@@ -7,7 +7,7 @@ const app = express();
 const port = 3000;
 
 app.use(express.static("public"));
-app.use(express.static("config/data"));
+app.use("files", express.static("config/files"));
 
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "views"));
@@ -23,25 +23,19 @@ const getPathConfig = (name) => {
     return JSON.parse(configText);
 };
 
-app.get('*', (req, res) => {
+app.get("/", (req, res) => {
+    const options = {
+        root: path.join(__dirname, "config")
+    };
+    res.sendFile("index.html", options);
+});
+
+app.get("*", (req, res) => {
     const url = req.url;
     console.log("Handling: " + url);
 
     const config = getPathConfig(url);
-
     res.render("app", {config});
-    /*
-    const options = {
-        root: path.join(__dirname, "public", "html")
-    };
-
-    const fileName = 'basic.html';
-    res.sendFile(fileName, options, function (err) {
-        if (err) {
-            console.log("Error:", err);
-            next(err);
-        }
-    });*/
 });
 
 app.listen(port, () => {
