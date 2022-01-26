@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>WODIN for Basic Model</h1>
+        <h1>{{title}}</h1>
         <div>App Type: {{appType}}</div>
         <div>Basic Prop: {{basicProp}}</div>
     </div>
@@ -14,10 +14,12 @@
         setup() {
             const store = useStore();
 
+            const title = computed(() => store.state.title);
             const appType = computed(() => store.state.appType);
             const basicProp = computed(() => store.state.basicProp);
 
             return {
+                title,
                 appType,
                 basicProp
             }
