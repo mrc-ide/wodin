@@ -1,14 +1,12 @@
 {
   "name": "wodin",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "build": "vue-cli-service build --target lib --name basicApp ./src/app/basic.ts --inline-vue",
     "test": "echo \"Error: no test specified\" && exit"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "bootstrap-vue": "^2.21.2",
     "vue": "^3.2.29",

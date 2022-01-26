@@ -7,6 +7,7 @@ export interface BasicState extends AppState {
 
 export const storeOptions: StoreOptions<BasicState> = {
     state: {
+        title: "Basic App",
         appType: "basic",
         basicProp: "basic value"
     }

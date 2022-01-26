@@ -16,6 +16,7 @@
 
             const appType = computed(() => store.state.appType);
             const basicProp = computed(() => store.state.basicProp);
+
             return {
                 appType,
                 basicProp
