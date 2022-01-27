@@ -1,4 +1,5 @@
 /.idea/
 /src/app/server/node_modules/
 /src/app/server/public/compiled/
+/src/app/server/dist/
 /src/app/static/node_modules/
