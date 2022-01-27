@@ -22,7 +22,8 @@ Each app with have one of these three app types, as well as any further configur
 
 ## Usage and configuration
 
-You can install dependencies. build and run the app locally in one step using `./scripts/build-and-run.sh`. The app will be available at http://localhost:3000
+You can install dependencies. build and run the app locally in one step using `./scripts/build-and-run.sh`. The app will be available at http://localhost:3000 
+You may need to install typescript: `npm install -g typescript`
 
 WODIN will be deployable as a docker image which can be mounted with custom configuration as follows:
 
