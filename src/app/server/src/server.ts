@@ -1,3 +1,5 @@
+import {Request, Response} from 'express';
+
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
@@ -13,11 +15,11 @@ app.use("/files", express.static(path.join(rootDir, "config/files")));
 app.set("view engine", "hbs");
 app.set("views", path.join(rootDir, "views"));
 
-hbs.registerHelper('json', function(context) {
+hbs.registerHelper('json', function(context: (...args: any[]) => any) {
     return JSON.stringify(context);
 });
 
-const getAppConfig = (appName) => {
+const getAppConfig = (appName: string) => {
     const filename = path.join(rootDir, "config",  `${appName}.config.json`);
     if (fs.existsSync(filename)) {
         const configText = fs.readFileSync(filename, {encoding: "utf-8"});
@@ -26,12 +28,12 @@ const getAppConfig = (appName) => {
     return null;
 };
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
     const filename = path.join(rootDir, "config", "index.html");
     res.sendFile(filename);
 });
 
-app.get("/apps/:appName", (req, res) => {
+app.get("/apps/:appName", (req: Request, res: Response) => {
     const appName = req.params["appName"];
     const config = getAppConfig(appName);
     if (config) {
