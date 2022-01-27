@@ -20,7 +20,9 @@ one of three types of model usage:
 
 Each app with have one of these three app types, as well as any further configuration required e.g. default odin code. 
 
-## Usage
+## Usage and configuration
+
+You can install dependencies. build and run the app locally in one step using `./scripts/build-and-run.sh`. The app will be available at http://localhost:3000
 
 WODIN will be deployable as a docker image which can be mounted with custom configuration as follows:
 
@@ -57,7 +59,7 @@ The back end handles requests for apps by reading the corresponding config files
 `views/app.hbs` to use the appropriate js file, and also to provide configuration values to the relevant store via
 the `appConfig` object.
 
-The backend server can be run using `npm run serve` from `/src/app/server`.
+The backend server can be built using `npm run build` and  run using `npm run serve`, both from `/src/app/server`.
 
 
 

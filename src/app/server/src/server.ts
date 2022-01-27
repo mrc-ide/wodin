@@ -19,7 +19,6 @@ hbs.registerHelper('json', function(context) {
 
 const getAppConfig = (appName) => {
     const filename = path.join(rootDir, "config",  `${appName}.config.json`);
-    // TODO: error handling - return 404 if file not found
     if (fs.existsSync(filename)) {
         const configText = fs.readFileSync(filename, {encoding: "utf-8"});
         return JSON.parse(configText);
@@ -38,7 +37,7 @@ app.get("/apps/:appName", (req, res) => {
     if (config) {
         res.render("app", {config});
     } else {
-        req.status(404);
+        res.status(404).render("404", {appName});
     }
 });
 
