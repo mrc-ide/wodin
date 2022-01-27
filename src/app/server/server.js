@@ -7,7 +7,7 @@ const app = express();
 const port = 3000;
 
 app.use(express.static("public"));
-app.use("files", express.static("config/files"));
+app.use("/files", express.static("config/files"));
 
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "views"));
@@ -16,8 +16,8 @@ hbs.registerHelper('json', function(context) {
     return JSON.stringify(context);
 });
 
-const getPathConfig = (name) => {
-    const filename = path.join(__dirname, `config${name}.config.json`);
+const getAppConfig = (appName) => {
+    const filename = path.join(__dirname, `config/${appName}.config.json`);
     // TODO: error handling - return 404 if file not found
     const configText = fs.readFileSync(filename, {encoding: "utf-8"});
     return JSON.parse(configText);
@@ -30,11 +30,9 @@ app.get("/", (req, res) => {
     res.sendFile("index.html", options);
 });
 
-app.get("*", (req, res) => {
-    const url = req.url;
-    console.log("Handling: " + url);
-
-    const config = getPathConfig(url);
+app.get("/apps/:appName", (req, res) => {
+    const appName = req.params.appName;
+    const config = getAppConfig(appName);
     res.render("app", {config});
 });
 
