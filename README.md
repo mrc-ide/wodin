@@ -18,11 +18,11 @@ one of three types of model usage:
 - *fit* - to fit a model to data
 - *stochastic* - to run a model stochastically
 
-Each app with have one of these three app types, as well as any further configuration required e.g. default odin code. 
+Each app will have one of these three app types, as well as any further configuration required e.g. default odin code. 
 
 ## Usage and configuration
 
-You can install dependencies. build and run the app locally in one step using `./scripts/build-and-run.sh`. The app will be available at http://localhost:3000 
+You can install dependencies, build and run the app locally in one step using `./scripts/build-and-run.sh`. The app will be available at http://localhost:3000 
 You may need to install typescript: `npm install -g typescript`
 
 WODIN will be deployable as a docker image which can be mounted with custom configuration as follows:
@@ -48,7 +48,7 @@ See the `/src/app/server/config` folder for example configuration, used in devel
 ### Front end 
 
 Front end source can be found under `src/app/static/src`. The front end can be built by running `npm run build` from
-`src/app/static`. This builds output to be picked up by the back end at `arc/app/server/public`.
+`src/app/static`. This builds output to be picked up by the back end at `src/app/server/public`.
 
 There are entry point scripts for each of the three app types (`basic.ts`, `fit.ts` and `stochastic.ts`), which are each
 built separately. You can build an individual app type using e.g. `npm run build-basic`. Each entry script invokes a store
