@@ -12,7 +12,7 @@ const defaultState: BasicState = {
 };
 
 // Injected into view by server
-declare const appConfig: BasicState;
+declare const appConfig: Partial<BasicState>;
 
 export const storeOptions: StoreOptions<BasicState> = {
     state: {
