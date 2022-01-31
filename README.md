@@ -60,7 +60,7 @@ The back end handles requests for apps by reading the corresponding config files
 `views/app.hbs` to use the appropriate js file, and also to provide configuration values to the relevant store via
 the `appConfig` object.
 
-The backend server can be built using `npm run build` and  run using `npm run serve`, both from `/src/app/server`.
+The back-end server can be built using `npm run build` and run using `npm run serve`, both from `/src/app/server`.
 
 
 
