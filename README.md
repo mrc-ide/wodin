@@ -4,8 +4,8 @@
 
 ## Introduction
 
-WODIN is a web application with [Node.js](https://nodejs.org/en/) back end using [Express](http://expressjs.com/), 
-and [Vue.js](https://vuejs.org/) front end. Both parts are written in [Typescript](https://www.typescriptlang.org/).  
+WODIN is a web application with a [Node.js](https://nodejs.org/en/) back end using [Express](http://expressjs.com/), 
+and a [Vue.js](https://vuejs.org/) front end. Both parts are written in [Typescript](https://www.typescriptlang.org/).  
 
 The application is intended to be deployable with custom configuration allowing (typically) teaching courses to be delivered
 where students can author and run model code using [odin](https://github.com/mrc-ide/odin). 
