@@ -6,7 +6,6 @@ const hbs = require("hbs");
 const {ConfigReader} = require("./configReader");
 
 const app = express();
-const port = process.env.PORT || 3000;
 const rootDir = path.join(__dirname, "..");
 
 app.use(express.static(path.join(rootDir, "public")));
@@ -22,6 +21,8 @@ hbs.registerHelper('json', function(context: (...args: any[]) => any) {
 const configReader = new ConfigReader(path.join(rootDir, "config"));
 const wodinConfig = configReader.readConfigFile("wodin.config.json");
 
+const port = wodinConfig.port;
+
 app.get("/", (req: Request, res: Response) => {
     const filename = path.join(rootDir, "config", "index.html");
     res.sendFile(filename);
@@ -33,8 +34,13 @@ app.get(`/${wodinConfig.appsPath}/:appName`, (req: Request, res: Response) => {
     if (config) {
         res.render("app", {config});
     } else {
-        res.status(404).render("404", {appName});
+        res.status(404).render("AppNotFound", {appName});
     }
+});
+
+app.use((req: Request, res: Response) => {
+    const url = req.url;
+    res.status(404).render("PageNotFound", {url});
 });
 
 app.listen(port, () => {
