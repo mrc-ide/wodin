@@ -2,8 +2,8 @@ import {Request, Response} from 'express';
 
 const express = require("express");
 const path = require("path");
-const fs = require("fs");
 const hbs = require("hbs");
+const {ConfigReader} = require("./configReader");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -19,16 +19,8 @@ hbs.registerHelper('json', function(context: (...args: any[]) => any) {
     return JSON.stringify(context);
 });
 
-const wodinConfig = JSON.parse(fs.readFileSync(path.join(rootDir, "config", "wodin.config.json")));
-
-const getAppConfig = (appName: string) => {
-    const filename = path.join(rootDir, "config", wodinConfig.appsPath, `${appName}.config.json`);
-    if (fs.existsSync(filename)) {
-        const configText = fs.readFileSync(filename, {encoding: "utf-8"});
-        return JSON.parse(configText);
-    }
-    return null;
-};
+const configReader = new ConfigReader(path.join(rootDir, "config"));
+const wodinConfig = configReader.readConfigFile("wodin.config.json");
 
 app.get("/", (req: Request, res: Response) => {
     const filename = path.join(rootDir, "config", "index.html");
@@ -37,7 +29,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.get(`/${wodinConfig.appsPath}/:appName`, (req: Request, res: Response) => {
     const appName = req.params["appName"];
-    const config = getAppConfig(appName);
+    const config = configReader.readConfigFile(wodinConfig.appsPath, `${appName}.config.json`);
     if (config) {
         res.render("app", {config});
     } else {
