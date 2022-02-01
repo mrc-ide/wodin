@@ -7,10 +7,11 @@
 WODIN is a web application with [Node.js](https://nodejs.org/en/) back end using [Express](http://expressjs.com/), 
 and [Vue.js](https://vuejs.org/) front end. Both parts are written in [Typescript](https://www.typescriptlang.org/).  
 
-The application is intended to be deployable with custom configuration allowing (typically) teaching courses to be delivered
-where students can author and run model code using [odin](https://github.com/mrc-ide/odin). 
-Odin will be invoked by WODIN to provide executable javascript
-models given odin code written by the users or provided in config. 
+The WODIN application can be deployed with custom configuration to create teaching courses that allow students to author 
+and run model code using [odin](https://github.com/mrc-ide/odin).
+
+When the user runs a model in WODIN, odin will be invoked to provide executable JavaScript for odin model code. This 
+odin code may be written by the user or provided in config.
 
 WODIN configuration defines multiple 'apps', corresponding to teaching modules, which each provide functionality for 
 one of three types of model usage:
@@ -38,8 +39,8 @@ Sample data can be provided in any folder structure under `/files` and will be a
 
 ### index.html 
 
-An index page which will be available at the root url `/` and should provide a front page for all apps, including any description
-and explanation along with links to apps and data files.
+A root index page `index.html` should be provided which will be available at the root url `/` and should provide a front 
+page for all apps, including any description and explanation along with links to apps and data files.
 
 See the `/src/app/server/config` folder for example configuration, used in development. 
 

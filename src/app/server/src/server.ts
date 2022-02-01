@@ -19,8 +19,10 @@ hbs.registerHelper('json', function(context: (...args: any[]) => any) {
     return JSON.stringify(context);
 });
 
+const wodinConfig = JSON.parse(fs.readFileSync(path.join(rootDir, "config", "wodin.config.json")));
+
 const getAppConfig = (appName: string) => {
-    const filename = path.join(rootDir, "config",  `${appName}.config.json`);
+    const filename = path.join(rootDir, "config", wodinConfig.appsPath, `${appName}.config.json`);
     if (fs.existsSync(filename)) {
         const configText = fs.readFileSync(filename, {encoding: "utf-8"});
         return JSON.parse(configText);
@@ -33,7 +35,7 @@ app.get("/", (req: Request, res: Response) => {
     res.sendFile(filename);
 });
 
-app.get("/apps/:appName", (req: Request, res: Response) => {
+app.get(`/${wodinConfig.appsPath}/:appName`, (req: Request, res: Response) => {
     const appName = req.params["appName"];
     const config = getAppConfig(appName);
     if (config) {
