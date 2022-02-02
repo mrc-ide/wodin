@@ -34,13 +34,13 @@ app.get(`/${wodinConfig.appsPath}/:appName`, (req: Request, res: Response) => {
     if (config) {
         res.render("app", {config});
     } else {
-        res.status(404).render("AppNotFound", {appName});
+        res.status(404).render("app-not-found", {appName});
     }
 });
 
 app.use((req: Request, res: Response) => {
     const url = req.url;
-    res.status(404).render("PageNotFound", {url});
+    res.status(404).render("page-not-found", {url});
 });
 
 app.listen(port, () => {
