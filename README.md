@@ -4,8 +4,8 @@
 
 ## Introduction
 
-WODIN is a web application with [Node.js](https://nodejs.org/en/) back end using [Express](http://expressjs.com/), 
-and [Vue.js](https://vuejs.org/) front end. Both parts are written in [Typescript](https://www.typescriptlang.org/).  
+WODIN is a web application with a [Node.js](https://nodejs.org/en/) back end using [Express](http://expressjs.com/), 
+and a [Vue.js](https://vuejs.org/) front end. Both parts are written in [Typescript](https://www.typescriptlang.org/).  
 
 The WODIN application can be deployed with custom configuration to create teaching courses that allow students to author 
 and run model code using [odin](https://github.com/mrc-ide/odin).
@@ -24,7 +24,7 @@ Each app will have one of these three app types, as well as any further configur
 ## Usage and configuration
 
 You can install dependencies, build and run the app locally in one step using `./scripts/build-and-run.sh`. The app will be available at http://localhost:3000 
-You may need to install typescript: `npm install -g typescript`
+You may need to install TypeScript: `npm install -g typescript`
 
 WODIN will be deployable as a docker image which can be mounted with custom configuration as follows:
 
@@ -48,7 +48,7 @@ See the `/src/app/server/config` folder for example configuration, used in devel
 
 ### Front end 
 
-Front end source can be found under `src/app/static/src`. The front end can be built by running `npm run build` from
+Front-end source can be found under `src/app/static/src`. The front end can be built by running `npm run build` from
 `src/app/static`. This builds output to be picked up by the back end at `src/app/server/public`.
 
 There are entry point scripts for each of the three app types (`basic.ts`, `fit.ts` and `stochastic.ts`), which are each
@@ -61,7 +61,7 @@ The back end handles requests for apps by reading the corresponding config files
 `views/app.hbs` to use the appropriate js file, and also to provide configuration values to the relevant store via
 the `appConfig` object.
 
-The backend server can be built using `npm run build` and  run using `npm run serve`, both from `/src/app/server`.
+The back-end server can be built using `npm run build` and run using `npm run serve`, both from `/src/app/server`.
 
 
 
