@@ -7,7 +7,9 @@
     "build-basic": "vue-cli-service build --target lib --name basicApp ./src/app/basic.ts --inline-vue --no-clean",
     "build-fit": "vue-cli-service build --target lib --name fitApp ./src/app/fit.ts --inline-vue --no-clean",
     "build-stochastic": "vue-cli-service build --target lib --name stochasticApp ./src/app/stochastic.ts --inline-vue --no-clean",
-    "build": "npm run build-basic && npm run build-fit && npm run build-stochastic",
+    "copy-js": "mkdir -p ../server/public/js && find dist/ -type f -name '*.umd.js' -exec cp '{}' ../server/public/js/ ';'",
+    "copy-css": "mkdir -p ../server/public/css && find dist/ -type f -name '*.css' -exec cp '{}' ../server/public/css/ ';'",
+    "build": "npm run build-basic && npm run build-fit && npm run build-stochastic && npm run copy-js && npm run copy-css",
     "test": "echo \"Error: no test specified\" && exit"
   },
   "dependencies": {
