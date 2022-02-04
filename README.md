@@ -35,12 +35,14 @@ file named `[appName].config.json`
 
 ### /files
 
-Sample data can be provided in any folder structure under `/files` and will be available at urls under `/files`
+Sample data and other supporting files can be provided in any folder structure under `/files` and will be available at urls under `/files`
 
 ### index.html 
 
 A root index page `index.html` should be provided which will be available at the root url `/` and should provide a front 
 page for all apps, including any description and explanation along with links to apps and data files.
+
+`index.html` may also use files included in the `/files` folder e.g. images or css.
 
 See the `/src/app/server/config` folder for example configuration, used in development. 
 

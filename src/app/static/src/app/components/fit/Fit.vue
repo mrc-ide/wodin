@@ -1,8 +1,8 @@
 <template>
     <div>
         <h1>{{title}}</h1>
-        <div>App Type: {{appType}}</div>
-        <div>Model Fit Prop: {{fitProp}}</div>
+        <div id="app-type">App Type: {{appType}}</div>
+        <div id="fit-prop">Model Fit Prop: {{fitProp}}</div>
     </div>
 </template>
 

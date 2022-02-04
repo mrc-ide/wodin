@@ -1,8 +1,8 @@
 <template>
     <div>
         <h1>{{title}}</h1>
-        <div>App Type: {{appType}}</div>
-        <div>Stochastic Prop: {{stochasticProp}}</div>
+        <div id="app-type">App Type: {{appType}}</div>
+        <div id="stochastic-prop">Stochastic Prop: {{stochasticProp}}</div>
     </div>
 </template>
 

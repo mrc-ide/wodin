@@ -4,4 +4,5 @@
 /src/app/server/public/js/
 /src/app/server/dist/
 /src/app/static/node_modules/
+/src/app/static/coverage/
 /src/app/static/dist/

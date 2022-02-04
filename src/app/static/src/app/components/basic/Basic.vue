@@ -1,8 +1,8 @@
 <template>
     <div>
         <h1>{{title}}</h1>
-        <div>App Type: {{appType}}</div>
-        <div>Basic Prop: {{basicProp}}</div>
+        <div id="app-type">App Type: {{appType}}</div>
+        <div id="basic-prop">Basic Prop: {{basicProp}}</div>
     </div>
 </template>
 
