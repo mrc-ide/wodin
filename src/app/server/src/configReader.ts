@@ -19,6 +19,4 @@ class ConfigReader {
     }
 }
 
-module.exports = {
-    ConfigReader
-};
+module.exports = ConfigReader;

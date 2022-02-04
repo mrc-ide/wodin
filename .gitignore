@@ -1,4 +1,5 @@
 /.idea/
+/src/app/server/coverage/
 /src/app/server/node_modules/
 /src/app/server/public/css/
 /src/app/server/public/js/
