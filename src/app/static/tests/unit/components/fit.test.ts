@@ -1,8 +1,8 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
-import Fit from "../../../src/app/components/fit/Fit.vue";
-import {FitState} from "../../../src/app/store/fit/fit";
-import {mockFitState} from "../../mocks";
+import FitApp from "../../../src/app/components/fit/FitApp.vue";
+import { FitState } from "../../../src/app/store/fit/fit";
+import { mockFitState } from "../../mocks";
 
 describe("Fit", () => {
     it("displays store values", () => {
@@ -10,8 +10,8 @@ describe("Fit", () => {
             title: "Test Title",
             fitProp: "Test fit prop value"
         });
-        const store = new Vuex.Store<FitState>({state});
-        const wrapper = shallowMount(Fit,  {
+        const store = new Vuex.Store<FitState>({ state });
+        const wrapper = shallowMount(FitApp, {
             global: {
                 plugins: [store]
             }

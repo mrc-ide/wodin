@@ -1,11 +1,10 @@
-import {createApp} from "vue";
+import { createApp } from "vue";
 import Vuex from "vuex";
-import {BasicState, storeOptions} from "./store/basic/basic";
-import Basic from "./components/basic/Basic.vue";
+import { BasicState, storeOptions } from "./store/basic/basic";
+import BasicApp from "./components/basic/BasicApp.vue";
 
 export const store = new Vuex.Store<BasicState>(storeOptions);
 
-const app = createApp(Basic);
+const app = createApp(BasicApp);
 app.use(store);
-app.mount('#app');
-
+app.mount("#app");

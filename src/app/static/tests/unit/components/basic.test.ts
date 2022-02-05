@@ -1,8 +1,8 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
-import Basic from "../../../src/app/components/basic/Basic.vue";
-import {BasicState} from "../../../src/app/store/basic/basic";
-import {mockBasicState} from "../../mocks";
+import BasicApp from "../../../src/app/components/basic/BasicApp.vue";
+import { BasicState } from "../../../src/app/store/basic/basic";
+import { mockBasicState } from "../../mocks";
 
 describe("Basic", () => {
     it("displays store values", () => {
@@ -10,8 +10,8 @@ describe("Basic", () => {
             title: "Test Title",
             basicProp: "Test basic prop value"
         });
-        const store = new Vuex.Store<BasicState>({state});
-        const wrapper = shallowMount(Basic,  {
+        const store = new Vuex.Store<BasicState>({ state });
+        const wrapper = shallowMount(BasicApp, {
             global: {
                 plugins: [store]
             }

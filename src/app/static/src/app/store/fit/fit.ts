@@ -1,5 +1,5 @@
-import {AppState} from "../AppState";
-import {StoreOptions} from "vuex";
+import { StoreOptions } from "vuex";
+import { AppState } from "../AppState";
 
 export interface FitState extends AppState {
     fitProp: string

@@ -1,9 +1,8 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
-import Stochastic from "../../../src/app/components/stochastic/Stochastic.vue";
-import {StochasticState} from "../../../src/app/store/stochastic/stochastic";;
-import {mockStochasticState} from "../../mocks";
-
+import StochasticApp from "../../../src/app/components/stochastic/StochasticApp.vue";
+import { StochasticState } from "../../../src/app/store/stochastic/stochastic";
+import { mockStochasticState } from "../../mocks";
 
 describe("Stochastic", () => {
     it("displays store values", () => {
@@ -11,8 +10,8 @@ describe("Stochastic", () => {
             title: "Test Title",
             stochasticProp: "Test stochastic prop value"
         });
-        const store = new Vuex.Store<StochasticState>({state});
-        const wrapper = shallowMount(Stochastic,  {
+        const store = new Vuex.Store<StochasticState>({ state });
+        const wrapper = shallowMount(StochasticApp, {
             global: {
                 plugins: [store]
             }

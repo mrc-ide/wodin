@@ -1,8 +1,8 @@
-import {BasicState} from "../src/app/store/basic/basic";
-import {FitState} from "../src/app/store/fit/fit";
-import {StochasticState} from "../src/app/store/stochastic/stochastic";
+import { BasicState } from "../src/app/store/basic/basic";
+import { FitState } from "../src/app/store/fit/fit";
+import { StochasticState } from "../src/app/store/stochastic/stochastic";
 
-export const mockBasicState = (state: Partial<BasicState> = {}) => {
+export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
     return {
         title: "",
         appType: "basic",
@@ -11,7 +11,7 @@ export const mockBasicState = (state: Partial<BasicState> = {}) => {
     };
 };
 
-export const mockFitState = (state: Partial<FitState> = {}) => {
+export const mockFitState = (state: Partial<FitState> = {}): FitState => {
     return {
         title: "",
         appType: "fit",
@@ -20,7 +20,7 @@ export const mockFitState = (state: Partial<FitState> = {}) => {
     };
 };
 
-export const mockStochasticState = (state: Partial<StochasticState> = {}) => {
+export const mockStochasticState = (state: Partial<StochasticState> = {}): StochasticState => {
     return {
         title: "",
         appType: "stochastic",
@@ -28,5 +28,3 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}) => {
         ...state
     };
 };
-
-
