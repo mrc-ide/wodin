@@ -3,6 +3,6 @@ module.exports = {
     testEnvironment: 'node',
     collectCoverage: true,
     testMatch: [
-        "**/?(*.)test.(js|ts)"
+        "**/?(*.)test.ts"
     ]
 };

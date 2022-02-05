@@ -6,7 +6,9 @@
   "scripts": {
     "build": "tsc",
     "serve": "node dist/server.js",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint src tests --ext .ts,.js",
+    "lint:fix": "eslint src tests --ext .ts,.js --fix"
   },
   "dependencies": {
     "express": "^4.17.2",
@@ -17,6 +19,11 @@
     "@types/express": "^4.17.13",
     "@types/jest": "^27.4.0",
     "@types/node": "^17.0.12",
+    "@typescript-eslint/eslint-plugin": "^5.10.2",
+    "@typescript-eslint/parser": "^5.10.2",
+    "eslint": "^8.8.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.4",
     "jest": "^27.4.7",
     "ts-jest": "^27.1.3"
   }
