@@ -22,6 +22,8 @@ module.exports = {
         quotes: ["error", "double", { avoidEscape: true }],
         "arrow-body-style": "off",
         "import/prefer-default-export": "off",
+        "import/no-unresolved": "off",
+        "import/extensions": "off",
         "@typescript-eslint/no-non-null-assertion": "off"
     },
     overrides: [{

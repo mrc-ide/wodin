@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 const express = require("express");
 const path = require("path");
 const hbs = require("hbs");
-const ConfigReader = require("./configReader.ts");
+const ConfigReader = require("./configReader");
 
 const app = express();
 const rootDir = path.join(__dirname, "..");
