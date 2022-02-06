@@ -5,6 +5,7 @@
     "strict": true,
     "moduleResolution": "node",
     "outDir": "./dist",
-    "rootDir": "./"
-  }
+    "rootDir": "./src"
+  },
+  "include": ["./src/**/*"]
 }
