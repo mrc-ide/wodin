@@ -57,7 +57,7 @@ There are entry point scripts for each of the three app types (`basic.ts`, `fit.
 built separately. You can build an individual app type using e.g. `npm run build-basic`. Each entry script invokes a store
 and top-level component for the given app type. 
 
-Run unit tests from `src/app/static` using `npm run test:unit`.
+Run unit tests from `src/app/static` using `npm run test:unit`. Run [eslint](https://eslint.org/) with `npm run lint` or `npm run lint:fix`.
 
 ### Back end
 
@@ -67,6 +67,4 @@ the `appConfig` object.
 
 The back-end server can be built using `npm run build` and run using `npm run serve`, both from `/src/app/server`.
 
-Run tests from `src/app/server` using `npm test`.
-
-
+Run tests from `src/app/server` using `npm test`. Run [eslint](https://eslint.org/) with `npm run lint` or `npm run lint:fix`.
