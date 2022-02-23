@@ -50,14 +50,14 @@ See the `/src/app/server/config` folder for example configuration, used in devel
 
 ### Front end 
 
-Front-end source can be found under `src/app/static/src`. The front end can be built by running `npm run build` from
-`src/app/static`. This builds output to be picked up by the back end at `src/app/server/public`.
+Front-end source can be found under `app/static/src`. The front end can be built by running `npm run build` from
+`app/static`. This builds output to be picked up by the back end at `app/server/public`.
 
 There are entry point scripts for each of the three app types (`basic.ts`, `fit.ts` and `stochastic.ts`), which are each
 built separately. You can build an individual app type using e.g. `npm run build-basic`. Each entry script invokes a store
 and top-level component for the given app type. 
 
-Run unit tests from `src/app/static` using `npm run test:unit`. Run [eslint](https://eslint.org/) with `npm run lint` or `npm run lint:fix`.
+Run unit tests from `app/static` using `npm run test:unit`. Run [eslint](https://eslint.org/) with `npm run lint` or `npm run lint:fix`.
 
 ### Back end
 
@@ -65,6 +65,6 @@ The back end handles requests for apps by reading the corresponding config files
 `views/app.hbs` to use the appropriate js file, and also to provide configuration values to the relevant store via
 the `appConfig` object.
 
-The back-end server can be built using `npm run build` and run using `npm run serve`, both from `/src/app/server`.
+The back-end server can be built using `npm run build` and run using `npm run serve`, both from `app/server`.
 
-Run tests from `src/app/server` using `npm test`. Run [eslint](https://eslint.org/) with `npm run lint` or `npm run lint:fix`.
+Run tests from `app/server` using `npm test`. Run [eslint](https://eslint.org/) with `npm run lint` or `npm run lint:fix`.

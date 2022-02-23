@@ -1,9 +1,9 @@
 /.idea/
-/src/app/server/coverage/
-/src/app/server/node_modules/
-/src/app/server/public/css/
-/src/app/server/public/js/
-/src/app/server/dist/
-/src/app/static/node_modules/
-/src/app/static/coverage/
-/src/app/static/dist/
+/app/server/coverage/
+/app/server/node_modules/
+/app/server/public/css/
+/app/server/public/js/
+/app/server/dist/
+/app/static/node_modules/
+/app/static/coverage/
+/app/static/dist/
