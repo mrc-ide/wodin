@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-class ConfigReader {
+export class ConfigReader {
     rootDir: string;
 
     constructor(rootDir: string) {
@@ -19,4 +19,3 @@ class ConfigReader {
     }
 }
 
-module.exports = ConfigReader;

@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
+import { ConfigReader } from "./configReader";
+import { ConfigController } from "./controllers/configController";
 
 const express = require("express");
 const path = require("path");
 const hbs = require("hbs");
-const ConfigReader = require("./configReader");
 
 const app = express();
 const rootDir = path.join(__dirname, "..");
@@ -19,7 +20,7 @@ hbs.registerHelper("json", (context: any) => {
 });
 
 const configReader = new ConfigReader(path.join(rootDir, "config"));
-const wodinConfig = configReader.readConfigFile("wodin.config.json");
+const wodinConfig = configReader.readConfigFile("wodin.config.json") as any; //TODO..
 
 const { port } = wodinConfig;
 
@@ -30,13 +31,16 @@ app.get("/", (req: Request, res: Response) => {
 
 app.get(`/${wodinConfig.appsPath}/:appName`, (req: Request, res: Response) => {
     const { appName } = req.params;
-    const config = configReader.readConfigFile(wodinConfig.appsPath, `${appName}.config.json`);
+    const config = configReader.readConfigFile(wodinConfig.appsPath, `${appName}.config.json`) as any; //TODO..
     if (config) {
-        res.render("app", { config });
+        const view =  `${config.appType}-app`;
+        res.render(view, { appName, title: config.title });
     } else {
         res.status(404).render("app-not-found", { appName });
     }
 });
+
+new ConfigController(configReader, wodinConfig.appsPath, app); //TODO: check if more sensible way to use app router
 
 app.use((req: Request, res: Response) => {
     const { url } = req;
