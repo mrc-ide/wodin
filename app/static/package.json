@@ -15,6 +15,7 @@
     "lint:fix": "vue-cli-service lint"
   },
   "dependencies": {
+    "axios": "^0.26.0",
     "bootstrap-vue": "^2.21.2",
     "vue": "^3.2.29",
     "vuex": "^4.0.2"

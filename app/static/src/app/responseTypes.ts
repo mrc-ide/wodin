@@ -1,3 +1,19 @@
+export interface APIError {
+    error: string,
+    detail: string | null
+}
+
+export interface ResponseFailure {
+    status: "failure";
+    data: null;
+    errors: APIError[];
+}
+
+export interface ResponseSuccess {
+    status: "success";
+    data: any;
+    errors: null;
+}
 export interface BasicConfig {
     basicProp: string
 }
