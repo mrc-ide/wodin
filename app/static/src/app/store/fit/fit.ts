@@ -1,6 +1,6 @@
 import { StoreOptions } from "vuex";
 import { AppState } from "../AppState";
-import { FitConfig } from "../../../../../shared/src/config/FitConfig";
+import { FitConfig } from "../../../../../shared/src/models/FitConfig";
 
 export interface FitState extends AppState {
     config: FitConfig

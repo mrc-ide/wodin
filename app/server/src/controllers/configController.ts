@@ -11,6 +11,7 @@ export class ConfigController {
         this.configReader = configReader;
         this.appsPath = appsPath;
         app.get(`${this.path}/basic/:appName`, this.getBasicConfig); //TODO: content type
+        // TODO: other app types
     }
 
     private readAppConfigFile = (appName: string) => {
@@ -22,14 +23,18 @@ export class ConfigController {
         res.end(JSON.stringify(responseObject));
     };
 
-    getBasicConfig = (req: Request, res: Response) => {
+    private getConfig = (req: Request, res: Response, jsonSchema: string) => {
         const { appName } = req.params;
         const config = this.readAppConfigFile(appName);
-        // TODO: validate config
+        // TODO: validate config against schema
         if (config) {
             this.writeResponse(config, res);
         } else {
             //TODO: 404
         }
+    };
+
+    getBasicConfig = (req: Request, res: Response) => {
+        this.getConfig(req, res, "basic");
     };
 }

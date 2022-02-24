@@ -1,6 +1,6 @@
 import { StoreOptions } from "vuex";
 import { AppState } from "../AppState";
-import { StochasticConfig } from "../../../../../shared/src/config/StochasticConfig";
+import { StochasticConfig } from "../../../../../shared/src/models/StochasticConfig";
 
 export interface StochasticState extends AppState {
     config: StochasticConfig

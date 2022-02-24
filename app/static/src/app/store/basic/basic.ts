@@ -1,6 +1,6 @@
 import { StoreOptions } from "vuex";
 import { AppState } from "../AppState";
-import { BasicConfig } from "../../../../../shared/src/config/BasicConfig";
+import { BasicConfig } from "../../../../../shared/src/models/BasicConfig";
 
 export interface BasicState extends AppState {
    config: BasicConfig
