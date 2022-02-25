@@ -1,8 +1,13 @@
 <template>
-    <div>
-        <h1>{{title}}</h1>
-        <div id="app-type">App Type: {{appType}}</div>
-        <div id="basic-prop">Basic Prop: {{basicProp}}</div>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1>{{title}}</h1>
+                <div id="app-type">App Type: {{appType}}</div>
+                <div id="basic-prop">Basic Prop: {{basicProp}}</div>
+                <errors></errors>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -10,19 +15,19 @@
 import { computed, defineComponent, onMounted } from "vue";
 import { useStore } from "vuex";
 import {BasicAction} from "../../store/basic/actions";
-
-interface Props {
-    app: string
-}
+import Errors from "../Errors.vue";
 
 export default defineComponent({
     props: {
-        appName: String
+        appName: String,
+        title: String
+    },
+    components: {
+        Errors
     },
     setup(props) {
         const store = useStore();
 
-        const title = computed(() => store.state.title); //TODO: this should come from config or a prop
         const appType = computed(() => store.state.appType);
         const basicProp = computed(() => store.state.config?.basicProp);
 
@@ -31,7 +36,6 @@ export default defineComponent({
         });
 
         return {
-            title,
             appType,
             basicProp
         };

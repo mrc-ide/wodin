@@ -3,6 +3,7 @@ import {ActionContext, Commit} from "vuex";
 import {freezer} from "./utils";
 import { APIError, ResponseSuccess, ResponseFailure } from "./responseTypes";
 import {AppState} from "./store/AppState";
+import {ErrorsMutation} from "./store/errors/mutations";
 
 export interface ResponseWithType<T> extends ResponseSuccess {
     data: T
@@ -21,8 +22,8 @@ export function isAPIResponseFailure(object: any): object is ResponseFailure {
 
 export interface API<S, E> {
 
-    withError: (type: E) => API<S, E>
-    withSuccess: (type: S) => API<S, E>
+    withError: (type: E, root: boolean) => API<S, E>
+    withSuccess: (type: S, root: boolean) => API<S, E>
     ignoreErrors: () => API<S, E>
 
     get<T>(url: string): Promise<void | ResponseWithType<T>>
@@ -64,9 +65,9 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         return this;
     };
 
-    withError = (type: E) => {
+    withError = (type: E, root: boolean = false) => {
         this._onError = (failure: ResponseFailure) => {
-            this._commit(type, APIService.getFirstErrorFromFailure(failure));
+            this._commit(type, APIService.getFirstErrorFromFailure(failure), {root});
         };
         return this
     };
@@ -76,10 +77,10 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         return this;
     };
 
-    withSuccess = (type: S) => {
+    withSuccess = (type: S, root: boolean = false) => {
         this._onSuccess = (data: any) => {
             const finalData = this._freezeResponse ? freezer.deepFreeze(data) : data;
-            this._commit(type, finalData);
+            this._commit(type, finalData, {root});
         };
         return this;
     };
@@ -115,7 +116,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
     };
 
     private _commitError = (error: APIError) => {
-        //TODO: Deal with unknown errors
+        this._commit({type: `errors/${ErrorsMutation.AddError}`, payload: error}, {root: true});
     };
 
     private _verifyHandlers(url: string) {

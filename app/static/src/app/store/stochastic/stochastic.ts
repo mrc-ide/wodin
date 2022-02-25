@@ -6,13 +6,15 @@ export interface StochasticState extends AppState {
     config: null | StochasticConfig
 }
 
-const defaultState: StochasticState = {
-    title: "Stochastic App",
-    appType: "stochastic",
-    appName: null,
-    config: null
+const defaultState: () => StochasticState = () => {
+    return {
+        title: "Stochastic App",
+        appType: "stochastic",
+        appName: null,
+        config: null
+    };
 };
 
 export const storeOptions: StoreOptions<StochasticState> = {
-    state: defaultState
+    state: defaultState()
 };
