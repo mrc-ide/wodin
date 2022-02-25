@@ -1,18 +1,16 @@
 import { StoreOptions } from "vuex";
 import { AppState } from "../AppState";
-import { StochasticConfig } from "../../../../../shared/src/models/StochasticConfig";
+import { StochasticConfig } from "../../responseTypes";
 
 export interface StochasticState extends AppState {
-    config: StochasticConfig
+    config: null | StochasticConfig
 }
 
 const defaultState: StochasticState = {
     title: "Stochastic App",
     appType: "stochastic",
     appName: null,
-    config: {
-        stochasticProp: "basic value"
-    }
+    config: null
 };
 
 export const storeOptions: StoreOptions<StochasticState> = {

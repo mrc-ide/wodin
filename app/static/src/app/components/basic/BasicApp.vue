@@ -7,16 +7,28 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import { useStore } from "vuex";
+import {BasicAction} from "../../store/basic/actions";
+
+interface Props {
+    app: string
+}
 
 export default defineComponent({
-    setup() {
+    props: {
+        appName: String
+    },
+    setup(props) {
         const store = useStore();
 
-        const title = computed(() => store.state.title);
+        const title = computed(() => store.state.title); //TODO: this should come from config or a prop
         const appType = computed(() => store.state.appType);
-        const basicProp = computed(() => store.state.basicProp);
+        const basicProp = computed(() => store.state.config?.basicProp);
+
+        onMounted(() => {
+            store.dispatch(BasicAction.FetchConfig, props.appName);
+        });
 
         return {
             title,

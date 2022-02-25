@@ -15,7 +15,7 @@ export class ConfigController {
         app.get(`${this._path}/fit/:appName`, this.getFitConfig);
         app.get(`${this._path}/stochastic/:appName`, this.getStochasticConfig);
     }
-_
+
     private _readAppConfigFile = (appName: string) => {
         return this._configReader.readConfigFile(this._appsPath, `${appName}.config.json`)
     };

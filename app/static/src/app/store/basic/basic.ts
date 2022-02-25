@@ -1,20 +1,22 @@
 import { StoreOptions } from "vuex";
 import { AppState } from "../AppState";
-import { BasicConfig } from "../../../../../shared/src/models/BasicConfig";
+import { BasicConfig } from "../../responseTypes";
+import { actions } from "./actions";
+import { mutations } from "./mutations";
 
 export interface BasicState extends AppState {
-   config: BasicConfig
+   config: null | BasicConfig
 }
 
 const defaultState: BasicState = {
     title: "Basic App",
     appType: "basic",
     appName: null,
-    config: {
-        basicProp: "basic value"
-    }
+    config: null
 };
 
 export const storeOptions: StoreOptions<BasicState> = {
-    state: defaultState
+    state: defaultState,
+    actions,
+    mutations
 };
