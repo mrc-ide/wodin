@@ -5,6 +5,6 @@ import StochasticApp from "./components/stochastic/StochasticApp.vue";
 
 export const store = new Vuex.Store<StochasticState>(storeOptions);
 
-const app = createApp(StochasticApp);
+const app = createApp({components: {StochasticApp}});
 app.use(store);
 app.mount("#app");

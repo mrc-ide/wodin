@@ -11,7 +11,6 @@ export interface BasicState extends AppState {
 
 const defaultState: () => BasicState = () => {
     return {
-        title: "Basic App",
         appType: "basic",
         appName: null,
         config: null

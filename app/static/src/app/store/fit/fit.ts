@@ -1,6 +1,9 @@
 import { StoreOptions } from "vuex";
 import { AppState } from "../AppState";
 import { FitConfig } from "../../responseTypes";
+import { actions } from "./actions";
+import { mutations } from "./mutations";
+import {errors} from "../errors/errors";
 
 export interface FitState extends AppState {
     config: null | FitConfig
@@ -8,7 +11,6 @@ export interface FitState extends AppState {
 
 const defaultState: () => FitState = () => {
     return {
-        title: "Model Fit App",
         appType: "fit",
         appName: null,
         config: null
@@ -16,5 +18,10 @@ const defaultState: () => FitState = () => {
 };
 
 export const storeOptions: StoreOptions<FitState> = {
-    state: defaultState()
+    state: defaultState(),
+    actions,
+    mutations,
+    modules: {
+        errors
+    }
 };
