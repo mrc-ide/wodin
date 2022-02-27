@@ -9,9 +9,10 @@ const hbs = require("hbs");
 
 const app = express();
 const rootDir = path.join(__dirname, "..");
+const configPath = path.join(rootDir, "../../config");
 
 app.use(express.static(path.join(rootDir, "public")));
-app.use("/files", express.static(path.join(rootDir, "config/files")));
+app.use("/files", express.static(path.join(configPath, "files")));
 
 app.set("view engine", "hbs");
 app.set("views", path.join(rootDir, "views"));
@@ -20,13 +21,13 @@ hbs.registerHelper("json", (context: any) => {
     return JSON.stringify(context);
 });
 
-const configReader = new ConfigReader(path.join(rootDir, "config"));
+const configReader = new ConfigReader(configPath);
 const wodinConfig = configReader.readConfigFile("wodin.config.json") as WodinConfig;
 
 const { port, appsPath } = wodinConfig;
 
 app.get("/", (req: Request, res: Response) => {
-    const filename = path.join(rootDir, "config", "index.html");
+    const filename = path.join(configPath, "index.html");
     res.sendFile(filename);
 });
 

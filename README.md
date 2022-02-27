@@ -44,7 +44,7 @@ page for all apps, including any description and explanation along with links to
 
 `index.html` may also use files included in the `/files` folder e.g. images or css.
 
-See the `/src/app/server/config` folder for example configuration, used in development. 
+See the `/config` folder for example configuration, used in development. 
 
 ## Development
 
