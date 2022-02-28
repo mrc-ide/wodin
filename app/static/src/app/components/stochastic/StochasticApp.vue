@@ -4,7 +4,7 @@
             <div class="col-12">
                 <h1>{{title}}</h1>
                 <div id="app-type">App Type: {{appType}}</div>
-                <div id="basic-prop">Stochastic Prop: {{stochasticProp}}</div>
+                <div id="stochastic-prop">Stochastic Prop: {{stochasticProp}}</div>
                 <errors-alert></errors-alert>
             </div>
         </div>

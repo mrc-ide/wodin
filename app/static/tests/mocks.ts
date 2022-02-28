@@ -4,27 +4,33 @@ import { StochasticState } from "../src/app/store/stochastic/state";
 
 export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
     return {
-        title: "",
         appType: "basic",
-        basicProp: "",
+        appName: "",
+        config: {
+            basicProp: ""
+        },
         ...state
     };
 };
 
 export const mockFitState = (state: Partial<FitState> = {}): FitState => {
     return {
-        title: "",
         appType: "fit",
-        fitProp: "",
+        appName: "",
+        config: {
+            fitProp: ""
+        },
         ...state
     };
 };
 
 export const mockStochasticState = (state: Partial<StochasticState> = {}): StochasticState => {
     return {
-        title: "",
         appType: "stochastic",
-        stochasticProp: "",
+        appName: "",
+        config: {
+            stochasticProp: ""
+        },
         ...state
     };
 };

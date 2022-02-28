@@ -4,7 +4,7 @@
             <div class="col-12">
                 <h1>{{title}}</h1>
                 <div id="app-type">App Type: {{appType}}</div>
-                <div id="basic-prop">Fit Prop: {{fitProp}}</div>
+                <div id="fit-prop">Fit Prop: {{fitProp}}</div>
                 <errors-alert></errors-alert>
             </div>
         </div>
