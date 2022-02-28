@@ -17,26 +17,26 @@
 </template>
 
 <script lang="ts">
-    import { computed, defineComponent } from "vue";
-    import {useStore} from "vuex";
-    import {ErrorsMutation} from "../store/errors/mutations";
+import { computed, defineComponent } from "vue";
+import { useStore } from "vuex";
+import { ErrorsMutation } from "../store/errors/mutations";
 
-    export default defineComponent({
-        name: "Errors",
-        setup() {
-            const store = useStore();
-            const namespace = "errors";
+export default defineComponent({
+    name: "ErrorsAlert",
+    setup() {
+        const store = useStore();
+        const namespace = "errors";
 
-            const errors = computed(() => store.state.errors.errors);
+        const errors = computed(() => store.state.errors.errors);
 
-            function dismissErrors() {
-                store.commit(`${namespace}/${ErrorsMutation.DismissErrors}`, {root: true});
-            }
-
-            return {
-                errors,
-                dismissErrors
-            };
+        function dismissErrors() {
+            store.commit(`${namespace}/${ErrorsMutation.DismissErrors}`, { root: true });
         }
-    });
+
+        return {
+            errors,
+            dismissErrors
+        };
+    }
+});
 </script>

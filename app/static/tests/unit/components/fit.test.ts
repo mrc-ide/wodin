@@ -1,7 +1,7 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import FitApp from "../../../src/app/components/fit/FitApp.vue";
-import { FitState } from "../../../src/app/store/fit/fit";
+import { FitState } from "../../../src/app/store/fit/state";
 import { mockFitState } from "../../mocks";
 
 describe("Fit", () => {

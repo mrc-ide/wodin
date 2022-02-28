@@ -17,9 +17,15 @@ module.exports = {
         "comma-dangle": ["error", "never"],
         indent: ["error", 4],
         quotes: ["error", "double", { avoidEscape: true }],
+        "max-len": [2, 120, 4],
         "arrow-body-style": "off",
         "import/prefer-default-export": "off",
-        "@typescript-eslint/no-non-null-assertion": "off"
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "no-shadow": "off",
+        "@typescript-eslint/no-shadow": ["error"],
+        "no-underscore-dangle": "off",
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": ["error"]
     },
     overrides: [{
         files: [

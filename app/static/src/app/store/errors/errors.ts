@@ -1,16 +1,12 @@
-import {APIError} from "../../responseTypes";
-import {Module} from "vuex";
-import {mutations} from "./mutations";
-import {AppState} from "../AppState";
-
-export interface ErrorsState {
-    errors: APIError[]
-}
+import { Module } from "vuex";
+import { mutations } from "./mutations";
+import { AppState } from "../AppState";
+import { ErrorsState } from "./state";
 
 const defaultErrorsState: () => ErrorsState = () => {
-  return {
-      errors: []
-  }
+    return {
+        errors: []
+    };
 };
 
 const namespaced = true;

@@ -5,7 +5,7 @@
                 <h1>{{title}}</h1>
                 <div id="app-type">App Type: {{appType}}</div>
                 <div id="basic-prop">Basic Prop: {{basicProp}}</div>
-                <errors></errors>
+                <errors-alert></errors-alert>
             </div>
         </div>
     </div>
@@ -14,8 +14,8 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted } from "vue";
 import { useStore } from "vuex";
-import {BasicAction} from "../../store/basic/actions";
-import Errors from "../Errors.vue";
+import { BasicAction } from "../../store/basic/actions";
+import ErrorsAlert from "../ErrorsAlert.vue";
 
 export default defineComponent({
     props: {
@@ -23,7 +23,7 @@ export default defineComponent({
         title: String
     },
     components: {
-        Errors
+        ErrorsAlert
     },
     setup(props) {
         const store = useStore();

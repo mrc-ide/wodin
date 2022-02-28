@@ -1,13 +1,8 @@
 import { StoreOptions } from "vuex";
-import { AppState } from "../AppState";
-import { StochasticConfig } from "../../responseTypes";
 import { actions } from "./actions";
 import { mutations } from "./mutations";
-import {errors} from "../errors/errors";
-
-export interface StochasticState extends AppState {
-    config: null | StochasticConfig
-}
+import { errors } from "../errors/errors";
+import { StochasticState } from "./state";
 
 const defaultState: () => StochasticState = () => {
     return {

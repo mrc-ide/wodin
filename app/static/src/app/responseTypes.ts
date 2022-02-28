@@ -11,7 +11,7 @@ export interface ResponseFailure {
 
 export interface ResponseSuccess {
     status: "success";
-    data: any;
+    data: unknown;
     errors: null;
 }
 export interface BasicConfig {

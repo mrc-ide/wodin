@@ -35,14 +35,15 @@ app.get(`/${appsPath}/:appName`, (req: Request, res: Response) => {
     const { appName } = req.params;
     const config = configReader.readConfigFile(appsPath, `${appName}.config.json`) as any;
     if (config) {
-        const view =  `${config.appType}-app`;
+        const view = `${config.appType}-app`;
         res.render(view, { appName, title: config.title });
     } else {
         res.status(404).render("app-not-found", { appName });
     }
 });
 
-new ConfigController(configReader, appsPath, app);
+const configController = new ConfigController(configReader, appsPath);
+configController.init(app);
 
 app.use((req: Request, res: Response) => {
     const { url } = req;

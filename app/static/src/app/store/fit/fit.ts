@@ -1,13 +1,8 @@
 import { StoreOptions } from "vuex";
-import { AppState } from "../AppState";
-import { FitConfig } from "../../responseTypes";
 import { actions } from "./actions";
 import { mutations } from "./mutations";
-import {errors} from "../errors/errors";
-
-export interface FitState extends AppState {
-    config: null | FitConfig
-}
+import { errors } from "../errors/errors";
+import { FitState } from "./state";
 
 const defaultState: () => FitState = () => {
     return {

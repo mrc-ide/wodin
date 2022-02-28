@@ -1,6 +1,6 @@
-import {MutationTree} from "vuex";
-import {APIError} from "../../responseTypes";
-import {ErrorsState} from "./errors";
+import { MutationTree } from "vuex";
+import { APIError } from "../../responseTypes";
+import { ErrorsState } from "./state";
 
 export enum ErrorsMutation {
     AddError = "AddError",
@@ -16,4 +16,3 @@ export const mutations: MutationTree<ErrorsState> = {
         state.errors = [];
     }
 };
-

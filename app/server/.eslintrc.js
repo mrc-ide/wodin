@@ -20,11 +20,17 @@ module.exports = {
         "comma-dangle": ["error", "never"],
         indent: ["error", 4],
         quotes: ["error", "double", { avoidEscape: true }],
+        "max-len": [2, 120, 4],
         "arrow-body-style": "off",
         "import/prefer-default-export": "off",
         "import/no-unresolved": "off",
         "import/extensions": "off",
-        "@typescript-eslint/no-non-null-assertion": "off"
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "no-shadow": "off",
+        "@typescript-eslint/no-shadow": ["error"],
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": "error",
+        "no-underscore-dangle": "off",
     },
     overrides: [{
         files: [

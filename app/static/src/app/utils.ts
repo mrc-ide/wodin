@@ -1,15 +1,14 @@
 export const freezer = {
-
-    deepFreeze: (data: any): any => {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    deepFreeze: (data: unknown): unknown => {
         if (Array.isArray(data)) {
-            return Object.freeze(data.map(d => freezer.deepFreeze(d)))
+            return Object.freeze(data.map((d) => freezer.deepFreeze(d)));
         }
         if (data != null && typeof data === "object") {
-            for (const prop in data) {
-                if (data.hasOwnProperty(prop)) {
-                    data[prop] = freezer.deepFreeze(data[prop])
-                }
-            }
+            const anyData = data as any;
+            Object.keys(data).forEach((prop) => {
+                anyData[prop] = freezer.deepFreeze(anyData[prop]);
+            });
             return Object.freeze(data);
         }
         return data;

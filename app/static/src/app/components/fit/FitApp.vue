@@ -5,42 +5,42 @@
                 <h1>{{title}}</h1>
                 <div id="app-type">App Type: {{appType}}</div>
                 <div id="basic-prop">Fit Prop: {{fitProp}}</div>
-                <errors></errors>
+                <errors-alert></errors-alert>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-    import { computed, defineComponent, onMounted } from "vue";
-    import { useStore } from "vuex";
-    import {FitAction} from "../../store/fit/actions";
-    import Errors from "../Errors.vue";
+import { computed, defineComponent, onMounted } from "vue";
+import { useStore } from "vuex";
+import { FitAction } from "../../store/fit/actions";
+import ErrorsAlert from "../ErrorsAlert.vue";
 
-    export default defineComponent({
-        props: {
-            appName: String,
-            title: String
-        },
-        components: {
-            Errors
-        },
-        setup(props) {
-            const store = useStore();
+export default defineComponent({
+    props: {
+        appName: String,
+        title: String
+    },
+    components: {
+        ErrorsAlert
+    },
+    setup(props) {
+        const store = useStore();
 
-            const appType = computed(() => store.state.appType);
-            const fitProp = computed(() => store.state.config?.fitProp);
+        const appType = computed(() => store.state.appType);
+        const fitProp = computed(() => store.state.config?.fitProp);
 
-            onMounted(() => {
-                store.dispatch(FitAction.FetchConfig, props.appName);
-            });
+        onMounted(() => {
+            store.dispatch(FitAction.FetchConfig, props.appName);
+        });
 
-            return {
-                appType,
-                fitProp
-            };
-        }
-    });
+        return {
+            appType,
+            fitProp
+        };
+    }
+});
 </script>
 <style lang="scss">
     @import "../../../scss/style.scss";

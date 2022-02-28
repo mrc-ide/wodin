@@ -1,6 +1,6 @@
 import { Response } from "express";
 
-export enum ErrorCode {
+export const enum ErrorCode {
     NOT_FOUND = "NOT_FOUND"
 }
 
@@ -18,7 +18,12 @@ export const jsonResponseSuccess = (data: any, res: Response) => {
     res.end(JSON.stringify(responseObject));
 };
 
-export const jsonResponseError = (httpStatus: number, error: ErrorCode, detail: string, res: Response) => {
+export const jsonResponseError = (
+    httpStatus: number,
+    error: ErrorCode,
+    detail: string,
+    res: Response
+) => {
     addContentType(res);
     const responseObject = {
         status: "failure",
@@ -27,5 +32,6 @@ export const jsonResponseError = (httpStatus: number, error: ErrorCode, detail: 
         ],
         data: null
     };
-    res.status(httpStatus).end(JSON.stringify(responseObject));
+    res.status(httpStatus);
+    res.end(JSON.stringify(responseObject));
 };

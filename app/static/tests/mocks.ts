@@ -1,6 +1,6 @@
-import { BasicState } from "../src/app/store/basic/basic";
-import { FitState } from "../src/app/store/fit/fit";
-import { StochasticState } from "../src/app/store/stochastic/stochastic";
+import { BasicState } from "../src/app/store/basic/state";
+import { FitState } from "../src/app/store/fit/state";
+import { StochasticState } from "../src/app/store/stochastic/state";
 
 export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
     return {

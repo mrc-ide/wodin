@@ -1,7 +1,7 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import StochasticApp from "../../../src/app/components/stochastic/StochasticApp.vue";
-import { StochasticState } from "../../../src/app/store/stochastic/stochastic";
+import { StochasticState } from "../../../src/app/store/stochastic/state";
 import { mockStochasticState } from "../../mocks";
 
 describe("Stochastic", () => {

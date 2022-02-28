@@ -1,7 +1,7 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import BasicApp from "../../../src/app/components/basic/BasicApp.vue";
-import { BasicState } from "../../../src/app/store/basic/basic";
+import { BasicState } from "../../../src/app/store/basic/state";
 import { mockBasicState } from "../../mocks";
 
 describe("Basic", () => {

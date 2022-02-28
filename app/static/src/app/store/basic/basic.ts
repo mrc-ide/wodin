@@ -1,13 +1,8 @@
 import { StoreOptions } from "vuex";
-import { AppState } from "../AppState";
-import { BasicConfig } from "../../responseTypes";
 import { actions } from "./actions";
 import { mutations } from "./mutations";
-import {errors} from "../errors/errors";
-
-export interface BasicState extends AppState {
-   config: null | BasicConfig
-}
+import { errors } from "../errors/errors";
+import { BasicState } from "./state";
 
 const defaultState: () => BasicState = () => {
     return {
