@@ -1,4 +1,4 @@
-import {mockAxios, mockBasicState, mockFailure, mockFitState, mockSuccess} from "../../../mocks";
+import {mockAxios, mockFailure, mockFitState, mockSuccess} from "../../../mocks";
 import {FitAction, actions} from "../../../../src/app/store/fit/actions";
 import {FitMutation} from "../../../../src/app/store/fit/mutations";
 import {AppStateMutation} from "../../../../src/app/store/AppState";

@@ -1,8 +1,7 @@
-import {mockAxios, mockBasicState, mockFailure, mockStochasticState, mockSuccess} from "../../../mocks";
+import {mockAxios, mockFailure, mockStochasticState, mockSuccess} from "../../../mocks";
 import {StochasticAction, actions} from "../../../../src/app/store/stochastic/actions";
 import {StochasticMutation} from "../../../../src/app/store/stochastic/mutations";
 import {AppStateMutation} from "../../../../src/app/store/AppState";
-import {BasicAction} from "../../../../src/app/store/basic/actions";
 import {ErrorsMutation} from "../../../../src/app/store/errors/mutations";
 
 describe("Stochastic actions", () => {
