@@ -32,7 +32,7 @@ describe("ErrorsAlert", () => {
 
     it("renders as expected with no errors", () => {
         const wrapper = getWrapper([]);
-        expect(wrapper.find(".alert")).toBe(false);
+        expect(wrapper.find(".alert").exists()).toBe(false);
     });
 
     it("renders as expected with one error", () => {
