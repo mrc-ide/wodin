@@ -4,7 +4,7 @@ import BasicApp from "../../../../src/app/components/basic/BasicApp.vue";
 import ErrorsAlert from "../../../../src/app/components/ErrorsAlert.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState } from "../../../mocks";
-import {BasicAction} from "../../../../src/app/store/basic/actions";
+import { BasicAction } from "../../../../src/app/store/basic/actions";
 
 describe("BasicApp", () => {
     const getWrapper = (mockFetchConfig = jest.fn()) => {
@@ -20,7 +20,7 @@ describe("BasicApp", () => {
         const store = new Vuex.Store<BasicState>({
             state,
             actions: {
-               [BasicAction.FetchConfig]: mockFetchConfig
+                [BasicAction.FetchConfig]: mockFetchConfig
             }
         });
         return shallowMount(BasicApp, {

@@ -4,7 +4,7 @@ import StochasticApp from "../../../../src/app/components/stochastic/StochasticA
 import ErrorsAlert from "../../../../src/app/components/ErrorsAlert.vue";
 import { StochasticState } from "../../../../src/app/store/stochastic/state";
 import { mockStochasticState } from "../../../mocks";
-import {StochasticAction} from "../../../../src/app/store/stochastic/actions";
+import { StochasticAction } from "../../../../src/app/store/stochastic/actions";
 
 describe("StochasticApp", () => {
     const getWrapper = (mockFetchConfig = jest.fn()) => {

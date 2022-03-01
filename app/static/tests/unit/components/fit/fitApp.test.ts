@@ -4,7 +4,7 @@ import FitApp from "../../../../src/app/components/fit/FitApp.vue";
 import ErrorsAlert from "../../../../src/app/components/ErrorsAlert.vue";
 import { FitState } from "../../../../src/app/store/fit/state";
 import { mockFitState } from "../../../mocks";
-import {FitAction} from "../../../../src/app/store/fit/actions";
+import { FitAction } from "../../../../src/app/store/fit/actions";
 
 describe("FitApp", () => {
     const getWrapper = (mockFetchConfig = jest.fn()) => {

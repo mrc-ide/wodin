@@ -1,4 +1,4 @@
-import {freezer} from "../../src/app/utils";
+import { freezer } from "../../src/app/utils";
 
 describe("freezer", () => {
     it("deep freezes an object", () => {
@@ -6,14 +6,14 @@ describe("freezer", () => {
             nothing: null,
             time: 10,
             name: "hello",
-            items: [1, null, "three", {label: "l1"}],
+            items: [1, null, "three", { label: "l1" }],
             child: {
                 name: "child",
                 items: [4, null, "five"]
             }
         };
 
-        const frozen = freezer.deepFreeze({...data}) as any;
+        const frozen = freezer.deepFreeze({ ...data }) as any;
         expect(frozen).toStrictEqual(data);
         expect(Object.isFrozen(frozen)).toBe(true);
         expect(Object.isFrozen(frozen.items)).toBe(true);
@@ -22,8 +22,7 @@ describe("freezer", () => {
     });
 
     it("deep freezes an array", () => {
-
-        const data = [{id: 1}, {child: {id: 2}}, 1, "hi"];
+        const data = [{ id: 1 }, { child: { id: 2 } }, 1, "hi"];
 
         const frozen = freezer.deepFreeze([...data]) as any;
         expect(frozen).toStrictEqual(data);

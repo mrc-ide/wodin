@@ -1,19 +1,21 @@
-import {mockAxios, mockBasicState, mockFailure, mockSuccess} from "../../../mocks";
-import {BasicAction, actions} from "../../../../src/app/store/basic/actions";
-import {BasicMutation} from "../../../../src/app/store/basic/mutations";
-import {AppStateMutation} from "../../../../src/app/store/AppState";
-import {ErrorsMutation} from "../../../../src/app/store/errors/mutations";
+import {
+    mockAxios, mockBasicState, mockFailure, mockSuccess
+} from "../../../mocks";
+import { BasicAction, actions } from "../../../../src/app/store/basic/actions";
+import { BasicMutation } from "../../../../src/app/store/basic/mutations";
+import { AppStateMutation } from "../../../../src/app/store/AppState";
+import { ErrorsMutation } from "../../../../src/app/store/errors/mutations";
 
 describe("Basic actions", () => {
     it("fetches config and commits result", async () => {
-        const config = {basicProp: "testValue"};
-        mockAxios.onGet(`/config/basic/test-app`)
+        const config = { basicProp: "testValue" };
+        mockAxios.onGet("/config/basic/test-app")
             .reply(200, mockSuccess(config));
 
         const commit = jest.fn();
         const state = mockBasicState();
 
-        await (actions[BasicAction.FetchConfig] as any)({commit, state}, "test-app");
+        await (actions[BasicAction.FetchConfig] as any)({ commit, state }, "test-app");
         expect(commit.mock.calls.length).toBe(2);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
@@ -26,13 +28,13 @@ describe("Basic actions", () => {
     });
 
     it("fetches result and commits error", async () => {
-        mockAxios.onGet(`/config/basic/test-app`)
+        mockAxios.onGet("/config/basic/test-app")
             .reply(500, mockFailure("Test Error Msg"));
 
         const commit = jest.fn();
         const state = mockBasicState();
 
-        await (actions[BasicAction.FetchConfig] as any)({commit, state}, "test-app");
+        await (actions[BasicAction.FetchConfig] as any)({ commit, state }, "test-app");
         expect(commit.mock.calls.length).toBe(2);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
