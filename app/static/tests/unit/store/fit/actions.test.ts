@@ -9,7 +9,7 @@ import { ErrorsMutation } from "../../../../src/app/store/errors/mutations";
 describe("Fit actions", () => {
     it("fetches config and commits result", async () => {
         const config = { fitProp: "testValue" };
-        mockAxios.onGet("/config/fit/test-app")
+        mockAxios.onGet("/config/test-app")
             .reply(200, mockSuccess(config));
 
         const commit = jest.fn();
@@ -28,7 +28,7 @@ describe("Fit actions", () => {
     });
 
     it("fetches result and commits error", async () => {
-        mockAxios.onGet("/config/fit/test-app")
+        mockAxios.onGet("/config/test-app")
             .reply(500, mockFailure("Test Error Msg"));
 
         const commit = jest.fn();

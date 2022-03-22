@@ -9,7 +9,7 @@ import { ErrorsMutation } from "../../../../src/app/store/errors/mutations";
 describe("Stochastic actions", () => {
     it("fetches config and commits result", async () => {
         const config = { stochasticProp: "testValue" };
-        mockAxios.onGet("/config/stochastic/test-app")
+        mockAxios.onGet("/config/test-app")
             .reply(200, mockSuccess(config));
 
         const commit = jest.fn();
@@ -28,7 +28,7 @@ describe("Stochastic actions", () => {
     });
 
     it("fetches result and commits error", async () => {
-        mockAxios.onGet("/config/stochastic/test-app")
+        mockAxios.onGet("/config/test-app")
             .reply(500, mockFailure("Test Error Msg"));
 
         const commit = jest.fn();

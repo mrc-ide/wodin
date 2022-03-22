@@ -18,6 +18,6 @@ export const actions: ActionTree<FitState, FitState> = {
             .freezeResponse()
             .withSuccess(FitMutation.SetConfig)
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
-            .get<FitConfig>(`/config/fit/${appName}`);
+            .get<FitConfig>(`/config/${appName}`);
     }
 };

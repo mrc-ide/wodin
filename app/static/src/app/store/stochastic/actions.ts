@@ -18,6 +18,6 @@ export const actions: ActionTree<StochasticState, StochasticState> = {
             .freezeResponse()
             .withSuccess(StochasticMutation.SetConfig)
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
-            .get<StochasticConfig>(`/config/stochastic/${appName}`);
+            .get<StochasticConfig>(`/config/${appName}`);
     }
 };

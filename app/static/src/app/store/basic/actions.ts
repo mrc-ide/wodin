@@ -18,6 +18,6 @@ export const actions: ActionTree<BasicState, BasicState> = {
             .freezeResponse()
             .withSuccess(BasicMutation.SetConfig)
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
-            .get<BasicConfig>(`/config/basic/${appName}`);
+            .get<BasicConfig>(`/config/${appName}`);
     }
 };

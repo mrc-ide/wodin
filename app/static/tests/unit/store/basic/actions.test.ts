@@ -9,7 +9,7 @@ import { ErrorsMutation } from "../../../../src/app/store/errors/mutations";
 describe("Basic actions", () => {
     it("fetches config and commits result", async () => {
         const config = { basicProp: "testValue" };
-        mockAxios.onGet("/config/basic/test-app")
+        mockAxios.onGet("/config/test-app")
             .reply(200, mockSuccess(config));
 
         const commit = jest.fn();
@@ -28,7 +28,7 @@ describe("Basic actions", () => {
     });
 
     it("fetches result and commits error", async () => {
-        mockAxios.onGet("/config/basic/test-app")
+        mockAxios.onGet("/config/test-app")
             .reply(500, mockFailure("Test Error Msg"));
 
         const commit = jest.fn();
