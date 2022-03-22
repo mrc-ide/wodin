@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Example WODIN configuration</title>
+    <link rel="stylesheet" href="/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/files/index/index.css"/>
+</head>
+<body>
+<div class="main">
+    <div class="container mt-5">
+        <h1>Example WODIN configuration </h1>
+        <p>
+            This demo site demonstrates how a WODIN instance can be configured. All configuration files are in the
+            <code>/config</code> folder.
+        </p>
+        <p>
+            This index page can be found at <code>index.html</code>.
+        </p>
+        <p>
+            Each app is configured using an <code>[appName].config.json</code> file where <code>[appName]</code> is the route to the app under <code>/apps</code>.
+        </p>
+        <p>
+            Sample data can be provided in the <code>/files</code> sub-folder. The examples here have parent folders with same name as the app, but any folder structure can be used.
+        </p>
+        <img>
+            The <code>/files</code> sub-folder may also contain images, css etc which the index page can use, like this:
+            <img src="/files/index/reside_logo.png" style="width:150px; display:block;"></img>
+        </p>
+
+        <h2>Day 1</h2>
+        <p>An example of a basic model app.</p>
+        <p><a href="apps/day1">Go to app</a></p>
+
+
+        <h2>Day 2</h2>
+        <p>An example of a model fit app.</p>
+        <p><a href="apps/day2">Go to app</a></p>
+        <p>Sample data files:</p>
+        <ul>
+            <li><a href="files/day2/sample1.csv">Day 2 Sample file 1</a></li>
+            <li><a href="files/day2/sample2.csv">Day 2 Sample file 2</a></li>
+        </ul>
+
+        <h2>Day 3</h2>
+        <p>An example of a stochastic model app.</p>
+        <p><a href="apps/day3">Go to app</a></p>
+        <p>Sample data file:</p>
+        <ul>
+            <li><a href="files/day3/sample1.csv">Day 3 Sample file</a></li>
+        </ul>
+    </div>
+</div>
