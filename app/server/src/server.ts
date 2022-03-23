@@ -36,6 +36,7 @@ app.get(`/${appsPath}/:appName`, (req: Request, res: Response) => {
     const config = configReader.readConfigFile(appsPath, `${appName}.config.json`) as any;
     if (config) {
         const view = `${config.appType}-app`;
+        // TODO: validate config against schema for app type
         res.render(view, { appName, title: config.title });
     } else {
         res.status(404).render("app-not-found", { appName });
@@ -43,7 +44,7 @@ app.get(`/${appsPath}/:appName`, (req: Request, res: Response) => {
 });
 
 const configController = new ConfigController(configReader, appsPath);
-configController.init(app);
+configController.registerRoutes(app);
 
 app.use((req: Request, res: Response) => {
     const { url } = req;

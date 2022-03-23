@@ -18,33 +18,17 @@ export class ConfigController {
         return this._configReader.readConfigFile(this._appsPath, `${appName}.config.json`);
     };
 
-    /* eslint-disable @typescript-eslint/no-unused-vars */ // until we implement schema validation
-    private _getConfig = (req: Request, res: Response, jsonSchema: string) => {
-        const { appName } = req.params;
+    registerRoutes = (app: Application) => {
+        app.get(`${this._path}/:appName`, this.getConfig);
+    };
+
+    getConfig = (req: Request, res: Response) => {
+        const {appName} = req.params;
         const config = this._readAppConfigFile(appName);
         if (config) {
-            // TODO: validate config against schema for app type
             jsonResponseSuccess(config, res);
         } else {
             jsonResponseError(404, ErrorCode.NOT_FOUND, `App with name ${appName} is not configured.`, res);
         }
-    };
-
-    init = (app: Application) => {
-        app.get(`${this._path}/basic/:appName`, this.getBasicConfig);
-        app.get(`${this._path}/fit/:appName`, this.getFitConfig);
-        app.get(`${this._path}/stochastic/:appName`, this.getStochasticConfig);
-    };
-
-    getBasicConfig = (req: Request, res: Response) => {
-        this._getConfig(req, res, "basic");
-    };
-
-    getFitConfig = (req: Request, res: Response) => {
-        this._getConfig(req, res, "fit");
-    };
-
-    getStochasticConfig = (req: Request, res: Response) => {
-        this._getConfig(req, res, "stochastic");
     };
 }
