@@ -22,4 +22,4 @@ jobs:
       - name: Lint back end
         run: npm run lint --prefix=app/server
       - name: Lint front end
-        run: run lint --prefix=app/static
+        run: npm run lint --prefix=app/static
