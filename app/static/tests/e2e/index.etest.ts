@@ -1,6 +1,18 @@
-import {expect, test} from "@playwright/test";
+import {expect, test, Page} from "@playwright/test";
+import * as fs from "fs";
 
 test.describe("Index tests", () => {
+
+    const tmpPath = "tmp";
+
+    test.beforeAll(() => {
+        fs.rmdirSync(tmpPath, {recursive: true});
+        fs.mkdirSync(tmpPath);
+    });
+
+    test.afterAll(() => {
+        fs.rmdirSync(tmpPath, {recursive: true});
+    });
 
     test("renders heading",async ({page}) => {
         await page.goto("/");
@@ -34,5 +46,25 @@ test.describe("Index tests", () => {
         expect(await page.innerText("#stochastic-prop")).toBe("Stochastic Prop: day3 stochastic value");
     });
 
-    //TODO: test can download sample files
+    const testDownloadFile = async (href: string, localFileName: string, expectedContent: string, page: Page) => {
+        await page.goto("/");
+
+        const [ download ] = await Promise.all([
+            page.waitForEvent('download'), // wait for download to start
+            page.click(`a[href='${href}']`)
+        ]);
+        const downloadPath = `${tmpPath}/${localFileName}`;
+        await download.saveAs(downloadPath);
+        const downloadContent = fs.readFileSync(downloadPath, { encoding: "utf-8" });
+        expect(downloadContent).toBe(expectedContent);
+    };
+
+    test("can download day 2 sample files", async ({page}) => {
+        await testDownloadFile("files/day2/sample1.csv", "sample2-1.csv", "2,1\n", page);
+        await testDownloadFile("files/day2/sample2.csv", "sample2-2.csv", "2,2\n", page);
+    });
+
+    test("can download day 3 sample file", async ({page}) => {
+        await testDownloadFile("files/day3/sample1.csv", "sample3-1.csv", "3,3\n", page);
+    });
 });
