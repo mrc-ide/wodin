@@ -1,9 +1,9 @@
-import { ConfigReader } from "../src/configReader";
 import * as fs from "fs";
+import { ConfigReader } from "../src/configReader";
 
 describe("configReader", () => {
     beforeEach(() => {
-        jest.resetAllMocks()
+        jest.resetAllMocks();
     });
 
     it("returns null when config not found", () => {

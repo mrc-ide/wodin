@@ -1,4 +1,4 @@
-import {ErrorCode, jsonResponseError, jsonResponseSuccess} from "../src/jsonResponse";
+import { ErrorCode, jsonResponseError, jsonResponseSuccess } from "../src/jsonResponse";
 
 describe("jsonResponse", () => {
     const mockHeader = jest.fn();
@@ -44,7 +44,7 @@ describe("jsonResponse", () => {
         const responseJson = JSON.parse(mockEnd.mock.calls[0][0]);
         expect(responseJson).toStrictEqual({
             status: "failure",
-            errors: [{error: "NOT_FOUND", detail: "Resource not found"}],
+            errors: [{ error: "NOT_FOUND", detail: "Resource not found" }],
             data: null
         });
     });
