@@ -6,7 +6,7 @@ test.describe("Index tests", () => {
 
     test.beforeAll(() => {
         if (fs.existsSync(tmpPath)) {
-            fs.rmdirSync(tmpPath, {recursive: true});
+            fs.rmdirSync(tmpPath, { recursive: true });
         }
         fs.mkdirSync(tmpPath);
     });
