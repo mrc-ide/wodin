@@ -1,0 +1,19 @@
+name: test
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm install -g typescript
+      - name: Build and Run
+        run: ./scripts/build-and-run.sh
+      - name: Test back end
+        run: npm test --prefix=app/server
+      - name: Test front end
+        run: npm run test:unit --prefix=app/static
+      - name: Lint back end
+        run: npm run lint --prefix=app/server
+      - name: Lint front end
+        run: run lint --prefix=app/static
