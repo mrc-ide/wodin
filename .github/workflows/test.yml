@@ -6,7 +6,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
-        run: npm install -g typescript
+        run: npm install -g typescript codecov
       - name: Build
         run: ./scripts/build.sh
       - name: Run server
@@ -23,3 +23,7 @@ jobs:
         run: npm run lint --prefix=app/server
       - name: Lint front end
         run: npm run lint --prefix=app/static
+      - name: Upload coverage
+        run: |
+          codecov -f app/static/coverage/*.json
+          codecov -f app/server/coverage/*.json
