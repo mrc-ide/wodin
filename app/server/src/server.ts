@@ -13,7 +13,7 @@ const { hideBin } = require("yargs/helpers");
 
 const app = express();
 
-const rootDir = path.join();
+const rootDir = path.join(__dirname, "..");
 
 const { argv } = yargs(hideBin(process.argv));
 const configPath = argv.config;
