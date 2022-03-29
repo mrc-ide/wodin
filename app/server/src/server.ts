@@ -8,19 +8,19 @@ import { WodinConfig } from "./types";
 const express = require("express");
 const path = require("path");
 const hbs = require("hbs");
-const yargs = require('yargs/yargs');
-const { hideBin } = require('yargs/helpers');
+const yargs = require("yargs/yargs");
+const { hideBin } = require("yargs/helpers");
 
 const app = express();
 
 const rootDir = path.join();
 
-const argv = yargs(hideBin(process.argv)).argv;
+const { argv } = yargs(hideBin(process.argv));
 const configPath = argv.config;
 if (!configPath) {
-    throw "Please provide a 'config' argument specifying path to the config folder"
+    throw new Error("Please provide a 'config' argument specifying path to the config folder");
 }
-console.log("Config path: " + configPath);
+console.log(`Config path: ${configPath}`);
 
 app.use(express.static(path.join(rootDir, "public")));
 app.use("/files", express.static(path.join(configPath, "files")));
