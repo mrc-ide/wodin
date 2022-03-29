@@ -23,19 +23,21 @@ Each app will have one of these three app types, as well as any further configur
 
 ## Usage and configuration
 
-You can install dependencies, build and run the app locally in one step using `./scripts/build-and-run.sh`. The app will be available at http://localhost:3000 
+For development, you can install dependencies, build and run the app locally in one step using `./scripts/build-and-run.sh`. The app will be available at http://localhost:3000 
 You may need to install TypeScript: `npm install -g typescript`
 
-WODIN will be deployable as a docker image which can be mounted with custom configuration as follows:
+WODIN is deployable via an npm package: https://www.npmjs.com/package/wodin
 
-### *.config.json
+To run an instance of WODIN with custom configuration, install the package and use `npx wodin --config=/path/to/config`
 
-Each config.json file defines config values for an app. The app will be available at `/apps/[appName]` for a config
-file named `[appName].config.json`
+The path provided in the `config` argument should be an absolute path to a root config folder containing the following: 
 
-### /files
+### wodin.config.json
 
-Sample data and other supporting files can be provided in any folder structure under `/files` and will be available at urls under `/files`
+Contains the following settings for the WODIN instance:
+- `port`: the port number at which WODIN should be served
+- `appsPath`: the url path under root at which each app should be available e.g `/apps/day1` for appPath of "apps" and app 
+name "day1"
 
 ### index.html 
 
@@ -43,6 +45,16 @@ A root index page `index.html` should be provided which will be available at the
 page for all apps, including any description and explanation along with links to apps and data files.
 
 `index.html` may also use files included in the `/files` folder e.g. images or css.
+
+### /[appsPath]/*.config.json
+
+Each config.json file defines config values for an app. The app will be available at `/[appsPath]/[appName]` for a config
+file named `[appName].config.json`. [appsPath] is defined in `wodin.config.json`. Note that the local config folder should
+match `appsPath` too. 
+
+### /files
+
+Sample data and other supporting files can be provided in any folder structure under `/files` and will be available at urls under `/files`
 
 See the `/config` folder for example configuration, used in development. 
 
