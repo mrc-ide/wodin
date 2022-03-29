@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { Request, Response } from "express";
 import { ConfigReader } from "./configReader";
 import { ConfigController } from "./controllers/configController";
@@ -6,10 +8,19 @@ import { WodinConfig } from "./types";
 const express = require("express");
 const path = require("path");
 const hbs = require("hbs");
+const yargs = require('yargs/yargs');
+const { hideBin } = require('yargs/helpers');
 
 const app = express();
-const rootDir = path.join(__dirname, "..");
-const configPath = path.join(rootDir, "../../config");
+
+const rootDir = path.join();
+
+const argv = yargs(hideBin(process.argv)).argv;
+const configPath = argv.config;
+if (!configPath) {
+    throw "Please provide a 'config' argument specifying path to the config folder"
+}
+console.log("Config path: " + configPath);
 
 app.use(express.static(path.join(rootDir, "public")));
 app.use("/files", express.static(path.join(configPath, "files")));

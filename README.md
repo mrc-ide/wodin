@@ -65,10 +65,17 @@ The back end handles requests for apps by reading the corresponding config files
 `views/app.hbs` to use the appropriate js file, and also to provide configuration values to the relevant store via
 the `appConfig` object.
 
-The back-end server can be built using `npm run build` and run using `npm run serve`, both from `app/server`.
+The back-end server can be built using `npm run build` and run using `npm run serve:dev`, both from `app/server`.
 
 Run tests from `app/server` using `npm test`. Run [eslint](https://eslint.org/) with `npm run lint` or `npm run lint:fix`.
 
 ### Browser tests
 
 Browser tests use [Playwright](https://playwright.dev/). Run browser tests, while the app is running, using `npm run e2e-test` from `app/static`.
+
+### Publishing
+
+To publish to npm:
+- build both front end and and back end
+- increment the version in `/app/server/package.json`
+- then `npm publish --access public`, from `/app/server` folder (may need to `npm login` first)
