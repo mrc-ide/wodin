@@ -60,6 +60,10 @@ See the `/config` folder for example configuration, used in development.
 
 ## Development
 
+This codebase has been tested with Node version 16.4.2.
+If you have recently changed node version, you may see Node Sass binding errors - running `npm rebuild node-sass --prefix=app/static`
+should fix this issue. 
+
 ### Front end 
 
 Front-end source can be found under `app/static/src`. The front end can be built by running `npm run build` from
