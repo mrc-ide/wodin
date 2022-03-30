@@ -23,7 +23,7 @@ export class ConfigController {
     };
 
     getConfig = (req: Request, res: Response) => {
-        const {appName} = req.params;
+        const { appName } = req.params;
         const config = this._readAppConfigFile(appName);
         if (config) {
             jsonResponseSuccess(config, res);

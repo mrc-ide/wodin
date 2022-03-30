@@ -1,6 +1,4 @@
-npm install --prefix=app/static
-npm run build --prefix=app/static
+HERE=$(readlink -f "$(dirname $0)")
+. $HERE/build.sh
 
-npm install --prefix=app/server
-npm run build --prefix=app/server
 npm run serve --prefix=app/server

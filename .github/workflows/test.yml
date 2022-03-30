@@ -1,0 +1,29 @@
+name: test
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm install -g typescript codecov
+      - name: Build
+        run: ./scripts/build.sh
+      - name: Run server
+        run: npm run serve --prefix=app/server &
+      - name: Test back end
+        run: npm test --prefix=app/server
+      - name: Test front end
+        run: npm run test:unit --prefix=app/static
+      - name: Run browser tests
+        run: |
+          npx playwright install
+          npm run e2e-test --prefix=app/static
+      - name: Lint back end
+        run: npm run lint --prefix=app/server
+      - name: Lint front end
+        run: npm run lint --prefix=app/static
+      - name: Upload coverage
+        run: |
+          codecov -f app/static/coverage/*.json
+          codecov -f app/server/coverage/*.json

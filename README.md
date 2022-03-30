@@ -68,3 +68,7 @@ the `appConfig` object.
 The back-end server can be built using `npm run build` and run using `npm run serve`, both from `app/server`.
 
 Run tests from `app/server` using `npm test`. Run [eslint](https://eslint.org/) with `npm run lint` or `npm run lint:fix`.
+
+### Browser tests
+
+Browser tests use [Playwright](https://playwright.dev/). Run browser tests, while the app is running, using `npm run e2e-test` from `app/static`.
