@@ -1,3 +1,5 @@
+set -ex
+
 HERE=$(readlink -f "$(dirname $0)")
 . $HERE/build.sh
 
