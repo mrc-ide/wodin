@@ -3,6 +3,7 @@ import { actions } from "./actions";
 import { mutations } from "./mutations";
 import { errors } from "../errors/errors";
 import { BasicState } from "./state";
+import {model} from "../model/model";
 
 const defaultState: () => BasicState = () => {
     return {
@@ -17,6 +18,7 @@ export const storeOptions: StoreOptions<BasicState> = {
     actions,
     mutations,
     modules: {
-        errors
+        errors,
+        model
     }
 };

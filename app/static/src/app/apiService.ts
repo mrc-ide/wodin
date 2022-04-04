@@ -31,7 +31,7 @@ export interface API<S, E> {
     get<T>(url: string): Promise<void | ResponseWithType<T>>
 }
 
-type AppCtx = ActionContext<any, AppState>;
+type AppCtx = ActionContext<any, any>;
 type OnError = (failure: ResponseFailure) => void;
 type OnSuccess = (success: ResponseSuccess) => void;
 
@@ -138,6 +138,26 @@ export class APIService<S extends string, E extends string> implements API<S, E>
     async get<T>(url: string): Promise<void | ResponseWithType<T>> {
         this._verifyHandlers(url);
         return this._handleAxiosResponse(axios.get(url, { headers: this._headers }));
+    }
+
+    // TODO: add js header to request
+    async getScript<T>(url: string): Promise<void | T> {
+        this._verifyHandlers(url);
+
+        return axios.get(url, { headers: this._headers }).then((axiosResponse: AxiosResponse) => {
+            const script =  axiosResponse.data; // TODO: Check for js header in response
+            const result =  eval(script);
+
+            console.log("Evaluated a script: " + JSON.stringify(result))
+
+            if (this._onSuccess) {
+                this._onSuccess(result);
+                return result;
+            }
+
+        }).catch((e: AxiosError) => {
+            return this._handleError(e); //Expect error to be in standard JSON format
+        });
     }
 }
 
