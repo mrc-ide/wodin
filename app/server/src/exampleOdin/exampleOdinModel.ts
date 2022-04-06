@@ -44,7 +44,32 @@ odin.odin = (function() {
   odin.prototype.run = function(times, y0, control) {
     return integrateOdin(this, times, y0, control);
   };
-  odin.prototype.coef = {b: {has_default: false, default: 8 / 3, rank: 0, min: -Infinity, max: Infinity, integer: false}, R: {has_default: false, default: 28, rank: 0, min: -Infinity, max: Infinity, integer: false}, sigma: {has_default: false, default: 10, rank: 0, min: -Infinity, max: Infinity, integer: false}};
+  odin.prototype.coef = {
+    b: {
+      has_default: false, 
+      default: 8 / 3, 
+      rank: 0, 
+      min: -Infinity, 
+      max: Infinity, 
+      integer: false
+    }, 
+    R: {
+      has_default: false, 
+      default: 28, 
+      rank: 0, 
+      min: -Infinity, 
+      max: Infinity, 
+      integer: false
+    }, 
+    sigma: {
+      has_default: false, 
+      default: 10, 
+      rank: 0, 
+      min: -Infinity, 
+      max: Infinity, 
+      integer: false
+    }
+  };
   odin.prototype.updateMetadata = function() {
     this.metadata = {};
     var internal = this.internal;
