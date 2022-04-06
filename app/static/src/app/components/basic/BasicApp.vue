@@ -5,7 +5,7 @@
                 <h1>{{title}}</h1>
                 <div id="app-type">App Type: {{appType}}</div>
                 <div id="basic-prop">Basic Prop: {{basicProp}}</div>
-                <chart></chart>
+                <run-model-plot></run-model-plot>
                 <errors-alert></errors-alert>
             </div>
         </div>
@@ -16,7 +16,7 @@
 import { computed, defineComponent, onMounted } from "vue";
 import { useStore } from "vuex";
 import { BasicAction } from "../../store/basic/actions";
-import Chart from "../run/Chart.vue";
+import RunModelPlot from "../run/RunModelPlot.vue";
 import ErrorsAlert from "../ErrorsAlert.vue";
 import {ModelAction} from "../../store/model/actions";
 
@@ -26,7 +26,7 @@ export default defineComponent({
         title: String
     },
     components: {
-        Chart,
+        RunModelPlot,
         ErrorsAlert
     },
     setup(props) {
