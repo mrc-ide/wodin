@@ -148,8 +148,6 @@ export class APIService<S extends string, E extends string> implements API<S, E>
             const script =  axiosResponse.data; // TODO: Check for js header in response
             const result =  eval(script);
 
-            console.log("Evaluated a script: " + JSON.stringify(result))
-
             if (this._onSuccess) {
                 this._onSuccess(result);
                 return result;

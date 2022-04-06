@@ -5,7 +5,7 @@ export const exampleOdinUtils = `(function(){
     
     OdinRunner.prototype = (function () {
         return {
-            runModel(pars, tEnd, nPoints, odin) {
+            runModel(pars, tEnd, nPoints, odin, dopri) {
                 var model = new odin.odin(this.helpers, pars);
                 var tStart = 0;
                 var times = this.helpers.grid(tStart, tEnd, nPoints);
@@ -22,8 +22,10 @@ export const exampleOdinUtils = `(function(){
                 solver.initialise(tStart, y0);
                 var solution = solver.run(tEnd);
                 
+                var grid = this.helpers.grid; // Need to do this to put grid into function closure
+                
                 return function(t0, t1) {
-                    var t = this.helpers.grid(Math.max(0, t0), Math.min(t1, tEnd), nPoints);
+                    var t = grid(Math.max(0, t0), Math.min(t1, tEnd), nPoints);
                     var y = solution(t);
                     return y[0].map((_, i) => ({
                         x: t, y: y.map(row => row[i]), name: nms[i]}));

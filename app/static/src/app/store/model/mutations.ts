@@ -10,12 +10,10 @@ export enum ModelMutation {
 
 export const mutations: MutationTree<ModelState> = {
     [ModelMutation.SetOdinUtils](state: ModelState, payload: OdinUtils) {
-        console.log("Committing odin utils: " + JSON.stringify(payload))
         state.odinUtils = payload;
     },
 
     [ModelMutation.SetOdin](state: ModelState, payload: Odin) {
-        console.log("Committing odin: " + JSON.stringify(payload))
         state.odin = payload;
     },
 

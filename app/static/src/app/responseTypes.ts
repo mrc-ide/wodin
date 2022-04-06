@@ -33,7 +33,7 @@ export interface OdinUtils {
 }
 
 export interface OdinRunner {
-    runModel: (pars: Record<string, number>, tEnd: number, nPoints: number, odin: Odin) => OdinSolution
+    runModel: (pars: Record<string, number>, tEnd: number, nPoints: number, odin: Odin, dopri: any) => OdinSolution
 }
 
 export interface OdinHelpers {

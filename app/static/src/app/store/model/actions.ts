@@ -1,9 +1,10 @@
-import {ActionContext, ActionTree} from "vuex";
+import {ActionTree} from "vuex";
 import {ModelState} from "./state";
 import {api} from "../../apiService";
 import {ModelMutation} from "./mutations";
 import {AppState} from "../AppState";
 import {RunModelPayload} from "../../actionPayloadTypes";
+import * as dopri from "dopri";
 
 export enum ModelAction {
     FetchOdinUtils = "FetchOdinUtils",
@@ -29,14 +30,12 @@ export const actions: ActionTree<ModelState, AppState> = {
         if (state.odinUtils && state.odin) {
             const {parameters, end, points} = payload;
 
-            console.log("Running model with utils: " + JSON.stringify(state.odinUtils));
-
             //TODO: This could be done in the mutation when we set these in the state
             const helpers = new (state.odinUtils.helpers as any)();
             const runner = new (state.odinUtils.runner as any)(helpers);
 
-            const solution = runner.runModel(parameters, end, points, state.odin);
-            commit({type: ModelMutation.SetOdinSolution, payload: solution})
+            const solution = runner.runModel(parameters, end, points, state.odin, dopri);
+            commit(ModelMutation.SetOdinSolution, solution)
         }
     }
 };
