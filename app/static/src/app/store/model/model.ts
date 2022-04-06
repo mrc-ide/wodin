@@ -1,7 +1,6 @@
-import {ModelState} from "./state";
-import {actions} from "./actions";
-import {mutations} from "./mutations";
-
+import { ModelState } from "./state";
+import { actions } from "./actions";
+import { mutations } from "./mutations";
 
 const defaultState: ModelState = {
     odinUtils: null,

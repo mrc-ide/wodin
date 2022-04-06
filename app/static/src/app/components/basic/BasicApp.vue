@@ -18,7 +18,7 @@ import { useStore } from "vuex";
 import { BasicAction } from "../../store/basic/actions";
 import RunModelPlot from "../run/RunModelPlot.vue";
 import ErrorsAlert from "../ErrorsAlert.vue";
-import {ModelAction} from "../../store/model/actions";
+import { ModelAction } from "../../store/model/actions";
 
 export default defineComponent({
     props: {
@@ -37,8 +37,9 @@ export default defineComponent({
 
         onMounted(() => {
             store.dispatch(BasicAction.FetchConfig, props.appName);
-            store.dispatch(`model/${ModelAction.FetchOdinUtils}`); //TODO: move this to somewhere generic, should happen for all types e.g. mixin
-            store.dispatch(`model/${ModelAction.FetchOdin}`); //Test model - not providing odin code yet
+            // TODO: move this to somewhere generic, should happen for all types e.g. mixin
+            store.dispatch(`model/${ModelAction.FetchOdinUtils}`);
+            store.dispatch(`model/${ModelAction.FetchOdin}`); // Test model - not providing odin code yet
         });
 
         return {

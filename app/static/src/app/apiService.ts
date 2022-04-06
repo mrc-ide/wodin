@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable no-eval */
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { ActionContext, Commit } from "vuex";
 import { freezer } from "./utils";
 import { APIError, ResponseSuccess, ResponseFailure } from "./responseTypes";
-import { AppState } from "./store/AppState";
 import { ErrorsMutation } from "./store/errors/mutations";
 
 export interface ResponseWithType<T> extends ResponseSuccess {
@@ -145,16 +145,15 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         this._verifyHandlers(url);
 
         return axios.get(url, { headers: this._headers }).then((axiosResponse: AxiosResponse) => {
-            const script =  axiosResponse.data; // TODO: Check for js header in response
-            const result =  eval(script);
+            const script = axiosResponse.data; // TODO: Check for js header in response
+            const result = eval(script);
 
             if (this._onSuccess) {
                 this._onSuccess(result);
-                return result;
             }
-
+            return result;
         }).catch((e: AxiosError) => {
-            return this._handleError(e); //Expect error to be in standard JSON format
+            return this._handleError(e); // Expect error to be in standard JSON format
         });
     }
 }

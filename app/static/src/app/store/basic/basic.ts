@@ -3,7 +3,7 @@ import { actions } from "./actions";
 import { mutations } from "./mutations";
 import { errors } from "../errors/errors";
 import { BasicState } from "./state";
-import {model} from "../model/model";
+import { model } from "../model/model";
 
 const defaultState: () => BasicState = () => {
     return {

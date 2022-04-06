@@ -27,10 +27,11 @@ export interface StochasticConfig {
 }
 
 // TODO: sort out the anys!
-export interface OdinUtils {
-    runner: OdinRunner,
-    helpers: OdinHelpers
+export interface Odin {
+    odin: () => any
 }
+
+export type OdinSolution = (t0: number, t1: number) => any;
 
 export interface OdinRunner {
     runModel: (pars: Record<string, number>, tEnd: number, nPoints: number, odin: Odin, dopri: any) => OdinSolution
@@ -40,9 +41,7 @@ export interface OdinHelpers {
     [k: string]: any;
 }
 
-export interface Odin {
-    odin: () => any
+export interface OdinUtils {
+    runner: OdinRunner,
+    helpers: OdinHelpers
 }
-
-export type OdinSolution = (t0: number, t1: number) => any;
-

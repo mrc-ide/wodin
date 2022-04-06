@@ -4,13 +4,13 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch} from "vue";
-import { createNamespacedHelpers, useStore } from "vuex";
-import {EventEmitter} from "events";
-import {Data, newPlot, react} from "plotly.js";
-import {ModelAction} from "../../store/model/actions";
-
-const { mapState, mapActions } = createNamespacedHelpers('model');
+import {
+    computed, defineComponent, ref, watch
+} from "vue";
+import { useStore } from "vuex";
+import { EventEmitter } from "events";
+import { Data, newPlot, react } from "plotly.js";
+import { ModelAction } from "../../store/model/actions";
 
 export default defineComponent({
     name: "RunModelPlot",
@@ -25,7 +25,7 @@ export default defineComponent({
         const baseData = ref(null);
 
         const runModel = () => {
-            if (odin && odinUtils) {
+            if (odin.value && odinUtils) {
                 const payload = {
                     parameters: {},
                     end: 100,
@@ -35,24 +35,13 @@ export default defineComponent({
             }
         };
 
-        const drawPlot = () => {
-            if (baseData.value) {
-                const el = plot.value as unknown;
-                const layout = {
-                    margin: { t: 0 }
-                };
-                newPlot(el as HTMLElement, baseData.value as Data[], layout);
-                (el as EventEmitter).on('plotly_relayout', relayout);
-            }
-        };
-
         const relayout = async (event: any) => {
             let data;
-            if (event['xaxis.autorange'] === true) {
+            if (event["xaxis.autorange"] === true) {
                 data = baseData.value;
             } else {
-                let t0 = event['xaxis.range[0]'];
-                let t1 = event['xaxis.range[1]'];
+                const t0 = event["xaxis.range[0]"];
+                const t1 = event["xaxis.range[1]"];
                 if (t0 === undefined || t1 === undefined) {
                     return;
                 }
@@ -60,13 +49,24 @@ export default defineComponent({
             }
 
             const layout = {
-                uirevision: 'true',
-                xaxis: {autorange: true},
-                yaxis: {autorange: true}
+                uirevision: "true",
+                xaxis: { autorange: true },
+                yaxis: { autorange: true }
             };
 
             const el = plot.value as HTMLElement;
             await react(el, data, layout);
+        };
+
+        const drawPlot = () => {
+            if (baseData.value) {
+                const el = plot.value as unknown;
+                const layout = {
+                    margin: { t: 0 }
+                };
+                newPlot(el as HTMLElement, baseData.value as Data[], layout);
+                (el as EventEmitter).on("plotly_relayout", relayout);
+            }
         };
 
         watch(odin, () => {
@@ -78,7 +78,7 @@ export default defineComponent({
         });
 
         watch(solution, () => {
-            baseData.value = solution.value(0, 100); //TODO: default end time will eventually be a prop
+            baseData.value = solution.value(0, 100); // TODO: default end time will eventually be a prop
             drawPlot();
         });
 
