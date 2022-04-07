@@ -26,22 +26,34 @@ export interface StochasticConfig {
     stochasticProp: string
 }
 
-// TODO: sort out the anys!
 export interface Odin {
-    odin: () => any
+    odin: () => unknown
 }
 
-export type OdinSolution = (t0: number, t1: number) => any;
+export type OdinSolution = (t0: number, t1: number) => {x: number, y: number}[];
 
 export interface OdinRunner {
-    runModel: (pars: Record<string, number>, tEnd: number, nPoints: number, odin: Odin, dopri: any) => OdinSolution
+    runModel: (pars: Record<string, number>, tEnd: number, nPoints: number, odin: Odin, dopri: unknown) => OdinSolution
 }
 
 export interface OdinHelpers {
-    [k: string]: any;
+    [k: string]: unknown;
 }
 
 export interface OdinUtils {
     runner: OdinRunner,
     helpers: OdinHelpers
+}
+
+export interface OdinHelpersConstructor {
+    new(): OdinHelpers
+}
+
+export interface OdinRunnerConstructor {
+    new(helpers: OdinHelpers): OdinRunner
+}
+
+export interface OdinUtilsConstructors {
+    runner: OdinRunnerConstructor,
+    helpers: OdinHelpersConstructor
 }

@@ -1,6 +1,7 @@
+/* eslint-disable new-cap */
 import { MutationTree } from "vuex";
 import { ModelState } from "./state";
-import { Odin, OdinSolution, OdinUtils } from "../../types/responseTypes";
+import { Odin, OdinSolution, OdinUtilsConstructors } from "../../types/responseTypes";
 
 export enum ModelMutation {
     SetOdinUtils = "SetOdinUtils",
@@ -9,8 +10,12 @@ export enum ModelMutation {
 }
 
 export const mutations: MutationTree<ModelState> = {
-    [ModelMutation.SetOdinUtils](state: ModelState, payload: OdinUtils) {
-        state.odinUtils = payload;
+    [ModelMutation.SetOdinUtils](state: ModelState, payload: OdinUtilsConstructors) {
+        // construct the utils objects from the implementations returned by the endpoint
+        const helpers = new payload.helpers();
+        const runner = new payload.runner(helpers);
+
+        state.odinUtils = { helpers, runner };
     },
 
     [ModelMutation.SetOdin](state: ModelState, payload: Odin) {

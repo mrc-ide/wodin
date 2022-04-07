@@ -5,6 +5,7 @@ import { api } from "../../apiService";
 import { ModelMutation } from "./mutations";
 import { AppState } from "../AppState";
 import { RunModelPayload } from "../../types/actionPayloadTypes";
+import { ErrorsMutation } from "../errors/mutations";
 
 export enum ModelAction {
     FetchOdinUtils = "FetchOdinUtils",
@@ -15,13 +16,15 @@ export enum ModelAction {
 export const actions: ActionTree<ModelState, AppState> = {
     async FetchOdinUtils(context) {
         await api(context)
-            .withSuccess(ModelMutation.SetOdinUtils) // TODO: Error case
+            .withSuccess(ModelMutation.SetOdinUtils)
+            .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
             .getScript<string>("/odin/utils");
     },
 
     async FetchOdin(context) {
         await api(context)
-            .withSuccess(ModelMutation.SetOdin) // TODO: Error case
+            .withSuccess(ModelMutation.SetOdin)
+            .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
             .getScript<string>("/odin/model");
     },
 
@@ -30,10 +33,7 @@ export const actions: ActionTree<ModelState, AppState> = {
         if (state.odinUtils && state.odin) {
             const { parameters, end, points } = payload;
 
-            // TODO: This could be done in the mutation when we set these in the state
-            const helpers = new (state.odinUtils.helpers as any)();
-            const runner = new (state.odinUtils.runner as any)(helpers);
-
+            const { runner } = state.odinUtils;
             const solution = runner.runModel(parameters, end, points, state.odin, dopri);
             commit(ModelMutation.SetOdinSolution, solution);
         }

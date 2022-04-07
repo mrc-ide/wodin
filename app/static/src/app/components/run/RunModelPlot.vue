@@ -9,7 +9,9 @@ import {
 } from "vue";
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
-import { Data, newPlot, react } from "plotly.js";
+import {
+    Data, newPlot, react, PlotRelayoutEvent
+} from "plotly.js";
 import { ModelAction } from "../../store/model/actions";
 
 export default defineComponent({
@@ -35,7 +37,7 @@ export default defineComponent({
             }
         };
 
-        const relayout = async (event: any) => {
+        const relayout = async (event: PlotRelayoutEvent) => {
             let data;
             if (event["xaxis.autorange"] === true) {
                 data = baseData.value;

@@ -11,7 +11,7 @@ export class OdinController {
     };
 
     private static addHeader = (res: Response) => {
-        res.header("Content-Type", "application/javascript") ;
+        res.header("Content-Type", "application/javascript");
     };
 
     static getUtils = (req: Request, res: Response) => {

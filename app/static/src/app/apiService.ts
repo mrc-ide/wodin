@@ -147,7 +147,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         const respHeader = "content-type"; // Express lower-cases all headers
         const headerValue = "application/javascript";
 
-        const headers = {...this._headers};
+        const headers = { ...this._headers };
         headers[reqHeader] = headerValue;
         return axios.get(url, { headers }).then((axiosResponse: AxiosResponse) => {
             if (!axiosResponse.headers[respHeader] || !axiosResponse.headers[respHeader].startsWith(headerValue)) {
