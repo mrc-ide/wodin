@@ -1,8 +1,6 @@
 // Mock the import of plotly to prevent errors
-jest.mock("plotly.js", () => ({
-    react: jest.fn()
-}));
-
+jest.mock("plotly.js", () => ({}));
+/* eslint-disable import/first */
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import BasicApp from "../../../../src/app/components/basic/BasicApp.vue";

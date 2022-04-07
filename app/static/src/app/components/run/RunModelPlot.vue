@@ -1,5 +1,5 @@
 <template>
-    <div ref="plot">
+    <div class="run-model-plot" ref="plot">
     </div>
 </template>
 
@@ -27,7 +27,7 @@ export default defineComponent({
         const baseData = ref(null);
 
         const runModel = () => {
-            if (odin.value && odinUtils) {
+            if (odin.value && odinUtils.value) {
                 const payload = {
                     parameters: {},
                     end: 100,
@@ -72,6 +72,8 @@ export default defineComponent({
         };
 
         watch(odin, () => {
+            // TODO: Eventually it probably won't be the component initiating run model, but the store, on updates
+            // to code or parameters - whic is not yet implemented
             runModel();
         });
 

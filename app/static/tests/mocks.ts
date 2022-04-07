@@ -4,6 +4,7 @@ import { BasicState } from "../src/app/store/basic/state";
 import { FitState } from "../src/app/store/fit/state";
 import { StochasticState } from "../src/app/store/stochastic/state";
 import { ResponseSuccess, ResponseFailure, APIError } from "../src/app/types/responseTypes";
+import {ModelState} from "../src/app/store/model/state";
 
 export const mockAxios = new MockAdapter(axios);
 
@@ -56,6 +57,15 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
         config: {
             stochasticProp: ""
         },
+        ...state
+    };
+};
+
+export const mockModelState = (state: Partial<ModelState> = {}): ModelState => {
+    return {
+        odinUtils: null,
+        odin: null,
+        odinSolution: null,
         ...state
     };
 };
