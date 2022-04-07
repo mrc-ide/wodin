@@ -1,5 +1,5 @@
 import { MutationTree } from "vuex";
-import { APIError } from "../../responseTypes";
+import { APIError } from "../../types/responseTypes";
 import { ErrorsState } from "./state";
 
 export enum ErrorsMutation {

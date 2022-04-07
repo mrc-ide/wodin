@@ -1,4 +1,4 @@
-import { Odin, OdinSolution, OdinUtils } from "../../responseTypes";
+import { Odin, OdinSolution, OdinUtils } from "../../types/responseTypes";
 
 export interface ModelState {
     odinUtils: null | OdinUtils

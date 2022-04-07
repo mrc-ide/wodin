@@ -4,7 +4,7 @@ import { ModelState } from "./state";
 import { api } from "../../apiService";
 import { ModelMutation } from "./mutations";
 import { AppState } from "../AppState";
-import { RunModelPayload } from "../../actionPayloadTypes";
+import { RunModelPayload } from "../../types/actionPayloadTypes";
 
 export enum ModelAction {
     FetchOdinUtils = "FetchOdinUtils",

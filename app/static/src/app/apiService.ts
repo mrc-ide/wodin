@@ -4,7 +4,7 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { ActionContext, Commit } from "vuex";
 import { freezer } from "./utils";
-import { APIError, ResponseSuccess, ResponseFailure } from "./responseTypes";
+import { APIError, ResponseSuccess, ResponseFailure } from "./types/responseTypes";
 import { ErrorsMutation } from "./store/errors/mutations";
 
 export interface ResponseWithType<T> extends ResponseSuccess {
@@ -140,12 +140,21 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         return this._handleAxiosResponse(axios.get(url, { headers: this._headers }));
     }
 
-    // TODO: add js header to request
     async getScript<T>(url: string): Promise<void | T> {
         this._verifyHandlers(url);
 
-        return axios.get(url, { headers: this._headers }).then((axiosResponse: AxiosResponse) => {
-            const script = axiosResponse.data; // TODO: Check for js header in response
+        const reqHeader = "Accept";
+        const respHeader = "content-type"; // Express lower-cases all headers
+        const headerValue = "application/javascript";
+
+        const headers = {...this._headers};
+        headers[reqHeader] = headerValue;
+        return axios.get(url, { headers }).then((axiosResponse: AxiosResponse) => {
+            if (!axiosResponse.headers[respHeader] || !axiosResponse.headers[respHeader].startsWith(headerValue)) {
+                throw new Error(`Response from ${url} must have ${respHeader}: ${headerValue} to get as script`);
+            }
+
+            const script = axiosResponse.data;
             const result = eval(script);
 
             if (this._onSuccess) {
@@ -153,7 +162,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
             }
             return result;
         }).catch((e: AxiosError) => {
-            return this._handleError(e); // Expect error to be in standard JSON format
+            return this._handleError(e);
         });
     }
 }

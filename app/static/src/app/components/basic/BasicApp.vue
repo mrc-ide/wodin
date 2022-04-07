@@ -37,7 +37,6 @@ export default defineComponent({
 
         onMounted(() => {
             store.dispatch(BasicAction.FetchConfig, props.appName);
-            // TODO: move this to somewhere generic, should happen for all types e.g. mixin
             store.dispatch(`model/${ModelAction.FetchOdinUtils}`);
             store.dispatch(`model/${ModelAction.FetchOdin}`); // Test model - not providing odin code yet
         });

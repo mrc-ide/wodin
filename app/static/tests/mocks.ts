@@ -3,7 +3,7 @@ import axios from "axios";
 import { BasicState } from "../src/app/store/basic/state";
 import { FitState } from "../src/app/store/fit/state";
 import { StochasticState } from "../src/app/store/stochastic/state";
-import { ResponseSuccess, ResponseFailure, APIError } from "../src/app/responseTypes";
+import { ResponseSuccess, ResponseFailure, APIError } from "../src/app/types/responseTypes";
 
 export const mockAxios = new MockAdapter(axios);
 

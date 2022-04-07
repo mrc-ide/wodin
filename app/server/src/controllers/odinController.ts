@@ -10,11 +10,17 @@ export class OdinController {
         app.get(`${this._path}/model`, OdinController.getModel);
     };
 
+    private static addHeader = (res: Response) => {
+        res.header("Content-Type", "application/javascript") ;
+    };
+
     static getUtils = (req: Request, res: Response) => {
+        OdinController.addHeader(res);
         res.end(exampleOdinUtils);
     };
 
     static getModel = (req: Request, res: Response) => {
+        OdinController.addHeader(res);
         res.end(exampleOdinModel);
     };
 }

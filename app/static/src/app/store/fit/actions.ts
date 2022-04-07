@@ -1,7 +1,7 @@
 import { ActionTree } from "vuex";
 import { FitState } from "./state";
 import { api } from "../../apiService";
-import { FitConfig } from "../../responseTypes";
+import { FitConfig } from "../../types/responseTypes";
 import { FitMutation } from "./mutations";
 import { ErrorsMutation } from "../errors/mutations";
 import { AppStateMutation } from "../AppState";
