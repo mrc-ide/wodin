@@ -87,7 +87,9 @@ export default defineComponent({
         });
 
         return {
-            plot
+            plot,
+            relayout,
+            solution
         };
     }
 });

@@ -11,6 +11,10 @@ export enum ModelMutation {
 
 export const mutations: MutationTree<ModelState> = {
     [ModelMutation.SetOdinUtils](state: ModelState, payload: OdinUtilsConstructors) {
+
+        console.log("payload: " + JSON.stringify(payload))
+        console.log("helpers: " + JSON.stringify(payload.helpers))
+
         // construct the utils objects from the implementations returned by the endpoint
         const helpers = new payload.helpers();
         const runner = new payload.runner(helpers);
