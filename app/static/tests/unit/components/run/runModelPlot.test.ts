@@ -199,4 +199,48 @@ describe("RunModelPlot", () => {
         expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual([0, 100]);
         expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual(expectedLayout);
     });
+
+    it("relayout does nothing on autorange false if t0 is undefined", async () => {
+        const store = getStore();
+        const wrapper = getWrapper(store);
+
+        const divElement = wrapper.find("div").element;
+        (divElement as any).on = jest.fn();
+
+        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
+        await nextTick();
+
+        const relayoutEvent = {
+            "xaxis.autorange": false,
+            "xaxis.range[0]": undefined,
+            "xaxis.range[1]": 7
+        };
+
+        const { relayout } = wrapper.vm as any;
+        await relayout(relayoutEvent);
+
+        expect(mockPlotlyReact).not.toHaveBeenCalled();
+    });
+
+    it("relayout does nothing on autorange false if t1 is undefined", async () => {
+        const store = getStore();
+        const wrapper = getWrapper(store);
+
+        const divElement = wrapper.find("div").element;
+        (divElement as any).on = jest.fn();
+
+        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
+        await nextTick();
+
+        const relayoutEvent = {
+            "xaxis.autorange": false,
+            "xaxis.range[0]": 2,
+            "xaxis.range[1]": undefined
+        };
+
+        const { relayout } = wrapper.vm as any;
+        await relayout(relayoutEvent);
+
+        expect(mockPlotlyReact).not.toHaveBeenCalled();
+    });
 });
