@@ -1,4 +1,6 @@
-export const exampleOdinUtils = `(function(){
+export const exampleOdinUtils = `
+var odinUtils = null;
+(function(){
     var OdinRunner = function(helpers, dopri) {
         this.helpers = helpers;
         this.dopri = dopri;
@@ -125,8 +127,9 @@ export const exampleOdinUtils = `(function(){
         };
     }());
     
-    return {
+    odinUtils = {
       "runner": OdinRunner,
       "helpers": OdinHelpers
     };
+    return odinUtils;
 })()`;

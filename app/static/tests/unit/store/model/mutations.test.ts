@@ -14,13 +14,15 @@ describe("Model mutations", () => {
 
         class TestRunner {
             public name: string;
+
             public helpers: TestHelpers;
+
             public dopri: unknown;
 
             constructor(helpers: TestHelpers, dopriImpl: unknown) {
                 this.name = "runner";
                 this.helpers = helpers;
-                this.dopri = dopriImpl
+                this.dopri = dopriImpl;
             }
         }
 
