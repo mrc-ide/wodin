@@ -1,3 +1,4 @@
+import * as dopri from "dopri";
 import { mutations } from "../../../../src/app/store/model/mutations";
 import { mockModelState } from "../../../mocks";
 
@@ -13,12 +14,13 @@ describe("Model mutations", () => {
 
         class TestRunner {
             public name: string;
-
             public helpers: TestHelpers;
+            public dopri: unknown;
 
-            constructor(helpers: TestHelpers) {
+            constructor(helpers: TestHelpers, dopriImpl: unknown) {
                 this.name = "runner";
                 this.helpers = helpers;
+                this.dopri = dopriImpl
             }
         }
 
@@ -32,6 +34,7 @@ describe("Model mutations", () => {
         expect(state.odinUtils!.helpers.name).toBe("helpers");
         expect((state.odinUtils!.runner as any).name).toBe("runner");
         expect((state.odinUtils!.runner as any).helpers).toBe(state.odinUtils!.helpers);
+        expect((state.odinUtils!.runner as any).dopri).toBe(dopri);
     });
 
     it("sets odin", () => {

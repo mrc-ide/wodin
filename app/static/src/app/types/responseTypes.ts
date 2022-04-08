@@ -33,7 +33,7 @@ export interface Odin {
 export type OdinSolution = (t0: number, t1: number) => {x: number, y: number}[];
 
 export interface OdinRunner {
-    runModel: (pars: Record<string, number>, tEnd: number, nPoints: number, odin: Odin, dopri: unknown) => OdinSolution
+    runModel: (pars: Record<string, number>, tEnd: number, nPoints: number, odin: Odin) => OdinSolution
 }
 
 export interface OdinHelpers {
@@ -50,7 +50,7 @@ export interface OdinHelpersConstructor {
 }
 
 export interface OdinRunnerConstructor {
-    new(helpers: OdinHelpers): OdinRunner
+    new(helpers: OdinHelpers, dopri: unknown): OdinRunner
 }
 
 export interface OdinUtilsConstructors {

@@ -1,11 +1,12 @@
 export const exampleOdinUtils = `(function(){
-    var OdinRunner = function(helpers) {
+    var OdinRunner = function(helpers, dopri) {
         this.helpers = helpers;
+        this.dopri = dopri;
     };
     
     OdinRunner.prototype = (function () {
         return {
-            runModel(pars, tEnd, nPoints, odin, dopri) {
+            runModel(pars, tEnd, nPoints, odin) {
                 var model = new odin.odin(this.helpers, pars);
                 var tStart = 0;
                 var times = this.helpers.grid(tStart, tEnd, nPoints);
@@ -18,7 +19,7 @@ export const exampleOdinUtils = `(function(){
             
                 var nms = model.metadata.ynames.slice(1);
                 
-                var solver = new dopri.Dopri(rhs, y0.length, control, null);
+                var solver = new this.dopri.Dopri(rhs, y0.length, control, null);
                 solver.initialise(tStart, y0);
                 var solution = solver.run(tEnd);
                 
