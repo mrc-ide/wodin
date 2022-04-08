@@ -5,14 +5,14 @@ jest.mock("plotly.js", () => ({
 }));
 
 /* eslint-disable import/first */
-import {shallowMount} from "@vue/test-utils";
-import RunModelPlot from "../../../../src/app/components/run/RunModelPlot.vue";
+import { shallowMount } from "@vue/test-utils";
 import { nextTick } from "vue";
 import Vuex from "vuex";
 import * as plotly from "plotly.js";
-import {BasicState} from "../../../../src/app/store/basic/state";
-import {ModelMutation, mutations} from "../../../../src/app/store/model/mutations";
-import {mockBasicState, mockModelState} from "../../../mocks";
+import RunModelPlot from "../../../../src/app/components/run/RunModelPlot.vue";
+import { BasicState } from "../../../../src/app/store/basic/state";
+import { ModelMutation, mutations } from "../../../../src/app/store/model/mutations";
+import { mockBasicState, mockModelState } from "../../../mocks";
 
 describe("RunModelPlot", () => {
     const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");
@@ -38,7 +38,7 @@ describe("RunModelPlot", () => {
     };
 
     const getWrapper = (store = getStore()) => {
-        return shallowMount(RunModelPlot,{
+        return shallowMount(RunModelPlot, {
             global: {
                 plugins: [store]
             }
@@ -68,7 +68,7 @@ describe("RunModelPlot", () => {
         const store = getStore(mockUtils, null, mockRunModel);
         getWrapper(store);
 
-        store.commit({type: `model/${ModelMutation.SetOdin}`, payload: {} as any});
+        store.commit({ type: `model/${ModelMutation.SetOdin}`, payload: {} as any });
         await nextTick();
         expect(mockRunModel).toHaveBeenCalled();
         const payload = mockRunModel.mock.calls[0][1];
@@ -80,13 +80,13 @@ describe("RunModelPlot", () => {
         const store = getStore(null, null, mockRunModel);
         getWrapper(store);
 
-        store.commit({type: `model/${ModelMutation.SetOdin}`, payload: {} as any});
+        store.commit({ type: `model/${ModelMutation.SetOdin}`, payload: {} as any });
         await nextTick();
         expect(mockRunModel).not.toHaveBeenCalled();
     });
 
     class TestConstructor {
-        constructor(){}
+        constructor() {}
     }
 
     const mockUtils = {
@@ -130,10 +130,10 @@ describe("RunModelPlot", () => {
         await nextTick();
         expect(mockPlotlyNewPlot.mock.calls[0][0]).toBe(wrapper.find("div").element);
         expect(mockPlotlyNewPlot.mock.calls[0][1]).toStrictEqual([0, 100]);
-        expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({margin: {t: 0}});
+        expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({ margin: { t: 0 } });
 
         expect(mockOn.mock.calls[0][0]).toBe("plotly_relayout");
-        const relayout = (wrapper.vm as any).relayout;
+        const { relayout } = wrapper.vm as any;
         expect(mockOn.mock.calls[0][1]).toBe(relayout);
     });
 
@@ -170,7 +170,7 @@ describe("RunModelPlot", () => {
             "xaxis.range[1]": 7
         };
 
-        const relayout = (wrapper.vm as any).relayout;
+        const { relayout } = wrapper.vm as any;
         await relayout(relayoutEvent);
 
         expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
@@ -192,7 +192,7 @@ describe("RunModelPlot", () => {
             "xaxis.autorange": true
         };
 
-        const relayout = (wrapper.vm as any).relayout;
+        const { relayout } = wrapper.vm as any;
         await relayout(relayoutEvent);
 
         expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);

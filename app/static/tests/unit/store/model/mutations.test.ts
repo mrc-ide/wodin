@@ -5,14 +5,17 @@ describe("Model mutations", () => {
     it("sets odin utils", () => {
         class TestHelpers {
             public name: string;
-            constructor(){
-                this.name = "helpers"
+
+            constructor() {
+                this.name = "helpers";
             }
         }
 
         class TestRunner {
             public name: string;
+
             public helpers: TestHelpers;
+
             constructor(helpers: TestHelpers) {
                 this.name = "runner";
                 this.helpers = helpers;
@@ -26,9 +29,9 @@ describe("Model mutations", () => {
         const state = mockModelState();
 
         mutations.SetOdinUtils(state, payload);
-        expect(state.odinUtils!!.helpers.name).toBe("helpers");
-        expect((state.odinUtils!!.runner as any).name).toBe("runner");
-        expect((state.odinUtils!!.runner as any).helpers).toBe(state.odinUtils!!.helpers);
+        expect(state.odinUtils!.helpers.name).toBe("helpers");
+        expect((state.odinUtils!.runner as any).name).toBe("runner");
+        expect((state.odinUtils!.runner as any).helpers).toBe(state.odinUtils!.helpers);
     });
 
     it("sets odin", () => {
@@ -42,7 +45,7 @@ describe("Model mutations", () => {
     });
 
     it("sets odin solution", () => {
-        const mockSolution = (t0: number, t1: number) => [{x: 1, y:2}];
+        const mockSolution = (t0: number, t1: number) => [{ x: 1, y: 2 }];
         const state = mockModelState();
 
         mutations.SetOdinSolution(state, mockSolution);

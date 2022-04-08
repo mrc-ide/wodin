@@ -1,6 +1,6 @@
-import {OdinController} from "../../src/controllers/odinController";
-import {exampleOdinUtils} from "../../src/exampleOdin/exampleOdinUtils";
-import {exampleOdinModel} from "../../src/exampleOdin/exampleOdinModel";
+import { OdinController } from "../../src/controllers/odinController";
+import { exampleOdinUtils } from "../../src/exampleOdin/exampleOdinUtils";
+import { exampleOdinModel } from "../../src/exampleOdin/exampleOdinModel";
 
 describe("odinController", () => {
     const mockResponse = {
@@ -42,5 +42,5 @@ describe("odinController", () => {
         expect(mockResponse.header.mock.calls[0][0]).toBe("Content-Type");
         expect(mockResponse.header.mock.calls[0][1]).toBe("application/javascript");
         expect(mockResponse.end.mock.calls[0][0]).toBe(exampleOdinModel);
-    })
+    });
 });

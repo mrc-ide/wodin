@@ -10,10 +10,9 @@ test.describe("Basic app tests", () => {
 
         // Test lines are plotted for each of 3 traces
         const linesSelector = `${plotSelector} .scatterlayer .trace .lines path`;
-        expect((await page.locator(`:nth-match(${linesSelector}, 1)`).getAttribute("d"))!!.startsWith("M0")).toBe(true);
-        expect((await page.locator(`:nth-match(${linesSelector}, 2)`).getAttribute("d"))!!.startsWith("M0")).toBe(true);
-        expect((await page.locator(`:nth-match(${linesSelector}, 3)`).getAttribute("d"))!!.startsWith("M0")).toBe(true);
-
+        expect((await page.locator(`:nth-match(${linesSelector}, 1)`).getAttribute("d"))!.startsWith("M0")).toBe(true);
+        expect((await page.locator(`:nth-match(${linesSelector}, 2)`).getAttribute("d"))!.startsWith("M0")).toBe(true);
+        expect((await page.locator(`:nth-match(${linesSelector}, 3)`).getAttribute("d"))!.startsWith("M0")).toBe(true);
 
         // Test traces appear on legend
         const legendTextSelector = `${plotSelector} .legendtext`;

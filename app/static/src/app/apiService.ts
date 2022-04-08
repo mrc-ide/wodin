@@ -151,18 +151,17 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         headers[reqHeader] = headerValue;
         return axios.get(url, { headers }).then((axiosResponse: AxiosResponse) => {
             if (!axiosResponse.headers[respHeader] || !axiosResponse.headers[respHeader].startsWith(headerValue)) {
-                const error = APIService.createError(`Response from ${url} must have ${respHeader}: ${headerValue} to get as script`);
-                this._commitError(error);
-                return;
-            } else {
-                const script = axiosResponse.data;
-                const result = eval(script);
-
-                if (this._onSuccess) {
-                    this._onSuccess(result);
-                }
-                return result;
+                const errorMsg = `Response from ${url} must have ${respHeader}: ${headerValue} to get as script`;
+                this._commitError(APIService.createError(errorMsg));
+                return null;
             }
+            const script = axiosResponse.data;
+            const result = eval(script);
+
+            if (this._onSuccess) {
+                this._onSuccess(result);
+            }
+            return result;
         }).catch((e: AxiosError) => {
             return this._handleError(e);
         });

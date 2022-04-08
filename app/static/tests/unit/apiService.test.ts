@@ -270,10 +270,10 @@ describe("ApiService", () => {
 
     it("gets script and commits evaluated value", async () => {
         mockAxios.onGet(TEST_ROUTE)
-            .reply(200, "7*2", {"content-type": "application/javascript"});
+            .reply(200, "7*2", { "content-type": "application/javascript" });
 
         const commit = jest.fn();
-        await api({commit, rootState} as any)
+        await api({ commit, rootState } as any)
             .withSuccess("TEST_TYPE")
             .getScript(TEST_ROUTE);
 
@@ -289,13 +289,14 @@ describe("ApiService", () => {
             .reply(200, "7*2", {});
 
         const commit = jest.fn();
-        await api({commit, rootState} as any)
+        await api({ commit, rootState } as any)
             .withSuccess("TEST_TYPE")
             .getScript(TEST_ROUTE);
 
         expect(commit.mock.calls.length).toBe(1);
         expect(commit.mock.calls[0][0].type).toBe("errors/AddError");
-        expect(commit.mock.calls[0][0].payload.detail).toBe("Response from /test must have content-type: application/javascript to get as script");
+        expect(commit.mock.calls[0][0].payload.detail)
+            .toBe("Response from /test must have content-type: application/javascript to get as script");
     });
 
     it("get script handles error", async () => {
@@ -303,7 +304,7 @@ describe("ApiService", () => {
             .reply(500, "");
 
         const commit = jest.fn();
-        await api({commit, rootState} as any)
+        await api({ commit, rootState } as any)
             .withSuccess("TEST_TYPE")
             .getScript(TEST_ROUTE);
 
