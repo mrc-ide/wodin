@@ -28,7 +28,7 @@ export const actions: ActionTree<ModelState, AppState> = {
             .getScript<string>("/odin/model");
     },
 
-    async RunModel(context, payload: RunModelPayload) {
+    RunModel(context, payload: RunModelPayload) {
         const { state, commit } = context;
         if (state.odinUtils && state.odin) {
             const { parameters, end, points } = payload;
