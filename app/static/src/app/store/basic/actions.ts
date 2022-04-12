@@ -1,7 +1,7 @@
 import { ActionTree } from "vuex";
 import { BasicState } from "./state";
 import { api } from "../../apiService";
-import { BasicConfig } from "../../responseTypes";
+import { BasicConfig } from "../../types/responseTypes";
 import { BasicMutation } from "./mutations";
 import { ErrorsMutation } from "../errors/mutations";
 import { AppStateMutation } from "../AppState";

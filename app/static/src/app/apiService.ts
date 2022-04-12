@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable no-eval */
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { ActionContext, Commit } from "vuex";
 import { freezer } from "./utils";
-import { APIError, ResponseSuccess, ResponseFailure } from "./responseTypes";
-import { AppState } from "./store/AppState";
+import { APIError, ResponseSuccess, ResponseFailure } from "./types/responseTypes";
 import { ErrorsMutation } from "./store/errors/mutations";
 
 export interface ResponseWithType<T> extends ResponseSuccess {
@@ -31,7 +31,7 @@ export interface API<S, E> {
     get<T>(url: string): Promise<void | ResponseWithType<T>>
 }
 
-type AppCtx = ActionContext<any, AppState>;
+type AppCtx = ActionContext<any, any>;
 type OnError = (failure: ResponseFailure) => void;
 type OnSuccess = (success: ResponseSuccess) => void;
 
@@ -138,6 +138,33 @@ export class APIService<S extends string, E extends string> implements API<S, E>
     async get<T>(url: string): Promise<void | ResponseWithType<T>> {
         this._verifyHandlers(url);
         return this._handleAxiosResponse(axios.get(url, { headers: this._headers }));
+    }
+
+    async getScript<T>(url: string): Promise<void | T> {
+        this._verifyHandlers(url);
+
+        const reqHeader = "Accept";
+        const respHeader = "content-type"; // Express lower-cases all headers
+        const headerValue = "application/javascript";
+
+        const headers = { ...this._headers };
+        headers[reqHeader] = headerValue;
+        return axios.get(url, { headers }).then((axiosResponse: AxiosResponse) => {
+            if (!axiosResponse.headers[respHeader] || !axiosResponse.headers[respHeader].startsWith(headerValue)) {
+                const errorMsg = `Response from ${url} must have ${respHeader}: ${headerValue} to get as script`;
+                this._commitError(APIService.createError(errorMsg));
+                return null;
+            }
+            const script = axiosResponse.data;
+            const result = eval(script);
+
+            if (this._onSuccess) {
+                this._onSuccess(result);
+            }
+            return result;
+        }).catch((e: AxiosError) => {
+            return this._handleError(e);
+        });
     }
 }
 

@@ -1,6 +1,6 @@
 import { MutationTree } from "vuex";
 import { StochasticState } from "./state";
-import { StochasticConfig } from "../../responseTypes";
+import { StochasticConfig } from "../../types/responseTypes";
 import { appStateMutations } from "../AppState";
 
 export enum StochasticMutation {

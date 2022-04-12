@@ -1,6 +1,6 @@
 import { MutationTree } from "vuex";
 import { FitState } from "./state";
-import { FitConfig } from "../../responseTypes";
+import { FitConfig } from "../../types/responseTypes";
 import { appStateMutations } from "../AppState";
 
 export enum FitMutation {

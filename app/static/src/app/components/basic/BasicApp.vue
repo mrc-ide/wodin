@@ -5,6 +5,7 @@
                 <h1>{{title}}</h1>
                 <div id="app-type">App Type: {{appType}}</div>
                 <div id="basic-prop">Basic Prop: {{basicProp}}</div>
+                <run-model-plot></run-model-plot>
                 <errors-alert></errors-alert>
             </div>
         </div>
@@ -15,7 +16,9 @@
 import { computed, defineComponent, onMounted } from "vue";
 import { useStore } from "vuex";
 import { BasicAction } from "../../store/basic/actions";
+import RunModelPlot from "../run/RunModelPlot.vue";
 import ErrorsAlert from "../ErrorsAlert.vue";
+import { ModelAction } from "../../store/model/actions";
 
 export default defineComponent({
     props: {
@@ -23,6 +26,7 @@ export default defineComponent({
         title: String
     },
     components: {
+        RunModelPlot,
         ErrorsAlert
     },
     setup(props) {
@@ -33,6 +37,8 @@ export default defineComponent({
 
         onMounted(() => {
             store.dispatch(BasicAction.FetchConfig, props.appName);
+            store.dispatch(`model/${ModelAction.FetchOdinUtils}`);
+            store.dispatch(`model/${ModelAction.FetchOdin}`); // Test model - not providing odin code yet
         });
 
         return {

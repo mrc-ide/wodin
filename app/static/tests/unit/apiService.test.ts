@@ -267,4 +267,49 @@ describe("ApiService", () => {
         expectNoErrorHandlerMsgLogged();
         expect(warnings[1][0]).toBe(`No success handler registered for request ${TEST_ROUTE}.`);
     });
+
+    it("gets script and commits evaluated value", async () => {
+        mockAxios.onGet(TEST_ROUTE)
+            .reply(200, "7*2", { "content-type": "application/javascript" });
+
+        const commit = jest.fn();
+        await api({ commit, rootState } as any)
+            .withSuccess("TEST_TYPE")
+            .getScript(TEST_ROUTE);
+
+        expectNoErrorHandlerMsgLogged();
+
+        expect(commit.mock.calls.length).toBe(1);
+        expect(commit.mock.calls[0][0]).toBe("TEST_TYPE");
+        expect(commit.mock.calls[0][1]).toBe(14);
+    });
+
+    it("getScript commits error if no content type header", async () => {
+        mockAxios.onGet(TEST_ROUTE)
+            .reply(200, "7*2", {});
+
+        const commit = jest.fn();
+        await api({ commit, rootState } as any)
+            .withSuccess("TEST_TYPE")
+            .getScript(TEST_ROUTE);
+
+        expect(commit.mock.calls.length).toBe(1);
+        expect(commit.mock.calls[0][0].type).toBe("errors/AddError");
+        expect(commit.mock.calls[0][0].payload.detail)
+            .toBe("Response from /test must have content-type: application/javascript to get as script");
+    });
+
+    it("get script handles error", async () => {
+        mockAxios.onGet(TEST_ROUTE)
+            .reply(500, "");
+
+        const commit = jest.fn();
+        await api({ commit, rootState } as any)
+            .withSuccess("TEST_TYPE")
+            .getScript(TEST_ROUTE);
+
+        expect(commit.mock.calls.length).toBe(1);
+        expect(commit.mock.calls[0][0].type).toBe("errors/AddError");
+        expect(commit.mock.calls[0][0].payload.detail).toBe("Could not parse API response. Please contact support.");
+    });
 });

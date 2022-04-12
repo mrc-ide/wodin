@@ -1,7 +1,7 @@
 import { ActionTree } from "vuex";
 import { StochasticState } from "./state";
 import { api } from "../../apiService";
-import { StochasticConfig } from "../../responseTypes";
+import { StochasticConfig } from "../../types/responseTypes";
 import { StochasticMutation } from "./mutations";
 import { ErrorsMutation } from "../errors/mutations";
 import { AppStateMutation } from "../AppState";

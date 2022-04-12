@@ -1,6 +1,6 @@
 import { MutationTree } from "vuex";
 import { BasicState } from "./state";
-import { BasicConfig } from "../../responseTypes";
+import { BasicConfig } from "../../types/responseTypes";
 import { appStateMutations } from "../AppState";
 
 export enum BasicMutation {

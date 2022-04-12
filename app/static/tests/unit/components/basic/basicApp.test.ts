@@ -1,3 +1,6 @@
+// Mock the import of plotly to prevent errors
+jest.mock("plotly.js", () => ({}));
+/* eslint-disable import/first */
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import BasicApp from "../../../../src/app/components/basic/BasicApp.vue";
@@ -5,6 +8,7 @@ import ErrorsAlert from "../../../../src/app/components/ErrorsAlert.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState } from "../../../mocks";
 import { BasicAction } from "../../../../src/app/store/basic/actions";
+import RunModelPlot from "../../../../src/app/components/run/RunModelPlot.vue";
 
 describe("BasicApp", () => {
     const getWrapper = (mockFetchConfig = jest.fn()) => {
@@ -37,6 +41,7 @@ describe("BasicApp", () => {
         expect(wrapper.find("#app-type").text()).toBe("App Type: basic");
         expect(wrapper.find("#basic-prop").text()).toBe("Basic Prop: Test basic prop value");
         expect(wrapper.findComponent(ErrorsAlert).exists()).toBe(true);
+        expect(wrapper.findComponent(RunModelPlot).exists()).toBe(true);
     });
 
     it("invokes FetchConfig action", () => {
