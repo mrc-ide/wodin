@@ -5,6 +5,7 @@
                 <h1>{{title}}</h1>
                 <div id="app-type">App Type: {{appType}}</div>
                 <div id="basic-prop">Basic Prop: {{basicProp}}</div>
+                <wodin-panels></wodin-panels>
                 <run-model-plot></run-model-plot>
                 <errors-alert></errors-alert>
             </div>
@@ -18,6 +19,7 @@ import { useStore } from "vuex";
 import { BasicAction } from "../../store/basic/actions";
 import RunModelPlot from "../run/RunModelPlot.vue";
 import ErrorsAlert from "../ErrorsAlert.vue";
+import WodinPanels from "../WodinPanels.vue";
 import { ModelAction } from "../../store/model/actions";
 
 export default defineComponent({
@@ -27,7 +29,8 @@ export default defineComponent({
     },
     components: {
         RunModelPlot,
-        ErrorsAlert
+        ErrorsAlert,
+        WodinPanels
     },
     setup(props) {
         const store = useStore();
