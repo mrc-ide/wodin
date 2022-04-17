@@ -42,8 +42,6 @@
             VueFeather
         },
         setup() {
-            //TODO: add slots
-
             const mode = ref<PanelsMode>(PanelsMode.Both);
 
             const modeClass = computed(() => {
@@ -89,15 +87,16 @@
 
 <style scoped lang="scss">
     $handleWidth: 3rem;
-    $fullWidth: calc(100% - 3rem);
-    $fullHeight: calc(100vh - 3rem);
+    $fullWidth: calc(100% - 4rem);
+    $fullHeight: calc(100vh - 5rem);
 
     $dark-grey: #777;
 
     .wodin-left, .wodin-right {
         float: left;
         height: $fullHeight;
-        overflow: auto;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     .wodin-left {
