@@ -3,11 +3,16 @@
         <div class="row">
             <div class="col-12">
                 <h1>{{title}}</h1>
-                <div id="app-type">App Type: {{appType}}</div>
-                <div id="basic-prop">Basic Prop: {{basicProp}}</div>
-                <wodin-panels></wodin-panels>
-                <run-model-plot></run-model-plot>
-                <errors-alert></errors-alert>
+                <wodin-panels>
+                    <template v-slot:left>
+                        <div id="app-type">App Type: {{appType}}</div>
+                        <div id="basic-prop">Basic Prop: {{basicProp}}</div>
+                    </template>
+                    <template v-slot:right>
+                        <run-model-plot></run-model-plot>
+                        <errors-alert></errors-alert>
+                    </template>
+                </wodin-panels>
             </div>
         </div>
     </div>
