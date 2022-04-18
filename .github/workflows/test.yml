@@ -17,7 +17,7 @@ jobs:
         run: npm run test:unit --prefix=app/static
       - name: Run browser tests
         run: |
-          npx playwright install
+          npx playwright install --prefix=app/static
           npm run e2e-test --prefix=app/static
       - name: Lint back end
         run: npm run lint --prefix=app/server
