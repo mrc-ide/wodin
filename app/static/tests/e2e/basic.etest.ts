@@ -6,7 +6,8 @@ test.describe("Basic app tests", () => {
     });
 
     const expectBothMode = async (page: Page) => {
-        expect(await page.locator(".wodin-mode-both .wodin-left .wodin-content #app-type").textContent()).toBe("App Type: basic");
+        expect(await page.locator(".wodin-mode-both .wodin-left .wodin-content #app-type").textContent())
+            .toBe("App Type: basic");
         expect(await page.locator(".wodin-mode-both .wodin-right .wodin-content .js-plotly-plot")).toBeVisible();
         expect(await page.locator(".wodin-collapse-controls #collapse-left")).toBeVisible();
         expect(await page.locator(".wodin-collapse-controls #collapse-right")).toBeVisible();
@@ -21,7 +22,6 @@ test.describe("Basic app tests", () => {
         expect(await page.locator(".wodin-collapse-controls #collapse-right")).toBeVisible();
         expect(await page.locator(".wodin-left .view-left")).toBeVisible();
         expect(await page.locator(".wodin-right .view-right").isHidden()).toBe(true);
-
     };
 
     const expectLeftMode = async (page: Page) => {
@@ -31,10 +31,9 @@ test.describe("Basic app tests", () => {
         expect(await page.locator(".wodin-collapse-controls #collapse-right").isHidden()).toBe(true);
         expect(await page.locator(".wodin-left .view-left").isHidden()).toBe(true);
         expect(await page.locator(".wodin-right .view-right")).toBeVisible();
-
     };
 
-    test("can collapse and expand left panel", async ({  page }) => {
+    test("can collapse and expand left panel", async ({ page }) => {
         await expectBothMode(page);
 
         await page.click("#collapse-left");
@@ -44,7 +43,7 @@ test.describe("Basic app tests", () => {
         await expectBothMode(page);
     });
 
-    test("can collapse and expand right panel", async ({  page }) => {
+    test("can collapse and expand right panel", async ({ page }) => {
         await expectBothMode(page);
 
         await page.click("#collapse-right");

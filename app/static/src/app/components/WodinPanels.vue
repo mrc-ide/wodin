@@ -29,60 +29,62 @@
 </template>
 
 <script lang="ts">
-    import { computed, defineComponent, ref } from "vue";
-    import VueFeather from "vue-feather";
+import { computed, defineComponent, ref } from "vue";
+import VueFeather from "vue-feather";
 
-    export enum PanelsMode {
+export enum PanelsMode {
         Left, Right, Both
     }
 
-    export default defineComponent({
-        name: "WodinPanels",
-        components: {
-            VueFeather
-        },
-        setup() {
-            const mode = ref<PanelsMode>(PanelsMode.Both);
+export default defineComponent({
+    name: "WodinPanels",
+    components: {
+        VueFeather
+    },
+    setup() {
+        const mode = ref<PanelsMode>(PanelsMode.Both);
 
-            const modeClass = computed(() => {
-                switch(mode.value) {
-                    case PanelsMode.Left:
-                        return "wodin-mode-left";
-                    case PanelsMode.Both:
-                        return "wodin-mode-both";
-                    case PanelsMode.Right:
-                        return "wodin-mode-right";
-                }
-            });
-
-            const canCollapseLeft = computed(() => mode.value !== PanelsMode.Right);
-            const canCollapseRight = computed(() => mode.value !== PanelsMode.Left);
-
-            const collapseLeft = () => {
-                if (mode.value === PanelsMode.Left) {
-                    mode.value = PanelsMode.Both;
-                } else if (mode.value == PanelsMode.Both) {
-                    mode.value = PanelsMode.Right;
-                }
-            };
-
-            const collapseRight = () => {
-                if (mode.value === PanelsMode.Right) {
-                    mode.value = PanelsMode.Both;
-                } else if (mode.value == PanelsMode.Both) {
-                    mode.value = PanelsMode.Left;
-                }
-            };
-
-            return {
-                modeClass,
-                canCollapseLeft,
-                canCollapseRight,
-                collapseLeft,
-                collapseRight
+        const modeClass = computed(() => {
+            switch (mode.value) {
+            case PanelsMode.Left:
+                return "wodin-mode-left";
+            case PanelsMode.Both:
+                return "wodin-mode-both";
+            case PanelsMode.Right:
+                return "wodin-mode-right";
+            default:
+                throw new Error("Unknown mode");
             }
-        }
-    });
+        });
+
+        const canCollapseLeft = computed(() => mode.value !== PanelsMode.Right);
+        const canCollapseRight = computed(() => mode.value !== PanelsMode.Left);
+
+        const collapseLeft = () => {
+            if (mode.value === PanelsMode.Left) {
+                mode.value = PanelsMode.Both;
+            } else if (mode.value === PanelsMode.Both) {
+                mode.value = PanelsMode.Right;
+            }
+        };
+
+        const collapseRight = () => {
+            if (mode.value === PanelsMode.Right) {
+                mode.value = PanelsMode.Both;
+            } else if (mode.value === PanelsMode.Both) {
+                mode.value = PanelsMode.Left;
+            }
+        };
+
+        return {
+            modeClass,
+            canCollapseLeft,
+            canCollapseRight,
+            collapseLeft,
+            collapseRight
+        };
+    }
+});
 </script>
 
 <style scoped lang="scss">

@@ -1,13 +1,12 @@
-import {shallowMount, VueWrapper} from "@vue/test-utils";
+import { shallowMount, VueWrapper } from "@vue/test-utils";
 import WodinPanels from "../../../src/app/components/WodinPanels.vue";
 
 describe("WodinPaneks", () => {
-
     const getWrapper = () => {
         return shallowMount(WodinPanels, {
             slots: {
-                left: `<div id="l-slot-content">LEFT</div>`,
-                right: `<div id="r-slot-content">RIGHT</div>`
+                left: "<div id=\"l-slot-content\">LEFT</div>",
+                right: "<div id=\"r-slot-content\">RIGHT</div>"
             }
         });
     };
@@ -38,8 +37,8 @@ describe("WodinPaneks", () => {
 
     it("has expected slot content", () => {
         const wrapper = getWrapper();
-        expect(wrapper.find("#wodin-content-left").html()).toContain(`<div id="l-slot-content">LEFT</div>`);
-        expect(wrapper.find("#wodin-content-right").html()).toContain(`<div id="r-slot-content">RIGHT</div>`);
+        expect(wrapper.find("#wodin-content-left").html()).toContain("<div id=\"l-slot-content\">LEFT</div>");
+        expect(wrapper.find("#wodin-content-right").html()).toContain("<div id=\"r-slot-content\">RIGHT</div>");
     });
 
     it("defaults to Both mode", () => {
