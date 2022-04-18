@@ -12,7 +12,7 @@
             <div class="view-left" @click="collapseRight()">
                 View Options
             </div>
-            <div class="wodin-content">
+            <div class="wodin-content" id="wodin-content-left">
                 <slot name="left"></slot>
             </div>
         </div>
@@ -20,7 +20,7 @@
             <div class="view-right" @click="collapseLeft()">
                 View Charts
             </div>
-            <div class="wodin-content">
+            <div class="wodin-content" id="wodin-content-right">
                 <slot name="right"></slot>
             </div>
         </div>
