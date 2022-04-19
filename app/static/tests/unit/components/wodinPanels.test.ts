@@ -1,4 +1,5 @@
 import { shallowMount, VueWrapper } from "@vue/test-utils";
+import { nextTick } from "vue";
 import WodinPanels from "../../../src/app/components/WodinPanels.vue";
 
 describe("WodinPaneks", () => {
@@ -74,5 +75,18 @@ describe("WodinPaneks", () => {
         await wrapper.find("#collapse-right").trigger("click");
         await wrapper.find(".view-right").trigger("click");
         testBothMode(wrapper);
+    });
+
+    it("throws error on unknown mode", async () => {
+        const wrapper = getWrapper();
+        let errorThrown = false;
+        try {
+            (wrapper.vm as any).mode = "nonexistent";
+            await nextTick();
+        } catch (error: any) {
+            expect(error.message).toBe("Unknown mode");
+            errorThrown = true;
+        }
+        expect(errorThrown).toBe(true);
     });
 });

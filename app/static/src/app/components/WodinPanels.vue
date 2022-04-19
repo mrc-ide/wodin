@@ -77,6 +77,7 @@ export default defineComponent({
         };
 
         return {
+            mode,
             modeClass,
             canCollapseLeft,
             canCollapseRight,
