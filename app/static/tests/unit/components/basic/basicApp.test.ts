@@ -1,5 +1,4 @@
 // Mock the import of plotly to prevent errors
-
 jest.mock("plotly.js", () => ({}));
 /* eslint-disable import/first */
 import Vuex from "vuex";
