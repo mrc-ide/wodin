@@ -73,7 +73,7 @@ export default defineComponent({
         const getAnimateClass = (left: boolean, leftward: boolean) => {
             const panel = left ? "l" : "r";
             const movement = (left && leftward) || (!left && !leftward) ? "collapse" : "expand";
-            const amount = mode.value == PanelsMode.Both ? "partial" : "full";
+            const amount = mode.value === PanelsMode.Both ? "partial" : "full";
             return `slide-${panel}-panel-${movement}-${amount}`;
         };
 
