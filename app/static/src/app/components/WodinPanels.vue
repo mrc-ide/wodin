@@ -60,21 +60,16 @@ export default defineComponent({
         const canCollapseLeft = computed(() => mode.value !== PanelsMode.Right);
         const canCollapseRight = computed(() => mode.value !== PanelsMode.Left);
 
-        const collapseLeft = () => {
-            if (mode.value === PanelsMode.Left) {
+        const collapse = (expandedMode: PanelsMode, collapsedMode: PanelsMode) => {
+            if (mode.value === expandedMode) {
                 mode.value = PanelsMode.Both;
             } else if (mode.value === PanelsMode.Both) {
-                mode.value = PanelsMode.Right;
+                mode.value = collapsedMode;
             }
         };
 
-        const collapseRight = () => {
-            if (mode.value === PanelsMode.Right) {
-                mode.value = PanelsMode.Both;
-            } else if (mode.value === PanelsMode.Both) {
-                mode.value = PanelsMode.Left;
-            }
-        };
+        const collapseLeft = () => collapse(PanelsMode.Left, PanelsMode.Right);
+        const collapseRight = () => collapse(PanelsMode.Right, PanelsMode.Left);
 
         return {
             mode,
