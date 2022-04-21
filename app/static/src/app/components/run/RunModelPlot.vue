@@ -10,7 +10,7 @@ import {
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
 import {
-    Data, newPlot, react, PlotRelayoutEvent
+    Data, newPlot, react, PlotRelayoutEvent, Plots
 } from "plotly.js";
 import { ModelAction } from "../../store/model/actions";
 
@@ -39,7 +39,7 @@ export default defineComponent({
 
         const config = {
             responsive: true
-        }
+        };
 
         const relayout = async (event: PlotRelayoutEvent) => {
             let data;
@@ -64,6 +64,10 @@ export default defineComponent({
             await react(el, data, layout, config);
         };
 
+        const resize = () => {
+            Plots.resize(plot.value as HTMLElement);
+        };
+
         const drawPlot = () => {
             if (baseData.value) {
                 const el = plot.value as unknown;
@@ -72,6 +76,7 @@ export default defineComponent({
                 };
                 newPlot(el as HTMLElement, baseData.value as Data[], layout, config);
                 (el as EventEmitter).on("plotly_relayout", relayout);
+                new ResizeObserver(resize).observe(el as HTMLElement);
             }
         };
 
