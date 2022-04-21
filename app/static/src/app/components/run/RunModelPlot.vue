@@ -37,6 +37,10 @@ export default defineComponent({
             }
         };
 
+        const config = {
+            responsive: true
+        }
+
         const relayout = async (event: PlotRelayoutEvent) => {
             let data;
             if (event["xaxis.autorange"] === true) {
@@ -57,7 +61,7 @@ export default defineComponent({
             };
 
             const el = plot.value as HTMLElement;
-            await react(el, data, layout);
+            await react(el, data, layout, config);
         };
 
         const drawPlot = () => {
@@ -66,7 +70,7 @@ export default defineComponent({
                 const layout = {
                     margin: { t: 0 }
                 };
-                newPlot(el as HTMLElement, baseData.value as Data[], layout);
+                newPlot(el as HTMLElement, baseData.value as Data[], layout, config);
                 (el as EventEmitter).on("plotly_relayout", relayout);
             }
         };
