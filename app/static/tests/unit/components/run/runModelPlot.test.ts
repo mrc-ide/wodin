@@ -1,7 +1,10 @@
 // Mock the import of plotly so we can mock Plotly methods
 jest.mock("plotly.js", () => ({
     newPlot: jest.fn(),
-    react: jest.fn()
+    react: jest.fn(),
+    Plots: {
+        resize: jest.fn()
+    }
 }));
 
 /* eslint-disable import/first */
@@ -17,6 +20,12 @@ import { mockBasicState, mockModelState } from "../../../mocks";
 describe("RunModelPlot", () => {
     const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");
     const mockPlotlyReact = jest.spyOn(plotly, "react");
+
+    const mockObserve = jest.fn();
+    function mockResizeObserver(this: any) {
+        this.observe = mockObserve;
+    }
+    (global.ResizeObserver as any) = mockResizeObserver;
 
     const getStore = (odinUtils = null, odin = null, mockRunModel = jest.fn) => {
         return new Vuex.Store<BasicState>({
@@ -242,5 +251,28 @@ describe("RunModelPlot", () => {
         await relayout(relayoutEvent);
 
         expect(mockPlotlyReact).not.toHaveBeenCalled();
+    });
+
+    it("initialises ResizeObserver", async () => {
+        const store = getStore();
+        const wrapper = getWrapper(store);
+        const divElement = wrapper.find("div").element;
+        (divElement as any).on = jest.fn();
+        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
+        await nextTick();
+
+        expect(mockObserve).toHaveBeenCalledWith(divElement);
+    });
+
+    it("resize method resizes Plot", async () => {
+        const store = getStore();
+        const wrapper = getWrapper(store);
+        const divElement = wrapper.find("div").element;
+        (divElement as any).on = jest.fn();
+        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
+        await nextTick();
+
+        (wrapper.vm as any).resize();
+        expect(plotly.Plots.resize).toHaveBeenCalledWith(divElement);
     });
 });

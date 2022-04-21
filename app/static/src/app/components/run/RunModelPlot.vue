@@ -10,7 +10,7 @@ import {
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
 import {
-    Data, newPlot, react, PlotRelayoutEvent
+    Data, newPlot, react, PlotRelayoutEvent, Plots
 } from "plotly.js";
 import { ModelAction } from "../../store/model/actions";
 
@@ -37,6 +37,10 @@ export default defineComponent({
             }
         };
 
+        const config = {
+            responsive: true
+        };
+
         const relayout = async (event: PlotRelayoutEvent) => {
             let data;
             if (event["xaxis.autorange"] === true) {
@@ -57,7 +61,11 @@ export default defineComponent({
             };
 
             const el = plot.value as HTMLElement;
-            await react(el, data, layout);
+            await react(el, data, layout, config);
+        };
+
+        const resize = () => {
+            Plots.resize(plot.value as HTMLElement);
         };
 
         const drawPlot = () => {
@@ -66,8 +74,9 @@ export default defineComponent({
                 const layout = {
                     margin: { t: 0 }
                 };
-                newPlot(el as HTMLElement, baseData.value as Data[], layout);
+                newPlot(el as HTMLElement, baseData.value as Data[], layout, config);
                 (el as EventEmitter).on("plotly_relayout", relayout);
+                new ResizeObserver(resize).observe(el as HTMLElement);
             }
         };
 
@@ -89,6 +98,7 @@ export default defineComponent({
         return {
             plot,
             relayout,
+            resize,
             solution
         };
     }
