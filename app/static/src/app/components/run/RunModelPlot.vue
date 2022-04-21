@@ -98,6 +98,7 @@ export default defineComponent({
         return {
             plot,
             relayout,
+            resize,
             solution
         };
     }
