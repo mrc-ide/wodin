@@ -1,5 +1,4 @@
 import { shallowMount, VueWrapper } from "@vue/test-utils";
-import { nextTick } from "vue";
 import WodinPanels from "../../../src/app/components/WodinPanels.vue";
 
 describe("WodinPaneks", () => {
@@ -12,29 +11,20 @@ describe("WodinPaneks", () => {
         });
     };
 
-    const testBothMode = (wrapper: VueWrapper) => {
-        const containerDiv = wrapper.find("div.wodin-mode-both");
+    const testMode = (wrapper: VueWrapper, containerClass: string, collapsibleLeft: boolean,
+        collapsibleRight: boolean) => {
+        const containerDiv = wrapper.find(`div.${containerClass}`);
         expect(containerDiv.exists()).toBe(true);
 
-        expect(containerDiv.find("#collapse-left").exists()).toBe(true);
-        expect(containerDiv.find("#collapse-right").exists()).toBe(true);
+        expect(containerDiv.find("#collapse-left").exists()).toBe(collapsibleLeft);
+        expect(containerDiv.find("#collapse-right").exists()).toBe(collapsibleRight);
     };
 
-    const testRightMode = (wrapper: VueWrapper) => {
-        const containerDiv = wrapper.find("div.wodin-mode-right");
-        expect(containerDiv.exists()).toBe(true);
+    const testBothMode = (wrapper: VueWrapper) => testMode(wrapper, "wodin-mode-both", true, true);
 
-        expect(containerDiv.find("#collapse-left").exists()).toBe(false);
-        expect(containerDiv.find("#collapse-right").exists()).toBe(true);
-    };
+    const testRightMode = (wrapper: VueWrapper) => testMode(wrapper, "wodin-mode-right", false, true);
 
-    const testLeftMode = (wrapper: VueWrapper) => {
-        const containerDiv = wrapper.find("div.wodin-mode-left");
-        expect(containerDiv.exists()).toBe(true);
-
-        expect(containerDiv.find("#collapse-left").exists()).toBe(true);
-        expect(containerDiv.find("#collapse-right").exists()).toBe(false);
-    };
+    const testLeftMode = (wrapper: VueWrapper) => testMode(wrapper, "wodin-mode-left", true, false);
 
     it("has expected slot content", () => {
         const wrapper = getWrapper();
@@ -85,18 +75,5 @@ describe("WodinPaneks", () => {
         await wrapper.find("#collapse-right").trigger("click");
         await wrapper.find(".view-right").trigger("click");
         testBothMode(wrapper);
-    });
-
-    it("throws error on unknown mode", async () => {
-        const wrapper = getWrapper();
-        let errorThrown = false;
-        try {
-            (wrapper.vm as any).mode = "nonexistent";
-            await nextTick();
-        } catch (error: any) {
-            expect(error.message).toBe("Unknown mode");
-            errorThrown = true;
-        }
-        expect(errorThrown).toBe(true);
     });
 });

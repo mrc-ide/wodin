@@ -46,18 +46,13 @@ export default defineComponent({
         const leftAnimateClass = ref("");
         const rightAnimateClass = ref("");
 
-        const modeClass = computed(() => {
-            switch (mode.value) {
-            case PanelsMode.Left:
-                return "wodin-mode-left";
-            case PanelsMode.Both:
-                return "wodin-mode-both";
-            case PanelsMode.Right:
-                return "wodin-mode-right";
-            default:
-                throw new Error("Unknown mode");
-            }
-        });
+        const modeClassMap: Record<PanelsMode, string> = {
+            [PanelsMode.Both]: "wodin-mode-both",
+            [PanelsMode.Left]: "wodin-mode-left",
+            [PanelsMode.Right]: "wodin-mode-right"
+        };
+
+        const modeClass = computed(() => modeClassMap[mode.value]);
 
         const canCollapseLeft = computed(() => mode.value !== PanelsMode.Right);
         const canCollapseRight = computed(() => mode.value !== PanelsMode.Left);

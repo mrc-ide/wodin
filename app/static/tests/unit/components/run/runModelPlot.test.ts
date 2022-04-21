@@ -1,6 +1,4 @@
 // Mock the import of plotly so we can mock Plotly methods
-import { Root } from "plotly.js";
-
 jest.mock("plotly.js", () => ({
     newPlot: jest.fn(),
     react: jest.fn(),
