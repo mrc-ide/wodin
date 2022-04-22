@@ -8,7 +8,6 @@ class Odin {
         initial_y2: 1,
         initial_y3: 1
       };
-      // Is this a const? Could go outside class
       this.coef = {
         b: {
           has_default: false, 
@@ -68,9 +67,8 @@ class Odin {
       state[2] = internal.initial_y3;
       return state;
     }
-    // Not used?
     run(times, y0, control) {
-      return integrateOdin(this, times, y0, control); // doesn't exist?
+      return integrateOdin(this, times, y0, control); 
     }
     updateMetadata() {
       this.metadata = {};

@@ -15,7 +15,7 @@ class OdinRunner {
     runModel(pars, tEnd, nPoints, odin) {
         const model = new odin(OdinBase, pars);
         const tStart = 0;
-        const times = this.grid(tStart, tEnd, nPoints); // not used?
+        const times = this.grid(tStart, tEnd, nPoints);
         const y0 = model.initial(tStart);
         const control = {};
     
@@ -66,9 +66,9 @@ class OdinBase {
             const msg = "Unknown user parameters: " + err.join(", ");
     
             if (unusedUserAction === "message") {
-                odinMessage(msg); // does not exist?
+                odinMessage(msg);
             } else if (unusedUserAction === "warning") {
-                odinWarning(msg); // does not exist?
+                odinWarning(msg);
             } else if (unusedUserAction === "stop") {
                 throw Error(msg);
             } else {
