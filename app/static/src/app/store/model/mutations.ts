@@ -2,21 +2,18 @@
 import * as dopri from "dopri";
 import { MutationTree } from "vuex";
 import { ModelState } from "./state";
-import { Odin, OdinSolution, OdinUtilsConstructors } from "../../types/responseTypes";
+import { Odin, OdinRunnerConstructor, OdinSolution } from "../../types/responseTypes";
 
 export enum ModelMutation {
-    SetOdinUtils = "SetOdinUtils",
+    SetOdinRunner = "SetOdinRunner",
     SetOdin = "SetOdin",
     SetOdinSolution = "SetOdinSolution"
 }
 
 export const mutations: MutationTree<ModelState> = {
-    [ModelMutation.SetOdinUtils](state: ModelState, payload: OdinUtilsConstructors) {
-        // construct the utils objects from the implementations returned by the endpoint
-        const helpers = new payload.helpers();
-        const runner = new payload.runner(helpers, dopri);
-
-        state.odinUtils = { helpers, runner };
+    [ModelMutation.SetOdinRunner](state: ModelState, payload: OdinRunnerConstructor) {
+        // construct the runner object from the implementation returned by the endpoint
+        state.odinRunner = new payload(dopri);
     },
 
     [ModelMutation.SetOdin](state: ModelState, payload: Odin) {

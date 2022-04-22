@@ -7,17 +7,17 @@ import { RunModelPayload } from "../../types/actionPayloadTypes";
 import { ErrorsMutation } from "../errors/mutations";
 
 export enum ModelAction {
-    FetchOdinUtils = "FetchOdinUtils",
+    FetchOdinRunner = "FetchOdinRunner",
     FetchOdin = "FetchOdin",
     RunModel = "RunModel"
 }
 
 export const actions: ActionTree<ModelState, AppState> = {
-    async FetchOdinUtils(context) {
+    async FetchOdinRunner(context) {
         await api(context)
-            .withSuccess(ModelMutation.SetOdinUtils)
+            .withSuccess(ModelMutation.SetOdinRunner)
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
-            .getScript<string>("/odin/utils");
+            .getScript<string>("/odin/runner");
     },
 
     async FetchOdin(context) {
@@ -29,11 +29,10 @@ export const actions: ActionTree<ModelState, AppState> = {
 
     RunModel(context, payload: RunModelPayload) {
         const { state, commit } = context;
-        if (state.odinUtils && state.odin) {
+        if (state.odinRunner && state.odin) {
             const { parameters, end, points } = payload;
 
-            const { runner } = state.odinUtils;
-            const solution = runner.runModel(parameters, end, points, state.odin);
+            const solution = state.odinRunner.runModel(parameters, end, points, state.odin);
             commit(ModelMutation.SetOdinSolution, solution);
         }
     }

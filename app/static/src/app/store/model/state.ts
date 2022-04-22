@@ -1,7 +1,7 @@
-import { Odin, OdinSolution, OdinUtils } from "../../types/responseTypes";
+import { Odin, OdinSolution, OdinRunner } from "../../types/responseTypes";
 
 export interface ModelState {
-    odinUtils: null | OdinUtils
+    odinRunner: null | OdinRunner
     odin: null | Odin
     odinSolution: null | OdinSolution
 }

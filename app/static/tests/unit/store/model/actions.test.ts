@@ -7,32 +7,25 @@ describe("Model actions", () => {
         mockAxios.reset();
     });
 
-    it("fetches odin utils", async () => {
-        const mockUtilsScript = `(() => {
-            return {
-                "runner": () => "runner",
-                "helpers": () => "helpers"
-            }
-        })()`;
-
-        mockAxios.onGet("/odin/utils")
-            .reply(200, mockUtilsScript, { "content-type": "application/javascript" });
+    it("fetches odin runner", async () => {
+        const mockRunnerScript = "() => \"runner\"";
+        mockAxios.onGet("/odin/runner")
+            .reply(200, mockRunnerScript, { "content-type": "application/javascript" });
 
         const commit = jest.fn();
-        await (actions[ModelAction.FetchOdinUtils] as any)({ commit });
+        await (actions[ModelAction.FetchOdinRunner] as any)({ commit });
 
-        expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinUtils);
+        expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinRunner);
         const committed = commit.mock.calls[0][1];
-        expect((committed.runner as any)()).toBe("runner");
-        expect((committed.helpers as any)()).toBe("helpers");
+        expect((committed as any)()).toBe("runner");
     });
 
-    it("commits error from fetch odin utils", async () => {
-        mockAxios.onGet("/odin/utils")
+    it("commits error from fetch odin runner", async () => {
+        mockAxios.onGet("/odin/runner")
             .reply(500, mockFailure("server error"));
 
         const commit = jest.fn();
-        await (actions[ModelAction.FetchOdinUtils] as any)({ commit });
+        await (actions[ModelAction.FetchOdinRunner] as any)({ commit });
 
         expect(commit.mock.calls[0][0]).toBe("errors/AddError");
         expect(commit.mock.calls[0][1].detail).toBe("server error");
@@ -77,11 +70,11 @@ describe("Model actions", () => {
         const mockRunModel = jest.fn((parameters, end, points, odin) => "test solution");
         const mockRunner = {
             runModel: mockRunModel
-        };
+        } as any;
         const mockOdin = {} as any;
 
         const state = mockModelState({
-            odinUtils: { runner: mockRunner } as any,
+            odinRunner: mockRunner,
             odin: mockOdin
         });
         const commit = jest.fn();
@@ -97,11 +90,11 @@ describe("Model actions", () => {
         expect(commit.mock.calls[0][1]).toBe("test solution");
     });
 
-    it("run model does nothing if odin utils are not set", () => {
+    it("run model does nothing if odin runner is not set", () => {
         const mockOdin = {} as any;
 
         const state = mockModelState({
-            odinUtils: null,
+            odinRunner: null,
             odin: mockOdin
         });
         const commit = jest.fn();
@@ -115,10 +108,10 @@ describe("Model actions", () => {
         const mockRunModel = jest.fn((parameters, end, points, odin) => "test solution");
         const mockRunner = {
             runModel: mockRunModel
-        };
+        } as any;
 
         const state = mockModelState({
-            odinUtils: { runner: mockRunner } as any,
+            odinRunner: mockRunner,
             odin: null
         });
         const commit = jest.fn();

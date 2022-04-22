@@ -1,4 +1,4 @@
-export const exampleOdinUtils = `"use strict";
+export const exampleOdinRunner = `"use strict";
 
 class OdinRunner {
     constructor(dopri) {

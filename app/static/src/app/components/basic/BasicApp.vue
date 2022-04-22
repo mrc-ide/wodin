@@ -45,7 +45,7 @@ export default defineComponent({
 
         onMounted(() => {
             store.dispatch(BasicAction.FetchConfig, props.appName);
-            store.dispatch(`model/${ModelAction.FetchOdinUtils}`);
+            store.dispatch(`model/${ModelAction.FetchOdinRunner}`);
             store.dispatch(`model/${ModelAction.FetchOdin}`); // Test model - not providing odin code yet
         });
 

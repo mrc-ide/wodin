@@ -20,14 +20,14 @@ export default defineComponent({
         const store = useStore();
 
         const odin = computed(() => store.state.model.odin);
-        const odinUtils = computed(() => store.state.model.odinUtils);
+        const odinRunner = computed(() => store.state.model.odinRunner);
         const solution = computed(() => store.state.model.odinSolution);
 
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
         const baseData = ref(null);
 
         const runModel = () => {
-            if (odin.value && odinUtils.value) {
+            if (odin.value && odinRunner.value) {
                 const payload = {
                     parameters: {},
                     end: 100,
@@ -86,7 +86,7 @@ export default defineComponent({
             runModel();
         });
 
-        watch(odinUtils, () => {
+        watch(odinRunner, () => {
             runModel();
         });
 

@@ -27,7 +27,7 @@ export interface StochasticConfig {
 }
 
 export interface Odin {
-    odin: () => unknown
+    new(...args : any[]): unknown
 }
 
 export type OdinSolution = (t0: number, t1: number) => {x: number, y: number}[];
@@ -36,24 +36,6 @@ export interface OdinRunner {
     runModel: (pars: Record<string, number>, tEnd: number, nPoints: number, odin: Odin) => OdinSolution
 }
 
-export interface OdinHelpers {
-    [k: string]: unknown;
-}
-
-export interface OdinUtils {
-    runner: OdinRunner,
-    helpers: OdinHelpers
-}
-
-export interface OdinHelpersConstructor {
-    new(): OdinHelpers
-}
-
 export interface OdinRunnerConstructor {
-    new(helpers: OdinHelpers, dopri: unknown): OdinRunner
-}
-
-export interface OdinUtilsConstructors {
-    runner: OdinRunnerConstructor,
-    helpers: OdinHelpersConstructor
+    new(dopri: unknown): OdinRunner
 }

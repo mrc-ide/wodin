@@ -27,14 +27,14 @@ describe("RunModelPlot", () => {
     }
     (global.ResizeObserver as any) = mockResizeObserver;
 
-    const getStore = (odinUtils = null, odin = null, mockRunModel = jest.fn) => {
+    const getStore = (odinRunner = null, odin = null, mockRunModel = jest.fn) => {
         return new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
                 model: {
                     namespaced: true,
                     state: mockModelState({
-                        odinUtils,
+                        odinRunner,
                         odin
                     }),
                     actions: {
@@ -71,10 +71,10 @@ describe("RunModelPlot", () => {
         points: 1000
     };
 
-    it("runs model when odin is updated, if odin utils are set", async () => {
-        const mockUtils = {} as any;
+    it("runs model when odin is updated, if odin runner is set", async () => {
+        const mockRunner = {} as any;
         const mockRunModel = jest.fn();
-        const store = getStore(mockUtils, null, mockRunModel);
+        const store = getStore(mockRunner, null, mockRunModel);
         getWrapper(store);
 
         store.commit({ type: `model/${ModelMutation.SetOdin}`, payload: {} as any });
@@ -84,7 +84,7 @@ describe("RunModelPlot", () => {
         expect(payload).toStrictEqual(expectedRunModelPayload);
     });
 
-    it("does not run model when odin is updated, if odin utils are not set", async () => {
+    it("does not run model when odin is updated, if odin runner is not set", async () => {
         const mockRunModel = jest.fn();
         const store = getStore(null, null, mockRunModel);
         getWrapper(store);
@@ -94,33 +94,28 @@ describe("RunModelPlot", () => {
         expect(mockRunModel).not.toHaveBeenCalled();
     });
 
-    class TestConstructor {
+    const mockRunner = class TestConstructor {
         constructor() {}
-    }
-
-    const mockUtils = {
-        runner: TestConstructor,
-        helpers: TestConstructor
     };
 
-    it("runs model when odin utils are updated, if odin is set", async () => {
+    it("runs model when odin runner is updated, if odin is set", async () => {
         const mockOdin = {} as any;
         const mockRunModel = jest.fn();
         const store = getStore(null, mockOdin, mockRunModel);
         getWrapper(store);
 
-        store.commit(`model/${ModelMutation.SetOdinUtils}`, mockUtils as any);
+        store.commit(`model/${ModelMutation.SetOdinRunner}`, mockRunner as any);
         await nextTick();
         const payload = mockRunModel.mock.calls[0][1];
         expect(payload).toStrictEqual(expectedRunModelPayload);
     });
 
-    it("does not run model when odin utils are updated, if odin is not set", async () => {
+    it("does not run model when odin runner is updated, if odin is not set", async () => {
         const mockRunModel = jest.fn();
         const store = getStore(null, null, mockRunModel);
         getWrapper(store);
 
-        store.commit(`model/${ModelMutation.SetOdinUtils}`, mockUtils as any);
+        store.commit(`model/${ModelMutation.SetOdinRunner}`, mockRunner as any);
         await nextTick();
         expect(mockRunModel).not.toHaveBeenCalled();
     });
