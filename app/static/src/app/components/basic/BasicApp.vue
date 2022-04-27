@@ -5,11 +5,24 @@
                 <h1>{{title}}</h1>
                 <wodin-panels>
                     <template v-slot:left>
-                        <div id="app-type">App Type: {{appType}}</div>
-                        <div id="basic-prop">Basic Prop: {{basicProp}}</div>
+                        <tabs :tabNames="['Code', 'Options']">
+                            <template v-slot:Code>
+                                <odin-code></odin-code>
+                            </template>
+                            <template v-slot:Options>
+                                <options></options>
+                            </template>
+                        </tabs>
                     </template>
                     <template v-slot:right>
-                        <run-model-plot></run-model-plot>
+                        <tabs :tabNames="['Run', 'Sensitivity']">
+                            <template v-slot:Run>
+                                <run-model-plot></run-model-plot>
+                            </template>
+                            <template v-slot:Sensitivity>
+                                <sensitivity></sensitivity>
+                            </template>
+                        </tabs>
                         <errors-alert></errors-alert>
                     </template>
                 </wodin-panels>
@@ -26,6 +39,10 @@ import RunModelPlot from "../run/RunModelPlot.vue";
 import ErrorsAlert from "../ErrorsAlert.vue";
 import WodinPanels from "../WodinPanels.vue";
 import { ModelAction } from "../../store/model/actions";
+import Tabs from "../Tabs.vue";
+import OdinCode from "../code/OdinCode.vue";
+import Options from "../options/Options.vue";
+import Sensitivity from "../sensitivity/Sensitivity.vue";
 
 export default defineComponent({
     props: {
@@ -35,7 +52,11 @@ export default defineComponent({
     components: {
         RunModelPlot,
         ErrorsAlert,
-        WodinPanels
+        WodinPanels,
+        Tabs,
+        OdinCode,
+        Options,
+        Sensitivity
     },
     setup(props) {
         const store = useStore();
