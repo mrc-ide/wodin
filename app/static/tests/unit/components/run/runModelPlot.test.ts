@@ -22,8 +22,10 @@ describe("RunModelPlot", () => {
     const mockPlotlyReact = jest.spyOn(plotly, "react");
 
     const mockObserve = jest.fn();
+    const mockDisconnect = jest.fn();
     function mockResizeObserver(this: any) {
         this.observe = mockObserve;
+        this.disconnect = mockDisconnect;
     }
     (global.ResizeObserver as any) = mockResizeObserver;
 
@@ -71,11 +73,23 @@ describe("RunModelPlot", () => {
         points: 1000
     };
 
+    it("runs model on mount if odin and runner are both set", () => {
+        const mockRunner = {} as any;
+        const mockOdin = {} as any;
+        const mockRunModel = jest.fn();
+        const store = getStore(mockRunner, mockOdin, mockRunModel);
+        getWrapper(store);
+        expect(mockRunModel).toHaveBeenCalled();
+        const payload = mockRunModel.mock.calls[0][1];
+        expect(payload).toStrictEqual(expectedRunModelPayload);
+    });
+
     it("runs model when odin is updated, if odin runner is set", async () => {
         const mockRunner = {} as any;
         const mockRunModel = jest.fn();
         const store = getStore(mockRunner, null, mockRunModel);
         getWrapper(store);
+        expect(mockRunModel).not.toHaveBeenCalled();
 
         store.commit({ type: `model/${ModelMutation.SetOdin}`, payload: {} as any });
         await nextTick();
@@ -88,6 +102,7 @@ describe("RunModelPlot", () => {
         const mockRunModel = jest.fn();
         const store = getStore(null, null, mockRunModel);
         getWrapper(store);
+        expect(mockRunModel).not.toHaveBeenCalled();
 
         store.commit({ type: `model/${ModelMutation.SetOdin}`, payload: {} as any });
         await nextTick();
@@ -143,7 +158,7 @@ describe("RunModelPlot", () => {
 
     it("does not draw plot if base data is null", async () => {
         const store = getStore();
-        const wrapper = getWrapper(store);
+        getWrapper(store);
 
         const nullSolution = (param1: number, param2: number) => null;
 
@@ -269,5 +284,27 @@ describe("RunModelPlot", () => {
 
         (wrapper.vm as any).resize();
         expect(plotly.Plots.resize).toHaveBeenCalledWith(divElement);
+    });
+
+    it("disconnects resizeObserver on unmount", async () => {
+        const store = getStore();
+        const wrapper = getWrapper(store);
+
+        const divElement = wrapper.find("div").element;
+        const mockOn = jest.fn();
+        (divElement as any).on = mockOn;
+
+        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
+        await nextTick();
+
+        wrapper.unmount();
+        expect(mockDisconnect).toHaveBeenCalled();
+    });
+
+    it("does not attempt to disconnect resizeObserver if not initialised", () => {
+        const store = getStore();
+        const wrapper = getWrapper(store);
+        wrapper.unmount();
+        expect(mockDisconnect).not.toHaveBeenCalled();
     });
 });

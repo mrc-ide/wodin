@@ -5,7 +5,7 @@
                 <h1>{{title}}</h1>
                 <wodin-panels>
                     <template v-slot:left>
-                        <wodin-tabs :tabNames="['Code', 'Options']">
+                        <wodin-tabs id="left-tabs" :tabNames="['Code', 'Options']">
                             <template v-slot:Code>
                                 <code-tab></code-tab>
                             </template>
@@ -15,7 +15,7 @@
                         </wodin-tabs>
                     </template>
                     <template v-slot:right>
-                        <wodin-tabs :tabNames="['Run', 'Sensitivity']">
+                        <wodin-tabs id="right-tabs" :tabNames="['Run', 'Sensitivity']">
                             <template v-slot:Run>
                                 <run-model-plot></run-model-plot>
                             </template>

@@ -68,7 +68,7 @@ export default defineComponent({
             Plots.resize(plot.value as HTMLElement);
         };
 
-        const resizeObserver = new ResizeObserver(resize);
+        let resizeObserver: null | ResizeObserver = null;
 
         const drawPlot = () => {
             if (baseData.value) {
@@ -78,6 +78,7 @@ export default defineComponent({
                 };
                 newPlot(el as HTMLElement, baseData.value as Data[], layout, config);
                 (el as EventEmitter).on("plotly_relayout", relayout);
+                resizeObserver = new ResizeObserver(resize);
                 resizeObserver.observe(plot.value as HTMLElement);
             }
         };
@@ -102,7 +103,9 @@ export default defineComponent({
         });
 
         onUnmounted(() => {
-            resizeObserver.disconnect();
+            if (resizeObserver) {
+                resizeObserver.disconnect();
+            }
         });
 
         return {
