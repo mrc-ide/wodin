@@ -1,6 +1,6 @@
 <template>
     <ul class="nav nav-tabs">
-        <li v-for="tabName in tabNames">
+        <li v-for="tabName in tabNames" :key="tabName">
             <a class="nav-link"
                :class="tabName === selectedTabName ? 'active' : ''"
                aria-current="page"
@@ -15,16 +15,16 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref, PropType} from "vue";
+import { defineComponent, ref, PropType } from "vue";
 
 interface Props {
     tabNames: string[]
 }
 
 export default defineComponent({
-    name: "Tabs",
+    name: "WodinTabs",
     props: {
-      tabNames: {type: Array as PropType<string[]>, required: true}
+        tabNames: { type: Array as PropType<string[]>, required: true }
     },
     setup(props: Props) {
         const selectedTabName = ref(props.tabNames[0]);
@@ -34,11 +34,9 @@ export default defineComponent({
         };
 
         return {
-            tabNames: props.tabNames,
             selectedTabName,
             tabSelected
-        }
+        };
     }
 });
 </script>
-

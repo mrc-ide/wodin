@@ -27,7 +27,7 @@ export interface StochasticConfig {
 }
 
 export interface Odin {
-    new(...args : any[]): unknown
+    new(...args : unknown[]): unknown
 }
 
 export type OdinSolution = (t0: number, t1: number) => {x: number, y: number}[];

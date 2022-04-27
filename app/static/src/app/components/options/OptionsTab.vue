@@ -5,7 +5,8 @@
 </template>
 
 <script lang="ts">
-    export default {
-        name: "Options"
-    }
+export default {
+    name: "OptionsTab"
+};
 </script>
+s

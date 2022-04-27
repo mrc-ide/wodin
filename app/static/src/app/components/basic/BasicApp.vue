@@ -5,24 +5,24 @@
                 <h1>{{title}}</h1>
                 <wodin-panels>
                     <template v-slot:left>
-                        <tabs :tabNames="['Code', 'Options']">
+                        <wodin-tabs :tabNames="['Code', 'Options']">
                             <template v-slot:Code>
-                                <odin-code></odin-code>
+                                <code-tab></code-tab>
                             </template>
                             <template v-slot:Options>
-                                <options></options>
+                                <options-tab></options-tab>
                             </template>
-                        </tabs>
+                        </wodin-tabs>
                     </template>
                     <template v-slot:right>
-                        <tabs :tabNames="['Run', 'Sensitivity']">
+                        <wodin-tabs :tabNames="['Run', 'Sensitivity']">
                             <template v-slot:Run>
                                 <run-model-plot></run-model-plot>
                             </template>
                             <template v-slot:Sensitivity>
-                                <sensitivity></sensitivity>
+                                <sensitivity-tab></sensitivity-tab>
                             </template>
-                        </tabs>
+                        </wodin-tabs>
                         <errors-alert></errors-alert>
                     </template>
                 </wodin-panels>
@@ -39,10 +39,10 @@ import RunModelPlot from "../run/RunModelPlot.vue";
 import ErrorsAlert from "../ErrorsAlert.vue";
 import WodinPanels from "../WodinPanels.vue";
 import { ModelAction } from "../../store/model/actions";
-import Tabs from "../Tabs.vue";
-import OdinCode from "../code/OdinCode.vue";
-import Options from "../options/Options.vue";
-import Sensitivity from "../sensitivity/Sensitivity.vue";
+import WodinTabs from "../WodinTabs.vue";
+import CodeTab from "../code/CodeTab.vue";
+import OptionsTab from "../options/OptionsTab.vue";
+import SensitivityTab from "../sensitivity/SensitivityTab.vue";
 
 export default defineComponent({
     props: {
@@ -53,10 +53,10 @@ export default defineComponent({
         RunModelPlot,
         ErrorsAlert,
         WodinPanels,
-        Tabs,
-        OdinCode,
-        Options,
-        Sensitivity
+        WodinTabs,
+        CodeTab,
+        OptionsTab,
+        SensitivityTab
     },
     setup(props) {
         const store = useStore();
