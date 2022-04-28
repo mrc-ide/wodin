@@ -26,12 +26,15 @@ export default defineComponent({
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
         const baseData = ref(null);
 
+        const nPoints = 1000; // TODO: appropriate value could be derived from width of element
+
         const runModel = () => {
             if (odin.value && odinRunner.value) {
                 const payload = {
                     parameters: {},
+                    start: 0,
                     end: 100,
-                    points: 1000
+                    control: {}
                 };
                 store.dispatch(`model/${ModelAction.RunModel}`, payload);
             }
@@ -51,7 +54,7 @@ export default defineComponent({
                 if (t0 === undefined || t1 === undefined) {
                     return;
                 }
-                data = solution.value(t0, t1);
+                data = solution.value(t0, t1, nPoints);
             }
 
             const layout = {
@@ -91,7 +94,7 @@ export default defineComponent({
         });
 
         watch(solution, () => {
-            baseData.value = solution.value(0, 100); // TODO: default end time will eventually be a prop
+            baseData.value = solution.value(0, 100, nPoints); // TODO: default end time will eventually be a prop
             drawPlot();
         });
 

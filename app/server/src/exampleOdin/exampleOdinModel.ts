@@ -1,95 +1,43 @@
-export const exampleOdinModel = `"use strict";
-
-class Odin {
-    constructor (base, user, unusedUserAction) {
-      this.base = base;  
-      this.internal = {
-        initial_y1: 10,
-        initial_y2: 1,
-        initial_y3: 1
-      };
-      this.coef = {
-        b: {
-          has_default: false, 
-          default: 8 / 3,
-          rank: 0,
-          min: -Infinity,
-          max: Infinity, 
-          integer: false
-        }, 
-        R: {
-          has_default: false, 
-          default: 28, 
-          rank: 0, 
-          min: -Infinity, 
-          max: Infinity, 
-          integer: false
-        }, 
-        sigma: {
-          has_default: false, 
-          default: 10, 
-          rank: 0, 
-          min: -Infinity, 
-          max: Infinity, 
-          integer: false
-        }
-      };
-  
-      this.setUser(user, unusedUserAction);
-    }
-    setUser = function(user, unusedUserAction) {
-      this.base.checkUser(user, ["b", "R", "sigma"], unusedUserAction);
-      const internal = this.internal;
-      this.base.getUser(user, "b", internal, null, 8 / 3, null, null, false);
-      this.base.getUser(user, "R", internal, null, 28, null, null, false);
-      this.base.getUser(user, "sigma", internal, null, 10, null, null, false);
-      this.updateMetadata();
-    }
-    rhs(t, state, dstatedt) {
-      const internal = this.internal;
-      const y1 = state[0];
-      const y2 = state[1];
-      const y3 = state[2];
-      dstatedt[0] = internal.sigma * (y2 - y1);
-      dstatedt[1] = internal.R * y1 - y2 - y1 * y3;
-      dstatedt[2] = - internal.b * y3 + y1 * y2;
-    }
-    rhsEval = function(t, state) {
-      const dstatedt = this.base.zeros(state.length);
-      this.rhs(t, state, dstatedt);
-      return dstatedt;
-    }
-    initial = function(t) {
-      const internal = this.internal;
-      const state = this.base.zeros(3);
-      state[0] = internal.initial_y1;
-      state[1] = internal.initial_y2;
-      state[2] = internal.initial_y3;
-      return state;
-    }
-    run(times, y0, control) {
-      return integrateOdin(this, times, y0, control); 
-    }
-    updateMetadata() {
-      this.metadata = {};
-      this.metadata.ynames = ["t", "y1", "y2", "y3"];
-      this.metadata.interpolateTimes = null;
-      this.metadata.internalOrder = {
-        b: null,
-        initial_y1: null,
-        initial_y2: null,
-        initial_y3: null,
-        R: null,
-        sigma: null
-      };
-      this.metadata.variableOrder = {
-        y1: null,
-        y2: null,
-        y3: null
-      }
-      this.metadata.outputOrder = null;
-    }
-}  
+export const exampleOdinModel = `class Odin {
+  constructor(base, user, unusedUserAction) {
+    this.base = base;
+    this.internal = {};
+    var internal = this.internal;
+    internal.K = 100;
+    internal.r = 0.20000000000000001;
+    this.setUser(user, unusedUserAction);
+  }
+  coef = {N0: {has_default: false, default: 1, rank: 0, min: -Infinity, max: Infinity, integer: false}}
+  rhs(t, state, dstatedt) {
+    var internal = this.internal;
+    var N = state[0];
+    dstatedt[0] = internal.r * N * (1 - N / internal.K);
+  }
+  run(tStart, tEnd, y0, control, Dopri) {
+    return this.base.run(tStart, tEnd, y0, control, this, Dopri);
+  }
+  initial(t) {
+    var internal = this.internal;
+    var state = this.base.zeros(1);
+    state[0] = internal.initial_N;
+    return state;
+  }
+  updateMetadata() {
+    this.metadata = {};
+    var internal = this.internal;
+    this.metadata.ynames = ["t", "N"];
+    this.metadata.internalOrder = {K: null, N0: null, initial_N: null, r: null};
+    this.metadata.variableOrder = {N: null};
+    this.metadata.outputOrder = null;
+  }
+  setUser(user, unusedUserAction) {
+    this.base.checkUser(user, ["N0"], unusedUserAction);
+    var internal = this.internal;
+    this.base.getUser(user, "N0", internal, null, 1, null, null, false);
+    internal.initial_N = internal.N0;
+    this.updateMetadata();
+  }
+}
 
 Odin;
 `;

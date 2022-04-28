@@ -1,8 +1,6 @@
-/* eslint-disable new-cap */
-import * as dopri from "dopri";
 import { MutationTree } from "vuex";
 import { ModelState } from "./state";
-import { Odin, OdinRunnerConstructor, OdinSolution } from "../../types/responseTypes";
+import {Odin, OdinRunner, OdinSolution} from "../../types/responseTypes";
 
 export enum ModelMutation {
     SetOdinRunner = "SetOdinRunner",
@@ -11,9 +9,8 @@ export enum ModelMutation {
 }
 
 export const mutations: MutationTree<ModelState> = {
-    [ModelMutation.SetOdinRunner](state: ModelState, payload: OdinRunnerConstructor) {
-        // construct the runner object from the implementation returned by the endpoint
-        state.odinRunner = new payload(dopri);
+    [ModelMutation.SetOdinRunner](state: ModelState, payload: OdinRunner) {
+        state.odinRunner = payload;
     },
 
     [ModelMutation.SetOdin](state: ModelState, payload: Odin) {
