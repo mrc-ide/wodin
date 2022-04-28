@@ -379,7 +379,8 @@ class OdinBase {
         return tot;
     }
 
-    static odinSum6(x, iFrom, iTo, jFrom, jTo, kFrom, kTo, lFrom, lTo, i5From, i5To, i6From, i6To, dim1, dim12, dim123, dim1234, dim12345) {
+    static odinSum6(x, iFrom, iTo, jFrom, jTo, kFrom, kTo, lFrom, lTo, i5From, i5To, i6From, i6To, dim1, dim12,
+                    dim123, dim1234, dim12345) {
         var tot = 0.0;
         for (var i6 = i6From; i6 < i6To; ++i6) {
             var i6i6 = i6 * dim12345;
@@ -402,7 +403,8 @@ class OdinBase {
         return tot;
     }
 
-    static odinSum7(x, iFrom, iTo, jFrom, jTo, kFrom, kTo, lFrom, lTo, i5From, i5To, i6From, i6To, i7From, i7To, dim1, dim12, dim123, dim1234, dim12345, dim123456) {
+    static odinSum7(x, iFrom, iTo, jFrom, jTo, kFrom, kTo, lFrom, lTo, i5From, i5To, i6From, i6To, i7From, i7To, dim1,
+                    dim12, dim123, dim1234, dim12345, dim123456) {
         var tot = 0.0;
         for (var i7 = i7From; i7 < i7To; ++i7) {
             var i7i7 = i7 * dim123456;
@@ -428,7 +430,8 @@ class OdinBase {
         return tot;
     }
 
-    static odinSum8(x, iFrom, iTo, jFrom, jTo, kFrom, kTo, lFrom, lTo, i5From, i5To, i6From, i6To, i7From, i7To, i8From, i8To, dim1, dim12, dim123, dim1234, dim12345, dim123456, dim1234567) {
+    static odinSum8(x, iFrom, iTo, jFrom, jTo, kFrom, kTo, lFrom, lTo, i5From, i5To, i6From, i6To, i7From, i7To, i8From,
+                    i8To, dim1, dim12, dim123, dim1234, dim12345, dim123456, dim1234567) {
         var tot = 0.0;
         for (var i8 = i8From; i8 < i8To; ++i8) {
             var i8i8 = i8 * dim1234567;
