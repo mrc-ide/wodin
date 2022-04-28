@@ -27,9 +27,13 @@ export interface StochasticConfig {
 }
 
 export interface Odin {
-    new(...args : any[]): unknown
+    new(...args : unknown[]): unknown
 }
 
 export type OdinSolution = (t0: number, t1: number, nPoints: number) => {x: number, y: number}[];
 
-export type OdinRunner = (dopri: unknown, odin: Odin, pars: Record<string, number>, tStart: number, tEnd: number, control: unknown ) => OdinSolution;
+export type OdinRunner = (dopri: unknown, odin: Odin,
+                          pars: Record<string, number>,
+                          tStart: number,
+                          tEnd: number,
+                          control: unknown) => OdinSolution;

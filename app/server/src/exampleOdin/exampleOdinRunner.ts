@@ -459,7 +459,7 @@ class OdinBase {
 
 }
 
-function wodinRunner(Dopri, Model, pars, tStart, tEnd, control) {
+(Dopri, Model, pars, tStart, tEnd, control) => {
     const grid = function(from, to, len) {
         const dx = (to - from) / (len - 1);
         const x = [];
@@ -480,6 +480,4 @@ function wodinRunner(Dopri, Model, pars, tStart, tEnd, control) {
         return y[0].map((_, i) => ({
             x: t, y: y.map(row => row[i]), name: names[i]}));
     }
-}
-
-wodinRunner;`;
+};`;

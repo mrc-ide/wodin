@@ -67,8 +67,9 @@ describe("RunModelPlot", () => {
 
     const expectedRunModelPayload = {
         parameters: {},
+        start: 0,
         end: 100,
-        points: 1000
+        control: {}
     };
 
     it("runs model when odin is updated, if odin runner is set", async () => {

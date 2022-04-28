@@ -1,4 +1,4 @@
-export const exampleOdinModel = `class Odin {
+export const exampleOdinModel = `(class {
   constructor(base, user, unusedUserAction) {
     this.base = base;
     this.internal = {};
@@ -37,7 +37,4 @@ export const exampleOdinModel = `class Odin {
     internal.initial_N = internal.N0;
     this.updateMetadata();
   }
-}
-
-Odin;
-`;
+})`;

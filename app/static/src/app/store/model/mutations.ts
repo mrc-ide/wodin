@@ -1,6 +1,6 @@
 import { MutationTree } from "vuex";
 import { ModelState } from "./state";
-import {Odin, OdinRunner, OdinSolution} from "../../types/responseTypes";
+import { Odin, OdinRunner, OdinSolution } from "../../types/responseTypes";
 
 export enum ModelMutation {
     SetOdinRunner = "SetOdinRunner",
