@@ -69,7 +69,7 @@ describe("Model actions", () => {
     };
 
     it("runs model", () => {
-        const mockRunner = jest.fn(() => "test solution" as any);
+        const mockRunner = jest.fn((dop, odin, pars, start, end, control) => "test solution" as any);
         const mockOdin = {} as any;
 
         const state = mockModelState({

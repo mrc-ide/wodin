@@ -32,7 +32,8 @@ export interface Odin {
 
 export type OdinSolution = (t0: number, t1: number, nPoints: number) => {x: number, y: number}[];
 
-export type OdinRunner = (dopri: unknown, odin: Odin,
+export type OdinRunner = (dopri: unknown,
+                          odin: Odin,
                           pars: Record<string, number>,
                           tStart: number,
                           tEnd: number,
