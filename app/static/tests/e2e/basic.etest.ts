@@ -69,12 +69,12 @@ test.describe("Basic app tests", () => {
         await expectBothMode(page);
     });
 
-    test("renders Code tab", async ({page}) => {
+    test("renders Code tab", async ({ page }) => {
         expect(await page.innerText(".wodin-left .wodin-content .nav-tabs .active")).toBe("Code");
         expect(await page.innerText(".wodin-left .wodin-content div.mt-4")).toBe("Coming soon: Code editor");
     });
 
-    test("can change to Options tab and back", async ({page}) => {
+    test("can change to Options tab and back", async ({ page }) => {
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
         expect(await page.innerText(".wodin-left .wodin-content .nav-tabs .active")).toBe("Options");
         expect(await page.innerText(".wodin-left .wodin-content div.mt-4")).toBe("Coming soon: Options editor.");
@@ -93,7 +93,7 @@ test.describe("Basic app tests", () => {
         expect(await page.isVisible(`${plotSelector} .modebar`)).toBe(true);
     });
 
-    test("can change to Sensitivity tab and back", async ({page}) => {
+    test("can change to Sensitivity tab and back", async ({ page }) => {
         await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
         expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Sensitivity");
         expect(await page.innerText(".wodin-right .wodin-content div.mt-4")).toBe("Coming soon: Sensitivity plot");
