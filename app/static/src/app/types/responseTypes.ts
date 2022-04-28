@@ -30,12 +30,11 @@ export interface Odin {
     new(...args : unknown[]): unknown
 }
 
-export type OdinSolution = (t0: number, t1: number) => {x: number, y: number}[];
+export type OdinSolution = (t0: number, t1: number, nPoints: number) => {x: number, y: number}[];
 
-export interface OdinRunner {
-    runModel: (pars: Record<string, number>, tEnd: number, nPoints: number, odin: Odin) => OdinSolution
-}
-
-export interface OdinRunnerConstructor {
-    new(dopri: unknown): OdinRunner
-}
+export type OdinRunner = (dopri: unknown,
+                          odin: Odin,
+                          pars: Record<string, number>,
+                          tStart: number,
+                          tEnd: number,
+                          control: unknown) => OdinSolution;

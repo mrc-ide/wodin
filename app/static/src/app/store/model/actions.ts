@@ -1,3 +1,4 @@
+import * as dopri from "dopri";
 import { ActionTree } from "vuex";
 import { ModelState } from "./state";
 import { api } from "../../apiService";
@@ -30,9 +31,11 @@ export const actions: ActionTree<ModelState, AppState> = {
     RunModel(context, payload: RunModelPayload) {
         const { state, commit } = context;
         if (state.odinRunner && state.odin) {
-            const { parameters, end, points } = payload;
+            const {
+                parameters, start, end, control
+            } = payload;
 
-            const solution = state.odinRunner.runModel(parameters, end, points, state.odin);
+            const solution = state.odinRunner(dopri.Dopri, state.odin, parameters, start, end, control);
             commit(ModelMutation.SetOdinSolution, solution);
         }
     }

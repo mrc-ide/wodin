@@ -1,3 +1,4 @@
+import * as dopri from "dopri";
 import { mockAxios, mockFailure, mockModelState } from "../../../mocks";
 import { ModelAction, actions } from "../../../../src/app/store/model/actions";
 import { ModelMutation } from "../../../../src/app/store/model/mutations";
@@ -62,15 +63,13 @@ describe("Model actions", () => {
 
     const runModelPayload = {
         parameters: { p1: 1, p2: 2 },
+        start: 0,
         end: 100,
-        points: 1000
+        control: {}
     };
 
     it("runs model", () => {
-        const mockRunModel = jest.fn((parameters, end, points, odin) => "test solution");
-        const mockRunner = {
-            runModel: mockRunModel
-        } as any;
+        const mockRunner = jest.fn((dop, odin, pars, start, end, control) => "test solution" as any);
         const mockOdin = {} as any;
 
         const state = mockModelState({
@@ -81,10 +80,12 @@ describe("Model actions", () => {
 
         (actions[ModelAction.RunModel] as any)({ commit, state }, runModelPayload);
 
-        expect(mockRunModel.mock.calls[0][0]).toStrictEqual({ p1: 1, p2: 2 });
-        expect(mockRunModel.mock.calls[0][1]).toBe(100);
-        expect(mockRunModel.mock.calls[0][2]).toBe(1000);
-        expect(mockRunModel.mock.calls[0][3]).toBe(mockOdin);
+        expect(mockRunner.mock.calls[0][0]).toBe(dopri.Dopri);
+        expect(mockRunner.mock.calls[0][1]).toBe(mockOdin);
+        expect(mockRunner.mock.calls[0][2]).toStrictEqual({ p1: 1, p2: 2 });
+        expect(mockRunner.mock.calls[0][3]).toBe(0); // stasrt
+        expect(mockRunner.mock.calls[0][4]).toBe(100); // end
+        expect(mockRunner.mock.calls[0][5]).toStrictEqual({}); // control
 
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinSolution);
         expect(commit.mock.calls[0][1]).toBe("test solution");
@@ -105,10 +106,7 @@ describe("Model actions", () => {
     });
 
     it("run model does nothing if odin is not set", () => {
-        const mockRunModel = jest.fn((parameters, end, points, odin) => "test solution");
-        const mockRunner = {
-            runModel: mockRunModel
-        } as any;
+        const mockRunner = jest.fn();
 
         const state = mockModelState({
             odinRunner: mockRunner,
@@ -119,6 +117,6 @@ describe("Model actions", () => {
         (actions[ModelAction.RunModel] as any)({ commit, state }, runModelPayload);
 
         expect(commit).not.toHaveBeenCalled();
-        expect(mockRunModel).not.toHaveBeenCalled();
+        expect(mockRunner).not.toHaveBeenCalled();
     });
 });

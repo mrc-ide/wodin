@@ -69,8 +69,9 @@ describe("RunModelPlot", () => {
 
     const expectedRunModelPayload = {
         parameters: {},
+        start: 0,
         end: 100,
-        points: 1000
+        control: {}
     };
 
     it("runs model on mount if odin and runner are both set", () => {
