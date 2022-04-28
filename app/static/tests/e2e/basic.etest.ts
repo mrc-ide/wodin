@@ -6,8 +6,8 @@ test.describe("Basic app tests", () => {
     });
 
     const expectBothMode = async (page: Page) => {
-        expect(await page.locator(".wodin-mode-both .wodin-left .wodin-content #app-type").textContent())
-            .toBe("App Type: basic");
+        expect(await page.innerText(".wodin-mode-both .wodin-left .wodin-content div.mt-4"))
+            .toBe("Coming soon: Code editor");
         expect(await page.locator(".wodin-mode-both .wodin-right .wodin-content .js-plotly-plot")).toBeVisible();
         expect(await page.locator(".wodin-collapse-controls #collapse-left")).toBeVisible();
         expect(await page.locator(".wodin-collapse-controls #collapse-right")).toBeVisible();
@@ -75,7 +75,7 @@ test.describe("Basic app tests", () => {
     });
 
     test("can change to Options tab and back", async ({page}) => {
-        await page.click(":nth-match(.wodin-left .nav-tabs, 2)");
+        await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
         expect(await page.innerText(".wodin-left .wodin-content .nav-tabs .active")).toBe("Options");
         expect(await page.innerText(".wodin-left .wodin-content div.mt-4")).toBe("Coming soon: Options editor.");
     });
@@ -94,7 +94,7 @@ test.describe("Basic app tests", () => {
     });
 
     test("can change to Sensitivity tab and back", async ({page}) => {
-        await page.click(":nth-match(.wodin-right .nav-tabs, 2)");
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
         expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Sensitivity");
         expect(await page.innerText(".wodin-right .wodin-content div.mt-4")).toBe("Coming soon: Sensitivity plot");
     });
