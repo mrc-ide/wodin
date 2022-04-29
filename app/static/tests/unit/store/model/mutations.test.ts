@@ -1,42 +1,13 @@
-import * as dopri from "dopri";
 import { mutations } from "../../../../src/app/store/model/mutations";
 import { mockModelState } from "../../../mocks";
 
 describe("Model mutations", () => {
-    it("sets odin utils", () => {
-        class TestHelpers {
-            public name: string;
-
-            constructor() {
-                this.name = "helpers";
-            }
-        }
-
-        class TestRunner {
-            public name: string;
-
-            public helpers: TestHelpers;
-
-            public dopri: unknown;
-
-            constructor(helpers: TestHelpers, dopriImpl: unknown) {
-                this.name = "runner";
-                this.helpers = helpers;
-                this.dopri = dopriImpl;
-            }
-        }
-
-        const payload = {
-            helpers: TestHelpers as any,
-            runner: TestRunner as any
-        };
+    it("sets odin runner", () => {
+        const mockRunner = jest.fn();
         const state = mockModelState();
 
-        mutations.SetOdinUtils(state, payload);
-        expect(state.odinUtils!.helpers.name).toBe("helpers");
-        expect((state.odinUtils!.runner as any).name).toBe("runner");
-        expect((state.odinUtils!.runner as any).helpers).toBe(state.odinUtils!.helpers);
-        expect((state.odinUtils!.runner as any).dopri).toBe(dopri);
+        mutations.SetOdinRunner(state, mockRunner);
+        expect(state.odinRunner).toBe(mockRunner);
     });
 
     it("sets odin", () => {

@@ -1,13 +1,13 @@
 import { Application, Request, Response } from "express";
 import { exampleOdinModel } from "../exampleOdin/exampleOdinModel";
-import { exampleOdinUtils } from "../exampleOdin/exampleOdinUtils";
 import axios from "axios";
+import { exampleOdinRunner } from "../exampleOdin/exampleOdinRunner";
 
 export class OdinController {
     private readonly _path = "/odin";
 
     registerRoutes = (app: Application) => {
-        app.get(`${this._path}/utils`, OdinController.getUtils);
+        app.get(`${this._path}/runner`, OdinController.getRunner);
         app.post(`${this._path}/model`, OdinController.postModel);
     };
 
@@ -15,9 +15,9 @@ export class OdinController {
         res.header("Content-Type", "application/javascript");
     };
 
-    static getUtils = (req: Request, res: Response) => {
+    static getRunner = (req: Request, res: Response) => {
         OdinController.addHeader(res);
-        res.end(exampleOdinUtils);
+        res.end(exampleOdinRunner);
     };
 
     static postModel = async (req: Request, res: Response) => {

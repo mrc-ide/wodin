@@ -63,7 +63,7 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
 
 export const mockModelState = (state: Partial<ModelState> = {}): ModelState => {
     return {
-        odinUtils: null,
+        odinRunner: null,
         odin: null,
         odinSolution: null,
         ...state
