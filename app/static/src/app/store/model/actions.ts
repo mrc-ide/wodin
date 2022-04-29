@@ -22,7 +22,7 @@ export const actions: ActionTree<ModelState, AppState> = {
     },
 
     async FetchOdin(context) {
-        const odinCode = `"model": [
+        const odinCode = {model: [
         "deriv(y1) <- sigma * (y2 - y1)",
         "deriv(y2) <- R * y1 - y2 - y1 * y3",
         "deriv(y3) <- -b * y3 + y1 * y2",
@@ -32,7 +32,7 @@ export const actions: ActionTree<ModelState, AppState> = {
         "sigma <- 10.0",
         "R     <- 28.0",
         "b     <-  8.0 / 3.0"
-    ]`;
+    ]};
 
         await api(context)
             .withSuccess(ModelMutation.SetOdin)

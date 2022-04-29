@@ -1,7 +1,5 @@
 import { Application, Request, Response } from "express";
-import { exampleOdinModel } from "../exampleOdin/exampleOdinModel";
 import axios from "axios";
-import { exampleOdinRunner } from "../exampleOdin/exampleOdinRunner";
 
 export class OdinController {
     private readonly _path = "/odin";
@@ -16,39 +14,29 @@ export class OdinController {
     };
 
     static getRunner = (req: Request, res: Response) => {
-        OdinController.addHeader(res);
-        res.end(exampleOdinRunner);
+        axios.get("http://localhost:8001/support/runner-ode")
+            .then((apiResponse) => {
+                OdinController.addHeader(res);
+                res.end(apiResponse.data.data);
+            })
+            .catch((errorResponse) => {
+                res.end(errorResponse.body)
+            });
+
     };
 
-    static postModel = async (req: Request, res: Response) => {
+    static postModel = (req: Request, res: Response) => {
 
         console.log("Making request with:")
         console.log(JSON.stringify(req.body))
 
-        const hackBody = `{"model": [
-        "deriv(y1) <- sigma * (y2 - y1)",
-        "deriv(y2) <- R * y1 - y2 - y1 * y3",
-        "deriv(y3) <- -b * y3 + y1 * y2",
-        "initial(y1) <- 10.0",
-        "initial(y2) <- 1.0",
-        "initial(y3) <- 1.0",
-        "sigma <- 10.0",
-        "R     <- 28.0",
-        "b     <-  8.0 / 3.0"
-    ]}`;
-
-        axios.post("http://localhost:8001/compile", JSON.parse(hackBody), {headers: {'Content-Type': 'application/json'}})
+        axios.post("http://localhost:8001/compile", req.body, {headers: {'Content-Type': 'application/json'}})
             .then((apiResponse) => {
-                console.log("got response")
-                console.log(JSON.stringify(apiResponse.data)) //TODO: return full response and edal with it in front end
                 OdinController.addHeader(res)
-
-                console.log("RETURNING MODEL:")
-                console.log(JSON.stringify(apiResponse.data))
-
                 res.end(apiResponse.data.data.model);
             })
             .catch((errorResponse) => {
+                //TODO: generic error handling
                 console.log("error");
                 console.log(JSON.stringify(errorResponse))
                 res.end(errorResponse.body)

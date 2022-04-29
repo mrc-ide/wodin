@@ -140,7 +140,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         return this._handleAxiosResponse(axios.get(url, { headers: this._headers }));
     }
 
-    async getScript<T>(url: string, body: string | null = null): Promise<void | T> {
+    async getScript<T>(url: string, body: any = null): Promise<void | T> {
         this._verifyHandlers(url);
 
         const reqHeader = "Accept";
@@ -150,7 +150,8 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         const headers = { ...this._headers };
         headers[reqHeader] = headerValue;
 
-        //TODO: sort oout get vs post in better way than this
+        //TODO: model and runner are both coming back from odin.api wrapped with other JSON, not as pure JS. So separate
+        //out the JS eval from apiService here- just do a standard get/post and leave mutation to eval
         const handleSuccess = (axiosResponse: AxiosResponse) => {
             if (!axiosResponse.headers[respHeader] || !axiosResponse.headers[respHeader].startsWith(headerValue)) {
                 const errorMsg = `Response from ${url} must have ${respHeader}: ${headerValue} to get as script`;
