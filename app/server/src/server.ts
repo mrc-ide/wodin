@@ -10,9 +10,11 @@ const express = require("express");
 const path = require("path");
 const hbs = require("hbs");
 const yargs = require("yargs/yargs");
+const bodyParser = require('body-parser')
 const { hideBin } = require("yargs/helpers");
 
 const app = express();
+app.use(bodyParser());
 
 const rootDir = path.join(__dirname, "..");
 

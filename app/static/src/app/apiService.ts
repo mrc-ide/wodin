@@ -140,7 +140,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         return this._handleAxiosResponse(axios.get(url, { headers: this._headers }));
     }
 
-    async getScript<T>(url: string): Promise<void | T> {
+    async getScript<T>(url: string, body: string | null = null): Promise<void | T> {
         this._verifyHandlers(url);
 
         const reqHeader = "Accept";
@@ -149,7 +149,9 @@ export class APIService<S extends string, E extends string> implements API<S, E>
 
         const headers = { ...this._headers };
         headers[reqHeader] = headerValue;
-        return axios.get(url, { headers }).then((axiosResponse: AxiosResponse) => {
+
+        //TODO: sort oout get vs post in better way than this
+        const handleSuccess = (axiosResponse: AxiosResponse) => {
             if (!axiosResponse.headers[respHeader] || !axiosResponse.headers[respHeader].startsWith(headerValue)) {
                 const errorMsg = `Response from ${url} must have ${respHeader}: ${headerValue} to get as script`;
                 this._commitError(APIService.createError(errorMsg));
@@ -162,9 +164,19 @@ export class APIService<S extends string, E extends string> implements API<S, E>
                 this._onSuccess(result);
             }
             return result;
-        }).catch((e: AxiosError) => {
-            return this._handleError(e);
-        });
+        };
+
+        if (!body) {
+            axios.get(url, { headers }).then(handleSuccess) //TODO: keep const of promise, not handleSuccess
+                .catch((e: AxiosError) => {
+                    return this._handleError(e);
+                });
+        } else {
+            axios.post(url, body,{ ...headers, "Content-Type": 'application/json' }).then(handleSuccess)
+                .catch((e: AxiosError) => {
+                    return this._handleError(e);
+                });
+        }
     }
 }
 

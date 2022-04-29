@@ -1,4 +1,5 @@
 {
     "port": 3000,
-    "appsPath": "apps"
+    "appsPath": "apps",
+    "odinAPI": "http://localhost:8001"
 }
