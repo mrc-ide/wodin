@@ -1,5 +1,5 @@
 import { Application, Request, Response } from "express";
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 
 export class OdinController {
     private readonly _path = "/odin";
@@ -14,13 +14,16 @@ export class OdinController {
     };
 
     static getRunner = (req: Request, res: Response) => {
+        //TODO: get base url from config - server side api class with error handling
+        //TODO: can we do more of a pass-through response style? Pass out the response with body, headers, status
+        // as it came back from the api, whether success or failure
         axios.get("http://localhost:8001/support/runner-ode")
             .then((apiResponse) => {
                 OdinController.addHeader(res);
                 res.end(apiResponse.data.data);
             })
-            .catch((errorResponse) => {
-                res.end(errorResponse.body)
+            .catch((e: AxiosError) => {
+                res.end(e)
             });
 
     };
@@ -35,11 +38,11 @@ export class OdinController {
                 OdinController.addHeader(res)
                 res.end(apiResponse.data.data.model);
             })
-            .catch((errorResponse) => {
+            .catch((e: AxiosError) => {
                 //TODO: generic error handling
                 console.log("error");
-                console.log(JSON.stringify(errorResponse))
-                res.end(errorResponse.body)
+                console.log(JSON.stringify(e))
+                res.end(e)
             });
 
     };
