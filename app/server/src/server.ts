@@ -2,8 +2,6 @@
 
 import { Request, Response } from "express";
 import { ConfigReader } from "./configReader";
-import { ConfigController } from "./controllers/configController";
-import { OdinController } from "./controllers/odinController";
 import { WodinConfig } from "./types";
 
 const express = require("express");
@@ -55,11 +53,11 @@ app.get(`/${appsPath}/:appName`, (req: Request, res: Response) => {
     }
 });
 
-const configController = new ConfigController(configReader, appsPath);
-configController.registerRoutes(app);
-
-const odinController = new OdinController();
-odinController.registerRoutes(app);
+app.set("configPath", configPath); //TODO: consts for these
+app.set("appsPath", appsPath);
+app.locals.testy = "testy";
+const routes = require('./routes');
+app.use("/", routes);
 
 app.use((req: Request, res: Response) => {
     const { url } = req;

@@ -1,10 +1,8 @@
-import { Application, Request, Response } from "express";
+import { Request, Response } from "express";
 import { ConfigReader } from "../configReader";
 import { ErrorCode, jsonResponseError, jsonResponseSuccess } from "../jsonResponse";
 
 export class ConfigController {
-    private readonly _path = "/config";
-
     private readonly _configReader: ConfigReader;
 
     private readonly _appsPath: string;
@@ -16,10 +14,6 @@ export class ConfigController {
 
     private _readAppConfigFile = (appName: string) => {
         return this._configReader.readConfigFile(this._appsPath, `${appName}.config.json`);
-    };
-
-    registerRoutes = (app: Application) => {
-        app.get(`${this._path}/:appName`, this.getConfig);
     };
 
     getConfig = (req: Request, res: Response) => {
