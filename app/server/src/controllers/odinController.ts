@@ -1,17 +1,14 @@
 import { Application, Request, Response } from "express";
 import { exampleOdinModel } from "../exampleOdin/exampleOdinModel";
 import { exampleOdinRunner } from "../exampleOdin/exampleOdinRunner";
+import { Controller } from "./controller";
 
-export class OdinController {
+export class OdinController extends Controller {
     private readonly _path = "/odin";
 
     registerRoutes = (app: Application) => {
         app.get(`${this._path}/runner`, OdinController.getRunner);
         app.get(`${this._path}/model`, OdinController.getModel);
-    };
-
-    private static addHeader = (res: Response) => {
-        res.header("Content-Type", "application/javascript");
     };
 
     static getRunner = (req: Request, res: Response) => {
