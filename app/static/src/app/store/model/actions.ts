@@ -1,3 +1,4 @@
+import * as dopri from "dopri";
 import { ActionTree } from "vuex";
 import { ModelState } from "./state";
 import { api } from "../../apiService";
@@ -7,17 +8,17 @@ import { RunModelPayload } from "../../types/actionPayloadTypes";
 import { ErrorsMutation } from "../errors/mutations";
 
 export enum ModelAction {
-    FetchOdinUtils = "FetchOdinUtils",
+    FetchOdinRunner = "FetchOdinRunner",
     FetchOdin = "FetchOdin",
     RunModel = "RunModel"
 }
 
 export const actions: ActionTree<ModelState, AppState> = {
-    async FetchOdinUtils(context) {
+    async FetchOdinRunner(context) {
         await api(context)
-            .withSuccess(ModelMutation.SetOdinUtils)
+            .withSuccess(ModelMutation.SetOdinRunner)
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
-            .getScript<string>("/odin/utils");
+            .getScript<string>("/odin/runner");
     },
 
     async FetchOdin(context) {
@@ -29,11 +30,12 @@ export const actions: ActionTree<ModelState, AppState> = {
 
     RunModel(context, payload: RunModelPayload) {
         const { state, commit } = context;
-        if (state.odinUtils && state.odin) {
-            const { parameters, end, points } = payload;
+        if (state.odinRunner && state.odin) {
+            const {
+                parameters, start, end, control
+            } = payload;
 
-            const { runner } = state.odinUtils;
-            const solution = runner.runModel(parameters, end, points, state.odin);
+            const solution = state.odinRunner(dopri.Dopri, state.odin, parameters, start, end, control);
             commit(ModelMutation.SetOdinSolution, solution);
         }
     }

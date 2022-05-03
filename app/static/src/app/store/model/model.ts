@@ -3,7 +3,7 @@ import { actions } from "./actions";
 import { mutations } from "./mutations";
 
 const defaultState: ModelState = {
-    odinUtils: null,
+    odinRunner: null,
     odin: null,
     odinSolution: null
 };

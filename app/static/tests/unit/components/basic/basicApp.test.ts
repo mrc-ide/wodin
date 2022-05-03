@@ -33,7 +33,7 @@ describe("BasicApp", () => {
                     namespaced: true,
                     state: mockModelState(),
                     actions: {
-                        [ModelAction.FetchOdinUtils]: jest.fn(),
+                        [ModelAction.FetchOdinRunner]: jest.fn(),
                         [ModelAction.FetchOdin]: jest.fn()
                     }
                 },
