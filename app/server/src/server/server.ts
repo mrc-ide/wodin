@@ -2,6 +2,8 @@
 
 import { ConfigReader } from "../configReader";
 import { WodinConfig } from "../types";
+import { registerViews } from "./views";
+import { registerRoutes } from "../routes";
 
 const express = require("express");
 const path = require("path");
@@ -26,10 +28,10 @@ app.use(express.static(path.join(rootDir, "public")));
 app.use("/files", express.static(path.join(configPath, "files")));
 
 // Views
-require("./views")(app, rootDir);
+registerViews(app, rootDir);
 
 // Routes
-const routes = require("../routes")(app);
+const routes = registerRoutes(app);
 
 app.use("/", routes);
 

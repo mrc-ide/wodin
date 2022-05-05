@@ -1,13 +1,18 @@
 import { Application, Request, Response } from "express";
 import { IndexController } from "../controllers/indexController";
+import appsRoutes from "./apps";
+import odinRoutes from "./odin";
+import configRoutes from "./config";
 
-module.exports = (app: Application) => {
-    const router = require("express").Router();
+const express = require("express");
+
+export const registerRoutes = (app: Application) => {
+    const router = express.Router();
 
     router.get("/", IndexController.getIndex);
-    router.use("/odin", require("./odin"));
-    router.use("/config", require("./config"));
-    router.use(`/${app.locals.appsPath}`, require("./apps"));
+    router.use("/odin", odinRoutes);
+    router.use("/config", configRoutes);
+    router.use(`/${app.locals.appsPath}`, appsRoutes);
 
     router.use((req: Request, res: Response) => {
         const { url } = req;

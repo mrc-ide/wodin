@@ -1,7 +1,7 @@
 import { ConfigController } from "../../src/controllers/configController";
 import * as jsonResponse from "../../src/jsonResponse";
 import { ErrorCode } from "../../src/jsonResponse";
-import {ConfigReader} from "../../src/configReader";
+import { ConfigReader } from "../../src/configReader";
 
 describe("configController", () => {
     const getRequest = (configReader: ConfigReader) => {

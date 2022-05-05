@@ -4,4 +4,4 @@ const router = require("express").Router();
 
 router.get("/:appName", ConfigController.getConfig);
 
-module.exports = router;
+export default router;
