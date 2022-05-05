@@ -31,9 +31,7 @@ app.use("/files", express.static(path.join(configPath, "files")));
 registerViews(app, rootDir);
 
 // Routes
-const routes = registerRoutes(app);
-
-app.use("/", routes);
+app.use("/", registerRoutes(app));
 
 app.listen(port, () => {
     console.log(`WODIN server listening on port ${port}`);
