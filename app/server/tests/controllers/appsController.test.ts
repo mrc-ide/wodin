@@ -1,4 +1,3 @@
-import clearAllMocks = jest.clearAllMocks;
 import { AppsController } from "../../src/controllers/appsController";
 
 describe("appsController", () => {
@@ -27,7 +26,7 @@ describe("appsController", () => {
     } as any;
 
     afterEach(() => {
-        clearAllMocks();
+        jest.clearAllMocks();
     });
 
     it("renders view with app config", () => {
