@@ -5,7 +5,7 @@
 
 <script lang="ts">
 import {
-    computed, defineComponent, ref, watch
+    computed, defineComponent, ref, watch, onMounted, onUnmounted
 } from "vue";
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
@@ -71,6 +71,8 @@ export default defineComponent({
             Plots.resize(plot.value as HTMLElement);
         };
 
+        let resizeObserver: null | ResizeObserver = null;
+
         const drawPlot = () => {
             if (baseData.value) {
                 const el = plot.value as unknown;
@@ -79,23 +81,32 @@ export default defineComponent({
                 };
                 newPlot(el as HTMLElement, baseData.value as Data[], layout, config);
                 (el as EventEmitter).on("plotly_relayout", relayout);
-                new ResizeObserver(resize).observe(el as HTMLElement);
+                resizeObserver = new ResizeObserver(resize);
+                resizeObserver.observe(plot.value as HTMLElement);
             }
         };
 
-        watch(odin, () => {
+        watch([odin, odinRunner], () => {
             // TODO: Eventually it probably won't be the component initiating run model, but the store, on updates
-            // to code or parameters - whic is not yet implemented
-            runModel();
-        });
-
-        watch(odinRunner, () => {
+            // to code or parameters - which is not yet implemented
             runModel();
         });
 
         watch(solution, () => {
-            baseData.value = solution.value(0, 100, nPoints); // TODO: default end time will eventually be a prop
+            // TODO: default end time will eventually be configured in the app
+            baseData.value = solution.value(0, 100, nPoints);
+
             drawPlot();
+        });
+
+        onMounted(() => {
+            runModel();
+        });
+
+        onUnmounted(() => {
+            if (resizeObserver) {
+                resizeObserver.disconnect();
+            }
         });
 
         return {
