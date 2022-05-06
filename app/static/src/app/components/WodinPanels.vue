@@ -20,7 +20,7 @@
             <div class="view-right" @click="collapseLeft()">
                 View Charts
             </div>
-            <div class="wodin-content" id="wodin-content-right">
+            <div class="wodin-content p-2" id="wodin-content-right">
                 <slot name="right"></slot>
             </div>
         </div>
