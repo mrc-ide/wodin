@@ -7,12 +7,12 @@
                    aria-current="page"
                    href="#"
                    @click="tabSelected(tabName)">
-                    {{tabName}}
+                    {{ tabName }}
                 </a>
             </li>
         </ul>
         <div class="mt-4">
-            <slot :name="selectedTabName" />
+            <slot :name="selectedTabName"/>
         </div>
     </div>
 </template>

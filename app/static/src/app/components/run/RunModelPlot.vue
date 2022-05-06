@@ -86,13 +86,9 @@ export default defineComponent({
             }
         };
 
-        watch(odin, () => {
+        watch([odin, odinRunner], () => {
             // TODO: Eventually it probably won't be the component initiating run model, but the store, on updates
             // to code or parameters - which is not yet implemented
-            runModel();
-        });
-
-        watch(odinRunner, () => {
             runModel();
         });
 
