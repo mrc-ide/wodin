@@ -12,22 +12,6 @@ describe("odinController", () => {
         jest.resetAllMocks();
     });
 
-    it("registerRoutes adds routes", () => {
-        const mockGet = jest.fn();
-        const app = {
-            get: mockGet
-        } as any;
-
-        const sut = new OdinController();
-        sut.registerRoutes(app);
-
-        expect(mockGet.mock.calls.length).toBe(2);
-        expect(mockGet.mock.calls[0][0]).toBe("/odin/runner");
-        expect(mockGet.mock.calls[0][1]).toBe(OdinController.getRunner);
-        expect(mockGet.mock.calls[1][0]).toBe("/odin/model");
-        expect(mockGet.mock.calls[1][1]).toBe(OdinController.getModel);
-    });
-
     it("getRunner adds header and returns runner script", () => {
         OdinController.getRunner({} as any, mockResponse);
 
