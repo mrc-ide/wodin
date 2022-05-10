@@ -1,7 +1,7 @@
 import { shallowMount, VueWrapper } from "@vue/test-utils";
 import WodinPanels from "../../../src/app/components/WodinPanels.vue";
 
-describe("WodinPaneks", () => {
+describe("WodinPanels", () => {
     const getWrapper = () => {
         return shallowMount(WodinPanels, {
             slots: {
