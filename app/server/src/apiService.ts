@@ -11,14 +11,18 @@ export class APIService {
         res.end(apiResponse.data);
     };
 
-    private static headersFromRequest = (req: Request) => {
-        const result = {} as Record<string, string>;
+    private static getRequestConfig = (req: Request) => {
+        const headers = {} as Record<string, string>;
         Object.keys(req.headers).forEach((key: string) => {
             if (req.headers[key]) {
-                result[key] = req.headers[key]!.toString();
+                headers[key] = req.headers[key]!.toString();
             }
         });
-        return result;
+
+        // do not parse json response before passing through
+        const transformResponse = (data: string) => data;
+
+        return { headers, transformResponse };
     };
 
     private static fullUrl = (req: Request, url: string) => {
@@ -27,12 +31,12 @@ export class APIService {
     };
 
     static get = async (url: string, req: Request, res: Response) => {
-        const apiResponse = await axios.get(APIService.fullUrl(req, url), APIService.headersFromRequest(req));
+        const apiResponse = await axios.get(APIService.fullUrl(req, url), APIService.getRequestConfig(req));
         APIService.passThroughResponse(apiResponse, res);
     };
 
     static post = async (url: string, body: string, req: Request, res: Response) => {
-        const apiResponse = await axios.post(APIService.fullUrl(req, url), body, APIService.headersFromRequest(req));
+        const apiResponse = await axios.post(APIService.fullUrl(req, url), body, APIService.getRequestConfig(req));
         APIService.passThroughResponse(apiResponse, res);
     };
 }

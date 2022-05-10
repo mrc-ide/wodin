@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable no-eval */
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { ActionContext, Commit } from "vuex";
 import { freezer } from "./utils";
@@ -38,7 +37,7 @@ type OnSuccess = (success: ResponseSuccess) => void;
 export class APIService<S extends string, E extends string> implements API<S, E> {
     private readonly _commit: Commit;
 
-    private readonly _headers: any;
+    private readonly _headers = { "Content-Type": "application/json" };
 
     constructor(context: AppCtx) {
         this._commit = context.commit;
@@ -140,44 +139,9 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         return this._handleAxiosResponse(axios.get(url, { headers: this._headers }));
     }
 
-    async getScript<T>(url: string, body: any = null): Promise<void | T> {
+    async post<T>(url: string, body: any = null): Promise<void | ResponseWithType<T>> {
         this._verifyHandlers(url);
-
-        const reqHeader = "Accept";
-        const respHeader = "content-type"; // Express lower-cases all headers
-        const headerValue = "application/javascript";
-
-        const headers = { ...this._headers };
-        headers[reqHeader] = headerValue;
-
-        //TODO: model and runner are both coming back from odin.api wrapped with other JSON, not as pure JS. So separate
-        //out the JS eval from apiService here- just do a standard get/post and leave mutation to eval
-        const handleSuccess = (axiosResponse: AxiosResponse) => {
-            if (!axiosResponse.headers[respHeader] || !axiosResponse.headers[respHeader].startsWith(headerValue)) {
-                const errorMsg = `Response from ${url} must have ${respHeader}: ${headerValue} to get as script`;
-                this._commitError(APIService.createError(errorMsg));
-                return null;
-            }
-            const script = axiosResponse.data;
-            const result = eval(script);
-
-            if (this._onSuccess) {
-                this._onSuccess(result);
-            }
-            return result;
-        };
-
-        if (!body) {
-            axios.get(url, { headers }).then(handleSuccess) //TODO: keep const of promise, not handleSuccess
-                .catch((e: AxiosError) => {
-                    return this._handleError(e);
-                });
-        } else {
-            axios.post(url, body,{ ...headers, "Content-Type": 'application/json' }).then(handleSuccess)
-                .catch((e: AxiosError) => {
-                    return this._handleError(e);
-                });
-        }
+        return this._handleAxiosResponse(axios.post(url, body, { headers: this._headers }));
     }
 }
 

@@ -30,6 +30,16 @@ export interface Odin {
     new(...args : unknown[]): unknown
 }
 
+export interface OdinModelResponse{
+    valid: boolean,
+    metadata: {
+        variables: string[],
+        parameters: string[],
+        messages: string[]
+    },
+    model: string
+}
+
 export type OdinSolution = (t0: number, t1: number, nPoints: number) => {x: number, y: number}[];
 
 export type OdinRunner = (dopri: unknown,

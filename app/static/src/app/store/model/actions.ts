@@ -6,6 +6,7 @@ import { ModelMutation } from "./mutations";
 import { AppState } from "../AppState";
 import { RunModelPayload } from "../../types/actionPayloadTypes";
 import { ErrorsMutation } from "../errors/mutations";
+import { OdinModelResponse } from "../../types/responseTypes";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
@@ -18,26 +19,28 @@ export const actions: ActionTree<ModelState, AppState> = {
         await api(context)
             .withSuccess(ModelMutation.SetOdinRunner)
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
-            .getScript<string>("/odin/runner");
+            .get<string>("/odin/runner");
     },
 
     async FetchOdin(context) {
-        const odinCode = {model: [
-        "deriv(y1) <- sigma * (y2 - y1)",
-        "deriv(y2) <- R * y1 - y2 - y1 * y3",
-        "deriv(y3) <- -b * y3 + y1 * y2",
-        "initial(y1) <- 10.0",
-        "initial(y2) <- 1.0",
-        "initial(y3) <- 1.0",
-        "sigma <- 10.0",
-        "R     <- 28.0",
-        "b     <-  8.0 / 3.0"
-    ]};
+        const odinCode = {
+            model: [
+                "deriv(y1) <- sigma * (y2 - y1)",
+                "deriv(y2) <- R * y1 - y2 - y1 * y3",
+                "deriv(y3) <- -b * y3 + y1 * y2",
+                "initial(y1) <- 10.0",
+                "initial(y2) <- 1.0",
+                "initial(y3) <- 1.0",
+                "sigma <- 10.0",
+                "R     <- 28.0",
+                "b     <-  8.0 / 3.0"
+            ]
+        };
 
         await api(context)
             .withSuccess(ModelMutation.SetOdin)
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
-            .getScript<string>("/odin/model", odinCode);
+            .post<OdinModelResponse>("/odin/model", odinCode);
     },
 
     RunModel(context, payload: RunModelPayload) {
