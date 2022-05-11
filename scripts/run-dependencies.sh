@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 set -ex
 
 ODIN_API_BRANCH=mrc-3183

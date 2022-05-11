@@ -9,6 +9,8 @@ jobs:
         run: npm install -g typescript codecov
       - name: Build
         run: ./scripts/build.sh
+      - name: Run dependencies
+        run: ./scripts/run-dependencies.sh
       - name: Run server
         run: npm run serve --prefix=app/server &
       - name: Test back end
