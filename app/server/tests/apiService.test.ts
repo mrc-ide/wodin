@@ -40,7 +40,10 @@ describe("apiService", () => {
         expect(mockRes.end.mock.calls[0][0]).toStrictEqual(responseData);
     };
 
-    const testExpectedAxiosRequestConfig = (headers: AxiosRequestHeaders, transformResponse: AxiosResponseTransformer) => {
+    const testExpectedAxiosRequestConfig = (
+        headers: AxiosRequestHeaders,
+        transformResponse: AxiosResponseTransformer
+    ) => {
         expect(headers).toStrictEqual({
             Accept: "application/json",
             "Content-Type": "text",
@@ -60,7 +63,10 @@ describe("apiService", () => {
         await APIService.get("/get-endpoint", mockReq, mockRes);
         const { url, headers, transformResponse } = mockAxios.history.get[0];
         expect(url).toBe(expectedUrl);
-        testExpectedAxiosRequestConfig(headers as AxiosRequestHeaders, transformResponse as AxiosResponseTransformer);
+        testExpectedAxiosRequestConfig(
+            headers as AxiosRequestHeaders,
+            transformResponse as AxiosResponseTransformer
+        );
         testExpectedResponse();
     });
 

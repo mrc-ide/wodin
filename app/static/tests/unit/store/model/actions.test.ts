@@ -1,5 +1,7 @@
 import * as dopri from "dopri";
-import { mockAxios, mockFailure, mockModelState } from "../../../mocks";
+import {
+    mockAxios, mockFailure, mockModelState, mockSuccess
+} from "../../../mocks";
 import { ModelAction, actions } from "../../../../src/app/store/model/actions";
 import { ModelMutation } from "../../../../src/app/store/model/mutations";
 
@@ -11,14 +13,13 @@ describe("Model actions", () => {
     it("fetches odin runner", async () => {
         const mockRunnerScript = "() => \"runner\"";
         mockAxios.onGet("/odin/runner")
-            .reply(200, mockRunnerScript, { "content-type": "application/javascript" });
+            .reply(200, mockSuccess(mockRunnerScript));
 
         const commit = jest.fn();
         await (actions[ModelAction.FetchOdinRunner] as any)({ commit });
 
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinRunner);
-        const committed = commit.mock.calls[0][1];
-        expect((committed as any)()).toBe("runner");
+        expect(commit.mock.calls[0][1]).toBe(mockRunnerScript);
     });
 
     it("commits error from fetch odin runner", async () => {
@@ -33,25 +34,22 @@ describe("Model actions", () => {
     });
 
     it("fetches odin model", async () => {
-        const mockOdinScript = `(() => {
-            return {
-                "odin": () => "odin"
-            }
-        })()`;
-
-        mockAxios.onGet("/odin/model")
-            .reply(200, mockOdinScript, { "content-type": "application/javascript" });
+        const testModel = { model: "test" };
+        mockAxios.onPost("/odin/model")
+            .reply(200, mockSuccess(testModel));
 
         const commit = jest.fn();
         await (actions[ModelAction.FetchOdin] as any)({ commit });
 
+        const postData = JSON.parse(mockAxios.history.post[0].data);
+        expect(postData.model[0]).toBe("deriv(y1) <- sigma * (y2 - y1)");
+
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
-        const committed = commit.mock.calls[0][1];
-        expect((committed.odin as any)()).toBe("odin");
+        expect(commit.mock.calls[0][1]).toStrictEqual(testModel);
     });
 
     it("commits error from fetch odin model", async () => {
-        mockAxios.onGet("/odin/model")
+        mockAxios.onPost("/odin/model")
             .reply(500, mockFailure("server error"));
 
         const commit = jest.fn();

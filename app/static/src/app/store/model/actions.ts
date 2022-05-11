@@ -23,6 +23,7 @@ export const actions: ActionTree<ModelState, AppState> = {
     },
 
     async FetchOdin(context) {
+        // TODO: this hardcoded model code will be replaced by config-defined and user-defined code later
         const odinCode = {
             model: [
                 "deriv(y1) <- sigma * (y2 - y1)",

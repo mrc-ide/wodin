@@ -37,8 +37,6 @@ type OnSuccess = (success: ResponseSuccess) => void;
 export class APIService<S extends string, E extends string> implements API<S, E> {
     private readonly _commit: Commit;
 
-    private readonly _headers = { "Content-Type": "application/json" };
-
     constructor(context: AppCtx) {
         this._commit = context.commit;
     }
@@ -136,12 +134,13 @@ export class APIService<S extends string, E extends string> implements API<S, E>
 
     async get<T>(url: string): Promise<void | ResponseWithType<T>> {
         this._verifyHandlers(url);
-        return this._handleAxiosResponse(axios.get(url, { headers: this._headers }));
+        return this._handleAxiosResponse(axios.get(url));
     }
 
-    async post<T>(url: string, body: any = null): Promise<void | ResponseWithType<T>> {
+    async post<T>(url: string, body: any): Promise<void | ResponseWithType<T>> {
         this._verifyHandlers(url);
-        return this._handleAxiosResponse(axios.post(url, body, { headers: this._headers }));
+        const headers = { "Content-Type": "application/json" };
+        return this._handleAxiosResponse(axios.post(url, body, { headers }));
     }
 }
 
