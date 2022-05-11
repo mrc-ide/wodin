@@ -12,6 +12,7 @@ export class APIService {
     };
 
     private static getRequestConfig = (req: Request) => {
+        // Pass through headers from front end
         const headers = {} as Record<string, string>;
         Object.keys(req.headers).forEach((key: string) => {
             if (req.headers[key]) {
