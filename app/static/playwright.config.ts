@@ -5,7 +5,7 @@ const config: PlaywrightTestConfig = {
     use: {
         baseURL: "http://localhost:3000"
     },
-    expect: { timeout: 60000 }
+    expect: { timeout: 120000 }
 };
 
 export default config;
