@@ -4,6 +4,7 @@ import { ConfigReader } from "../configReader";
 import { WodinConfig } from "../types";
 import { registerViews } from "./views";
 import { registerRoutes } from "../routes";
+import { DefaultCodeReader } from "../defaultCodeReader";
 
 const express = require("express");
 const path = require("path");
@@ -21,10 +22,11 @@ const { configPath } = require("./args");
 const configReader = new ConfigReader(configPath);
 const wodinConfig = configReader.readConfigFile("wodin.config.json") as WodinConfig;
 const { port, appsPath, odinAPI } = wodinConfig;
+const defaultCodeReader = new DefaultCodeReader(`${configPath}/defaultCode`);
 
 // Make app locals available to controllers
 Object.assign(app.locals, {
-    appsPath, configPath, configReader, odinAPI
+    appsPath, configPath, configReader, defaultCodeReader, odinAPI
 });
 
 // Static content

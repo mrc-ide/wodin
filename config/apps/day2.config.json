@@ -1,5 +1,6 @@
 {
   "appType": "fit",
   "title": "Day 2 - Model Fit",
-  "fitProp": "day2 fit value"
+  "fitProp": "day2 fit value",
+  "readOnlyCode": false
 }
