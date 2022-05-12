@@ -17,7 +17,7 @@
     "e2e-test": "npx playwright test"
   },
   "resolutions": {
-    "ansi-regex": "4.1.1"
+    "ansi-regex": "5.0.1"
   },
   "dependencies": {
     "axios": "^0.26.0",
@@ -34,29 +34,27 @@
     "@types/plotly.js": "^1.54.20",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
-    "@vue/cli-plugin-babel": "^5.0.4",
-    "@vue/cli-plugin-eslint": "^5.0.4",
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "^4.5.15",
     "@vue/cli-plugin-router": "~4.5.0",
-    "@vue/cli-plugin-typescript": "^5.0.4",
-    "@vue/cli-plugin-unit-jest": "^5.0.4",
+    "@vue/cli-plugin-typescript": "~4.5.0",
+    "@vue/cli-plugin-unit-jest": "~4.5.0",
     "@vue/cli-plugin-vuex": "~4.5.0",
-    "@vue/cli-service": "^5.0.4",
+    "@vue/cli-service": "^4.5.15",
     "@vue/eslint-config-airbnb": "^5.0.2",
     "@vue/eslint-config-typescript": "^10.0.0",
     "@vue/test-utils": "^2.0.0-rc.18",
-    "assert": "^2.0.0",
     "axios-mock-adapter": "^1.20.0",
     "eslint": "^6.7.2",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-vue": "^8.4.1",
     "eslint-plugin-vuejs-accessibility": "^1.1.1",
     "feather-icons": "^4.29.0",
-    "node-sass": "^7.0.1",
-    "sass-loader": "^12.6.0",
-    "stream-browserify": "^3.0.0",
+    "node-sass": "^6.0.1",
+    "sass-loader": "^10.2.1",
     "typescript": "^4.5.5",
     "vue-jest": "^5.0.0-alpha.10",
     "vue-loader": "^17.0.0",
-    "webpack": "^5.72.1"
+    "webpack": "^4.46.0"
   }
 }
