@@ -34,8 +34,6 @@ test.describe("Basic app tests", () => {
     };
 
     test("can collapse and expand left panel", async ({ page }) => {
-        expect(await page.innerHTML(".wodin-mode-both")).toBe("");
-
         await expectBothMode(page);
 
         await page.click("#collapse-left");

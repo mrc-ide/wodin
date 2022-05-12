@@ -4,7 +4,8 @@ const config: PlaywrightTestConfig = {
     testMatch: '*.etest.ts',
     use: {
         baseURL: "http://localhost:3000"
-    }
+    },
+    expect: { timeout: 60000 }
 };
 
 export default config;
