@@ -5,6 +5,8 @@ import { FitState } from "../src/app/store/fit/state";
 import { StochasticState } from "../src/app/store/stochastic/state";
 import { ResponseSuccess, ResponseFailure, APIError } from "../src/app/types/responseTypes";
 import { ModelState } from "../src/app/store/model/state";
+import {CodeState} from "../src/app/store/code/state";
+import mock = jest.mock;
 
 export const mockAxios = new MockAdapter(axios);
 
@@ -28,13 +30,37 @@ export const mockFailure = (errorMessage: string): ResponseFailure => {
     };
 };
 
+const mockAppConfig = {
+    readOnlyCode: false,
+    defaultCode: []
+};
+
+export const mockModelState = (state: Partial<ModelState> = {}): ModelState => {
+    return {
+        odinRunner: null,
+        odin: null,
+        odinSolution: null,
+        odinModelResponse: null,
+        ...state
+    };
+};
+
+export const mockCodeState = (state: Partial<CodeState> = {}): CodeState => {
+    return {
+        code: []
+    };
+};
+
 export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
     return {
         appType: "basic",
         appName: "",
         config: {
-            basicProp: ""
+            basicProp: "",
+            ...mockAppConfig
         },
+        code: mockCodeState(),
+        model: mockModelState(),
         ...state
     };
 };
@@ -44,8 +70,11 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
         appType: "fit",
         appName: "",
         config: {
-            fitProp: ""
+            fitProp: "",
+            ...mockAppConfig
         },
+        code: mockCodeState(),
+        model: mockModelState(),
         ...state
     };
 };
@@ -55,18 +84,11 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
         appType: "stochastic",
         appName: "",
         config: {
-            stochasticProp: ""
+            stochasticProp: "",
+            ...mockAppConfig
         },
-        ...state
-    };
-};
-
-export const mockModelState = (state: Partial<ModelState> = {}): ModelState => {
-    return {
-        odinRunner: null,
-        odin: null,
-        odinSolution: null,
-        odinModelResponse: null,
+        code: mockCodeState(),
+        model: mockModelState(),
         ...state
     };
 };
