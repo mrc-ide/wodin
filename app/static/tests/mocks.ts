@@ -5,7 +5,7 @@ import { FitState } from "../src/app/store/fit/state";
 import { StochasticState } from "../src/app/store/stochastic/state";
 import { ResponseSuccess, ResponseFailure, APIError } from "../src/app/types/responseTypes";
 import { ModelState } from "../src/app/store/model/state";
-import {CodeState} from "../src/app/store/code/state";
+import { CodeState } from "../src/app/store/code/state";
 import mock = jest.mock;
 
 export const mockAxios = new MockAdapter(axios);

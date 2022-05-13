@@ -1,20 +1,18 @@
+import Vuex from "vuex";
 import {
     mockAxios, mockBasicState, mockCodeState, mockFailure, mockSuccess
 } from "../../../mocks";
 import { BasicAction, actions } from "../../../../src/app/store/basic/actions";
-import { BasicMutation } from "../../../../src/app/store/basic/mutations";
+import { BasicMutation, mutations as basicMutations } from "../../../../src/app/store/basic/mutations";
 import { AppStateMutation } from "../../../../src/app/store/AppState";
 import { ErrorsMutation } from "../../../../src/app/store/errors/mutations";
-import {CodeMutation} from "../../../../src/app/store/code/mutations";
-import Vuex from "vuex";
-import {BasicState} from "../../../../src/app/store/basic/state";
-import {mutations as basicMutations} from "../../../../src/app/store/basic/mutations";
-import {mutations as codeMutations} from "../../../../src/app/store/code/mutations";
-import {ModelAction} from "../../../../src/app/store/model/actions";
+import { CodeMutation, mutations as codeMutations } from "../../../../src/app/store/code/mutations";
+import { BasicState } from "../../../../src/app/store/basic/state";
+import { ModelAction } from "../../../../src/app/store/model/actions";
 
 describe("Basic actions", () => {
     const getStore = () => {
-        const state = mockBasicState({config: null});
+        const state = mockBasicState({ config: null });
         return new Vuex.Store<BasicState>({
             state,
             mutations: basicMutations,

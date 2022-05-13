@@ -1,4 +1,4 @@
-import {mockCodeState} from "../../../mocks";
+import { mockCodeState } from "../../../mocks";
 import { mutations } from "../../../../src/app/store/code/mutations";
 
 describe("Code mutations", () => {
