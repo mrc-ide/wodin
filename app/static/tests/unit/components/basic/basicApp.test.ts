@@ -76,7 +76,7 @@ describe("BasicApp", () => {
         expect(rightTabLinks.at(1)!.text()).toBe("Sensitivity");
         expect(rightTabs.find("div.mt-4 div.run-model-plot").exists()).toBe(true);
 
-        expect(wrapper.findComponent(LoadingSpinner)).toBe(false);
+        expect(wrapper.findComponent(LoadingSpinner).exists()).toBe(false);
     });
 
     it("renders loading spinner when config is not set", () => {
