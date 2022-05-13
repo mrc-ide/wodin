@@ -12,7 +12,9 @@ export class ConfigController {
         defaultCodeReader: DefaultCodeReader
     ) => {
         const result = configReader.readConfigFile(appsPath, `${appName}.config.json`) as AppConfig;
-        result.defaultCode = defaultCodeReader.readDefaultCode(appName);
+        if (result) {
+            result.defaultCode = defaultCodeReader.readDefaultCode(appName);
+        }
         return result;
     };
 

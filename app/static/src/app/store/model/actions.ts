@@ -7,7 +7,6 @@ import { AppState } from "../AppState";
 import { RunModelPayload } from "../../types/actionPayloadTypes";
 import { ErrorsMutation } from "../errors/mutations";
 import { OdinModelResponse } from "../../types/responseTypes";
-import {CodeState} from "../code/state";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",

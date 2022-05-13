@@ -6,7 +6,7 @@ import { BasicMutation } from "./mutations";
 import { ErrorsMutation } from "../errors/mutations";
 import { AppStateMutation } from "../AppState";
 import { CodeMutation } from "../code/mutations";
-import {ModelAction} from "../model/actions";
+import { ModelAction } from "../model/actions";
 
 export enum BasicAction {
     FetchConfig = "FetchConfig"
