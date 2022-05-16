@@ -11,7 +11,7 @@ describe("FitApp", () => {
         const state = mockFitState({
             config: {
                 fitProp: "Test fit prop value"
-            }
+            } as any
         });
         const props = {
             title: "Test Title",
