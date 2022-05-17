@@ -1,11 +1,17 @@
 <template>
     <div>
-        Coming soon: Code editor
+        <code-editor/>
     </div>
 </template>
 
 <script lang="ts">
-export default {
-    name: "CodeTab"
-};
+import { defineComponent } from "vue";
+import CodeEditor from "./CodeEditor.vue";
+
+export default defineComponent({
+    name: "CodeTab",
+    components: {
+        CodeEditor
+    }
+});
 </script>
