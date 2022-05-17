@@ -1,21 +1,14 @@
 <template>
-  <monaco-editor
-      class="editor"
-      v-model="code"
-      language="javascript" >
-  </monaco-editor>
+  <div class="editor" ref="editor"></div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import {
+    computed, defineComponent, onMounted, ref
+} from "vue";
 import { useStore } from "vuex";
-import { VAceEditor } from "vue3-ace-editor";
-import {AppConfig} from "../../types/responseTypes";
-//import * as Mode from "ace-builds/src-noconflict/mode-json";
-//import {config, edit} from "ace-builds";
-//import workerJsonUrl from '../../../../node_modules/ace-builds/src-noconflict/worker-json.js'; // For webpack / vue-cli
-//import {Mode } from 'ace-builds/src-noconflict/mode-json';
-import MonacoEditor from 'vue-monaco';
+import loader from "@monaco-editor/loader";
+import { AppConfig } from "../../types/responseTypes";
 
 interface changeEvent {
   lines: string[]
@@ -23,26 +16,38 @@ interface changeEvent {
 
 export default defineComponent({
     name: "CodeEditor.vue",
-    components: {
-        MonacoEditor
-    },
+
     setup() {
         const store = useStore();
-        //config.setModuleUrl('ace/mode/json_worker', workerJsonUrl);
 
-        //const mode = new Mode();
-        //edit(null).mode
-
+        const editor = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
 
         const code = computed(() => store.state.code.code.join("\n"));
         // TODO: what's the best way to handle readonly? Get it from base class config?
         const readOnly = computed(() => (store.state.config as AppConfig).readOnlyCode);
 
         const codeChanged = (ev: changeEvent) => {
-          //console.log("code chnaged to: " + JSON.stringify(ev.lines))
-        }
+            // console.log("code chnaged to: " + JSON.stringify(ev.lines))
+        };
+
+        onMounted(() => {
+            loader.init().then((monaco) => {
+                const monacoEd = monaco.editor.create(editor.value as HTMLElement, {
+                    value: code.value,
+                    language: "r",
+                    minimap: {enabled: false},
+                    readOnly: readOnly.value
+                });
+                monacoEd.onDidChangeModelContent((event) => {
+                  const newCode = monacoEd.getModel()!.getLinesContent();
+                  console.log("New code: " + JSON.stringify(newCode))
+                });
+
+            });
+        });
 
         return {
+            editor,
             code,
             readOnly,
             codeChanged
@@ -52,7 +57,7 @@ export default defineComponent({
 </script>
 <style>
 .editor {
-  width: 300px;
+  width: 100%;
   height: 400px;
 }
 </style>

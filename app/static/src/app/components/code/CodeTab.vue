@@ -1,7 +1,5 @@
 <template>
-    <div>
-        <code-editor/>
-    </div>
+  <code-editor/>
 </template>
 
 <script lang="ts">

@@ -11,7 +11,7 @@
                 </a>
             </li>
         </ul>
-        <div class="mt-4">
+        <div class="mt-4 px-2">
             <slot :name="selectedTabName"/>
         </div>
     </div>

@@ -6,7 +6,7 @@ module.exports = {
     runtimeCompiler: true,
     configureWebpack: {
         plugins: [new MonacoWebpackPlugin({
-            languages: ['javascript']
+            languages: ["r"]
         })]
     }
 };
