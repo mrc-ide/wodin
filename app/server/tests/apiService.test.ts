@@ -60,7 +60,8 @@ describe("apiService", () => {
             responseData,
             responseHeaders
         );
-        await APIService.get("/get-endpoint", mockReq, mockRes);
+        const sut = new APIService(mockReq, mockRes);
+        await sut.get("/get-endpoint");
         const { url, headers, transformResponse } = mockAxios.history.get[0];
         expect(url).toBe(expectedUrl);
         testExpectedAxiosRequestConfig(
@@ -78,7 +79,8 @@ describe("apiService", () => {
             responseData,
             responseHeaders
         );
-        await APIService.post("/post-endpoint", postData, mockReq, mockRes);
+        const sut = new APIService(mockReq, mockRes);
+        await sut.post("/post-endpoint", postData);
         const {
             url, data, headers, transformResponse
         } = mockAxios.history.post[0];

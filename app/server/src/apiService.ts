@@ -3,20 +3,32 @@ import axios, { AxiosResponse } from "axios";
 import { AppLocals } from "./types";
 
 export class APIService {
-    private static passThroughResponse = (apiResponse: AxiosResponse, res: Response) => {
-        res.status(apiResponse.status);
+    private readonly _req: Request;
+
+    private readonly _res: Response;
+
+    private readonly _odinAPI: string;
+
+    constructor(req: Request, res: Response) {
+        this._req = req;
+        this._res = res;
+        this._odinAPI = (req.app.locals as AppLocals).odinAPI;
+    }
+
+    private passThroughResponse = (apiResponse: AxiosResponse) => {
+        this._res.status(apiResponse.status);
         Object.keys(apiResponse.headers).forEach((key: string) => {
-            res.header(key, apiResponse.headers[key]);
+            this._res.header(key, apiResponse.headers[key]);
         });
-        res.end(apiResponse.data);
+        this._res.end(apiResponse.data);
     };
 
-    private static getRequestConfig = (req: Request) => {
+    private getRequestConfig = () => {
         // Pass through headers from front end
         const headers = {} as Record<string, string>;
-        Object.keys(req.headers).forEach((key: string) => {
-            if (req.headers[key]) {
-                headers[key] = req.headers[key]!.toString();
+        Object.keys(this._req.headers).forEach((key: string) => {
+            if (this._req.headers[key]) {
+                headers[key] = this._req.headers[key]!.toString();
             }
         });
 
@@ -26,18 +38,17 @@ export class APIService {
         return { headers, transformResponse };
     };
 
-    private static fullUrl = (req: Request, url: string) => {
-        const { odinAPI } = req.app.locals as AppLocals;
-        return `${odinAPI}${url}`;
+    private fullUrl = (url: string) => {
+        return `${this._odinAPI}${url}`;
     };
 
-    static get = async (url: string, req: Request, res: Response) => {
-        const apiResponse = await axios.get(APIService.fullUrl(req, url), APIService.getRequestConfig(req));
-        APIService.passThroughResponse(apiResponse, res);
+    get = async (url: string) => {
+        const apiResponse = await axios.get(this.fullUrl(url), this.getRequestConfig());
+        this.passThroughResponse(apiResponse);
     };
 
-    static post = async (url: string, body: string, req: Request, res: Response) => {
-        const apiResponse = await axios.post(APIService.fullUrl(req, url), body, APIService.getRequestConfig(req));
-        APIService.passThroughResponse(apiResponse, res);
+    post = async (url: string, body: string) => {
+        const apiResponse = await axios.post(this.fullUrl(url), body, this.getRequestConfig());
+        this.passThroughResponse(apiResponse);
     };
 }
