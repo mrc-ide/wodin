@@ -19,27 +19,12 @@ export default defineComponent({
     setup() {
         const store = useStore();
 
-        const odin = computed(() => store.state.model.odin);
-        const odinRunner = computed(() => store.state.model.odinRunner);
         const solution = computed(() => store.state.model.odinSolution);
 
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
         const baseData = ref(null);
 
         const nPoints = 1000; // TODO: appropriate value could be derived from width of element
-
-        const runModel = () => {
-            if (odin.value && odinRunner.value) {
-                const payload = {
-                    parameters: {},
-                    start: 0,
-                    end: 100,
-                    control: {}
-                };
-                store.dispatch(`model/${ModelAction.RunModel}`, payload);
-            }
-        };
-
         const config = {
             responsive: true
         };
@@ -86,11 +71,11 @@ export default defineComponent({
             }
         };
 
-        watch([odin, odinRunner], () => {
+        /*watch([odin, odinRunner], () => {
             // TODO: Eventually it probably won't be the component initiating run model, but the store, on updates
             // to code or parameters - which is not yet implemented
             runModel();
-        });
+        });*/
 
         watch(solution, () => {
             // TODO: default end time will eventually be configured in the app
@@ -99,9 +84,9 @@ export default defineComponent({
             drawPlot();
         });
 
-        onMounted(() => {
+        /*onMounted(() => {
             runModel();
-        });
+        });*/
 
         onUnmounted(() => {
             if (resizeObserver) {

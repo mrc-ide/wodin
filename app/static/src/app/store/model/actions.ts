@@ -4,7 +4,6 @@ import { ModelState } from "./state";
 import { api } from "../../apiService";
 import { ModelMutation } from "./mutations";
 import { AppState } from "../AppState";
-import { RunModelPayload } from "../../types/actionPayloadTypes";
 import { ErrorsMutation } from "../errors/mutations";
 import { OdinModelResponse } from "../../types/responseTypes";
 
@@ -23,22 +22,27 @@ export const actions: ActionTree<ModelState, AppState> = {
     },
 
     async FetchOdin(context) {
-        const { rootState } = context;
+        const { rootState, dispatch } = context;
         const model = rootState.code.code;
 
-        await api(context)
+        const response = await api(context)
             .withSuccess(ModelMutation.SetOdin)
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
             .post<OdinModelResponse>("/odin/model", { model });
+
+        if (response) {
+            dispatch(ModelAction.RunModel);
+        }
     },
 
-    RunModel(context, payload: RunModelPayload) {
+    RunModel(context) {
         const { state, commit } = context;
         if (state.odinRunner && state.odin) {
-            const {
-                parameters, start, end, control
-            } = payload;
-
+            // TODO: these values will come from state when UI elements are implemented
+            const parameters = {};
+            const start = 0;
+            const end = 100;
+            const control = {};
             const solution = state.odinRunner(dopri.Dopri, state.odin, parameters, start, end, control);
             commit(ModelMutation.SetOdinSolution, solution);
         }
