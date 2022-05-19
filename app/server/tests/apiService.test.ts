@@ -1,6 +1,6 @@
 import { AxiosRequestHeaders, AxiosResponseTransformer } from "axios";
 import { mockAxios } from "./mocks";
-import { APIService } from "../src/apiService";
+import { api } from "../src/apiService";
 
 describe("apiService", () => {
     beforeEach(() => {
@@ -53,6 +53,8 @@ describe("apiService", () => {
         expect((transformResponse as AxiosResponseTransformer)(transformTest)).toBe(transformTest);
     };
 
+    const sut = api(mockReq, mockRes);
+
     it("get passes through response from api", async () => {
         const expectedUrl = "http://test/get-endpoint";
         mockAxios.onGet(expectedUrl).reply(
@@ -60,7 +62,7 @@ describe("apiService", () => {
             responseData,
             responseHeaders
         );
-        const sut = new APIService(mockReq, mockRes);
+
         await sut.get("/get-endpoint");
         const { url, headers, transformResponse } = mockAxios.history.get[0];
         expect(url).toBe(expectedUrl);
@@ -79,7 +81,6 @@ describe("apiService", () => {
             responseData,
             responseHeaders
         );
-        const sut = new APIService(mockReq, mockRes);
         await sut.post("/post-endpoint", postData);
         const {
             url, data, headers, transformResponse

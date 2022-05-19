@@ -52,3 +52,5 @@ export class APIService {
         this.passThroughResponse(apiResponse);
     };
 }
+
+export const api = (req: Request, res: Response) => new APIService(req, res);

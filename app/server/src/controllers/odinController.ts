@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
-import { APIService } from "../apiService";
+import { api } from "../apiService";
 
 export class OdinController {
     static getRunner = async (req: Request, res: Response) => {
-        await new APIService(req, res)
+        await api(req, res)
             .get("/support/runner-ode");
     };
 
     static postModel = async (req: Request, res: Response) => {
-        await new APIService(req, res)
+        await api(req, res)
             .post("/compile", req.body);
     };
 }
