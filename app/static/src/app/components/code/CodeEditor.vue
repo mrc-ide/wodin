@@ -26,31 +26,32 @@ export default defineComponent({
         // TODO: what's the best way to handle readonly? Get it from base class config?
         const readOnly = computed(() => (store.state.config as AppConfig).readOnlyCode);
 
-        const codeChanged = (ev: changeEvent) => {
-            // console.log("code chnaged to: " + JSON.stringify(ev.lines))
-        };
+        // const codeChanged = (ev: changeEvent) => {
+        // console.log("code chnaged to: " + JSON.stringify(ev.lines))
+        // };
 
         onMounted(() => {
             loader.init().then((monaco) => {
                 const monacoEd = monaco.editor.create(editor.value as HTMLElement, {
                     value: code.value,
                     language: "r",
-                    minimap: {enabled: false},
+                    minimap: { enabled: false },
                     readOnly: readOnly.value
                 });
-                monacoEd.onDidChangeModelContent((event) => {
-                  const newCode = monacoEd.getModel()!.getLinesContent();
-                  console.log("New code: " + JSON.stringify(newCode))
+                monacoEd.onDidChangeModelContent(() => {
+                    const newCode = monacoEd.getModel()!.getLinesContent();
+                    console.log(`New code: ${JSON.stringify(newCode)}`);
+                    if (newCode !== )
+                    store.commit("code/SetCode", newCode, {root: true});
+                    //store.dispatch("model/RunModel");
                 });
-
             });
         });
 
         return {
             editor,
             code,
-            readOnly,
-            codeChanged
+            readOnly
         };
     }
 });
