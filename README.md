@@ -23,8 +23,10 @@ Each app will have one of these three app types, as well as any further configur
 
 ## Usage and configuration
 
+WODIN fetches compiled odin code from [odin.api](https://github.com/mrc-ide/odin.api), which should be run locally using 
+`./scripts/run-dev-dependencies.sh`.
+
 For development, you can install dependencies, build and run the app locally in one step using `./scripts/build-and-run.sh`. The app will be available at http://localhost:3000 
-You may need to install TypeScript: `npm install -g typescript`
 
 WODIN is deployable via an npm package: https://www.npmjs.com/package/wodin
 
@@ -38,6 +40,7 @@ Contains the following settings for the WODIN instance:
 - `port`: the port number at which WODIN should be served
 - `appsPath`: the url path under root at which each app should be available e.g `/apps/day1` for appPath of "apps" and app 
 name "day1"
+- `odinAPI`: base url for the running instance of [odin.api](https://github.com/mrc-ide/odin.api) to use
 
 ### index.html 
 

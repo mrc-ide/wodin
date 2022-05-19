@@ -92,7 +92,7 @@ describe("RunModelPlot", () => {
         getWrapper(store);
         expect(mockRunModel).not.toHaveBeenCalled();
 
-        store.commit({ type: `model/${ModelMutation.SetOdin}`, payload: {} as any });
+        store.commit(`model/${ModelMutation.SetOdin}`, { model: "'testModel'" });
         await nextTick();
         expect(mockRunModel).toHaveBeenCalled();
         const payload = mockRunModel.mock.calls[0][1];

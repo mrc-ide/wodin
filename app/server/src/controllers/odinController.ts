@@ -1,16 +1,14 @@
 import { Request, Response } from "express";
-import { exampleOdinModel } from "../exampleOdin/exampleOdinModel";
-import { exampleOdinRunner } from "../exampleOdin/exampleOdinRunner";
-import { Controller } from "./controller";
+import { api } from "../apiService";
 
-export class OdinController extends Controller {
-    static getRunner = (req: Request, res: Response) => {
-        OdinController.addHeader(res);
-        res.end(exampleOdinRunner);
+export class OdinController {
+    static getRunner = async (req: Request, res: Response) => {
+        await api(req, res)
+            .get("/support/runner-ode");
     };
 
-    static getModel = (req: Request, res: Response) => {
-        OdinController.addHeader(res);
-        res.end(exampleOdinModel);
+    static postModel = async (req: Request, res: Response) => {
+        await api(req, res)
+            .post("/compile", req.body);
     };
 }

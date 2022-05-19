@@ -1,4 +1,4 @@
-import { freezer } from "../../src/app/utils";
+import { evaluateScript, freezer } from "../../src/app/utils";
 
 describe("freezer", () => {
     it("deep freezes an object", () => {
@@ -28,5 +28,12 @@ describe("freezer", () => {
         expect(frozen).toStrictEqual(data);
         expect(Object.isFrozen(frozen[0])).toBe(true);
         expect(Object.isFrozen(frozen[1].child)).toBe(true);
+    });
+});
+
+describe("evaluateScript", () => {
+    it("evals as type", () => {
+        const fn = evaluateScript<(n: number) => number>("(n) => n+3");
+        expect(fn(2)).toBe(5);
     });
 });

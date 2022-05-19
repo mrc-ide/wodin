@@ -14,3 +14,8 @@ export const freezer = {
         return data;
     }
 };
+
+/* eslint-disable no-eval */
+export function evaluateScript<T>(script: string): T {
+    return eval(script) as T;
+}

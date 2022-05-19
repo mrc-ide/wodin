@@ -7,8 +7,10 @@ import { registerRoutes } from "../routes";
 
 const express = require("express");
 const path = require("path");
+const bodyParser = require("body-parser");
 
 const app = express();
+app.use(bodyParser.json());
 
 const rootDir = path.join(__dirname, "../..");
 
@@ -18,10 +20,12 @@ const { configPath } = require("./args");
 // Global config
 const configReader = new ConfigReader(configPath);
 const wodinConfig = configReader.readConfigFile("wodin.config.json") as WodinConfig;
-const { port, appsPath } = wodinConfig;
+const { port, appsPath, odinAPI } = wodinConfig;
 
 // Make app locals available to controllers
-Object.assign(app.locals, { appsPath, configPath, configReader });
+Object.assign(app.locals, {
+    appsPath, configPath, configReader, odinAPI
+});
 
 // Static content
 app.use(express.static(path.join(rootDir, "public")));

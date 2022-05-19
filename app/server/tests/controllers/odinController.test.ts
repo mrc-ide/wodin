@@ -1,30 +1,33 @@
+import * as apiService from "../../src/apiService";
 import { OdinController } from "../../src/controllers/odinController";
-import { exampleOdinRunner } from "../../src/exampleOdin/exampleOdinRunner";
-import { exampleOdinModel } from "../../src/exampleOdin/exampleOdinModel";
+
+const mockAPIGet = jest.fn();
+const mockAPIPost = jest.fn();
+const mockAPIService = {
+    get: mockAPIGet,
+    post: mockAPIPost
+} as any;
+
+const apiSpy = jest.spyOn(apiService, "api").mockReturnValue(mockAPIService);
 
 describe("odinController", () => {
-    const mockResponse = {
-        header: jest.fn(),
-        end: jest.fn()
+    const mockRequest = {
+        body: "test body"
     } as any;
+    const mockResponse = {} as any;
 
-    beforeEach(() => {
-        jest.resetAllMocks();
+    it("getRunner gets from api service", async () => {
+        await OdinController.getRunner(mockRequest, mockResponse);
+        expect(apiSpy.mock.calls[0][0]).toBe(mockRequest);
+        expect(apiSpy.mock.calls[0][1]).toBe(mockResponse);
+        expect(mockAPIGet.mock.calls[0][0]).toBe("/support/runner-ode");
     });
 
-    it("getRunner adds header and returns runner script", () => {
-        OdinController.getRunner({} as any, mockResponse);
-
-        expect(mockResponse.header.mock.calls[0][0]).toBe("Content-Type");
-        expect(mockResponse.header.mock.calls[0][1]).toBe("application/javascript");
-        expect(mockResponse.end.mock.calls[0][0]).toBe(exampleOdinRunner);
-    });
-
-    it("getModel adds header returns model script", () => {
-        OdinController.getModel({} as any, mockResponse);
-
-        expect(mockResponse.header.mock.calls[0][0]).toBe("Content-Type");
-        expect(mockResponse.header.mock.calls[0][1]).toBe("application/javascript");
-        expect(mockResponse.end.mock.calls[0][0]).toBe(exampleOdinModel);
+    it("postModel posts to api service", async () => {
+        await OdinController.postModel(mockRequest, mockResponse);
+        expect(apiSpy.mock.calls[0][0]).toBe(mockRequest);
+        expect(apiSpy.mock.calls[0][1]).toBe(mockResponse);
+        expect(mockAPIPost.mock.calls[0][0]).toBe("/compile");
+        expect(mockAPIPost.mock.calls[0][1]).toBe("test body");
     });
 });
