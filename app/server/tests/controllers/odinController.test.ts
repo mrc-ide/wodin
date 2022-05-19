@@ -1,6 +1,5 @@
-/* eslint-disable import/first */
-// Need to mock APIService before we import OdinController
 import * as apiService from "../../src/apiService";
+import { OdinController } from "../../src/controllers/odinController";
 
 const mockAPIGet = jest.fn();
 const mockAPIPost = jest.fn();
@@ -10,8 +9,6 @@ const mockAPIService = {
 } as any;
 
 const apiSpy = jest.spyOn(apiService, "api").mockReturnValue(mockAPIService);
-
-import { OdinController } from "../../src/controllers/odinController";
 
 describe("odinController", () => {
     const mockRequest = {
