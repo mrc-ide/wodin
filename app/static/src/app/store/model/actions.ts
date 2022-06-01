@@ -24,7 +24,7 @@ export const actions: ActionTree<ModelState, AppState> = {
 
     async FetchOdin(context) {
         const { rootState } = context;
-        const model = rootState.code.code;
+        const model = rootState.code.currentCode;
 
         await api(context)
             .withSuccess(ModelMutation.SetOdin)

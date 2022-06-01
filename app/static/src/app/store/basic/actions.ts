@@ -25,7 +25,7 @@ export const actions: ActionTree<BasicState, BasicState> = {
         if (response) {
             commit(`code/${CodeMutation.SetCurrentCode}`, state.config!.defaultCode, { root: true });
 
-            if (state.code.code.length) {
+            if (state.code.currentCode.length) {
                 // Fetch model for default code
                 await dispatch(`model/${ModelAction.FetchOdin}`);
             }
