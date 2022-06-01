@@ -1,3 +1,3 @@
 export interface CodeState {
-    code: string[]
+    currentCode: string[]
 }

@@ -47,7 +47,7 @@ export const mockModelState = (state: Partial<ModelState> = {}): ModelState => {
 
 export const mockCodeState = (state: Partial<CodeState> = {}): CodeState => {
     return {
-        code: []
+        currentCode: []
     };
 };
 

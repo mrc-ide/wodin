@@ -23,7 +23,7 @@ export const actions: ActionTree<BasicState, BasicState> = {
             .get<BasicConfig>(`/config/${appName}`);
 
         if (response) {
-            commit(`code/${CodeMutation.SetCode}`, state.config!.defaultCode, { root: true });
+            commit(`code/${CodeMutation.SetCurrentCode}`, state.config!.defaultCode, { root: true });
 
             if (state.code.code.length) {
                 // Fetch model for default code

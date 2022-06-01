@@ -2,7 +2,7 @@ import { CodeState } from "./state";
 import { mutations } from "./mutations";
 
 export const defaultState: CodeState = {
-    code: []
+    currentCode: []
 };
 
 export const code = {

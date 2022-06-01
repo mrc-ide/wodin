@@ -2,11 +2,11 @@ import { MutationTree } from "vuex";
 import { CodeState } from "./state";
 
 export enum CodeMutation {
-    SetCode = "SetCode"
+    SetCurrentCode = "SetCurrentCode"
 }
 
 export const mutations: MutationTree<CodeState> = {
-    [CodeMutation.SetCode](state: CodeState, payload: string[]) {
-        state.code = [...payload];
+    [CodeMutation.SetCurrentCode](state: CodeState, payload: string[]) {
+        state.currentCode = payload;
     }
 };
