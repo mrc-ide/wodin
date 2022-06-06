@@ -1,4 +1,5 @@
 import { ConfigReader } from "./configReader";
+import { DefaultCodeReader } from "./defaultCodeReader";
 
 export interface WodinConfig {
     port: number,
@@ -6,9 +7,16 @@ export interface WodinConfig {
     appsPath: string
 }
 
+export interface AppConfig {
+    appType: string,
+    title: string,
+    defaultCode: string[] | undefined
+}
+
 export interface AppLocals {
     odinAPI: string,
     appsPath: string,
     configPath: string,
-    configReader: ConfigReader
+    configReader: ConfigReader,
+    defaultCodeReader: DefaultCodeReader
 }

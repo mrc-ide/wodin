@@ -3,8 +3,11 @@ import { actions } from "./actions";
 import { mutations } from "./mutations";
 import { errors } from "../errors/errors";
 import { FitState } from "./state";
+import { model } from "../model/model";
+import { code } from "../code/code";
 
-const defaultState: () => FitState = () => {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const defaultState: () => any = () => {
     return {
         appType: "fit",
         appName: null,
@@ -17,6 +20,8 @@ export const storeOptions: StoreOptions<FitState> = {
     actions,
     mutations,
     modules: {
-        errors
+        errors,
+        code,
+        model
     }
 };

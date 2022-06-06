@@ -55,6 +55,15 @@ Each config.json file defines config values for an app. The app will be availabl
 file named `[appName].config.json`. [appsPath] is defined in `wodin.config.json`. Note that the local config folder should
 match `appsPath` too. 
 
+Each app config file should contain the following settings:
+- `appType`: "basic", "fit" or "stochastic"
+- `title`: the app title which will be visible to the user
+- `readOnlyCode`: boolean indicating whether default code should not be editable by the user
+
+### /defaultCode/*.R
+
+Default odin code for an application (if any) should be provided in the `/defaultCode` folder, in a file named `[appName].R`.
+
 ### /files
 
 Sample data and other supporting files can be provided in any folder structure under `/files` and will be available at urls under `/files`

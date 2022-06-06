@@ -23,25 +23,13 @@ export const actions: ActionTree<ModelState, AppState> = {
     },
 
     async FetchOdin(context) {
-        // TODO: this hardcoded model code will be replaced by config-defined and user-defined code later
-        const odinCode = {
-            model: [
-                "deriv(y1) <- sigma * (y2 - y1)",
-                "deriv(y2) <- R * y1 - y2 - y1 * y3",
-                "deriv(y3) <- -b * y3 + y1 * y2",
-                "initial(y1) <- 10.0",
-                "initial(y2) <- 1.0",
-                "initial(y3) <- 1.0",
-                "sigma <- 10.0",
-                "R     <- 28.0",
-                "b     <-  8.0 / 3.0"
-            ]
-        };
+        const { rootState } = context;
+        const model = rootState.code.currentCode;
 
         await api(context)
             .withSuccess(ModelMutation.SetOdin)
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
-            .post<OdinModelResponse>("/odin/model", odinCode);
+            .post<OdinModelResponse>("/odin/model", { model });
     },
 
     RunModel(context, payload: RunModelPayload) {

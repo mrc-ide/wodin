@@ -10,6 +10,12 @@ describe("Model actions", () => {
         mockAxios.reset();
     });
 
+    const rootState = {
+        code: {
+            currentCode: ["line1", "line2"]
+        }
+    };
+
     it("fetches odin runner", async () => {
         const mockRunnerScript = "() => \"runner\"";
         mockAxios.onGet("/odin/runner")
@@ -39,10 +45,10 @@ describe("Model actions", () => {
             .reply(200, mockSuccess(testModel));
 
         const commit = jest.fn();
-        await (actions[ModelAction.FetchOdin] as any)({ commit });
+        await (actions[ModelAction.FetchOdin] as any)({ commit, rootState });
 
         const postData = JSON.parse(mockAxios.history.post[0].data);
-        expect(postData.model[0]).toBe("deriv(y1) <- sigma * (y2 - y1)");
+        expect(postData).toStrictEqual({ model: rootState.code.currentCode });
 
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[0][1]).toStrictEqual(testModel);
@@ -53,7 +59,7 @@ describe("Model actions", () => {
             .reply(500, mockFailure("server error"));
 
         const commit = jest.fn();
-        await (actions[ModelAction.FetchOdin] as any)({ commit });
+        await (actions[ModelAction.FetchOdin] as any)({ commit, rootState });
 
         expect(commit.mock.calls[0][0]).toBe("errors/AddError");
         expect(commit.mock.calls[0][1].detail).toBe("server error");

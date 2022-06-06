@@ -11,7 +11,7 @@ describe("StochasticApp", () => {
         const state = mockStochasticState({
             config: {
                 stochasticProp: "Test stochastic prop value"
-            }
+            } as any
         });
         const props = {
             title: "Test Title",

@@ -14,15 +14,21 @@ export interface ResponseSuccess {
     data: unknown;
     errors: null;
 }
-export interface BasicConfig {
+
+export interface AppConfig {
+    defaultCode: string[],
+    readOnlyCode: boolean
+}
+
+export interface BasicConfig extends AppConfig {
     basicProp: string
 }
 
-export interface FitConfig {
+export interface FitConfig extends AppConfig {
     fitProp: string
 }
 
-export interface StochasticConfig {
+export interface StochasticConfig extends AppConfig {
     stochasticProp: string
 }
 

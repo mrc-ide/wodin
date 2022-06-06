@@ -1,18 +1,28 @@
 import { Request, Response } from "express";
 import { ConfigReader } from "../configReader";
 import { ErrorCode, jsonResponseError, jsonResponseSuccess } from "../jsonResponse";
-import { AppLocals } from "../types";
+import { AppConfig, AppLocals } from "../types";
+import { DefaultCodeReader } from "../defaultCodeReader";
 
 export class ConfigController {
-    private static _readAppConfigFile = (appName: string, appsPath: string, configReader: ConfigReader) => {
-        return configReader.readConfigFile(appsPath, `${appName}.config.json`);
+    private static _readAppConfigFile = (
+        appName: string,
+        appsPath: string,
+        configReader: ConfigReader,
+        defaultCodeReader: DefaultCodeReader
+    ) => {
+        const result = configReader.readConfigFile(appsPath, `${appName}.config.json`) as AppConfig;
+        if (result) {
+            result.defaultCode = defaultCodeReader.readDefaultCode(appName);
+        }
+        return result;
     };
 
     static getConfig = (req: Request, res: Response) => {
         const { appName } = req.params;
-        const { configReader, appsPath } = req.app.locals as AppLocals;
+        const { configReader, appsPath, defaultCodeReader } = req.app.locals as AppLocals;
 
-        const config = this._readAppConfigFile(appName, appsPath, configReader);
+        const config = this._readAppConfigFile(appName, appsPath, configReader, defaultCodeReader);
         if (config) {
             jsonResponseSuccess(config, res);
         } else {

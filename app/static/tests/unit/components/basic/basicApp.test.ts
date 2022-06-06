@@ -4,6 +4,7 @@ jest.mock("plotly.js", () => ({}));
 import Vuex from "vuex";
 import { mount, shallowMount } from "@vue/test-utils";
 import BasicApp from "../../../../src/app/components/basic/BasicApp.vue";
+import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState, mockModelState } from "../../../mocks";
 import { BasicAction } from "../../../../src/app/store/basic/actions";
@@ -11,12 +12,9 @@ import { ModelAction } from "../../../../src/app/store/model/actions";
 import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
 
 describe("BasicApp", () => {
-    const getWrapper = (mockFetchConfig = jest.fn(), shallow = true) => {
-        const state = mockBasicState({
-            config: {
-                basicProp: "Test basic prop value"
-            }
-        });
+    const getWrapper = (mockFetchConfig = jest.fn(), shallow = true, includeConfig = true) => {
+        const config = includeConfig ? { basicProp: "Test basic prop value" } : null;
+        const state = mockBasicState({ config } as any);
         const props = {
             title: "Test Title",
             appName: "testApp"
@@ -31,8 +29,7 @@ describe("BasicApp", () => {
                     namespaced: true,
                     state: mockModelState(),
                     actions: {
-                        [ModelAction.FetchOdinRunner]: jest.fn(),
-                        [ModelAction.FetchOdin]: jest.fn()
+                        [ModelAction.FetchOdinRunner]: jest.fn()
                     }
                 },
                 errors: {
@@ -57,7 +54,7 @@ describe("BasicApp", () => {
         return mount(BasicApp, options);
     };
 
-    it("renders initial content as expected", () => {
+    it("renders content as expected when config is set", () => {
         const wrapper = getWrapper(jest.fn(), false);
         expect(wrapper.find("h1").text()).toBe("Test Title");
 
@@ -78,6 +75,15 @@ describe("BasicApp", () => {
         expect(rightTabLinks.at(0)!.text()).toBe("Run");
         expect(rightTabLinks.at(1)!.text()).toBe("Sensitivity");
         expect(rightTabs.find("div.mt-4 div.run-model-plot").exists()).toBe(true);
+
+        expect(wrapper.findComponent(LoadingSpinner).exists()).toBe(false);
+    });
+
+    it("renders loading spinner when config is not set", () => {
+        const wrapper = getWrapper(jest.fn(), true, false);
+        expect(wrapper.find("h1").text()).toBe("Test Title");
+        expect(wrapper.findComponent(LoadingSpinner).exists()).toBe(true);
+        expect(wrapper.find("h2").text()).toBe("Loading application...");
     });
 
     it("renders Options as expected", async () => {

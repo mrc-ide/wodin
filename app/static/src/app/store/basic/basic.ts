@@ -4,8 +4,10 @@ import { mutations } from "./mutations";
 import { errors } from "../errors/errors";
 import { BasicState } from "./state";
 import { model } from "../model/model";
+import { code } from "../code/code";
 
-const defaultState: () => BasicState = () => {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const defaultState: () => any = () => {
     return {
         appType: "basic",
         appName: null,
@@ -19,6 +21,7 @@ export const storeOptions: StoreOptions<BasicState> = {
     mutations,
     modules: {
         errors,
-        model
+        model,
+        code
     }
 };

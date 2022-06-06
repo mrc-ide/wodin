@@ -2,7 +2,7 @@ import { ModelState } from "./state";
 import { actions } from "./actions";
 import { mutations } from "./mutations";
 
-const defaultState: ModelState = {
+export const defaultState: ModelState = {
     odinRunner: null,
     odinModelResponse: null,
     odin: null,

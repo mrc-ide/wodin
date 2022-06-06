@@ -3,8 +3,11 @@ import { actions } from "./actions";
 import { mutations } from "./mutations";
 import { errors } from "../errors/errors";
 import { StochasticState } from "./state";
+import { model } from "../model/model";
+import { code } from "../code/code";
 
-const defaultState: () => StochasticState = () => {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const defaultState: () => any = () => {
     return {
         appType: "stochastic",
         appName: null,
@@ -17,6 +20,8 @@ export const storeOptions: StoreOptions<StochasticState> = {
     actions,
     mutations,
     modules: {
-        errors
+        errors,
+        code,
+        model
     }
 };
