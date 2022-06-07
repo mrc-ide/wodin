@@ -1,14 +1,13 @@
-import { MutationTree } from "vuex";
-import { ModelState } from "./state";
-import {
-    Odin, OdinModelResponse, OdinRunner, OdinSolution
-} from "../../types/responseTypes";
-import { evaluateScript } from "../../utils";
+import {MutationTree} from "vuex";
+import {ModelState, ModelUpdateType} from "./state";
+import {Odin, OdinModelResponse, OdinRunner, OdinSolution} from "../../types/responseTypes";
+import {evaluateScript} from "../../utils";
 
 export enum ModelMutation {
     SetOdinRunner = "SetOdinRunner",
+    SetOdinResponse = "SetOdinResponse",
     SetOdin = "SetOdin",
-    SetOdinSolution = "SetOdinSolution"
+    SetOdinSolution = "SetOdinSolution",
 }
 
 export const mutations: MutationTree<ModelState> = {
@@ -16,12 +15,18 @@ export const mutations: MutationTree<ModelState> = {
         state.odinRunner = evaluateScript<OdinRunner>(payload);
     },
 
-    [ModelMutation.SetOdin](state: ModelState, payload: OdinModelResponse) {
+    [ModelMutation.SetOdinResponse](state: ModelState, payload: OdinModelResponse) {
         state.odinModelResponse = payload;
-        state.odin = evaluateScript<Odin>(payload.model);
+        state.lastUpdate = ModelUpdateType.CodeUpdated;
+    },
+
+    [ModelMutation.SetOdin](state: ModelState, payload: Odin | null) {
+        state.odin = payload;
+        state.lastUpdate = ModelUpdateType.Compiled;
     },
 
     [ModelMutation.SetOdinSolution](state: ModelState, payload: OdinSolution) {
         state.odinSolution = payload;
+        state.lastUpdate = ModelUpdateType.ModelRun;
     }
 };

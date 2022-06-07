@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, onMounted, ref, watch
+  computed, defineComponent, onMounted, ref,
 } from "vue";
 import { useStore } from "vuex";
 import loader from "@monaco-editor/loader";

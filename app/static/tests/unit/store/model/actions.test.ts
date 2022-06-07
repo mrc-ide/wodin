@@ -50,7 +50,7 @@ describe("Model actions", () => {
         const postData = JSON.parse(mockAxios.history.post[0].data);
         expect(postData).toStrictEqual({ model: rootState.code.code });
 
-        expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
+        expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinResponse);
         expect(commit.mock.calls[0][1]).toStrictEqual(testModel);
     });
 

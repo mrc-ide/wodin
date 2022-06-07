@@ -5,11 +5,13 @@ import { api } from "../../apiService";
 import { ModelMutation } from "./mutations";
 import { AppState } from "../AppState";
 import { ErrorsMutation } from "../errors/mutations";
-import { OdinModelResponse } from "../../types/responseTypes";
+import {Odin, OdinModelResponse} from "../../types/responseTypes";
+import {evaluateScript} from "../../utils";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
     FetchOdin = "FetchOdin",
+    CompileModel = "CompileModel",
     RunModel = "RunModel"
 }
 
@@ -22,16 +24,20 @@ export const actions: ActionTree<ModelState, AppState> = {
     },
 
     async FetchOdin(context) {
-        const { rootState, dispatch } = context;
+        const { rootState } = context;
         const model = rootState.code.code;
 
-        const response = await api(context)
-            .withSuccess(ModelMutation.SetOdin)
+        await api(context)
+            .withSuccess(ModelMutation.SetOdinResponse)
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
             .post<OdinModelResponse>("/odin/model", { model });
+    },
 
-        if (response) {
-            dispatch(ModelAction.RunModel);
+    CompileModel(context) {
+        const {commit, state} = context;
+        if (state.odinModelResponse) {
+            const odin = evaluateScript<Odin>(state.odinModelResponse.model);
+            commit(ModelMutation.SetOdin, odin);
         }
     },
 

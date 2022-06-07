@@ -21,7 +21,7 @@
                     <template v-slot:right>
                         <wodin-tabs id="right-tabs" :tabNames="['Run', 'Sensitivity']">
                             <template v-slot:Run>
-                                <run-model-plot></run-model-plot>
+                              <run-tab></run-tab>
                             </template>
                             <template v-slot:Sensitivity>
                                 <sensitivity-tab></sensitivity-tab>
@@ -39,7 +39,7 @@
 import { computed, defineComponent, onMounted } from "vue";
 import { useStore } from "vuex";
 import { BasicAction } from "../../store/basic/actions";
-import RunModelPlot from "../run/RunModelPlot.vue";
+import RunTab from "../run/RunTab.vue";
 import ErrorsAlert from "../ErrorsAlert.vue";
 import WodinPanels from "../WodinPanels.vue";
 import { ModelAction } from "../../store/model/actions";
@@ -56,7 +56,7 @@ export default defineComponent({
     },
     components: {
         LoadingSpinner,
-        RunModelPlot,
+        RunTab,
         ErrorsAlert,
         WodinPanels,
         WodinTabs,
@@ -71,9 +71,11 @@ export default defineComponent({
         const basicProp = computed(() => store.state.config?.basicProp);
         const loading = computed(() => !store.state.config);
 
-        onMounted(() => {
+        onMounted(async () => {
             store.dispatch(BasicAction.FetchConfig, props.appName);
-            store.dispatch(`model/${ModelAction.FetchOdinRunner}`);
+            await store.dispatch(`model/${ModelAction.FetchOdinRunner}`);
+            await store.dispatch(`model/${ModelAction.CompileModel}`);
+            await store.dispatch(`model/${ModelAction.RunModel}`);
         });
 
         return {
