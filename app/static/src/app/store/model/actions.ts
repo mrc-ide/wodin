@@ -24,6 +24,7 @@ export const actions: ActionTree<ModelState, AppState> = {
     },
 
     async FetchOdin(context) {
+        console.log("Fetching odin")
         const { rootState } = context;
         const model = rootState.code.code;
 
@@ -34,6 +35,7 @@ export const actions: ActionTree<ModelState, AppState> = {
     },
 
     CompileModel(context) {
+        console.log("Compiling model")
         const {commit, state} = context;
         if (state.odinModelResponse) {
             const odin = evaluateScript<Odin>(state.odinModelResponse.model);
@@ -42,6 +44,7 @@ export const actions: ActionTree<ModelState, AppState> = {
     },
 
     RunModel(context) {
+        console.log("running model")
         const { state, commit } = context;
         if (state.odinRunner && state.odin) {
             // TODO: these values will come from state when UI elements are implemented

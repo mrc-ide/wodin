@@ -17,6 +17,7 @@ import { ModelAction } from "../../store/model/actions";
 export default defineComponent({
     name: "RunModelPlot",
     setup() {
+        console.log("SETTING UP PLOT")
         const store = useStore();
 
         const solution = computed(() => store.state.model.odinSolution);
@@ -71,22 +72,15 @@ export default defineComponent({
             }
         };
 
-        /*watch([odin, odinRunner], () => {
-            // TODO: Eventually it probably won't be the component initiating run model, but the store, on updates
-            // to code or parameters - which is not yet implemented
-            runModel();
-        });*/
-
         watch(solution, () => {
-            // TODO: default end time will eventually be configured in the app
-            baseData.value = solution.value(0, 100, nPoints);
+            console.log("watch solution fired");
+            if (solution.value) {
+              // TODO: default end time will eventually be configured in the app
+              baseData.value = solution.value(0, 100, nPoints);
 
-            drawPlot();
+              drawPlot();
+            }
         });
-
-        /*onMounted(() => {
-            runModel();
-        });*/
 
         onUnmounted(() => {
             if (resizeObserver) {

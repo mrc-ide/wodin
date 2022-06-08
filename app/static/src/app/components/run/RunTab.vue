@@ -1,5 +1,7 @@
 <template>
-  <button class="btn btn-primary" :disabled="!canRunModel" @click="runModel">Run model</button>
+  <div>
+    <button class="btn btn-primary" :disabled="!canRunModel" @click="runModel">Run model</button>
+  </div>
   <run-model-plot></run-model-plot>
   <div class="text-danger">{{updateMsg}}</div>
 </template>
@@ -13,7 +15,7 @@ import { ModelUpdateType } from "../../store/model/state";
 
 export default {
     name: "RunTab",
-    component: {
+    components: {
         RunModelPlot
     },
     setup() {
@@ -36,7 +38,8 @@ export default {
 
         return {
             canRunModel,
-            updateMsg
+            updateMsg,
+            runModel
         };
     }
 };

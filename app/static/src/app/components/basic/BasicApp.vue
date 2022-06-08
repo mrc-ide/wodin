@@ -68,19 +68,15 @@ export default defineComponent({
         const store = useStore();
 
         const appType = computed(() => store.state.appType);
-        const basicProp = computed(() => store.state.config?.basicProp);
         const loading = computed(() => !store.state.config);
 
         onMounted(async () => {
             store.dispatch(BasicAction.FetchConfig, props.appName);
-            await store.dispatch(`model/${ModelAction.FetchOdinRunner}`);
-            await store.dispatch(`model/${ModelAction.CompileModel}`);
-            await store.dispatch(`model/${ModelAction.RunModel}`);
+            store.dispatch(`model/${ModelAction.FetchOdinRunner}`);
         });
 
         return {
             appType,
-            basicProp,
             loading
         };
     }

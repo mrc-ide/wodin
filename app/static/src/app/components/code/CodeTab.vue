@@ -26,7 +26,7 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
-        const codeIsValid = computed(() => store.state.model.odinModelResponse.valid);
+        const codeIsValid = computed(() => store.state.model.odinModelResponse?.valid);
 
         const compile = () => store.dispatch(`model/${ModelAction.CompileModel}`);
 

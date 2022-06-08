@@ -5,6 +5,7 @@ import { errors } from "../errors/errors";
 import { BasicState } from "./state";
 import { model, defaultState as defaultModelState } from "../model/model";
 import { code, defaultState as defaultCodeState } from "../code/code";
+import { logMutations } from "../plugins";
 
 const defaultState: () => BasicState = () => {
     return {
@@ -24,5 +25,8 @@ export const storeOptions: StoreOptions<BasicState> = {
         errors,
         model,
         code
-    }
+    },
+    plugins: [
+        logMutations
+    ]
 };
