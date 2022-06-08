@@ -66,7 +66,7 @@ describe("BasicApp", () => {
         expect(leftTabLinks.length).toBe(2);
         expect(leftTabLinks.at(0)!.text()).toBe("Code");
         expect(leftTabLinks.at(1)!.text()).toBe("Options");
-        expect(leftTabs.find("div.mt-4").text()).toBe("Coming soon: Code editor");
+        expect(leftTabs.find("div.mt-4 div.code-tab").exists()).toBe(true);
 
         const rightPanel = wodinPanels.find(".wodin-right");
         const rightTabs = rightPanel.find("#right-tabs");
@@ -74,7 +74,7 @@ describe("BasicApp", () => {
         expect(rightTabLinks.length).toBe(2);
         expect(rightTabLinks.at(0)!.text()).toBe("Run");
         expect(rightTabLinks.at(1)!.text()).toBe("Sensitivity");
-        expect(rightTabs.find("div.mt-4 div.run-model-plot").exists()).toBe(true);
+        expect(rightTabs.find("div.mt-4 div.run-tab").exists()).toBe(true);
 
         expect(wrapper.findComponent(LoadingSpinner).exists()).toBe(false);
     });

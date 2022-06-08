@@ -8,6 +8,7 @@ import {
 } from "vue";
 import { useStore } from "vuex";
 import loader from "@monaco-editor/loader";
+import Timeout = NodeJS.Timeout;
 import { AppConfig } from "../../types/responseTypes";
 import { CodeAction } from "../../store/code/actions";
 
@@ -25,7 +26,16 @@ export default defineComponent({
         const readOnly = computed(() => (store.state.config as AppConfig).readOnlyCode);
 
         let newCode: string[] | null = null;
-        let timeoutId: any = null;
+        let timeoutId: null | Timeout = null;
+
+        const setPendingCodeUpdate = () => {
+            if (!timeoutId) {
+                timeoutId = setTimeout(() => {
+                    store.dispatch(`code/${CodeAction.UpdateCode}`, newCode, { root: true });
+                    timeoutId = null;
+                }, 1000);
+            }
+        };
 
         onMounted(() => {
             loader.init().then((monaco) => {
@@ -37,12 +47,7 @@ export default defineComponent({
                 });
                 monacoEd.onDidChangeModelContent(() => {
                     newCode = monacoEd.getModel()!.getLinesContent();
-                    if (!timeoutId) {
-                        timeoutId = setTimeout(() => {
-                            store.dispatch(`code/${CodeAction.UpdateCode}`, newCode, { root: true });
-                            timeoutId = null;
-                        }, 1000);
-                    }
+                    setPendingCodeUpdate();
                 });
             });
         });

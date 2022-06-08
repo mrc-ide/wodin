@@ -12,17 +12,16 @@ import { EventEmitter } from "events";
 import {
     Data, newPlot, react, PlotRelayoutEvent, Plots
 } from "plotly.js";
-import { ModelAction } from "../../store/model/actions";
 
 export default defineComponent({
     name: "RunModelPlot",
     props: {
-      fadePlot: Boolean
+        fadePlot: Boolean
     },
     setup(props) {
-       const store = useStore();
+        const store = useStore();
 
-        const plotStyle = computed(() => props.fadePlot ? "opacity:0.5;" : "");
+        const plotStyle = computed(() => (props.fadePlot ? "opacity:0.5;" : ""));
         const solution = computed(() => store.state.model.odinSolution);
 
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
@@ -63,26 +62,26 @@ export default defineComponent({
         let resizeObserver: null | ResizeObserver = null;
 
         const drawPlot = () => {
-            if (baseData.value) {
-                const el = plot.value as unknown;
-                const layout = {
-                    margin: { t: 0 }
-                };
-                newPlot(el as HTMLElement, baseData.value as Data[], layout, config);
-                (el as EventEmitter).on("plotly_relayout", relayout);
-                resizeObserver = new ResizeObserver(resize);
-                resizeObserver.observe(plot.value as HTMLElement);
+            if (solution.value) {
+                // TODO: default end time will eventually be configured in the app
+                baseData.value = solution.value(0, 100, nPoints);
+
+                if (baseData.value) {
+                    const el = plot.value as unknown;
+                    const layout = {
+                        margin: { t: 0 }
+                    };
+                    newPlot(el as HTMLElement, baseData.value as Data[], layout, config);
+                    (el as EventEmitter).on("plotly_relayout", relayout);
+                    resizeObserver = new ResizeObserver(resize);
+                    resizeObserver.observe(plot.value as HTMLElement);
+                }
             }
         };
 
-        watch(solution, () => {
-            if (solution.value) {
-              // TODO: default end time will eventually be configured in the app
-              baseData.value = solution.value(0, 100, nPoints);
+        onMounted(drawPlot);
 
-              drawPlot();
-            }
-        });
+        watch(solution, drawPlot);
 
         onUnmounted(() => {
             if (resizeObserver) {

@@ -1,15 +1,17 @@
 <template>
-  <code-editor/>
-  <button class="btn btn-primary" :disabled="!codeIsValid" @click="compile">Compile</button>
-  <div class="mt-2">
-    <template v-if="codeIsValid">
-      <vue-feather class="text-success inline-icon" type="check"></vue-feather>
-      Code is valid
-    </template>
-    <template v-else>
-      <vue-feather class="text-danger inline-icon" type="x"></vue-feather>
-      Code is not valid
-    </template>
+  <div class="code-tab">
+    <code-editor/>
+    <button class="btn btn-primary" :disabled="!codeIsValid" @click="compile">Compile</button>
+    <div class="mt-2">
+      <template v-if="codeIsValid">
+        <vue-feather class="text-success inline-icon" type="check"></vue-feather>
+        Code is valid
+      </template>
+      <template v-else>
+        <vue-feather class="text-danger inline-icon" type="x"></vue-feather>
+        Code is not valid
+      </template>
+    </div>
   </div>
 </template>
 

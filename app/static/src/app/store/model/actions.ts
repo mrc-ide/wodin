@@ -1,12 +1,12 @@
 import * as dopri from "dopri";
-import {ActionContext, ActionTree} from "vuex";
-import {ModelState, RequiredModelAction} from "./state";
-import {api} from "../../apiService";
-import {ModelMutation} from "./mutations";
-import {AppState} from "../AppState";
-import {ErrorsMutation} from "../errors/mutations";
-import {Odin, OdinModelResponse} from "../../types/responseTypes";
-import {evaluateScript} from "../../utils";
+import { ActionContext, ActionTree } from "vuex";
+import { ModelState, RequiredModelAction } from "./state";
+import { api } from "../../apiService";
+import { ModelMutation } from "./mutations";
+import { AppState } from "../AppState";
+import { ErrorsMutation } from "../errors/mutations";
+import { Odin, OdinModelResponse } from "../../types/responseTypes";
+import { evaluateScript } from "../../utils";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
@@ -15,33 +15,6 @@ export enum ModelAction {
     RunModel = "RunModel",
     DefaultModel = "DefaultModel"
 }
-
-export const actions: ActionTree<ModelState, AppState> = {
-    async FetchOdinRunner(context) {
-        await api(context)
-            .withSuccess(ModelMutation.SetOdinRunner)
-            .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
-            .get<string>("/odin/runner");
-    },
-
-    async FetchOdin(context) {
-        await fetchOdin(context);
-    },
-
-    CompileModel(context) {
-        compileModel(context);
-    },
-
-    RunModel(context) {
-        runModel(context);
-    },
-
-    async DefaultModel(context) {
-        await fetchOdin(context);
-        compileModel(context);
-        runModel(context);
-    }
-};
 
 const fetchOdin = async (context: ActionContext<ModelState, AppState>) => {
     const { rootState, commit } = context;
@@ -81,5 +54,32 @@ const runModel = async (context: ActionContext<ModelState, AppState>) => {
         if (state.requiredAction === RequiredModelAction.Run) {
             commit(ModelMutation.SetRequiredAction, null);
         }
+    }
+};
+
+export const actions: ActionTree<ModelState, AppState> = {
+    async FetchOdinRunner(context) {
+        await api(context)
+            .withSuccess(ModelMutation.SetOdinRunner)
+            .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
+            .get<string>("/odin/runner");
+    },
+
+    async FetchOdin(context) {
+        await fetchOdin(context);
+    },
+
+    CompileModel(context) {
+        compileModel(context);
+    },
+
+    RunModel(context) {
+        runModel(context);
+    },
+
+    async DefaultModel(context) {
+        await fetchOdin(context);
+        compileModel(context);
+        runModel(context);
     }
 };

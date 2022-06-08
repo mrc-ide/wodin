@@ -41,6 +41,7 @@ export const mockModelState = (state: Partial<ModelState> = {}): ModelState => {
         odin: null,
         odinSolution: null,
         odinModelResponse: null,
+        requiredAction: null,
         ...state
     };
 };

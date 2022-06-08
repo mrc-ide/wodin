@@ -1,7 +1,9 @@
-import {MutationTree} from "vuex";
-import {ModelState, RequiredModelAction} from "./state";
-import {Odin, OdinModelResponse, OdinRunner, OdinSolution} from "../../types/responseTypes";
-import {evaluateScript} from "../../utils";
+import { MutationTree } from "vuex";
+import { ModelState, RequiredModelAction } from "./state";
+import {
+    Odin, OdinModelResponse, OdinRunner, OdinSolution
+} from "../../types/responseTypes";
+import { evaluateScript } from "../../utils";
 
 export enum ModelMutation {
     SetOdinRunner = "SetOdinRunner",
@@ -29,6 +31,6 @@ export const mutations: MutationTree<ModelState> = {
     },
 
     [ModelMutation.SetRequiredAction](state: ModelState, payload: RequiredModelAction | null) {
-        state.requiredAction = payload
+        state.requiredAction = payload;
     }
 };

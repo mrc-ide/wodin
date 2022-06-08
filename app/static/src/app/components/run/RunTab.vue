@@ -1,19 +1,21 @@
 <template>
-  <div>
-    <button class="btn btn-primary" :disabled="!canRunModel" @click="runModel">Run model</button>
+  <div class="run-tab">
+    <div>
+      <button class="btn btn-primary" :disabled="!canRunModel" @click="runModel">Run model</button>
+    </div>
+    <div class="text-danger text-center" style="min-height:1.5rem;">{{updateMsg}}</div>
+    <run-model-plot :fade-plot="!!updateMsg"></run-model-plot>
   </div>
-  <div class="text-danger text-center" style="min-height:1.5rem;">{{updateMsg}}</div>
-  <run-model-plot :fade-plot="!!updateMsg"></run-model-plot>
 </template>
 
 <script lang="ts">
 import { useStore } from "vuex";
-import { computed } from "vue";
+import { computed, defineComponent } from "vue";
 import RunModelPlot from "./RunModelPlot.vue";
 import { ModelAction } from "../../store/model/actions";
 import { RequiredModelAction } from "../../store/model/state";
 
-export default {
+export default defineComponent({
     name: "RunTab",
     components: {
         RunModelPlot
@@ -42,5 +44,5 @@ export default {
             runModel
         };
     }
-};
+});
 </script>
