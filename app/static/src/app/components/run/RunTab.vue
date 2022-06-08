@@ -2,8 +2,8 @@
   <div>
     <button class="btn btn-primary" :disabled="!canRunModel" @click="runModel">Run model</button>
   </div>
-  <run-model-plot></run-model-plot>
-  <div class="text-danger">{{updateMsg}}</div>
+  <div class="text-danger text-center" style="min-height:1.5rem;">{{updateMsg}}</div>
+  <run-model-plot :fade-plot="!!updateMsg"></run-model-plot>
 </template>
 
 <script lang="ts">
@@ -11,7 +11,7 @@ import { useStore } from "vuex";
 import { computed } from "vue";
 import RunModelPlot from "./RunModelPlot.vue";
 import { ModelAction } from "../../store/model/actions";
-import { ModelUpdateType } from "../../store/model/state";
+import { RequiredModelAction } from "../../store/model/state";
 
 export default {
     name: "RunTab",
@@ -24,16 +24,16 @@ export default {
 
         const runModel = () => store.dispatch(`model/${ModelAction.RunModel}`);
         const updateMsg = computed(() => {
-            const { lastUpdate } = store.state.model;
-            if (lastUpdate === ModelUpdateType.CodeUpdated) {
+            const { requiredAction } = store.state.model;
+            if (requiredAction === RequiredModelAction.Compile) {
                 return "Code has been updated. Compile code and Run Model to view graph for latest code.";
             }
 
-            if (lastUpdate === ModelUpdateType.Compiled) {
+            if (requiredAction === RequiredModelAction.Run) {
                 return "Code has been recompiled. Run Model to view graph for latest code.";
             }
 
-            return null;
+            return "";
         });
 
         return {

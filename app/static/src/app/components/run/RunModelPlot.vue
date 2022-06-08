@@ -1,5 +1,5 @@
 <template>
-    <div class="run-model-plot" ref="plot">
+    <div class="run-model-plot" ref="plot" :style="plotStyle">
     </div>
 </template>
 
@@ -16,9 +16,13 @@ import { ModelAction } from "../../store/model/actions";
 
 export default defineComponent({
     name: "RunModelPlot",
-    setup() {
+    props: {
+      fadePlot: Boolean
+    },
+    setup(props) {
        const store = useStore();
 
+        const plotStyle = computed(() => props.fadePlot ? "opacity:0.5;" : "");
         const solution = computed(() => store.state.model.odinSolution);
 
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
@@ -88,6 +92,7 @@ export default defineComponent({
         });
 
         return {
+            plotStyle,
             plot,
             relayout,
             resize,

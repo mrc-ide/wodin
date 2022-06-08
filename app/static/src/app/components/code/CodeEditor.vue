@@ -4,12 +4,12 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, onMounted, ref,
+    computed, defineComponent, onMounted, ref
 } from "vue";
 import { useStore } from "vuex";
 import loader from "@monaco-editor/loader";
 import { AppConfig } from "../../types/responseTypes";
-import {CodeAction} from "../../store/code/actions";
+import { CodeAction } from "../../store/code/actions";
 
 export default defineComponent({
     name: "CodeEditor.vue",
@@ -19,24 +19,29 @@ export default defineComponent({
 
         const editor = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
 
-        const code = computed(() => store.state.code.currentCode.join("\n"));
+        const currentCodeLines = computed(() => store.state.code.currentCode);
+        const joinCodeLines = (lines: string[]) => lines.join("\n");
+        const currentCode = computed(() => joinCodeLines(currentCodeLines.value));
         const readOnly = computed(() => (store.state.config as AppConfig).readOnlyCode);
+
+        let newCode: string[] | null = null;
+        let timeoutId: any = null;
 
         onMounted(() => {
             loader.init().then((monaco) => {
                 const monacoEd = monaco.editor.create(editor.value as HTMLElement, {
-                    value: code.value,
+                    value: currentCode.value,
                     language: "r",
                     minimap: { enabled: false },
                     readOnly: readOnly.value
                 });
                 monacoEd.onDidChangeModelContent(() => {
-                    //TODO: buffer updates for ~2sec
-                    //TODO: deal with validation errors - error currently logged to console,
-                    // Should it hide previous visualisation if current code has errors?
-                    const newCode = monacoEd.getModel()!.getLinesContent();
-                    if (newCode !== code.value) {
-                      store.dispatch(`code/${CodeAction.UpdateCode}`, newCode, {root: true});
+                    newCode = monacoEd.getModel()!.getLinesContent();
+                    if (!timeoutId) {
+                        timeoutId = setTimeout(() => {
+                            store.dispatch(`code/${CodeAction.UpdateCode}`, newCode, { root: true });
+                            timeoutId = null;
+                        }, 2000);
                     }
                 });
             });
@@ -44,7 +49,6 @@ export default defineComponent({
 
         return {
             editor,
-            code,
             readOnly
         };
     }
@@ -54,5 +58,6 @@ export default defineComponent({
 .editor {
   width: 100%;
   height: 400px;
+  border-width: 1px;
 }
 </style>
