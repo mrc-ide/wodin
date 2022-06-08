@@ -17,8 +17,7 @@ import { ModelAction } from "../../store/model/actions";
 export default defineComponent({
     name: "RunModelPlot",
     setup() {
-        console.log("SETTING UP PLOT")
-        const store = useStore();
+       const store = useStore();
 
         const solution = computed(() => store.state.model.odinSolution);
 
