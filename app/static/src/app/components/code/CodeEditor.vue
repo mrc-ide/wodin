@@ -19,7 +19,7 @@ export default defineComponent({
 
         const editor = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
 
-        const code = computed(() => store.state.code.code.join("\n"));
+        const code = computed(() => store.state.code.currentCode.join("\n"));
         const readOnly = computed(() => (store.state.config as AppConfig).readOnlyCode);
 
         onMounted(() => {

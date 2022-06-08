@@ -50,7 +50,7 @@ describe("Basic actions", () => {
         expect(committedConfig).toStrictEqual(config);
         expect(Object.isFrozen(committedConfig)).toBe(true);
 
-        expect(commit.mock.calls[2][0]).toBe(`code/${CodeMutation.SetCode}`);
+        expect(commit.mock.calls[2][0]).toBe(`code/${CodeMutation.SetCurrentCode}`);
         expect(commit.mock.calls[2][1]).toStrictEqual([]);
 
         // no code model fetch as defaultCode is empty
@@ -77,7 +77,7 @@ describe("Basic actions", () => {
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
         expect(commit.mock.calls[1][0]).toBe(BasicMutation.SetConfig);
 
-        expect(commit.mock.calls[2][0]).toBe(`code/${CodeMutation.SetCode}`);
+        expect(commit.mock.calls[2][0]).toBe(`code/${CodeMutation.SetCurrentCode}`);
         expect(commit.mock.calls[2][1]).toStrictEqual(["line1", "line2"]);
 
         expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdin}`);

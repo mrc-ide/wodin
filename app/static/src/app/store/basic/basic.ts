@@ -3,17 +3,16 @@ import { actions } from "./actions";
 import { mutations } from "./mutations";
 import { errors } from "../errors/errors";
 import { BasicState } from "./state";
-import { model, defaultState as defaultModelState } from "../model/model";
-import { code, defaultState as defaultCodeState } from "../code/code";
+import { model } from "../model/model";
+import { code } from "../code/code";
 import { logMutations } from "../plugins";
 
-const defaultState: () => BasicState = () => {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const defaultState: () => any = () => {
     return {
         appType: "basic",
         appName: null,
-        config: null,
-        code: defaultCodeState,
-        model: defaultModelState
+        config: null
     };
 };
 

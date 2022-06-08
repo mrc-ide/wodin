@@ -12,7 +12,7 @@ describe("Model actions", () => {
 
     const rootState = {
         code: {
-            code: ["line1", "line2"]
+            currentCode: ["line1", "line2"]
         }
     };
 
@@ -48,7 +48,7 @@ describe("Model actions", () => {
         await (actions[ModelAction.FetchOdin] as any)({ commit, rootState });
 
         const postData = JSON.parse(mockAxios.history.post[0].data);
-        expect(postData).toStrictEqual({ model: rootState.code.code });
+        expect(postData).toStrictEqual({ model: rootState.code.currentCode });
 
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinResponse);
         expect(commit.mock.calls[0][1]).toStrictEqual(testModel);

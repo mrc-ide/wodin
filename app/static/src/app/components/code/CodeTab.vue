@@ -2,11 +2,10 @@
   <code-editor/>
   <button class="btn btn-primary" :disabled="!codeIsValid" @click="compile">Compile</button>
   <div v-if="codeIsValid">
-    <vue-feather class="text-success" type="check-icon"></vue-feather>
+    <vue-feather type="check"></vue-feather>
     Code is valid
   </div>
   <div v-if="!codeIsValid">
-    <vue-feather class="text-danger" type="x-icon"></vue-feather>
     Code is not valid
   </div>
 </template>
