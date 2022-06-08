@@ -70,7 +70,7 @@ export default defineComponent({
         const appType = computed(() => store.state.appType);
         const loading = computed(() => !store.state.config);
 
-        onMounted(async () => {
+        onMounted(() => {
             store.dispatch(BasicAction.FetchConfig, props.appName);
             store.dispatch(`model/${ModelAction.FetchOdinRunner}`);
         });

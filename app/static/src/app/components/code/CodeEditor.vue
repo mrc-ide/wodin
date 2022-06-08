@@ -41,7 +41,7 @@ export default defineComponent({
                         timeoutId = setTimeout(() => {
                             store.dispatch(`code/${CodeAction.UpdateCode}`, newCode, { root: true });
                             timeoutId = null;
-                        }, 2000);
+                        }, 1000);
                     }
                 });
             });

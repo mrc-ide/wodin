@@ -76,7 +76,6 @@ export default defineComponent({
         };
 
         watch(solution, () => {
-            console.log("watch solution fired");
             if (solution.value) {
               // TODO: default end time will eventually be configured in the app
               baseData.value = solution.value(0, 100, nPoints);
