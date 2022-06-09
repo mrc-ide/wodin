@@ -29,16 +29,13 @@ describe("RunModelPlot", () => {
     }
     (global.ResizeObserver as any) = mockResizeObserver;
 
-    const getStore = (odinRunner = null, odin = null, mockRunModel = jest.fn) => {
+    const getStore = (mockRunModel = jest.fn) => {
         return new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
                 model: {
                     namespaced: true,
-                    state: mockModelState({
-                        odinRunner,
-                        odin
-                    }),
+                    state: mockModelState(),
                     actions: {
                         RunModel: mockRunModel
                     },
