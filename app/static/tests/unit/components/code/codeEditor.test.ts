@@ -23,12 +23,12 @@ import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState, mockCodeState } from "../../../mocks";
 
 describe("CodeEditor", () => {
-    const getStore = (mockUpdateCode = jest.fn()) => {
-        return new Vuex.Store<BasicState>({
+    const getWrapper = (readOnlyCode = false, mockUpdateCode = jest.fn()) => {
+        const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
                 config: {
                     defaultCode: ["default code"],
-                    readOnlyCode: false,
+                    readOnlyCode,
                     basicProp: ""
                 }
             }),
@@ -44,9 +44,7 @@ describe("CodeEditor", () => {
                 }
             }
         });
-    };
 
-    const getWrapper = (store = getStore()) => {
         return shallowMount(CodeEditor, {
             global: {
                 plugins: [store]
@@ -59,8 +57,7 @@ describe("CodeEditor", () => {
     });
 
     it("initialises Monaco Editor", (done) => {
-        const store = getStore();
-        const wrapper = getWrapper(store);
+        const wrapper = getWrapper();
         setTimeout(() => {
             const el = wrapper.find("div").element;
             expect(mockMonaco.editor.create.mock.calls[0][0]).toBe(el);
@@ -77,8 +74,7 @@ describe("CodeEditor", () => {
 
     it("Monaco Editor change handler makes a delayed code update dispatch", (done) => {
         const mockUpdateCode = jest.fn();
-        const store = getStore(mockUpdateCode);
-        getWrapper(store);
+        getWrapper(false, mockUpdateCode);
         setTimeout(() => {
             expect(mockMonacoEditor.onDidChangeModelContent).toHaveBeenCalled();
             const changeHandler = mockMonacoEditor.onDidChangeModelContent.mock.calls[0][0];
@@ -95,5 +91,11 @@ describe("CodeEditor", () => {
         });
     });
 
-    //TODO: sets readonly
+    it("initialises Monaco Editor as readonly if state is configured with readOnlyCode", (done) => {
+        getWrapper(true);
+        setTimeout(() => {
+            expect(mockMonaco.editor.create.mock.calls[0][1].readOnly).toBe(true);
+            done();
+        });
+    });
 });

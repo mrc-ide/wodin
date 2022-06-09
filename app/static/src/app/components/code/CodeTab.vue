@@ -2,7 +2,7 @@
   <div class="code-tab">
     <code-editor/>
     <button class="btn btn-primary" :disabled="!codeIsValid" @click="compile">Compile</button>
-    <div class="mt-2">
+    <div class="mt-2" id="code-status">
       <template v-if="codeIsValid">
         <vue-feather class="text-success inline-icon" type="check"></vue-feather>
         Code is valid
