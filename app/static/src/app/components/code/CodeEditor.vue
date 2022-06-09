@@ -20,9 +20,7 @@ export default defineComponent({
 
         const editor = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
 
-        const currentCodeLines = computed(() => store.state.code.currentCode);
-        const joinCodeLines = (lines: string[]) => lines.join("\n");
-        const currentCode = computed(() => joinCodeLines(currentCodeLines.value));
+        const currentCode = computed(() => store.state.code.currentCode);
         const readOnly = computed(() => (store.state.config as AppConfig).readOnlyCode);
 
         let newCode: string[] | null = null;
@@ -40,7 +38,7 @@ export default defineComponent({
         onMounted(() => {
             loader.init().then((monaco) => {
                 const monacoEd = monaco.editor.create(editor.value as HTMLElement, {
-                    value: currentCode.value,
+                    value: currentCode.value.join("\n"),
                     language: "r",
                     minimap: { enabled: false },
                     readOnly: readOnly.value
