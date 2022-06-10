@@ -27,11 +27,9 @@ describe("Model actions", () => {
         const commit = jest.fn();
         await (actions[ModelAction.FetchOdinRunner] as any)({ commit });
 
-        expect(commit.mock.calls.length).toBe(2);
+        expect(commit.mock.calls.length).toBe(1);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinRunner);
         expect(commit.mock.calls[0][1]).toBe(mockRunnerScript);
-        expect(commit.mock.calls[1][0]).toBe(ModelMutation.SetRequiredAction);
-        expect(commit.mock.calls[1][1]).toBe(RequiredModelAction.Compile);
     });
 
     it("commits error from fetch odin runner", async () => {

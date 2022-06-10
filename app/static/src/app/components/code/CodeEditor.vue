@@ -1,5 +1,7 @@
 <template>
-  <div class="editor" ref="editor"></div>
+  <div class="editor-container mb-2">
+    <div class="editor" ref="editor"></div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -58,9 +60,13 @@ export default defineComponent({
 });
 </script>
 <style>
+.editor-container {
+  width: 100%;
+  border: 1px solid #dee2e6;
+}
+
 .editor {
   width: 100%;
   height: 400px;
-  border-width: 1px;
 }
 </style>

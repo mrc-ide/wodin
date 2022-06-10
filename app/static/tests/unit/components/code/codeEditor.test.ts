@@ -59,7 +59,7 @@ describe("CodeEditor", () => {
     it("initialises Monaco Editor", (done) => {
         const wrapper = getWrapper();
         setTimeout(() => {
-            const el = wrapper.find("div").element;
+            const el = wrapper.find("div.editor").element;
             expect(mockMonaco.editor.create.mock.calls[0][0]).toBe(el);
             expect(mockMonaco.editor.create.mock.calls[0][1]).toStrictEqual({
                 value: "line1\nline2",
