@@ -1,6 +1,6 @@
 import Vuex from "vuex";
-import {logMutations} from "../../../src/app/store/plugins";
-import {AppState} from "../../../src/app/store/AppState";
+import { logMutations } from "../../../src/app/store/plugins";
+import { AppState } from "../../../src/app/store/AppState";
 
 describe("plugins", () => {
     it("logMutations logs mutations to console", () => {

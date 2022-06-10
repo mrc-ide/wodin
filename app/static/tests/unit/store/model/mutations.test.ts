@@ -1,6 +1,6 @@
 import { mutations } from "../../../../src/app/store/model/mutations";
 import { mockModelState } from "../../../mocks";
-import {RequiredModelAction} from "../../../../src/app/store/model/state";
+import { RequiredModelAction } from "../../../../src/app/store/model/state";
 
 describe("Model mutations", () => {
     it("evaluates and sets odin runner", () => {

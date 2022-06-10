@@ -1,13 +1,12 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via RunModelPlot
-import { RequiredModelAction } from "../../../../src/app/store/model/state";
-
 jest.mock("plotly.js", () => {});
 
 /* eslint-disable import/first */
 import Vuex from "vuex";
+import { shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState, mockModelState } from "../../../mocks";
-import { shallowMount } from "@vue/test-utils";
+import { RequiredModelAction } from "../../../../src/app/store/model/state";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
 import RunModelPlot from "../../../../src/app/components/run/RunModelPlot.vue";
 
@@ -58,13 +57,17 @@ describe("RunTab", () => {
     });
     it("fades plot and shows message when compile required", () => {
         const wrapper = getWrapper({} as any, {} as any, RequiredModelAction.Compile);
-        expect(wrapper.find(".run-update-msg").text()).toBe("Code has been updated. Compile code and Run Model to view graph for latest code.");
+        expect(wrapper.find(".run-update-msg").text()).toBe(
+            "Code has been updated. Compile code and Run Model to view graph for latest code."
+        );
         expect(wrapper.findComponent(RunModelPlot).props("fadePlot")).toBe(true);
     });
 
     it("fades plot and shows message when model run required", () => {
         const wrapper = getWrapper({} as any, {} as any, RequiredModelAction.Run);
-        expect(wrapper.find(".run-update-msg").text()).toBe("Code has been recompiled. Run Model to view graph for latest code.");
+        expect(wrapper.find(".run-update-msg").text()).toBe(
+            "Code has been recompiled. Run Model to view graph for latest code."
+        );
         expect(wrapper.findComponent(RunModelPlot).props("fadePlot")).toBe(true);
     });
 

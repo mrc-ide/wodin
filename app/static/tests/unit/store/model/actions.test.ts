@@ -1,10 +1,12 @@
 import * as dopri from "dopri";
-import {mockAxios, mockBasicState, mockCodeState, mockFailure, mockModelState, mockSuccess} from "../../../mocks";
-import {actions, ModelAction} from "../../../../src/app/store/model/actions";
-import {ModelMutation, mutations} from "../../../../src/app/store/model/mutations";
-import {RequiredModelAction} from "../../../../src/app/store/model/state";
 import Vuex from "vuex";
-import {BasicState} from "../../../../src/app/store/basic/state";
+import {
+    mockAxios, mockBasicState, mockCodeState, mockFailure, mockModelState, mockSuccess
+} from "../../../mocks";
+import { actions, ModelAction } from "../../../../src/app/store/model/actions";
+import { ModelMutation, mutations } from "../../../../src/app/store/model/mutations";
+import { RequiredModelAction } from "../../../../src/app/store/model/state";
+import { BasicState } from "../../../../src/app/store/basic/state";
 
 describe("Model actions", () => {
     beforeEach(() => {
@@ -80,7 +82,7 @@ describe("Model actions", () => {
             requiredAction: RequiredModelAction.Compile
         };
         const commit = jest.fn();
-        (actions[ModelAction.CompileModel] as any)({commit, state});
+        (actions[ModelAction.CompileModel] as any)({ commit, state });
         expect(commit.mock.calls.length).toBe(2);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[0][1]).toBe(3);
@@ -96,7 +98,7 @@ describe("Model actions", () => {
             requiredAction: RequiredModelAction.Run
         });
         const commit = jest.fn();
-        (actions[ModelAction.CompileModel] as any)({commit, state});
+        (actions[ModelAction.CompileModel] as any)({ commit, state });
         expect(commit.mock.calls.length).toBe(1);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[0][1]).toBe(3);
@@ -105,7 +107,7 @@ describe("Model actions", () => {
     it("compile model does nothing if no odin response", () => {
         const state = mockModelState();
         const commit = jest.fn();
-        (actions[ModelAction.CompileModel] as any)({commit, state});
+        (actions[ModelAction.CompileModel] as any)({ commit, state });
         expect(commit.mock.calls.length).toBe(0);
     });
 
@@ -190,8 +192,8 @@ describe("Model actions", () => {
                 code: {
                     namespaced: true,
                     state: mockCodeState({
-                              currentCode: ["default code"]
-                          })
+                        currentCode: ["default code"]
+                    })
                 },
                 model: {
                     namespaced: true,
