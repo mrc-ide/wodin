@@ -1,7 +1,7 @@
 <template>
   <div class="run-tab">
     <div>
-      <button class="btn btn-primary" :disabled="!canRunModel" @click="runModel">Run model</button>
+      <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
     </div>
     <div class="run-update-msg text-danger text-center">{{updateMsg}}</div>
     <run-model-plot :fade-plot="!!updateMsg"></run-model-plot>
