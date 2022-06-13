@@ -1,9 +1,7 @@
-import { MutationTree } from "vuex";
-import { ModelState, RequiredModelAction } from "./state";
-import {
-    Odin, OdinModelResponse, OdinParameter, OdinRunner, OdinSolution
-} from "../../types/responseTypes";
-import { evaluateScript } from "../../utils";
+import {MutationTree} from "vuex";
+import {ModelState, RequiredModelAction} from "./state";
+import {Odin, OdinModelResponse, OdinParameter, OdinRunner, OdinSolution} from "../../types/responseTypes";
+import {evaluateScript} from "../../utils";
 import {Dict} from "../../types/utilTypes";
 
 export enum ModelMutation {
@@ -11,9 +9,11 @@ export enum ModelMutation {
     SetOdinResponse = "SetOdinResponse",
     SetOdin = "SetOdin",
     SetOdinSolution = "SetOdinSolution",
-    SetRequiredAction = "SetRequiredAction",
+    SetRequiredCodeAction = "SetRequiredCodeAction",
+    SetRequiredParamsAction = "SetRequiredParamsAction",
     SetParameters = "SetParameters",
-    SetParameterValues = "SetParameterValues"
+    SetParameterValues = "SetParameterValues",
+    UpdateParameterValues = "UpdateParameterValues"
 }
 
 export const mutations: MutationTree<ModelState> = {
@@ -33,8 +33,12 @@ export const mutations: MutationTree<ModelState> = {
         state.odinSolution = payload;
     },
 
-    [ModelMutation.SetRequiredAction](state: ModelState, payload: RequiredModelAction | null) {
-        state.requiredAction = payload;
+    [ModelMutation.SetRequiredCodeAction](state: ModelState, payload: RequiredModelAction | null) {
+        state.requiredCodeAction = payload;
+    },
+
+    [ModelMutation.SetRequiredParamsAction](state: ModelState, payload: RequiredModelAction | null) {
+        state.requiredParamsAction = payload;
     },
 
     [ModelMutation.SetParameters](state: ModelState, payload: OdinParameter[]) {
@@ -42,6 +46,16 @@ export const mutations: MutationTree<ModelState> = {
     },
 
     [ModelMutation.SetParameterValues](state: ModelState, payload: Dict<number>) {
+        // initialise values
         state.parameterValues = payload;
+    },
+
+    [ModelMutation.UpdateParameterValues](state: ModelState, payload: Dict<number>) {
+        // update values (incomplete or complete set) and set required action as run will be needed using new values
+        state.parameterValues = {
+            ...state.parameterValues,
+            ...payload
+        };
+        state.requiredParamsAction = RequiredModelAction.Run;
     }
 };

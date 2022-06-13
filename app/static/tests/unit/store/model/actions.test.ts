@@ -93,7 +93,7 @@ describe("Model actions", () => {
             odinModelResponse: {
                 model: "1+2"
             } as any,
-            requiredAction: RequiredModelAction.Run
+            requiredCodeAction: RequiredModelAction.Run
         });
         const commit = jest.fn();
         (actions[ModelAction.CompileModel] as any)({ commit, state });
@@ -116,7 +116,7 @@ describe("Model actions", () => {
         const state = mockModelState({
             odinRunner: mockRunner,
             odin: mockOdin,
-            requiredAction: RequiredModelAction.Run
+            requiredCodeAction: RequiredModelAction.Run
         });
         const commit = jest.fn();
 
@@ -143,7 +143,7 @@ describe("Model actions", () => {
         const state = mockModelState({
             odinRunner: mockRunner,
             odin: mockOdin,
-            requiredAction: RequiredModelAction.Compile
+            requiredCodeAction: RequiredModelAction.Compile
         });
         const commit = jest.fn();
 

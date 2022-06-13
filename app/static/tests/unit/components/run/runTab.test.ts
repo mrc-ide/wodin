@@ -23,7 +23,7 @@ describe("RunTab", () => {
                     state: mockModelState({
                         odinRunner,
                         odin,
-                        requiredAction
+                        requiredCodeAction: requiredAction
                     }),
                     actions: {
                         RunModel: mockRunModel

@@ -26,7 +26,7 @@ const fetchOdin = async (context: ActionContext<ModelState, AppState>) => {
         .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
         .post<OdinModelResponse>("/odin/model", { model })
         .then(() => {
-            commit(ModelMutation.SetRequiredAction, RequiredModelAction.Compile);
+            commit(ModelMutation.SetRequiredCodeAction, RequiredModelAction.Compile);
         });
 };
 
@@ -48,8 +48,8 @@ const compileModel = async (context: ActionContext<ModelState, AppState>) => {
         });
         commit(ModelMutation.SetParameterValues, newValues);
 
-        if (state.requiredAction === RequiredModelAction.Compile) {
-            commit(ModelMutation.SetRequiredAction, RequiredModelAction.Run);
+        if (state.requiredCodeAction === RequiredModelAction.Compile) {
+            commit(ModelMutation.SetRequiredCodeAction, RequiredModelAction.Run);
         }
     }
 };
@@ -57,17 +57,20 @@ const compileModel = async (context: ActionContext<ModelState, AppState>) => {
 const runModel = async (context: ActionContext<ModelState, AppState>) => {
     const { state, commit } = context;
     if (state.odinRunner && state.odin) {
-        const parameters = {};
+        const parameters = state.parameterValues;
         const start = 0;
 
-        // TODO: these values will come from state when UI elements are implemented
+        // TODO: this value will come from state when UI elements are implemented
         const end = 100;
         const control = {};
         const solution = state.odinRunner(dopri.Dopri, state.odin, parameters, start, end, control);
         commit(ModelMutation.SetOdinSolution, solution);
 
-        if (state.requiredAction === RequiredModelAction.Run) {
-            commit(ModelMutation.SetRequiredAction, null);
+        if (state.requiredCodeAction === RequiredModelAction.Run) {
+            commit(ModelMutation.SetRequiredCodeAction, null);
+        }
+        if (state.requiredParamsAction === RequiredModelAction.Run) {
+            commit(ModelMutation.SetRequiredParamsAction, null);
         }
     }
 };
