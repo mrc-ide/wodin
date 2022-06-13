@@ -1,7 +1,7 @@
 import { expect, test, Page } from "@playwright/test";
 
 test.describe("Wodin App tabs tests", () => {
-    test.beforeEach(async ({page}) => {
+    test.beforeEach(async ({ page }) => {
         await page.goto("/apps/day1");
     });
 
