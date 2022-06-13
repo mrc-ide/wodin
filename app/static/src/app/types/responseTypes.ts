@@ -36,11 +36,21 @@ export interface Odin {
     new(...args : unknown[]): unknown
 }
 
+export interface OdinParameter {
+    name: string,
+    default: null | number,
+    min: null | number,
+    max: null | number,
+    // eslint-disable-next-line camelcase
+    is_integer: boolean,
+    rank: number
+}
+
 export interface OdinModelResponse{
     valid: boolean,
     metadata: {
         variables: string[],
-        parameters: string[],
+        parameters: OdinParameter[],
         messages: string[]
     },
     model: string

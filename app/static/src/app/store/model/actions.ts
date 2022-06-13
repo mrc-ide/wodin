@@ -5,8 +5,9 @@ import { api } from "../../apiService";
 import { ModelMutation } from "./mutations";
 import { AppState } from "../AppState";
 import { ErrorsMutation } from "../errors/mutations";
-import { Odin, OdinModelResponse } from "../../types/responseTypes";
+import {Odin, OdinModelResponse, OdinParameter} from "../../types/responseTypes";
 import { evaluateScript } from "../../utils";
+import {Dict} from "../../types/utilTypes";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
@@ -34,6 +35,19 @@ const compileModel = async (context: ActionContext<ModelState, AppState>) => {
     if (state.odinModelResponse) {
         const odin = evaluateScript<Odin>(state.odinModelResponse.model);
         commit(ModelMutation.SetOdin, odin);
+
+        const {parameters} = state.odinModelResponse.metadata;
+        commit(ModelMutation.SetParameters, parameters);
+
+        // Retain parameter values where they still exist in new model - for new params, use default values
+        const newValues: Dict<number> = {};
+        const oldValuesKeys = Object.keys(state.parameterValues);
+        parameters.forEach((param: OdinParameter) => {
+            const value = oldValuesKeys.includes(param.name) ? state.parameterValues[param.name] : param.default;
+            newValues[param.name] = value === null ? 0 : value;
+        });
+        commit(ModelMutation.SetParameterValues, newValues);
+
         if (state.requiredAction === RequiredModelAction.Compile) {
             commit(ModelMutation.SetRequiredAction, RequiredModelAction.Run);
         }
@@ -43,9 +57,10 @@ const compileModel = async (context: ActionContext<ModelState, AppState>) => {
 const runModel = async (context: ActionContext<ModelState, AppState>) => {
     const { state, commit } = context;
     if (state.odinRunner && state.odin) {
-        // TODO: these values will come from state when UI elements are implemented
         const parameters = {};
         const start = 0;
+
+        // TODO: these values will come from state when UI elements are implemented
         const end = 100;
         const control = {};
         const solution = state.odinRunner(dopri.Dopri, state.odin, parameters, start, end, control);

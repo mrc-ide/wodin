@@ -1,16 +1,19 @@
 import { MutationTree } from "vuex";
 import { ModelState, RequiredModelAction } from "./state";
 import {
-    Odin, OdinModelResponse, OdinRunner, OdinSolution
+    Odin, OdinModelResponse, OdinParameter, OdinRunner, OdinSolution
 } from "../../types/responseTypes";
 import { evaluateScript } from "../../utils";
+import {Dict} from "../../types/utilTypes";
 
 export enum ModelMutation {
     SetOdinRunner = "SetOdinRunner",
     SetOdinResponse = "SetOdinResponse",
     SetOdin = "SetOdin",
     SetOdinSolution = "SetOdinSolution",
-    SetRequiredAction = "SetRequiredAction"
+    SetRequiredAction = "SetRequiredAction",
+    SetParameters = "SetParameters",
+    SetParameterValues = "SetParameterValues"
 }
 
 export const mutations: MutationTree<ModelState> = {
@@ -32,5 +35,13 @@ export const mutations: MutationTree<ModelState> = {
 
     [ModelMutation.SetRequiredAction](state: ModelState, payload: RequiredModelAction | null) {
         state.requiredAction = payload;
+    },
+
+    [ModelMutation.SetParameters](state: ModelState, payload: OdinParameter[]) {
+        state.parameters = payload;
+    },
+
+    [ModelMutation.SetParameterValues](state: ModelState, payload: Dict<number>) {
+        state.parameterValues = payload;
     }
 };
