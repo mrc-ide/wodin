@@ -26,7 +26,7 @@ const fetchOdin = async (context: ActionContext<ModelState, AppState>) => {
         .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
         .post<OdinModelResponse>("/odin/model", { model })
         .then(() => {
-            commit(ModelMutation.SetRequiredCodeAction, RequiredModelAction.Compile);
+            commit(ModelMutation.SetRequiredAction, RequiredModelAction.Compile);
         });
 };
 
@@ -48,8 +48,8 @@ const compileModel = async (context: ActionContext<ModelState, AppState>) => {
         });
         commit(ModelMutation.SetParameterValues, newValues);
 
-        if (state.requiredCodeAction === RequiredModelAction.Compile) {
-            commit(ModelMutation.SetRequiredCodeAction, RequiredModelAction.Run);
+        if (state.requiredAction === RequiredModelAction.Compile) {
+            commit(ModelMutation.SetRequiredAction, RequiredModelAction.Run);
         }
     }
 };
@@ -66,11 +66,8 @@ const runModel = async (context: ActionContext<ModelState, AppState>) => {
         const solution = state.odinRunner(dopri.Dopri, state.odin, parameters, start, end, control);
         commit(ModelMutation.SetOdinSolution, solution);
 
-        if (state.requiredCodeAction === RequiredModelAction.Run) {
-            commit(ModelMutation.SetRequiredCodeAction, null);
-        }
-        if (state.requiredParamsAction === RequiredModelAction.Run) {
-            commit(ModelMutation.SetRequiredParamsAction, null);
+        if (state.requiredAction === RequiredModelAction.Run) {
+            commit(ModelMutation.SetRequiredAction, null);
         }
     }
 };

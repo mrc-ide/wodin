@@ -9,8 +9,7 @@ export enum RequiredModelAction {
 }
 
 export interface ModelState {
-    requiredCodeAction: null | RequiredModelAction
-    requiredParamsAction: null | RequiredModelAction
+    requiredAction: null | RequiredModelAction
     odinRunner: null | OdinRunner
     odinModelResponse: null | OdinModelResponse // This contains all validation messages etc
     odin: null | Odin // When we 'compile' we evaluate the response's 'model' string into a working model

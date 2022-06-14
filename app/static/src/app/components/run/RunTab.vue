@@ -3,8 +3,7 @@
     <div>
       <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
     </div>
-    <div class="run-update-msg text-danger text-center">{{updateCodeMsg}}</div>
-    <div class="run-update-msg text-danger text-center">{{updateParamsMsg}}</div>
+    <div class="run-update-msg text-danger text-center">{{updateMsg}}</div>
     <run-model-plot :fade-plot="!!updateMsg"></run-model-plot>
   </div>
 </template>
@@ -23,23 +22,19 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
-        const canRunModel = computed(() => !!store.state.model.odinRunner && !!store.state.model.odin);
+
+        const requiredAction = computed(() => store.state.model.requiredACtion);
+
+        // Enable run button if model has initialised and compile is not required
+        const canRunModel = computed(() => !!store.state.model.odinRunner && !!store.state.model.odin && requiredAction.value !== RequiredModelAction.Compile);
 
         const runModel = () => store.dispatch(`model/${ModelAction.RunModel}`);
         const updateCodeMsg = computed(() => {
-            const { requiredCodeAction } = store.state.model;
-            if (requiredCodeAction === RequiredModelAction.Compile) {
-                return "Code has been updated. Compile code and Run Model to view graph for latest code.";
+            if (requiredAction.value === RequiredModelAction.Compile) {
+                return "Model code has been updated. Compile code and Run Model to view updated graph.";
             }
-            if (requiredCodeAction === RequiredModelAction.Run) {
-                return "Code has been recompiled. Run Model to view graph for latest code.";
-            }
-            return "";
-        });
-        const updateParamsMsg = computed(() => {
-            const { requiredParamsAction } = store.state.model;
-            if (requiredParamsAction === RequiredModelAction.Run) {
-                return "Parameters have been updated. Run Model to view graph for latest parameters.";
+            if (requiredAction.value === RequiredModelAction.Run) {
+                return "Model code has been recompiled or parameters have been updated. Run Model to view updated graph.";
             }
             return "";
         });
@@ -47,7 +42,6 @@ export default defineComponent({
         return {
             canRunModel,
             updateCodeMsg,
-            updateParamsMsg,
             runModel
         };
     }

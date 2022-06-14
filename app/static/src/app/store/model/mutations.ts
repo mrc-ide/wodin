@@ -9,8 +9,7 @@ export enum ModelMutation {
     SetOdinResponse = "SetOdinResponse",
     SetOdin = "SetOdin",
     SetOdinSolution = "SetOdinSolution",
-    SetRequiredCodeAction = "SetRequiredCodeAction",
-    SetRequiredParamsAction = "SetRequiredParamsAction",
+    SetRequiredAction = "SetRequiredCAction",
     SetParameters = "SetParameters",
     SetParameterValues = "SetParameterValues",
     UpdateParameterValues = "UpdateParameterValues"
@@ -33,12 +32,8 @@ export const mutations: MutationTree<ModelState> = {
         state.odinSolution = payload;
     },
 
-    [ModelMutation.SetRequiredCodeAction](state: ModelState, payload: RequiredModelAction | null) {
-        state.requiredCodeAction = payload;
-    },
-
-    [ModelMutation.SetRequiredParamsAction](state: ModelState, payload: RequiredModelAction | null) {
-        state.requiredParamsAction = payload;
+    [ModelMutation.SetRequiredAction](state: ModelState, payload: RequiredModelAction | null) {
+        state.requiredAction = payload;
     },
 
     [ModelMutation.SetParameters](state: ModelState, payload: OdinParameter[]) {
@@ -56,6 +51,8 @@ export const mutations: MutationTree<ModelState> = {
             ...state.parameterValues,
             ...payload
         };
-        state.requiredParamsAction = RequiredModelAction.Run;
+        if (state.requiredAction !== RequiredModelAction.Compile) {
+            state.requiredAction = RequiredModelAction.Run;
+        }
     }
 };

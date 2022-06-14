@@ -40,6 +40,6 @@ describe("Model mutations", () => {
     it("sets required action", () => {
         const state = mockModelState();
         mutations.SetRequiredAction(state, RequiredModelAction.Compile);
-        expect(state.requiredCodeAction).toBe(RequiredModelAction.Compile);
+        expect(state.requiredAction).toBe(RequiredModelAction.Compile);
     });
 });
