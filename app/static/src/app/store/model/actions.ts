@@ -29,7 +29,7 @@ const fetchOdin = async (context: ActionContext<ModelState, AppState>) => {
         });
 };
 
-const compileModel = async (context: ActionContext<ModelState, AppState>) => {
+const compileModel = (context: ActionContext<ModelState, AppState>) => {
     const { commit, state } = context;
     if (state.odinModelResponse) {
         const odin = evaluateScript<Odin>(state.odinModelResponse.model);
@@ -40,7 +40,7 @@ const compileModel = async (context: ActionContext<ModelState, AppState>) => {
     }
 };
 
-const runModel = async (context: ActionContext<ModelState, AppState>) => {
+const runModel = (context: ActionContext<ModelState, AppState>) => {
     const { state, commit } = context;
     if (state.odinRunner && state.odin) {
         // TODO: these values will come from state when UI elements are implemented

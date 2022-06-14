@@ -15,7 +15,7 @@ import { AppConfig } from "../../types/responseTypes";
 import { CodeAction } from "../../store/code/actions";
 
 export default defineComponent({
-    name: "CodeEditor.vue",
+    name: "CodeEditor",
 
     setup() {
         const store = useStore();
