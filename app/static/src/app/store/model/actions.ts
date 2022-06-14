@@ -39,7 +39,7 @@ export const actions: ActionTree<ModelState, AppState> = {
                 parameters, start, end, control
             } = payload;
 
-            const solution = state.odinRunner(dopri.Dopri, state.odin, parameters, start, end, control);
+            const solution = state.odinRunner(dopri, state.odin, parameters, start, end, control);
             commit(ModelMutation.SetOdinSolution, solution);
         }
     }

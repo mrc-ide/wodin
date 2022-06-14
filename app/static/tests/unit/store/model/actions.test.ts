@@ -84,7 +84,7 @@ describe("Model actions", () => {
 
         (actions[ModelAction.RunModel] as any)({ commit, state }, runModelPayload);
 
-        expect(mockRunner.mock.calls[0][0]).toBe(dopri.Dopri);
+        expect(mockRunner.mock.calls[0][0]).toBe(dopri);
         expect(mockRunner.mock.calls[0][1]).toBe(mockOdin);
         expect(mockRunner.mock.calls[0][2]).toStrictEqual({ p1: 1, p2: 2 });
         expect(mockRunner.mock.calls[0][3]).toBe(0); // stasrt
