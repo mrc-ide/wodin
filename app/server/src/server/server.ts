@@ -9,9 +9,11 @@ import { DefaultCodeReader } from "../defaultCodeReader";
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
+const morgan = require("morgan");
 
 const app = express();
 app.use(bodyParser.json());
+app.use(morgan("short"));
 
 const rootDir = path.join(__dirname, "../..");
 
