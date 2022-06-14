@@ -59,7 +59,7 @@ export default defineComponent({
     }
 });
 </script>
-<style>
+<style scoped lang="scss">
 .editor-container {
   width: 100%;
   border: 1px solid #dee2e6;
