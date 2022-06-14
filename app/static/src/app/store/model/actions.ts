@@ -63,7 +63,7 @@ const runModel = async (context: ActionContext<ModelState, AppState>) => {
         // TODO: this value will come from state when UI elements are implemented
         const end = 100;
         const control = {};
-        const solution = state.odinRunner(dopri.Dopri, state.odin, parameters, start, end, control);
+        const solution = state.odinRunner(dopri, state.odin, parameters, start, end, control);
         commit(ModelMutation.SetOdinSolution, solution);
 
         if (state.requiredAction === RequiredModelAction.Run) {

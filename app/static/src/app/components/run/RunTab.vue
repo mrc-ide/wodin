@@ -23,13 +23,13 @@ export default defineComponent({
     setup() {
         const store = useStore();
 
-        const requiredAction = computed(() => store.state.model.requiredACtion);
+        const requiredAction = computed(() => store.state.model.requiredAction);
 
         // Enable run button if model has initialised and compile is not required
         const canRunModel = computed(() => !!store.state.model.odinRunner && !!store.state.model.odin && requiredAction.value !== RequiredModelAction.Compile);
 
         const runModel = () => store.dispatch(`model/${ModelAction.RunModel}`);
-        const updateCodeMsg = computed(() => {
+        const updateMsg = computed(() => {
             if (requiredAction.value === RequiredModelAction.Compile) {
                 return "Model code has been updated. Compile code and Run Model to view updated graph.";
             }
@@ -41,7 +41,7 @@ export default defineComponent({
 
         return {
             canRunModel,
-            updateCodeMsg,
+            updateMsg,
             runModel
         };
     }
