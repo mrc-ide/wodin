@@ -42,5 +42,8 @@ module.exports = {
             "max-classes-per-file": "off",
             "no-useless-constructor": "off"
         }
-    }]
+    }],
+    globals: {
+        NodeJS: true
+    }
 };

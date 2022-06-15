@@ -1,5 +1,5 @@
 <template>
-    <div class="run-model-plot" ref="plot">
+    <div class="run-model-plot" ref="plot" :style="plotStyle">
     </div>
 </template>
 
@@ -12,34 +12,22 @@ import { EventEmitter } from "events";
 import {
     Data, newPlot, react, PlotRelayoutEvent, Plots
 } from "plotly.js";
-import { ModelAction } from "../../store/model/actions";
 
 export default defineComponent({
     name: "RunModelPlot",
-    setup() {
+    props: {
+        fadePlot: Boolean
+    },
+    setup(props) {
         const store = useStore();
 
-        const odin = computed(() => store.state.model.odin);
-        const odinRunner = computed(() => store.state.model.odinRunner);
+        const plotStyle = computed(() => (props.fadePlot ? "opacity:0.5;" : ""));
         const solution = computed(() => store.state.model.odinSolution);
 
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
         const baseData = ref(null);
 
         const nPoints = 1000; // TODO: appropriate value could be derived from width of element
-
-        const runModel = () => {
-            if (odin.value && odinRunner.value) {
-                const payload = {
-                    parameters: {},
-                    start: 0,
-                    end: 100,
-                    control: {}
-                };
-                store.dispatch(`model/${ModelAction.RunModel}`, payload);
-            }
-        };
-
         const config = {
             responsive: true
         };
@@ -74,34 +62,26 @@ export default defineComponent({
         let resizeObserver: null | ResizeObserver = null;
 
         const drawPlot = () => {
-            if (baseData.value) {
-                const el = plot.value as unknown;
-                const layout = {
-                    margin: { t: 0 }
-                };
-                newPlot(el as HTMLElement, baseData.value as Data[], layout, config);
-                (el as EventEmitter).on("plotly_relayout", relayout);
-                resizeObserver = new ResizeObserver(resize);
-                resizeObserver.observe(plot.value as HTMLElement);
+            if (solution.value) {
+                // TODO: default end time will eventually be configured in the app
+                baseData.value = solution.value(0, 100, nPoints);
+
+                if (baseData.value) {
+                    const el = plot.value as unknown;
+                    const layout = {
+                        margin: { t: 0 }
+                    };
+                    newPlot(el as HTMLElement, baseData.value as Data[], layout, config);
+                    (el as EventEmitter).on("plotly_relayout", relayout);
+                    resizeObserver = new ResizeObserver(resize);
+                    resizeObserver.observe(plot.value as HTMLElement);
+                }
             }
         };
 
-        watch([odin, odinRunner], () => {
-            // TODO: Eventually it probably won't be the component initiating run model, but the store, on updates
-            // to code or parameters - which is not yet implemented
-            runModel();
-        });
+        onMounted(drawPlot);
 
-        watch(solution, () => {
-            // TODO: default end time will eventually be configured in the app
-            baseData.value = solution.value(0, 100, nPoints);
-
-            drawPlot();
-        });
-
-        onMounted(() => {
-            runModel();
-        });
+        watch(solution, drawPlot);
 
         onUnmounted(() => {
             if (resizeObserver) {
@@ -110,6 +90,7 @@ export default defineComponent({
         });
 
         return {
+            plotStyle,
             plot,
             relayout,
             resize,
