@@ -48,7 +48,7 @@ const runModel = (context: ActionContext<ModelState, AppState>) => {
         const start = 0;
         const end = 100;
         const control = {};
-        const solution = state.odinRunner(dopri.Dopri, state.odin, parameters, start, end, control);
+        const solution = state.odinRunner(dopri, state.odin, parameters, start, end, control);
         commit(ModelMutation.SetOdinSolution, solution);
 
         if (state.requiredAction === RequiredModelAction.Run) {

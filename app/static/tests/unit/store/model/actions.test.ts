@@ -122,7 +122,7 @@ describe("Model actions", () => {
 
         (actions[ModelAction.RunModel] as any)({ commit, state });
 
-        expect(mockRunner.mock.calls[0][0]).toBe(dopri.Dopri);
+        expect(mockRunner.mock.calls[0][0]).toBe(dopri);
         expect(mockRunner.mock.calls[0][1]).toBe(mockOdin);
         expect(mockRunner.mock.calls[0][2]).toStrictEqual({ });
         expect(mockRunner.mock.calls[0][3]).toBe(0); // start
@@ -229,7 +229,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[3][1]).toBe(RequiredModelAction.Run);
 
         // run
-        expect(mockRunner.mock.calls[0][0]).toBe(dopri.Dopri);
+        expect(mockRunner.mock.calls[0][0]).toBe(dopri);
         expect(mockRunner.mock.calls[0][1]).toBe(3);
         expect(mockRunner.mock.calls[0][2]).toStrictEqual({ });
         expect(mockRunner.mock.calls[0][3]).toBe(0); // start
