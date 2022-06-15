@@ -37,7 +37,6 @@ const compileModel = async (context: ActionContext<ModelState, AppState>) => {
         commit(ModelMutation.SetOdin, odin);
 
         const {parameters} = state.odinModelResponse.metadata;
-        commit(ModelMutation.SetParameters, parameters);
 
         // Retain parameter values where they still exist in new model - for new params, use default values
         const newValues: Dict<number> = {};

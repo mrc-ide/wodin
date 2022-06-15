@@ -5,7 +5,10 @@
         <label class="col-form-label">{{paramName}}</label>
       </div>
       <div class="col-6">
-        <input class="form-control" type="number" :value="paramValues[paramName]" @input="updateValue($event, paramName)"/>
+        <input class="form-control parameter-input"
+               type="number"
+               :value="paramValues[paramName]"
+               @input="updateValue($event, paramName)"/>
       </div>
     </div>
   </div>
@@ -36,3 +39,4 @@ export default defineComponent({
     }
 });
 </script>
+

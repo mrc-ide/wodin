@@ -10,7 +10,6 @@ export enum ModelMutation {
     SetOdin = "SetOdin",
     SetOdinSolution = "SetOdinSolution",
     SetRequiredAction = "SetRequiredCAction",
-    SetParameters = "SetParameters",
     SetParameterValues = "SetParameterValues",
     UpdateParameterValues = "UpdateParameterValues"
 }
@@ -34,10 +33,6 @@ export const mutations: MutationTree<ModelState> = {
 
     [ModelMutation.SetRequiredAction](state: ModelState, payload: RequiredModelAction | null) {
         state.requiredAction = payload;
-    },
-
-    [ModelMutation.SetParameters](state: ModelState, payload: OdinParameter[]) {
-        state.parameters = payload;
     },
 
     [ModelMutation.SetParameterValues](state: ModelState, payload: Dict<number>) {

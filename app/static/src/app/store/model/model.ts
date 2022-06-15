@@ -8,7 +8,6 @@ export const defaultState: ModelState = {
     odinModelResponse: null,
     odin: null,
     odinSolution: null,
-    parameters: [],
     parameterValues: {}
 };
 
