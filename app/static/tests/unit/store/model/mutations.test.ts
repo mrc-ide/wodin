@@ -1,5 +1,6 @@
 import { mutations } from "../../../../src/app/store/model/mutations";
 import { mockModelState } from "../../../mocks";
+import { RequiredModelAction } from "../../../../src/app/store/model/state";
 
 describe("Model mutations", () => {
     it("evaluates and sets odin runner", () => {
@@ -10,7 +11,7 @@ describe("Model mutations", () => {
         expect((state.odinRunner as any)()).toBe("runner");
     });
 
-    it("evaluates and sets  odin", () => {
+    it("sets  odin response", () => {
         const mockOdinModelResponse = {
             valid: true,
             metadata: {},
@@ -18,9 +19,14 @@ describe("Model mutations", () => {
         };
         const state = mockModelState();
 
-        mutations.SetOdin(state, mockOdinModelResponse);
+        mutations.SetOdinResponse(state, mockOdinModelResponse);
         expect(state.odinModelResponse).toBe(mockOdinModelResponse);
-        expect((state.odin as any)()).toBe("hello");
+    });
+
+    it("sets odin", () => {
+        const state = mockModelState();
+        mutations.SetOdin(state, "test odin" as any);
+        expect(state.odin).toBe("test odin");
     });
 
     it("sets odin solution", () => {
@@ -29,5 +35,11 @@ describe("Model mutations", () => {
 
         mutations.SetOdinSolution(state, mockSolution);
         expect(state.odinSolution).toBe(mockSolution);
+    });
+
+    it("sets required action", () => {
+        const state = mockModelState();
+        mutations.SetRequiredAction(state, RequiredModelAction.Compile);
+        expect(state.requiredAction).toBe(RequiredModelAction.Compile);
     });
 });

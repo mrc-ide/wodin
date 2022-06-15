@@ -41,13 +41,15 @@ export const mockModelState = (state: Partial<ModelState> = {}): ModelState => {
         odin: null,
         odinSolution: null,
         odinModelResponse: null,
+        requiredAction: null,
         ...state
     };
 };
 
 export const mockCodeState = (state: Partial<CodeState> = {}): CodeState => {
     return {
-        currentCode: []
+        currentCode: [],
+        ...state
     };
 };
 

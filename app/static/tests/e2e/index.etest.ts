@@ -25,7 +25,7 @@ test.describe("Index tests", () => {
         await page.click("a[href='apps/day1']");
 
         expect(await page.innerText("h1")).toBe("Day 1 - Basic Model");
-        expect(await page.innerText(".wodin-left div.mt-4")).toBe("Coming soon: Code editor");
+        expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Code");
     });
 
     test("day2 link goes to Fit app", async ({ page }) => {

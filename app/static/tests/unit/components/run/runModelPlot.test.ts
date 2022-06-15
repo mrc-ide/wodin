@@ -29,16 +29,13 @@ describe("RunModelPlot", () => {
     }
     (global.ResizeObserver as any) = mockResizeObserver;
 
-    const getStore = (odinRunner = null, odin = null, mockRunModel = jest.fn) => {
+    const getStore = (mockRunModel = jest.fn) => {
         return new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
                 model: {
                     namespaced: true,
-                    state: mockModelState({
-                        odinRunner,
-                        odin
-                    }),
+                    state: mockModelState(),
                     actions: {
                         RunModel: mockRunModel
                     },
@@ -48,8 +45,9 @@ describe("RunModelPlot", () => {
         });
     };
 
-    const getWrapper = (store = getStore()) => {
+    const getWrapper = (store = getStore(), fadePlot = false) => {
         return shallowMount(RunModelPlot, {
+            props: { fadePlot },
             global: {
                 plugins: [store]
             }
@@ -67,73 +65,16 @@ describe("RunModelPlot", () => {
         expect((wrapper.vm as any).plot).toBe(div.element);
     });
 
-    const expectedRunModelPayload = {
-        parameters: {},
-        start: 0,
-        end: 100,
-        control: {}
-    };
-
-    it("runs model on mount if odin and runner are both set", () => {
-        const mockRunner = {} as any;
-        const mockOdin = {} as any;
-        const mockRunModel = jest.fn();
-        const store = getStore(mockRunner, mockOdin, mockRunModel);
-        getWrapper(store);
-        expect(mockRunModel).toHaveBeenCalled();
-        const payload = mockRunModel.mock.calls[0][1];
-        expect(payload).toStrictEqual(expectedRunModelPayload);
+    it("does not render fade style when fadePlot is false", () => {
+        const wrapper = getWrapper();
+        const div = wrapper.find("div.run-model-plot");
+        expect(div.attributes("style")).toBe("");
     });
 
-    it("runs model when odin is updated, if odin runner is set", async () => {
-        const mockRunner = {} as any;
-        const mockRunModel = jest.fn();
-        const store = getStore(mockRunner, null, mockRunModel);
-        getWrapper(store);
-        expect(mockRunModel).not.toHaveBeenCalled();
-
-        store.commit(`model/${ModelMutation.SetOdin}`, { model: "'testModel'" });
-        await nextTick();
-        expect(mockRunModel).toHaveBeenCalled();
-        const payload = mockRunModel.mock.calls[0][1];
-        expect(payload).toStrictEqual(expectedRunModelPayload);
-    });
-
-    it("does not run model when odin is updated, if odin runner is not set", async () => {
-        const mockRunModel = jest.fn();
-        const store = getStore(null, null, mockRunModel);
-        getWrapper(store);
-        expect(mockRunModel).not.toHaveBeenCalled();
-
-        store.commit({ type: `model/${ModelMutation.SetOdin}`, payload: {} as any });
-        await nextTick();
-        expect(mockRunModel).not.toHaveBeenCalled();
-    });
-
-    const mockRunner = class TestConstructor {
-        constructor() {}
-    };
-
-    it("runs model when odin runner is updated, if odin is set", async () => {
-        const mockOdin = {} as any;
-        const mockRunModel = jest.fn();
-        const store = getStore(null, mockOdin, mockRunModel);
-        getWrapper(store);
-
-        store.commit(`model/${ModelMutation.SetOdinRunner}`, mockRunner as any);
-        await nextTick();
-        const payload = mockRunModel.mock.calls[0][1];
-        expect(payload).toStrictEqual(expectedRunModelPayload);
-    });
-
-    it("does not run model when odin runner is updated, if odin is not set", async () => {
-        const mockRunModel = jest.fn();
-        const store = getStore(null, null, mockRunModel);
-        getWrapper(store);
-
-        store.commit(`model/${ModelMutation.SetOdinRunner}`, mockRunner as any);
-        await nextTick();
-        expect(mockRunModel).not.toHaveBeenCalled();
+    it("renders fade style when fade plot is true", () => {
+        const wrapper = getWrapper(getStore(), true);
+        const div = wrapper.find("div.run-model-plot");
+        expect(div.attributes("style")).toBe("opacity: 0.5;");
     });
 
     const mockSolution = (param1: number, param2: number) => [param1, param2];
