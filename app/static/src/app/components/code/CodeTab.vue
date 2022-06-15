@@ -3,14 +3,8 @@
     <code-editor/>
     <button class="btn btn-primary" id="compile-btn" :disabled="!codeIsValid" @click="compile">Compile</button>
     <div class="mt-2" id="code-status">
-      <template v-if="codeIsValid">
-        <vue-feather class="text-success inline-icon" type="check"></vue-feather>
-        Code is valid
-      </template>
-      <template v-else>
-        <vue-feather class="text-danger inline-icon" type="x"></vue-feather>
-        Code is not valid
-      </template>
+        <vue-feather class="inline-icon" :class="iconClass" :type="validIcon"></vue-feather>
+        {{ validMsg }}
     </div>
   </div>
 </template>
@@ -21,6 +15,7 @@ import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import CodeEditor from "./CodeEditor.vue";
 import { ModelAction } from "../../store/model/actions";
+import userMessages from "../../userMessages";
 
 export default defineComponent({
     name: "CodeTab",
@@ -34,8 +29,15 @@ export default defineComponent({
 
         const compile = () => store.dispatch(`model/${ModelAction.CompileModel}`);
 
+        const validMsg = computed(() => (codeIsValid.value ? userMessages.code.isValid : userMessages.code.isNotValid));
+        const validIcon = computed(() => (codeIsValid.value ? "check" : "x"));
+        const iconClass = computed(() => (codeIsValid.value ? "text-success" : "text-danger"));
+
         return {
             codeIsValid,
+            validMsg,
+            validIcon,
+            iconClass,
             compile
         };
     }

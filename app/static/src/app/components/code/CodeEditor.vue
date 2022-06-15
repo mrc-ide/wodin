@@ -15,7 +15,7 @@ import { AppConfig } from "../../types/responseTypes";
 import { CodeAction } from "../../store/code/actions";
 
 export default defineComponent({
-    name: "CodeEditor.vue",
+    name: "CodeEditor",
 
     setup() {
         const store = useStore();
@@ -59,7 +59,7 @@ export default defineComponent({
     }
 });
 </script>
-<style>
+<style scoped lang="scss">
 .editor-container {
   width: 100%;
   border: 1px solid #dee2e6;
