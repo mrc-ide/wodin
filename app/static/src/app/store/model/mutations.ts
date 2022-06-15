@@ -1,6 +1,6 @@
 import {MutationTree} from "vuex";
 import {ModelState, RequiredModelAction} from "./state";
-import {Odin, OdinModelResponse, OdinParameter, OdinRunner, OdinSolution} from "../../types/responseTypes";
+import {Odin, OdinModelResponse, OdinRunner, OdinSolution} from "../../types/responseTypes";
 import {evaluateScript} from "../../utils";
 import {Dict} from "../../types/utilTypes";
 
@@ -9,7 +9,7 @@ export enum ModelMutation {
     SetOdinResponse = "SetOdinResponse",
     SetOdin = "SetOdin",
     SetOdinSolution = "SetOdinSolution",
-    SetRequiredAction = "SetRequiredCAction",
+    SetRequiredAction = "SetRequiredAction",
     SetParameterValues = "SetParameterValues",
     UpdateParameterValues = "UpdateParameterValues"
 }

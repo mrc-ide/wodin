@@ -3,10 +3,10 @@ jest.mock("plotly.js", () => {});
 
 /* eslint-disable import/first */
 import Vuex from "vuex";
-import { shallowMount } from "@vue/test-utils";
-import { BasicState } from "../../../../src/app/store/basic/state";
-import { mockBasicState, mockModelState } from "../../../mocks";
-import { RequiredModelAction } from "../../../../src/app/store/model/state";
+import {shallowMount} from "@vue/test-utils";
+import {BasicState} from "../../../../src/app/store/basic/state";
+import {mockBasicState, mockModelState} from "../../../mocks";
+import {RequiredModelAction} from "../../../../src/app/store/model/state";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
 import RunModelPlot from "../../../../src/app/components/run/RunModelPlot.vue";
 
@@ -51,10 +51,16 @@ describe("RunTab", () => {
         expect(wrapper.find("button").element.disabled).toBe(true);
     });
 
-    it("disabled run button when state has no odin model", () => {
+    it("disables run button when state has no odin model", () => {
         const wrapper = getWrapper({} as any, null);
         expect(wrapper.find("button").element.disabled).toBe(true);
     });
+
+    it("disabled run button when compile is required", () => {
+        const wrapper = getWrapper({} as any, {} as any, RequiredModelAction.Compile);
+        expect(wrapper.find("button").element.disabled).toBe(true);
+    });
+
     it("fades plot and shows message when compile required", () => {
         const wrapper = getWrapper({} as any, {} as any, RequiredModelAction.Compile);
         expect(wrapper.find(".run-update-msg").text()).toBe(
