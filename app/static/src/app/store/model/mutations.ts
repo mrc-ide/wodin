@@ -1,8 +1,10 @@
-import {MutationTree} from "vuex";
-import {ModelState, RequiredModelAction} from "./state";
-import {Odin, OdinModelResponse, OdinRunner, OdinSolution} from "../../types/responseTypes";
-import {evaluateScript} from "../../utils";
-import {Dict} from "../../types/utilTypes";
+import { MutationTree } from "vuex";
+import { ModelState, RequiredModelAction } from "./state";
+import {
+    Odin, OdinModelResponse, OdinRunner, OdinSolution
+} from "../../types/responseTypes";
+import { evaluateScript } from "../../utils";
+import { Dict } from "../../types/utilTypes";
 
 export enum ModelMutation {
     SetOdinRunner = "SetOdinRunner",

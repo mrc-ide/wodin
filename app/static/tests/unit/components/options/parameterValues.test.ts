@@ -1,9 +1,9 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
-import {BasicState} from "../../../../src/app/store/basic/state";
+import { BasicState } from "../../../../src/app/store/basic/state";
 import ParameterValues from "../../../../src/app/components/options/ParameterValues.vue";
 import mock = jest.mock;
-import {mockBasicState, mockModelState} from "../../../mocks";
+import { mockBasicState, mockModelState } from "../../../mocks";
 
 describe("ParameterValues", () => {
     const getWrapper = (mockUpdateParameterValues = jest.fn()) => {
@@ -55,6 +55,6 @@ describe("ParameterValues", () => {
         const input2 = wrapper.findAll("input").at(1)!;
         await input2.setValue("3.3");
         expect(mockUpdateParameterValues).toHaveBeenCalledTimes(1);
-        expect(mockUpdateParameterValues.mock.calls[0][1]).toStrictEqual({param2: 3.3});
+        expect(mockUpdateParameterValues.mock.calls[0][1]).toStrictEqual({ param2: 3.3 });
     });
 });

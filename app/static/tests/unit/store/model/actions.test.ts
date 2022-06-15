@@ -78,9 +78,9 @@ describe("Model actions", () => {
                 model: "1+2",
                 metadata: {
                     parameters: [
-                        {name: "p2", default: 20},
-                        {name: "p3", default: 30},
-                        {name: "p4", default: 40}
+                        { name: "p2", default: 20 },
+                        { name: "p3", default: 30 },
+                        { name: "p4", default: 40 }
                     ]
                 }
             },
@@ -98,7 +98,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[0][1]).toBe(3);
         expect(commit.mock.calls[1][0]).toBe(ModelMutation.SetParameterValues);
         // Expect pre-existing parameter values to be retained,
-        expect(commit.mock.calls[1][1]).toStrictEqual({p2: 2, p3: 3, p4: 40});
+        expect(commit.mock.calls[1][1]).toStrictEqual({ p2: 2, p3: 3, p4: 40 });
         expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetRequiredAction);
         expect(commit.mock.calls[2][1]).toBe(RequiredModelAction.Run);
     });
@@ -132,7 +132,7 @@ describe("Model actions", () => {
             odinRunner: mockRunner,
             odin: mockOdin,
             requiredAction: RequiredModelAction.Run,
-            parameterValues: {p1: 1, p2: 2}
+            parameterValues: { p1: 1, p2: 2 }
         });
         const commit = jest.fn();
 

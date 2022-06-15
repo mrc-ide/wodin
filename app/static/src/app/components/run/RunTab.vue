@@ -29,7 +29,8 @@ export default defineComponent({
         const requiredAction = computed(() => store.state.model.requiredAction);
 
         // Enable run button if model has initialised and compile is not required
-        const canRunModel = computed(() => !!store.state.model.odinRunner && !!store.state.model.odin && requiredAction.value !== RequiredModelAction.Compile);
+        const canRunModel = computed(() => !!store.state.model.odinRunner && !!store.state.model.odin
+            && requiredAction.value !== RequiredModelAction.Compile);
 
         const runModel = () => store.dispatch(`model/${ModelAction.RunModel}`);
         const updateMsg = computed(() => {

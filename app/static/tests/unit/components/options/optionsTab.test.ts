@@ -3,7 +3,7 @@ import Vuex from "vuex";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
 import VerticalCollapse from "../../../../src/app/components/VerticalCollapse.vue";
 import ParameterValues from "../../../../src/app/components/options/ParameterValues.vue";
-import {BasicState} from "../../../../src/app/store/basic/state";
+import { BasicState } from "../../../../src/app/store/basic/state";
 
 describe("OptionsTab", () => {
     it("renders as expected", () => {
@@ -14,7 +14,7 @@ describe("OptionsTab", () => {
                 }
             } as any
         });
-        const wrapper = mount(OptionsTab, {global: { plugins: [store] }});
+        const wrapper = mount(OptionsTab, { global: { plugins: [store] } });
         const collapse = wrapper.findComponent(VerticalCollapse);
         expect(collapse.props("title")).toBe("Model Parameters");
         expect(collapse.props("collapseId")).toBe("model-params");

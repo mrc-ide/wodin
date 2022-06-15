@@ -3,10 +3,10 @@ jest.mock("plotly.js", () => {});
 
 /* eslint-disable import/first */
 import Vuex from "vuex";
-import {shallowMount} from "@vue/test-utils";
-import {BasicState} from "../../../../src/app/store/basic/state";
-import {mockBasicState, mockModelState} from "../../../mocks";
-import {RequiredModelAction} from "../../../../src/app/store/model/state";
+import { shallowMount } from "@vue/test-utils";
+import { BasicState } from "../../../../src/app/store/basic/state";
+import { mockBasicState, mockModelState } from "../../../mocks";
+import { RequiredModelAction } from "../../../../src/app/store/model/state";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
 import RunModelPlot from "../../../../src/app/components/run/RunModelPlot.vue";
 

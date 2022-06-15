@@ -45,15 +45,15 @@ describe("Model mutations", () => {
 
     it("sets parameter values", () => {
         const state = mockModelState();
-        const parameters = {p1: 1, p2: 2};
+        const parameters = { p1: 1, p2: 2 };
         mutations.SetParameterValues(state, parameters);
         expect(state.parameterValues).toBe(parameters);
     });
 
     it("updates parameter values and sets requiredAction to Run", () => {
-        const state = mockModelState({parameterValues: {p1: 1, p2: 2}});
-        mutations.UpdateParameterValues(state, {p1: 10, p3: 30});
-        expect(state.parameterValues).toStrictEqual({p1: 10, p2: 2, p3: 30});
+        const state = mockModelState({ parameterValues: { p1: 1, p2: 2 } });
+        mutations.UpdateParameterValues(state, { p1: 10, p3: 30 });
+        expect(state.parameterValues).toStrictEqual({ p1: 10, p2: 2, p3: 30 });
         expect(state.requiredAction).toBe(RequiredModelAction.Run);
     });
 });

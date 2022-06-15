@@ -5,9 +5,9 @@ import { api } from "../../apiService";
 import { ModelMutation } from "./mutations";
 import { AppState } from "../AppState";
 import { ErrorsMutation } from "../errors/mutations";
-import {Odin, OdinModelResponse, OdinParameter} from "../../types/responseTypes";
+import { Odin, OdinModelResponse, OdinParameter } from "../../types/responseTypes";
 import { evaluateScript } from "../../utils";
-import {Dict} from "../../types/utilTypes";
+import { Dict } from "../../types/utilTypes";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
@@ -36,7 +36,7 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
         const odin = evaluateScript<Odin>(state.odinModelResponse.model);
         commit(ModelMutation.SetOdin, odin);
 
-        const {parameters} = state.odinModelResponse.metadata;
+        const { parameters } = state.odinModelResponse.metadata;
 
         // Retain parameter values where they still exist in new model - for new params, use default values
         const newValues: Dict<number> = {};
