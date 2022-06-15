@@ -4,8 +4,8 @@
     <a data-bs-toggle="collapse"
        :href="'#' + collapseId"
        role="button"
-       aria-expanded="false"
-       aria-controls="collapseExample"
+       aria-expanded="true"
+       :aria-controls="collapseId"
        @click="toggleCollapse">
       <vue-feather :type="iconType"></vue-feather>
     </a>
@@ -30,7 +30,7 @@ export default defineComponent({
         VueFeather
     },
     setup() {
-        const collapsed = ref(false);
+        const collapsed = ref(false); // default to expanded view
 
         const toggleCollapse = () => {
             collapsed.value = !collapsed.value;
@@ -40,8 +40,7 @@ export default defineComponent({
 
         return {
             toggleCollapse,
-            iconType,
-            collapsed
+            iconType
         };
     }
 });

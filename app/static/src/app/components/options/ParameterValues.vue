@@ -27,7 +27,6 @@ export default defineComponent({
 
         const updateValue = (e: Event, paramName: string) => {
             const newValue = parseFloat((e.target as HTMLInputElement).value);
-            console.log("new value: " + newValue);
             store.commit("model/UpdateParameterValues", { [paramName]: newValue });
         };
 
