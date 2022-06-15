@@ -64,7 +64,7 @@ describe("RunTab", () => {
     it("fades plot and shows message when compile required", () => {
         const wrapper = getWrapper({} as any, {} as any, RequiredModelAction.Compile);
         expect(wrapper.find(".run-update-msg").text()).toBe(
-            "Code has been updated. Compile code and Run Model to view graph for latest code."
+            "Model code has been updated. Compile code and Run Model to view updated graph."
         );
         expect(wrapper.findComponent(RunModelPlot).props("fadePlot")).toBe(true);
     });
@@ -72,7 +72,7 @@ describe("RunTab", () => {
     it("fades plot and shows message when model run required", () => {
         const wrapper = getWrapper({} as any, {} as any, RequiredModelAction.Run);
         expect(wrapper.find(".run-update-msg").text()).toBe(
-            "Code has been recompiled. Run Model to view graph for latest code."
+            "Model code has been recompiled or parameters have been updated. Run Model to view updated graph."
         );
         expect(wrapper.findComponent(RunModelPlot).props("fadePlot")).toBe(true);
     });

@@ -4,7 +4,7 @@ export default {
         isNotValid: "Code is not valid"
     },
     run: {
-        compileRequired: "Code has been updated. Compile code and Run Model to view graph for latest code.",
-        runRequired: "Code has been recompiled or parameter. Run Model to view graph for latest code."
+        compileRequired: "Model code has been updated. Compile code and Run Model to view updated graph.",
+        runRequired: "Model code has been recompiled or parameters have been updated. Run Model to view updated graph."
     }
 };

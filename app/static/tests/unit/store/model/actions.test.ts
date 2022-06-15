@@ -106,15 +106,20 @@ describe("Model actions", () => {
     it("compile model does not update required action if required action was not Compile", () => {
         const state = mockModelState({
             odinModelResponse: {
-                model: "1+2"
+                model: "1+2",
+                metadata: {
+                    parameters: []
+                }
             } as any,
             requiredAction: RequiredModelAction.Run
         });
         const commit = jest.fn();
         (actions[ModelAction.CompileModel] as any)({ commit, state });
-        expect(commit.mock.calls.length).toBe(1);
+        expect(commit.mock.calls.length).toBe(2);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[0][1]).toBe(3);
+        expect(commit.mock.calls[1][0]).toBe(ModelMutation.SetParameterValues);
+        expect(commit.mock.calls[1][1]).toStrictEqual({});
     });
 
     it("compile model does nothing if no odin response", () => {
@@ -220,14 +225,19 @@ describe("Model actions", () => {
             }
         });
 
-        const testModel = { model: "1+2" };
+        const testModel = {
+            model: "1+2",
+            metadata: {
+                parameters: [{ name: "p1", default: 1 }]
+            }
+        };
         mockAxios.onPost("/odin/model")
             .reply(200, mockSuccess(testModel));
 
         const commit = jest.spyOn(store, "commit");
 
         await store.dispatch(`model/${ModelAction.DefaultModel}`);
-        expect(commit.mock.calls.length).toBe(6);
+        expect(commit.mock.calls.length).toBe(7);
 
         // fetch
         const postData = JSON.parse(mockAxios.history.post[0].data);
@@ -241,20 +251,22 @@ describe("Model actions", () => {
         // compile
         expect(commit.mock.calls[2][0]).toBe(`model/${ModelMutation.SetOdin}`);
         expect(commit.mock.calls[2][1]).toBe(3); // evaluated value of test model
-        expect(commit.mock.calls[3][0]).toBe(`model/${ModelMutation.SetRequiredAction}`);
-        expect(commit.mock.calls[3][1]).toBe(RequiredModelAction.Run);
+        expect(commit.mock.calls[3][0]).toBe(`model/${ModelMutation.SetParameterValues}`);
+        expect(commit.mock.calls[3][1]).toStrictEqual({ p1: 1 });
+        expect(commit.mock.calls[4][0]).toBe(`model/${ModelMutation.SetRequiredAction}`);
+        expect(commit.mock.calls[4][1]).toBe(RequiredModelAction.Run);
 
         // run
-        expect(mockRunner.mock.calls[0][0]).toBe(dopri.Dopri);
+        expect(mockRunner.mock.calls[0][0]).toBe(dopri);
         expect(mockRunner.mock.calls[0][1]).toBe(3);
-        expect(mockRunner.mock.calls[0][2]).toStrictEqual({ });
+        expect(mockRunner.mock.calls[0][2]).toStrictEqual({ p1: 1 });
         expect(mockRunner.mock.calls[0][3]).toBe(0); // start
         expect(mockRunner.mock.calls[0][4]).toBe(100); // end
         expect(mockRunner.mock.calls[0][5]).toStrictEqual({}); // control
 
-        expect(commit.mock.calls[4][0]).toBe(`model/${ModelMutation.SetOdinSolution}`);
-        expect(commit.mock.calls[4][1]).toBe("test solution");
-        expect(commit.mock.calls[5][0]).toBe(`model/${ModelMutation.SetRequiredAction}`);
-        expect(commit.mock.calls[5][1]).toBe(null);
+        expect(commit.mock.calls[5][0]).toBe(`model/${ModelMutation.SetOdinSolution}`);
+        expect(commit.mock.calls[5][1]).toBe("test solution");
+        expect(commit.mock.calls[6][0]).toBe(`model/${ModelMutation.SetRequiredAction}`);
+        expect(commit.mock.calls[6][1]).toBe(null);
     });
 });
