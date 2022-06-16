@@ -23,6 +23,7 @@ export default defineComponent({
 
         const plotStyle = computed(() => (props.fadePlot ? "opacity:0.5;" : ""));
         const solution = computed(() => store.state.model.odinSolution);
+        const endTime = computed(() => store.state.model.endTime);
 
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
         const baseData = ref(null);
@@ -63,8 +64,7 @@ export default defineComponent({
 
         const drawPlot = () => {
             if (solution.value) {
-                // TODO: default end time will eventually be configured in the app
-                baseData.value = solution.value(0, 100, nPoints);
+                baseData.value = solution.value(0, endTime.value, nPoints);
 
                 if (baseData.value) {
                     const el = plot.value as unknown;

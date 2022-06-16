@@ -8,7 +8,7 @@
         <input class="form-control parameter-input"
                type="number"
                min="1"
-               :value="endTime
+               :value="endTime"
                @input="updateEndTime"/>
       </div>
     </div>
@@ -18,23 +18,23 @@
 <script lang="ts">
 import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
-import {ModelMutation} from "../../store/model/mutations";
+import { ModelMutation } from "../../store/model/mutations";
 
 export default defineComponent({
-  name: "RunOptions",
-  setup() {
-    const store = useStore();
-    const endTime = computed(() => store.state.model.endTime);
+    name: "RunOptions",
+    setup() {
+        const store = useStore();
+        const endTime = computed(() => store.state.model.endTime);
 
-    const updateEndTime = (e: Event) => {
-      const newValue = parseFloat((e.target as HTMLInputElement).value);
-      store.commit(`model/${ModelMutation.SetEndTime}`, newValue);
-    };
+        const updateEndTime = (e: Event) => {
+            const newValue = parseFloat((e.target as HTMLInputElement).value);
+            store.commit(`model/${ModelMutation.SetEndTime}`, newValue);
+        };
 
-    return {
-      endTime,
-      updateEndTime
-    };
-  }
+        return {
+            endTime,
+            updateEndTime
+        };
+    }
 });
 </script>
