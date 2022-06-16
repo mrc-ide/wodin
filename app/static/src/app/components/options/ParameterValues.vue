@@ -17,17 +17,18 @@
 <script lang="ts">
 import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
+import { ModelMutation } from "../../store/model/mutations";
 
 export default defineComponent({
     name: "ParameterValues",
     setup() {
         const store = useStore();
         const paramValues = computed(() => store.state.model.parameterValues);
-        const paramNames = computed(() => Object.keys(paramValues.value)); // TODO: use rank
+        const paramNames = computed(() => Object.keys(paramValues.value));
 
         const updateValue = (e: Event, paramName: string) => {
             const newValue = parseFloat((e.target as HTMLInputElement).value);
-            store.commit("model/UpdateParameterValues", { [paramName]: newValue });
+            store.commit(`model/${ModelMutation.UpdateParameterValues}`, { [paramName]: newValue });
         };
 
         return {
