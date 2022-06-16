@@ -17,33 +17,33 @@ test.describe("Index tests", () => {
 
     test("renders heading", async ({ page }) => {
         await page.goto("/");
-        expect(await page.innerText("h1")).toBe("Example WODIN configuration");
+        await expect(await page.innerText("h1")).toBe("Example WODIN configuration");
     });
 
     test("day1 link goes to Basic app", async ({ page }) => {
         await page.goto("/");
         await page.click("a[href='apps/day1']");
 
-        expect(await page.innerText("h1")).toBe("Day 1 - Basic Model");
-        expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Code");
+        await expect(await page.innerText("h1")).toBe("Day 1 - Basic Model");
+        await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Code");
     });
 
     test("day2 link goes to Fit app", async ({ page }) => {
         await page.goto("/");
         await page.click("a[href='apps/day2']");
 
-        expect(await page.innerText("h1")).toBe("Day 2 - Model Fit");
-        expect(await page.innerText("#app-type")).toBe("App Type: fit");
-        expect(await page.innerText("#fit-prop")).toBe("Fit Prop: day2 fit value");
+        await expect(await page.innerText("h1")).toBe("Day 2 - Model Fit");
+        await expect(await page.innerText("#app-type")).toBe("App Type: fit");
+        await expect(await page.innerText("#fit-prop")).toBe("Fit Prop: day2 fit value");
     });
 
     test("day3 link goes to Stochastic app", async ({ page }) => {
         await page.goto("/");
         await page.click("a[href='apps/day3']");
 
-        expect(await page.innerText("h1")).toBe("Day 3 - Stochastic Model");
-        expect(await page.innerText("#app-type")).toBe("App Type: stochastic");
-        expect(await page.innerText("#stochastic-prop")).toBe("Stochastic Prop: day3 stochastic value");
+        await expect(await page.innerText("h1")).toBe("Day 3 - Stochastic Model");
+        await expect(await page.innerText("#app-type")).toBe("App Type: stochastic");
+        await expect(await page.innerText("#stochastic-prop")).toBe("Stochastic Prop: day3 stochastic value");
     });
 
     const testDownloadFile = async (href: string, localFileName: string, expectedContent: string, page: Page) => {
@@ -56,7 +56,7 @@ test.describe("Index tests", () => {
         const downloadPath = `${tmpPath}/${localFileName}`;
         await download.saveAs(downloadPath);
         const downloadContent = fs.readFileSync(downloadPath, { encoding: "utf-8" });
-        expect(downloadContent).toBe(expectedContent);
+        await expect(downloadContent).toBe(expectedContent);
     };
 
     test("can download day 2 sample files", async ({ page }) => {
