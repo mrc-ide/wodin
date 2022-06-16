@@ -60,7 +60,7 @@ test.describe("Options Tab tests", () => {
         expect(newPath).not.toEqual(previousPath);
     });
 
-    test("parameters update when compile with new code", async ({page}) => {
+    test("parameters update when compile with new code", async ({ page }) => {
         // Navigate to code tab
         await page.click(":nth-match(.wodin-left .nav-tabs a, 1)");
 
@@ -92,6 +92,5 @@ test.describe("Options Tab tests", () => {
         await expect(await page.inputValue(":nth-match(#model-params input, 2)")).toBe("28");
         await expect(await page.innerText(":nth-match(#model-params label, 3)")).toBe("sigma");
         await expect(await page.inputValue(":nth-match(#model-params input, 3)")).toBe("10");
-
     });
 });

@@ -98,7 +98,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[0][1]).toBe(3);
         expect(commit.mock.calls[1][0]).toBe(ModelMutation.SetParameterValues);
         // Expect pre-existing parameter values to be retained,
-        expect(commit.mock.calls[1][1]).toStrictEqual({ p2: 2, p3: 3, p4: 40 });
+        expect(commit.mock.calls[1][1]).toStrictEqual({ p2: 20, p3: 30, p4: 40 });
         expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetRequiredAction);
         expect(commit.mock.calls[2][1]).toBe(RequiredModelAction.Run);
     });

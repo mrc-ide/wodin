@@ -38,11 +38,10 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
 
         const { parameters } = state.odinModelResponse.metadata;
 
-        // Retain parameter values where they still exist in new model - for new params, use default values
+        // Overwrite any existing parameter values in the model
         const newValues: Dict<number> = {};
-        const oldValuesKeys = Object.keys(state.parameterValues);
         parameters.forEach((param: OdinParameter) => {
-            const value = oldValuesKeys.includes(param.name) ? state.parameterValues[param.name] : param.default;
+            const value = param.default;
             newValues[param.name] = value === null ? 0 : value;
         });
         commit(ModelMutation.SetParameterValues, newValues);
