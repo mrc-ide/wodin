@@ -17,6 +17,7 @@
 <script lang="ts">
 import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
+import { ModelMutation } from "../../store/model/mutations";
 
 export default defineComponent({
     name: "ParameterValues",
@@ -27,7 +28,7 @@ export default defineComponent({
 
         const updateValue = (e: Event, paramName: string) => {
             const newValue = parseFloat((e.target as HTMLInputElement).value);
-            store.commit("model/UpdateParameterValues", { [paramName]: newValue });
+            store.commit(`model/${ModelMutation.UpdateParameterValues}`, { [paramName]: newValue });
         };
 
         return {
