@@ -23,7 +23,7 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const paramValues = computed(() => store.state.model.parameterValues);
-        const paramNames = computed(() => Object.keys(paramValues.value)); // TODO: use rank
+        const paramNames = computed(() => Object.keys(paramValues.value));
 
         const updateValue = (e: Event, paramName: string) => {
             const newValue = parseFloat((e.target as HTMLInputElement).value);
