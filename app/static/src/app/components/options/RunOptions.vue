@@ -1,14 +1,15 @@
 <template>
   <div class="container">
-    <div v-for="paramName in paramNames" class="row my-2" :key="paramName">
+    <div class="row my-2">
       <div class="col-6">
-        <label class="col-form-label">{{paramName}}</label>
+        <label class="col-form-label">End time</label>
       </div>
       <div class="col-6">
         <input class="form-control parameter-input"
                type="number"
-               :value="paramValues[paramName]"
-               @input="updateValue($event, paramName)"/>
+               min="1"
+               :value="endTime
+               @input="updateEndTime"/>
       </div>
     </div>
   </div>
@@ -17,23 +18,22 @@
 <script lang="ts">
 import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
+import {ModelMutation} from "../../store/model/mutations";
 
 export default defineComponent({
   name: "RunOptions",
   setup() {
     const store = useStore();
-    const paramValues = computed(() => store.state.model.parameterValues);
-    const paramNames = computed(() => Object.keys(paramValues.value)); // TODO: use rank
+    const endTime = computed(() => store.state.model.endTime);
 
-    const updateValue = (e: Event, paramName: string) => {
+    const updateEndTime = (e: Event) => {
       const newValue = parseFloat((e.target as HTMLInputElement).value);
-      store.commit("model/UpdateParameterValues", { [paramName]: newValue });
+      store.commit(`model/${ModelMutation.SetEndTime}`, newValue);
     };
 
     return {
-      paramValues,
-      paramNames,
-      updateValue
+      endTime,
+      updateEndTime
     };
   }
 });

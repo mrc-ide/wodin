@@ -56,5 +56,8 @@ export const mutations: MutationTree<ModelState> = {
 
     [ModelMutation.SetEndTime](state: ModelState, payload: number) {
         state.endTime = payload;
+        if (state.requiredAction !== RequiredModelAction.Compile) {  // TODO: common method for this?
+            state.requiredAction = RequiredModelAction.Run;
+        }
     }
 };
