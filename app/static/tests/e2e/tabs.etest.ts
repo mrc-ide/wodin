@@ -15,7 +15,7 @@ test.describe("Wodin App tabs tests", () => {
     test("can change to Options tab and back", async ({ page }) => {
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
         expect(await page.innerText(".wodin-left .wodin-content .nav-tabs .active")).toBe("Options");
-        expect(await page.innerText(".wodin-left .wodin-content div.mt-4")).toBe("Coming soon: Options editor.");
+        expect(await page.innerText(".wodin-left .wodin-content div.mt-4")).toContain("Model Parameters");
     });
 
     test("renders plot in Run tab", async ({ page }) => {

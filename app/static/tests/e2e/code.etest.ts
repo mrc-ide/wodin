@@ -1,7 +1,7 @@
 import { expect, test, Page } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
 
-test.describe("Wodin Tabs tests", () => {
+test.describe("Code Tab tests", () => {
     const { timeout } = PlaywrightConfig;
 
     test.beforeEach(async ({ page }) => {
@@ -37,7 +37,7 @@ b     <-  8.0 / 3.0
         await page.fill(".monaco-editor textarea", newValidCode);
 
         await expect(page.locator(".run-tab .run-update-msg")).toHaveText(
-            "Code has been updated. Compile code and Run Model to view graph for latest code.", {
+            "Model code has been updated. Compile code and Run Model to view updated graph.", {
                 timeout
             }
         );
@@ -49,7 +49,7 @@ b     <-  8.0 / 3.0
         // Compile code - see new update message
         await page.click("#compile-btn");
         await expect(page.locator(".run-tab .run-update-msg")).toHaveText(
-            "Code has been recompiled. Run Model to view graph for latest code.", {
+            "Model code has been recompiled or parameters have been updated. Run Model to view updated graph.", {
                 timeout
             }
         );
@@ -73,7 +73,7 @@ b     <-  8.0 / 3.0
         await page.fill(".monaco-editor textarea", invalidCode);
 
         await expect(page.locator(".run-tab .run-update-msg")).toHaveText(
-            "Code has been updated. Compile code and Run Model to view graph for latest code.", {
+            "Model code has been updated. Compile code and Run Model to view updated graph.", {
                 timeout
             }
         );
