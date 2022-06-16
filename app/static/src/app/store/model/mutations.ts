@@ -13,7 +13,8 @@ export enum ModelMutation {
     SetOdinSolution = "SetOdinSolution",
     SetRequiredAction = "SetRequiredAction",
     SetParameterValues = "SetParameterValues",
-    UpdateParameterValues = "UpdateParameterValues"
+    UpdateParameterValues = "UpdateParameterValues",
+    SetEndTime = "SetEndTime"
 }
 
 export const mutations: MutationTree<ModelState> = {
@@ -51,5 +52,9 @@ export const mutations: MutationTree<ModelState> = {
         if (state.requiredAction !== RequiredModelAction.Compile) {
             state.requiredAction = RequiredModelAction.Run;
         }
+    },
+
+    [ModelMutation.SetEndTime](state: ModelState, payload: number) {
+        state.endTime = payload;
     }
 };
