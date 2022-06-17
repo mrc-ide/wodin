@@ -43,7 +43,6 @@ export default defineComponent({
         };
 
         watch(odinSolution, () => {
-            console.log("odin solution updated");
             // force inputs to update when model is run to show actual values
             paramKeys.value = timestampParamNames();
         });
