@@ -2,9 +2,7 @@ import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import ParameterValues from "../../../../src/app/components/options/ParameterValues.vue";
-import mock = jest.mock;
-import { mockBasicState, mockModelState } from "../../../mocks";
-import {mutations} from "../../../../src/app/store/fit/mutations";
+import { mockModelState } from "../../../mocks";
 
 describe("ParameterValues", () => {
     const getWrapper = (mockUpdateParameterValues = jest.fn()) => {
