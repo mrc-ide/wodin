@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div v-for="paramName in paramNames" class="row my-2" :key="paramName">
+    <div v-for="(paramName, index) in paramNames" class="row my-2" :key="paramKeys[index]">
       <div class="col-6">
         <label class="col-form-label">{{paramName}}</label>
       </div>
@@ -15,7 +15,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import {
+    defineComponent, computed, watch, ref
+} from "vue";
 import { useStore } from "vuex";
 import { ModelMutation } from "../../store/model/mutations";
 
@@ -26,14 +28,30 @@ export default defineComponent({
         const paramValues = computed(() => store.state.model.parameterValues);
         const paramNames = computed(() => Object.keys(paramValues.value));
 
+        const timestampParamNames = () => paramNames.value.map((name: string) => name + Date.now());
+
+        const paramKeys = ref(timestampParamNames());
+        const odinSolution = computed(() => store.state.model.odinSolution);
+
         const updateValue = (e: Event, paramName: string) => {
-            const newValue = parseFloat((e.target as HTMLInputElement).value);
-            store.commit(`model/${ModelMutation.UpdateParameterValues}`, { [paramName]: newValue });
+            const input = e.target as HTMLInputElement;
+            const newValue = parseFloat(input.value);
+            // Do not send update if user has cleared the numeric input. Refresh inputs on next run
+            if (!Number.isNaN(newValue)) {
+                store.commit(`model/${ModelMutation.UpdateParameterValues}`, { [paramName]: newValue });
+            }
         };
+
+        watch(odinSolution, () => {
+            console.log("odin solution updated");
+            // force inputs to update when model is run to show actual values
+            paramKeys.value = timestampParamNames();
+        });
 
         return {
             paramValues,
             paramNames,
+            paramKeys,
             updateValue
         };
     }

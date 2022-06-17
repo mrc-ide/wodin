@@ -2,7 +2,7 @@
   <div class="collapse-title p-2">
     {{title}}
     <a data-bs-toggle="collapse"
-       :href="'#' + collapseId"
+       :href="`#${collapseId}`"
        role="button"
        aria-expanded="true"
        :aria-controls="collapseId"

@@ -33,7 +33,7 @@ test.describe("Options Tab tests", () => {
 
         // expand
         await page.click(".collapse-title a");
-        await expect(await page.getAttribute(".collapse-title a i", "data-name")).toBe("chevron-up");
+        await expect(await page.getAttribute(".collapse-title a i", "data-name")).toBe("chevron-upp");
         await expect(await page.locator("#model-params")).not.toBeHidden();
     });
 
@@ -92,5 +92,16 @@ test.describe("Options Tab tests", () => {
         await expect(await page.inputValue(":nth-match(#model-params input, 2)")).toBe("28");
         await expect(await page.innerText(":nth-match(#model-params label, 3)")).toBe("sigma");
         await expect(await page.inputValue(":nth-match(#model-params input, 3)")).toBe("10");
+    });
+
+    test("cleared parameter input resets on model run", async ({ page }) => {
+        await page.fill(":nth-match(#model-params input, 1)", "");
+        await page.click("#run-btn");
+
+        await expect(await page.locator(":nth-match(#model-params input, 1)")).toHaveValue(
+            "4", {
+                timeout
+            }
+        );
     });
 });
