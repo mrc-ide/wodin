@@ -17,6 +17,12 @@ export enum ModelMutation {
     SetEndTime = "SetEndTime"
 }
 
+const runRequired = (state: ModelState) => {
+    if (state.requiredAction !== RequiredModelAction.Compile) {
+        state.requiredAction = RequiredModelAction.Run;
+    }
+};
+
 export const mutations: MutationTree<ModelState> = {
     [ModelMutation.SetOdinRunner](state: ModelState, payload: string) {
         state.odinRunner = evaluateScript<OdinRunner>(payload);
@@ -49,15 +55,11 @@ export const mutations: MutationTree<ModelState> = {
             ...state.parameterValues,
             ...payload
         };
-        if (state.requiredAction !== RequiredModelAction.Compile) {
-            state.requiredAction = RequiredModelAction.Run;
-        }
+        runRequired(state);
     },
 
     [ModelMutation.SetEndTime](state: ModelState, payload: number) {
         state.endTime = payload;
-        if (state.requiredAction !== RequiredModelAction.Compile) {  // TODO: common method for this?
-            state.requiredAction = RequiredModelAction.Run;
-        }
+        runRequired(state);
     }
 };

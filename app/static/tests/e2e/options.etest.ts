@@ -46,7 +46,7 @@ test.describe("Options Tab tests", () => {
         await page.fill(":nth-match(#model-params input, 1)", "3");
 
         await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
-            "Model code has been recompiled or parameters have been updated. Run Model to view updated graph.", {
+            "Model code has been recompiled or options have been updated. Run Model to view updated graph.", {
                 timeout
             }
         );
@@ -78,7 +78,7 @@ test.describe("Options Tab tests", () => {
         // Compile code
         await page.click("#compile-btn");
         await expect(page.locator(".run-tab .run-update-msg")).toHaveText(
-            "Model code has been recompiled or parameters have been updated. Run Model to view updated graph.", {
+            "Model code has been recompiled or options have been updated. Run Model to view updated graph.", {
                 timeout
             }
         );

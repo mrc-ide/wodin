@@ -35,7 +35,9 @@ describe("RunModelPlot", () => {
             modules: {
                 model: {
                     namespaced: true,
-                    state: mockModelState(),
+                    state: mockModelState({
+                        endTime: 99
+                    }),
                     actions: {
                         RunModel: mockRunModel
                     },
@@ -90,7 +92,7 @@ describe("RunModelPlot", () => {
         store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
         await nextTick();
         expect(mockPlotlyNewPlot.mock.calls[0][0]).toBe(wrapper.find("div").element);
-        expect(mockPlotlyNewPlot.mock.calls[0][1]).toStrictEqual([0, 100]);
+        expect(mockPlotlyNewPlot.mock.calls[0][1]).toStrictEqual([0, 99]);
         expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({ margin: { t: 0 } });
 
         expect(mockOn.mock.calls[0][0]).toBe("plotly_relayout");

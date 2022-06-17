@@ -137,7 +137,8 @@ describe("Model actions", () => {
             odinRunner: mockRunner,
             odin: mockOdin,
             requiredAction: RequiredModelAction.Run,
-            parameterValues: { p1: 1, p2: 2 }
+            parameterValues: { p1: 1, p2: 2 },
+            endTime: 99
         });
         const commit = jest.fn();
 
@@ -147,7 +148,7 @@ describe("Model actions", () => {
         expect(mockRunner.mock.calls[0][1]).toBe(mockOdin);
         expect(mockRunner.mock.calls[0][2]).toStrictEqual({ p1: 1, p2: 2 });
         expect(mockRunner.mock.calls[0][3]).toBe(0); // start
-        expect(mockRunner.mock.calls[0][4]).toBe(100); // end
+        expect(mockRunner.mock.calls[0][4]).toBe(99); // end time from state
         expect(mockRunner.mock.calls[0][5]).toStrictEqual({}); // control
 
         expect(commit.mock.calls.length).toBe(2);

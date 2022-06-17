@@ -1,6 +1,6 @@
-import { mutations } from "../../../../src/app/store/model/mutations";
-import { mockModelState } from "../../../mocks";
-import { RequiredModelAction } from "../../../../src/app/store/model/state";
+import {mutations} from "../../../../src/app/store/model/mutations";
+import {mockModelState} from "../../../mocks";
+import {RequiredModelAction} from "../../../../src/app/store/model/state";
 
 describe("Model mutations", () => {
     it("evaluates and sets odin runner", () => {
@@ -55,5 +55,26 @@ describe("Model mutations", () => {
         mutations.UpdateParameterValues(state, { p1: 10, p3: 30 });
         expect(state.parameterValues).toStrictEqual({ p1: 10, p2: 2, p3: 30 });
         expect(state.requiredAction).toBe(RequiredModelAction.Run);
+    });
+
+    it("UpdateParameterValues does not set requiredAction to Run if it is currently Compile", () => {
+        const state = mockModelState({ parameterValues: { p1: 1 }, requiredAction: RequiredModelAction.Compile});
+        mutations.UpdateParameterValues(state, { p2: 2 });
+        expect(state.parameterValues).toStrictEqual({ p1: 1, p2: 2 });
+        expect(state.requiredAction).toBe(RequiredModelAction.Compile);
+    });
+
+    it("sets end time and sets requiredAction to Run", () => {
+        const state = mockModelState({endTime: 99})
+        mutations.SetEndTime(state, 101);
+        expect(state.endTime).toBe(101);
+        expect(state.requiredAction).toBe(RequiredModelAction.Run);
+    });
+
+    it("SetEndTime does not set requiredAction to Run if it is currently Compile", () => {
+        const state = mockModelState({endTime: 99, requiredAction: RequiredModelAction.Compile})
+        mutations.SetEndTime(state, 101);
+        expect(state.endTime).toBe(101);
+        expect(state.requiredAction).toBe(RequiredModelAction.Compile);
     });
 });
