@@ -159,7 +159,7 @@ describe("RunModelPlot", () => {
         await relayout(relayoutEvent);
 
         expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
-        expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual([0, 100]);
+        expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual([0, 99]);
         expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual(expectedLayout);
     });
 

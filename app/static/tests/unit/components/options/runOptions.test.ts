@@ -1,6 +1,6 @@
 import Vuex from "vuex";
-import {BasicState} from "../../../../src/app/store/basic/state";
-import {shallowMount} from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
+import { BasicState } from "../../../../src/app/store/basic/state";
 import RunOptions from "../../../../src/app/components/options/RunOptions.vue";
 
 describe("RunOptions", () => {

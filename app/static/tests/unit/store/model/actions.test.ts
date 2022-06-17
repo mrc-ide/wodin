@@ -218,7 +218,8 @@ describe("Model actions", () => {
                 model: {
                     namespaced: true,
                     state: mockModelState({
-                        odinRunner: mockRunner
+                        odinRunner: mockRunner,
+                        endTime: 99
                     }),
                     mutations,
                     actions
@@ -262,7 +263,7 @@ describe("Model actions", () => {
         expect(mockRunner.mock.calls[0][1]).toBe(3);
         expect(mockRunner.mock.calls[0][2]).toStrictEqual({ p1: 1 });
         expect(mockRunner.mock.calls[0][3]).toBe(0); // start
-        expect(mockRunner.mock.calls[0][4]).toBe(100); // end
+        expect(mockRunner.mock.calls[0][4]).toBe(99); // end
         expect(mockRunner.mock.calls[0][5]).toStrictEqual({}); // control
 
         expect(commit.mock.calls[5][0]).toBe(`model/${ModelMutation.SetOdinSolution}`);
