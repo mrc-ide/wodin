@@ -33,7 +33,7 @@ test.describe("Options Tab tests", () => {
 
         // expand
         await page.click(".collapse-title a");
-        await expect(await page.getAttribute(".collapse-title a i", "data-name")).toBe("chevron-upp");
+        await expect(await page.getAttribute(".collapse-title a i", "data-name")).toBe("chevron-up");
         await expect(await page.locator("#model-params")).not.toBeHidden();
     });
 
