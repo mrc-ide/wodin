@@ -12,7 +12,7 @@ test.describe("Options Tab tests", () => {
 
     test("can see default parameters", async ({ page }) => {
         await expect(await page.innerText(".collapse-title")).toContain("Model Parameters");
-        await expect(await page.getAttribute(".collapse-title a i", "data-name")).toBe("chevron-up");
+        await expect(await page.getAttribute(".collapse-title i", "data-name")).toBe("chevron-up");
         await expect(await page.locator("#model-params")).not.toBeHidden();
 
         await expect(await page.innerText(":nth-match(#model-params label, 1)")).toBe("beta");
@@ -27,13 +27,13 @@ test.describe("Options Tab tests", () => {
 
     test("can collapse and expand parameters panel", async ({ page }) => {
         // collapse
-        await page.click(".collapse-title a");
-        await expect(await page.getAttribute(".collapse-title a i", "data-name")).toBe("chevron-down");
+        await page.click(".collapse-title");
+        await expect(await page.getAttribute(".collapse-title i", "data-name")).toBe("chevron-down");
         await expect(await page.locator("#model-params")).toBeHidden();
 
         // expand
-        await page.click(".collapse-title a");
-        await expect(await page.getAttribute(".collapse-title a i", "data-name")).toBe("chevron-up");
+        await page.click(".collapse-title");
+        await expect(await page.getAttribute(".collapse-title i", "data-name")).toBe("chevron-up");
         await expect(await page.locator("#model-params")).not.toBeHidden();
     });
 
