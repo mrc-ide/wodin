@@ -2,6 +2,7 @@ import { ConfigReader } from "./configReader";
 import { DefaultCodeReader } from "./defaultCodeReader";
 
 export interface WodinConfig {
+    courseTitle: string,
     port: number,
     odinAPI: string,
     appsPath: string

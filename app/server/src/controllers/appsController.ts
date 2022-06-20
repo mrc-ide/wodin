@@ -9,7 +9,7 @@ export class AppsController {
         if (config) {
             const view = `${config.appType}-app`;
             // TODO: validate config against schema for app type
-            res.render(view, { appName, title: config.title });
+            res.render(view, { appName, appTitle: config.title }); //TODO: course title and wodin version
         } else {
             res.status(404).render("app-not-found", { appName });
         }
