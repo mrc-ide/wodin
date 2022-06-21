@@ -18,20 +18,20 @@ test.describe("Wodin App tabs tests", () => {
     });
 
     test("renders Code tab", async ({ page }) => {
-        expect(await page.innerText(".wodin-left .wodin-content .nav-tabs .active")).toBe("Code");
-        expect(await page.inputValue(".monaco-editor textarea")).toContain("# variables");
-        expect(await page.innerText(".wodin-left .wodin-content button")).toBe("Compile");
-        expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is valid");
+        await expect(await page.innerText(".wodin-left .wodin-content .nav-tabs .active")).toBe("Code");
+        await expect(await page.inputValue(".monaco-editor textarea")).toContain("# variables");
+        await expect(await page.innerText(".wodin-left .wodin-content button")).toBe("Compile");
+        await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is valid");
     });
 
     test("can change to Options tab and back", async ({ page }) => {
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
-        expect(await page.innerText(".wodin-left .wodin-content .nav-tabs .active")).toBe("Options");
-        expect(await page.innerText(".wodin-left .wodin-content div.mt-4")).toBe("Coming soon: Options editor.");
+        await expect(await page.innerText(".wodin-left .wodin-content .nav-tabs .active")).toBe("Options");
+        await expect(await page.innerText(".wodin-left .wodin-content div.mt-4")).toContain("Model Parameters");
     });
 
     test("renders plot in Run tab", async ({ page }) => {
-        expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Run");
+        await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Run");
 
         const plotSelector = ".wodin-right .wodin-content div.mt-4 .js-plotly-plot";
 
@@ -43,17 +43,18 @@ test.describe("Wodin App tabs tests", () => {
 
         // Test traces appear on legend
         const legendTextSelector = `${plotSelector} .legendtext`;
-        expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("S");
-        expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 2)`)).toBe("I");
-        expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 3)`)).toBe("R");
+        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("S");
+        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 2)`)).toBe("I");
+        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 3)`)).toBe("R");
 
         // Test modebar menu is present
-        expect(await page.isVisible(`${plotSelector} .modebar`)).toBe(true);
+        await expect(await page.isVisible(`${plotSelector} .modebar`)).toBe(true);
     });
 
     test("can change to Sensitivity tab and back", async ({ page }) => {
         await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
-        expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Sensitivity");
-        expect(await page.innerText(".wodin-right .wodin-content div.mt-4")).toBe("Coming soon: Sensitivity plot");
+        await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Sensitivity");
+        await expect(await page.innerText(".wodin-right .wodin-content div.mt-4"))
+            .toBe("Coming soon: Sensitivity plot");
     });
 });

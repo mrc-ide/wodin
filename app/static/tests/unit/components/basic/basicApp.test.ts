@@ -10,6 +10,7 @@ import { mockBasicState, mockModelState } from "../../../mocks";
 import { BasicAction } from "../../../../src/app/store/basic/actions";
 import { ModelAction } from "../../../../src/app/store/model/actions";
 import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
+import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
 
 describe("BasicApp", () => {
     const getWrapper = (mockFetchConfig = jest.fn(), shallow = true, includeConfig = true) => {
@@ -88,7 +89,7 @@ describe("BasicApp", () => {
 
         // Change to Options tab
         await leftTabs.findAll("li a").at(1)!.trigger("click");
-        expect(leftTabs.find("div.mt-4").text()).toBe("Coming soon: Options editor.");
+        expect(leftTabs.find("div.mt-4").findComponent(OptionsTab).exists()).toBe(true);
     });
 
     it("renders Sensitivity as expected", async () => {
