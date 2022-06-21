@@ -5,6 +5,18 @@ test.describe("Wodin App tabs tests", () => {
         await page.goto("/apps/day1");
     });
 
+    test("renders header", async ({ page }) => {
+        expect(await page.innerText("nav a.navbar-brand")).toBe("WODIN Example");
+        expect(await page.getAttribute("nav a.navbar-brand", "href")).toBe("/");
+        expect(await page.innerText("nav .navbar-app")).toBe("Day 1 - Basic Model");
+        expect(await page.innerText("nav.navbar-version")).toMatch("/^WODIN v[0-9].[0-9]].[0-9]]$/");
+    });
+
+    test("link in header navigates to index page", async ({ page }) => {
+        await page.click("nav a.navbar-brand");
+        expect(await page.innerText("h1")).toBe("Example WODIN configuration");
+    });
+
     test("renders Code tab", async ({ page }) => {
         expect(await page.innerText(".wodin-left .wodin-content .nav-tabs .active")).toBe("Code");
         expect(await page.inputValue(".monaco-editor textarea")).toContain("# variables");

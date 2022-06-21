@@ -1,7 +1,9 @@
 <template>
   <nav class="navbar navbar-dark bg-brand mb-2 px-2">
-    <a class="navbar-brand pl-2" href="/">{{ courseTitle }}</a>
-    <span class="navbar-nav navbar-app">{{ appTitle }}</span>
+    <span>
+      <a class="navbar-brand pl-2" href="/">{{ courseTitle }}</a>
+      <span class="nav-item navbar-app">{{ appTitle }}</span>
+    </span>
     <span class="navbar-version navbar-text">WODIN v{{ wodinVersion }}</span>
   </nav>
 </template>
@@ -22,5 +24,6 @@ export default defineComponent({
 <style scoped lang="scss">
 .navbar-app {
   color: #fff;
+  margin-left: 2rem;
 }
 </style>
