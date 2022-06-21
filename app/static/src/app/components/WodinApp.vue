@@ -24,11 +24,11 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted } from "vue";
 import { useStore } from "vuex";
-import { BasicAction } from "../store/basic/actions";
 import ErrorsAlert from "./ErrorsAlert.vue";
 import WodinPanels from "./WodinPanels.vue";
 import { ModelAction } from "../store/model/actions";
 import LoadingSpinner from "./LoadingSpinner.vue";
+import {AppStateAction} from "../store/AppState";
 
 export default defineComponent({
     name: "WodinApp",
@@ -48,7 +48,7 @@ export default defineComponent({
         const loading = computed(() => !store.state.config);
 
         onMounted(() => {
-            store.dispatch(BasicAction.FetchConfig, props.appName); // TODO: This needs to move from Basic
+            store.dispatch(AppStateAction.FetchConfig, props.appName);
             store.dispatch(`model/${ModelAction.FetchOdinRunner}`);
         });
 
