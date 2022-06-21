@@ -19,5 +19,7 @@ export interface AppLocals {
     appsPath: string,
     configPath: string,
     configReader: ConfigReader,
-    defaultCodeReader: DefaultCodeReader
+    defaultCodeReader: DefaultCodeReader,
+    wodinConfig: WodinConfig,
+    wodinVersion: String
 }

@@ -1,8 +1,8 @@
 <template>
   <nav class="navbar navbar-dark bg-brand mb-2 px-2">
-    <a class="navbar-brand pl-2" href="/">Course Title</a>
-    <span class="navbar-nav mr-auto">{{ appTitle }}</span>
-    <span class="navbar-text">WODIN v0.0.1</span>
+    <a class="navbar-brand pl-2" href="/">{{ courseTitle }}</a>
+    <span class="navbar-nav navbar-app">{{ appTitle }}</span>
+    <span class="navbar-text">WODIN v{{ wodinVersion }}</span>
   </nav>
 </template>
 
@@ -12,7 +12,15 @@ import { defineComponent } from "vue";
 export default defineComponent({
     name: "AppHeader",
     props: {
-        appTitle: String
+        appTitle: String,
+        courseTitle: String,
+        wodinVersion: String
     }
 });
 </script>
+
+<style scoped lang="scss">
+.navbar-app {
+  color: #fff;
+}
+</style>
