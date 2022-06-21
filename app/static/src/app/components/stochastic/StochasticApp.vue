@@ -2,7 +2,6 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <h1>{{title}}</h1>
                 <div id="app-type">App Type: {{appType}}</div>
                 <div id="stochastic-prop">Stochastic Prop: {{stochasticProp}}</div>
                 <errors-alert></errors-alert>
