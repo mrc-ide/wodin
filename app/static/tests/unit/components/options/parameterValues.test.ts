@@ -1,12 +1,18 @@
-import Vuex from "vuex";
+import Vuex, { Store } from "vuex";
+import { nextTick } from "vue";
 import { shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import ParameterValues from "../../../../src/app/components/options/ParameterValues.vue";
-import mock = jest.mock;
-import { mockBasicState, mockModelState } from "../../../mocks";
+import { mockModelState } from "../../../mocks";
+import { ModelMutation, mutations } from "../../../../src/app/store/model/mutations";
+import Mock = jest.Mock;
 
 describe("ParameterValues", () => {
-    const getWrapper = (mockUpdateParameterValues = jest.fn()) => {
+    const getStore = (mockUpdateParameterValues: Mock<any, any> | null = null) => {
+        // Use mock or real mutations
+        const storeMutations = mockUpdateParameterValues
+            ? { UpdateParameterValues: mockUpdateParameterValues } : mutations;
+
         const store = new Vuex.Store<BasicState>({
             state: {} as any,
             modules: {
@@ -18,13 +24,14 @@ describe("ParameterValues", () => {
                             param2: 2.2
                         }
                     }),
-                    mutations: {
-                        UpdateParameterValues: mockUpdateParameterValues
-                    }
+                    mutations: storeMutations
                 }
             }
         });
+        return store;
+    };
 
+    const getWrapper = (store: Store<BasicState>) => {
         return shallowMount(ParameterValues, {
             global: {
                 plugins: [store]
@@ -33,7 +40,7 @@ describe("ParameterValues", () => {
     };
 
     it("renders as expected", () => {
-        const wrapper = getWrapper();
+        const wrapper = getWrapper(getStore());
         const rows = wrapper.findAll("div.row");
 
         const p1 = rows.at(0)!;
@@ -51,10 +58,28 @@ describe("ParameterValues", () => {
 
     it("commits parameter value change", async () => {
         const mockUpdateParameterValues = jest.fn();
-        const wrapper = getWrapper(mockUpdateParameterValues);
+        const wrapper = getWrapper(getStore(mockUpdateParameterValues));
         const input2 = wrapper.findAll("input").at(1)!;
         await input2.setValue("3.3");
         expect(mockUpdateParameterValues).toHaveBeenCalledTimes(1);
         expect(mockUpdateParameterValues.mock.calls[0][1]).toStrictEqual({ param2: 3.3 });
+    });
+
+    it("does not commit parameter value change to empty string", async () => {
+        const mockUpdateParameterValues = jest.fn();
+        const wrapper = getWrapper(getStore(mockUpdateParameterValues));
+        const input2 = wrapper.findAll("input").at(1)!;
+        await input2.setValue("");
+        expect(mockUpdateParameterValues).not.toHaveBeenCalled();
+    });
+
+    it("refreshes cleared input when odinSolution changes", async () => {
+        const store = getStore();
+        const wrapper = getWrapper(store);
+        wrapper.findAll("input").at(1)!.setValue("");
+
+        store.commit(`model/${ModelMutation.SetOdinSolution}`, {});
+        await nextTick();
+        expect((wrapper.findAll("input").at(1)!.element as HTMLInputElement).value).toBe("2.2");
     });
 });

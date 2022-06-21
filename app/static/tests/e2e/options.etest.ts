@@ -10,9 +10,9 @@ test.describe("Options Tab tests", () => {
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
     });
 
-    test("can see default options", async ({ page }) => {
-        await expect(await page.innerText(":nth-match(.collapse-title, 1)")).toContain("Model Parameters");
-        await expect(await page.getAttribute(":nth-match(.collapse-title a i, 1)", "data-name")).toBe("chevron-up");
+    test("can see default parameters", async ({ page }) => {
+        await expect(await page.innerText(".collapse-title")).toContain("Model Parameters");
+        await expect(await page.getAttribute(":nth-match(.collapse-title i, 1)", "data-name")).toBe("chevron-up");
         await expect(await page.locator("#model-params")).not.toBeHidden();
 
         await expect(await page.innerText(":nth-match(#model-params label, 1)")).toBe("beta");
@@ -25,7 +25,7 @@ test.describe("Options Tab tests", () => {
         await expect(await page.inputValue(":nth-match(#model-params input, 4)")).toBe("2");
 
         await expect(await page.innerText(":nth-match(.collapse-title, 2)")).toContain("Run Options");
-        await expect(await page.getAttribute(":nth-match(.collapse-title a i, 2)", "data-name")).toBe("chevron-up");
+        await expect(await page.getAttribute(":nth-match(.collapse-title i, 2)", "data-name")).toBe("chevron-up");
         await expect(await page.locator("#run-options")).not.toBeHidden();
 
         await expect(await page.innerText(":nth-match(#run-options label, 1)")).toBe("End time");
@@ -34,23 +34,23 @@ test.describe("Options Tab tests", () => {
 
     test("can collapse and expand options panel", async ({ page }) => {
         // parameters collapse
-        await page.click(":nth-match(.collapse-title a, 1)");
-        await expect(await page.getAttribute(":nth-match(.collapse-title a i, 1)", "data-name")).toBe("chevron-down");
+        await page.click(":nth-match(.collapse-title, 1)");
+        await expect(await page.getAttribute(":nth-match(.collapse-title i, 1)", "data-name")).toBe("chevron-down");
         await expect(await page.locator("#model-params")).toBeHidden();
 
         // parameters expand
-        await page.click(":nth-match(.collapse-title a, 1)");
-        await expect(await page.getAttribute(":nth-match(.collapse-title a i ,1)", "data-name")).toBe("chevron-up");
+        await page.click(":nth-match(.collapse-title, 1)");
+        await expect(await page.getAttribute(":nth-match(.collapse-title i ,1)", "data-name")).toBe("chevron-up");
         await expect(await page.locator("#model-params")).not.toBeHidden();
 
         // run-options collapse
-        await page.click(":nth-match(.collapse-title a, 2)");
-        await expect(await page.getAttribute(":nth-match(.collapse-title a i, 2)", "data-name")).toBe("chevron-down");
+        await page.click(":nth-match(.collapse-title, 2)");
+        await expect(await page.getAttribute(":nth-match(.collapse-title i, 2)", "data-name")).toBe("chevron-down");
         await expect(await page.locator("#run-options")).toBeHidden();
 
         // parameters expand
-        await page.click(":nth-match(.collapse-title a, 2)");
-        await expect(await page.getAttribute(":nth-match(.collapse-title a i, 2)", "data-name")).toBe("chevron-up");
+        await page.click(":nth-match(.collapse-title, 2)");
+        await expect(await page.getAttribute(":nth-match(.collapse-title i, 2)", "data-name")).toBe("chevron-up");
         await expect(await page.locator("#run-options")).not.toBeHidden();
     });
 
@@ -130,5 +130,16 @@ test.describe("Options Tab tests", () => {
 
         // Expect run plot's x axis final tick to now be 200
         await expect(await page.locator(xAxisTickSelector).last().innerHTML()).toBe("200");
+    });
+
+    test("cleared parameter input resets on model run", async ({ page }) => {
+        await page.fill(":nth-match(#model-params input, 1)", "");
+        await page.click("#run-btn");
+
+        await expect(await page.locator(":nth-match(#model-params input, 1)")).toHaveValue(
+            "4", {
+                timeout
+            }
+        );
     });
 });

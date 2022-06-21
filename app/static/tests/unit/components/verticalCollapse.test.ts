@@ -18,7 +18,7 @@ describe("VerticalCollapse", () => {
     it("renders as expected", () => {
         const wrapper = getWrapper();
         expect(wrapper.find(".collapse-title").text()).toBe("Test Title");
-        const collapse = wrapper.find(".collapse-title a");
+        const collapse = wrapper.find("a");
         expect(collapse.attributes("data-bs-toggle")).toBe("collapse");
         expect(collapse.attributes("href")).toBe("#test-collapse-id");
         expect(collapse.attributes("role")).toBe("button");
@@ -29,7 +29,7 @@ describe("VerticalCollapse", () => {
 
     it("toggles icon on collapse/expand", async () => {
         const wrapper = getWrapper();
-        const collapse = wrapper.find(".collapse-title a");
+        const collapse = wrapper.find("a");
         await collapse.trigger("click");
         expect(collapse.findComponent(VueFeather).props("type")).toBe("chevron-down");
         await collapse.trigger("click");
