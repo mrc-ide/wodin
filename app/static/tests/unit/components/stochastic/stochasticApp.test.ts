@@ -14,7 +14,6 @@ describe("StochasticApp", () => {
             } as any
         });
         const props = {
-            title: "Test Title",
             appName: "testApp"
         };
         const store = new Vuex.Store<StochasticState>({
@@ -33,7 +32,6 @@ describe("StochasticApp", () => {
 
     it("renders as expected", () => {
         const wrapper = getWrapper();
-        expect(wrapper.find("h1").text()).toBe("Test Title");
         expect(wrapper.find("#app-type").text()).toBe("App Type: stochastic");
         expect(wrapper.find("#stochastic-prop").text()).toBe("Stochastic Prop: Test stochastic prop value");
         expect(wrapper.findComponent(ErrorsAlert).exists()).toBe(true);
