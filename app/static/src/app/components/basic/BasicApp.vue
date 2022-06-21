@@ -1,87 +1,47 @@
 <template>
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <h1>{{title}}</h1>
-                <div v-if="loading" class="text-center">
-                  <loading-spinner size="lg"></loading-spinner>
-                  <h2 id="loading-message">Loading application...</h2>
-                </div>
-                <wodin-panels v-if="!loading" >
-                    <template v-slot:left>
-                        <wodin-tabs id="left-tabs" :tabNames="['Code', 'Options']">
-                            <template v-slot:Code>
-                                <code-tab></code-tab>
-                            </template>
-                            <template v-slot:Options>
-                                <options-tab></options-tab>
-                            </template>
-                        </wodin-tabs>
-                    </template>
-                    <template v-slot:right>
-                        <wodin-tabs id="right-tabs" :tabNames="['Run', 'Sensitivity']">
-                            <template v-slot:Run>
-                              <run-tab></run-tab>
-                            </template>
-                            <template v-slot:Sensitivity>
-                                <sensitivity-tab></sensitivity-tab>
-                            </template>
-                        </wodin-tabs>
-                        <errors-alert></errors-alert>
-                    </template>
-                </wodin-panels>
-            </div>
-        </div>
-    </div>
+  <wodin-app>
+    <template v-slot:left>
+      <wodin-tabs id="left-tabs" :tabNames="['Code', 'Options']">
+        <template v-slot:Code>
+          <code-tab></code-tab>
+        </template>
+        <template v-slot:Options>
+          <options-tab></options-tab>
+        </template>
+      </wodin-tabs>
+    </template>
+    <template v-slot:right>
+      <wodin-tabs id="right-tabs" :tabNames="['Run', 'Sensitivity']">
+        <template v-slot:Run>
+          <run-tab></run-tab>
+        </template>
+        <template v-slot:Sensitivity>
+          <sensitivity-tab></sensitivity-tab>
+        </template>
+      </wodin-tabs>
+    </template>
+  </wodin-app>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, onMounted } from "vue";
-import { useStore } from "vuex";
-import { BasicAction } from "../../store/basic/actions";
-import RunTab from "../run/RunTab.vue";
-import ErrorsAlert from "../ErrorsAlert.vue";
-import WodinPanels from "../WodinPanels.vue";
-import { ModelAction } from "../../store/model/actions";
-import LoadingSpinner from "../LoadingSpinner.vue";
+<script>
+import { defineComponent } from "vue";
+import WodinApp from "../WodinApp.vue";
 import WodinTabs from "../WodinTabs.vue";
 import CodeTab from "../code/CodeTab.vue";
-import OptionsTab from "../options/OptionsTab.vue";
-import SensitivityTab from "../sensitivity/SensitivityTab.vue";
+import RunTab from "../run/RunTab.vue";
+import OptionsTab from "../options/OptionsTab";
+import SensitivityTab from "../sensitivity/SensitivityTab";
+
 
 export default defineComponent({
-    props: {
-        appName: String,
-        title: String
-    },
+    name: "BasicApp",
     components: {
-        LoadingSpinner,
-        RunTab,
-        ErrorsAlert,
-        WodinPanels,
-        WodinTabs,
         CodeTab,
+        RunTab,
         OptionsTab,
-        SensitivityTab
-    },
-    setup(props) {
-        const store = useStore();
-
-        const appType = computed(() => store.state.appType);
-        const loading = computed(() => !store.state.config);
-
-        onMounted(() => {
-            store.dispatch(BasicAction.FetchConfig, props.appName);
-            store.dispatch(`model/${ModelAction.FetchOdinRunner}`);
-        });
-
-        return {
-            appType,
-            loading
-        };
+        SensitivityTab,
+        WodinApp,
+        WodinTabs
     }
 });
 </script>
-<style lang="scss">
-    @import "../../../scss/style.scss";
-</style>
