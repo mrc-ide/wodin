@@ -1,6 +1,4 @@
 // Mock the import of plotly to prevent errors
-import {AppStateAction} from "../../../../src/app/store/appState/actions";
-
 jest.mock("plotly.js", () => ({}));
 /* eslint-disable import/first */
 import Vuex from "vuex";
@@ -11,7 +9,8 @@ import { mockBasicState, mockModelState } from "../../../mocks";
 import WodinApp from "../../../../src/app/components/WodinApp.vue";
 import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
-import {ModelAction} from "../../../../src/app/store/model/actions";
+import { ModelAction } from "../../../../src/app/store/model/actions";
+import { AppStateAction } from "../../../../src/app/store/appState/actions";
 
 describe("BasicApp", () => {
     const getWrapper = () => {

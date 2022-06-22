@@ -5,14 +5,14 @@ import Vuex from "vuex";
 import { mount, shallowMount } from "@vue/test-utils";
 import FitApp from "../../../../src/app/components/fit/FitApp.vue";
 import { FitState } from "../../../../src/app/store/fit/state";
-import {AppStateAction} from "../../../../src/app/store/appState/actions";
+import { AppStateAction } from "../../../../src/app/store/appState/actions";
 import { mockFitState, mockModelState } from "../../../mocks";
 import WodinApp from "../../../../src/app/components/WodinApp.vue";
 import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
-import {ModelAction} from "../../../../src/app/store/model/actions";
+import { ModelAction } from "../../../../src/app/store/model/actions";
 import CodeTab from "../../../../src/app/components/code/CodeTab.vue";
-import DataTab from "../../../../src/app/components/data/DataTab.vue"
+import DataTab from "../../../../src/app/components/data/DataTab.vue";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
 
 describe("FitApp", () => {

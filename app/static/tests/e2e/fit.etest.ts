@@ -5,7 +5,7 @@ test.describe("Wodin App model fit tests", () => {
         await page.goto("/apps/day2");
     });
 
-    test("renders Data tab", async ({page}) => {
+    test("renders Data tab", async ({ page }) => {
         await expect(await page.innerText(".wodin-left .wodin-content .nav-tabs .active")).toBe("Data");
         await expect(await page.innerText(".wodin-left .wodin-content div.mt-4")).toBe("Coming soon: Data upload");
     });

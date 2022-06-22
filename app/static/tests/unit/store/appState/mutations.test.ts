@@ -8,7 +8,7 @@ describe("AppState mutations", () => {
     });
 
     it("sets config", () => {
-        const state = {config: null} as any;
+        const state = { config: null } as any;
         const config = { basicProp: "Test value" };
         appStateMutations.SetConfig(state, config);
         expect(state.config).toBe(config);

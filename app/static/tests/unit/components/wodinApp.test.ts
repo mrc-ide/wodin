@@ -1,12 +1,12 @@
-import {mockBasicState} from "../../mocks";
 import Vuex from "vuex";
-import {BasicState} from "../../../src/app/store/basic/state";
-import {ModelAction} from "../../../src/app/store/model/actions";
-import {mount} from "@vue/test-utils";
+import { mount } from "@vue/test-utils";
+import { mockBasicState } from "../../mocks";
+import { BasicState } from "../../../src/app/store/basic/state";
+import { ModelAction } from "../../../src/app/store/model/actions";
 import LoadingSpinner from "../../../src/app/components/LoadingSpinner.vue";
 import WodinPanels from "../../../src/app/components/WodinPanels.vue";
 import ErrorsAlert from "../../../src/app/components/ErrorsAlert.vue";
-import {AppStateAction} from "../../../src/app/store/appState/actions";
+import { AppStateAction } from "../../../src/app/store/appState/actions";
 import WodinApp from "../../../src/app/components/WodinApp.vue";
 
 describe("WodinApp", () => {
@@ -67,7 +67,7 @@ describe("WodinApp", () => {
     });
 
     it("renders loading spinner when config is not set", () => {
-        const wrapper = getWrapper(jest.fn(), jest.fn(),false);
+        const wrapper = getWrapper(jest.fn(), jest.fn(), false);
         expect(wrapper.find("h1").text()).toBe("Test Title");
         expect(wrapper.findComponent(LoadingSpinner).exists()).toBe(true);
         expect(wrapper.find("h2").text()).toBe("Loading application...");

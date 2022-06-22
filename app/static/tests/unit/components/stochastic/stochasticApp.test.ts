@@ -2,11 +2,11 @@ import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
 import StochasticApp from "../../../../src/app/components/stochastic/StochasticApp.vue";
 import { StochasticState } from "../../../../src/app/store/stochastic/state";
-import {mockStochasticState} from "../../../mocks";
+import { mockStochasticState } from "../../../mocks";
 import WodinApp from "../../../../src/app/components/WodinApp.vue";
 import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
-import {ModelAction} from "../../../../src/app/store/model/actions";
-import {AppStateAction} from "../../../../src/app/store/appState/actions";
+import { ModelAction } from "../../../../src/app/store/model/actions";
+import { AppStateAction } from "../../../../src/app/store/appState/actions";
 
 describe("StochasticApp", () => {
     const getWrapper = () => {
@@ -16,9 +16,9 @@ describe("StochasticApp", () => {
         };
 
         const store = new Vuex.Store<StochasticState>({
-            state: mockStochasticState({config: {} as any}),
+            state: mockStochasticState({ config: {} as any }),
             actions: {
-              [AppStateAction.FetchConfig]: jest.fn()
+                [AppStateAction.FetchConfig]: jest.fn()
             },
             modules: {
                 errors: {
