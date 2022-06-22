@@ -23,7 +23,7 @@ describe("BasicApp", () => {
         const store = new Vuex.Store<BasicState>({
             state,
             actions: {
-                [AppStateAction.FetchConfig]: jest.fn(),
+                [AppStateAction.FetchConfig]: jest.fn()
             },
             modules: {
                 model: {
