@@ -1,6 +1,6 @@
 import { Module } from "vuex";
 import { mutations } from "./mutations";
-import { AppState } from "../AppState";
+import { AppState } from "../appState/state";
 import { ErrorsState } from "./state";
 
 const defaultErrorsState: () => ErrorsState = () => {

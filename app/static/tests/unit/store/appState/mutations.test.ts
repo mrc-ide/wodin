@@ -1,4 +1,4 @@
-import { appStateMutations } from "../../../../src/app/store/AppState";
+import { appStateMutations } from "../../../../src/app/store/appState/AppState";
 
 describe("AppState mutations", () => {
     it("Sets appName", () => {

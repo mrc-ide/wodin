@@ -14,7 +14,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted } from "vue";
 import { useStore } from "vuex";
-import { FitAction } from "../../store/fit/actions";
+import {AppStateAction} from "../../store/appState/actions";
 import ErrorsAlert from "../ErrorsAlert.vue";
 
 export default defineComponent({
@@ -32,7 +32,7 @@ export default defineComponent({
         const fitProp = computed(() => store.state.config?.fitProp);
 
         onMounted(() => {
-            store.dispatch(FitAction.FetchConfig, props.appName);
+            store.dispatch(AppStateAction.FetchConfig, props.appName);
         });
 
         return {

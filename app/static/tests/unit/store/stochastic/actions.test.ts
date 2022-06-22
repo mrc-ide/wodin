@@ -3,7 +3,7 @@ import {
 } from "../../../mocks";
 import { StochasticAction, actions } from "../../../../src/app/store/stochastic/actions";
 import { StochasticMutation } from "../../../../src/app/store/stochastic/mutations";
-import { AppStateMutation } from "../../../../src/app/store/AppState";
+import { AppStateMutation } from "../../../../src/app/store/appState/AppState";
 import { ErrorsMutation } from "../../../../src/app/store/errors/mutations";
 
 describe("Stochastic actions", () => {

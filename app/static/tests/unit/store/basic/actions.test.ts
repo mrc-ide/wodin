@@ -4,7 +4,7 @@ import {
 } from "../../../mocks";
 import { BasicAction, actions } from "../../../../src/app/store/basic/actions";
 import { BasicMutation, mutations as basicMutations } from "../../../../src/app/store/basic/mutations";
-import { AppStateMutation } from "../../../../src/app/store/AppState";
+import { AppStateMutation } from "../../../../src/app/store/appState/AppState";
 import { ErrorsMutation } from "../../../../src/app/store/errors/mutations";
 import { CodeMutation, mutations as codeMutations } from "../../../../src/app/store/code/mutations";
 import { BasicState } from "../../../../src/app/store/basic/state";

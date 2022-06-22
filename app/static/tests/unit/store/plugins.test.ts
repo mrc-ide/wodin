@@ -1,12 +1,12 @@
 import Vuex from "vuex";
 import { logMutations } from "../../../src/app/store/plugins";
-import { AppState } from "../../../src/app/store/AppState";
+import { State } from "../../../src/app/store/appState/AppState";
 
 describe("plugins", () => {
     it("logMutations logs mutations to console", () => {
         const logSpy = jest.spyOn(console, "log");
 
-        const store = new Vuex.Store<AppState>({
+        const store = new Vuex.Store<State>({
             mutations: {
                 test: () => {}
             },

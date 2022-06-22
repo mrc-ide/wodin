@@ -3,7 +3,7 @@ import {
 } from "../../../mocks";
 import { FitAction, actions } from "../../../../src/app/store/fit/actions";
 import { FitMutation } from "../../../../src/app/store/fit/mutations";
-import { AppStateMutation } from "../../../../src/app/store/AppState";
+import { AppStateMutation } from "../../../../src/app/store/appState/AppState";
 import { ErrorsMutation } from "../../../../src/app/store/errors/mutations";
 
 describe("Fit actions", () => {

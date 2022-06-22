@@ -2,7 +2,7 @@ import { ActionTree } from "vuex";
 import { CodeState } from "./state";
 import { CodeMutation } from "./mutations";
 import { ModelAction } from "../model/actions";
-import { AppState } from "../AppState";
+import { AppState } from "../appState/state";
 
 export enum CodeAction {
     UpdateCode= "UpdateCode"

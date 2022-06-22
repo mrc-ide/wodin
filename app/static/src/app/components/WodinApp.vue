@@ -28,7 +28,7 @@ import ErrorsAlert from "./ErrorsAlert.vue";
 import WodinPanels from "./WodinPanels.vue";
 import { ModelAction } from "../store/model/actions";
 import LoadingSpinner from "./LoadingSpinner.vue";
-import {AppStateAction} from "../store/AppState";
+import {AppStateAction} from "../store/appState/actions";
 
 export default defineComponent({
     name: "WodinApp",

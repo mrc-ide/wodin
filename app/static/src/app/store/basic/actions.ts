@@ -1,5 +1,5 @@
 import { ActionTree } from "vuex";
 import { BasicState } from "./state";
-import { actions as appStateActions} from "../AppState";
+import { appStateActions} from "../appState/actions";
 
 export const actions: ActionTree<BasicState, BasicState> = appStateActions;
