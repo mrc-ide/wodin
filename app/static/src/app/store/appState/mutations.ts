@@ -1,6 +1,6 @@
-import {MutationTree} from "vuex";
-import {AppState} from "./state";
-import {AppConfig} from "../../types/responseTypes";
+import { MutationTree } from "vuex";
+import { AppState } from "./state";
+import { AppConfig } from "../../types/responseTypes";
 
 export enum AppStateMutation {
     SetAppName = "SetAppName",

@@ -1,6 +1,6 @@
 import { CodeState } from "../code/state";
 import { ModelState } from "../model/state";
-import {AppConfig} from "../../types/responseTypes";
+import { AppConfig } from "../../types/responseTypes";
 
 export interface AppState {
     config: null | AppConfig,

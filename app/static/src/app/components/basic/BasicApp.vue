@@ -29,9 +29,8 @@ import WodinApp from "../WodinApp.vue";
 import WodinTabs from "../WodinTabs.vue";
 import CodeTab from "../code/CodeTab.vue";
 import RunTab from "../run/RunTab.vue";
-import OptionsTab from "../options/OptionsTab";
-import SensitivityTab from "../sensitivity/SensitivityTab";
-
+import OptionsTab from "../options/OptionsTab.vue";
+import SensitivityTab from "../sensitivity/SensitivityTab.vue";
 
 export default defineComponent({
     name: "BasicApp",

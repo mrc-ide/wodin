@@ -1,11 +1,11 @@
-import {ActionTree} from "vuex";
-import {api} from "../../apiService";
-import {ErrorsMutation} from "../errors/mutations";
-import {AppConfig} from "../../types/responseTypes";
-import {CodeMutation} from "../code/mutations";
-import {ModelAction} from "../model/actions";
-import {AppState} from "./state";
-import {AppStateMutation} from "./mutations";
+import { ActionTree } from "vuex";
+import { api } from "../../apiService";
+import { ErrorsMutation } from "../errors/mutations";
+import { AppConfig } from "../../types/responseTypes";
+import { CodeMutation } from "../code/mutations";
+import { ModelAction } from "../model/actions";
+import { AppState } from "./state";
+import { AppStateMutation } from "./mutations";
 
 export enum AppStateAction {
     FetchConfig = "FetchConfig"
