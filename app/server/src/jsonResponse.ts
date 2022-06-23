@@ -1,9 +1,5 @@
 import { Response } from "express";
 
-export const enum ErrorCode {
-    NOT_FOUND = "NOT_FOUND"
-}
-
 const addContentType = (res: Response) => {
     res.header("Content-Type", "application/json");
 };
@@ -18,9 +14,14 @@ export const jsonResponseSuccess = (data: any, res: Response) => {
     res.end(JSON.stringify(responseObject));
 };
 
+export const enum ErrorType {
+    NOT_FOUND = "NOT_FOUND",
+    OTHER_ERROR = "OTHER_ERROR"
+}
+
 export const jsonResponseError = (
     httpStatus: number,
-    error: ErrorCode,
+    error: ErrorType,
     detail: string,
     res: Response
 ) => {

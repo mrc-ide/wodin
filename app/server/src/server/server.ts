@@ -5,15 +5,17 @@ import { WodinConfig } from "../types";
 import { registerViews } from "./views";
 import { registerRoutes } from "../routes";
 import { DefaultCodeReader } from "../defaultCodeReader";
+import { handleError } from "../errors";
+import { initialiseLogging } from "../logging";
 
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
-const morgan = require("morgan");
+
 
 const app = express();
 app.use(bodyParser.json());
-app.use(morgan("short"));
+initialiseLogging(app);
 
 const rootDir = path.join(__dirname, "../..");
 
@@ -44,3 +46,6 @@ app.use("/", registerRoutes(app));
 app.listen(port, () => {
     console.log(`WODIN server listening on port ${port}`);
 });
+
+// Error handler
+app.use(handleError);
