@@ -50,7 +50,7 @@ test.describe("Code Tab tests", () => {
         // Compile code - see new update message
         await page.click("#compile-btn");
         await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
-            "Model code has been recompiled or parameters have been updated. Run Model to view updated graph.", {
+            "Model code has been recompiled or options have been updated. Run Model to view updated graph.", {
                 timeout
             }
         );

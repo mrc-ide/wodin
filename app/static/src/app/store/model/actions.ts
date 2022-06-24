@@ -57,9 +57,7 @@ const runModel = (context: ActionContext<ModelState, AppState>) => {
     if (state.odinRunner && state.odin) {
         const parameters = state.parameterValues;
         const start = 0;
-
-        // TODO: this value will come from state when UI elements are implemented
-        const end = 100;
+        const end = state.endTime;
         const control = {};
         const solution = state.odinRunner(dopri, state.odin, parameters, start, end, control);
         commit(ModelMutation.SetOdinSolution, solution);
