@@ -1,8 +1,9 @@
-import { Application, Request, Response } from "express";
+import { Application, Request } from "express";
 import { IndexController } from "../controllers/indexController";
 import appsRoutes from "./apps";
 import odinRoutes from "./odin";
 import configRoutes from "./config";
+import { ErrorType, WodinWebError } from "../errors";
 
 const express = require("express");
 
@@ -14,9 +15,9 @@ export const registerRoutes = (app: Application) => {
     router.use("/config", configRoutes);
     router.use(`/${app.locals.appsPath}`, appsRoutes);
 
-    router.use((req: Request, res: Response) => {
+    router.use((req: Request) => {
         const { url } = req;
-        res.status(404).render("page-not-found", { url });
+        throw new WodinWebError(`Page not found: ${url}`, 404, ErrorType.NOT_FOUND, "page-not-found", { url });
     });
 
     return router;

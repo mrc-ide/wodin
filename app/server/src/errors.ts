@@ -21,18 +21,49 @@ export class WodinError extends Error {
     }
 }
 
-export const handleError = (err: Error, req: Request, res: Response, next: any) => {
-    // TODO: option to render view rather than json
+export class WodinWebError extends WodinError {
+    view: string;
+
+    options: object;
+
+    constructor(message: string, status: number, errorType: ErrorType, view: string, options: object) {
+        super(message, status, errorType);
+
+        this.view = view;
+        this.options = options;
+    }
+}
+
+// Need to include the unused next var for this to be used correctly as and error handler
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const handleError = (err: Error, req: Request, res: Response, _: Function) => {
     const wodinError = err instanceof WodinError;
+    const wodinWebError = err instanceof WodinWebError;
 
     const status = wodinError ? err.status : 500;
     const type = wodinError ? err.errorType : ErrorType.OTHER_ERROR;
 
     // Do not return raw messages from unexpected errors to the front end
-    const detail = wodinError ? err.message : `An unexpected error occurred. Please contact support and quote error code ${uid()}`;
+    const detail = wodinError ? err.message
+        : `An unexpected error occurred. Please contact support and quote error code ${uid()}`;
 
-    // Set error detail and stack on req so morgan logs them
-    (req as any).errorStack = err.stack;
+    // Set error type, detail and stack on req so morgan logs them
+    (req as any).errorType = type;
     (req as any).errorDetail = detail;
-    jsonResponseError(status, type, detail, res);
+    (req as any).errorStack = err.stack;
+
+    // If unexpected server error, check if requested content type is json - if not, render default error view rather
+    // than json response
+    let view = wodinWebError ? err.view : null;
+    let options = wodinWebError ? err.options : {};
+    if (!wodinError && !(req.headers.Accept && req.headers.Accept.includes("application/json"))) {
+        view = "unexpected-error";
+        options = { detail };
+    }
+
+    if (view) {
+        res.status(status).render(view, options);
+    } else {
+        jsonResponseError(status, type, detail, res);
+    }
 };
