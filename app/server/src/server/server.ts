@@ -43,9 +43,9 @@ registerViews(app, rootDir);
 // Routes
 app.use("/", registerRoutes(app));
 
+// Error handler
+app.use(handleError);
+
 app.listen(port, () => {
     console.log(`WODIN server listening on port ${port}`);
 });
-
-// Error handler
-app.use(handleError);

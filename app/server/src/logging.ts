@@ -1,10 +1,13 @@
 import { Application, Request, Response } from "express";
+import {ErrorType, WodinError} from "./errors";
 
 const morgan = require("morgan");
 
 export const initialiseLogging = (app: Application) => {
-    morgan.token("error-detail", (req: Request) => { return (req as any).errorDetail; });
-    morgan.token("error", (req: Request) => { return (req as any).error; });
+    console.log("INITIALISING LOGGING");
+    morgan.token("error-detail", (req: Request, res: Response) => { return (req as any).errorDetail; });
+    morgan.token("error-stack", (req: Request) => { return (req as any).errorStack; });
+
 
     const customFormat = (tokens: any, req: Request, res: Response) => {
         return [
@@ -16,7 +19,7 @@ export const initialiseLogging = (app: Application) => {
             tokens.res(req, res, "content-length"), "-",
             tokens["response-time"](req, res), "ms",
             tokens["error-detail"](req),
-            tokens.error(req)
+            tokens["error-stack"](req)
         ].join(" ");
     };
 
