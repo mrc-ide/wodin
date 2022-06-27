@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { uid } from "uid";
 import { jsonResponseError } from "./jsonResponse";
+import {reqWithError} from "./logging";
 
 export const enum ErrorType {
     NOT_FOUND = "NOT_FOUND",
@@ -48,9 +49,9 @@ export const handleError = (err: Error, req: Request, res: Response, _: Function
         : `An unexpected error occurred. Please contact support and quote error code ${uid()}`;
 
     // Set error type, detail and stack on req so morgan logs them
-    (req as any).errorType = type;
-    (req as any).errorDetail = detail;
-    (req as any).errorStack = err.stack;
+    reqWithError(req).errorType = type;
+    reqWithError(req).errorDetail = detail;
+    reqWithError(req).errorStack = err.stack;
 
     // If unexpected server error, check if requested content type is json - if not, render default error view rather
     // than json response

@@ -4,11 +4,11 @@ const morgan = require("morgan");
 
 interface RequestWithError {
     errorType: string,
-    errorDetail: string,
-    errorStack: string
+    errorDetail: string,s
+    errorStack: string | undefined
 }
 
-const reqWithError = (req: Request) => (req as unknown) as RequestWithError;
+export const reqWithError = (req: Request) => (req as unknown) as RequestWithError;
 
 export const initialiseLogging = (app: Application) => {
     morgan.token("error-type", (req: Request) => reqWithError(req).errorType);
