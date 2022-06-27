@@ -1,8 +1,8 @@
 import { ConfigController } from "../../src/controllers/configController";
 import * as jsonResponse from "../../src/jsonResponse";
-import { ErrorCode } from "../../src/jsonResponse";
 import { ConfigReader } from "../../src/configReader";
 import { DefaultCodeReader } from "../../src/defaultCodeReader";
+import {ErrorType, WodinError} from "../../src/errors";
 
 describe("configController", () => {
     const getRequest = (configReader: ConfigReader, defaultCodeReader: DefaultCodeReader) => {
@@ -31,7 +31,6 @@ describe("configController", () => {
     const defaultCode = ["default", "code"];
 
     const spyJsonResponseSuccess = jest.spyOn(jsonResponse, "jsonResponseSuccess");
-    const spyJsonResponseError = jest.spyOn(jsonResponse, "jsonResponseError");
 
     beforeEach(() => {
         jest.resetAllMocks();
@@ -58,16 +57,12 @@ describe("configController", () => {
         expect(spyJsonResponseSuccess.mock.calls[0][1]).toBe(res);
     });
 
-    it("getConfig returns expected error response when app config file is not found", () => {
+    it("getConfig throws expected error when app config file is not found", () => {
         const mockConfigReader = { readConfigFile: jest.fn().mockReturnValue(null) } as any;
         const req = getRequest(mockConfigReader, jest.fn() as any);
 
-        ConfigController.getConfig(req, res);
-
-        expect(spyJsonResponseError.mock.calls.length).toBe(1);
-        expect(spyJsonResponseError.mock.calls[0][0]).toBe(404);
-        expect(spyJsonResponseError.mock.calls[0][1]).toBe(ErrorCode.NOT_FOUND);
-        expect(spyJsonResponseError.mock.calls[0][2]).toBe("App with name TestApp is not configured.");
-        expect(spyJsonResponseError.mock.calls[0][3]).toBe(res);
+        const expectedError = new WodinError("App with name TestApp is not configured.", 404, ErrorType.NOT_FOUND);
+        expect(() => { ConfigController.getConfig(req, res) }).toThrow(expectedError);
+        expect(spyJsonResponseSuccess).not.toHaveBeenCalled();
     });
 });
