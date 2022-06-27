@@ -1,9 +1,11 @@
+// mock json response before import errors
+const mockJsonResponseError = jest.fn();
+jest.mock("../src/jsonResponse", () => { return { jsonResponseError: mockJsonResponseError }; });
+
+// eslint-disable-next-line import/first
 import {
     handleError, WodinError, ErrorType, WodinWebError
 } from "../src/errors";
-
-const mockJsonResponseError = jest.fn();
-jest.mock("../src/jsonResponse", () => { return { jsonResponseError: mockJsonResponseError }; });
 
 const mockRequest = (accept = "application/json,*/*") => {
     return {

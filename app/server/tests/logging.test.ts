@@ -1,10 +1,12 @@
-import { initialiseLogging } from "../src/logging";
-
+// mock morgan before import logging
 const mockMorganResult = {};
 const mockMorgan = jest.fn().mockReturnValue(mockMorganResult);
 const mockMorganToken = jest.fn();
 (mockMorgan as any).token = mockMorganToken;
 jest.mock("morgan", () => mockMorgan);
+
+// eslint-disable-next-line import/first
+import { initialiseLogging } from "../src/logging";
 
 describe("logging", () => {
     it("initialiseLogging registers custom tokens and format", () => {
