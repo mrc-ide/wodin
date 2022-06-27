@@ -1,7 +1,9 @@
-const mockJsonResponseError = jest.fn();
-jest.mock("../src/jsonResponse", () => { return {jsonResponseError: mockJsonResponseError}; })
+import {
+    handleError, WodinError, ErrorType, WodinWebError
+} from "../src/errors";
 
-import {handleError, WodinError, ErrorType, WodinWebError} from "../src/errors";
+const mockJsonResponseError = jest.fn();
+jest.mock("../src/jsonResponse", () => { return { jsonResponseError: mockJsonResponseError }; });
 
 const mockRequest = (accept = "application/json,*/*") => {
     return {
@@ -72,7 +74,7 @@ describe("handeError", () => {
     });
 
     it("logs WodinWebError and renders view", () => {
-        const options = {test: "test option"};
+        const options = { test: "test option" };
         const err = new WodinWebError("test wodin web error", 404, ErrorType.NOT_FOUND, "test-view", options);
         const req = mockRequest("text/html");
         const res = mockResponse();
@@ -103,6 +105,6 @@ describe("handeError", () => {
         expect(mockJsonResponseError).not.toHaveBeenCalled();
         expect(res.status.mock.calls[0][0]).toBe(500);
         expect(mockStatus.render.mock.calls[0][0]).toBe("unexpected-error");
-        expect(mockStatus.render.mock.calls[0][1]).toStrictEqual({detail: req.errorDetail});
+        expect(mockStatus.render.mock.calls[0][1]).toStrictEqual({ detail: req.errorDetail });
     });
 });

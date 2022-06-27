@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { uid } from "uid";
 import { jsonResponseError } from "./jsonResponse";
-import {reqWithError} from "./logging";
+import { reqWithError } from "./logging";
 
 export const enum ErrorType {
     NOT_FOUND = "NOT_FOUND",

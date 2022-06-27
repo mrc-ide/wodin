@@ -3,6 +3,7 @@ import { IndexController } from "../../src/controllers/indexController";
 import odinRoutes from "../../src/routes/odin";
 import configRoutes from "../../src/routes/config";
 import appsRoutes from "../../src/routes/apps";
+import { ErrorType, WodinWebError } from "../../src/errors";
 
 describe("registerRoutes", () => {
     const express = require("express");
@@ -44,7 +45,7 @@ describe("registerRoutes", () => {
         expect(router.use.mock.calls[2][1]).toBe(appsRoutes);
     });
 
-    it("not found handler sets status and renders view", () => {
+    it("not found handler throws expected error", () => {
         const router = registerRoutes(mockApp);
         const notFoundHandler = router.use.mock.calls[3][0];
 
@@ -58,11 +59,13 @@ describe("registerRoutes", () => {
             status: mockStatus
         };
 
-        notFoundHandler(mockReq, mockRes);
-        expect(mockStatus).toBeCalledTimes(1);
-        expect(mockStatus.mock.calls[0][0]).toBe(404);
-        expect(mockRender).toBeCalledTimes(1);
-        expect(mockRender.mock.calls[0][0]).toBe("page-not-found");
-        expect(mockRender.mock.calls[0][1]).toStrictEqual({ url: "/nonexistent" });
+        const expectedError = new WodinWebError(
+            "Page not found: /nonexistent",
+            404,
+            ErrorType.NOT_FOUND,
+            "page-not-found",
+            { url: "/nonexistent" }
+        );
+        expect(() => notFoundHandler(mockReq, mockRes)).toThrow(expectedError);
     });
 });

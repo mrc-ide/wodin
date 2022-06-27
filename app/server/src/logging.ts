@@ -4,7 +4,7 @@ const morgan = require("morgan");
 
 interface RequestWithError {
     errorType: string,
-    errorDetail: string,s
+    errorDetail: string,
     errorStack: string | undefined
 }
 

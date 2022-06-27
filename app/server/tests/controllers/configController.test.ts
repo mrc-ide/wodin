@@ -2,7 +2,7 @@ import { ConfigController } from "../../src/controllers/configController";
 import * as jsonResponse from "../../src/jsonResponse";
 import { ConfigReader } from "../../src/configReader";
 import { DefaultCodeReader } from "../../src/defaultCodeReader";
-import {ErrorType, WodinError} from "../../src/errors";
+import { ErrorType, WodinError } from "../../src/errors";
 
 describe("configController", () => {
     const getRequest = (configReader: ConfigReader, defaultCodeReader: DefaultCodeReader) => {
@@ -62,7 +62,7 @@ describe("configController", () => {
         const req = getRequest(mockConfigReader, jest.fn() as any);
 
         const expectedError = new WodinError("App with name TestApp is not configured.", 404, ErrorType.NOT_FOUND);
-        expect(() => { ConfigController.getConfig(req, res) }).toThrow(expectedError);
+        expect(() => { ConfigController.getConfig(req, res); }).toThrow(expectedError);
         expect(spyJsonResponseSuccess).not.toHaveBeenCalled();
     });
 });

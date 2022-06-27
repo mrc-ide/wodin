@@ -1,10 +1,10 @@
+import { initialiseLogging } from "../src/logging";
+
 const mockMorganResult = {};
 const mockMorgan = jest.fn().mockReturnValue(mockMorganResult);
 const mockMorganToken = jest.fn();
 (mockMorgan as any).token = mockMorganToken;
 jest.mock("morgan", () => mockMorgan);
-
-import { initialiseLogging } from "../src/logging";
 
 describe("logging", () => {
     it("initialiseLogging registers custom tokens and format", () => {
@@ -69,11 +69,10 @@ describe("logging", () => {
             "error-stack": (req: any) => req.errorStack
         };
 
-        const expectedLog = "remoteReq:remoteRes remoteUReq:remoteURes methodReq:methodRes urlReq:urlRes " +
-                                "statusReq:statusRes resReq:resRes:content-length - timeReq:timeRes ms " +
-                                "errTypeReq errDetailReq errStackReq";
+        const expectedLog = "remoteReq:remoteRes remoteUReq:remoteURes methodReq:methodRes urlReq:urlRes "
+                                + "statusReq:statusRes resReq:resRes:content-length - timeReq:timeRes ms "
+                                + "errTypeReq errDetailReq errStackReq";
         const customLog = customFormatFn(tokens, testReq, testRes);
         expect(customLog).toEqual(expectedLog);
-
     });
 });
