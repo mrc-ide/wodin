@@ -1,39 +1,10 @@
 import { Request, Response } from "express";
 import { uid } from "uid";
-import { jsonResponseError } from "./jsonResponse";
-import { reqWithError } from "./logging";
-
-export const enum ErrorType {
-    NOT_FOUND = "NOT_FOUND",
-    OTHER_ERROR = "OTHER_ERROR"
-}
-
-export class WodinError extends Error {
-    status: number;
-
-    errorType: ErrorType;
-
-    constructor(message: string, status: number, errorType: ErrorType) {
-        super(message);
-
-        this.name = "WodinError";
-        this.status = status;
-        this.errorType = errorType;
-    }
-}
-
-export class WodinWebError extends WodinError {
-    view: string;
-
-    options: object;
-
-    constructor(message: string, status: number, errorType: ErrorType, view: string, options: object) {
-        super(message, status, errorType);
-
-        this.view = view;
-        this.options = options;
-    }
-}
+import { jsonResponseError } from "../jsonResponse";
+import { reqWithError } from "../logging";
+import { ErrorType } from "./errorType";
+import { WodinError } from "./wodinError";
+import { WodinWebError } from "./wodinWebError";
 
 // Need to include the unused next var for this to be used correctly as and error handler
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

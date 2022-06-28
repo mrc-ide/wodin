@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AppLocals } from "../types";
-import { ErrorType, WodinWebError } from "../errors";
+import { ErrorType } from "../errors/errorType";
+import { WodinWebError } from "../errors/wodinWebError";
 
 export class AppsController {
     static getApp = (req: Request, res: Response) => {

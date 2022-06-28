@@ -3,7 +3,8 @@ import { ConfigReader } from "../configReader";
 import { jsonResponseSuccess } from "../jsonResponse";
 import { AppConfig, AppLocals } from "../types";
 import { DefaultCodeReader } from "../defaultCodeReader";
-import { ErrorType, WodinError } from "../errors";
+import { ErrorType } from "../errors/errorType";
+import { WodinError } from "../errors/wodinError";
 
 export class ConfigController {
     private static _readAppConfigFile = (

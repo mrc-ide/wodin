@@ -1,5 +1,6 @@
 import { AppsController } from "../../src/controllers/appsController";
-import { ErrorType, WodinWebError } from "../../src/errors";
+import { ErrorType } from "../../src/errors/errorType";
+import { WodinWebError } from "../../src/errors/wodinWebError";
 
 describe("appsController", () => {
     const getMockRequest = (appConfig: any) => {

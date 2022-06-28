@@ -5,7 +5,7 @@ import { WodinConfig } from "../types";
 import { registerViews } from "./views";
 import { registerRoutes } from "../routes";
 import { DefaultCodeReader } from "../defaultCodeReader";
-import { handleError } from "../errors";
+import { handleError } from "../errors/handleError";
 import { initialiseLogging } from "../logging";
 
 const express = require("express");

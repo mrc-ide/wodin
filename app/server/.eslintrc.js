@@ -30,8 +30,7 @@ module.exports = {
         "@typescript-eslint/no-shadow": ["error"],
         "no-unused-vars": "off",
         "@typescript-eslint/no-unused-vars": "error",
-        "no-underscore-dangle": "off",
-        "max-classes-per-file": ["error", 2]
+        "no-underscore-dangle": "off"
     },
     overrides: [{
         files: [

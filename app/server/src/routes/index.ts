@@ -3,7 +3,8 @@ import { IndexController } from "../controllers/indexController";
 import appsRoutes from "./apps";
 import odinRoutes from "./odin";
 import configRoutes from "./config";
-import { ErrorType, WodinWebError } from "../errors";
+import { ErrorType } from "../errors/errorType";
+import { WodinWebError } from "../errors/wodinWebError";
 
 const express = require("express");
 
