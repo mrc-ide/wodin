@@ -57,7 +57,7 @@ export const handleError = (err: Error, req: Request, res: Response, _: Function
     // than json response
     let view = wodinWebError ? err.view : null;
     let options = wodinWebError ? err.options : {};
-    if (!wodinError && !(req.headers.Accept && req.headers.Accept.includes("application/json"))) {
+    if (!wodinError && !(req.headers.accept && req.headers.accept.includes("application/json"))) {
         view = "unexpected-error";
         options = { detail };
     }

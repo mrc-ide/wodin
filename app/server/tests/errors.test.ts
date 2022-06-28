@@ -10,7 +10,7 @@ import {
 const mockRequest = (accept = "application/json,*/*") => {
     return {
         headers: {
-            Accept: accept
+            accept
         }
     } as any;
 };
