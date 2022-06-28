@@ -14,7 +14,7 @@ export const actions: ActionTree<FitDataState, AppState> = {
             const reader = new FileReader();
 
             reader.onload = function (evt) {
-                console.log(evt);
+                console.log("File loaded:" + JSON.stringify(evt.target!.result));
             };
 
             reader.onerror = function (evt) {
