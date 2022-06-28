@@ -5,6 +5,7 @@ import { errors } from "../errors/errors";
 import { FitState } from "./state";
 import { model } from "../model/model";
 import { code } from "../code/code";
+import { fitData } from "../fitData/fitData";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
@@ -22,6 +23,7 @@ export const storeOptions: StoreOptions<FitState> = {
     modules: {
         errors,
         code,
-        model
+        model,
+        fitData
     }
 };
