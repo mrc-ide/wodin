@@ -32,28 +32,16 @@ test.describe("Index tests", () => {
         await page.goto("/");
         await page.click("a[href='apps/day2']");
 
-<<<<<<< HEAD
-        await expect(await page.innerText("h1")).toBe("Day 2 - Model Fit");
-        await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Data");
-=======
         await expect(await page.innerText("nav .navbar-app")).toBe("Day 2 - Model Fit");
-        await expect(await page.innerText("#app-type")).toBe("App Type: fit");
-        await expect(await page.innerText("#fit-prop")).toBe("Fit Prop: day2 fit value");
->>>>>>> main
+        await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Data");
     });
 
     test("day3 link goes to Stochastic app", async ({ page }) => {
         await page.goto("/");
         await page.click("a[href='apps/day3']");
 
-<<<<<<< HEAD
-        await expect(await page.innerText("h1")).toBe("Day 3 - Stochastic Model");
-        await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Code");
-=======
         await expect(await page.innerText("nav .navbar-app")).toBe("Day 3 - Stochastic Model");
-        await expect(await page.innerText("#app-type")).toBe("App Type: stochastic");
-        await expect(await page.innerText("#stochastic-prop")).toBe("Stochastic Prop: day3 stochastic value");
->>>>>>> main
+        await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Code");
     });
 
     const testDownloadFile = async (href: string, localFileName: string, expectedContent: string, page: Page) => {

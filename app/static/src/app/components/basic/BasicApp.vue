@@ -1,5 +1,5 @@
 <template>
-  <wodin-app>
+  <wodin-app :app-name="appName">
     <template v-slot:left>
       <wodin-tabs id="left-tabs" :tabNames="['Code', 'Options']">
         <template v-slot:Code>
