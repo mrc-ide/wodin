@@ -16,7 +16,6 @@ describe("BasicApp", () => {
     const getWrapper = () => {
         const state = mockBasicState({ config: {} as any });
         const props = {
-            title: "Test Title",
             appName: "testApp"
         };
         const store = new Vuex.Store<BasicState>({

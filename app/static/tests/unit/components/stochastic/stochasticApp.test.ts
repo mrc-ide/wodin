@@ -11,7 +11,6 @@ import { AppStateAction } from "../../../../src/app/store/appState/actions";
 describe("StochasticApp", () => {
     const getWrapper = () => {
         const props = {
-            title: "Test Title",
             appName: "testApp"
         };
 

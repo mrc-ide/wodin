@@ -3,11 +3,16 @@
     <head>
         <meta charset="utf-8">
         <title>{{title}}</title>
-        <link rel="stylesheet" href="/css/basicApp.css">
+        <link rel="stylesheet" href="/css/basicApp.css"
     </head>
     <body>
         <div id="app">
-            <basic-app :app-name="'{{appName}}'" :title="'{{title}}'"></basic-app>
+            <app-header
+                :app-title="'{{appTitle}}'"
+                :course-title="'{{courseTitle}}'"
+                :wodin-version="'{{wodinVersion}}'">
+             </app-header>
+            <basic-app :app-name="'{{appName}}'"></basic-app>
         </div>
         <script src="/js/basicApp.umd.js"></script>
     </body>

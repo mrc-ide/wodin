@@ -19,7 +19,6 @@ describe("FitApp", () => {
     const getWrapper = () => {
         const state = mockFitState({ config: {} as any });
         const props = {
-            title: "Test Title",
             appName: "testApp"
         };
         const store = new Vuex.Store<FitState>({

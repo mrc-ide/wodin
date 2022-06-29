@@ -1,4 +1,5 @@
 {
+    "courseTitle": "WODIN Example",
     "port": 3000,
     "appsPath": "apps",
     "odinAPI": "http://localhost:8001"

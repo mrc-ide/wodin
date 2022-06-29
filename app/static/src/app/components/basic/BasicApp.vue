@@ -34,6 +34,9 @@ import SensitivityTab from "../sensitivity/SensitivityTab.vue";
 
 export default defineComponent({
     name: "BasicApp",
+    props: {
+        appName: String
+    },
     components: {
         CodeTab,
         RunTab,

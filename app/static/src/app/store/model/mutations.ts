@@ -13,8 +13,15 @@ export enum ModelMutation {
     SetOdinSolution = "SetOdinSolution",
     SetRequiredAction = "SetRequiredAction",
     SetParameterValues = "SetParameterValues",
-    UpdateParameterValues = "UpdateParameterValues"
+    UpdateParameterValues = "UpdateParameterValues",
+    SetEndTime = "SetEndTime"
 }
+
+const runRequired = (state: ModelState) => {
+    if (state.requiredAction !== RequiredModelAction.Compile) {
+        state.requiredAction = RequiredModelAction.Run;
+    }
+};
 
 export const mutations: MutationTree<ModelState> = {
     [ModelMutation.SetOdinRunner](state: ModelState, payload: string) {
@@ -48,8 +55,11 @@ export const mutations: MutationTree<ModelState> = {
             ...state.parameterValues,
             ...payload
         };
-        if (state.requiredAction !== RequiredModelAction.Compile) {
-            state.requiredAction = RequiredModelAction.Run;
-        }
+        runRequired(state);
+    },
+
+    [ModelMutation.SetEndTime](state: ModelState, payload: number) {
+        state.endTime = payload;
+        runRequired(state);
     }
 };
