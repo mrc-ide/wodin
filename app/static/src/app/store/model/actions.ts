@@ -3,7 +3,7 @@ import { ActionContext, ActionTree } from "vuex";
 import { ModelState, RequiredModelAction } from "./state";
 import { api } from "../../apiService";
 import { ModelMutation } from "./mutations";
-import { AppState } from "../AppState";
+import { AppState } from "../appState/state";
 import { ErrorsMutation } from "../errors/mutations";
 import { Odin, OdinModelResponse, OdinParameter } from "../../types/responseTypes";
 import { evaluateScript } from "../../utils";

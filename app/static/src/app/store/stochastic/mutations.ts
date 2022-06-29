@@ -1,16 +1,7 @@
 import { MutationTree } from "vuex";
 import { StochasticState } from "./state";
-import { StochasticConfig } from "../../types/responseTypes";
-import { appStateMutations } from "../AppState";
-
-export enum StochasticMutation {
-    SetConfig = "SetConfig"
-}
+import { appStateMutations } from "../appState/mutations";
 
 export const mutations: MutationTree<StochasticState> = {
-    ...appStateMutations,
-
-    [StochasticMutation.SetConfig](state: StochasticState, payload: StochasticConfig) {
-        state.config = payload;
-    }
+    ...appStateMutations
 };

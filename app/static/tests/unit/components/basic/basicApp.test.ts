@@ -2,27 +2,26 @@
 jest.mock("plotly.js", () => ({}));
 /* eslint-disable import/first */
 import Vuex from "vuex";
-import { mount, shallowMount } from "@vue/test-utils";
+import { mount } from "@vue/test-utils";
 import BasicApp from "../../../../src/app/components/basic/BasicApp.vue";
-import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState, mockModelState } from "../../../mocks";
-import { BasicAction } from "../../../../src/app/store/basic/actions";
-import { ModelAction } from "../../../../src/app/store/model/actions";
+import WodinApp from "../../../../src/app/components/WodinApp.vue";
 import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
+import { ModelAction } from "../../../../src/app/store/model/actions";
+import { AppStateAction } from "../../../../src/app/store/appState/actions";
 
 describe("BasicApp", () => {
-    const getWrapper = (mockFetchConfig = jest.fn(), shallow = true, includeConfig = true) => {
-        const config = includeConfig ? { basicProp: "Test basic prop value" } : null;
-        const state = mockBasicState({ config } as any);
+    const getWrapper = () => {
+        const state = mockBasicState({ config: {} as any });
         const props = {
             appName: "testApp"
         };
         const store = new Vuex.Store<BasicState>({
             state,
             actions: {
-                [BasicAction.FetchConfig]: mockFetchConfig
+                [AppStateAction.FetchConfig]: jest.fn()
             },
             modules: {
                 model: {
@@ -48,16 +47,15 @@ describe("BasicApp", () => {
             props
         };
 
-        if (shallow) {
-            return shallowMount(BasicApp, options);
-        }
         return mount(BasicApp, options);
     };
 
-    it("renders content as expected when config is set", () => {
-        const wrapper = getWrapper(jest.fn(), false);
-        const wodinPanels = wrapper.findComponent(WodinPanels);
+    it("renders content as expected", () => {
+        const wrapper = getWrapper();
+        const wodinApp = wrapper.findComponent(WodinApp);
+        expect(wodinApp.props("appName")).toBe("testApp");
 
+        const wodinPanels = wodinApp.findComponent(WodinPanels);
         const leftPanel = wodinPanels.find(".wodin-left");
         const leftTabs = leftPanel.find("#left-tabs");
         const leftTabLinks = leftTabs.findAll("ul li a");
@@ -73,18 +71,10 @@ describe("BasicApp", () => {
         expect(rightTabLinks.at(0)!.text()).toBe("Run");
         expect(rightTabLinks.at(1)!.text()).toBe("Sensitivity");
         expect(rightTabs.find("div.mt-4 div.run-tab").exists()).toBe(true);
-
-        expect(wrapper.findComponent(LoadingSpinner).exists()).toBe(false);
-    });
-
-    it("renders loading spinner when config is not set", () => {
-        const wrapper = getWrapper(jest.fn(), true, false);
-        expect(wrapper.findComponent(LoadingSpinner).exists()).toBe(true);
-        expect(wrapper.find("h2").text()).toBe("Loading application...");
     });
 
     it("renders Options as expected", async () => {
-        const wrapper = getWrapper(jest.fn(), false);
+        const wrapper = getWrapper();
         const leftTabs = wrapper.find("#left-tabs");
 
         // Change to Options tab
@@ -93,17 +83,11 @@ describe("BasicApp", () => {
     });
 
     it("renders Sensitivity as expected", async () => {
-        const wrapper = getWrapper(jest.fn(), false);
+        const wrapper = getWrapper();
         const rightTabs = wrapper.find("#right-tabs");
 
         // Change to Sensitivity tab
         await rightTabs.findAll("li a").at(1)!.trigger("click");
         expect(rightTabs.find("div.mt-4").text()).toBe("Coming soon: Sensitivity plot");
-    });
-
-    it("invokes FetchConfig action", () => {
-        const mockFetchConfig = jest.fn();
-        getWrapper(mockFetchConfig);
-        expect(mockFetchConfig.mock.calls.length).toBe(1);
     });
 });

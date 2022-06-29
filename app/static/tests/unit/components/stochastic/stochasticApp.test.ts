@@ -1,45 +1,66 @@
 import Vuex from "vuex";
-import { shallowMount } from "@vue/test-utils";
+import { mount } from "@vue/test-utils";
 import StochasticApp from "../../../../src/app/components/stochastic/StochasticApp.vue";
-import ErrorsAlert from "../../../../src/app/components/ErrorsAlert.vue";
 import { StochasticState } from "../../../../src/app/store/stochastic/state";
 import { mockStochasticState } from "../../../mocks";
-import { StochasticAction } from "../../../../src/app/store/stochastic/actions";
+import WodinApp from "../../../../src/app/components/WodinApp.vue";
+import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
+import { ModelAction } from "../../../../src/app/store/model/actions";
+import { AppStateAction } from "../../../../src/app/store/appState/actions";
 
 describe("StochasticApp", () => {
-    const getWrapper = (mockFetchConfig = jest.fn()) => {
-        const state = mockStochasticState({
-            config: {
-                stochasticProp: "Test stochastic prop value"
-            } as any
-        });
+    const getWrapper = () => {
         const props = {
             appName: "testApp"
         };
+
         const store = new Vuex.Store<StochasticState>({
-            state,
+            state: mockStochasticState({ config: {} as any }),
             actions: {
-                [StochasticAction.FetchConfig]: mockFetchConfig
+                [AppStateAction.FetchConfig]: jest.fn()
+            },
+            modules: {
+                errors: {
+                    namespaced: true,
+                    state: { errors: [] }
+                },
+                model: {
+                    namespaced: true,
+                    actions: {
+                        [ModelAction.FetchOdinRunner]: jest.fn()
+                    }
+                }
             }
         });
-        return shallowMount(StochasticApp, {
+
+        const options = {
             global: {
                 plugins: [store]
             },
             props
-        });
+        };
+
+        return mount(StochasticApp, options);
     };
 
-    it("renders as expected", () => {
+    it("renders content as expected", () => {
         const wrapper = getWrapper();
-        expect(wrapper.find("#app-type").text()).toBe("App Type: stochastic");
-        expect(wrapper.find("#stochastic-prop").text()).toBe("Stochastic Prop: Test stochastic prop value");
-        expect(wrapper.findComponent(ErrorsAlert).exists()).toBe(true);
-    });
+        const wodinApp = wrapper.findComponent(WodinApp);
+        expect(wodinApp.props("appName")).toBe("testApp");
 
-    it("invokes FetchConfig action", () => {
-        const mockFetchConfig = jest.fn();
-        getWrapper(mockFetchConfig);
-        expect(mockFetchConfig.mock.calls.length).toBe(1);
+        const wodinPanels = wodinApp.findComponent(WodinPanels);
+        const leftPanel = wodinPanels.find(".wodin-left");
+        const leftTabs = leftPanel.find("#left-tabs");
+        const leftTabLinks = leftTabs.findAll("ul li a");
+        expect(leftTabLinks.length).toBe(1);
+        expect(leftTabLinks.at(0)!.text()).toBe("Code");
+        expect(leftTabs.find("div.mt-4").text()).toBe("Coming soon: Stochastic apps");
+
+        const rightPanel = wodinPanels.find(".wodin-right");
+        const rightTabs = rightPanel.find("#right-tabs");
+        const rightTabLinks = rightTabs.findAll("ul li a");
+        expect(rightTabLinks.length).toBe(1);
+        expect(rightTabLinks.at(0)!.text()).toBe("Run");
+        expect(rightTabs.find("div.mt-4").text()).toBe("Coming soon: Stochastic apps");
     });
 });

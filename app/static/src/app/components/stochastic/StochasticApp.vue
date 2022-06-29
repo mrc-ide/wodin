@@ -1,46 +1,35 @@
 <template>
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div id="app-type">App Type: {{appType}}</div>
-                <div id="stochastic-prop">Stochastic Prop: {{stochasticProp}}</div>
-                <errors-alert></errors-alert>
-            </div>
-        </div>
-    </div>
+  <wodin-app :app-name="appName">
+    <template v-slot:left>
+      <wodin-tabs id="left-tabs" :tabNames="['Code']">
+        <template v-slot:Code>
+          Coming soon: Stochastic apps
+        </template>
+      </wodin-tabs>
+    </template>
+    <template v-slot:right>
+      <wodin-tabs id="right-tabs" :tabNames="['Run']">
+        <template v-slot:Run>
+          Coming soon: Stochastic apps
+        </template>
+      </wodin-tabs>
+    </template>
+  </wodin-app>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, onMounted } from "vue";
-import { useStore } from "vuex";
-import { StochasticAction } from "../../store/stochastic/actions";
-import ErrorsAlert from "../ErrorsAlert.vue";
+<script>
+import { defineComponent } from "vue";
+import WodinApp from "../WodinApp.vue";
+import WodinTabs from "../WodinTabs.vue";
 
 export default defineComponent({
+    name: "StochasticApp",
     props: {
-        appName: String,
-        title: String
+        appName: String
     },
     components: {
-        ErrorsAlert
-    },
-    setup(props) {
-        const store = useStore();
-
-        const appType = computed(() => store.state.appType);
-        const stochasticProp = computed(() => store.state.config?.stochasticProp);
-
-        onMounted(() => {
-            store.dispatch(StochasticAction.FetchConfig, props.appName);
-        });
-
-        return {
-            appType,
-            stochasticProp
-        };
+        WodinApp,
+        WodinTabs
     }
 });
 </script>
-<style lang="scss">
-    @import "../../../scss/style.scss";
-</style>

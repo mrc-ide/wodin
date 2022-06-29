@@ -1,46 +1,59 @@
 <template>
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div id="app-type">App Type: {{appType}}</div>
-                <div id="fit-prop">Fit Prop: {{fitProp}}</div>
-                <errors-alert></errors-alert>
-            </div>
-        </div>
-    </div>
+  <wodin-app :app-name="appName">
+    <template v-slot:left>
+      <wodin-tabs id="left-tabs" :tabNames="['Data', 'Code', 'Options']">
+        <template v-slot:Data>
+          <data-tab></data-tab>
+        </template>
+        <template v-slot:Code>
+          <code-tab></code-tab>
+        </template>
+        <template v-slot:Options>
+          <options-tab></options-tab>
+        </template>
+      </wodin-tabs>
+    </template>
+    <template v-slot:right>
+      <wodin-tabs id="right-tabs" :tabNames="['Run', 'Fit', 'Sensitivity']">
+        <template v-slot:Run>
+          <run-tab></run-tab>
+        </template>
+        <template v-slot:Fit>
+          <fit-tab></fit-tab>
+        </template>
+        <template v-slot:Sensitivity>
+          <sensitivity-tab></sensitivity-tab>
+        </template>
+      </wodin-tabs>
+    </template>
+  </wodin-app>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, onMounted } from "vue";
-import { useStore } from "vuex";
-import { FitAction } from "../../store/fit/actions";
-import ErrorsAlert from "../ErrorsAlert.vue";
+<script>
+import { defineComponent } from "vue";
+import WodinApp from "../WodinApp.vue";
+import WodinTabs from "../WodinTabs.vue";
+import CodeTab from "../code/CodeTab.vue";
+import DataTab from "../data/DataTab.vue";
+import FitTab from "./FitTab.vue";
+import RunTab from "../run/RunTab.vue";
+import OptionsTab from "../options/OptionsTab.vue";
+import SensitivityTab from "../sensitivity/SensitivityTab.vue";
 
 export default defineComponent({
+    name: "FitApp",
     props: {
-        appName: String,
-        title: String
+        appName: String
     },
     components: {
-        ErrorsAlert
-    },
-    setup(props) {
-        const store = useStore();
-
-        const appType = computed(() => store.state.appType);
-        const fitProp = computed(() => store.state.config?.fitProp);
-
-        onMounted(() => {
-            store.dispatch(FitAction.FetchConfig, props.appName);
-        });
-
-        return {
-            appType,
-            fitProp
-        };
+        CodeTab,
+        DataTab,
+        FitTab,
+        RunTab,
+        OptionsTab,
+        SensitivityTab,
+        WodinApp,
+        WodinTabs
     }
 });
 </script>
-<style lang="scss">
-    @import "../../../scss/style.scss";
-</style>
