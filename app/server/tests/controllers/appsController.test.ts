@@ -1,4 +1,6 @@
 import { AppsController } from "../../src/controllers/appsController";
+import { ErrorType } from "../../src/errors/errorType";
+import { WodinWebError } from "../../src/errors/wodinWebError";
 
 describe("appsController", () => {
     const getMockRequest = (appConfig: any) => {
@@ -47,14 +49,16 @@ describe("appsController", () => {
         expect(mockStatus).not.toBeCalled();
     });
 
-    it("renders not found view and sets status to 404 when no config", () => {
+    it("throws expected error when no config", () => {
         const request = getMockRequest(null);
-        AppsController.getApp(request, mockResponse);
-
-        expect(mockStatus).toBeCalledTimes(1);
-        expect(mockStatus.mock.calls[0][0]).toBe(404);
-        expect(mockRender).toBeCalledTimes(1);
-        expect(mockRender.mock.calls[0][0]).toBe("app-not-found");
-        expect(mockRender.mock.calls[0][1]).toStrictEqual({ appName: "test" });
+        const expectedErr = new WodinWebError(
+            "App not found: test",
+            404,
+            ErrorType.NOT_FOUND,
+            "app-not-found",
+            { appName: "test" }
+        );
+        expect(() => { AppsController.getApp(request, mockResponse); }).toThrow(expectedErr);
+        expect(mockRender).not.toHaveBeenCalled();
     });
 });

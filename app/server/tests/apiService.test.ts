@@ -28,8 +28,12 @@ describe("apiService", () => {
         end: jest.fn()
     } as any;
 
+    const postData = "posted data";
+
     const responseData = { data: "test get" };
     const responseHeaders = { respHeader1: "rh1", respHeader2: "rh2" };
+
+    const mockNext = jest.fn();
 
     const testExpectedResponse = () => {
         expect(mockRes.status.mock.calls[0][0]).toBe(200);
@@ -39,6 +43,8 @@ describe("apiService", () => {
         expect(mockRes.header.mock.calls[1][1]).toBe("rh2");
         expect(mockRes.end.mock.calls[0][0]).toStrictEqual(responseData);
     };
+
+    const testError = "test error";
 
     const testExpectedAxiosRequestConfig = (
         headers: AxiosRequestHeaders,
@@ -53,7 +59,16 @@ describe("apiService", () => {
         expect((transformResponse as AxiosResponseTransformer)(transformTest)).toBe(transformTest);
     };
 
-    const sut = api(mockReq, mockRes);
+    const testExpectedError = () => {
+        expect(mockNext).toHaveBeenCalledTimes(1);
+        expect(mockNext.mock.calls[0][0].response.status).toBe(500);
+        expect(mockNext.mock.calls[0][0].response.data).toBe(testError);
+        expect(mockRes.status).not.toHaveBeenCalled();
+        expect(mockRes.header).not.toHaveBeenCalled();
+        expect(mockRes.end).not.toHaveBeenCalled();
+    };
+
+    const sut = api(mockReq, mockRes, mockNext);
 
     it("get passes through response from api", async () => {
         const expectedUrl = "http://test/get-endpoint";
@@ -75,7 +90,6 @@ describe("apiService", () => {
 
     it("post passes through response from api", async () => {
         const expectedUrl = "http://test/post-endpoint";
-        const postData = "posted data";
         mockAxios.onPost(expectedUrl).reply(
             200,
             responseData,
@@ -90,5 +104,29 @@ describe("apiService", () => {
 
         testExpectedAxiosRequestConfig(headers as AxiosRequestHeaders, transformResponse as AxiosResponseTransformer);
         testExpectedResponse();
+    });
+
+    it("get calls next if error thrown", async () => {
+        const expectedUrl = "http://test/get-endpoint";
+        mockAxios.onGet(expectedUrl).reply(
+            500,
+            testError,
+            responseHeaders
+        );
+
+        await sut.get("/get-endpoint");
+        testExpectedError();
+    });
+
+    it("post calls next if error thrown", async () => {
+        const expectedUrl = "http://test/post-endpoint";
+        mockAxios.onPost(expectedUrl).reply(
+            500,
+            testError,
+            responseHeaders
+        );
+
+        await sut.post("/post-endpoint", postData);
+        testExpectedError();
     });
 });

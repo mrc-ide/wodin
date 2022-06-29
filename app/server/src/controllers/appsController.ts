@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { AppLocals } from "../types";
+import { ErrorType } from "../errors/errorType";
+import { WodinWebError } from "../errors/wodinWebError";
 
 export class AppsController {
     static getApp = (req: Request, res: Response) => {
@@ -16,7 +18,13 @@ export class AppsController {
             };
             res.render(view, viewOptions);
         } else {
-            res.status(404).render("app-not-found", { appName });
+            throw new WodinWebError(
+                `App not found: ${appName}`,
+                404,
+                ErrorType.NOT_FOUND,
+                "app-not-found",
+                { appName }
+            );
         }
     };
 }

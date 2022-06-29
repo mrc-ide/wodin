@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import { ConfigReader } from "../configReader";
-import { ErrorCode, jsonResponseError, jsonResponseSuccess } from "../jsonResponse";
+import { jsonResponseSuccess } from "../jsonResponse";
 import { AppConfig, AppLocals } from "../types";
 import { DefaultCodeReader } from "../defaultCodeReader";
+import { ErrorType } from "../errors/errorType";
+import { WodinError } from "../errors/wodinError";
 
 export class ConfigController {
     private static _readAppConfigFile = (
@@ -26,7 +28,7 @@ export class ConfigController {
         if (config) {
             jsonResponseSuccess(config, res);
         } else {
-            jsonResponseError(404, ErrorCode.NOT_FOUND, `App with name ${appName} is not configured.`, res);
+            throw new WodinError(`App with name ${appName} is not configured.`, 404, ErrorType.NOT_FOUND);
         }
     };
 }
