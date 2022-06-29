@@ -1,6 +1,9 @@
+import {CastingContext, parse} from "csv-parse";
 import {ActionTree} from "vuex";
 import {AppState} from "../appState/state";
 import {FitDataState} from "./state";
+import {Error} from "../../types/responseTypes";
+import {FitDataMutation} from "./mutations";
 
 export enum FitDataAction {
     Upload = "Upload"
@@ -8,13 +11,33 @@ export enum FitDataAction {
 
 export const actions: ActionTree<FitDataState, AppState> = {
     Upload(context, file) {
-
+        const { commit } = context;
         if (file) {
-            console.log("uploaded a file: " + file.name);
             const reader = new FileReader();
 
-            reader.onload = function (evt) {
-                console.log("File loaded:" + JSON.stringify(evt.target!.result));
+            reader.onload = function (event) {
+                if (event.target && event.target.result) {
+                    const cast = (value: string, castContext: CastingContext) => {
+                        if (castContext.header) {
+                            return value;
+                        }
+                        return parseFloat(value); //TODO: error doesn't seem to be generated with broken files (with non-numerics)
+                    };
+
+                    parse(event.target.result.toString(), {columns: true, cast},  (err, data) => {
+                        const error = "An error occurred when loading data";
+                        let dataError: Error | null = err ? {error, detail: JSON.stringify(err)} : null;
+                        if (!dataError && !data.length) {
+                            dataError = {error, detail: "File contains no data rows"}
+                        }
+                        if (!dataError) {
+                            const columns = Object.keys(data[0]);
+                            commit(FitDataMutation.SetData, {data, columns});
+                        } else {
+                            commit(FitDataMutation.SetError, dataError);
+                        }
+                    });
+                }
             };
 
             reader.onerror = function (evt) {

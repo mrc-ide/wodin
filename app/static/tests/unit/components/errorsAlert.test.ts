@@ -3,11 +3,11 @@ import { shallowMount } from "@vue/test-utils";
 import { mockBasicState } from "../../mocks";
 import { BasicState } from "../../../src/app/store/basic/state";
 import ErrorsAlert from "../../../src/app/components/ErrorsAlert.vue";
-import { APIError } from "../../../src/app/types/responseTypes";
+import { Error } from "../../../src/app/types/responseTypes";
 import { ErrorsMutation } from "../../../src/app/store/errors/mutations";
 
 describe("ErrorsAlert", () => {
-    const getWrapper = (errors: APIError[], dismissErrors = jest.fn()) => {
+    const getWrapper = (errors: Error[], dismissErrors = jest.fn()) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState,
             modules: {

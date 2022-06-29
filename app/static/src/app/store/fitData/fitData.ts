@@ -1,12 +1,16 @@
 import { FitDataState } from "./state";
 import { actions } from "./actions";
+import { mutations } from "./mutations";
 
 export const defaultState: FitDataState = {
-    data: null
+    data: null,
+    columns: null,
+    error: null
 };
 
 export const fitData = {
     namespaced: true,
     state: defaultState,
-    actions
+    actions,
+    mutations
 };

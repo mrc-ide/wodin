@@ -1,5 +1,5 @@
-import { APIError } from "../../types/responseTypes";
+import { Error } from "../../types/responseTypes";
 
 export interface ErrorsState {
-    errors: APIError[]
+    errors: Error[]
 }

@@ -3,7 +3,7 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { ActionContext, Commit } from "vuex";
 import { freezer } from "./utils";
-import { APIError, ResponseSuccess, ResponseFailure } from "./types/responseTypes";
+import { Error, ResponseSuccess, ResponseFailure } from "./types/responseTypes";
 import { ErrorsMutation } from "./store/errors/mutations";
 
 export interface ResponseWithType<T> extends ResponseSuccess {
@@ -53,7 +53,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         return failure.errors[0];
     };
 
-    static createError(detail: string): APIError {
+    static createError(detail: string): Error {
         return {
             error: "MALFORMED_RESPONSE",
             detail
@@ -119,7 +119,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         }
     };
 
-    private _commitError = (error: APIError) => {
+    private _commitError = (error: Error) => {
         this._commit({ type: `errors/${ErrorsMutation.AddError}`, payload: error }, { root: true });
     };
 

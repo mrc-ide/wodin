@@ -1,3 +1,8 @@
+import {Dict} from "../../types/utilTypes";
+import {Error} from "../../types/responseTypes";
+
 export interface FitDataState {
-    data: any //TODO: make this more sensible
+    data: Dict<number> | null,
+    columns: string[] | null,
+    error: Error | null
 }

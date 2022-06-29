@@ -19,3 +19,4 @@ export const freezer = {
 export function evaluateScript<T>(script: string): T {
     return eval(script) as T;
 }
+
