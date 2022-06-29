@@ -9,7 +9,9 @@ describe("appsController", () => {
             app: {
                 locals: {
                     appsPath: "testapps",
-                    configReader: mockConfigReader
+                    configReader: mockConfigReader,
+                    wodinConfig: { courseTitle: "Test Course Title" },
+                    wodinVersion: "1.2.3"
                 }
             },
             params: {
@@ -36,7 +38,12 @@ describe("appsController", () => {
 
         expect(mockRender).toBeCalledTimes(1);
         expect(mockRender.mock.calls[0][0]).toBe("testType-app");
-        expect(mockRender.mock.calls[0][1]).toStrictEqual({ appName: "test", title: "testTitle" });
+        expect(mockRender.mock.calls[0][1]).toStrictEqual({
+            appName: "test",
+            appTitle: "testTitle",
+            courseTitle: "Test Course Title",
+            wodinVersion: "1.2.3"
+        });
         expect(mockStatus).not.toBeCalled();
     });
 

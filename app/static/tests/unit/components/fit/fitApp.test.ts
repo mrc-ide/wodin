@@ -14,7 +14,6 @@ describe("FitApp", () => {
             } as any
         });
         const props = {
-            title: "Test Title",
             appName: "testApp"
         };
         const store = new Vuex.Store<FitState>({
@@ -33,7 +32,6 @@ describe("FitApp", () => {
 
     it("renders as expected", () => {
         const wrapper = getWrapper();
-        expect(wrapper.find("h1").text()).toBe("Test Title");
         expect(wrapper.find("#app-type").text()).toBe("App Type: fit");
         expect(wrapper.find("#fit-prop").text()).toBe("Fit Prop: Test fit prop value");
         expect(wrapper.findComponent(ErrorsAlert).exists()).toBe(true);

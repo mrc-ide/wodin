@@ -26,9 +26,12 @@ const wodinConfig = configReader.readConfigFile("wodin.config.json") as WodinCon
 const { port, appsPath, odinAPI } = wodinConfig;
 const defaultCodeReader = new DefaultCodeReader(`${configPath}/defaultCode`);
 
+// Use WODIN version from package.json
+const wodinVersion = process.env.npm_package_version;
+
 // Make app locals available to controllers
 Object.assign(app.locals, {
-    appsPath, configPath, configReader, defaultCodeReader, odinAPI
+    appsPath, configPath, configReader, defaultCodeReader, odinAPI, wodinConfig, wodinVersion
 });
 
 // Static content

@@ -17,7 +17,6 @@ describe("BasicApp", () => {
         const config = includeConfig ? { basicProp: "Test basic prop value" } : null;
         const state = mockBasicState({ config } as any);
         const props = {
-            title: "Test Title",
             appName: "testApp"
         };
         const store = new Vuex.Store<BasicState>({
@@ -57,8 +56,6 @@ describe("BasicApp", () => {
 
     it("renders content as expected when config is set", () => {
         const wrapper = getWrapper(jest.fn(), false);
-        expect(wrapper.find("h1").text()).toBe("Test Title");
-
         const wodinPanels = wrapper.findComponent(WodinPanels);
 
         const leftPanel = wodinPanels.find(".wodin-left");
@@ -82,7 +79,6 @@ describe("BasicApp", () => {
 
     it("renders loading spinner when config is not set", () => {
         const wrapper = getWrapper(jest.fn(), true, false);
-        expect(wrapper.find("h1").text()).toBe("Test Title");
         expect(wrapper.findComponent(LoadingSpinner).exists()).toBe(true);
         expect(wrapper.find("h2").text()).toBe("Loading application...");
     });

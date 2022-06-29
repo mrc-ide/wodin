@@ -2,7 +2,6 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <h1>{{title}}</h1>
                 <div v-if="loading" class="text-center">
                   <loading-spinner size="lg"></loading-spinner>
                   <h2 id="loading-message">Loading application...</h2>
@@ -51,8 +50,7 @@ import SensitivityTab from "../sensitivity/SensitivityTab.vue";
 
 export default defineComponent({
     props: {
-        appName: String,
-        title: String
+        appName: String
     },
     components: {
         LoadingSpinner,
