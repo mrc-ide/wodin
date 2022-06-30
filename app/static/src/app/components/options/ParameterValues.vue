@@ -26,7 +26,7 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const paramValues = computed(() => store.state.model.parameterValues);
-        const paramNames = computed(() => Array.from(paramValues.value.keys()) as string[]);
+        const paramNames = computed(() => (paramValues.value ? Array.from(paramValues.value.keys()) as string[] : []));
 
         const timestampParamNames = () => paramNames.value.map((name: string) => name + Date.now());
 

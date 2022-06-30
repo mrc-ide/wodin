@@ -11,7 +11,7 @@ describe("OptionsTab", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 model: {
-                    parameterValues: {}
+                    parameterValues: null
                 }
             } as any
         });

@@ -1,7 +1,6 @@
 import {
     Odin, OdinModelResponse, OdinSolution, OdinRunner
 } from "../../types/responseTypes";
-import { Dict } from "../../types/utilTypes";
 
 export enum RequiredModelAction {
     Compile,
