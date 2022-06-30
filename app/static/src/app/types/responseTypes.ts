@@ -58,9 +58,9 @@ export interface OdinModelResponse{
 
 export type OdinSolution = (t0: number, t1: number, nPoints: number) => {x: number, y: number}[];
 
-export type OdinRunner = (dopri: unknown,
-                          odin: Odin,
-                          pars: Record<string, number>,
-                          tStart: number,
-                          tEnd: number,
-                          control: unknown) => OdinSolution;
+export interface OdinRunner {
+    wodinRun: (odin: Odin,
+               pars: Map<string, number>,
+               tStart: number,
+               tEnd: number) => OdinSolution;
+}

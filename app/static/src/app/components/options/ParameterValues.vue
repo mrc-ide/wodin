@@ -7,7 +7,7 @@
       <div class="col-6">
         <input class="form-control parameter-input"
                type="number"
-               :value="paramValues[paramName]"
+               :value="paramValues.get(paramName)"
                @input="updateValue($event, paramName)"/>
       </div>
     </div>
@@ -26,7 +26,7 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const paramValues = computed(() => store.state.model.parameterValues);
-        const paramNames = computed(() => Object.keys(paramValues.value));
+        const paramNames = computed(() => Array.from(paramValues.value.keys()) as string[]);
 
         const timestampParamNames = () => paramNames.value.map((name: string) => name + Date.now());
 
