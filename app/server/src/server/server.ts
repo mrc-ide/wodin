@@ -5,15 +5,16 @@ import { WodinConfig } from "../types";
 import { registerViews } from "./views";
 import { registerRoutes } from "../routes";
 import { DefaultCodeReader } from "../defaultCodeReader";
+import { handleError } from "../errors/handleError";
+import { initialiseLogging } from "../logging";
 
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
-const morgan = require("morgan");
 
 const app = express();
 app.use(bodyParser.json());
-app.use(morgan("short"));
+initialiseLogging(app);
 
 const rootDir = path.join(__dirname, "../..");
 
@@ -26,9 +27,12 @@ const wodinConfig = configReader.readConfigFile("wodin.config.json") as WodinCon
 const { port, appsPath, odinAPI } = wodinConfig;
 const defaultCodeReader = new DefaultCodeReader(`${configPath}/defaultCode`);
 
+// Use WODIN version from package.json
+const wodinVersion = process.env.npm_package_version;
+
 // Make app locals available to controllers
 Object.assign(app.locals, {
-    appsPath, configPath, configReader, defaultCodeReader, odinAPI
+    appsPath, configPath, configReader, defaultCodeReader, odinAPI, wodinConfig, wodinVersion
 });
 
 // Static content
@@ -40,6 +44,9 @@ registerViews(app, rootDir);
 
 // Routes
 app.use("/", registerRoutes(app));
+
+// Error handler
+app.use(handleError);
 
 app.listen(port, () => {
     console.log(`WODIN server listening on port ${port}`);

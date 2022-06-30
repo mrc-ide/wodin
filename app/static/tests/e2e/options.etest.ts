@@ -12,7 +12,7 @@ test.describe("Options Tab tests", () => {
 
     test("can see default parameters", async ({ page }) => {
         await expect(await page.innerText(".collapse-title")).toContain("Model Parameters");
-        await expect(await page.getAttribute(".collapse-title i", "data-name")).toBe("chevron-up");
+        await expect(await page.getAttribute(":nth-match(.collapse-title i, 1)", "data-name")).toBe("chevron-up");
         await expect(await page.locator("#model-params")).not.toBeHidden();
 
         await expect(await page.innerText(":nth-match(#model-params label, 1)")).toBe("beta");
@@ -23,18 +23,35 @@ test.describe("Options Tab tests", () => {
         await expect(await page.inputValue(":nth-match(#model-params input, 3)")).toBe("1000000");
         await expect(await page.innerText(":nth-match(#model-params label, 4)")).toBe("sigma");
         await expect(await page.inputValue(":nth-match(#model-params input, 4)")).toBe("2");
+
+        await expect(await page.innerText(":nth-match(.collapse-title, 2)")).toContain("Run Options");
+        await expect(await page.getAttribute(":nth-match(.collapse-title i, 2)", "data-name")).toBe("chevron-up");
+        await expect(await page.locator("#run-options")).not.toBeHidden();
+
+        await expect(await page.innerText(":nth-match(#run-options label, 1)")).toBe("End time");
+        await expect(await page.inputValue(":nth-match(#run-options input, 1)")).toBe("100");
     });
 
-    test("can collapse and expand parameters panel", async ({ page }) => {
-        // collapse
-        await page.click(".collapse-title");
-        await expect(await page.getAttribute(".collapse-title i", "data-name")).toBe("chevron-down");
+    test("can collapse and expand options panel", async ({ page }) => {
+        // parameters collapse
+        await page.click(":nth-match(.collapse-title, 1)");
+        await expect(await page.getAttribute(":nth-match(.collapse-title i, 1)", "data-name")).toBe("chevron-down");
         await expect(await page.locator("#model-params")).toBeHidden();
 
-        // expand
-        await page.click(".collapse-title");
-        await expect(await page.getAttribute(".collapse-title i", "data-name")).toBe("chevron-up");
+        // parameters expand
+        await page.click(":nth-match(.collapse-title, 1)");
+        await expect(await page.getAttribute(":nth-match(.collapse-title i ,1)", "data-name")).toBe("chevron-up");
         await expect(await page.locator("#model-params")).not.toBeHidden();
+
+        // run-options collapse
+        await page.click(":nth-match(.collapse-title, 2)");
+        await expect(await page.getAttribute(":nth-match(.collapse-title i, 2)", "data-name")).toBe("chevron-down");
+        await expect(await page.locator("#run-options")).toBeHidden();
+
+        // parameters expand
+        await page.click(":nth-match(.collapse-title, 2)");
+        await expect(await page.getAttribute(":nth-match(.collapse-title i, 2)", "data-name")).toBe("chevron-up");
+        await expect(await page.locator("#run-options")).not.toBeHidden();
     });
 
     test("can update parameter value", async ({ page }) => {
@@ -46,7 +63,7 @@ test.describe("Options Tab tests", () => {
         await page.fill(":nth-match(#model-params input, 1)", "3");
 
         await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
-            "Model code has been recompiled or parameters have been updated. Run Model to view updated graph.", {
+            "Model code has been recompiled or options have been updated. Run Model to view updated graph.", {
                 timeout
             }
         );
@@ -78,7 +95,7 @@ test.describe("Options Tab tests", () => {
         // Compile code
         await page.click("#compile-btn");
         await expect(page.locator(".run-tab .run-update-msg")).toHaveText(
-            "Model code has been recompiled or parameters have been updated. Run Model to view updated graph.", {
+            "Model code has been recompiled or options have been updated. Run Model to view updated graph.", {
                 timeout
             }
         );
@@ -92,6 +109,27 @@ test.describe("Options Tab tests", () => {
         await expect(await page.inputValue(":nth-match(#model-params input, 2)")).toBe("28");
         await expect(await page.innerText(":nth-match(#model-params label, 3)")).toBe("sigma");
         await expect(await page.inputValue(":nth-match(#model-params input, 3)")).toBe("10");
+    });
+
+    test("can update end time", async ({ page }) => {
+        // Expect run plot's x axis final tick to initially be 100
+        const xAxisTickSelector = ".plotly svg .xaxislayer-above .xtick text";
+        await expect(await page.locator(xAxisTickSelector).last().innerHTML()).toBe("100");
+
+        await page.fill("#run-options input", "200");
+
+        await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
+            "Model code has been recompiled or options have been updated. Run Model to view updated graph.", {
+                timeout
+            }
+        );
+
+        // Re-run model
+        await page.click("#run-btn");
+        await expect(await page.locator(".run-tab .run-update-msg")).toHaveText("");
+
+        // Expect run plot's x axis final tick to now be 200
+        await expect(await page.locator(xAxisTickSelector).last().innerHTML()).toBe("200");
     });
 
     test("cleared parameter input resets on model run", async ({ page }) => {

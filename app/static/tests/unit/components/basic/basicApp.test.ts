@@ -16,7 +16,6 @@ describe("BasicApp", () => {
     const getWrapper = () => {
         const state = mockBasicState({ config: {} as any });
         const props = {
-            title: "Test Title",
             appName: "testApp"
         };
         const store = new Vuex.Store<BasicState>({
@@ -53,11 +52,10 @@ describe("BasicApp", () => {
 
     it("renders content as expected", () => {
         const wrapper = getWrapper();
-        expect(wrapper.find("h1").text()).toBe("Test Title");
-
         const wodinApp = wrapper.findComponent(WodinApp);
-        const wodinPanels = wodinApp.findComponent(WodinPanels);
+        expect(wodinApp.props("appName")).toBe("testApp");
 
+        const wodinPanels = wodinApp.findComponent(WodinPanels);
         const leftPanel = wodinPanels.find(".wodin-left");
         const leftTabs = leftPanel.find("#left-tabs");
         const leftTabLinks = leftTabs.findAll("ul li a");

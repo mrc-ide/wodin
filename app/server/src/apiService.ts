@@ -9,9 +9,12 @@ export class APIService {
 
     private readonly _odinAPI: string;
 
-    constructor(req: Request, res: Response) {
+    private readonly _next: Function;
+
+    constructor(req: Request, res: Response, next: Function) {
         this._req = req;
         this._res = res;
+        this._next = next;
         this._odinAPI = (req.app.locals as AppLocals).odinAPI;
     }
 
@@ -43,14 +46,22 @@ export class APIService {
     };
 
     get = async (url: string) => {
-        const apiResponse = await axios.get(this.fullUrl(url), this.getRequestConfig());
-        this.passThroughResponse(apiResponse);
+        try {
+            const apiResponse = await axios.get(this.fullUrl(url), this.getRequestConfig());
+            this.passThroughResponse(apiResponse);
+        } catch (err) {
+            this._next(err);
+        }
     };
 
     post = async (url: string, body: string) => {
-        const apiResponse = await axios.post(this.fullUrl(url), body, this.getRequestConfig());
-        this.passThroughResponse(apiResponse);
+        try {
+            const apiResponse = await axios.post(this.fullUrl(url), body, this.getRequestConfig());
+            this.passThroughResponse(apiResponse);
+        } catch (err) {
+            this._next(err);
+        }
     };
 }
 
-export const api = (req: Request, res: Response) => new APIService(req, res);
+export const api = (req: Request, res: Response, next: Function) => new APIService(req, res, next);

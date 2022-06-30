@@ -2,7 +2,7 @@
 jest.mock("plotly.js", () => ({}));
 /* eslint-disable import/first */
 import Vuex from "vuex";
-import { mount, shallowMount } from "@vue/test-utils";
+import { mount } from "@vue/test-utils";
 import FitApp from "../../../../src/app/components/fit/FitApp.vue";
 import { FitState } from "../../../../src/app/store/fit/state";
 import { AppStateAction } from "../../../../src/app/store/appState/actions";
@@ -19,7 +19,6 @@ describe("FitApp", () => {
     const getWrapper = () => {
         const state = mockFitState({ config: {} as any });
         const props = {
-            title: "Test Title",
             appName: "testApp"
         };
         const store = new Vuex.Store<FitState>({
@@ -56,11 +55,10 @@ describe("FitApp", () => {
 
     it("renders content as expected", () => {
         const wrapper = getWrapper();
-        expect(wrapper.find("h1").text()).toBe("Test Title");
-
         const wodinApp = wrapper.findComponent(WodinApp);
-        const wodinPanels = wodinApp.findComponent(WodinPanels);
+        expect(wodinApp.props("appName")).toBe("testApp");
 
+        const wodinPanels = wodinApp.findComponent(WodinPanels);
         const leftPanel = wodinPanels.find(".wodin-left");
         const leftTabs = leftPanel.find("#left-tabs");
         const leftTabLinks = leftTabs.findAll("ul li a");

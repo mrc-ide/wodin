@@ -54,8 +54,6 @@ describe("WodinApp", () => {
 
     it("renders as expected when config is set", () => {
         const wrapper = getWrapper();
-        expect(wrapper.find("h1").text()).toBe("Test Title");
-
         const panels = wrapper.findComponent(WodinPanels);
         expect(panels.find("#l-content").text()).toBe("Left slot content");
         expect(panels.find("#r-content").text()).toBe("Right slot content");
@@ -68,7 +66,6 @@ describe("WodinApp", () => {
 
     it("renders loading spinner when config is not set", () => {
         const wrapper = getWrapper(jest.fn(), jest.fn(), false);
-        expect(wrapper.find("h1").text()).toBe("Test Title");
         expect(wrapper.findComponent(LoadingSpinner).exists()).toBe(true);
         expect(wrapper.find("h2").text()).toBe("Loading application...");
 

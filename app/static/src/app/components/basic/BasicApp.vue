@@ -1,5 +1,5 @@
 <template>
-  <wodin-app>
+  <wodin-app :app-name="appName">
     <template v-slot:left>
       <wodin-tabs id="left-tabs" :tabNames="['Code', 'Options']">
         <template v-slot:Code>
@@ -34,6 +34,9 @@ import SensitivityTab from "../sensitivity/SensitivityTab.vue";
 
 export default defineComponent({
     name: "BasicApp",
+    props: {
+        appName: String
+    },
     components: {
         CodeTab,
         RunTab,

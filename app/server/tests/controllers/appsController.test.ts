@@ -1,4 +1,6 @@
 import { AppsController } from "../../src/controllers/appsController";
+import { ErrorType } from "../../src/errors/errorType";
+import { WodinWebError } from "../../src/errors/wodinWebError";
 
 describe("appsController", () => {
     const getMockRequest = (appConfig: any) => {
@@ -9,7 +11,9 @@ describe("appsController", () => {
             app: {
                 locals: {
                     appsPath: "testapps",
-                    configReader: mockConfigReader
+                    configReader: mockConfigReader,
+                    wodinConfig: { courseTitle: "Test Course Title" },
+                    wodinVersion: "1.2.3"
                 }
             },
             params: {
@@ -36,18 +40,25 @@ describe("appsController", () => {
 
         expect(mockRender).toBeCalledTimes(1);
         expect(mockRender.mock.calls[0][0]).toBe("testType-app");
-        expect(mockRender.mock.calls[0][1]).toStrictEqual({ appName: "test", title: "testTitle" });
+        expect(mockRender.mock.calls[0][1]).toStrictEqual({
+            appName: "test",
+            appTitle: "testTitle",
+            courseTitle: "Test Course Title",
+            wodinVersion: "1.2.3"
+        });
         expect(mockStatus).not.toBeCalled();
     });
 
-    it("renders not found view and sets status to 404 when no config", () => {
+    it("throws expected error when no config", () => {
         const request = getMockRequest(null);
-        AppsController.getApp(request, mockResponse);
-
-        expect(mockStatus).toBeCalledTimes(1);
-        expect(mockStatus.mock.calls[0][0]).toBe(404);
-        expect(mockRender).toBeCalledTimes(1);
-        expect(mockRender.mock.calls[0][0]).toBe("app-not-found");
-        expect(mockRender.mock.calls[0][1]).toStrictEqual({ appName: "test" });
+        const expectedErr = new WodinWebError(
+            "App not found: test",
+            404,
+            ErrorType.NOT_FOUND,
+            "app-not-found",
+            { appName: "test" }
+        );
+        expect(() => { AppsController.getApp(request, mockResponse); }).toThrow(expectedErr);
+        expect(mockRender).not.toHaveBeenCalled();
     });
 });

@@ -1,4 +1,4 @@
-import { ErrorCode, jsonResponseError, jsonResponseSuccess } from "../src/jsonResponse";
+import { jsonResponseError, jsonResponseSuccess } from "../src/jsonResponse";
 
 describe("jsonResponse", () => {
     const mockHeader = jest.fn();
@@ -31,7 +31,7 @@ describe("jsonResponse", () => {
     });
 
     it("jsonResponseError adds header, status and expected response text", () => {
-        jsonResponseError(404, ErrorCode.NOT_FOUND, "Resource not found", mockRes as any);
+        jsonResponseError(404, "NOT_FOUND", "Resource not found", mockRes as any);
 
         expect(mockHeader.mock.calls.length).toBe(1);
         expect(mockHeader.mock.calls[0][0]).toBe("Content-Type");

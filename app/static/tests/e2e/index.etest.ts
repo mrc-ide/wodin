@@ -24,7 +24,7 @@ test.describe("Index tests", () => {
         await page.goto("/");
         await page.click("a[href='apps/day1']");
 
-        await expect(await page.innerText("h1")).toBe("Day 1 - Basic Model");
+        await expect(await page.innerText("nav .navbar-app")).toBe("Day 1 - Basic Model");
         await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Code");
     });
 
@@ -32,7 +32,7 @@ test.describe("Index tests", () => {
         await page.goto("/");
         await page.click("a[href='apps/day2']");
 
-        await expect(await page.innerText("h1")).toBe("Day 2 - Model Fit");
+        await expect(await page.innerText("nav .navbar-app")).toBe("Day 2 - Model Fit");
         await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Data");
     });
 
@@ -40,7 +40,7 @@ test.describe("Index tests", () => {
         await page.goto("/");
         await page.click("a[href='apps/day3']");
 
-        await expect(await page.innerText("h1")).toBe("Day 3 - Stochastic Model");
+        await expect(await page.innerText("nav .navbar-app")).toBe("Day 3 - Stochastic Model");
         await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Code");
     });
 

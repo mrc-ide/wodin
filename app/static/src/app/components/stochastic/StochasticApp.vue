@@ -1,5 +1,5 @@
 <template>
-  <wodin-app>
+  <wodin-app :app-name="appName">
     <template v-slot:left>
       <wodin-tabs id="left-tabs" :tabNames="['Code']">
         <template v-slot:Code>
@@ -24,6 +24,9 @@ import WodinTabs from "../WodinTabs.vue";
 
 export default defineComponent({
     name: "StochasticApp",
+    props: {
+        appName: String
+    },
     components: {
         WodinApp,
         WodinTabs
