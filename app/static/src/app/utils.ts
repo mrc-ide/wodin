@@ -1,3 +1,6 @@
+import { Dict } from "./types/utilTypes";
+import { Error } from "./types/responseTypes";
+
 export const freezer = {
     /* eslint-disable @typescript-eslint/no-explicit-any */
     deepFreeze: (data: unknown): unknown => {
@@ -20,3 +23,34 @@ export function evaluateScript<T>(script: string): T {
     return eval(script) as T;
 }
 
+export interface ProcessFitDataResult {
+    data: Dict<number>[] | null;
+    error: Error | null;
+}
+export function processFitData(data: Dict<string>[], errorMsg: string): ProcessFitDataResult {
+    if (!data.length) {
+        return { data: null, error: { error: errorMsg, detail: "File contains no data rows" } };
+    }
+    const nonNumValues: string[] = [];
+    const processedData = data.map((row) => {
+        const processedRow: Dict<number> = {};
+        Object.keys(row).forEach((key) => {
+            const value = Number(row[key]);
+            if (Number.isNaN(value)) {
+                nonNumValues.push(row[key]);
+            } else {
+                processedRow[key] = value;
+            }
+        });
+        return processedRow;
+    });
+    if (nonNumValues.length) {
+        // There might be many non-numeric value, just return the first few in the error
+        const valueCount = Math.max(3, nonNumValues.length);
+        const suffix = nonNumValues.length > valueCount ? " and more" : "";
+        const detail = `Data contains non-numeric values: ${nonNumValues.slice(0, valueCount).join(", ")}${suffix}`;
+        const error = { error: errorMsg, detail };
+        return { data: null, error };
+    }
+    return { data: processedData, error: null };
+}

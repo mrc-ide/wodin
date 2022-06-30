@@ -1,5 +1,5 @@
 <template>
-  <div class="small text-danger">{{displayError}}</div>
+  <div class="small text-danger mt-2">{{displayError}}</div>
 </template>
 
 <script>
@@ -11,7 +11,7 @@ export default defineComponent({
         error: Object
     },
     setup(props) {
-        const displayError = computed(() => (props.error ? `${props.error.error}: ${props.error.details}` : ""));
+        const displayError = computed(() => (props.error ? `${props.error.error}: ${props.error.detail}` : ""));
 
         return { displayError };
     }

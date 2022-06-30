@@ -1,45 +1,46 @@
 <template>
+  <h3>Upload data</h3>
   <div>
-    <input type="file" id="fitDataUpload" accept=".csv,.txt" @change="upload">
+    <input type="file" id="fitDataUpload" accept=".csv,.txt" @change="upload" class="form-control">
   </div>
-  <div v-if="success">
+  <div v-if="success" class="mt-2">
+    <vue-feather class="inline-icon text-success" type="check"></vue-feather>
     Uploaded {{rows}} rows and {{columns}} columns
   </div>
-  <div>{{data}}</div>
   <error-info :error="error"></error-info>
 </template>
 
 <script lang="ts">
 import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
-import {FitDataAction} from "../../store/fitData/actions";
+import VueFeather from "vue-feather";
+import { FitDataAction } from "../../store/fitData/actions";
 import ErrorInfo from "../ErrorInfo.vue";
 
 export default defineComponent({
     name: "DataTab",
     components: {
-      ErrorInfo
+        ErrorInfo,
+        VueFeather
     },
     setup() {
         const store = useStore();
-        const upload = (event: Event) => {
-          const file = (event as any).target.files[0];
-          store.dispatch(`fitData/${FitDataAction.Upload}`, file);
+        const upload = (event: InputEvent) => {
+            const file = (event.target! as HTMLInputElement).files![0];
+            store.dispatch(`fitData/${FitDataAction.Upload}`, file);
         };
 
         const error = computed(() => store.state.fitData.error);
         const success = computed(() => !!store.state.fitData.data);
         const rows = computed(() => store.state.fitData.data?.length);
         const columns = computed(() => store.state.fitData.columns?.length);
-        const data = computed(() => JSON.stringify(store.state.fitData.data)); //testing only
 
         return {
             upload,
             error,
             success,
             rows,
-            columns,
-            data
+            columns
         };
     }
 });

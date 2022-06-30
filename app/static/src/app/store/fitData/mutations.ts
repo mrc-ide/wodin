@@ -9,7 +9,7 @@ export enum FitDataMutation {
 }
 
 export interface SetDataPayload {
-    data: Dict<number> | null,
+    data: Dict<number>[] | null,
     columns: string[] | null
 }
 
