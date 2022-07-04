@@ -3,7 +3,7 @@
   <div>
     <input type="file" id="fitDataUpload" accept=".csv,.txt" @change="upload" class="form-control">
   </div>
-  <div v-if="success" class="mt-2">
+  <div v-if="success" class="mt-2" id="data-upload-success">
     <vue-feather class="inline-icon text-success" type="check"></vue-feather>
     Uploaded {{rows}} rows and {{columns}} columns
   </div>

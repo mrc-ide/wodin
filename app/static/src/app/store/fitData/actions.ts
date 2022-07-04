@@ -5,6 +5,7 @@ import { FitDataState } from "./state";
 import { Error } from "../../types/responseTypes";
 import { FitDataMutation } from "./mutations";
 import { processFitData, ProcessFitDataResult } from "../../utils";
+import userMessages from "../../userMessages";
 
 export enum FitDataAction {
     Upload = "Upload"
@@ -19,7 +20,7 @@ export const actions: ActionTree<FitDataState, AppState> = {
             reader.onload = (event) => {
                 if (event.target && event.target.result) {
                     parse(event.target.result.toString(), { columns: true }, (err, rawData) => {
-                        const errorMsg = "An error occurred when loading data";
+                        const errorMsg = userMessages.fitData.errorLoadingData;
                         let dataError: Error | null = err ? { error: errorMsg, detail: err.message } : null;
                         let processResult: ProcessFitDataResult | undefined;
                         if (!dataError) {
@@ -38,7 +39,7 @@ export const actions: ActionTree<FitDataState, AppState> = {
             };
 
             reader.onerror = () => {
-                const error = { error: "An error occurred when reading data file", detail: reader.error?.message };
+                const error = { error: userMessages.fitData.errorReadingFile, detail: reader.error?.message };
                 commit(FitDataMutation.SetError, error);
             };
 
