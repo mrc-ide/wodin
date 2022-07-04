@@ -7,6 +7,7 @@ import { ResponseSuccess, ResponseFailure, Error } from "../src/app/types/respon
 import { ModelState } from "../src/app/store/model/state";
 import { CodeState } from "../src/app/store/code/state";
 import mock = jest.mock;
+import {FitDataState} from "../src/app/store/fitData/state";
 
 export const mockAxios = new MockAdapter(axios);
 
@@ -53,6 +54,15 @@ export const mockCodeState = (state: Partial<CodeState> = {}): CodeState => {
         currentCode: [],
         ...state
     };
+};
+
+export const mockFitDataState = (state:Partial<FitDataState> = {}): FitDataState => {
+  return {
+      data: null,
+      columns: null,
+      error: null,
+      ...state
+  };
 };
 
 export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
