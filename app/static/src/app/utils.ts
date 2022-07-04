@@ -47,7 +47,7 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
     });
     if (nonNumValues.length) {
         // There might be many non-numeric values, just return the first few in the error
-        const valueCount = Math.max(3, nonNumValues.length);
+        const valueCount = Math.min(3, nonNumValues.length);
         const suffix = nonNumValues.length > valueCount ? " and more" : "";
         const msgValues = nonNumValues.slice(0, valueCount).map((s) => `'${s}'`).join(", ");
         const detail = `${userMessages.fitData.nonNumericValues}: ${msgValues}${suffix}`;

@@ -80,7 +80,7 @@ describe("Fit Data actions", () => {
             expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetError);
             const expectedError = {
                 error: "An error occurred when loading data",
-                detail: "Data contains non-numeric values: hello"
+                detail: "Data contains non-numeric values: 'hello'"
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();
