@@ -90,7 +90,7 @@ describe("Fit Data actions", () => {
     it("commits file read error", (done) => {
         const mockFileReader = {} as any;
         const readAsText = jest.fn().mockImplementation(() => {
-            mockFileReader.error = {message: "File cannot be read"};
+            mockFileReader.error = { message: "File cannot be read" };
             mockFileReader.onerror();
         });
         mockFileReader.readAsText = readAsText;
