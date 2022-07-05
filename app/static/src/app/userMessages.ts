@@ -8,7 +8,7 @@ export default {
     fitData: {
         errorLoadingData: "An error occurred when loading data",
         errorReadingFile: "An error occurred when reading data file",
-        tooFewRows: `File must contain at least ${settings.minFitDataRows} data rows`,
+        tooFewRows: `File must contain at least ${settings.minFitDataRows} data rows.`,
         nonNumericValues: "Data contains non-numeric values",
         noTimeVariables: "Data contains no suitable time variable. A time variable must strictly increase per row."
     },

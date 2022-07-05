@@ -45,7 +45,7 @@ describe("Fit Data actions", () => {
                     { a: 3, b: 4 },
                     { a: 5, b: 6 },
                     { a: 7, b: 8 },
-                    { a: 9, b: 10}
+                    { a: 9, b: 10 }
                 ],
                 columns: ["a", "b"],
                 timeVariableCandidates: ["a", "b"]
@@ -74,7 +74,7 @@ describe("Fit Data actions", () => {
     });
 
     it("commits csv processing error", (done) => {
-        const mockFileReader = getMockFileReader("a,b\n1,2\nhello,4");
+        const mockFileReader = getMockFileReader("a,b\n1,2\n3,4");
 
         const commit = jest.fn();
         (actions[FitDataAction.Upload] as any)({ commit }, file);
@@ -84,7 +84,7 @@ describe("Fit Data actions", () => {
             expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetError);
             const expectedError = {
                 error: "An error occurred when loading data",
-                detail: "Data contains non-numeric values: 'hello'"
+                detail: "File must contain at least 5 data rows."
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();

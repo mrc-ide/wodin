@@ -3,9 +3,9 @@ import { shallowMount } from "@vue/test-utils";
 import VueFeather from "vue-feather";
 import DataTab from "../../../../src/app/components/data/DataTab.vue";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
-import {mockFitDataState, mockFitState} from "../../../mocks";
+import { mockFitDataState, mockFitState } from "../../../mocks";
 import { FitState } from "../../../../src/app/store/fit/state";
-import {FitDataState} from "../../../../src/app/store/fitData/state";
+import { FitDataState } from "../../../../src/app/store/fitData/state";
 
 describe("Data Tab", () => {
     const getWrapper = (
@@ -50,7 +50,9 @@ describe("Data Tab", () => {
         const columns = ["a", "b", "c"];
         const timeVariableCandidates = ["a", "b"];
         const timeVariable = "b";
-        const wrapper = getWrapper({data, columns, timeVariableCandidates, timeVariable});
+        const wrapper = getWrapper({
+            data, columns, timeVariableCandidates, timeVariable
+        });
         expect(wrapper.find("#data-upload-success").text()).toBe("Uploaded 2 rows and 3 columns");
         expect(wrapper.findComponent(VueFeather).props("type")).toBe("check");
         const select = wrapper.find("#time-variable select");
@@ -66,7 +68,7 @@ describe("Data Tab", () => {
 
     it("renders as expected on error", () => {
         const error = { error: "TEST ERROR", detail: "TEST DETAIL" };
-        const wrapper = getWrapper({error});
+        const wrapper = getWrapper({ error });
         expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(error);
         expect(wrapper.find("#time-variable").exists()).toBe(false);
     });
@@ -91,7 +93,9 @@ describe("Data Tab", () => {
         const timeVariableCandidates = ["a", "b"];
         const timeVariable = "b";
         const mockSetTimeVar = jest.fn();
-        const wrapper = getWrapper({data, columns, timeVariableCandidates, timeVariable}, jest.fn(), mockSetTimeVar);
+        const wrapper = getWrapper({
+            data, columns, timeVariableCandidates, timeVariable
+        }, jest.fn(), mockSetTimeVar);
 
         const select = wrapper.find("#time-variable select");
         (select.element as HTMLSelectElement).value = "a";

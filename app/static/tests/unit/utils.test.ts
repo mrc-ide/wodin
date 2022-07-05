@@ -45,7 +45,7 @@ describe("processFitData", () => {
             { a: "3.5", b: "-100" },
             { a: "5", b: "6" },
             { a: "7", b: "8" },
-            { a: "9", b: "10"}
+            { a: "9", b: "10" }
         ];
         const result = processFitData(data, "Error occurred");
         expect(result.error).toBe(null);
@@ -70,11 +70,9 @@ describe("processFitData", () => {
         expect(result.data).toBe(null);
         expect(result.error).toStrictEqual({
             error: "Error occurred",
-            detail: "File must contain at least 5 data rows"
+            detail: "File must contain at least 5 data rows."
         });
     });
-
-
 
     it("returns error with 3 or fewer non-numeric values", () => {
         const data = [
@@ -82,7 +80,7 @@ describe("processFitData", () => {
             { a: "3", b: "4" },
             { a: "5", b: "six" },
             { a: "7", b: "8" },
-            { a: "9", b: "10"}
+            { a: "9", b: "10" }
         ];
         const result = processFitData(data, "Error occurred");
         expect(result.data).toBe(null);
@@ -98,7 +96,7 @@ describe("processFitData", () => {
             { a: "3", b: "four" },
             { a: "5", b: "six" },
             { a: "7", b: "8" },
-            { a: "9", b: "10"}
+            { a: "9", b: "10" }
         ];
         const result = processFitData(data, "Error occurred");
         expect(result.data).toBe(null);
@@ -114,7 +112,7 @@ describe("processFitData", () => {
             { a: "3", b: "4" },
             { a: "5", b: "6" },
             { a: "7", b: "5" },
-            { a: "-21", b: "10"}
+            { a: "-21", b: "10" }
         ];
         const result = processFitData(data, "Error occurred");
         expect(result.data).toBe(null);
