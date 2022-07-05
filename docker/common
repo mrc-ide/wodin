@@ -1,7 +1,6 @@
 # -*-sh-*-
 PACKAGE_NAME=wodin
 PACKAGE_ORG=mrcide
-PACKAGE_VERSION=$(npx --prefix app/server -c 'echo "$npm_package_version"')
 
 # Buildkite doesn't check out a full history from the remote (just the
 # single commit) so you end up with a detached head and git rev-parse
@@ -21,5 +20,4 @@ fi
 
 TAG_SHA="${PACKAGE_ORG}/${PACKAGE_NAME}:${GIT_SHA}"
 TAG_BRANCH="${PACKAGE_ORG}/${PACKAGE_NAME}:${GIT_BRANCH}"
-TAG_VERSION="${PACKAGE_ORG}/${PACKAGE_NAME}:v${PACKAGE_VERSION}"
 TAG_LATEST="${PACKAGE_ORG}/${PACKAGE_NAME}:latest"
