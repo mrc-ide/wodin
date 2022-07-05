@@ -18,9 +18,9 @@ test.describe("Data tab tests", () => {
     };
 
     test("can upload valid csv file", async ({ page }) => {
-        await uploadCSVData(page, "a,b\n1,2\n3,4\n5,6\n");
+        await uploadCSVData(page, "a,b\n1,2\n3,4\n5,6\n7,8\n9,10");
         await expect(await page.locator("#data-upload-success")).toHaveText(
-            "Uploaded 3 rows and 2 columns", {
+            "Uploaded 5 rows and 2 columns", {
                 timeout
             }
         );
@@ -35,5 +35,26 @@ test.describe("Data tab tests", () => {
             }
         );
         await expect(page.locator("#data-upload-success")).toHaveCount(0);
+    });
+
+    test("can select time variable", async ({page}) => {
+        await uploadCSVData(page, "a,b,c\n1,2,10\n3,4,9\n5,6,10\n7,8,11\n9,10,12");
+        await expect(await page.locator("#data-upload-success")).toHaveText(
+            "Uploaded 5 rows and 2 columns", {
+                timeout
+            }
+        );
+
+        const options = await page.locator("#select-time-variable option");
+        await expect(options).toHaveCount(2);
+        await expect(await options.allInnerTexts()).toStrictEqual(["a", "b"]);
+
+        await expect(await page.inputValue("#select-time-variable")).toBe("a");
+
+        await page.selectOption("#select-time-variable", "b");
+        await expect(await page.inputValue("#select-time-variable")).toBe("b");
+
+        // TODO: Check selected time variable persists across tabs
+        //page.
     });
 });
