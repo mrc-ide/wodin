@@ -1,5 +1,4 @@
 import { evaluateScript, freezer, processFitData } from "../../src/app/utils";
-import { Dict } from "../../src/app/types/utilTypes";
 
 describe("freezer", () => {
     it("deep freezes an object", () => {
@@ -43,28 +42,47 @@ describe("processFitData", () => {
     it("processes numeric data without errors", () => {
         const data = [
             { a: "1", b: "2" },
-            { a: "3.5", b: "100" }
+            { a: "3.5", b: "-100" },
+            { a: "5", b: "6" },
+            { a: "7", b: "8" },
+            { a: "9", b: "10"}
         ];
         const result = processFitData(data, "Error occurred");
         expect(result.error).toBe(null);
         expect(result.data).toStrictEqual([
             { a: 1, b: 2 },
-            { a: 3.5, b: 100 }
+            { a: 3.5, b: -100 },
+            { a: 5, b: 6 },
+            { a: 7, b: 8 },
+            { a: 9, b: 10 }
         ]);
+        expect(result.timeVariableCandidates).toStrictEqual(["a"]);
     });
 
-    it("returns error if no data rows", () => {
-        const data: Dict<string>[] = [];
+    it("returns error if less than 5 rows", () => {
+        const data = [
+            { a: "1", b: "2" },
+            { a: "3.5", b: "-100" },
+            { a: "5", b: "6" },
+            { a: "7", b: "8" }
+        ];
         const result = processFitData(data, "Error occurred");
         expect(result.data).toBe(null);
-        expect(result.error).toStrictEqual({ error: "Error occurred", detail: "File contains no data rows" });
+        expect(result.error).toStrictEqual({
+            error: "Error occurred",
+            detail: "File must contain at least 5 data rows"
+        });
     });
+
+
 
     it("returns error with 3 or fewer non-numeric values", () => {
         const data = [
             { a: "one", b: "two" },
             { a: "3", b: "4" },
-            { a: "5", b: "six" }
+            { a: "5", b: "six" },
+            { a: "7", b: "8" },
+            { a: "9", b: "10"}
         ];
         const result = processFitData(data, "Error occurred");
         expect(result.data).toBe(null);
@@ -78,13 +96,31 @@ describe("processFitData", () => {
         const data = [
             { a: "one", b: "two" },
             { a: "3", b: "four" },
-            { a: "5", b: "six" }
+            { a: "5", b: "six" },
+            { a: "7", b: "8" },
+            { a: "9", b: "10"}
         ];
         const result = processFitData(data, "Error occurred");
         expect(result.data).toBe(null);
         expect(result.error).toStrictEqual({
             error: "Error occurred",
             detail: "Data contains non-numeric values: 'one', 'two', 'four' and more"
+        });
+    });
+
+    it("returns error if no candidate time variables", () => {
+        const data = [
+            { a: "1", b: "2" },
+            { a: "3", b: "4" },
+            { a: "5", b: "6" },
+            { a: "7", b: "5" },
+            { a: "-21", b: "10"}
+        ];
+        const result = processFitData(data, "Error occurred");
+        expect(result.data).toBe(null);
+        expect(result.error).toStrictEqual({
+            error: "Error occurred",
+            detail: "Data contains no suitable time variable. A time variable must strictly increase per row."
         });
     });
 });

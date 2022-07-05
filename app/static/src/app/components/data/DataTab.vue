@@ -8,7 +8,7 @@
     Uploaded {{rows}} rows and {{columns}} columns
   </div>
   <error-info :error="error"></error-info>
-  <div v-if="timeVariableCandidates" class="mt-4">
+  <div v-if="timeVariableCandidates" id="time-variable" class="mt-4">
     <label for="select-time-variable" class="fw-bold">
       Select time variable
     </label>
