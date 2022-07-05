@@ -5,6 +5,8 @@ import { mutations } from "./mutations";
 export const defaultState: FitDataState = {
     data: null,
     columns: null,
+    timeVariableCandidates: null,
+    timeVariable: null,
     error: null
 };
 

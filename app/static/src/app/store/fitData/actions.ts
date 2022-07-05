@@ -30,7 +30,11 @@ export const actions: ActionTree<FitDataState, AppState> = {
 
                         if (!dataError && processResult?.data) {
                             const columns = Object.keys(processResult.data[0]);
-                            commit(FitDataMutation.SetData, { data: processResult.data, columns });
+                            commit(FitDataMutation.SetData, {
+                                data: processResult.data,
+                                columns,
+                                timeVariableCandidates: processResult.timeVariableCandidates
+                            });
                         } else {
                             commit(FitDataMutation.SetError, dataError);
                         }

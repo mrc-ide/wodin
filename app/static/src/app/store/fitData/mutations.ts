@@ -5,18 +5,22 @@ import { Error } from "../../types/responseTypes";
 
 export enum FitDataMutation {
     SetData = "SetData",
-    SetError = "SetError"
+    SetError = "SetError",
+    SetTimeVariable = "SetTimeVariable"
 }
 
 export interface SetDataPayload {
     data: Dict<number>[] | null,
-    columns: string[] | null
+    columns: string[] | null,
+    timeVariableCandidates: string[] | null
 }
 
 export const mutations: MutationTree<FitDataState> = {
     [FitDataMutation.SetData](state: FitDataState, payload: SetDataPayload) {
         state.data = payload.data;
         state.columns = payload.columns;
+        state.timeVariableCandidates = payload.timeVariableCandidates;
+        state.timeVariable = state.timeVariableCandidates?.length ? state.timeVariableCandidates[0] : null;
         state.error = null;
     },
 
@@ -24,5 +28,10 @@ export const mutations: MutationTree<FitDataState> = {
         state.error = payload;
         state.data = null;
         state.columns = null;
+        state.timeVariableCandidates = null;
+    },
+
+    [FitDataMutation.SetTimeVariable](state: FitDataState, payload: string | null) {
+        state.timeVariable = payload;
     }
 };

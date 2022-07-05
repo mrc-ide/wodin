@@ -1,6 +1,7 @@
 import { Dict } from "./types/utilTypes";
 import { Error } from "./types/responseTypes";
 import userMessages from "./userMessages";
+import settings from "./settings";
 
 export const freezer = {
     /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -27,12 +28,17 @@ export function evaluateScript<T>(script: string): T {
 export interface ProcessFitDataResult {
     data: Dict<number>[] | null;
     error: Error | null;
+    timeVariableCandidates: string[] | null
 }
 export function processFitData(data: Dict<string>[], errorMsg: string): ProcessFitDataResult {
-    if (!data.length) {
-        return { data: null, error: { error: errorMsg, detail: userMessages.fitData.noRows } };
+    const emptyResult = {
+        data: null, timeVariableCandidates: null, error: null
+    };
+    if (data.length < settings.minFitDataRows) {
+        return { ...emptyResult, error: { error: errorMsg, detail: userMessages.fitData.tooFewRows } };
     }
     const nonNumValues: string[] = [];
+
     const processedData = data.map((row) => {
         const processedRow: Dict<number> = {};
         Object.keys(row).forEach((key) => {
@@ -47,12 +53,30 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
     });
     if (nonNumValues.length) {
         // There might be many non-numeric values, just return the first few in the error
-        const valueCount = Math.min(3, nonNumValues.length);
+        const valueCount = Math.min(settings.displayFitDataNonNumericValues, nonNumValues.length);
         const suffix = nonNumValues.length > valueCount ? " and more" : "";
         const msgValues = nonNumValues.slice(0, valueCount).map((s) => `'${s}'`).join(", ");
         const detail = `${userMessages.fitData.nonNumericValues}: ${msgValues}${suffix}`;
         const error = { error: errorMsg, detail };
-        return { data: null, error };
+        return { ...emptyResult, error };
     }
-    return { data: processedData, error: null };
+    let timeVariableCandidates = Object.keys(data[0]);
+
+    processedData.forEach((row, index) => {
+        if (index > 0) {
+            const toRemove: string[] = [];
+            timeVariableCandidates.forEach((key) => {
+                if (row[key] <= processedData[index - 1][key]) {
+                    toRemove.push(key);
+                }
+            });
+            timeVariableCandidates = timeVariableCandidates.filter((key) => !toRemove.includes(key));
+        }
+    });
+
+    if (!timeVariableCandidates.length) {
+        return { ...emptyResult, error: { error: errorMsg, detail: userMessages.fitData.noTimeVariables } };
+    }
+
+    return { ...emptyResult, data: processedData, timeVariableCandidates };
 }
