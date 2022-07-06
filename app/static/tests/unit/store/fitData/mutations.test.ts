@@ -13,6 +13,7 @@ describe("FitData mutations", () => {
         expect(state.data).toBe(data);
         expect(state.columns).toBe(columns);
         expect(state.timeVariableCandidates).toBe(timeVariableCandidates);
+        expect(state.timeVariable).toBe("a");
         expect(state.error).toBe(null);
     });
 
