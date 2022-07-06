@@ -61,6 +61,8 @@ export const mockFitDataState = (state:Partial<FitDataState> = {}): FitDataState
         data: null,
         columns: null,
         error: null,
+        timeVariableCandidates: null,
+        timeVariable: null,
         ...state
     };
 };
