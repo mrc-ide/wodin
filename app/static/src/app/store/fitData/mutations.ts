@@ -6,13 +6,20 @@ import { Error } from "../../types/responseTypes";
 export enum FitDataMutation {
     SetData = "SetData",
     SetError = "SetError",
-    SetTimeVariable = "SetTimeVariable"
+    SetTimeVariable = "SetTimeVariable",
+    SetLinkedVariables = "SetLinkedVariables",
+    SetLinkedVariable = "SetLinkedVariable"
 }
 
 export interface SetDataPayload {
     data: Dict<number>[] | null,
     columns: string[] | null,
     timeVariableCandidates: string[] | null
+}
+
+export interface SetLinkedVariablePayload {
+    column: string,
+    variable: string | null
 }
 
 export const mutations: MutationTree<FitDataState> = {
@@ -33,5 +40,14 @@ export const mutations: MutationTree<FitDataState> = {
 
     [FitDataMutation.SetTimeVariable](state: FitDataState, payload: string | null) {
         state.timeVariable = payload;
+    },
+
+    [FitDataMutation.SetLinkedVariables](state: FitDataState, payload: Dict<string | null>) {
+        console.log("Setting Linked Variables to: " + JSON.stringify(payload))
+        state.linkedVariables = payload;
+    },
+
+    [FitDataMutation.SetLinkedVariable](state: FitDataState, payload: SetLinkedVariablePayload) {
+        state.linkedVariables[payload.column] = payload.variable;
     }
 };

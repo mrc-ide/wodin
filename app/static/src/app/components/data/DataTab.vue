@@ -26,7 +26,6 @@ import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import { FitDataAction } from "../../store/fitData/actions";
 import ErrorInfo from "../ErrorInfo.vue";
-import { FitDataMutation } from "../../store/fitData/mutations";
 
 export default defineComponent({
     name: "DataTab",
@@ -43,7 +42,7 @@ export default defineComponent({
 
         const updateTimeVariable = (event: Event) => {
             const { value } = event.target as HTMLSelectElement;
-            store.commit(`fitData/${FitDataMutation.SetTimeVariable}`, value);
+            store.dispatch(`fitData/${FitDataAction.UpdateTimeVariable}`, value);
         };
 
         const error = computed(() => store.state.fitData.error);
