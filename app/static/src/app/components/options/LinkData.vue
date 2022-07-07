@@ -6,8 +6,8 @@
           <label class="col-form-label">{{ dataColumn }}</label>
         </div>
         <div class="col-6">
-            <select class="form-select" @change="updateLinkedVariable(dataColumn, $event)" v-model="linkedVariables[dataColumn]">
-              <option :value="null">-- no link --</option>
+            <select class="form-select" @change="updateLinkedVariable(dataColumn, $event)" :value="linkedVariables[dataColumn] || ''">
+              <option value="">-- no link --</option>
               <option v-for="modelVar in modelVariables" :value="modelVar" :key="modelVar">{{modelVar}}</option>
             </select>
         </div>
@@ -37,7 +37,8 @@ export default defineComponent({
         const linkedVariables = computed(() => store.state.fitData.linkedVariables);
 
         const updateLinkedVariable = (dataColumn: string, event: Event) => {
-            const { value } = event.target as HTMLSelectElement;
+            const selectValue = (event.target as HTMLSelectElement).value;
+            const value = selectValue === "" ? null : selectValue;
             store.commit(`${namespace}/${FitDataMutation.SetLinkedVariable}`, { column: dataColumn, variable: value });
         };
 

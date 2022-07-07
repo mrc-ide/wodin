@@ -43,7 +43,6 @@ export const mutations: MutationTree<FitDataState> = {
     },
 
     [FitDataMutation.SetLinkedVariables](state: FitDataState, payload: Dict<string | null>) {
-        console.log("Setting Linked Variables to: " + JSON.stringify(payload))
         state.linkedVariables = payload;
     },
 

@@ -17,6 +17,7 @@ export enum FitDataAction {
 const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) => {
     // This is called whenever new data is uploaded, or selected time variable changes, or the model changes, which
     // may partially or fully invalidate any existing links. We retain any we can from previous selection.
+    // Empty string means no link
     const {commit, state, rootState, getters} = context;
     const modelResponse = rootState.model.odinModelResponse;
     const modelVariables = modelResponse?.valid ? modelResponse.metadata.variables : [];
