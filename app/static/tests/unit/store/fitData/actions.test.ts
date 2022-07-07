@@ -1,6 +1,7 @@
 import { actions, FitDataAction } from "../../../../src/app/store/fitData/actions";
 import { FitDataMutation } from "../../../../src/app/store/fitData/mutations";
 import resetAllMocks = jest.resetAllMocks;
+import {mockFitDataState} from "../../../mocks";
 
 describe("Fit Data actions", () => {
     const file = { name: "testFile" } as any;
@@ -30,14 +31,36 @@ describe("Fit Data actions", () => {
         expect(mockFileReader.readAsText.mock.calls[0][1]).toBe("UTF-8");
     };
 
-    it("commits data on success", (done) => {
+    it("Upload commits data and updates linke variables on success", (done) => {
         const mockFileReader = getMockFileReader("a,b\n1,2\n3,4\n5,6\n7,8\n9,10");
+        const mockGetters = {
+            nonTimeColumns: ["a"]
+        };
+        const mockRootState = {
+            model: {
+                odinModelResponse: {
+                    valid: true,
+                    metadata: {
+                        variables: ["X", "Y"]
+                    }
+                }
+            }
+        };
+        const mockState = {
+            linkedVariables: {a: "X", b: "Y"}
+        };
 
         const commit = jest.fn();
-        (actions[FitDataAction.Upload] as any)({ commit }, file);
+        const context = {
+            commit,
+            state: mockState,
+            rootState: mockRootState,
+            getters: mockGetters
+        };
+        (actions[FitDataAction.Upload] as any)(context, file);
         expectFileRead(mockFileReader);
         setTimeout(() => {
-            expect(commit).toHaveBeenCalledTimes(1);
+            expect(commit).toHaveBeenCalledTimes(2);
             expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetData);
             const expectedSetDataPayload = {
                 data: [
@@ -51,11 +74,13 @@ describe("Fit Data actions", () => {
                 timeVariableCandidates: ["a", "b"]
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedSetDataPayload);
+            expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetLinkedVariables);
+            expect(commit.mock.calls[1][1]).toStrictEqual({a: "X"});
             done();
         });
     });
 
-    it("commits csv parse error", (done) => {
+    it("Upload commits csv parse error", (done) => {
         const mockFileReader = getMockFileReader("a,b\n1,2,3");
 
         const commit = jest.fn();
@@ -73,7 +98,7 @@ describe("Fit Data actions", () => {
         });
     });
 
-    it("commits csv processing error", (done) => {
+    it("Upload commits csv processing error", (done) => {
         const mockFileReader = getMockFileReader("a,b\n1,2\n3,4");
 
         const commit = jest.fn();
@@ -91,7 +116,7 @@ describe("Fit Data actions", () => {
         });
     });
 
-    it("commits file read error", (done) => {
+    it("Upload commits file read error", (done) => {
         const mockFileReader = {} as any;
         const readAsText = jest.fn().mockImplementation(() => {
             mockFileReader.error = { message: "File cannot be read" };
@@ -115,7 +140,7 @@ describe("Fit Data actions", () => {
         });
     });
 
-    it("does nothing if file is not set", (done) => {
+    it("Upload does nothing if file is not set", (done) => {
         const mockFileReader = getMockFileReader("a,b\n1,2\n3,4\n");
 
         const commit = jest.fn();
@@ -125,5 +150,59 @@ describe("Fit Data actions", () => {
             expect(commit).not.toHaveBeenCalled();
             done();
         });
+    });
+
+    const getters = {
+        nonTimeColumns: ["old1", "old3", "new"]
+    };
+
+    const state = mockFitDataState({
+        linkedVariables: {
+            old1: "A",
+            old2: "B",
+            old3: "C"
+        }
+    });
+
+    it("update linked variables retains existing links if possible when model is valid", () => {
+        const rootState = {
+            model: {
+                odinModelResponse: {
+                    valid: true,
+                    metadata: {
+                        variables: ["B", "C", "D"]
+                    }
+                }
+            }
+        };
+
+        const commit = jest.fn();
+
+        (actions[FitDataAction.UpdateLinkedVariables] as any)({commit, state, rootState, getters});
+
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetLinkedVariables);
+        expect(commit.mock.calls[0][1]).toStrictEqual({old1: null, old3: "C", new: null});
+    });
+
+    it("update linked variables without retaining existing links when model is not valid", () => {
+        const rootState = {
+            model: {
+                odinModelResponse: {
+                    valid: false,
+                    metadata: {
+                        variables: ["B", "C", "D"]
+                    }
+                }
+            }
+        };
+
+        const commit = jest.fn();
+
+        (actions[FitDataAction.UpdateLinkedVariables] as any)({commit, state, rootState, getters});
+
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetLinkedVariables);
+        expect(commit.mock.calls[0][1]).toStrictEqual({old1: null, old3: null, new: null});
     });
 });
