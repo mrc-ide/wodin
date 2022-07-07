@@ -14,7 +14,9 @@
       </div>
     </template>
     <template v-else>
-      {{ linkPrerequisitesMsg }}
+      <div class="row my-2">
+        {{ linkPrerequisitesMsg }}
+      </div>
     </template>
   </div>
 </template>
@@ -52,7 +54,6 @@ export default defineComponent({
             updateLinkedVariable,
             linkPrerequisitesMsg
         };
-    // TODO: show a warning/error if user selects same same variable to fit for multiple columns
     }
 });
 </script>
