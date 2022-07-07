@@ -19,6 +19,7 @@ import VerticalCollapse from "../VerticalCollapse.vue";
 import ParameterValues from "./ParameterValues.vue";
 import RunOptions from "./RunOptions.vue";
 import LinkData from "./LinkData.vue";
+import {AppType} from "../../store/appState/state";
 
 export default {
     name: "OptionsTab",
@@ -30,7 +31,7 @@ export default {
     },
     setup() {
         const store = useStore();
-        const isFit = computed(() => store.state.appType === "fit");
+        const isFit = computed(() => store.state.appType === AppType.Fit);
 
         return {
             isFit

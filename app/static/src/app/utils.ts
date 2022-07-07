@@ -37,6 +37,9 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
     if (data.length < settings.minFitDataRows) {
         return { ...emptyResult, error: { error: errorMsg, detail: userMessages.fitData.tooFewRows } };
     }
+    if (Object.keys(data[0]).length < settings.minFitDataColumns) {
+        return { ...emptyResult, error: {error: errorMsg, detail: userMessages.fitData.tooFewColumns} }
+    }
     const nonNumValues: string[] = [];
 
     const processedData = data.map((row) => {

@@ -14,7 +14,7 @@
       </div>
     </template>
     <template v-else>
-      no model fit data or no model
+      {{ linkPrerequisitesMsg }}
     </template>
   </div>
 </template>
@@ -23,31 +23,35 @@
 import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
 import { FitDataMutation } from "../../store/fitData/mutations";
+import { FitDataGetter } from "../../store/fitData/getters";
+import userMessages from "../../userMessages";
 
 export default defineComponent({
     name: "LinkData",
     setup() {
+        const namespace = "fitData";
         const store = useStore();
-        const dataColumns = computed(() => store.getters["fitData/nonTimeColumns"]); // TODO: use an enum for this
+        const dataColumns = computed(() => store.getters[`${namespace}/${FitDataGetter.nonTimeColumns}`]);
         const modelSuccess = computed(() => store.state.model.odinModelResponse?.valid);
         const modelVariables = computed(() => store.state.model.odinModelResponse?.metadata.variables);
         const linkedVariables = computed(() => store.state.fitData.linkedVariables);
 
         const updateLinkedVariable = (dataColumn: string, event: Event) => {
             const { value } = event.target as HTMLSelectElement;
-            store.commit(`fitData/${FitDataMutation.SetLinkedVariable}`, { column: dataColumn, variable: value });
+            store.commit(`${namespace}/${FitDataMutation.SetLinkedVariable}`, { column: dataColumn, variable: value });
         };
+
+        const linkPrerequisitesMsg = userMessages.fitData.linkPrerequisites;
 
         return {
             dataColumns,
             modelSuccess,
             modelVariables,
             linkedVariables,
-            updateLinkedVariable
+            updateLinkedVariable,
+            linkPrerequisitesMsg
         };
-    // TODO: enforce must have at least 2 columns in data
-    // TODO: Make a nice message for missing prerequisites
-    // TODO: Make an enum for app type
+    // TODO: show a warning/error if user selects same same variable to fit for multiple columns
     }
 });
 </script>

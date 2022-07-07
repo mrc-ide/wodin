@@ -1,13 +1,17 @@
-import {GetterTree, Getter} from "vuex";
-import {FitDataState} from "./state";
-import {FitState} from "../fit/state";
+import { GetterTree, Getter } from "vuex";
+import { FitDataState } from "./state";
+import { FitState } from "../fit/state";
+
+export enum FitDataGetter {
+    nonTimeColumns ="nonTimeColumns"
+}
 
 export interface FitDataGetters {
-    nonTimeColumns: Getter<FitDataState, FitState>
+    [FitDataGetter.nonTimeColumns]: Getter<FitDataState, FitState>
 }
 
 export const getters: FitDataGetters & GetterTree<FitDataState, FitState> = {
-    nonTimeColumns: (state: FitDataState) => {
+    [FitDataGetter.nonTimeColumns]: (state: FitDataState) => {
         return state.columns?.filter((column) => column !== state.timeVariable);
     }
 };
