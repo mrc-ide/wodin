@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { ActionContext, Commit } from "vuex";
+import { Commit } from "vuex";
 import { freezer } from "./utils";
 import { Error, ResponseSuccess, ResponseFailure } from "./types/responseTypes";
+import { AppCtx } from "./types/utilTypes";
 import { ErrorsMutation } from "./store/errors/mutations";
 
 export interface ResponseWithType<T> extends ResponseSuccess {
@@ -30,7 +31,6 @@ export interface API<S, E> {
     get<T>(url: string): Promise<void | ResponseWithType<T>>
 }
 
-type AppCtx = ActionContext<any, any>;
 type OnError = (failure: ResponseFailure) => void;
 type OnSuccess = (success: ResponseSuccess) => void;
 
