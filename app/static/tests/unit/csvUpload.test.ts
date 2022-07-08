@@ -1,5 +1,5 @@
 import resetAllMocks = jest.resetAllMocks;
-import {csvUpload} from "../../src/app/csvUpload";
+import { csvUpload } from "../../src/app/csvUpload";
 
 describe("CSVUpload", () => {
     const file = { name: "testFile" } as any;
@@ -38,7 +38,7 @@ describe("CSVUpload", () => {
         const mockFileReader = getMockFileReader("a,b\n1,2\n3,4\n");
 
         const commit = jest.fn();
-        csvUpload({commit} as any)
+        csvUpload({ commit } as any)
             .withSuccess(TestMutation.Success)
             .withError(TestMutation.Error)
             .upload(file);
@@ -63,7 +63,7 @@ describe("CSVUpload", () => {
         const mockFileReader = getMockFileReader("a,b\n1,2,3");
 
         const commit = jest.fn();
-        csvUpload({commit} as any)
+        csvUpload({ commit } as any)
             .withSuccess(TestMutation.Success)
             .withError(TestMutation.Error)
             .upload(file);
@@ -85,10 +85,10 @@ describe("CSVUpload", () => {
         const mockFileReader = getMockFileReader("a,b\n1,2\nhello,4");
 
         const commit = jest.fn();
-        csvUpload({commit} as any)
+        csvUpload({ commit } as any)
             .withSuccess(TestMutation.Success)
             .withError(TestMutation.Error)
-            .upload(file)
+            .upload(file);
         expectFileRead(mockFileReader);
         setTimeout(() => {
             expect(commit).toHaveBeenCalledTimes(1);
@@ -112,7 +112,7 @@ describe("CSVUpload", () => {
         jest.spyOn(global, "FileReader").mockImplementation(() => mockFileReader);
 
         const commit = jest.fn();
-        csvUpload({commit} as any)
+        csvUpload({ commit } as any)
             .withSuccess(TestMutation.Success)
             .withError(TestMutation.Error)
             .upload(file);
@@ -130,13 +130,11 @@ describe("CSVUpload", () => {
     });
 
     it("warns when handlers are not registered", (done) => {
-        const mockFileReader = {
-            readAsText: jest.fn()
-        } as any;
+        const mockFileReader = getMockFileReader("a,b\n1,2\n3,4");
         jest.spyOn(global, "FileReader").mockImplementation(() => mockFileReader);
         const consoleSpy = jest.spyOn(console, "warn");
         const commit = jest.fn();
-        csvUpload({commit} as any)
+        csvUpload({ commit } as any)
             .upload(file);
         expect(consoleSpy).toHaveBeenCalledTimes(2);
         expect(consoleSpy.mock.calls[0][0]).toBe("No error handler registered for CSVUpload.");
