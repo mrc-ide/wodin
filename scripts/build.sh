@@ -1,7 +1,8 @@
 set -ex
+ROOT=$(realpath $(dirname $0)/..)
 
-npm install --prefix=app/static
-npm run build --prefix=app/static
+npm install --prefix=$ROOT/app/static
+npm run build --prefix=$ROOT/app/static
 
-npm install --prefix=app/server
-npm run build --prefix=app/server
+npm install --prefix=$ROOT/app/server
+npm run build --prefix=$ROOT/app/server

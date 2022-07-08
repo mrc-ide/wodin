@@ -1,0 +1,17 @@
+**/node_modules
+**/dist
+**/.git
+app/server/public/js
+
+# From gitignore
+/.idea/
+/app/server/coverage/
+/app/server/node_modules/
+/app/server/public/css/
+/app/server/public/js/
+/app/server/dist/
+/app/static/node_modules/
+/app/static/coverage/
+/app/static/dist/
+/app/static/tmp/
+/app/static/test-results
