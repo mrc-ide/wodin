@@ -32,6 +32,9 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
     if (!data.length) {
         return { data: null, error: { error: errorMsg, detail: userMessages.fitData.noRows } };
     }
+
+    // Convert the string values in the file data into numbers. Keep any values which cannot be converted in
+    // nonNumValues and, if any, return the first few in an error message
     const nonNumValues: string[] = [];
     const processedData = data.map((row) => {
         const processedRow: Dict<number> = {};
