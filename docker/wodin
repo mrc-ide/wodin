@@ -3,7 +3,7 @@ if [ "$#" -eq 0 ]; then
     CONFIG=/wodin/config
 elif [ "$#" -eq 1 ]; then
     CONFIG=$1
-if [ "$#" -ne 1 ]; then
+else [ "$#" -ne 1 ]; then
     echo "Usage wodin [<config.json>]"
     exit 1
 fi
