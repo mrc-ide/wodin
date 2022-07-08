@@ -44,18 +44,19 @@ export const mutations: MutationTree<ModelState> = {
         state.requiredAction = payload;
     },
 
-    [ModelMutation.SetParameterValues](state: ModelState, payload: Dict<number>) {
+    [ModelMutation.SetParameterValues](state: ModelState, payload: Map<string, number>) {
         // initialise values
         state.parameterValues = payload;
     },
 
     [ModelMutation.UpdateParameterValues](state: ModelState, payload: Dict<number>) {
-        // update values (incomplete or complete set) and set required action as run will be needed using new values
-        state.parameterValues = {
-            ...state.parameterValues,
-            ...payload
-        };
-        runRequired(state);
+        if (state.parameterValues) {
+            Object.keys(payload).forEach((key) => {
+                state.parameterValues!.set(key, payload[key]);
+            });
+
+            runRequired(state);
+        }
     },
 
     [ModelMutation.SetEndTime](state: ModelState, payload: number) {

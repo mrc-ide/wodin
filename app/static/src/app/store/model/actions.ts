@@ -1,4 +1,3 @@
-import * as dopri from "dopri";
 import { ActionContext, ActionTree } from "vuex";
 import { ModelState, RequiredModelAction } from "./state";
 import { api } from "../../apiService";
@@ -7,7 +6,6 @@ import { AppState } from "../appState/state";
 import { ErrorsMutation } from "../errors/mutations";
 import { Odin, OdinModelResponse, OdinParameter } from "../../types/responseTypes";
 import { evaluateScript } from "../../utils";
-import { Dict } from "../../types/utilTypes";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
@@ -39,10 +37,10 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
         const { parameters } = state.odinModelResponse.metadata;
 
         // Overwrite any existing parameter values in the model
-        const newValues: Dict<number> = {};
+        const newValues = new Map<string, number>();
         parameters.forEach((param: OdinParameter) => {
             const value = param.default;
-            newValues[param.name] = value === null ? 0 : value;
+            newValues.set(param.name, value === null ? 0 : value);
         });
         commit(ModelMutation.SetParameterValues, newValues);
 
@@ -54,12 +52,11 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
 
 const runModel = (context: ActionContext<ModelState, AppState>) => {
     const { state, commit } = context;
-    if (state.odinRunner && state.odin) {
-        const parameters = state.parameterValues;
+    const parameters = state.parameterValues;
+    if (state.odinRunner && state.odin && parameters) {
         const start = 0;
         const end = state.endTime;
-        const control = {};
-        const solution = state.odinRunner(dopri, state.odin, parameters, start, end, control);
+        const solution = state.odinRunner.wodinRun(state.odin, parameters, start, end);
         commit(ModelMutation.SetOdinSolution, solution);
 
         if (state.requiredAction === RequiredModelAction.Run) {

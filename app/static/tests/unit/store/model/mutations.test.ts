@@ -51,16 +51,19 @@ describe("Model mutations", () => {
     });
 
     it("updates parameter values and sets requiredAction to Run", () => {
-        const state = mockModelState({ parameterValues: { p1: 1, p2: 2 } });
+        const state = mockModelState({ parameterValues: new Map([["p1", 1], ["p2", 2]]) });
         mutations.UpdateParameterValues(state, { p1: 10, p3: 30 });
-        expect(state.parameterValues).toStrictEqual({ p1: 10, p2: 2, p3: 30 });
+        expect(state.parameterValues).toStrictEqual(new Map([["p1", 10], ["p2", 2], ["p3", 30]]));
         expect(state.requiredAction).toBe(RequiredModelAction.Run);
     });
 
     it("UpdateParameterValues does not set requiredAction to Run if it is currently Compile", () => {
-        const state = mockModelState({ parameterValues: { p1: 1 }, requiredAction: RequiredModelAction.Compile });
+        const state = mockModelState({
+            parameterValues: new Map([["p1", 1]]),
+            requiredAction: RequiredModelAction.Compile
+        });
         mutations.UpdateParameterValues(state, { p2: 2 });
-        expect(state.parameterValues).toStrictEqual({ p1: 1, p2: 2 });
+        expect(state.parameterValues).toStrictEqual(new Map([["p1", 1], ["p2", 2]]));
         expect(state.requiredAction).toBe(RequiredModelAction.Compile);
     });
 
