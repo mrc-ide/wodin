@@ -19,10 +19,7 @@ describe("ParameterValues", () => {
                 model: {
                     namespaced: true,
                     state: mockModelState({
-                        parameterValues: {
-                            param1: 1,
-                            param2: 2.2
-                        }
+                        parameterValues: new Map([["param1", 1], ["param2", 2.2]])
                     }),
                     mutations: storeMutations
                 }
