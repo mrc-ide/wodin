@@ -1,12 +1,17 @@
 <template>
-  <div class="code-tab">
-    <code-editor/>
-    <button class="btn btn-primary" id="compile-btn" :disabled="!codeIsValid" @click="compile">Compile</button>
-    <div class="mt-2" id="code-status">
-        <vue-feather class="inline-icon" :class="iconClass" :type="validIcon"></vue-feather>
-        {{ validMsg }}
+    <div class="code-tab">
+        <button class="btn btn-primary btn-sm"
+                id="reset-btn"
+                :disabled="!configIsPresent"
+                @click="reset">Reset
+        </button>
+        <code-editor/>
+        <button class="btn btn-primary mt-2" id="compile-btn" :disabled="!codeIsValid" @click="compile">Compile</button>
+        <div class="mt-2" id="code-status">
+            <vue-feather class="inline-icon" :class="iconClass" :type="validIcon"></vue-feather>
+            {{ validMsg }}
+        </div>
     </div>
-  </div>
 </template>
 
 <script lang="ts">
@@ -26,19 +31,21 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const codeIsValid = computed(() => store.state.model.odinModelResponse?.valid);
-
-        const compile = () => store.dispatch(`model/${ModelAction.CompileModel}`);
-
         const validMsg = computed(() => (codeIsValid.value ? userMessages.code.isValid : userMessages.code.isNotValid));
         const validIcon = computed(() => (codeIsValid.value ? "check" : "x"));
         const iconClass = computed(() => (codeIsValid.value ? "text-success" : "text-danger"));
+        const compile = () => store.dispatch(`model/${ModelAction.CompileModel}`);
+        const configIsPresent = () => true;
+        const reset = () => console.log("clicked reset");
 
         return {
             codeIsValid,
             validMsg,
             validIcon,
             iconClass,
-            compile
+            compile,
+            configIsPresent,
+            reset
         };
     }
 });
