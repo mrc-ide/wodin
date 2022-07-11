@@ -36,7 +36,7 @@ test.describe("Code Tab tests", () => {
         return plot.evaluate((el) => window.getComputedStyle(el).getPropertyValue("opacity"));
     };
 
-    test("can update code, compile and run model", async ({ page }, done) => {
+    test("can update code, compile and run model", async ({ page }) => {
         // Update code - see update message and graph fade.
         // We seem to have to delete the old code here with key presses - 'fill' just prepends. I guess this relates to
         // how monaco responds to DOM events.
@@ -87,7 +87,7 @@ test.describe("Code Tab tests", () => {
         expect(await compileBtn.isDisabled()).toBe(true);
     });
 
-    test("can reset code editor", async ({ page }, done) => {
+    test("can reset code editor", async ({ page }) => {
         await writeInvalidCode(page);
         await expect(await page.innerText(".wodin-left .wodin-content #reset-btn")).toBe("Reset");
         await expect(await page.innerText(".wodin-left .wodin-content")).toContain("faker");
