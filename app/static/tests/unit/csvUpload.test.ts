@@ -3,6 +3,7 @@ import { csvUpload } from "../../src/app/csvUpload";
 
 describe("CSVUpload", () => {
     const file = { name: "testFile" } as any;
+    const fileTimeout = 20;
 
     const getMockFileReader = (csvData: string) => {
         const mockFileReader = {} as any;
@@ -60,7 +61,7 @@ describe("CSVUpload", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedSetDataPayload);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("commits csv parse error", (done) => {
@@ -82,7 +83,7 @@ describe("CSVUpload", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("commits csv processing error", (done) => {
@@ -103,7 +104,7 @@ describe("CSVUpload", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("commits file read error", (done) => {
@@ -130,7 +131,7 @@ describe("CSVUpload", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("warns when handlers are not registered", (done) => {
@@ -146,6 +147,6 @@ describe("CSVUpload", () => {
         setTimeout(() => {
             expect(commit).not.toHaveBeenCalled();
             done();
-        });
+        }, fileTimeout);
     });
 });
