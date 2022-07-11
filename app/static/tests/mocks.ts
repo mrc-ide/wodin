@@ -6,7 +6,6 @@ import { StochasticState } from "../src/app/store/stochastic/state";
 import { ResponseSuccess, ResponseFailure, Error } from "../src/app/types/responseTypes";
 import { ModelState } from "../src/app/store/model/state";
 import { CodeState } from "../src/app/store/code/state";
-import mock = jest.mock;
 import { FitDataState } from "../src/app/store/fitData/state";
 
 export const mockAxios = new MockAdapter(axios);
@@ -43,7 +42,7 @@ export const mockModelState = (state: Partial<ModelState> = {}): ModelState => {
         odinSolution: null,
         odinModelResponse: null,
         requiredAction: null,
-        parameterValues: {},
+        parameterValues: null,
         endTime: 100,
         ...state
     };
