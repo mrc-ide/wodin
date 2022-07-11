@@ -6,6 +6,7 @@ import { FitState } from "./state";
 import { model } from "../model/model";
 import { code } from "../code/code";
 import { fitData } from "../fitData/fitData";
+import { modelFit } from "../modelFit/modelFit";
 import { AppType } from "../appState/state";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -25,6 +26,7 @@ export const storeOptions: StoreOptions<FitState> = {
         errors,
         code,
         model,
-        fitData
+        fitData,
+        modelFit
     }
 };
