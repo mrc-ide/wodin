@@ -1,4 +1,4 @@
-export interface APIError {
+export interface Error {
     error: string,
     detail: string | null
 }
@@ -6,7 +6,7 @@ export interface APIError {
 export interface ResponseFailure {
     status: "failure";
     data: null;
-    errors: APIError[];
+    errors: Error[];
 }
 
 export interface ResponseSuccess {

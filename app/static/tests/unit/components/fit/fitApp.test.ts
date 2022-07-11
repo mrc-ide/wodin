@@ -6,7 +6,7 @@ import { mount } from "@vue/test-utils";
 import FitApp from "../../../../src/app/components/fit/FitApp.vue";
 import { FitState } from "../../../../src/app/store/fit/state";
 import { AppStateAction } from "../../../../src/app/store/appState/actions";
-import { mockFitState, mockModelState } from "../../../mocks";
+import { mockFitDataState, mockFitState, mockModelState } from "../../../mocks";
 import WodinApp from "../../../../src/app/components/WodinApp.vue";
 import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
@@ -33,6 +33,10 @@ describe("FitApp", () => {
                     actions: {
                         [ModelAction.FetchOdinRunner]: jest.fn()
                     }
+                },
+                fitData: {
+                    namespaced: true,
+                    state: mockFitDataState()
                 },
                 errors: {
                     namespaced: true,

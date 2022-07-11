@@ -3,9 +3,10 @@ import axios from "axios";
 import { BasicState } from "../src/app/store/basic/state";
 import { FitState } from "../src/app/store/fit/state";
 import { StochasticState } from "../src/app/store/stochastic/state";
-import { ResponseSuccess, ResponseFailure, APIError } from "../src/app/types/responseTypes";
+import { ResponseSuccess, ResponseFailure, Error } from "../src/app/types/responseTypes";
 import { ModelState } from "../src/app/store/model/state";
 import { CodeState } from "../src/app/store/code/state";
+import { FitDataState } from "../src/app/store/fitData/state";
 
 export const mockAxios = new MockAdapter(axios);
 
@@ -17,7 +18,7 @@ export const mockSuccess = (data: any): ResponseSuccess => {
     };
 };
 
-export const mockError = (errorMessage = "some message"): APIError => {
+export const mockError = (errorMessage = "some message"): Error => {
     return { error: "OTHER_ERROR", detail: errorMessage };
 };
 
@@ -50,6 +51,15 @@ export const mockModelState = (state: Partial<ModelState> = {}): ModelState => {
 export const mockCodeState = (state: Partial<CodeState> = {}): CodeState => {
     return {
         currentCode: [],
+        ...state
+    };
+};
+
+export const mockFitDataState = (state:Partial<FitDataState> = {}): FitDataState => {
+    return {
+        data: null,
+        columns: null,
+        error: null,
         ...state
     };
 };

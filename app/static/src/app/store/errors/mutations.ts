@@ -1,5 +1,5 @@
 import { MutationTree } from "vuex";
-import { APIError } from "../../types/responseTypes";
+import { Error } from "../../types/responseTypes";
 import { ErrorsState } from "./state";
 
 export enum ErrorsMutation {
@@ -8,7 +8,7 @@ export enum ErrorsMutation {
 }
 
 export const mutations: MutationTree<ErrorsState> = {
-    [ErrorsMutation.AddError](state: ErrorsState, payload: APIError) {
+    [ErrorsMutation.AddError](state: ErrorsState, payload: Error) {
         state.errors.push(payload);
     },
 
