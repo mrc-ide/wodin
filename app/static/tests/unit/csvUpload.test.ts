@@ -1,9 +1,9 @@
 import resetAllMocks = jest.resetAllMocks;
+import { fileTimeout } from "../testUtils";
 import { csvUpload } from "../../src/app/csvUpload";
 
 describe("CSVUpload", () => {
     const file = { name: "testFile" } as any;
-    const fileTimeout = 20;
 
     const getMockFileReader = (csvData: string) => {
         const mockFileReader = {} as any;

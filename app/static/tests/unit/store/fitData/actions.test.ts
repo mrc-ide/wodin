@@ -1,6 +1,7 @@
 import { actions, FitDataAction } from "../../../../src/app/store/fitData/actions";
 import { FitDataMutation } from "../../../../src/app/store/fitData/mutations";
 import resetAllMocks = jest.resetAllMocks;
+import { fileTimeout } from "../../../testUtils";
 
 describe("Fit Data actions", () => {
     const file = { name: "testFile" } as any;
@@ -52,7 +53,7 @@ describe("Fit Data actions", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedSetDataPayload);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("commits csv parse error", (done) => {
@@ -70,7 +71,7 @@ describe("Fit Data actions", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("commits csv processing error", (done) => {
@@ -88,7 +89,7 @@ describe("Fit Data actions", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("commits file read error", (done) => {
@@ -112,7 +113,7 @@ describe("Fit Data actions", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("does nothing if file is not set", (done) => {
@@ -124,6 +125,6 @@ describe("Fit Data actions", () => {
         setTimeout(() => {
             expect(commit).not.toHaveBeenCalled();
             done();
-        });
+        }, fileTimeout);
     });
 });
