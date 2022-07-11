@@ -6,7 +6,7 @@ import { FitState } from "./state";
 import { model } from "../model/model";
 import { code } from "../code/code";
 import { fitData } from "../fitData/fitData";
-import {AppType} from "../appState/state";
+import { AppType } from "../appState/state";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {

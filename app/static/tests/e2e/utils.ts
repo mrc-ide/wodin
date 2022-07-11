@@ -1,4 +1,4 @@
-import {Page} from "@playwright/test";
+import { Page } from "@playwright/test";
 
 export const uploadCSVData = async (page: Page, data: string) => {
     const file = {

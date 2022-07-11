@@ -1,12 +1,12 @@
 import { parse } from "csv-parse";
-import {ActionTree, ActionContext} from "vuex";
+import { ActionTree, ActionContext } from "vuex";
 import { FitDataState } from "./state";
 import { Error } from "../../types/responseTypes";
 import { FitDataMutation } from "./mutations";
 import { processFitData, ProcessFitDataResult } from "../../utils";
 import userMessages from "../../userMessages";
-import {FitState} from "../fit/state";
-import {Dict} from "../../types/utilTypes";
+import { FitState } from "../fit/state";
+import { Dict } from "../../types/utilTypes";
 
 export enum FitDataAction {
     Upload = "Upload",
@@ -18,7 +18,9 @@ const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) =
     // This is called whenever new data is uploaded, or selected time variable changes, or the model changes, which
     // may partially or fully invalidate any existing links. We retain any we can from previous selection.
     // Empty string means no link
-    const {commit, state, rootState, getters} = context;
+    const {
+        commit, state, rootState, getters
+    } = context;
     const modelResponse = rootState.model.odinModelResponse;
     const modelVariables = modelResponse?.valid ? modelResponse.metadata.variables : [];
     const dataColumns = getters.nonTimeColumns;
@@ -27,7 +29,7 @@ const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) =
         newLinks = dataColumns.reduce((links: Dict<string | null>, column: string) => {
             const existingLink = state.linkedVariables[column];
             const value = (existingLink && modelVariables.includes(existingLink)) ? existingLink : null;
-            return {...links, [column]: value};
+            return { ...links, [column]: value };
         }, {});
     }
     commit(FitDataMutation.SetLinkedVariables, newLinks);

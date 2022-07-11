@@ -13,13 +13,13 @@
 </template>
 
 <script lang="ts">
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
 import { useStore } from "vuex";
 import VerticalCollapse from "../VerticalCollapse.vue";
 import ParameterValues from "./ParameterValues.vue";
 import RunOptions from "./RunOptions.vue";
 import LinkData from "./LinkData.vue";
-import {AppType} from "../../store/appState/state";
+import { AppType } from "../../store/appState/state";
 
 export default {
     name: "OptionsTab",
@@ -36,7 +36,6 @@ export default {
         return {
             isFit
         };
-
     }
 };
 </script>

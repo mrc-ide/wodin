@@ -94,7 +94,7 @@ describe("LinkData", () => {
         (admissionsSelect.element as HTMLSelectElement).value = "R";
         await admissionsSelect.trigger("change");
         expect(mockSetLinkedVariable).toHaveBeenCalledTimes(1);
-        expect(mockSetLinkedVariable.mock.calls[0][1]).toStrictEqual({column: "Admissions", variable: "R"});
+        expect(mockSetLinkedVariable.mock.calls[0][1]).toStrictEqual({ column: "Admissions", variable: "R" });
     });
 
     it("updates linked variable on select no link", async () => {
@@ -104,7 +104,7 @@ describe("LinkData", () => {
         (casesSelect.element as HTMLSelectElement).value = "";
         await casesSelect.trigger("change");
         expect(mockSetLinkedVariable).toHaveBeenCalledTimes(1);
-        expect(mockSetLinkedVariable.mock.calls[0][1]).toStrictEqual({column: "Cases", variable: null});
+        expect(mockSetLinkedVariable.mock.calls[0][1]).toStrictEqual({ column: "Cases", variable: null });
     });
 
     it("renders as expected when data has not been uploaded", () => {

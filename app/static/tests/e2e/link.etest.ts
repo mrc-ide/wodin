@@ -1,7 +1,7 @@
 import { expect, test, Page } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
-import {uploadCSVData} from "./utils";
-import {newValidCode} from "./code.etest";
+import { uploadCSVData } from "./utils";
+import { newValidCode } from "./code.etest";
 
 export const newVariableCode = `# variables
 deriv(S) <-  - beta * S * J / N
@@ -19,9 +19,9 @@ sigma <- user(2)
 `;
 
 test.describe("Link Variables tests", () => {
-    const {timeout} = PlaywrightConfig;
+    const { timeout } = PlaywrightConfig;
 
-    test.beforeEach(async ({page}) => {
+    test.beforeEach(async ({ page }) => {
         await page.goto("/apps/day2");
         uploadCSVData(page, "Day,Cases,Admissions\n1,2,1\n3,4,2\n5,6,3\n7,8,4\n9,10,5");
     });
@@ -35,7 +35,7 @@ test.describe("Link Variables tests", () => {
         await select2.selectOption("R");
     };
 
-    test("displays expected link interface after data upload", async ({page}) => {
+    test("displays expected link interface after data upload", async ({ page }) => {
         await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
         await expect(await page.innerText(":nth-match(.collapse-title, 1)")).toBe("Link");
         const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
@@ -57,7 +57,7 @@ test.describe("Link Variables tests", () => {
         await expect(await options2.allInnerTexts()).toStrictEqual(expectedVariableOptions);
     });
 
-    test("can change link variables selections, which are retained on tab change", async ({page}) => {
+    test("can change link variables selections, which are retained on tab change", async ({ page }) => {
         await makeInitialLinkSelections(page);
 
         await page.click(":nth-match(.wodin-left .nav-tabs a, 1)");
@@ -68,7 +68,7 @@ test.describe("Link Variables tests", () => {
         await expect(await page.inputValue(":nth-match(.collapse select, 2)")).toBe("R");
     });
 
-    test("link variables selections are retained on upload new data where possible", async ({page}) => {
+    test("link variables selections are retained on upload new data where possible", async ({ page }) => {
         await makeInitialLinkSelections(page);
 
         await page.click(":nth-match(.wodin-left .nav-tabs a, 1)");
@@ -81,7 +81,7 @@ test.describe("Link Variables tests", () => {
         await expect(await page.inputValue(":nth-match(.collapse select, 2)")).toBe("");
     });
 
-    test("link variables selections are retained on select new time variable where possible", async ({page}) => {
+    test("link variables selections are retained on select new time variable where possible", async ({ page }) => {
         await makeInitialLinkSelections(page);
         await page.click(":nth-match(.wodin-left .nav-tabs a, 1)");
         await page.selectOption("#select-time-variable", "Cases");
@@ -93,7 +93,7 @@ test.describe("Link Variables tests", () => {
         await expect(await page.inputValue(":nth-match(.collapse select, 2)")).toBe("R");
     });
 
-    test("link variables selections are retained on recompile code where possible", async ({page}) => {
+    test("link variables selections are retained on recompile code where possible", async ({ page }) => {
         await makeInitialLinkSelections(page);
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
 

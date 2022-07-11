@@ -1,12 +1,13 @@
 <template>
   <div class="container">
     <template v-if="dataColumns && modelSuccess">
-      <div v-for="dataColumn in dataColumns" class="row my-2">
+      <div v-for="dataColumn in dataColumns" :key="dataColumn" class="row my-2">
         <div class="col-6">
           <label class="col-form-label">{{ dataColumn }}</label>
         </div>
         <div class="col-6">
-            <select class="form-select" @change="updateLinkedVariable(dataColumn, $event)" :value="linkedVariables[dataColumn] || ''">
+            <select class="form-select"
+                    @change="updateLinkedVariable(dataColumn, $event)" :value="linkedVariables[dataColumn] || ''">
               <option value="">-- no link --</option>
               <option v-for="modelVar in modelVariables" :value="modelVar" :key="modelVar">{{modelVar}}</option>
             </select>

@@ -1,6 +1,6 @@
 import { expect, test, Page } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
-import {uploadCSVData} from "./utils";
+import { uploadCSVData } from "./utils";
 
 test.describe("Data tab tests", () => {
     const { timeout } = PlaywrightConfig;

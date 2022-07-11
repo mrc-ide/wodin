@@ -6,8 +6,8 @@ import { actions, ModelAction } from "../../../../src/app/store/model/actions";
 import { ModelMutation, mutations } from "../../../../src/app/store/model/mutations";
 import { RequiredModelAction } from "../../../../src/app/store/model/state";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import {AppType} from "../../../../src/app/store/appState/state";
-import {FitDataAction} from "../../../../src/app/store/fitData/actions";
+import { AppType } from "../../../../src/app/store/appState/state";
+import { FitDataAction } from "../../../../src/app/store/fitData/actions";
 
 describe("Model actions", () => {
     beforeEach(() => {
@@ -126,10 +126,12 @@ describe("Model actions", () => {
             requiredAction: RequiredModelAction.Compile,
             parameterValues: {}
         };
-        const fitRootState = {appType: AppType.Fit};
+        const fitRootState = { appType: AppType.Fit };
         const commit = jest.fn();
         const dispatch = jest.fn();
-        (actions[ModelAction.CompileModel] as any)({ commit, dispatch, state, rootState: fitRootState });
+        (actions[ModelAction.CompileModel] as any)({
+            commit, dispatch, state, rootState: fitRootState
+        });
         expect(commit.mock.calls.length).toBe(3);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[1][0]).toBe(ModelMutation.SetParameterValues);

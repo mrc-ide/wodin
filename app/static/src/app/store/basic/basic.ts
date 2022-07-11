@@ -6,7 +6,7 @@ import { BasicState } from "./state";
 import { model } from "../model/model";
 import { code } from "../code/code";
 import { logMutations } from "../plugins";
-import {AppType} from "../appState/state";
+import { AppType } from "../appState/state";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {

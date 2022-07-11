@@ -1,7 +1,7 @@
 import { actions, FitDataAction } from "../../../../src/app/store/fitData/actions";
 import { FitDataMutation } from "../../../../src/app/store/fitData/mutations";
 import resetAllMocks = jest.resetAllMocks;
-import {mockFitDataState} from "../../../mocks";
+import { mockFitDataState } from "../../../mocks";
 
 describe("Fit Data actions", () => {
     const file = { name: "testFile" } as any;
@@ -47,7 +47,7 @@ describe("Fit Data actions", () => {
             }
         };
         const mockState = {
-            linkedVariables: {a: "X", b: "Y"}
+            linkedVariables: { a: "X", b: "Y" }
         };
 
         const commit = jest.fn();
@@ -75,7 +75,7 @@ describe("Fit Data actions", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedSetDataPayload);
             expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetLinkedVariables);
-            expect(commit.mock.calls[1][1]).toStrictEqual({a: "X"});
+            expect(commit.mock.calls[1][1]).toStrictEqual({ a: "X" });
             done();
         });
     });
@@ -178,11 +178,13 @@ describe("Fit Data actions", () => {
 
         const commit = jest.fn();
 
-        (actions[FitDataAction.UpdateLinkedVariables] as any)({commit, state, rootState, getters});
+        (actions[FitDataAction.UpdateLinkedVariables] as any)({
+            commit, state, rootState, getters
+        });
 
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetLinkedVariables);
-        expect(commit.mock.calls[0][1]).toStrictEqual({old1: null, old3: "C", new: null});
+        expect(commit.mock.calls[0][1]).toStrictEqual({ old1: null, old3: "C", new: null });
     });
 
     it("update linked variables without retaining existing links when model is not valid", () => {
@@ -199,10 +201,12 @@ describe("Fit Data actions", () => {
 
         const commit = jest.fn();
 
-        (actions[FitDataAction.UpdateLinkedVariables] as any)({commit, state, rootState, getters});
+        (actions[FitDataAction.UpdateLinkedVariables] as any)({
+            commit, state, rootState, getters
+        });
 
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetLinkedVariables);
-        expect(commit.mock.calls[0][1]).toStrictEqual({old1: null, old3: null, new: null});
+        expect(commit.mock.calls[0][1]).toStrictEqual({ old1: null, old3: null, new: null });
     });
 });

@@ -1,5 +1,5 @@
-import {FitDataGetter, getters} from "../../../../src/app/store/fitData/getters";
-import {mockFitDataState} from "../../../mocks";
+import { FitDataGetter, getters } from "../../../../src/app/store/fitData/getters";
+import { mockFitDataState } from "../../../mocks";
 
 describe("FitDataGetters", () => {
     it("gets non-time columns", () => {

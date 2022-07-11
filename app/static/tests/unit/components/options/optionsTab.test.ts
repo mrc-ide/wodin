@@ -6,8 +6,8 @@ import ParameterValues from "../../../../src/app/components/options/ParameterVal
 import RunOptions from "../../../../src/app/components/options/RunOptions.vue";
 import LinkData from "../../../../src/app/components/options/LinkData.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import {FitState} from "../../../../src/app/store/fit/state";
-import {AppType} from "../../../../src/app/store/appState/state";
+import { FitState } from "../../../../src/app/store/fit/state";
+import { AppType } from "../../../../src/app/store/appState/state";
 
 describe("OptionsTab", () => {
     it("renders as expected for Basic app", () => {
