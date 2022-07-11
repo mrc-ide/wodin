@@ -1,10 +1,5 @@
 <template>
     <div class="code-tab">
-        <button class="btn btn-primary btn-sm"
-                id="reset-btn"
-                :disabled="!configIsPresent"
-                @click="reset">Reset
-        </button>
         <code-editor/>
         <button class="btn btn-primary mt-2" id="compile-btn" :disabled="!codeIsValid" @click="compile">Compile</button>
         <div class="mt-2" id="code-status">
@@ -35,17 +30,13 @@ export default defineComponent({
         const validIcon = computed(() => (codeIsValid.value ? "check" : "x"));
         const iconClass = computed(() => (codeIsValid.value ? "text-success" : "text-danger"));
         const compile = () => store.dispatch(`model/${ModelAction.CompileModel}`);
-        const configIsPresent = () => true;
-        const reset = () => console.log("clicked reset");
 
         return {
             codeIsValid,
             validMsg,
             validIcon,
             iconClass,
-            compile,
-            configIsPresent,
-            reset
+            compile
         };
     }
 });

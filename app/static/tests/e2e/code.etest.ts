@@ -20,6 +20,13 @@ b     <-  user(3.0)
 test.describe("Code Tab tests", () => {
     const { timeout } = PlaywrightConfig;
 
+    const writeInvalidCode = async (page: Page) => {
+        const invalidCode = "deriv(y1) test * faker";
+        await page.press(".monaco-editor textarea", "Control+A");
+        await page.press(".monaco-editor textarea", "Delete");
+        await page.fill(".monaco-editor textarea", invalidCode);
+    };
+
     test.beforeEach(async ({ page }) => {
         await page.goto("/apps/day1");
     });
@@ -68,10 +75,7 @@ test.describe("Code Tab tests", () => {
     });
 
     test("can see code not valid msg when update code with syntax error", async ({ page }) => {
-        const invalidCode = "deriv(y1) sigma * (y2 - y1)";
-        await page.press(".monaco-editor textarea", "Control+A");
-        await page.press(".monaco-editor textarea", "Delete");
-        await page.fill(".monaco-editor textarea", invalidCode);
+        await writeInvalidCode(page);
 
         await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
             "Model code has been updated. Compile code and Run Model to view updated graph.", {
@@ -81,5 +85,13 @@ test.describe("Code Tab tests", () => {
         await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is not valid");
         const compileBtn = await page.locator("#compile-btn");
         expect(await compileBtn.isDisabled()).toBe(true);
+    });
+
+    test("can reset code editor", async ({ page }, done) => {
+        await writeInvalidCode(page);
+        await expect(await page.innerText(".wodin-left .wodin-content #reset-btn")).toBe("Reset");
+        await expect(await page.innerText(".wodin-left .wodin-content")).toContain("faker");
+        await page.click("#reset-btn");
+        await expect(await page.innerText(".wodin-left .wodin-content")).not.toContain("faker");
     });
 });
