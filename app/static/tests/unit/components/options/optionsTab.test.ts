@@ -15,7 +15,7 @@ describe("OptionsTab", () => {
             state: {
                 appType: AppType.Basic,
                 model: {
-                    parameterValues: {}
+                    parameterValues: null
                 }
             } as any
         });

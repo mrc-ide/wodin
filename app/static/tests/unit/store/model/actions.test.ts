@@ -1,4 +1,3 @@
-import * as dopri from "dopri";
 import Vuex from "vuex";
 import {
     mockAxios, mockBasicState, mockCodeState, mockFailure, mockModelState, mockSuccess
@@ -20,6 +19,12 @@ describe("Model actions", () => {
         code: {
             currentCode: ["line1", "line2"]
         }
+    };
+
+    const mockRunner = () => {
+        return {
+            wodinRun: jest.fn((odin, pars, start, end) => "test solution" as any)
+        };
     };
 
     it("fetches odin runner", async () => {
@@ -88,11 +93,11 @@ describe("Model actions", () => {
                 }
             },
             requiredAction: RequiredModelAction.Compile,
-            parameterValues: {
-                p1: 1,
-                p2: 2,
-                p3: 3
-            }
+            parameterValues: new Map([
+                ["p1", 1],
+                ["p2", 2],
+                ["p3", 3]
+            ])
         };
         const commit = jest.fn();
         const dispatch = jest.fn();
@@ -101,8 +106,8 @@ describe("Model actions", () => {
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[0][1]).toBe(3);
         expect(commit.mock.calls[1][0]).toBe(ModelMutation.SetParameterValues);
-        // Expect pre-existing parameter values to be retained,
-        expect(commit.mock.calls[1][1]).toStrictEqual({ p2: 20, p3: 30, p4: 40 });
+        const expectedParams = new Map([["p2", 20], ["p3", 30], ["p4", 40]]);
+        expect(commit.mock.calls[1][1]).toStrictEqual(expectedParams);
         expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetRequiredAction);
         expect(commit.mock.calls[2][1]).toBe(RequiredModelAction.Run);
 
@@ -150,7 +155,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[0][1]).toBe(3);
         expect(commit.mock.calls[1][0]).toBe(ModelMutation.SetParameterValues);
-        expect(commit.mock.calls[1][1]).toStrictEqual({});
+        expect(commit.mock.calls[1][1]).toStrictEqual(new Map());
     });
 
     it("compile model does nothing if no odin response", () => {
@@ -161,26 +166,26 @@ describe("Model actions", () => {
     });
 
     it("runs model and updates required action", () => {
-        const mockRunner = jest.fn((dop, odin, pars, start, end, control) => "test solution" as any);
         const mockOdin = {} as any;
 
+        const parameterValues = new Map([["p1", 1], ["p2", 2]]);
+        const runner = mockRunner();
         const state = mockModelState({
-            odinRunner: mockRunner,
+            odinRunner: runner,
             odin: mockOdin,
             requiredAction: RequiredModelAction.Run,
-            parameterValues: { p1: 1, p2: 2 },
+            parameterValues,
             endTime: 99
         });
         const commit = jest.fn();
 
         (actions[ModelAction.RunModel] as any)({ commit, state });
 
-        expect(mockRunner.mock.calls[0][0]).toBe(dopri);
-        expect(mockRunner.mock.calls[0][1]).toBe(mockOdin);
-        expect(mockRunner.mock.calls[0][2]).toStrictEqual({ p1: 1, p2: 2 });
-        expect(mockRunner.mock.calls[0][3]).toBe(0); // start
-        expect(mockRunner.mock.calls[0][4]).toBe(99); // end time from state
-        expect(mockRunner.mock.calls[0][5]).toStrictEqual({}); // control
+        const run = runner.wodinRun;
+        expect(run.mock.calls[0][0]).toBe(mockOdin);
+        expect(run.mock.calls[0][1]).toStrictEqual(parameterValues);
+        expect(run.mock.calls[0][2]).toBe(0); // start
+        expect(run.mock.calls[0][3]).toBe(99); // end time from state
 
         expect(commit.mock.calls.length).toBe(2);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinSolution);
@@ -190,13 +195,13 @@ describe("Model actions", () => {
     });
 
     it("run model does not update required action if required action was not run", () => {
-        const mockRunner = jest.fn();
         const mockOdin = {} as any;
 
         const state = mockModelState({
-            odinRunner: mockRunner,
+            odinRunner: mockRunner(),
             odin: mockOdin,
-            requiredAction: RequiredModelAction.Compile
+            requiredAction: RequiredModelAction.Compile,
+            parameterValues: new Map()
         });
         const commit = jest.fn();
 
@@ -220,10 +225,9 @@ describe("Model actions", () => {
     });
 
     it("run model does nothing if odin is not set", () => {
-        const mockRunner = jest.fn();
-
+        const runner = mockRunner();
         const state = mockModelState({
-            odinRunner: mockRunner,
+            odinRunner: runner,
             odin: null
         });
         const commit = jest.fn();
@@ -231,12 +235,12 @@ describe("Model actions", () => {
         (actions[ModelAction.RunModel] as any)({ commit, state });
 
         expect(commit).not.toHaveBeenCalled();
-        expect(mockRunner).not.toHaveBeenCalled();
+        expect(runner.wodinRun).not.toHaveBeenCalled();
     });
 
     it("DefaultModel fetches, compiles and runs default model synchronously", async () => {
         // Use real store so can trace the flow of updates through the state
-        const mockRunner = jest.fn((dop, odin, pars, start, end, control) => "test solution" as any);
+        const runner = mockRunner();
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
@@ -249,7 +253,7 @@ describe("Model actions", () => {
                 model: {
                     namespaced: true,
                     state: mockModelState({
-                        odinRunner: mockRunner,
+                        odinRunner: runner,
                         endTime: 99
                     }),
                     mutations,
@@ -285,17 +289,16 @@ describe("Model actions", () => {
         expect(commit.mock.calls[2][0]).toBe(`model/${ModelMutation.SetOdin}`);
         expect(commit.mock.calls[2][1]).toBe(3); // evaluated value of test model
         expect(commit.mock.calls[3][0]).toBe(`model/${ModelMutation.SetParameterValues}`);
-        expect(commit.mock.calls[3][1]).toStrictEqual({ p1: 1 });
+        expect(commit.mock.calls[3][1]).toStrictEqual(new Map([["p1", 1]]));
         expect(commit.mock.calls[4][0]).toBe(`model/${ModelMutation.SetRequiredAction}`);
         expect(commit.mock.calls[4][1]).toBe(RequiredModelAction.Run);
 
-        // run
-        expect(mockRunner.mock.calls[0][0]).toBe(dopri);
-        expect(mockRunner.mock.calls[0][1]).toBe(3);
-        expect(mockRunner.mock.calls[0][2]).toStrictEqual({ p1: 1 });
-        expect(mockRunner.mock.calls[0][3]).toBe(0); // start
-        expect(mockRunner.mock.calls[0][4]).toBe(99); // end
-        expect(mockRunner.mock.calls[0][5]).toStrictEqual({}); // control
+        // runs
+        const run = runner.wodinRun;
+        expect(run.mock.calls[0][0]).toBe(3);
+        expect(run.mock.calls[0][1]).toStrictEqual(new Map([["p1", 1]]));
+        expect(run.mock.calls[0][2]).toBe(0); // start
+        expect(run.mock.calls[0][3]).toBe(99); // end
 
         expect(commit.mock.calls[5][0]).toBe(`model/${ModelMutation.SetOdinSolution}`);
         expect(commit.mock.calls[5][1]).toBe("test solution");
