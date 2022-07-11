@@ -2,7 +2,7 @@
 const mockMonacoEditor = {
     onDidChangeModelContent: jest.fn(),
     getModel: () => {
-        return { getLinesContent: jest.fn().mockReturnValue(["new code"]) };
+        return { getLinesContent: jest.fn().mockReturnValueOnce(["new code"]) };
     },
     setValue: jest.fn()
 };
@@ -100,14 +100,14 @@ describe("CodeEditor", () => {
         });
     });
 
-    it("can reset monaco editor", (done) => {
+    it("can reset monaco editor", () => {
         const mockUpdateCode = jest.fn();
         const wrapper = getWrapper(false, mockUpdateCode);
         setTimeout(() => {
-            expect(mockUpdateCode).not.toHaveBeenCalled();
+            expect(mockMonacoEditor.setValue).not.toHaveBeenCalled();
             wrapper.find("#reset-btn").trigger("click");
-            expect(mockUpdateCode.mock.calls[0][1]).toStrictEqual(["default code"]);
-            done();
+            expect(mockMonacoEditor.setValue).toHaveBeenCalled();
+            expect(mockMonacoEditor.setValue).toHaveBeenCalledWith("default code");
         });
     });
 

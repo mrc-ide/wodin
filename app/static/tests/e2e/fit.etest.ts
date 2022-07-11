@@ -14,7 +14,6 @@ test.describe("Wodin App model fit tests", () => {
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
         await expect(await page.innerText(".wodin-left .wodin-content .nav-tabs .active")).toBe("Code");
         await expect(await page.innerText(".wodin-left .wodin-content #compile-btn")).toBe("Compile");
-        await expect(await page.innerText(".wodin-left .wodin-content #reset-btn")).toBe("Reset");
     });
 
     test("can change to Options tab and back", async ({ page }) => {

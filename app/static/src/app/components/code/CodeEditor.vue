@@ -66,9 +66,7 @@ export default defineComponent({
         };
 
         const resetCode = () => {
-            newCode = defaultCode.value;
-            updateCode();
-            getModel.setValue(currentCode.value.join("\n"));
+            getModel.setValue(defaultCode.value.join("\n"));
         };
 
         onMounted(() => {
