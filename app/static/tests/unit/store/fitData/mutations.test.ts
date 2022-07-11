@@ -31,4 +31,19 @@ describe("FitData mutations", () => {
         mutations.SetTimeVariable(state, "b");
         expect(state.timeVariable).toBe("b");
     });
+
+    it("sets linked variables", () => {
+        const state = mockFitDataState();
+        const linkedVars = {a: "S", b: "I"};
+        mutations.SetLinkedVariables(state, linkedVars);
+        expect(state.linkedVariables).toBe(linkedVars);
+    });
+
+    it("sets linked variable", () => {
+        const state = mockFitDataState();
+        mutations.SetLinkedVariable(state, {column: "a", variable: "S"});
+        expect(state.linkedVariables).toStrictEqual({a: "S"});
+        mutations.SetLinkedVariable(state, {column: "b", variable: null});
+        expect(state.linkedVariables).toStrictEqual({a: "S", b: null});
+    });
 });

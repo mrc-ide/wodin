@@ -7,6 +7,8 @@ import { actions, ModelAction } from "../../../../src/app/store/model/actions";
 import { ModelMutation, mutations } from "../../../../src/app/store/model/mutations";
 import { RequiredModelAction } from "../../../../src/app/store/model/state";
 import { BasicState } from "../../../../src/app/store/basic/state";
+import {AppType} from "../../../../src/app/store/appState/state";
+import {FitDataAction} from "../../../../src/app/store/fitData/actions";
 
 describe("Model actions", () => {
     beforeEach(() => {
@@ -14,6 +16,7 @@ describe("Model actions", () => {
     });
 
     const rootState = {
+        appType: AppType.Basic,
         code: {
             currentCode: ["line1", "line2"]
         }
@@ -92,7 +95,8 @@ describe("Model actions", () => {
             }
         };
         const commit = jest.fn();
-        (actions[ModelAction.CompileModel] as any)({ commit, state });
+        const dispatch = jest.fn();
+        (actions[ModelAction.CompileModel] as any)({ commit, state, rootState });
         expect(commit.mock.calls.length).toBe(3);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[0][1]).toBe(3);
@@ -101,6 +105,33 @@ describe("Model actions", () => {
         expect(commit.mock.calls[1][1]).toStrictEqual({ p2: 20, p3: 30, p4: 40 });
         expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetRequiredAction);
         expect(commit.mock.calls[2][1]).toBe(RequiredModelAction.Run);
+
+        // does not dispatch updated linked variables if app type is not Fit
+        expect(dispatch).not.toHaveBeenCalled();
+    });
+
+    it("compile model dipatches update linked variables for Fit apps", () => {
+        const state = {
+            odinModelResponse: {
+                model: "1+2",
+                metadata: {
+                    parameters: []
+                }
+            },
+            requiredAction: RequiredModelAction.Compile,
+            parameterValues: {}
+        };
+        const fitRootState = {appType: AppType.Fit};
+        const commit = jest.fn();
+        const dispatch = jest.fn();
+        (actions[ModelAction.CompileModel] as any)({ commit, dispatch, state, rootState: fitRootState });
+        expect(commit.mock.calls.length).toBe(3);
+        expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
+        expect(commit.mock.calls[1][0]).toBe(ModelMutation.SetParameterValues);
+        expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetRequiredAction);
+
+        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(dispatch.mock.calls[0][0]).toBe(`fitData/${FitDataAction.UpdateLinkedVariables}`);
     });
 
     it("compile model does not update required action if required action was not Compile", () => {
@@ -114,7 +145,7 @@ describe("Model actions", () => {
             requiredAction: RequiredModelAction.Run
         });
         const commit = jest.fn();
-        (actions[ModelAction.CompileModel] as any)({ commit, state });
+        (actions[ModelAction.CompileModel] as any)({ commit, state, rootState });
         expect(commit.mock.calls.length).toBe(2);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[0][1]).toBe(3);
@@ -125,7 +156,7 @@ describe("Model actions", () => {
     it("compile model does nothing if no odin response", () => {
         const state = mockModelState();
         const commit = jest.fn();
-        (actions[ModelAction.CompileModel] as any)({ commit, state });
+        (actions[ModelAction.CompileModel] as any)({ commit, state, rootState });
         expect(commit.mock.calls.length).toBe(0);
     });
 
