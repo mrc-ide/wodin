@@ -37,7 +37,7 @@ export default defineComponent({
 
         let newCode: string[] | null = null;
         let timeoutId: null | Timeout = null;
-        let getModel: monaco.editor.IStandaloneCodeEditor;
+        let editorInstance: monaco.editor.IStandaloneCodeEditor;
         const updateCode = () => store.dispatch(`code/${CodeAction.UpdateCode}`, newCode, { root: true });
 
         const setPendingCodeUpdate = () => {
@@ -51,22 +51,22 @@ export default defineComponent({
 
         const createMonacoEditor = () => {
             loader.init().then((monacoInstance) => {
-                getModel = monacoInstance.editor.create(editor.value as HTMLElement, {
+                editorInstance = monacoInstance.editor.create(editor.value as HTMLElement, {
                     value: currentCode.value.join("\n"),
                     language: "r",
                     minimap: { enabled: false },
                     readOnly: readOnly.value
                 });
 
-                getModel.onDidChangeModelContent(() => {
-                    newCode = getModel.getModel()!.getLinesContent();
+                editorInstance.onDidChangeModelContent(() => {
+                    newCode = editorInstance.getModel()!.getLinesContent();
                     setPendingCodeUpdate();
                 });
             });
         };
 
         const resetCode = () => {
-            getModel.setValue(defaultCode.value.join("\n"));
+            editorInstance.setValue(defaultCode.value.join("\n"));
         };
 
         onMounted(() => {
