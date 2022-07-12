@@ -15,12 +15,11 @@ export const actions: ActionTree<ModelFitState, FitState> = {
 
         commit(ModelFitMutation.SetFitting, true);
 
-        // TODO: only run if we can - make that a getter
+        // TODO: only run if we can - make that a getter - all the assumptions have !s
         const { odin, odinRunner } = rootState.model;
 
         const time = rootState.fitData.data!.map((row) => row[rootState.fitData.timeVariable!]);
-        const linkedColumn = Object.keys(rootState.fitData.linkedVariables)
-            .filter((key) => rootState.fitData.linkedVariables[key] !== null)[0];
+        const linkedColumn = rootState.fitData.columnToFit!;
         const linkedVariable = rootState.fitData.linkedVariables[linkedColumn]!;
         const value = rootState.fitData.data!.map((row) => row[linkedColumn]);
         const data = { time, value };
