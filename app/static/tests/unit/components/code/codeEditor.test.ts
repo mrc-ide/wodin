@@ -102,7 +102,7 @@ describe("CodeEditor", () => {
 
     it("can reset monaco editor", (done) => {
         const mockUpdateCode = jest.fn();
-        const wrapper = getWrapper(true, mockUpdateCode);
+        const wrapper = getWrapper(false, mockUpdateCode);
         setTimeout(() => {
             expect(mockMonacoEditor.setValue).not.toHaveBeenCalled();
             wrapper.find("#reset-btn").trigger("click");
@@ -114,13 +114,13 @@ describe("CodeEditor", () => {
 
     it("does not render reset button when no default code and is not readOnly", () => {
         const mockUpdateCode = jest.fn();
-        const wrapper = getWrapper(false, mockUpdateCode, []);
+        const wrapper = getWrapper(true, mockUpdateCode, []);
         expect(wrapper.find("#reset-btn").exists()).toBe(false);
     });
 
     it("does not render reset button when is not readOnly", () => {
         const mockUpdateCode = jest.fn();
-        const wrapper = getWrapper(false, mockUpdateCode);
+        const wrapper = getWrapper(true, mockUpdateCode);
         expect(wrapper.find("#reset-btn").exists()).toBe(false);
     });
 });

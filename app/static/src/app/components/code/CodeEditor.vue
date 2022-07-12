@@ -33,7 +33,7 @@ export default defineComponent({
         const currentCode = computed(() => store.state.code.currentCode);
         const readOnly = computed(() => (store.state.config as AppConfig).readOnlyCode);
         const defaultCode = computed(() => (store.state.config as AppConfig).defaultCode);
-        const defaultCodeExists = computed(() => defaultCode.value && (defaultCode.value.length && readOnly.value));
+        const defaultCodeExists = computed(() => defaultCode.value && (defaultCode.value.length && !readOnly.value));
 
         let newCode: string[] | null = null;
         let timeoutId: null | Timeout = null;
