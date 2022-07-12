@@ -24,7 +24,10 @@ export default defineComponent({
 
         const plotStyle = computed(() => (props.fadePlot ? "opacity:0.5;" : ""));
         const solution = computed(() => props.modelFit ? store.state.modelFit.solution : store.state.model.odinSolution);
-        const endTime = computed(() => store.state.model.endTime);
+
+        // TODO: do what for model fit? Work this out from the data? What does odin-js do?
+        const dataEndTime = 30;
+        const endTime = computed(() => (props.modelFit ? dataEndTime : store.state.model.endTime));
 
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
         const baseData = ref(null);
@@ -64,14 +67,23 @@ export default defineComponent({
         let resizeObserver: null | ResizeObserver = null;
 
         const drawPlot = () => {
+            console.log("drawing plot")
             if (solution.value) {
+                console.log("solution exists")
+                console.log("end time is " + endTime.value)
                 baseData.value = solution.value(0, endTime.value, nPoints);
+                // model fit partial solution returns single series - convert to array
+                if (baseData.value && !Array.isArray(baseData.value)) {
+                  baseData.value = [baseData.value] as any; //TODO: ugh, typescript
+                }
+                console.log("Base data is " + JSON.stringify(baseData.value))
 
                 if (baseData.value) {
                     const el = plot.value as unknown;
                     const layout = {
                         margin: { t: 0 }
                     };
+                    console.log("drawing plot")
                     newPlot(el as HTMLElement, baseData.value as Data[], layout, config);
                     (el as EventEmitter).on("plotly_relayout", relayout);
                     resizeObserver = new ResizeObserver(resize);

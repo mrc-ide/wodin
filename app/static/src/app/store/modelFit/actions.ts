@@ -44,7 +44,10 @@ export const actions: ActionTree<ModelFitState, FitState> = {
         const result = simplex.result();
         commit(ModelFitMutation.SetResult, result);
         if (result.converged) {
+            console.log("FINAL RESULT: " + JSON.stringify(result));
+
             commit(ModelFitMutation.SetFitting, false);
+
         } else {
             setTimeout(() => {
                 dispatch(ModelFitAction.FitModelStep, simplex);

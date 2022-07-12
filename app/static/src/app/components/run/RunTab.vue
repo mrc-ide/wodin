@@ -6,7 +6,7 @@
     <div class="run-update-msg text-danger text-center">
       <span v-if="updateMsg" class="p-1">{{updateMsg}}</span>
     </div>
-    <run-model-plot :fade-plot="!!updateMsg"></run-model-plot>
+    <run-model-plot :fade-plot="!!updateMsg" :model-fit="false"></run-model-plot>
   </div>
 </template>
 

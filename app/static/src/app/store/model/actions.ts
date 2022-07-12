@@ -64,7 +64,6 @@ const runModel = (context: ActionContext<ModelState, AppState>) => {
     if (state.odinRunner && state.odin && parameters) {
         const start = 0;
         const end = state.endTime;
-        console.log("Running with odin " + JSON.stringify(state.odin))
         const solution = state.odinRunner.wodinRun(state.odin, parameters, start, end);
         commit(ModelMutation.SetOdinSolution, solution);
 
