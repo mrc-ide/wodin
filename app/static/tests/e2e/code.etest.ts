@@ -21,6 +21,8 @@ test.describe("Code Tab tests", () => {
     const { timeout } = PlaywrightConfig;
 
     const writeCode = async (page: Page, code: string) => {
+        await page.press(".monaco-editor textarea", "Control+A");
+        await page.press(".monaco-editor textarea", "Delete");
         await page.fill(".monaco-editor textarea", "");
         await page.fill(".monaco-editor textarea", code);
     };
@@ -34,7 +36,7 @@ test.describe("Code Tab tests", () => {
         return plot.evaluate((el) => window.getComputedStyle(el).getPropertyValue("opacity"));
     };
 
-    test("can update code, compile and run model", async ({ page }, done) => {
+    test("can update code, compile and run model", async ({ page }) => {
         // Update code - see update message and graph fade.
         // We seem to have to delete the old code here with key presses - 'fill' just prepends. I guess this relates to
         // how monaco responds to DOM events.
@@ -92,16 +94,11 @@ test.describe("Code Tab tests", () => {
                 timeout
             }
         );
-
         await expect(await page.innerText(".wodin-left .wodin-content #reset-btn")).toBe("Reset");
         await expect(await page.innerText(".wodin-left .wodin-content")).toContain("faker");
         await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is not valid");
         await page.click("#reset-btn");
-        await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to view updated graph.", {
-                timeout
-            }
-        );
+        await page.waitForResponse((response) => response.url().includes("/odin"));
         await expect(await page.innerText(".wodin-left .wodin-content")).not.toContain("faker");
         await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is valid");
     });

@@ -84,6 +84,7 @@ test.describe("Options Tab tests", () => {
         // Provide new code
         await page.press(".monaco-editor textarea", "Control+A");
         await page.press(".monaco-editor textarea", "Delete");
+        await page.fill(".monaco-editor textarea", "");
         await page.fill(".monaco-editor textarea", newValidCode);
 
         await expect(page.locator(".run-tab .run-update-msg")).toHaveText(
