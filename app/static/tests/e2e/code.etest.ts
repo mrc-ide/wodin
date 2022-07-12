@@ -21,8 +21,7 @@ test.describe("Code Tab tests", () => {
     const { timeout } = PlaywrightConfig;
 
     const writeCode = async (page: Page, code: string) => {
-        await page.press(".monaco-editor textarea", "Control+A");
-        await page.press(".monaco-editor textarea", "Delete");
+        await page.fill(".monaco-editor textarea", "");
         await page.fill(".monaco-editor textarea", code);
     };
 
@@ -86,12 +85,23 @@ test.describe("Code Tab tests", () => {
     });
 
     test("can reset code editor", async ({ page }) => {
-        const invalidCode = "deriv(y1) test * faker";
+        const invalidCode = "faker\n";
         await writeCode(page, invalidCode);
+        await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
+            "Model code has been updated. Compile code and Run Model to view updated graph.", {
+                timeout
+            }
+        );
+
         await expect(await page.innerText(".wodin-left .wodin-content #reset-btn")).toBe("Reset");
         await expect(await page.innerText(".wodin-left .wodin-content")).toContain("faker");
         await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is not valid");
         await page.click("#reset-btn");
+        await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
+            "Model code has been updated. Compile code and Run Model to view updated graph.", {
+                timeout
+            }
+        );
         await expect(await page.innerText(".wodin-left .wodin-content")).not.toContain("faker");
         await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is valid");
     });
