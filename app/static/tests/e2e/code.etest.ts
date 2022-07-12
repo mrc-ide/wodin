@@ -90,7 +90,9 @@ test.describe("Code Tab tests", () => {
         await writeCode(page, invalidCode);
         await expect(await page.innerText(".wodin-left .wodin-content #reset-btn")).toBe("Reset");
         await expect(await page.innerText(".wodin-left .wodin-content")).toContain("faker");
+        await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is not valid");
         await page.click("#reset-btn");
         await expect(await page.innerText(".wodin-left .wodin-content")).not.toContain("faker");
+        await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is valid");
     });
 });
