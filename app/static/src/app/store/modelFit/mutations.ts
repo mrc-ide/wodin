@@ -3,15 +3,19 @@ import {ModelFitState} from "./state";
 import {SimplexResult} from "../../types/responseTypes";
 
 export enum ModelFitMutation {
+    SetFitting = "SetFitting",
     SetResult = "SetResult"
 }
 
 export const mutations: MutationTree<ModelFitState> = {
+    [ModelFitMutation.SetFitting](state: ModelFitState, payload: boolean) {
+        state.fitting = payload;
+    },
+
     [ModelFitMutation.SetResult](state: ModelFitState, payload: SimplexResult) {
         state.converged = payload.converged;
         state.iterations = payload.iterations;
-        state.data = payload.data;
-        console.log("Committed iterations: " + state.iterations);
-        console.log("Committed data: " + JSON.stringify(state.data));
+        state.sumOfSquares = payload.value;
+        state.solution = payload.data.solutionFit;
     }
 };

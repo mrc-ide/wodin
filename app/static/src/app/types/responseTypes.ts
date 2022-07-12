@@ -73,7 +73,10 @@ export interface OdinFitParameters {
 export interface SimplexResult {
     iterations: number;
     converged: boolean;
-    data: any
+    value: number;
+    data: {
+        solutionFit: OdinSolution
+    }
 }
 
 export interface Simplex {
@@ -89,5 +92,8 @@ export interface OdinRunner {
 
     wodinFit: (odin: Odin,
                data: OdinFitData,
-               pars: OdinFitParameters) => Simplex;
+               pars: OdinFitParameters,
+               modelledSeries: string,
+               odeParams: any,
+               simplexParams: any) => Simplex;
 }

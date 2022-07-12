@@ -3,9 +3,11 @@ import { actions } from "./actions";
 import { mutations } from "./mutations";
 
 export const defaultState: ModelFitState = {
+    fitting: false,
     iterations: null,
     converged: null,
-    data: null
+    sumOfSquares: null,
+    solution: null
 };
 
 export const modelFit = {

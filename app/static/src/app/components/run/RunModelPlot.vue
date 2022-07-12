@@ -16,13 +16,14 @@ import {
 export default defineComponent({
     name: "RunModelPlot",
     props: {
-        fadePlot: Boolean
+        fadePlot: Boolean,
+        modelFit: Boolean
     },
     setup(props) {
         const store = useStore();
 
         const plotStyle = computed(() => (props.fadePlot ? "opacity:0.5;" : ""));
-        const solution = computed(() => store.state.model.odinSolution);
+        const solution = computed(() => props.modelFit ? store.state.modelFit.solution : store.state.model.odinSolution);
         const endTime = computed(() => store.state.model.endTime);
 
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template

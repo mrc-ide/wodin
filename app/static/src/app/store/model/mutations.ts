@@ -33,6 +33,7 @@ export const mutations: MutationTree<ModelState> = {
     },
 
     [ModelMutation.SetOdin](state: ModelState, payload: Odin | null) {
+        console.log("SETTING ODIN: " + JSON.stringify(payload));
         state.odin = payload;
     },
 
