@@ -75,7 +75,8 @@ export interface SimplexResult {
     converged: boolean;
     value: number;
     data: {
-        solutionFit: OdinSolution
+        solutionFit: OdinSolution,
+        pars: Map<string, number>
     }
 }
 

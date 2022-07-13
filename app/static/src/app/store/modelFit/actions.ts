@@ -3,6 +3,7 @@ import { FitState } from "../fit/state";
 import { ModelFitState } from "./state";
 import { Dict } from "../../types/utilTypes";
 import { ModelFitMutation } from "./mutations";
+import {ModelMutation} from "../model/mutations";
 
 export enum ModelFitAction {
     FitModel = "FitModel",
@@ -42,9 +43,11 @@ export const actions: ActionTree<ModelFitState, FitState> = {
         simplex.step();
         const result = simplex.result();
         commit(ModelFitMutation.SetResult, result);
+        // update model params on every step
+        commit(`model/${ModelMutation.SetParameterValues}`, result.data.pars, {root: true});
+
         if (result.converged) {
             console.log("FINAL RESULT: " + JSON.stringify(result));
-
             commit(ModelFitMutation.SetFitting, false);
 
         } else {
