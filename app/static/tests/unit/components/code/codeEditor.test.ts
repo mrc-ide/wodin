@@ -114,11 +114,11 @@ describe("CodeEditor", () => {
 
     it("does not render reset button when no default code and is not readOnly", () => {
         const mockUpdateCode = jest.fn();
-        const wrapper = getWrapper(true, mockUpdateCode, []);
+        const wrapper = getWrapper(false, mockUpdateCode, []);
         expect(wrapper.find("#reset-btn").exists()).toBe(false);
     });
 
-    it("does not render reset button when is not readOnly", () => {
+    it("does not render reset button when is readOnly", () => {
         const mockUpdateCode = jest.fn();
         const wrapper = getWrapper(true, mockUpdateCode);
         expect(wrapper.find("#reset-btn").exists()).toBe(false);

@@ -87,6 +87,7 @@ test.describe("Code Tab tests", () => {
     });
 
     test("can reset code editor", async ({ page }) => {
+        const defaultCode = await page.innerText(".wodin-left .wodin-content .editor-container");
         const invalidCode = "faker\n";
         await writeCode(page, invalidCode);
         await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
@@ -95,11 +96,11 @@ test.describe("Code Tab tests", () => {
             }
         );
         await expect(await page.innerText(".wodin-left .wodin-content #reset-btn")).toBe("Reset");
-        await expect(await page.innerText(".wodin-left .wodin-content")).toContain("faker");
+        expect(await page.innerText(".wodin-left .wodin-content .editor-container")).not.toBe(defaultCode);
         await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is not valid");
         await page.click("#reset-btn");
         await page.waitForResponse((response) => response.url().includes("/odin"));
-        await expect(await page.innerText(".wodin-left .wodin-content")).not.toContain("faker");
+        expect(await page.innerText(".wodin-left .wodin-content .editor-container")).toBe(defaultCode);
         await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is valid");
     });
 });
