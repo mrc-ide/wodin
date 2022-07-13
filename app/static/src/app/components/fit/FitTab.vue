@@ -23,7 +23,7 @@ export default {
         const store = useStore();
         const namespace = "modelFit";
 
-        // TODO: we can fit model when we have an Odin Solution, and data, and at least one linked variable, and a time variable
+        // TODO: we can fit model when we have an Odin Solution, and data, and columnToFit, and a time variable
         const canFitModel = computed(() => true);
         const fitModel = () => store.dispatch(`${namespace}/${ModelFitAction.FitModel}`);
         const iterations = computed(() => store.state.modelFit.iterations);

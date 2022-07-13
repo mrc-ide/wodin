@@ -27,16 +27,18 @@ export default defineComponent({
         const plotStyle = computed(() => (props.fadePlot ? "opacity:0.5;" : ""));
         const solution = computed(() => (props.modelFit ? store.state.modelFit.solution : store.state.model.odinSolution));
 
-        // TODO: do what for model fit? Work this out from the data? What does odin-js do?
-        const dataEndTime = 30;
-        const endTime = computed(() => (props.modelFit ? dataEndTime : store.state.model.endTime));
+        const startTime = computed(() => {
+            return props.modelFit ? store.getters[`fitData/${FitDataGetter.dataStart}`] : 0;
+        });
+        const endTime = computed(() => {
+            return props.modelFit ? store.getters[`fitData/${FitDataGetter.dataEnd}`] : store.state.model.endTime;
+        });
 
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
         const baseData = ref(null);
 
-        // TODO: include all linked series for run mode where fit data is available
         const fitDataSeries = computed(() => {
-          return props.modelFit ? store.getters[`fitData/${FitDataGetter.selectedLinkedColumnSeries}`] : [];
+            return props.modelFit ? store.getters[`fitData/${FitDataGetter.selectedLinkedColumnSeries}`] : [];
         });
 
         const nPoints = 1000; // TODO: appropriate value could be derived from width of element
@@ -77,8 +79,9 @@ export default defineComponent({
             console.log("drawing plot");
             if (solution.value) {
                 console.log("solution exists");
+                console.log(`start time is ${startTime.value}`);
                 console.log(`end time is ${endTime.value}`);
-                let dataToPlot = solution.value(0, endTime.value, nPoints);
+                let dataToPlot = solution.value(startTime.value, endTime.value, nPoints);
 
                 // model fit partial solution returns single series - convert to array
                 if (props.modelFit) {

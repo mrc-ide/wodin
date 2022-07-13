@@ -33,6 +33,7 @@ const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) =
         }, {});
     }
     commit(FitDataMutation.SetLinkedVariables, newLinks);
+    //TODO: retain and commit columnToFit
 };
 
 export const actions: ActionTree<FitDataState, FitState> = {

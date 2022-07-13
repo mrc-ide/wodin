@@ -4,7 +4,9 @@ import { FitState } from "../fit/state";
 
 export enum FitDataGetter {
     nonTimeColumns ="nonTimeColumns",
-    selectedLinkedColumnSeries="selectedLinkedColumnSeries"
+    selectedLinkedColumnSeries="selectedLinkedColumnSeries",
+    dataStart = "dataStart",
+    dataEnd = "dataEnd"
 }
 
 export interface FitDataGetters {
@@ -30,5 +32,23 @@ export const getters: FitDataGetters & GetterTree<FitDataState, FitState> = {
         } else {
             return [];
         }
+    },
+
+    [FitDataGetter.dataStart]: (state: FitDataState) => {
+        let result = 0;
+        if (state.timeVariable && state.data?.length) {
+            // We should have checked that data is in order for time variable, so should just be able to use first row
+            result = state.data[0][state.timeVariable]!;
+        }
+        return result;
+    },
+
+    [FitDataGetter.dataEnd]: (state: FitDataState) => {
+        let result = 0;
+        if (state.timeVariable && state.data?.length) {
+            // We should have checked that data is in order for time variable, so should just be able to use last row
+            result = state.data[state.data.length - 1][state.timeVariable]!;
+        }
+        return result;
     }
 };
