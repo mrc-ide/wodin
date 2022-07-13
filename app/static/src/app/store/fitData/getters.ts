@@ -22,7 +22,9 @@ export const getters: FitDataGetters & GetterTree<FitDataState, FitState> = {
             return [{
                 name: state.columnToFit,
                 x: state.data.map((row) => row[state.timeVariable!]),
-                y: state.data.map((row) => row[state.columnToFit!])
+                y: state.data.map((row) => row[state.columnToFit!]),
+                mode: 'markers',  // TODO: should this really be coming from the getter with plotly config? Move to the component
+                type: 'scatter'
 
             }];
         } else {
