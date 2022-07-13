@@ -1,6 +1,6 @@
 import { Commit } from "vuex";
 import { parse } from "csv-parse";
-import { AppCtx } from "./types/utilTypes";
+import { AppCtx, Dict } from "./types/utilTypes";
 import userMessages from "./userMessages";
 import { Error } from "./types/responseTypes";
 import { processFitData, ProcessFitDataResult } from "./utils";
@@ -8,6 +8,9 @@ import { SetDataPayload } from "./store/fitData/mutations";
 
 type OnError = (error: Error) => void;
 type OnSuccess = (success: SetDataPayload) => void;
+interface ParseError {
+    message: string
+}
 
 export class CSVUpload<S extends string, E extends string> {
     private readonly _commit: Commit;
@@ -50,23 +53,20 @@ export class CSVUpload<S extends string, E extends string> {
 
             reader.onload = (event) => {
                 if (event.target && event.target.result) {
-                    parse(event.target.result.toString(), { columns: true }, (err, rawData) => {
+                    const options = { columns: true };
+                    const textToParse = event.target.result.toString();
+                    parse(textToParse, options, (err: ParseError | null, rawData: Dict<string>[]) => {
                         const errorMsg = userMessages.fitData.errorLoadingData;
                         let dataError: Error | null = err ? { error: errorMsg, detail: err.message } : null;
                         let processResult: ProcessFitDataResult | undefined;
                         if (!dataError) {
                             processResult = processFitData(rawData, errorMsg);
-                            dataError = processResult.error;
+                            dataError = processResult.error || null;
                         }
 
                         if (!dataError && processResult?.data) {
-                            const columns = Object.keys(processResult.data[0]);
                             if (this._onSuccess) {
-                                this._onSuccess({
-                                    data: processResult.data,
-                                    columns,
-                                    timeVariableCandidates: processResult.timeVariableCandidates
-                                });
+                                this._onSuccess(processResult);
                             }
                         } else if (this._onError) {
                             this._onError(dataError!);

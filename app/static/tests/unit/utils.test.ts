@@ -48,7 +48,7 @@ describe("processFitData", () => {
             { a: "9", b: "10" }
         ];
         const result = processFitData(data, "Error occurred");
-        expect(result.error).toBe(null);
+        expect(result.error).toBe(undefined);
         expect(result.data).toStrictEqual([
             { a: 1, b: 2 },
             { a: 3.5, b: -100 },
