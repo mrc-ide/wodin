@@ -1,6 +1,7 @@
 import { actions, FitDataAction } from "../../../../src/app/store/fitData/actions";
 import { FitDataMutation } from "../../../../src/app/store/fitData/mutations";
 import resetAllMocks = jest.resetAllMocks;
+import { fileTimeout } from "../../../testUtils";
 
 describe("Fit Data actions", () => {
     const file = { name: "testFile" } as any;
@@ -31,7 +32,7 @@ describe("Fit Data actions", () => {
     };
 
     it("commits data on success", (done) => {
-        const mockFileReader = getMockFileReader("a,b\n1,2\n3,4\n");
+        const mockFileReader = getMockFileReader("a,b\n1,2\n3,4\n5,6\n7,8\n9,10");
 
         const commit = jest.fn();
         (actions[FitDataAction.Upload] as any)({ commit }, file);
@@ -42,13 +43,17 @@ describe("Fit Data actions", () => {
             const expectedSetDataPayload = {
                 data: [
                     { a: 1, b: 2 },
-                    { a: 3, b: 4 }
+                    { a: 3, b: 4 },
+                    { a: 5, b: 6 },
+                    { a: 7, b: 8 },
+                    { a: 9, b: 10 }
                 ],
-                columns: ["a", "b"]
+                columns: ["a", "b"],
+                timeVariableCandidates: ["a", "b"]
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedSetDataPayload);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("commits csv parse error", (done) => {
@@ -66,11 +71,11 @@ describe("Fit Data actions", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("commits csv processing error", (done) => {
-        const mockFileReader = getMockFileReader("a,b\n1,2\nhello,4");
+        const mockFileReader = getMockFileReader("a,b\n1,2\n3,4");
 
         const commit = jest.fn();
         (actions[FitDataAction.Upload] as any)({ commit }, file);
@@ -80,11 +85,11 @@ describe("Fit Data actions", () => {
             expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetError);
             const expectedError = {
                 error: "An error occurred when loading data",
-                detail: "Data contains non-numeric values: 'hello'"
+                detail: "File must contain at least 5 data rows."
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("commits file read error", (done) => {
@@ -108,7 +113,7 @@ describe("Fit Data actions", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("does nothing if file is not set", (done) => {
@@ -120,6 +125,6 @@ describe("Fit Data actions", () => {
         setTimeout(() => {
             expect(commit).not.toHaveBeenCalled();
             done();
-        });
+        }, fileTimeout);
     });
 });

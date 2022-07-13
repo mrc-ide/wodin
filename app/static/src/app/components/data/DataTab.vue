@@ -8,6 +8,16 @@
     Uploaded {{rows}} rows and {{columns}} columns
   </div>
   <error-info :error="error"></error-info>
+  <div v-if="timeVariableCandidates" id="time-variable" class="mt-4">
+    <label for="select-time-variable" class="fw-bold">
+      Select time variable
+    </label>
+    <select id="select-time-variable" class="form-select" v-model="timeVariable" @change="updateTimeVariable">
+      <option v-for="timeVar in timeVariableCandidates" :key="timeVar" :value="timeVar">
+        {{timeVar}}
+      </option>
+    </select>
+  </div>
 </template>
 
 <script lang="ts">
@@ -16,6 +26,7 @@ import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import { FitDataAction } from "../../store/fitData/actions";
 import ErrorInfo from "../ErrorInfo.vue";
+import { FitDataMutation } from "../../store/fitData/mutations";
 
 export default defineComponent({
     name: "DataTab",
@@ -30,17 +41,27 @@ export default defineComponent({
             store.dispatch(`fitData/${FitDataAction.Upload}`, file);
         };
 
+        const updateTimeVariable = (event: Event) => {
+            const { value } = event.target as HTMLSelectElement;
+            store.commit(`fitData/${FitDataMutation.SetTimeVariable}`, value);
+        };
+
         const error = computed(() => store.state.fitData.error);
         const success = computed(() => !!store.state.fitData.data);
         const rows = computed(() => store.state.fitData.data?.length);
         const columns = computed(() => store.state.fitData.columns?.length);
+        const timeVariableCandidates = computed(() => store.state.fitData.timeVariableCandidates);
+        const timeVariable = computed(() => store.state.fitData.timeVariable);
 
         return {
             upload,
+            updateTimeVariable,
             error,
             success,
             rows,
-            columns
+            columns,
+            timeVariableCandidates,
+            timeVariable
         };
     }
 });

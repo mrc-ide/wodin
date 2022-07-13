@@ -1,4 +1,5 @@
 import resetAllMocks = jest.resetAllMocks;
+import { fileTimeout } from "../testUtils";
 import { csvUpload } from "../../src/app/csvUpload";
 
 describe("CSVUpload", () => {
@@ -35,7 +36,7 @@ describe("CSVUpload", () => {
     }
 
     it("commits data on success", (done) => {
-        const mockFileReader = getMockFileReader("a,b\n1,2\n3,4\n");
+        const mockFileReader = getMockFileReader("a,b\n1,2\n3,4\n5,6\n7,8\n9,10\n");
 
         const commit = jest.fn();
         csvUpload({ commit } as any)
@@ -50,13 +51,17 @@ describe("CSVUpload", () => {
             const expectedSetDataPayload = {
                 data: [
                     { a: 1, b: 2 },
-                    { a: 3, b: 4 }
+                    { a: 3, b: 4 },
+                    { a: 5, b: 6 },
+                    { a: 7, b: 8 },
+                    { a: 9, b: 10 }
                 ],
-                columns: ["a", "b"]
+                columns: ["a", "b"],
+                timeVariableCandidates: ["a", "b"]
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedSetDataPayload);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("commits csv parse error", (done) => {
@@ -78,11 +83,11 @@ describe("CSVUpload", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("commits csv processing error", (done) => {
-        const mockFileReader = getMockFileReader("a,b\n1,2\nhello,4");
+        const mockFileReader = getMockFileReader("a,b\n1,2\nhello,4\n5,6\n7,8\n9,10\n");
 
         const commit = jest.fn();
         csvUpload({ commit } as any)
@@ -99,7 +104,7 @@ describe("CSVUpload", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("commits file read error", (done) => {
@@ -126,7 +131,7 @@ describe("CSVUpload", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("warns when handlers are not registered", (done) => {
@@ -142,6 +147,6 @@ describe("CSVUpload", () => {
         setTimeout(() => {
             expect(commit).not.toHaveBeenCalled();
             done();
-        });
+        }, fileTimeout);
     });
 });
