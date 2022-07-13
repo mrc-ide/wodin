@@ -3,9 +3,7 @@
     <div>
       <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
     </div>
-    <div class="run-update-msg text-danger text-center">
-      <span v-if="updateMsg" class="p-1">{{updateMsg}}</span>
-    </div>
+    <action-required-message :message="updateMsg"></action-required-message>
     <run-model-plot :fade-plot="!!updateMsg" :model-fit="false"></run-model-plot>
   </div>
 </template>
@@ -14,6 +12,7 @@
 import { useStore } from "vuex";
 import { computed, defineComponent } from "vue";
 import RunModelPlot from "./RunModelPlot.vue";
+import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { ModelAction } from "../../store/model/actions";
 import { RequiredModelAction } from "../../store/model/state";
 import userMessages from "../../userMessages";
@@ -21,7 +20,8 @@ import userMessages from "../../userMessages";
 export default defineComponent({
     name: "RunTab",
     components: {
-        RunModelPlot
+        RunModelPlot,
+        ActionRequiredMessage
     },
     setup() {
         const store = useStore();
@@ -51,11 +51,4 @@ export default defineComponent({
     }
 });
 </script>
-<style scoped lang="scss">
-  .run-update-msg {
-    min-height:1.6rem;
-    span {
-      border: 1px solid #dee2e6;
-    }
-  }
-</style>
+

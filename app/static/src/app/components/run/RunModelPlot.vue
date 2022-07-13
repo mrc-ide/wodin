@@ -1,6 +1,9 @@
 <template>
     <div class="run-model-plot" ref="plot" :style="plotStyle">
     </div>
+    <div v-if="!baseData" class="plot-placeholder">
+      {{ placeholderMessage }}
+    </div>
 </template>
 
 <script lang="ts">
@@ -12,8 +15,8 @@ import { EventEmitter } from "events";
 import {
     Data, newPlot, react, PlotRelayoutEvent, Plots
 } from "plotly.js";
-import { modelFit } from "../../store/modelFit/modelFit";
 import { FitDataGetter } from "../../store/fitData/getters";
+import userMessages from "../../userMessages";
 
 export default defineComponent({
     name: "RunModelPlot",
@@ -23,6 +26,8 @@ export default defineComponent({
     },
     setup(props) {
         const store = useStore();
+
+        const placeholderMessage = computed(() => (props.modelFit ? userMessages.modelFit.notFittedYet : userMessages.run.notRunYet));
 
         const plotStyle = computed(() => (props.fadePlot ? "opacity:0.5;" : ""));
         const solution = computed(() => (props.modelFit ? store.state.modelFit.solution : store.state.model.odinSolution));
@@ -111,12 +116,25 @@ export default defineComponent({
         });
 
         return {
+            placeholderMessage,
             plotStyle,
             plot,
             relayout,
             resize,
-            solution
+            solution,
+            baseData
         };
     }
 });
 </script>
+<style scoped lang="scss">
+  .plot-placeholder {
+    width: 100%;
+    height: 450px;
+    background-color: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+</style>
