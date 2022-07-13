@@ -76,11 +76,7 @@ export default defineComponent({
         let resizeObserver: null | ResizeObserver = null;
 
         const drawPlot = () => {
-            console.log("drawing plot");
             if (solution.value) {
-                console.log("solution exists");
-                console.log(`start time is ${startTime.value}`);
-                console.log(`end time is ${endTime.value}`);
                 let dataToPlot = solution.value(startTime.value, endTime.value, nPoints);
 
                 // model fit partial solution returns single series - convert to array
@@ -90,14 +86,12 @@ export default defineComponent({
 
                 dataToPlot = [...dataToPlot, ...fitDataSeries.value];
                 baseData.value = dataToPlot;
-                console.log(`Base data is ${JSON.stringify(baseData.value)}`);
 
                 if (baseData.value) {
                     const el = plot.value as unknown;
                     const layout = {
                         margin: { t: 0 }
                     };
-                    console.log("drawing plot");
                     newPlot(el as HTMLElement, baseData.value as Data[], layout, config);
                     (el as EventEmitter).on("plotly_relayout", relayout);
                     resizeObserver = new ResizeObserver(resize);

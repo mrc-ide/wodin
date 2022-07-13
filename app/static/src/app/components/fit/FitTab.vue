@@ -13,6 +13,7 @@ import { computed } from "vue";
 import { useStore } from "vuex";
 import RunModelPlot from "../run/RunModelPlot.vue";
 import { ModelFitAction } from "../../store/modelFit/actions";
+import {ModelFitGetter} from "../../store/modelFit/getters";
 
 export default {
     name: "FitTab",
@@ -23,8 +24,7 @@ export default {
         const store = useStore();
         const namespace = "modelFit";
 
-        // TODO: we can fit model when we have an Odin Solution, and data, and columnToFit, and a time variable
-        const canFitModel = computed(() => true);
+        const canFitModel = computed(() => store.getters[`${namespace}/${ModelFitGetter.canRunFit}`]);
         const fitModel = () => store.dispatch(`${namespace}/${ModelFitAction.FitModel}`);
         const iterations = computed(() => store.state.modelFit.iterations);
         const sumOfSquares = computed(() => store.state.modelFit.sumOfSquares);

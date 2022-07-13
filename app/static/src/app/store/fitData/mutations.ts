@@ -52,6 +52,5 @@ export const mutations: MutationTree<FitDataState> = {
         // initialise a column to fit from any which have a link
         const linkedCols = Object.keys(state.linkedVariables).filter((key) => state.linkedVariables[key] !== null);
         state.columnToFit = linkedCols.length ? linkedCols[0] : null;
-        console.log("set column to fit to " +  state.columnToFit)
     }
 };

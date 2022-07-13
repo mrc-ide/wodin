@@ -19,7 +19,6 @@ export const getters: FitDataGetters & GetterTree<FitDataState, FitState> = {
         return state.columns?.filter((column) => column !== state.timeVariable);
     },
     [FitDataGetter.selectedLinkedColumnSeries]: (state: FitDataState) => {
-        console.log("getting selected linked column series");
         if (state.data && state.columnToFit && state.timeVariable) {
             return [{
                 name: state.columnToFit,
