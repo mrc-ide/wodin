@@ -31,10 +31,12 @@ const runRequired = (state: ModelState) => {
 export const mutations: MutationTree<ModelState> = {
     [ModelMutation.SetOdinRunner](state: ModelState, payload: string) {
         state.odinRunner = evaluateScript<OdinRunner>(payload);
+        state.error = null;
     },
 
     [ModelMutation.SetOdinResponse](state: ModelState, payload: OdinModelResponse) {
         state.odinModelResponse = payload;
+        state.error = null;
     },
 
     [ModelMutation.SetOdin](state: ModelState, payload: Odin | null) {
