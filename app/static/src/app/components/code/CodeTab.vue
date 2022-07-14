@@ -6,9 +6,8 @@
             <vue-feather class="inline-icon" :class="iconClass" :type="validIcon"></vue-feather>
             {{ validMsg }}
         </div>
+        <error-info :error="error"></error-info>
     </div>
-      <error-info :error="error"></error-info>
-  </div>
 </template>
 
 <script lang="ts">
@@ -31,8 +30,6 @@ export default defineComponent({
         const store = useStore();
         const codeIsValid = computed(() => store.state.model.odinModelResponse?.valid);
         const error = computed(() => store.state.model.odinModelResponseError);
-        const compile = () => store.dispatch(`model/${ModelAction.CompileModel}`);
-
         const validMsg = computed(() => (codeIsValid.value ? userMessages.code.isValid : userMessages.code.isNotValid));
         const validIcon = computed(() => (codeIsValid.value ? "check" : "x"));
         const iconClass = computed(() => (codeIsValid.value ? "text-success" : "text-danger"));

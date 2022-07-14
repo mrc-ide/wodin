@@ -90,9 +90,9 @@ describe("RunTab", () => {
     });
 
     it("displays error info in run model", () => {
-        const error = { error: "model error", detail: "with details" };
-        const wrapper = getWrapper({ error });
+        const odinRunnerError = { error: "model error", detail: "with details" };
+        const wrapper = getWrapper({ odinRunnerError });
         expect(wrapper.findComponent(ErrorInfo).exists()).toBe(true);
-        expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(error);
+        expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(odinRunnerError);
     });
 });

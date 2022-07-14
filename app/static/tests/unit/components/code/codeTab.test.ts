@@ -73,9 +73,9 @@ describe("CodeTab", () => {
     });
 
     it("displays error info in run model", () => {
-        const error = { error: "model error", detail: "with details" };
-        const wrapper = getWrapper({ error });
+        const odinModelResponseError = { error: "model error", detail: "with details" };
+        const wrapper = getWrapper({ odinModelResponseError });
         expect(wrapper.findComponent(ErrorInfo).exists()).toBe(true);
-        expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(error);
+        expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(odinModelResponseError);
     });
 });

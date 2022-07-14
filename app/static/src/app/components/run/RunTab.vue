@@ -7,8 +7,8 @@
             <span v-if="updateMsg" class="p-1">{{ updateMsg }}</span>
         </div>
         <run-model-plot :fade-plot="!!updateMsg"></run-model-plot>
+        <error-info :error="error"></error-info>
     </div>
-    <error-info :error="error"></error-info>
 </template>
 
 <script lang="ts">
