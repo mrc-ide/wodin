@@ -32,7 +32,7 @@ describe("Fit Data actions", () => {
         expect(mockFileReader.readAsText.mock.calls[0][1]).toBe("UTF-8");
     };
 
-    it("Upload commits data and updates linke variables on success", (done) => {
+    it("Upload commits data and updates linked variables on success", (done) => {
         const mockFileReader = getMockFileReader("a,b\n1,2\n3,4\n5,6\n7,8\n9,10");
         const mockGetters = {
             nonTimeColumns: ["a"]

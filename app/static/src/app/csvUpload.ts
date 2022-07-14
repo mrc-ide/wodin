@@ -8,6 +8,8 @@ import { SetDataPayload } from "./store/fitData/mutations";
 
 type OnError = (error: Error) => void;
 type OnSuccess = (success: SetDataPayload) => void;
+type PostSuccess = () => void;
+
 interface ParseError {
     message: string
 }
@@ -18,6 +20,8 @@ export class CSVUpload<S extends string, E extends string> {
     private _onError: OnError | null = null;
 
     private _onSuccess: OnSuccess | null = null;
+
+    private _postSuccess: PostSuccess | null = null;
 
     constructor(context: AppCtx) {
         this._commit = context.commit;
@@ -34,6 +38,11 @@ export class CSVUpload<S extends string, E extends string> {
         this._onSuccess = (success: SetDataPayload) => {
             this._commit(type, success);
         };
+        return this;
+    };
+
+    then = (postSuccess: PostSuccess) => {
+        this._postSuccess = postSuccess;
         return this;
     };
 
@@ -67,6 +76,9 @@ export class CSVUpload<S extends string, E extends string> {
                         if (!dataError && processResult?.data) {
                             if (this._onSuccess) {
                                 this._onSuccess(processResult);
+                            }
+                            if (this._postSuccess) {
+                                this._postSuccess();
                             }
                         } else if (this._onError) {
                             this._onError(dataError!);

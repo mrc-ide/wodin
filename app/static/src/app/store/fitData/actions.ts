@@ -37,6 +37,7 @@ export const actions: ActionTree<FitDataState, FitState> = {
         csvUpload(context)
             .withSuccess(FitDataMutation.SetData)
             .withError(FitDataMutation.SetError)
+            .then(() => updateLinkedVariables(context))
             .upload(file);
     },
 
