@@ -30,7 +30,7 @@ describe("Model mutations", () => {
     });
 
     it("sets odin solution", () => {
-        const mockSolution = (t0: number, t1: number) => [{ x: 1, y: 2 }];
+        const mockSolution = () => [{ x: 1, y: 2 }];
         const state = mockModelState();
 
         mutations.SetOdinSolution(state, mockSolution);
@@ -79,5 +79,12 @@ describe("Model mutations", () => {
         mutations.SetEndTime(state, 101);
         expect(state.endTime).toBe(101);
         expect(state.requiredAction).toBe(RequiredModelAction.Compile);
+    });
+
+    it("sets model error", () => {
+        const error = { error: "model error", detail: "with details" };
+        const state = mockModelState();
+        mutations.SetError(state, error);
+        expect(state.error).toBe(error);
     });
 });

@@ -1,7 +1,11 @@
 import { MutationTree } from "vuex";
 import { ModelState, RequiredModelAction } from "./state";
 import {
-    Odin, OdinModelResponse, OdinRunner, OdinSolution
+    Odin,
+    OdinModelResponse,
+    OdinRunner,
+    OdinSolution,
+    Error
 } from "../../types/responseTypes";
 import { evaluateScript } from "../../utils";
 import { Dict } from "../../types/utilTypes";
@@ -14,7 +18,8 @@ export enum ModelMutation {
     SetRequiredAction = "SetRequiredAction",
     SetParameterValues = "SetParameterValues",
     UpdateParameterValues = "UpdateParameterValues",
-    SetEndTime = "SetEndTime"
+    SetEndTime = "SetEndTime",
+    SetError = "SetError",
 }
 
 const runRequired = (state: ModelState) => {
@@ -62,5 +67,9 @@ export const mutations: MutationTree<ModelState> = {
     [ModelMutation.SetEndTime](state: ModelState, payload: number) {
         state.endTime = payload;
         runRequired(state);
+    },
+
+    [ModelMutation.SetError](state: ModelState, payload: Error) {
+        state.error = payload;
     }
 };
