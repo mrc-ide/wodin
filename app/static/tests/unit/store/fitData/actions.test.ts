@@ -210,4 +210,45 @@ describe("Fit Data actions", () => {
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetLinkedVariables);
         expect(commit.mock.calls[0][1]).toStrictEqual({ old1: null, old3: null, new: null });
     });
+
+    it("Update time variable commits new time variable and updates linked variables", () => {
+        const testState = {
+            timeVariable: "Day1",
+            columns: ["Day1", "Day2", "Cases"],
+            linkedVariables: {
+                Day2: "A",
+                Cases: "B"
+            }
+        };
+
+        const rootState = {
+            model: {
+                odinModelResponse: {
+                    valid: true,
+                    metadata: {
+                        variables: ["A", "B", "C"]
+                    }
+                }
+            }
+        };
+
+        // mock the getter result we should get after the mutation has been committed
+        const testGetters = {
+            nonTimeColumns: ["Day1", "Cases"]
+        };
+
+        const commit = jest.fn().mockImplementation((type: FitDataMutation, payload: string) => {
+            if (type === FitDataMutation.SetTimeVariable) {
+                state.timeVariable = payload;
+            }
+        });
+        (actions[FitDataAction.UpdateTimeVariable] as any)({
+            commit, state: testState, rootState, getters: testGetters
+        }, "Day2");
+        expect(commit).toHaveBeenCalledTimes(2);
+        expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetTimeVariable);
+        expect(commit.mock.calls[0][1]).toBe("Day2");
+        expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetLinkedVariables);
+        expect(commit.mock.calls[1][1]).toStrictEqual({ Day1: null, Cases: "B" });
+    });
 });
