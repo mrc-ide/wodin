@@ -5,9 +5,10 @@
       <action-required-message :message="actionRequiredMessage"></action-required-message>
       <run-model-plot :fade-plot="!!updateMsg" :model-fit="true"></run-model-plot>
       <div v-if="iterations">
-        <vue-feather v-if="converged" class="inline-icon text-success" type="check"></vue-feather>
-        <loading-spinner v-if="fitting" size="xs"></loading-spinner>
-        Iterations: {{iterations}}  Sum of squares: {{sumOfSquares}}
+        <vue-feather v-if="converged" class="inline-icon text-success" type="check" size="40px"></vue-feather>
+        <loading-spinner v-if="fitting" class="inline-icon" size="xs"></loading-spinner>
+        <span>Iterations: {{iterations}}</span>
+        <span class="mx-3">Sum of squares: {{sumOfSquares}}</span>
       </div>
     </div>
   </div>

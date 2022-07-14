@@ -1,7 +1,7 @@
 <template>
     <div class="run-model-plot" ref="plot" :style="plotStyle">
     </div>
-    <div v-if="!baseData" class="plot-placeholder">
+    <div v-if="!baseData.length" class="plot-placeholder">
       {{ placeholderMessage }}
     </div>
 </template>
@@ -17,7 +17,7 @@ import {
 } from "plotly.js";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
-import {Dict} from "../../types/utilTypes";
+import { Dict } from "../../types/utilTypes";
 
 export default defineComponent({
     name: "RunModelPlot",
@@ -41,25 +41,39 @@ export default defineComponent({
         });
 
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
-        const baseData = ref(null);
+        const baseData = ref<Data[]>([]);
 
         // translate fit data into a form that can be plotted - only supported for modelFit for now
-        const fitDataSeries = computed(() => {
+        const fitDataSeries = (start: number, end: number) => {
             const { fitData } = store.state;
-            if (props.modelFit && fitData.data && fitData.columnToFit && fitData.timeVariable) {
+            const timeVar = fitData.timeVariable;
+            if (props.modelFit && fitData.data && fitData.columnToFit && timeVar) {
+                const filteredData = fitData.data.filter((row: Dict<number>) => row[timeVar] >= start && row[timeVar] <= end);
                 return [{
                     name: fitData.columnToFit,
-                    x: fitData.data.map((row: Dict<number>) => row[fitData.timeVariable!]),
-                    y: fitData.data.map((row: Dict<number>) => row[fitData.columnToFit!]),
+                    x: filteredData.map((row: Dict<number>) => row[fitData.timeVariable!]),
+                    y: filteredData.map((row: Dict<number>) => row[fitData.columnToFit!]),
                     mode: "markers",
                     type: "scatter"
 
                 }];
             }
             return [];
-        });
+        };
 
         const nPoints = 1000; // TODO: appropriate value could be derived from width of element
+
+        const allPlotData = (start: number, end: number): Data[] => {
+            let dataToPlot = solution.value(startTime.value, endTime.value, nPoints);
+
+            // model fit partial solution returns single series - convert to array
+            if (props.modelFit) {
+                dataToPlot = [dataToPlot] as Data[];
+            }
+
+            return [...dataToPlot, ...fitDataSeries(start, end)];
+        };
+
         const config = {
             responsive: true
         };
@@ -74,7 +88,7 @@ export default defineComponent({
                 if (t0 === undefined || t1 === undefined) {
                     return;
                 }
-                data = solution.value(t0, t1, nPoints);
+                data = allPlotData(t0, t1);
             }
 
             const layout = {
@@ -95,22 +109,14 @@ export default defineComponent({
 
         const drawPlot = () => {
             if (solution.value) {
-                let dataToPlot = solution.value(startTime.value, endTime.value, nPoints);
+                baseData.value = allPlotData(startTime.value, endTime.value);
 
-                // model fit partial solution returns single series - convert to array
-                if (props.modelFit) {
-                    dataToPlot = [dataToPlot] as Data[];
-                }
-
-                dataToPlot = [...dataToPlot, ...fitDataSeries.value];
-                baseData.value = dataToPlot;
-
-                if (baseData.value) {
+                if (baseData.value.length) {
                     const el = plot.value as unknown;
                     const layout = {
                         margin: { t: 0 }
                     };
-                    newPlot(el as HTMLElement, baseData.value as Data[], layout, config);
+                    newPlot(el as HTMLElement, baseData.value, layout, config);
                     (el as EventEmitter).on("plotly_relayout", relayout);
                     resizeObserver = new ResizeObserver(resize);
                     resizeObserver.observe(plot.value as HTMLElement);
