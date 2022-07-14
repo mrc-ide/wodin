@@ -1,5 +1,5 @@
 import {
-    Odin, OdinModelResponse, OdinSolution, OdinRunner
+    Odin, OdinModelResponse, OdinSolution, OdinRunner, Error
 } from "../../types/responseTypes";
 
 export enum RequiredModelAction {
@@ -14,5 +14,6 @@ export interface ModelState {
     odin: null | Odin // When we 'compile' we evaluate the response's 'model' string into a working model
     odinSolution: null | OdinSolution
     parameterValues: null | Map<string, number>
-    endTime: number
+    endTime: number,
+    error: Error | null
 }

@@ -44,7 +44,7 @@ describe("Model actions", () => {
         const commit = jest.fn();
         await (actions[ModelAction.FetchOdinRunner] as any)({ commit });
 
-        expect(commit.mock.calls[0][0]).toBe("errors/AddError");
+        expect(commit.mock.calls[0][0]).toBe("SetError");
         expect(commit.mock.calls[0][1].detail).toBe("server error");
     });
 
@@ -73,7 +73,7 @@ describe("Model actions", () => {
         const commit = jest.fn();
         await (actions[ModelAction.FetchOdin] as any)({ commit, rootState });
 
-        expect(commit.mock.calls[0][0]).toBe("errors/AddError");
+        expect(commit.mock.calls[0][0]).toBe("SetError");
         expect(commit.mock.calls[0][1].detail).toBe("server error");
     });
 
