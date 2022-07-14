@@ -17,6 +17,7 @@ import {
 } from "plotly.js";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
+import {Dict} from "../../types/utilTypes";
 
 export default defineComponent({
     name: "RunModelPlot",
@@ -42,8 +43,20 @@ export default defineComponent({
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
         const baseData = ref(null);
 
+        // translate fit data into a form that can be plotted - only supported for modelFit for now
         const fitDataSeries = computed(() => {
-            return props.modelFit ? store.getters[`fitData/${FitDataGetter.selectedLinkedColumnSeries}`] : [];
+            const { fitData } = store.state;
+            if (props.modelFit && fitData.data && fitData.columnToFit && fitData.timeVariable) {
+                return [{
+                    name: fitData.columnToFit,
+                    x: fitData.data.map((row: Dict<number>) => row[fitData.timeVariable!]),
+                    y: fitData.data.map((row: Dict<number>) => row[fitData.columnToFit!]),
+                    mode: "markers",
+                    type: "scatter"
+
+                }];
+            }
+            return [];
         });
 
         const nPoints = 1000; // TODO: appropriate value could be derived from width of element
