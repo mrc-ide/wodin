@@ -5,11 +5,11 @@ import { RequiredModelAction } from "../../../../src/app/store/model/state";
 describe("Model mutations", () => {
     it("evaluates and sets odin runner", () => {
         const mockRunner = "() => 'runner'";
-        const state = mockModelState({ error: mockError("error") });
+        const state = mockModelState({ odinRunnerError: mockError("error") });
 
         mutations.SetOdinRunner(state, mockRunner);
         expect((state.odinRunner as any)()).toBe("runner");
-        expect(state.error).toBe(null);
+        expect(state.odinRunnerError).toBe(null);
     });
 
     it("sets  odin response", () => {
@@ -18,11 +18,11 @@ describe("Model mutations", () => {
             metadata: {},
             model: "() => 'hello'"
         };
-        const state = mockModelState({ error: mockError("error") });
+        const state = mockModelState({ odinModelResponseError: mockError("error") });
 
         mutations.SetOdinResponse(state, mockOdinModelResponse);
         expect(state.odinModelResponse).toBe(mockOdinModelResponse);
-        expect(state.error).toBe(null);
+        expect(state.odinModelResponseError).toBe(null);
     });
 
     it("sets odin", () => {
@@ -83,10 +83,17 @@ describe("Model mutations", () => {
         expect(state.requiredAction).toBe(RequiredModelAction.Compile);
     });
 
-    it("sets model error", () => {
+    it("sets odinModelResponseError", () => {
         const error = { error: "model error", detail: "with details" };
         const state = mockModelState();
-        mutations.SetError(state, error);
-        expect(state.error).toBe(error);
+        mutations.SetOdinResponseError(state, error);
+        expect(state.odinModelResponseError).toBe(error);
+    });
+
+    it("sets odinModelResponseError", () => {
+        const error = { error: "model error", detail: "with details" };
+        const state = mockModelState();
+        mutations.SetOdinRunnerError(state, error);
+        expect(state.odinRunnerError).toBe(error);
     });
 });

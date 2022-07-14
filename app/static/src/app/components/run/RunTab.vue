@@ -30,7 +30,7 @@ export default defineComponent({
         const store = useStore();
 
         const requiredAction = computed(() => store.state.model.requiredAction);
-        const error = computed(() => store.state.model.error);
+        const error = computed(() => store.state.model.odinRunnerError);
 
         // Enable run button if model has initialised and compile is not required
         const canRunModel = computed(() => !!store.state.model.odinRunner && !!store.state.model.odin

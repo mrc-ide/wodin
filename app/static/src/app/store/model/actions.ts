@@ -20,7 +20,7 @@ const fetchOdin = async (context: ActionContext<ModelState, AppState>) => {
 
     await api(context)
         .withSuccess(ModelMutation.SetOdinResponse)
-        .withError(ModelMutation.SetError)
+        .withError(ModelMutation.SetOdinResponseError)
         .post<OdinModelResponse>("/odin/model", { model })
         .then(() => {
             commit(ModelMutation.SetRequiredAction, RequiredModelAction.Compile);
@@ -68,7 +68,7 @@ export const actions: ActionTree<ModelState, AppState> = {
     async FetchOdinRunner(context) {
         await api(context)
             .withSuccess(ModelMutation.SetOdinRunner)
-            .withError(ModelMutation.SetError)
+            .withError(ModelMutation.SetOdinRunnerError)
             .get<string>("/odin/runner");
     },
 

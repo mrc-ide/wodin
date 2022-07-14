@@ -19,7 +19,8 @@ export enum ModelMutation {
     SetParameterValues = "SetParameterValues",
     UpdateParameterValues = "UpdateParameterValues",
     SetEndTime = "SetEndTime",
-    SetError = "SetError",
+    SetOdinRunnerError = "SetOdinRunnerError",
+    SetOdinResponseError = "SetOdinResponseError",
 }
 
 const runRequired = (state: ModelState) => {
@@ -31,12 +32,12 @@ const runRequired = (state: ModelState) => {
 export const mutations: MutationTree<ModelState> = {
     [ModelMutation.SetOdinRunner](state: ModelState, payload: string) {
         state.odinRunner = evaluateScript<OdinRunner>(payload);
-        state.error = null;
+        state.odinRunnerError = null;
     },
 
     [ModelMutation.SetOdinResponse](state: ModelState, payload: OdinModelResponse) {
         state.odinModelResponse = payload;
-        state.error = null;
+        state.odinModelResponseError = null;
     },
 
     [ModelMutation.SetOdin](state: ModelState, payload: Odin | null) {
@@ -71,7 +72,11 @@ export const mutations: MutationTree<ModelState> = {
         runRequired(state);
     },
 
-    [ModelMutation.SetError](state: ModelState, payload: Error) {
-        state.error = payload;
+    [ModelMutation.SetOdinResponseError](state: ModelState, payload: Error) {
+        state.odinModelResponseError = payload;
+    },
+
+    [ModelMutation.SetOdinRunnerError](state: ModelState, payload: Error) {
+        state.odinRunnerError = payload;
     }
 };
