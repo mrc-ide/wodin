@@ -13,7 +13,7 @@ test.describe("Wodin App model fit tests", () => {
     test("can change to Code tab and back", async ({ page }) => {
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
         await expect(await page.innerText(".wodin-left .wodin-content .nav-tabs .active")).toBe("Code");
-        await expect(await page.innerText(".wodin-left .wodin-content button")).toBe("Compile");
+        await expect(await page.innerText(".wodin-left .wodin-content #compile-btn")).toBe("Compile");
     });
 
     test("can change to Options tab and back", async ({ page }) => {
@@ -24,7 +24,7 @@ test.describe("Wodin App model fit tests", () => {
 
     test("renders Run tab", async ({ page }) => {
         await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Run");
-        await expect(await page.innerText(".wodin-right .wodin-content button")).toBe("Run model");
+        await expect(await page.innerText(".wodin-right .wodin-content #run-btn")).toBe("Run model");
     });
 
     test("can change to Fit tab and back", async ({ page }) => {

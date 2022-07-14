@@ -2,8 +2,9 @@
 const mockMonacoEditor = {
     onDidChangeModelContent: jest.fn(),
     getModel: () => {
-        return { getLinesContent: jest.fn().mockReturnValue(["new code"]) };
-    }
+        return { getLinesContent: jest.fn().mockReturnValueOnce(["new code"]) };
+    },
+    setValue: jest.fn()
 };
 
 const mockMonaco = {
@@ -23,11 +24,11 @@ import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState, mockCodeState } from "../../../mocks";
 
 describe("CodeEditor", () => {
-    const getWrapper = (readOnlyCode = false, mockUpdateCode = jest.fn()) => {
+    const getWrapper = (readOnlyCode = false, mockUpdateCode = jest.fn(), defaultCode = ["default code"]) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
                 config: {
-                    defaultCode: ["default code"],
+                    defaultCode,
                     readOnlyCode,
                     basicProp: ""
                 }
@@ -97,5 +98,29 @@ describe("CodeEditor", () => {
             expect(mockMonaco.editor.create.mock.calls[0][1].readOnly).toBe(true);
             done();
         });
+    });
+
+    it("can reset monaco editor", (done) => {
+        const mockUpdateCode = jest.fn();
+        const wrapper = getWrapper(false, mockUpdateCode);
+        setTimeout(() => {
+            expect(mockMonacoEditor.setValue).not.toHaveBeenCalled();
+            wrapper.find("#reset-btn").trigger("click");
+            expect(mockMonacoEditor.setValue).toHaveBeenCalled();
+            expect(mockMonacoEditor.setValue).toHaveBeenCalledWith("default code");
+            done();
+        });
+    });
+
+    it("does not render reset button when no default code and is not readOnly", () => {
+        const mockUpdateCode = jest.fn();
+        const wrapper = getWrapper(false, mockUpdateCode, []);
+        expect(wrapper.find("#reset-btn").exists()).toBe(false);
+    });
+
+    it("does not render reset button when is readOnly", () => {
+        const mockUpdateCode = jest.fn();
+        const wrapper = getWrapper(true, mockUpdateCode);
+        expect(wrapper.find("#reset-btn").exists()).toBe(false);
     });
 });

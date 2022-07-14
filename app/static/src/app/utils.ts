@@ -27,19 +27,24 @@ export function evaluateScript<T>(script: string): T {
 
 export interface ProcessFitDataResult {
     data: Dict<number>[] | null;
-    error: Error | null;
-    timeVariableCandidates: string[] | null
+    columns: string[] | null,
+    timeVariableCandidates: string[] | null,
+    error?: Error
 }
 export function processFitData(data: Dict<string>[], errorMsg: string): ProcessFitDataResult {
     const emptyResult = {
-        data: null, timeVariableCandidates: null, error: null
+        data: null, columns: null, timeVariableCandidates: null
     };
     if (data.length < settings.minFitDataRows) {
         return { ...emptyResult, error: { error: errorMsg, detail: userMessages.fitData.tooFewRows } };
     }
+
     if (Object.keys(data[0]).length < settings.minFitDataColumns) {
         return { ...emptyResult, error: { error: errorMsg, detail: userMessages.fitData.tooFewColumns } };
     }
+
+    // Convert the string values in the file data into numbers. Keep any values which cannot be converted in
+    // nonNumValues and, if any, return the first few in an error message
     const nonNumValues: string[] = [];
 
     const processedData = data.map((row) => {
@@ -81,5 +86,8 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
         return { ...emptyResult, error: { error: errorMsg, detail: userMessages.fitData.noTimeVariables } };
     }
 
-    return { ...emptyResult, data: processedData, timeVariableCandidates };
+    const columns = Object.keys(processedData[0]);
+    return {
+        ...emptyResult, data: processedData, columns, timeVariableCandidates
+    };
 }

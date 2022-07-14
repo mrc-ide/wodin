@@ -4,7 +4,8 @@ const config: PlaywrightTestConfig = {
     testMatch: '*.etest.ts',
     use: {
         baseURL: "http://localhost:3000",
-        screenshot: "only-on-failure"
+        screenshot: "only-on-failure",
+        actionTimeout: 0
     },
     timeout: 10000,
     workers: 1

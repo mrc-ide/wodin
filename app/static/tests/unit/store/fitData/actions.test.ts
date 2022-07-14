@@ -2,6 +2,7 @@ import { actions, FitDataAction } from "../../../../src/app/store/fitData/action
 import { FitDataMutation } from "../../../../src/app/store/fitData/mutations";
 import resetAllMocks = jest.resetAllMocks;
 import { mockFitDataState } from "../../../mocks";
+import { fileTimeout } from "../../../testUtils";
 
 describe("Fit Data actions", () => {
     const file = { name: "testFile" } as any;
@@ -77,7 +78,7 @@ describe("Fit Data actions", () => {
             expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetLinkedVariables);
             expect(commit.mock.calls[1][1]).toStrictEqual({ a: "X" });
             done();
-        });
+        }, fileTimeout);
     });
 
     it("Upload commits csv parse error", (done) => {
@@ -95,7 +96,7 @@ describe("Fit Data actions", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("Upload commits csv processing error", (done) => {
@@ -113,7 +114,7 @@ describe("Fit Data actions", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("Upload commits file read error", (done) => {
@@ -137,7 +138,7 @@ describe("Fit Data actions", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("Upload does nothing if file is not set", (done) => {
@@ -149,7 +150,7 @@ describe("Fit Data actions", () => {
         setTimeout(() => {
             expect(commit).not.toHaveBeenCalled();
             done();
-        });
+        }, fileTimeout);
     });
 
     const getters = {
