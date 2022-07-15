@@ -29,12 +29,10 @@ export default defineComponent({
         const paramValuesMap = computed(() => store.state.model.parameterValues);
         const paramNames = computed(() => (paramValuesMap.value ? Array.from(paramValuesMap.value.keys()) as string[] : []));
         const paramValues = computed(() => {
-            // TODO: reduce
-            const result = {} as Dict<number>;
-            paramNames.value.forEach((name) => {
-                result[name] = paramValuesMap.value.get(name);
-            });
-            return result;
+            return paramNames.value.reduce((values: Dict<number>, key: string) => {
+                values[key] = paramValuesMap.value.get(key)!;
+                return values;
+            }, {} as Dict<number>);
         });
 
         const timestampParamNames = () => paramNames.value.map((name: string) => name + Date.now());

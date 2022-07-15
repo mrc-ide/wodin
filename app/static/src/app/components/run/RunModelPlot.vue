@@ -1,8 +1,8 @@
 <template>
-    <div :style="plotStyle">
+    <div class="run-plot-container" :style="plotStyle">
       <div class="run-model-plot" ref="plot">
       </div>
-      <div v-if="!baseData.length" class="plot-placeholder">
+      <div v-if="!hasPlotData" class="plot-placeholder">
         {{ placeholderMessage }}
       </div>
       <slot></slot>
@@ -45,11 +45,14 @@ export default defineComponent({
 
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
         const baseData = ref<Data[]>([]);
+        const nPoints = 1000; // TODO: appropriate value could be derived from width of element
+
+        const hasPlotData = computed(() => !!(baseData.value?.length));
 
         // translate fit data into a form that can be plotted - only supported for modelFit for now
         const fitDataSeries = (start: number, end: number) => {
             const { fitData } = store.state;
-            const timeVar = fitData.timeVariable;
+            const timeVar = fitData?.timeVariable;
             if (props.modelFit && fitData.data && fitData.columnToFit && timeVar) {
                 const filteredData = fitData.data.filter((row: Dict<number>) => row[timeVar] >= start && row[timeVar] <= end);
                 return [{
@@ -64,16 +67,12 @@ export default defineComponent({
             return [];
         };
 
-        const nPoints = 1000; // TODO: appropriate value could be derived from width of element
-
         const allPlotData = (start: number, end: number): Data[] => {
-            let dataToPlot = solution.value(startTime.value, endTime.value, nPoints);
-
+            let dataToPlot = solution.value(start, end, nPoints) || [];
             // model fit partial solution returns single series - convert to array
             if (props.modelFit) {
                 dataToPlot = [dataToPlot] as Data[];
             }
-
             return [...dataToPlot, ...fitDataSeries(start, end)];
         };
 
@@ -116,7 +115,7 @@ export default defineComponent({
             if (solution.value) {
                 baseData.value = allPlotData(startTime.value, endTime.value);
 
-                if (baseData.value.length) {
+                if (hasPlotData.value) {
                     const el = plot.value as unknown;
                     const layout = {
                         margin: { t: 0 }
@@ -146,7 +145,8 @@ export default defineComponent({
             relayout,
             resize,
             solution,
-            baseData
+            baseData,
+            hasPlotData
         };
     }
 });
