@@ -1,8 +1,11 @@
 <template>
-    <div class="run-model-plot" ref="plot" :style="plotStyle">
-    </div>
-    <div v-if="!baseData.length" class="plot-placeholder">
-      {{ placeholderMessage }}
+    <div :style="plotStyle">
+      <div class="run-model-plot" ref="plot">
+      </div>
+      <div v-if="!baseData.length" class="plot-placeholder">
+        {{ placeholderMessage }}
+      </div>
+      <slot></slot>
     </div>
 </template>
 
@@ -102,7 +105,9 @@ export default defineComponent({
         };
 
         const resize = () => {
-            Plots.resize(plot.value as HTMLElement);
+            if (plot.value) {
+              Plots.resize(plot.value as HTMLElement);
+            }
         };
 
         let resizeObserver: null | ResizeObserver = null;

@@ -7,10 +7,10 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "ActionRequiredMessage",
-  props: {
-    message: String
-  }
+    name: "ActionRequiredMessage",
+    props: {
+        message: String
+    }
 });
 </script>
 <style scoped lang="scss">
