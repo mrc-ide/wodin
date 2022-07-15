@@ -22,17 +22,17 @@ import VueFeather from "vue-feather";
 import RunModelPlot from "../run/RunModelPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { ModelFitAction } from "../../store/modelFit/actions";
-import {ModelFitGetter} from "../../store/modelFit/getters";
+import { ModelFitGetter } from "../../store/modelFit/getters";
 import userMessages from "../../userMessages";
 import LoadingSpinner from "../LoadingSpinner.vue";
 
 export default {
     name: "FitTab",
     components: {
-      LoadingSpinner,
-      RunModelPlot,
-      ActionRequiredMessage,
-      VueFeather
+        LoadingSpinner,
+        RunModelPlot,
+        ActionRequiredMessage,
+        VueFeather
     },
     setup() {
         const store = useStore();
@@ -44,7 +44,7 @@ export default {
         const converged = computed(() => store.state.modelFit.converged);
         const fitting = computed(() => store.state.modelFit.fitting);
         const sumOfSquares = computed(() => store.state.modelFit.sumOfSquares);
-        const actionRequiredMessage = computed(() => canFitModel.value ? "" : userMessages.modelFit.cannotFit);
+        const actionRequiredMessage = computed(() => (canFitModel.value ? "" : userMessages.modelFit.cannotFit));
 
         return {
             canFitModel,

@@ -106,7 +106,7 @@ export default defineComponent({
 
         const resize = () => {
             if (plot.value) {
-              Plots.resize(plot.value as HTMLElement);
+                Plots.resize(plot.value as HTMLElement);
             }
         };
 

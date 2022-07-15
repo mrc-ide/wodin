@@ -1,4 +1,4 @@
-import {OdinSolution} from "../../types/responseTypes";
+import { OdinSolution } from "../../types/responseTypes";
 
 export interface ModelFitState {
     fitting: boolean,

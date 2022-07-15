@@ -1,4 +1,4 @@
-import {Dict} from "./utilTypes";
+import { Dict } from "./utilTypes";
 
 export interface Error {
     error: string,

@@ -1,6 +1,6 @@
-import {MutationTree} from "vuex";
-import {ModelFitState} from "./state";
-import {SimplexResult} from "../../types/responseTypes";
+import { MutationTree } from "vuex";
+import { ModelFitState } from "./state";
+import { SimplexResult } from "../../types/responseTypes";
 
 export enum ModelFitMutation {
     SetFitting = "SetFitting",
