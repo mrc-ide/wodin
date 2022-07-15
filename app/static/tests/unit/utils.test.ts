@@ -48,7 +48,7 @@ describe("processFitData", () => {
             { a: "9", b: "10" }
         ];
         const result = processFitData(data, "Error occurred");
-        expect(result.error).toBe(null);
+        expect(result.error).toBe(undefined);
         expect(result.data).toStrictEqual([
             { a: 1, b: 2 },
             { a: 3.5, b: -100 },
@@ -71,6 +71,22 @@ describe("processFitData", () => {
         expect(result.error).toStrictEqual({
             error: "Error occurred",
             detail: "File must contain at least 5 data rows."
+        });
+    });
+
+    it("returns error if less than 2 columns", () => {
+        const data = [
+            { a: "1" },
+            { a: "3.5" },
+            { a: "5" },
+            { a: "7" },
+            { a: "10" }
+        ];
+        const result = processFitData(data, "Error occurred");
+        expect(result.data).toBe(null);
+        expect(result.error).toStrictEqual({
+            error: "Error occurred",
+            detail: "File must contain at least 2 columns."
         });
     });
 

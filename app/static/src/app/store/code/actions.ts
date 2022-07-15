@@ -9,9 +9,9 @@ export enum CodeAction {
 }
 
 export const actions: ActionTree<CodeState, AppState> = {
-    [CodeAction.UpdateCode](context, code) {
+    async [CodeAction.UpdateCode](context, code) {
         const { commit, dispatch } = context;
         commit(CodeMutation.SetCurrentCode, code);
-        dispatch(`model/${ModelAction.FetchOdin}`, null, { root: true });
+        await dispatch(`model/${ModelAction.FetchOdin}`, null, { root: true });
     }
 };

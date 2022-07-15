@@ -35,7 +35,7 @@ describe("OptionsTab", () => {
             state: {
                 appType: AppType.Fit,
                 model: {
-                    parameterValues: {}
+                    parameterValues: new Map<string, number>()
                 }
             } as any
         });

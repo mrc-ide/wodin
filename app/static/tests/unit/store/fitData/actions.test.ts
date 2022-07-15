@@ -2,6 +2,7 @@ import { actions, FitDataAction } from "../../../../src/app/store/fitData/action
 import { FitDataMutation } from "../../../../src/app/store/fitData/mutations";
 import resetAllMocks = jest.resetAllMocks;
 import { mockFitDataState } from "../../../mocks";
+import { fileTimeout } from "../../../testUtils";
 
 describe("Fit Data actions", () => {
     const file = { name: "testFile" } as any;
@@ -31,7 +32,7 @@ describe("Fit Data actions", () => {
         expect(mockFileReader.readAsText.mock.calls[0][1]).toBe("UTF-8");
     };
 
-    it("Upload commits data and updates linke variables on success", (done) => {
+    it("Upload commits data and updates linked variables on success", (done) => {
         const mockFileReader = getMockFileReader("a,b\n1,2\n3,4\n5,6\n7,8\n9,10");
         const mockGetters = {
             nonTimeColumns: ["a"]
@@ -77,7 +78,7 @@ describe("Fit Data actions", () => {
             expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetLinkedVariables);
             expect(commit.mock.calls[1][1]).toStrictEqual({ a: "X" });
             done();
-        });
+        }, fileTimeout);
     });
 
     it("Upload commits csv parse error", (done) => {
@@ -95,7 +96,7 @@ describe("Fit Data actions", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("Upload commits csv processing error", (done) => {
@@ -113,7 +114,7 @@ describe("Fit Data actions", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("Upload commits file read error", (done) => {
@@ -137,7 +138,7 @@ describe("Fit Data actions", () => {
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
             done();
-        });
+        }, fileTimeout);
     });
 
     it("Upload does nothing if file is not set", (done) => {
@@ -149,7 +150,7 @@ describe("Fit Data actions", () => {
         setTimeout(() => {
             expect(commit).not.toHaveBeenCalled();
             done();
-        });
+        }, fileTimeout);
     });
 
     const getters = {
@@ -208,5 +209,46 @@ describe("Fit Data actions", () => {
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetLinkedVariables);
         expect(commit.mock.calls[0][1]).toStrictEqual({ old1: null, old3: null, new: null });
+    });
+
+    it("Update time variable commits new time variable and updates linked variables", () => {
+        const testState = {
+            timeVariable: "Day1",
+            columns: ["Day1", "Day2", "Cases"],
+            linkedVariables: {
+                Day2: "A",
+                Cases: "B"
+            }
+        };
+
+        const rootState = {
+            model: {
+                odinModelResponse: {
+                    valid: true,
+                    metadata: {
+                        variables: ["A", "B", "C"]
+                    }
+                }
+            }
+        };
+
+        // mock the getter result we should get after the mutation has been committed
+        const testGetters = {
+            nonTimeColumns: ["Day1", "Cases"]
+        };
+
+        const commit = jest.fn().mockImplementation((type: FitDataMutation, payload: string) => {
+            if (type === FitDataMutation.SetTimeVariable) {
+                state.timeVariable = payload;
+            }
+        });
+        (actions[FitDataAction.UpdateTimeVariable] as any)({
+            commit, state: testState, rootState, getters: testGetters
+        }, "Day2");
+        expect(commit).toHaveBeenCalledTimes(2);
+        expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetTimeVariable);
+        expect(commit.mock.calls[0][1]).toBe("Day2");
+        expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetLinkedVariables);
+        expect(commit.mock.calls[1][1]).toStrictEqual({ Day1: null, Cases: "B" });
     });
 });

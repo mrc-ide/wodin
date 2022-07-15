@@ -20,7 +20,8 @@ test.describe("Wodin App tabs tests", () => {
     test("renders Code tab", async ({ page }) => {
         await expect(await page.innerText(".wodin-left .wodin-content .nav-tabs .active")).toBe("Code");
         await expect(await page.inputValue(".monaco-editor textarea")).toContain("# variables");
-        await expect(await page.innerText(".wodin-left .wodin-content button")).toBe("Compile");
+        await expect(await page.innerText(".wodin-left .wodin-content #reset-btn")).toBe("Reset");
+        await expect(await page.innerText(".wodin-left .wodin-content #compile-btn")).toBe("Compile");
         await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is valid");
     });
 

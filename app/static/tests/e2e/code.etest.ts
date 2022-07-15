@@ -20,6 +20,13 @@ b     <-  user(3.0)
 test.describe("Code Tab tests", () => {
     const { timeout } = PlaywrightConfig;
 
+    const writeCode = async (page: Page, code: string) => {
+        await page.press(".monaco-editor textarea", "Control+A");
+        await page.press(".monaco-editor textarea", "Delete");
+        await page.fill(".monaco-editor textarea", "");
+        await page.fill(".monaco-editor textarea", code);
+    };
+
     test.beforeEach(async ({ page }) => {
         await page.goto("/apps/day1");
     });
@@ -29,13 +36,11 @@ test.describe("Code Tab tests", () => {
         return plot.evaluate((el) => window.getComputedStyle(el).getPropertyValue("opacity"));
     };
 
-    test("can update code, compile and run model", async ({ page }, done) => {
+    test("can update code, compile and run model", async ({ page }) => {
         // Update code - see update message and graph fade.
         // We seem to have to delete the old code here with key presses - 'fill' just prepends. I guess this relates to
         // how monaco responds to DOM events.
-        await page.press(".monaco-editor textarea", "Control+A");
-        await page.press(".monaco-editor textarea", "Delete");
-        await page.fill(".monaco-editor textarea", newValidCode);
+        await writeCode(page, newValidCode);
 
         await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
             "Model code has been updated. Compile code and Run Model to view updated graph.", {
@@ -68,10 +73,8 @@ test.describe("Code Tab tests", () => {
     });
 
     test("can see code not valid msg when update code with syntax error", async ({ page }) => {
-        const invalidCode = "deriv(y1) sigma * (y2 - y1)";
-        await page.press(".monaco-editor textarea", "Control+A");
-        await page.press(".monaco-editor textarea", "Delete");
-        await page.fill(".monaco-editor textarea", invalidCode);
+        const invalidCode = "deriv(y1) test * faker";
+        await writeCode(page, invalidCode);
 
         await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
             "Model code has been updated. Compile code and Run Model to view updated graph.", {
@@ -81,5 +84,23 @@ test.describe("Code Tab tests", () => {
         await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is not valid");
         const compileBtn = await page.locator("#compile-btn");
         expect(await compileBtn.isDisabled()).toBe(true);
+    });
+
+    test("can reset code editor", async ({ page }) => {
+        const defaultCode = await page.innerText(".wodin-left .wodin-content .editor-container");
+        const invalidCode = "faker\n";
+        await writeCode(page, invalidCode);
+        await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
+            "Model code has been updated. Compile code and Run Model to view updated graph.", {
+                timeout
+            }
+        );
+        await expect(await page.innerText(".wodin-left .wodin-content #reset-btn")).toBe("Reset");
+        expect(await page.innerText(".wodin-left .wodin-content .editor-container")).not.toBe(defaultCode);
+        await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is not valid");
+        await page.click("#reset-btn");
+        await page.waitForResponse((response) => response.url().includes("/odin"));
+        expect(await page.innerText(".wodin-left .wodin-content .editor-container")).toBe(defaultCode);
+        await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is valid");
     });
 });
