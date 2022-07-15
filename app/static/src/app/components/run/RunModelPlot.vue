@@ -68,7 +68,11 @@ export default defineComponent({
         };
 
         const allPlotData = (start: number, end: number): Data[] => {
-            let dataToPlot = solution.value(start, end, nPoints) || [];
+            let dataToPlot = solution.value(start, end, nPoints);
+            if (!dataToPlot) {
+                return [];
+            }
+
             // model fit partial solution returns single series - convert to array
             if (props.modelFit) {
                 dataToPlot = [dataToPlot] as Data[];
