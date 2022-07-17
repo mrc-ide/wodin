@@ -1,6 +1,7 @@
 import { Getter, GetterTree } from "vuex";
 import { ModelFitState } from "./state";
 import { FitState } from "../fit/state";
+import {FitDataState} from "../fitData/state";
 
 export enum ModelFitGetter {
     canRunFit = "canRunFit"
