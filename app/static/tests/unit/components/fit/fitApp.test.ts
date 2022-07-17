@@ -6,7 +6,9 @@ import { mount } from "@vue/test-utils";
 import FitApp from "../../../../src/app/components/fit/FitApp.vue";
 import { FitState } from "../../../../src/app/store/fit/state";
 import { AppStateAction } from "../../../../src/app/store/appState/actions";
-import { mockFitDataState, mockFitState, mockModelState } from "../../../mocks";
+import {
+    mockFitDataState, mockFitState, mockModelFitState, mockModelState
+} from "../../../mocks";
 import WodinApp from "../../../../src/app/components/WodinApp.vue";
 import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
@@ -37,6 +39,10 @@ describe("FitApp", () => {
                 fitData: {
                     namespaced: true,
                     state: mockFitDataState()
+                },
+                modelFit: {
+                    namespaced: true,
+                    state: mockModelFitState()
                 },
                 errors: {
                     namespaced: true,
@@ -104,9 +110,9 @@ describe("FitApp", () => {
         const wrapper = getWrapper();
         const rightTabs = wrapper.find("#right-tabs");
 
-        // Change to Sensitivity tab
+        // Change to Fit tab
         await rightTabs.findAll("li a").at(1)!.trigger("click");
-        expect(rightTabs.find("div.mt-4").text()).toBe("Coming soon: Model fit");
+        expect(rightTabs.find("div.mt-4 button").text()).toBe("Fit model");
     });
 
     it("renders Sensitivity as expected", async () => {

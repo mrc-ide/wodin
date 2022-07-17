@@ -31,10 +31,12 @@ export default defineComponent({
     setup(props) {
         const store = useStore();
 
-        const placeholderMessage = computed(() => (props.modelFit ? userMessages.modelFit.notFittedYet : userMessages.run.notRunYet));
+        const placeholderMessage = computed(() => (props.modelFit ? userMessages.modelFit.notFittedYet
+            : userMessages.run.notRunYet));
 
         const plotStyle = computed(() => (props.fadePlot ? "opacity:0.5;" : ""));
-        const solution = computed(() => (props.modelFit ? store.state.modelFit.solution : store.state.model.odinSolution));
+        const solution = computed(() => (props.modelFit ? store.state.modelFit.solution
+            : store.state.model.odinSolution));
 
         const startTime = computed(() => {
             return props.modelFit ? store.getters[`fitData/${FitDataGetter.dataStart}`] : 0;
@@ -54,7 +56,9 @@ export default defineComponent({
             const { fitData } = store.state;
             const timeVar = fitData?.timeVariable;
             if (props.modelFit && fitData.data && fitData.columnToFit && timeVar) {
-                const filteredData = fitData.data.filter((row: Dict<number>) => row[timeVar] >= start && row[timeVar] <= end);
+                const filteredData = fitData.data.filter(
+                    (row: Dict<number>) => row[timeVar] >= start && row[timeVar] <= end
+                );
                 return [{
                     name: fitData.columnToFit,
                     x: filteredData.map((row: Dict<number>) => row[fitData.timeVariable!]),

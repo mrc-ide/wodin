@@ -16,8 +16,10 @@ import RunModelPlot from "../../../../src/app/components/run/RunModelPlot.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { ModelMutation, mutations } from "../../../../src/app/store/model/mutations";
 import { ModelFitMutation, mutations as modelFitMutations } from "../../../../src/app/store/modelFit/mutations";
-import {mockBasicState, mockFitDataState, mockModelFitState, mockModelState} from "../../../mocks";
-import {FitDataState} from "../../../../src/app/store/fitData/state";
+import {
+    mockBasicState, mockFitDataState, mockModelFitState, mockModelState
+} from "../../../mocks";
+import { FitDataState } from "../../../../src/app/store/fitData/state";
 
 describe("RunModelPlot", () => {
     const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");
@@ -134,7 +136,7 @@ describe("RunModelPlot", () => {
     });
 
     const mockFitData = {
-        data:[{t: 0, v: 10}, {t: 1, v: 20}],
+        data: [{ t: 0, v: 10 }, { t: 1, v: 20 }],
         timeVariable: "t",
         columnToFit: "v"
     };

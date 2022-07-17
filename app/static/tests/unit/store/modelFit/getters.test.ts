@@ -22,7 +22,7 @@ describe("ModelFit getters", () => {
 
     it("canRunFit is false when odin is not set", () => {
         const rootState = {
-            model: {...model, odin: null},
+            model: { ...model, odin: null },
             fitData
         };
         expect((getters[ModelFitGetter.canRunFit] as any)(state, {}, rootState)).toBe(false);
@@ -30,7 +30,7 @@ describe("ModelFit getters", () => {
 
     it("canRunFit is false when odinRunner is not set", () => {
         const rootState = {
-            model: {...model, odinRunner: null},
+            model: { ...model, odinRunner: null },
             fitData
         };
         expect((getters[ModelFitGetter.canRunFit] as any)(state, {}, rootState)).toBe(false);
@@ -39,7 +39,7 @@ describe("ModelFit getters", () => {
     it("canRunFit is false when data is not set", () => {
         const rootState = {
             model,
-            fitData: {...fitData, data: null}
+            fitData: { ...fitData, data: null }
         };
         expect((getters[ModelFitGetter.canRunFit] as any)(state, {}, rootState)).toBe(false);
     });
@@ -47,7 +47,7 @@ describe("ModelFit getters", () => {
     it("canRunFit is false when timeVariable is not set", () => {
         const rootState = {
             model,
-            fitData: {...fitData, timeVariable: null}
+            fitData: { ...fitData, timeVariable: null }
         };
         expect((getters[ModelFitGetter.canRunFit] as any)(state, {}, rootState)).toBe(false);
     });
@@ -55,7 +55,7 @@ describe("ModelFit getters", () => {
     it("canRunFit is false when columnToFit is not set", () => {
         const rootState = {
             model,
-            fitData: {...fitData, columnToFit: null}
+            fitData: { ...fitData, columnToFit: null }
         };
         expect((getters[ModelFitGetter.canRunFit] as any)(state, {}, rootState)).toBe(false);
     });

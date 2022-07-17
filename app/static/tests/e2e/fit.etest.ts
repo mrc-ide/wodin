@@ -1,8 +1,7 @@
 import { expect, test, Page } from "@playwright/test";
-import {uploadCSVData} from "./utils";
+import { uploadCSVData } from "./utils";
 
-const realisticFitData =
-    `Day,Cases
+const realisticFitData = `Day,Cases
 0,1
 1,1
 2,0
@@ -77,7 +76,7 @@ test.describe("Wodin App model fit tests", () => {
             .toBe("Coming soon: Sensitivity plot");
     });
 
-    test("can run model fit", async ({page}) => {
+    test("can run model fit", async ({ page }) => {
         // Upload data
         await uploadCSVData(page, realisticFitData);
 

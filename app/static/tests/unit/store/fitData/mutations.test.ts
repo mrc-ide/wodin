@@ -56,47 +56,47 @@ describe("FitData mutations", () => {
 
     it("set linked variable initialises new column to fit when previous is not available", () => {
         const state = mockFitDataState({
-            linkedVariables: {a: "S", b: "I"},
+            linkedVariables: { a: "S", b: "I" },
             columnToFit: "a"
         });
-        mutations.SetLinkedVariable(state, {column: "a", variable: null});
+        mutations.SetLinkedVariable(state, { column: "a", variable: null });
         expect(state.columnToFit).toBe("b");
     });
 
     it("set linked variable clears column to fit if none available", () => {
         const state = mockFitDataState({
-            linkedVariables: {a: "S", b: null},
+            linkedVariables: { a: "S", b: null },
             columnToFit: "a"
         });
-        mutations.SetLinkedVariable(state, {column: "a", variable: null});
+        mutations.SetLinkedVariable(state, { column: "a", variable: null });
         expect(state.columnToFit).toBe(null);
     });
 
     it("set linked variables retains column to fit when still available", () => {
         const state = mockFitDataState({
-            linkedVariables: {a: "S", b: "I"},
+            linkedVariables: { a: "S", b: "I" },
             columnToFit: "b"
         });
-        mutations.SetLinkedVariables(state, {a: "I", b: "R"});
+        mutations.SetLinkedVariables(state, { a: "I", b: "R" });
         expect(state.columnToFit).toBe("b");
     });
 
     it("set linked variables initialises new column to fit when previous is not available", () => {
         const state = mockFitDataState({
-            linkedVariables: {a: "S", b: null},
+            linkedVariables: { a: "S", b: null },
             columnToFit: "a"
         });
-        mutations.SetLinkedVariables(state, {a: null, c: "I", d: "R"});
+        mutations.SetLinkedVariables(state, { a: null, c: "I", d: "R" });
 
         expect(state.columnToFit).toBe("c");
-    })
+    });
 
     it("set linked variables clears column to fit if none available", () => {
         const state = mockFitDataState({
-            linkedVariables: {a: "S", b: null},
+            linkedVariables: { a: "S", b: null },
             columnToFit: "a"
         });
-        mutations.SetLinkedVariables(state, {a: null, b: null});
+        mutations.SetLinkedVariables(state, { a: null, b: null });
 
         expect(state.columnToFit).toBe(null);
     });

@@ -1,7 +1,6 @@
 import { ActionTree } from "vuex";
 import { FitState } from "../fit/state";
 import { ModelFitState } from "./state";
-import { Dict } from "../../types/utilTypes";
 import { ModelFitMutation } from "./mutations";
 import { ModelMutation } from "../model/mutations";
 import { ModelFitGetter } from "./getters";

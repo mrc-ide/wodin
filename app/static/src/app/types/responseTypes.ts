@@ -95,6 +95,6 @@ export interface OdinRunner {
                data: OdinFitData,
                pars: OdinFitParameters,
                modelledSeries: string,
-               odeParams: any,
-               simplexParams: any) => Simplex;
+               odeParams: Dict<unknown>,
+               simplexParams: Dict<unknown>) => Simplex;
 }

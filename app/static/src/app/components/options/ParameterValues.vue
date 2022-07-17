@@ -27,9 +27,12 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const paramValuesMap = computed(() => store.state.model.parameterValues);
-        const paramNames = computed(() => (paramValuesMap.value ? Array.from(paramValuesMap.value.keys()) as string[] : []));
+        const paramNames = computed(
+            () => (paramValuesMap.value ? Array.from(paramValuesMap.value.keys()) as string[] : [])
+        );
         const paramValues = computed(() => {
             return paramNames.value.reduce((values: Dict<number>, key: string) => {
+                // eslint-disable-next-line no-param-reassign
                 values[key] = paramValuesMap.value.get(key)!;
                 return values;
             }, {} as Dict<number>);

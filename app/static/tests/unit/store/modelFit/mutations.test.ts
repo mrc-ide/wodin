@@ -1,5 +1,5 @@
-import {mockModelFitState} from "../../../mocks";
-import {mutations} from "../../../../src/app/store/modelFit/mutations";
+import { mockModelFitState } from "../../../mocks";
+import { mutations } from "../../../../src/app/store/modelFit/mutations";
 
 describe("ModeilFit mutations", () => {
     it("sets fitting", () => {
