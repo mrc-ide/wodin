@@ -1,7 +1,12 @@
 <template>
   <h3>Upload data</h3>
   <div>
-    <input type="file" id="fitDataUpload" accept=".csv,.txt" @change="upload" class="form-control">
+    <input type="file"
+           id="fitDataUpload"
+           accept=".csv,.txt"
+           @change="upload"
+           @click="clearCurrentFile"
+           class="form-control">
   </div>
   <div v-if="success" class="mt-2" id="data-upload-success">
     <vue-feather class="inline-icon text-success" type="check"></vue-feather>
@@ -40,6 +45,11 @@ export default defineComponent({
             store.dispatch(`fitData/${FitDataAction.Upload}`, file);
         };
 
+        const clearCurrentFile = (event: InputEvent) => {
+            const target = event.target! as HTMLInputElement;
+            target.value = ""; // Allow file re-upload
+        };
+
         const updateTimeVariable = (event: Event) => {
             const { value } = event.target as HTMLSelectElement;
             store.dispatch(`fitData/${FitDataAction.UpdateTimeVariable}`, value);
@@ -53,6 +63,7 @@ export default defineComponent({
         const timeVariable = computed(() => store.state.fitData.timeVariable);
 
         return {
+            clearCurrentFile,
             upload,
             updateTimeVariable,
             error,
