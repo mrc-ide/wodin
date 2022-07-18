@@ -59,10 +59,10 @@ describe("LinkData", () => {
         expect(options[3].value).toBe("R");
     };
 
-    const checkCannotLink = (wrapper: VueWrapper<any>) => {
+    const checkCannotLink = (wrapper: VueWrapper<any>, expectedMessage: string) => {
         const rows = wrapper.findAll(".row");
         expect(rows.length).toBe(1);
-        expect(rows.at(0)!.text()).toBe("Please upload data and compile model in order to select links.");
+        expect(rows.at(0)!.text()).toBe(expectedMessage);
         expect(wrapper.find("label").exists()).toBe(false);
         expect(wrapper.find("select").exists()).toBe(false);
     };
@@ -109,16 +109,19 @@ describe("LinkData", () => {
 
     it("renders as expected when data has not been uploaded", () => {
         const wrapper = getWrapper(false, true);
-        checkCannotLink(wrapper);
+        checkCannotLink(wrapper,
+            "Please complete the following in order to select links: Upload valid data");
     });
 
     it("renders as expected when model has not been compiled", () => {
         const wrapper = getWrapper(true, false);
-        checkCannotLink(wrapper);
+        checkCannotLink(wrapper,
+            "Please complete the following in order to select links: Compile model");
     });
 
     it("renders as expected without neither data nor compiled data", () => {
         const wrapper = getWrapper(false, false);
-        checkCannotLink(wrapper);
+        checkCannotLink(wrapper,
+            "Please complete the following in order to select links: Upload valid data, Compile model");
     });
 });

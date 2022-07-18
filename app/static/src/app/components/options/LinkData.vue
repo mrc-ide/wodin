@@ -16,7 +16,7 @@
     </template>
     <template v-else>
       <div class="row my-2">
-        {{ linkPrerequisitesMsg }}
+        {{ linkPrerequisitesMessage }}
       </div>
     </template>
   </div>
@@ -38,6 +38,20 @@ export default defineComponent({
         const modelSuccess = computed(() => store.state.model.odinModelResponse?.valid);
         const modelVariables = computed(() => store.state.model.odinModelResponse?.metadata.variables);
         const linkedVariables = computed(() => store.state.fitData.linkedVariables);
+        const linkPrerequisitesMessage = computed(() => {
+            const messages = [];
+            const { prefix, data, model } = userMessages.fitData.linkPrerequisites;
+            if (!dataColumns.value) {
+                messages.push(data);
+            }
+            if (!modelSuccess.value) {
+                messages.push(model);
+            }
+            if (messages.length) {
+                return `${prefix} ${messages.join(", ")}`;
+            }
+            return null;
+        });
 
         const updateLinkedVariable = (dataColumn: string, event: Event) => {
             const selectValue = (event.target as HTMLSelectElement).value;
@@ -45,15 +59,13 @@ export default defineComponent({
             store.commit(`${namespace}/${FitDataMutation.SetLinkedVariable}`, { column: dataColumn, variable: value });
         };
 
-        const linkPrerequisitesMsg = userMessages.fitData.linkPrerequisites;
-
         return {
             dataColumns,
             modelSuccess,
             modelVariables,
             linkedVariables,
             updateLinkedVariable,
-            linkPrerequisitesMsg
+            linkPrerequisitesMessage
         };
     }
 });
