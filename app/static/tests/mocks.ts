@@ -106,6 +106,7 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
         },
         code: mockCodeState(),
         model: mockModelState(),
+        fitData: mockFitDataState(),
         ...state
     };
 };
