@@ -4,5 +4,5 @@ import { FitDataState } from "../fitData/state";
 
 export interface FitState extends AppState {
     config: null | FitConfig,
-    fitData: FitDataState,
+    fitData: FitDataState
 }
