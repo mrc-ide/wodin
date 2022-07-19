@@ -21,8 +21,6 @@ export default defineComponent({
         }
     },
     setup(props, { emit }) {
-      //pattern="^\d{1,3}(,?\d{3})*(\.\d+)?$"
-
         // We want to correct user's poor formatting e.g. insert comma separators, but bad UX to do
         // this on every keystroke, so update text value on blur, mounted, and external value change (a change
         // to a value which wasn't the last one changed to here e.g. caused by model fit)
@@ -30,24 +28,24 @@ export default defineComponent({
         const textValue = ref("");
 
         const formatTextValue = () => {
-            console.log("formatting");
             // display value with thousands format
             textValue.value = format(",")(props.value);
-            console.log(`Set textValue to ${textValue.value}`);
         };
 
         const updateValue = (event: Event) => {
+            // 1. Apply character mask - only allow numerics, decimal point and comma
             const element = event.target as HTMLInputElement;
-            const newVal = element.value;
+            const newVal = element.value.replace(/[^0-9,.]/g, "");
+
             textValue.value = newVal;
-            console.log("updatingValue");
-            // take out commas should be able to parse
+            // within the event handler we need to update the element directly to apply character mask as well as
+            // updating reactive value
+            element.value = newVal;
+
+            // 2. Remove commas and parse to number, and emit update to container
             const cleanedValue = newVal.replace(/,/g, "");
-            console.log(`cleanedValue: ${cleanedValue}`);
             const numeric = parseFloat(cleanedValue);
-            console.log(`numeric: ${numeric}`);
             if (!Number.isNaN(numeric)) {
-                console.log("emitting numeric");
                 lastNumericValueSet.value = numeric;
                 emit("update", numeric);
             }

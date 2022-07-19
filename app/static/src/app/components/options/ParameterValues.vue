@@ -36,10 +36,7 @@ export default defineComponent({
         const odinSolution = computed(() => store.state.model.odinSolution);
 
         const updateValue = (newValue: number, paramName: string) => {
-            console.log(`New value of ${JSON.stringify(newValue)} for paramName ${paramName}`)
-            if (!Number.isNaN(newValue)) {
-              store.commit(`model/${ModelMutation.UpdateParameterValues}`, {[paramName]: newValue});
-            }
+            store.commit(`model/${ModelMutation.UpdateParameterValues}`, { [paramName]: newValue });
         };
 
         watch(odinSolution, () => {
