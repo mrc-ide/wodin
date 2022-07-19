@@ -5,10 +5,8 @@
         <label class="col-form-label">{{paramName}}</label>
       </div>
       <div class="col-6">
-        <input class="form-control parameter-input"
-               type="number"
-               :value="paramValues.get(paramName)"
-               @input="updateValue($event, paramName)"/>
+        <numeric-input :value="paramValues.get(paramName)"
+                       @update="(n) => updateValue(n, paramName)"/>
       </div>
     </div>
   </div>
@@ -20,9 +18,13 @@ import {
 } from "vue";
 import { useStore } from "vuex";
 import { ModelMutation } from "../../store/model/mutations";
+import NumericInput from "./NumericInput.vue";
 
 export default defineComponent({
     name: "ParameterValues",
+    components: {
+        NumericInput
+    },
     setup() {
         const store = useStore();
         const paramValues = computed(() => store.state.model.parameterValues);
@@ -33,12 +35,10 @@ export default defineComponent({
         const paramKeys = ref(timestampParamNames());
         const odinSolution = computed(() => store.state.model.odinSolution);
 
-        const updateValue = (e: Event, paramName: string) => {
-            const input = e.target as HTMLInputElement;
-            const newValue = parseFloat(input.value);
-            // Do not send update if user has cleared the numeric input. Refresh inputs on next run
+        const updateValue = (newValue: number, paramName: string) => {
+            console.log(`New value of ${JSON.stringify(newValue)} for paramName ${paramName}`)
             if (!Number.isNaN(newValue)) {
-                store.commit(`model/${ModelMutation.UpdateParameterValues}`, { [paramName]: newValue });
+              store.commit(`model/${ModelMutation.UpdateParameterValues}`, {[paramName]: newValue});
             }
         };
 
