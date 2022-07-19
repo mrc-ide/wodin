@@ -6,11 +6,13 @@ import { FitState } from "./state";
 import { model } from "../model/model";
 import { code } from "../code/code";
 import { fitData } from "../fitData/fitData";
+import { AppType } from "../appState/state";
+import { logMutations } from "../plugins";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
     return {
-        appType: "fit",
+        appType: AppType.Fit,
         appName: null,
         config: null
     };
@@ -25,5 +27,8 @@ export const storeOptions: StoreOptions<FitState> = {
         code,
         model,
         fitData
-    }
+    },
+    plugins: [
+        logMutations
+    ]
 };

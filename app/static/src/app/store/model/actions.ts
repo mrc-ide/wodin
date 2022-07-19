@@ -2,10 +2,11 @@ import { ActionContext, ActionTree } from "vuex";
 import { ModelState, RequiredModelAction } from "./state";
 import { api } from "../../apiService";
 import { ModelMutation } from "./mutations";
-import { AppState } from "../appState/state";
+import { AppState, AppType } from "../appState/state";
 import { ErrorsMutation } from "../errors/mutations";
 import { Odin, OdinModelResponse, OdinParameter } from "../../types/responseTypes";
 import { evaluateScript } from "../../utils";
+import { FitDataAction } from "../fitData/actions";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
@@ -29,7 +30,9 @@ const fetchOdin = async (context: ActionContext<ModelState, AppState>) => {
 };
 
 const compileModel = (context: ActionContext<ModelState, AppState>) => {
-    const { commit, state } = context;
+    const {
+        commit, state, rootState, dispatch
+    } = context;
     if (state.odinModelResponse) {
         const odin = evaluateScript<Odin>(state.odinModelResponse.model);
         commit(ModelMutation.SetOdin, odin);
@@ -46,6 +49,11 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
 
         if (state.requiredAction === RequiredModelAction.Compile) {
             commit(ModelMutation.SetRequiredAction, RequiredModelAction.Run);
+        }
+
+        if (rootState.appType === AppType.Fit) {
+            // initialise data links
+            dispatch(`fitData/${FitDataAction.UpdateLinkedVariables}`, null, { root: true });
         }
     }
 };

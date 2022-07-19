@@ -9,8 +9,14 @@ export default {
         errorLoadingData: "An error occurred when loading data",
         errorReadingFile: "An error occurred when reading data file",
         tooFewRows: `File must contain at least ${settings.minFitDataRows} data rows.`,
+        tooFewColumns: `File must contain at least ${settings.minFitDataColumns} columns.`,
         nonNumericValues: "Data contains non-numeric values",
-        noTimeVariables: "Data contains no suitable time variable. A time variable must strictly increase per row."
+        noTimeVariables: "Data contains no suitable time variable. A time variable must strictly increase per row.",
+        linkPrerequisites: {
+            prefix: "Please complete the following in order to select links:",
+            data: "Upload valid data",
+            model: "Compile model"
+        }
     },
     run: {
         compileRequired: "Model code has been updated. Compile code and Run Model to view updated graph.",

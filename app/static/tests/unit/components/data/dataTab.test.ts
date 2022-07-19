@@ -11,7 +11,7 @@ describe("Data Tab", () => {
     const getWrapper = (
         state: Partial<FitDataState> = {},
         mockUpload = jest.fn(),
-        mockSetTimeVariable = jest.fn()
+        mockUpdateTimeVariable = jest.fn()
     ) => {
         const store = new Vuex.Store<FitState>({
             state: mockFitState(),
@@ -20,10 +20,8 @@ describe("Data Tab", () => {
                     namespaced: true,
                     state: mockFitDataState(state),
                     actions: {
-                        Upload: mockUpload
-                    },
-                    mutations: {
-                        SetTimeVariable: mockSetTimeVariable
+                        Upload: mockUpload,
+                        UpdateTimeVariable: mockUpdateTimeVariable
                     }
                 }
             }
@@ -87,21 +85,35 @@ describe("Data Tab", () => {
         expect(mockUpload.mock.calls[0][1]).toBe(mockFile);
     });
 
-    it("commits SetTimeVariable when select changes", async () => {
+    it("dispatches UpdateTimeVariable when select changes", async () => {
         const data = [{ a: 1, b: 2, c: 3 }, { a: 2, b: 3, c: -4 }];
         const columns = ["a", "b", "c"];
         const timeVariableCandidates = ["a", "b"];
         const timeVariable = "b";
-        const mockSetTimeVar = jest.fn();
+        const mockUpdateTimeVar = jest.fn();
         const wrapper = getWrapper({
             data, columns, timeVariableCandidates, timeVariable
-        }, jest.fn(), mockSetTimeVar);
+        }, jest.fn(), mockUpdateTimeVar);
 
         const select = wrapper.find("#time-variable select");
         (select.element as HTMLSelectElement).value = "a";
         await select.trigger("change");
 
-        expect(mockSetTimeVar).toHaveBeenCalledTimes(1);
-        expect(mockSetTimeVar.mock.calls[0][1]).toBe("a");
+        expect(mockUpdateTimeVar).toHaveBeenCalledTimes(1);
+        expect(mockUpdateTimeVar.mock.calls[0][1]).toBe("a");
+    });
+
+    it("clears input value on click", async () => {
+        const wrapper = getWrapper();
+        const input = wrapper.find("input");
+        const el = (input.element as HTMLInputElement);
+        const mockSetValue = jest.fn();
+        Object.defineProperty(el, "value", {
+            get: jest.fn().mockReturnValue("testFile.csv"),
+            set: mockSetValue
+        });
+        await input.trigger("click");
+        expect(mockSetValue).toHaveBeenCalledTimes(1);
+        expect(mockSetValue.mock.calls[0][0]).toBe("");
     });
 });

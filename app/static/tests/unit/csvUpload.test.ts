@@ -20,6 +20,8 @@ describe("CSVUpload", () => {
         return mockFileReader;
     };
 
+    const postSuccess = jest.fn();
+
     afterEach(() => {
         resetAllMocks();
     });
@@ -35,13 +37,14 @@ describe("CSVUpload", () => {
       Error = "Error"
     }
 
-    it("commits data on success", (done) => {
+    it("commits data and calls post success on success", (done) => {
         const mockFileReader = getMockFileReader("a,b\n1,2\n3,4\n5,6\n7,8\n9,10\n");
 
         const commit = jest.fn();
         csvUpload({ commit } as any)
             .withSuccess(TestMutation.Success)
             .withError(TestMutation.Error)
+            .then(postSuccess)
             .upload(file);
 
         expectFileRead(mockFileReader);
@@ -60,6 +63,28 @@ describe("CSVUpload", () => {
                 timeVariableCandidates: ["a", "b"]
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedSetDataPayload);
+
+            expect(postSuccess).toHaveBeenCalledTimes(1);
+
+            done();
+        }, fileTimeout);
+    });
+
+    it("succeeds if post success is not set", (done) => {
+        const mockFileReader = getMockFileReader("a,b\n1,2\n3,4\n5,6\n7,8\n9,10\n");
+
+        const commit = jest.fn();
+        csvUpload({ commit } as any)
+            .withSuccess(TestMutation.Success)
+            .withError(TestMutation.Error)
+            .upload(file);
+
+        expectFileRead(mockFileReader);
+        setTimeout(() => {
+            expect(commit).toHaveBeenCalledTimes(1);
+            expect(commit.mock.calls[0][0]).toBe(TestMutation.Success);
+            expect(postSuccess).not.toHaveBeenCalled();
+
             done();
         }, fileTimeout);
     });
@@ -71,6 +96,7 @@ describe("CSVUpload", () => {
         csvUpload({ commit } as any)
             .withSuccess(TestMutation.Success)
             .withError(TestMutation.Error)
+            .then(postSuccess)
             .upload(file);
 
         expectFileRead(mockFileReader);
@@ -82,6 +108,7 @@ describe("CSVUpload", () => {
                 detail: "Invalid Record Length: columns length is 2, got 3 on line 2"
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
+            expect(postSuccess).not.toHaveBeenCalled();
             done();
         }, fileTimeout);
     });
@@ -93,6 +120,7 @@ describe("CSVUpload", () => {
         csvUpload({ commit } as any)
             .withSuccess(TestMutation.Success)
             .withError(TestMutation.Error)
+            .then(postSuccess)
             .upload(file);
         expectFileRead(mockFileReader);
         setTimeout(() => {
@@ -103,6 +131,7 @@ describe("CSVUpload", () => {
                 detail: "Data contains non-numeric values: 'hello'"
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
+            expect(postSuccess).not.toHaveBeenCalled();
             done();
         }, fileTimeout);
     });
@@ -120,6 +149,7 @@ describe("CSVUpload", () => {
         csvUpload({ commit } as any)
             .withSuccess(TestMutation.Success)
             .withError(TestMutation.Error)
+            .then(postSuccess)
             .upload(file);
         expectFileRead(mockFileReader);
         setTimeout(() => {
@@ -130,6 +160,7 @@ describe("CSVUpload", () => {
                 detail: "File cannot be read"
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
+            expect(postSuccess).not.toHaveBeenCalled();
             done();
         }, fileTimeout);
     });

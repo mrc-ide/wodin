@@ -74,6 +74,22 @@ describe("processFitData", () => {
         });
     });
 
+    it("returns error if less than 2 columns", () => {
+        const data = [
+            { a: "1" },
+            { a: "3.5" },
+            { a: "5" },
+            { a: "7" },
+            { a: "10" }
+        ];
+        const result = processFitData(data, "Error occurred");
+        expect(result.data).toBe(null);
+        expect(result.error).toStrictEqual({
+            error: "Error occurred",
+            detail: "File must contain at least 2 columns."
+        });
+    });
+
     it("returns error with 3 or fewer non-numeric values", () => {
         const data = [
             { a: "one", b: "two" },

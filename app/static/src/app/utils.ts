@@ -39,6 +39,10 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
         return { ...emptyResult, error: { error: errorMsg, detail: userMessages.fitData.tooFewRows } };
     }
 
+    if (Object.keys(data[0]).length < settings.minFitDataColumns) {
+        return { ...emptyResult, error: { error: errorMsg, detail: userMessages.fitData.tooFewColumns } };
+    }
+
     // Convert the string values in the file data into numbers. Keep any values which cannot be converted in
     // nonNumValues and, if any, return the first few in an error message
     const nonNumValues: string[] = [];
