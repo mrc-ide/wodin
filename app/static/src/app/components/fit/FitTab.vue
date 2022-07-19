@@ -6,12 +6,15 @@
       <action-required-message :message="actionRequiredMessage"></action-required-message>
       <run-model-plot :fade-plot="!!actionRequiredMessage" :model-fit="true">
         <div v-if="iterations">
-          <vue-feather v-if="converged" class="inline-icon text-success" type="check" size="40px"></vue-feather>
-          <vue-feather v-if="cancelled" class="inline-icon text-secondary" type="alert-circle" size="40px"></vue-feather>
+          <vue-feather v-if="iconType"
+                       class="inline-icon"
+                       :class="iconClass"
+                       :type="iconType"
+                       size="40px"></vue-feather>
           <loading-spinner v-if="fitting" class="inline-icon" size="xs"></loading-spinner>
           <span class="ms-2">Iterations: {{iterations}}</span>
           <span class="ms-2">Sum of squares: {{sumOfSquares}}</span>
-          <div v-if="cancelled" class="small text-danger">{{cancelledMsg}}</div>
+          <div v-if="cancelled" id="fit-cancelled-msg" class="small text-danger">{{cancelledMsg}}</div>
         </div>
       </run-model-plot>
     </div>
@@ -28,7 +31,7 @@ import { ModelFitAction } from "../../store/modelFit/actions";
 import { ModelFitGetter } from "../../store/modelFit/getters";
 import userMessages from "../../userMessages";
 import LoadingSpinner from "../LoadingSpinner.vue";
-import {ModelFitMutation} from "../../store/modelFit/mutations";
+import { ModelFitMutation } from "../../store/modelFit/mutations";
 
 export default {
     name: "FitTab",
@@ -52,7 +55,26 @@ export default {
         const cancelled = computed(() => iterations.value && !fitting.value && !converged.value);
         const sumOfSquares = computed(() => store.state.modelFit.sumOfSquares);
         const actionRequiredMessage = computed(() => (canFitModel.value ? "" : userMessages.modelFit.cannotFit));
-        const cancelledMsg = computed(() => cancelled.value ? userMessages.modelFit.cancelled : "");
+        const cancelledMsg = computed(() => (cancelled.value ? userMessages.modelFit.cancelled : ""));
+        const iconType = computed(() => {
+            if (cancelled.value) {
+                return "alert-circle";
+            }
+            if (converged.value) {
+                return "check";
+            }
+            return null;
+        });
+        const iconClass = computed(() => {
+            switch (iconType.value) {
+            case "alert-circle":
+                return "text-secondary";
+            case "check":
+                return "text-success";
+            default:
+                return null;
+            }
+        });
 
         return {
             canFitModel,
@@ -64,7 +86,9 @@ export default {
             cancelled,
             cancelledMsg,
             sumOfSquares,
-            actionRequiredMessage
+            actionRequiredMessage,
+            iconType,
+            iconClass
         };
     }
 };
