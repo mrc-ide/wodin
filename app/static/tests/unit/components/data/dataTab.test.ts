@@ -102,4 +102,18 @@ describe("Data Tab", () => {
         expect(mockUpdateTimeVar).toHaveBeenCalledTimes(1);
         expect(mockUpdateTimeVar.mock.calls[0][1]).toBe("a");
     });
+
+    it("clears input value on click", async () => {
+        const wrapper = getWrapper();
+        const input = wrapper.find("input");
+        const el = (input.element as HTMLInputElement);
+        const mockSetValue = jest.fn();
+        Object.defineProperty(el, "value", {
+            get: jest.fn().mockReturnValue("testFile.csv"),
+            set: mockSetValue
+        });
+        await input.trigger("click");
+        expect(mockSetValue).toHaveBeenCalledTimes(1);
+        expect(mockSetValue.mock.calls[0][0]).toBe("");
+    });
 });

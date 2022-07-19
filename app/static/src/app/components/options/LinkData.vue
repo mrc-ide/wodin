@@ -7,7 +7,8 @@
         </div>
         <div class="col-6">
             <select class="form-select"
-                    @change="updateLinkedVariable(dataColumn, $event)" :value="linkedVariables[dataColumn] || ''">
+                    @change="updateLinkedVariable(dataColumn, $event)"
+                    :value="linkedVariables[dataColumn] || ''">
               <option value="">-- no link --</option>
               <option v-for="modelVar in modelVariables" :value="modelVar" :key="modelVar">{{modelVar}}</option>
             </select>
@@ -16,7 +17,7 @@
     </template>
     <template v-else>
       <div class="row my-2">
-        {{ linkPrerequisitesMsg }}
+        {{ linkPrerequisitesMessage }}
       </div>
     </template>
   </div>
@@ -38,14 +39,27 @@ export default defineComponent({
         const modelSuccess = computed(() => store.state.model.odinModelResponse?.valid);
         const modelVariables = computed(() => store.state.model.odinModelResponse?.metadata.variables);
         const linkedVariables = computed(() => store.state.fitData.linkedVariables);
+        const linkPrerequisitesMessage = computed(() => {
+            const messages = [];
+            let result = null;
+            const { prefix, data, model } = userMessages.fitData.linkPrerequisites;
+            if (!dataColumns.value) {
+                messages.push(data);
+            }
+            if (!modelSuccess.value) {
+                messages.push(model);
+            }
+            if (messages.length) {
+                result = `${prefix} ${messages.join(", ")}`;
+            }
+            return result;
+        });
 
         const updateLinkedVariable = (dataColumn: string, event: Event) => {
             const selectValue = (event.target as HTMLSelectElement).value;
-            const value = selectValue === "" ? null : selectValue;
-            store.commit(`${namespace}/${FitDataMutation.SetLinkedVariable}`, { column: dataColumn, variable: value });
+            store.commit(`${namespace}/${FitDataMutation.SetLinkedVariable}`,
+                { column: dataColumn, variable: selectValue || null });
         };
-
-        const linkPrerequisitesMsg = userMessages.fitData.linkPrerequisites;
 
         return {
             dataColumns,
@@ -53,7 +67,7 @@ export default defineComponent({
             modelVariables,
             linkedVariables,
             updateLinkedVariable,
-            linkPrerequisitesMsg
+            linkPrerequisitesMessage
         };
     }
 });
