@@ -204,11 +204,21 @@ describe("processFitData", () => {
             { a: "3.5", b: "-100" },
             { a: "5", b: "6" },
             { a: "7", b: "8" },
-            { a: "", b: ""},
-            { a: "", b: ""},
-            { a: "", b: ""},
-            { a: "", b: ""}
+            { a: "", b: "" },
+            { a: "", b: "" },
+            { a: "", b: "" },
+            { a: "", b: "" }
         ];
+        const result = processFitData(data, "Error occurred");
+        expect(result.data).toBe(null);
+        expect(result.error).toStrictEqual({
+            error: "Error occurred",
+            detail: "File must contain at least 5 data rows."
+        });
+    });
+
+    it("copes with pathalogical empty csv", () => {
+        const data = Array(5).fill({ a: "", b: "" });
         const result = processFitData(data, "Error occurred");
         expect(result.data).toBe(null);
         expect(result.error).toStrictEqual({

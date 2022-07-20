@@ -68,8 +68,14 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
     }
 
     // There might be trailing empty rows to drop.
-    while (all(Object.values(last(processedData)).map((v) => Number.isNaN(v)))) {
-        processedData.pop();
+    while (processedData.length > 0) {
+        const row = processedData[processedData.length - 1];
+        const missing = Object.values(row).map((v) => Number.isNaN(v));
+        if (missing.reduce((a, b) => a && b, true)) { // all missing
+            processedData.pop();
+        } else {
+            break;
+        }
     }
 
     // Only after discarding missing blank rows should we check to see if we have sufficient
@@ -99,12 +105,4 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
     return {
         ...emptyResult, data: processedData, columns, timeVariableCandidates
     };
-}
-
-function all(data: boolean[]) {
-    return data.reduce((a, b) => a && b, true);
-}
-
-function last<T>(data: Array<T>) {
-    return data[data.length - 1];
 }
