@@ -137,4 +137,24 @@ describe("processFitData", () => {
             detail: "Data contains no suitable time variable. A time variable must strictly increase per row."
         });
     });
+
+    it("allows missing values in data columns", () => {
+        const data = [
+            { a: "1", b: "2" },
+            { a: "3.5", b: "" },
+            { a: "5", b: "20" },
+            { a: "7", b: "NA" },
+            { a: "9", b: "10" }
+        ];
+        const result = processFitData(data, "Error occurred");
+        expect(result.error).toBe(undefined);
+        expect(result.data).toStrictEqual([
+            { a: 1, b: 2 },
+            { a: 3.5, b: NaN },
+            { a: 5, b: 20 },
+            { a: 7, b: NaN },
+            { a: 9, b: 10 }
+        ]);
+        expect(result.timeVariableCandidates).toStrictEqual(["a"]);
+    });
 });

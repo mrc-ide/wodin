@@ -51,7 +51,9 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
         const processedRow: Dict<number> = {};
         Object.keys(row).forEach((key) => {
             const value = Number(row[key]);
-            if (Number.isNaN(value)) {
+            if (row[key] === "" || row[key] === "NA") {
+                processedRow[key] = NaN;
+            } else if (Number.isNaN(value)) {
                 nonNumValues.push(row[key]);
             } else {
                 processedRow[key] = value;
@@ -74,7 +76,7 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
         if (index > 0) {
             const toRemove: string[] = [];
             timeVariableCandidates.forEach((key) => {
-                if (row[key] <= processedData[index - 1][key]) {
+                if (Number.isNaN(row[key]) || row[key] <= processedData[index - 1][key]) {
                     toRemove.push(key);
                 }
             });
