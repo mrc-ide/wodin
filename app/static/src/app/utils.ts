@@ -70,7 +70,7 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
     // There might be trailing empty rows to drop.
     while (processedData.length > 0) {
         const row = processedData[processedData.length - 1];
-       if (Object.values(row).every((v) => Number.isNaN(v))) { // all missing
+        if (Object.values(row).every((v) => Number.isNaN(v))) { // all missing
             processedData.pop();
         } else {
             break;
