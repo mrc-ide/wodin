@@ -35,10 +35,6 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
     const emptyResult = {
         data: null, columns: null, timeVariableCandidates: null
     };
-    if (data.length < settings.minFitDataRows) {
-        return { ...emptyResult, error: { error: errorMsg, detail: userMessages.fitData.tooFewRows } };
-    }
-
     if (Object.keys(data[0]).length < settings.minFitDataColumns) {
         return { ...emptyResult, error: { error: errorMsg, detail: userMessages.fitData.tooFewColumns } };
     }
@@ -70,6 +66,17 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
         const error = { error: errorMsg, detail };
         return { ...emptyResult, error };
     }
+
+    // There might be trailing empty rows to drop.
+    while (all(Object.values(last(processedData)).map((v) => Number.isNaN(v)))) {
+        processedData.pop();
+    }
+
+    // Only after discarding missing blank rows should we check to see if we have sufficient
+    if (processedData.length < settings.minFitDataRows) {
+        return { ...emptyResult, error: { error: errorMsg, detail: userMessages.fitData.tooFewRows } };
+    }
+
     let timeVariableCandidates = Object.keys(data[0]);
 
     processedData.forEach((row, index) => {
@@ -92,4 +99,12 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
     return {
         ...emptyResult, data: processedData, columns, timeVariableCandidates
     };
+}
+
+function all(data: boolean[]) {
+    return data.reduce((a, b) => a && b, true);
+}
+
+function last<T>(data: Array<T>) {
+    return data[data.length - 1];
 }
