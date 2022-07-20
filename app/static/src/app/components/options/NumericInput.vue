@@ -20,6 +20,7 @@ export default defineComponent({
             required: true
         }
     },
+    emits: ["update"],
     setup(props, { emit }) {
         // We want to correct user's poor formatting e.g. insert comma separators, but bad UX to do
         // this on every keystroke, so update text value on blur, mounted, and external value change (a change
@@ -37,9 +38,9 @@ export default defineComponent({
             const element = event.target as HTMLInputElement;
             const newVal = element.value.replace(/[^0-9,.]/g, "");
 
-            textValue.value = newVal;
             // within the event handler we need to update the element directly to apply character mask as well as
             // updating reactive value
+            textValue.value = newVal;
             element.value = newVal;
 
             // 2. Remove commas and parse to number, and emit update to container
