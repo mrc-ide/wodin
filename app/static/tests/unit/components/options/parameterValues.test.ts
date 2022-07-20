@@ -1,6 +1,6 @@
 import Vuex, { Store } from "vuex";
 import { nextTick } from "vue";
-import {mount, shallowMount} from "@vue/test-utils";
+import { mount, shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import ParameterValues from "../../../../src/app/components/options/ParameterValues.vue";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";

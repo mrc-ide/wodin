@@ -2,7 +2,6 @@ import { mount, VueWrapper } from "@vue/test-utils";
 import { nextTick } from "vue";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
 
-//TODO: test input attribute values
 describe("NumericInput", () => {
     const expectInputToHaveValue = (wrapper: VueWrapper<any>, expectedTextValue: string) => {
         expect((wrapper.find("input").element as HTMLInputElement).value).toBe(expectedTextValue);
@@ -10,6 +9,7 @@ describe("NumericInput", () => {
 
     const expectInitialValueOnMount = async (value: number, expectedTextValue: string) => {
         const wrapper = mount(NumericInput, { props: { value } });
+        expect(wrapper.find("input").attributes("type")).toBe("text");
         await nextTick();
         expectInputToHaveValue(wrapper, expectedTextValue);
     };
@@ -82,7 +82,7 @@ describe("NumericInput", () => {
         await nextTick();
 
         await wrapper.find("input").setValue("9999.9");
-        await wrapper.setProps({value: 9999.9});
+        await wrapper.setProps({ value: 9999.9 });
 
         await wrapper.find("input").trigger("blur");
 

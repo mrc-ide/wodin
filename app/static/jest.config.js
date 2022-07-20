@@ -9,5 +9,6 @@ module.exports = {
     ],
     coveragePathIgnorePatterns: [
         "./tests/mocks.ts"
-    ]
+    ],
+    transformIgnorePatterns: ["node_modules/(?!(d3-format))"]
 };
