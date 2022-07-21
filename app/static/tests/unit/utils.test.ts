@@ -137,4 +137,93 @@ describe("processFitData", () => {
             detail: "Data contains no suitable time variable. A time variable must strictly increase per row."
         });
     });
+
+    it("allows missing values in data columns", () => {
+        const data = [
+            { a: "1", b: "2" },
+            { a: "3.5", b: "" },
+            { a: "5", b: "20" },
+            { a: "7", b: "NA" },
+            { a: "9", b: "10" }
+        ];
+        const result = processFitData(data, "Error occurred");
+        expect(result.error).toBe(undefined);
+        expect(result.data).toStrictEqual([
+            { a: 1, b: 2 },
+            { a: 3.5, b: NaN },
+            { a: 5, b: 20 },
+            { a: 7, b: NaN },
+            { a: 9, b: 10 }
+        ]);
+        expect(result.timeVariableCandidates).toStrictEqual(["a"]);
+    });
+
+    it("disallows columns with missing values as time variables", () => {
+        // both are increasing here
+        const data = [
+            { a: "1", b: "2" },
+            { a: "2", b: "3" },
+            { a: "5", b: "4.5" },
+            { a: "NA", b: "7" },
+            { a: "9", b: "" }
+        ];
+        const result = processFitData(data, "Error occurred");
+        expect(result.data).toBe(null);
+        expect(result.error).toStrictEqual({
+            error: "Error occurred",
+            detail: "Data contains no suitable time variable. A time variable must strictly increase per row."
+        });
+    });
+
+    it("strips trailing blank rows", () => {
+        const data = [
+            { a: "1", b: "2" },
+            { a: "3.5", b: "-100" },
+            { a: "5", b: "6" },
+            { a: "7", b: "8" },
+            { a: "9", b: "10" },
+            { a: "", b: "" },
+            { a: "", b: "" },
+            { a: "", b: "" }
+        ];
+        const result = processFitData(data, "Error occurred");
+        expect(result.error).toBe(undefined);
+        expect(result.data).toStrictEqual([
+            { a: 1, b: 2 },
+            { a: 3.5, b: -100 },
+            { a: 5, b: 6 },
+            { a: 7, b: 8 },
+            { a: 9, b: 10 }
+        ]);
+        expect(result.timeVariableCandidates).toStrictEqual(["a"]);
+    });
+
+    it("returns error if less than 5 rows, after stripping blanks", () => {
+        const data = [
+            { a: "1", b: "2" },
+            { a: "3.5", b: "-100" },
+            { a: "5", b: "6" },
+            { a: "7", b: "8" },
+            { a: "", b: "" },
+            { a: "", b: "" },
+            { a: "", b: "" },
+            { a: "", b: "" }
+        ];
+        const result = processFitData(data, "Error occurred");
+        expect(result.data).toBe(null);
+        expect(result.error).toStrictEqual({
+            error: "Error occurred",
+            detail: "File must contain at least 5 data rows."
+        });
+    });
+
+    it("copes with pathalogical empty csv", () => {
+        const data = Array(5).fill({ a: "", b: "" });
+        const result = processFitData(data, "Error occurred");
+        expect(result.data).toBe(null);
+        expect(result.error).toStrictEqual({
+            error: "Error occurred",
+            detail: "File must contain at least 5 data rows."
+        });
+    });
 });

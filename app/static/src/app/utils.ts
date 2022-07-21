@@ -35,10 +35,6 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
     const emptyResult = {
         data: null, columns: null, timeVariableCandidates: null
     };
-    if (data.length < settings.minFitDataRows) {
-        return { ...emptyResult, error: { error: errorMsg, detail: userMessages.fitData.tooFewRows } };
-    }
-
     if (Object.keys(data[0]).length < settings.minFitDataColumns) {
         return { ...emptyResult, error: { error: errorMsg, detail: userMessages.fitData.tooFewColumns } };
     }
@@ -51,7 +47,9 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
         const processedRow: Dict<number> = {};
         Object.keys(row).forEach((key) => {
             const value = Number(row[key]);
-            if (Number.isNaN(value)) {
+            if (row[key] === "" || row[key] === "NA") {
+                processedRow[key] = NaN;
+            } else if (Number.isNaN(value)) {
                 nonNumValues.push(row[key]);
             } else {
                 processedRow[key] = value;
@@ -68,13 +66,29 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
         const error = { error: errorMsg, detail };
         return { ...emptyResult, error };
     }
+
+    // There might be trailing empty rows to drop.
+    while (processedData.length > 0) {
+        const row = processedData[processedData.length - 1];
+        if (Object.values(row).every((v) => Number.isNaN(v))) { // all missing
+            processedData.pop();
+        } else {
+            break;
+        }
+    }
+
+    // Only after discarding missing blank rows should we check to see if we have sufficient
+    if (processedData.length < settings.minFitDataRows) {
+        return { ...emptyResult, error: { error: errorMsg, detail: userMessages.fitData.tooFewRows } };
+    }
+
     let timeVariableCandidates = Object.keys(data[0]);
 
     processedData.forEach((row, index) => {
         if (index > 0) {
             const toRemove: string[] = [];
             timeVariableCandidates.forEach((key) => {
-                if (row[key] <= processedData[index - 1][key]) {
+                if (Number.isNaN(row[key]) || row[key] <= processedData[index - 1][key]) {
                     toRemove.push(key);
                 }
             });
