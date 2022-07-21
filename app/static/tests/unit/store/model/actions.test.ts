@@ -24,7 +24,7 @@ describe("Model actions", () => {
     const mockRunner = () => {
         return {
             wodinRun: jest.fn((odin, pars, start, end) => "test solution" as any)
-        };
+        } as any;
     };
 
     it("fetches odin runner", async () => {

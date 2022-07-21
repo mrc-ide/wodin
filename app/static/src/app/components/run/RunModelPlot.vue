@@ -1,5 +1,11 @@
 <template>
-    <div class="run-model-plot" ref="plot" :style="plotStyle">
+    <div class="run-plot-container" :style="plotStyle">
+      <div class="run-model-plot" ref="plot">
+      </div>
+      <div v-if="!hasPlotData" class="plot-placeholder">
+        {{ placeholderMessage }}
+      </div>
+      <slot></slot>
     </div>
 </template>
 
@@ -12,23 +18,72 @@ import { EventEmitter } from "events";
 import {
     Data, newPlot, react, PlotRelayoutEvent, Plots
 } from "plotly.js";
+import { FitDataGetter } from "../../store/fitData/getters";
+import userMessages from "../../userMessages";
+import { Dict } from "../../types/utilTypes";
 
 export default defineComponent({
     name: "RunModelPlot",
     props: {
-        fadePlot: Boolean
+        fadePlot: Boolean,
+        modelFit: Boolean
     },
     setup(props) {
         const store = useStore();
 
+        const placeholderMessage = computed(() => (props.modelFit ? userMessages.modelFit.notFittedYet
+            : userMessages.run.notRunYet));
+
         const plotStyle = computed(() => (props.fadePlot ? "opacity:0.5;" : ""));
-        const solution = computed(() => store.state.model.odinSolution);
-        const endTime = computed(() => store.state.model.endTime);
+        const solution = computed(() => (props.modelFit ? store.state.modelFit.solution
+            : store.state.model.odinSolution));
+
+        const startTime = computed(() => {
+            return props.modelFit ? store.getters[`fitData/${FitDataGetter.dataStart}`] : 0;
+        });
+        const endTime = computed(() => {
+            return props.modelFit ? store.getters[`fitData/${FitDataGetter.dataEnd}`] : store.state.model.endTime;
+        });
 
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
-        const baseData = ref(null);
-
+        const baseData = ref<Data[]>([]);
         const nPoints = 1000; // TODO: appropriate value could be derived from width of element
+
+        const hasPlotData = computed(() => !!(baseData.value?.length));
+
+        // translate fit data into a form that can be plotted - only supported for modelFit for now
+        const fitDataSeries = (start: number, end: number) => {
+            const { fitData } = store.state;
+            const timeVar = fitData?.timeVariable;
+            if (props.modelFit && fitData.data && fitData.columnToFit && timeVar) {
+                const filteredData = fitData.data.filter(
+                    (row: Dict<number>) => row[timeVar] >= start && row[timeVar] <= end
+                );
+                return [{
+                    name: fitData.columnToFit,
+                    x: filteredData.map((row: Dict<number>) => row[fitData.timeVariable!]),
+                    y: filteredData.map((row: Dict<number>) => row[fitData.columnToFit!]),
+                    mode: "markers",
+                    type: "scatter"
+
+                }];
+            }
+            return [];
+        };
+
+        const allPlotData = (start: number, end: number): Data[] => {
+            let dataToPlot = solution.value(start, end, nPoints);
+            if (!dataToPlot) {
+                return [];
+            }
+
+            // model fit partial solution returns single series - convert to array
+            if (props.modelFit) {
+                dataToPlot = [dataToPlot] as Data[];
+            }
+            return [...dataToPlot, ...fitDataSeries(start, end)];
+        };
+
         const config = {
             responsive: true
         };
@@ -43,7 +98,7 @@ export default defineComponent({
                 if (t0 === undefined || t1 === undefined) {
                     return;
                 }
-                data = solution.value(t0, t1, nPoints);
+                data = allPlotData(t0, t1);
             }
 
             const layout = {
@@ -57,21 +112,23 @@ export default defineComponent({
         };
 
         const resize = () => {
-            Plots.resize(plot.value as HTMLElement);
+            if (plot.value) {
+                Plots.resize(plot.value as HTMLElement);
+            }
         };
 
         let resizeObserver: null | ResizeObserver = null;
 
         const drawPlot = () => {
             if (solution.value) {
-                baseData.value = solution.value(0, endTime.value, nPoints);
+                baseData.value = allPlotData(startTime.value, endTime.value);
 
-                if (baseData.value) {
+                if (hasPlotData.value) {
                     const el = plot.value as unknown;
                     const layout = {
                         margin: { t: 0 }
                     };
-                    newPlot(el as HTMLElement, baseData.value as Data[], layout, config);
+                    newPlot(el as HTMLElement, baseData.value, layout, config);
                     (el as EventEmitter).on("plotly_relayout", relayout);
                     resizeObserver = new ResizeObserver(resize);
                     resizeObserver.observe(plot.value as HTMLElement);
@@ -90,12 +147,26 @@ export default defineComponent({
         });
 
         return {
+            placeholderMessage,
             plotStyle,
             plot,
             relayout,
             resize,
-            solution
+            solution,
+            baseData,
+            hasPlotData
         };
     }
 });
 </script>
+<style scoped lang="scss">
+  .plot-placeholder {
+    width: 100%;
+    height: 450px;
+    background-color: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+</style>

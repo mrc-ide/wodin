@@ -3,11 +3,14 @@ import axios from "axios";
 import { BasicState } from "../src/app/store/basic/state";
 import { FitState } from "../src/app/store/fit/state";
 import { StochasticState } from "../src/app/store/stochastic/state";
-import { ResponseSuccess, ResponseFailure, Error } from "../src/app/types/responseTypes";
+import {
+    ResponseSuccess, ResponseFailure, Error, OdinSolution
+} from "../src/app/types/responseTypes";
 import { ModelState } from "../src/app/store/model/state";
 import { CodeState } from "../src/app/store/code/state";
 import { FitDataState } from "../src/app/store/fitData/state";
 import { AppType } from "../src/app/store/appState/state";
+import { ModelFitState } from "../src/app/store/modelFit/state";
 
 export const mockAxios = new MockAdapter(axios);
 
@@ -64,6 +67,7 @@ export const mockFitDataState = (state:Partial<FitDataState> = {}): FitDataState
         timeVariableCandidates: null,
         timeVariable: null,
         linkedVariables: {},
+        columnToFit: null,
         ...state
     };
 };
@@ -82,6 +86,16 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
     };
 };
 
+export const mockModelFitState = (state: Partial<ModelFitState> = {}): ModelFitState => {
+    return {
+        fitting: false,
+        iterations: null,
+        converged: null,
+        sumOfSquares: null,
+        solution: null
+    };
+};
+
 export const mockFitState = (state: Partial<FitState> = {}): FitState => {
     return {
         appType: AppType.Fit,
@@ -92,6 +106,7 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
         },
         code: mockCodeState(),
         model: mockModelState(),
+        fitData: mockFitDataState(),
         ...state
     };
 };
