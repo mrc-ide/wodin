@@ -1,5 +1,5 @@
 import { Dict } from "./types/utilTypes";
-import { Error } from "./types/responseTypes";
+import { Error, OdinModelResponseError } from "./types/responseTypes";
 import userMessages from "./userMessages";
 import settings from "./settings";
 
@@ -31,6 +31,14 @@ export interface ProcessFitDataResult {
     timeVariableCandidates: string[] | null,
     error?: Error
 }
+
+export function getFormedError(errorResponse: OdinModelResponseError): Error {
+    const line = errorResponse.line.join();
+    const detail = line ? `Error on line ${line}: ${errorResponse.message}` : errorResponse.message;
+    const error = "OTHER_ERROR";
+    return { error, detail };
+}
+
 export function processFitData(data: Dict<string>[], errorMsg: string): ProcessFitDataResult {
     const emptyResult = {
         data: null, columns: null, timeVariableCandidates: null

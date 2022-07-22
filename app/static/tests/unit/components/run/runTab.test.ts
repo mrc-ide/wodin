@@ -6,26 +6,32 @@ import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState, mockModelState } from "../../../mocks";
-import { RequiredModelAction } from "../../../../src/app/store/model/state";
+import { ModelState, RequiredModelAction } from "../../../../src/app/store/model/state";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
 import RunModelPlot from "../../../../src/app/components/run/RunModelPlot.vue";
+import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
 
 describe("RunTab", () => {
-    const getWrapper = (odinRunner = {} as any,
-        odin = {} as any,
-        requiredAction: RequiredModelAction | null = null,
-        mockRunModel = jest.fn()) => {
+    const defaultModelState = {
+        odinRunner: {} as any,
+        odin: {} as any,
+        requiredAction: null
+    };
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    const mockRunModel = jest.fn();
+
+    const getWrapper = (modelState: Partial<ModelState> = defaultModelState) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
                 model: {
                     namespaced: true,
-                    state: mockModelState({
-                        odinRunner,
-                        odin,
-                        requiredAction
-                    }),
+                    state: mockModelState(modelState),
                     actions: {
                         RunModel: mockRunModel
                     }
@@ -48,22 +54,22 @@ describe("RunTab", () => {
     });
 
     it("disables run button when state has no odinRunner", () => {
-        const wrapper = getWrapper(null);
+        const wrapper = getWrapper({ odinRunner: null });
         expect(wrapper.find("button").element.disabled).toBe(true);
     });
 
     it("disables run button when state has no odin model", () => {
-        const wrapper = getWrapper({} as any, null);
+        const wrapper = getWrapper({ odin: null });
         expect(wrapper.find("button").element.disabled).toBe(true);
     });
 
     it("disabled run button when compile is required", () => {
-        const wrapper = getWrapper({} as any, {} as any, RequiredModelAction.Compile);
+        const wrapper = getWrapper({ requiredAction: RequiredModelAction.Compile });
         expect(wrapper.find("button").element.disabled).toBe(true);
     });
 
     it("fades plot and shows message when compile required", () => {
-        const wrapper = getWrapper({} as any, {} as any, RequiredModelAction.Compile);
+        const wrapper = getWrapper({ requiredAction: RequiredModelAction.Compile });
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Model code has been updated. Compile code and Run Model to view updated graph."
         );
@@ -71,7 +77,7 @@ describe("RunTab", () => {
     });
 
     it("fades plot and shows message when model run required", () => {
-        const wrapper = getWrapper({} as any, {} as any, RequiredModelAction.Run);
+        const wrapper = getWrapper({ requiredAction: RequiredModelAction.Run });
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Model code has been recompiled or options have been updated. Run Model to view updated graph."
         );
@@ -79,9 +85,15 @@ describe("RunTab", () => {
     });
 
     it("invokes run model action when run button is clicked", () => {
-        const mockRunModel = jest.fn();
-        const wrapper = getWrapper({} as any, {} as any, null, mockRunModel);
+        const wrapper = getWrapper();
         wrapper.find("button").trigger("click");
         expect(mockRunModel).toHaveBeenCalled();
+    });
+
+    it("displays error info in run model", () => {
+        const odinRunnerError = { error: "model error", detail: "with details" };
+        const wrapper = getWrapper({ odinRunnerError });
+        expect(wrapper.findComponent(ErrorInfo).exists()).toBe(true);
+        expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(odinRunnerError);
     });
 });

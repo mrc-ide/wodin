@@ -5,6 +5,12 @@ export default {
         isValid: "Code is valid",
         isNotValid: "Code is not valid"
     },
+    errors: {
+        evaluateScript: {
+            error: "OTHER_ERROR",
+            detail: "An unexpected error occurred while evaluating script. Please contact support."
+        }
+    },
     fitData: {
         errorLoadingData: "An error occurred when loading data",
         errorReadingFile: "An error occurred when reading data file",
