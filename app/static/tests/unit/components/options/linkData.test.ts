@@ -3,11 +3,11 @@ import Vuex from "vuex";
 import LinkData from "../../../../src/app/components/options/LinkData.vue";
 import { FitState } from "../../../../src/app/store/fit/state";
 import { getters } from "../../../../src/app/store/fitData/getters";
-import { FitDataMutation } from "../../../../src/app/store/fitData/mutations";
 import { mockFitDataState, mockFitState, mockModelState } from "../../../mocks";
+import {FitDataAction} from "../../../../src/app/store/fitData/actions";
 
 describe("LinkData", () => {
-    const getWrapper = (includeColumns = true, includeValidModel = true, mockSetLinkedVariable = jest.fn()) => {
+    const getWrapper = (includeColumns = true, includeValidModel = true, mockUpdateLinkedVariable = jest.fn()) => {
         const store = new Vuex.Store<FitState>({
             state: mockFitState(),
             modules: {
@@ -22,8 +22,8 @@ describe("LinkData", () => {
                         } : {}
                     }),
                     getters,
-                    mutations: {
-                        [FitDataMutation.SetLinkedVariable]: mockSetLinkedVariable
+                    actions: {
+                        [FitDataAction.UpdateLinkedVariable]: mockUpdateLinkedVariable
                     }
                 },
                 model: {
@@ -88,23 +88,23 @@ describe("LinkData", () => {
     });
 
     it("updates linked variable on select variable", async () => {
-        const mockSetLinkedVariable = jest.fn();
-        const wrapper = getWrapper(true, true, mockSetLinkedVariable);
+        const mockUpdateLinkedVariable = jest.fn();
+        const wrapper = getWrapper(true, true, mockUpdateLinkedVariable);
         const admissionsSelect = wrapper.findAll("select").at(1)!;
         (admissionsSelect.element as HTMLSelectElement).value = "R";
         await admissionsSelect.trigger("change");
-        expect(mockSetLinkedVariable).toHaveBeenCalledTimes(1);
-        expect(mockSetLinkedVariable.mock.calls[0][1]).toStrictEqual({ column: "Admissions", variable: "R" });
+        expect(mockUpdateLinkedVariable).toHaveBeenCalledTimes(1);
+        expect(mockUpdateLinkedVariable.mock.calls[0][1]).toStrictEqual({ column: "Admissions", variable: "R" });
     });
 
     it("updates linked variable on select no link", async () => {
-        const mockSetLinkedVariable = jest.fn();
-        const wrapper = getWrapper(true, true, mockSetLinkedVariable);
+        const mockUpdateLinkedVariable = jest.fn();
+        const wrapper = getWrapper(true, true, mockUpdateLinkedVariable);
         const casesSelect = wrapper.findAll("select").at(0)!;
         (casesSelect.element as HTMLSelectElement).value = "";
         await casesSelect.trigger("change");
-        expect(mockSetLinkedVariable).toHaveBeenCalledTimes(1);
-        expect(mockSetLinkedVariable.mock.calls[0][1]).toStrictEqual({ column: "Cases", variable: null });
+        expect(mockUpdateLinkedVariable).toHaveBeenCalledTimes(1);
+        expect(mockUpdateLinkedVariable.mock.calls[0][1]).toStrictEqual({ column: "Cases", variable: null });
     });
 
     it("renders as expected when data has not been uploaded", () => {

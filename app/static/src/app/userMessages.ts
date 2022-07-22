@@ -25,6 +25,8 @@ export default {
     },
     modelFit: {
         cannotFit: "Cannot fit model. Please provide valid data and code, and link at least one variable.",
-        notFittedYet: "Model has not been fitted."
+        notFittedYet: "Model has not been fitted.",
+        compileRequired: "Model code has been updated. Compile code and Fit Model for updated best fit.",
+        fitRequired: "Model code has been recompiled, or options or data have been updated. Fit Model for updated best fit."
     }
 };

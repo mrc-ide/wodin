@@ -53,7 +53,7 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
         }
 
         if (rootState.appType === AppType.Fit) {
-            commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true);
+            commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, {root: true});
         }
 
         if (rootState.appType === AppType.Fit) {

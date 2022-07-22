@@ -53,10 +53,10 @@ export default {
                 return userMessages.modelFit.cannotFit;
             }
             if (compileRequired.value) {
-                return "compile required";
+                return userMessages.modelFit.compileRequired;
             }
             if (fitUpdateRequired.value) {
-                return "fit required";
+                return userMessages.modelFit.fitRequired;
             }
 
             return "";

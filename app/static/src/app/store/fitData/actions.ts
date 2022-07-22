@@ -42,7 +42,7 @@ export const actions: ActionTree<FitDataState, FitState> = {
             .withError(FitDataMutation.SetError)
             .then(() => {
                 updateLinkedVariables(context);
-                commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true);
+                commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, {root: true});
             })
             .upload(file);
     },
@@ -51,7 +51,7 @@ export const actions: ActionTree<FitDataState, FitState> = {
         const { commit } = context;
         commit(FitDataMutation.SetTimeVariable, timeVariable);
         updateLinkedVariables(context);
-        commit(ModelFitMutation.SetFitUpdateRequired, true);
+        commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, {root: true});
     },
 
     [FitDataAction.UpdateLinkedVariables](context) {
