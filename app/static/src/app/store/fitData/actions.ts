@@ -62,7 +62,7 @@ export const actions: ActionTree<FitDataState, FitState> = {
         const { commit, state } = context;
         commit(FitDataMutation.SetLinkedVariable, payload);
         if (payload.column === state.columnToFit) {
-            commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true);
+            commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, {root: true});
         }
     }
 };
