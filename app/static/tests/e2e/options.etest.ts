@@ -20,7 +20,7 @@ test.describe("Options Tab tests", () => {
         await expect(await page.innerText(":nth-match(#model-params label, 2)")).toBe("I0");
         await expect(await page.inputValue(":nth-match(#model-params input, 2)")).toBe("1");
         await expect(await page.innerText(":nth-match(#model-params label, 3)")).toBe("N");
-        await expect(await page.inputValue(":nth-match(#model-params input, 3)")).toBe("1000000");
+        await expect(await page.inputValue(":nth-match(#model-params input, 3)")).toBe("1,000,000");
         await expect(await page.innerText(":nth-match(#model-params label, 4)")).toBe("sigma");
         await expect(await page.inputValue(":nth-match(#model-params input, 4)")).toBe("2");
 
@@ -142,5 +142,26 @@ test.describe("Options Tab tests", () => {
                 timeout
             }
         );
+    });
+
+    test("cannot enter chars in parameter input which are not numeric, comma or decimal point", async ({ page }) => {
+        await page.fill(":nth-match(#model-params input, 1)", "12.3g");
+        await expect(await page.inputValue(":nth-match(#model-params input, 1)")).toBe("12.3");
+    });
+
+    test("Entered parameter values are formatted when blur input", async ({ page }) => {
+        await page.fill(":nth-match(#model-params input, 1)", "10000");
+        await page.click(":nth-match(#model-params input, 2)");
+        await expect(await page.inputValue(":nth-match(#model-params input, 1)")).toBe("10,000");
+
+        await page.fill(":nth-match(#model-params input, 1)", "-10000");
+        await page.click(":nth-match(#model-params input, 2)");
+        await expect(await page.inputValue(":nth-match(#model-params input, 1)")).toBe("-10,000");
+    });
+
+    test("Non-numbers are reverted to previous value when blur input", async ({ page }) => {
+        await page.fill(":nth-match(#model-params input, 1)", ",.");
+        await page.click(":nth-match(#model-params input, 2)");
+        await expect(await page.inputValue(":nth-match(#model-params input, 1)")).toBe("4");
     });
 });
