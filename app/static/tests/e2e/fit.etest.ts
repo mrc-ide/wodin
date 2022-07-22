@@ -1,7 +1,7 @@
 import { expect, test, Page } from "@playwright/test";
 import { uploadCSVData } from "./utils";
 
-const realisticFitData = `Day,Cases
+export const realisticFitData = `Day,Cases
 0,1
 1,1
 2,0
@@ -33,7 +33,24 @@ const realisticFitData = `Day,Cases
 28,2
 29,0
 30,2
-31,0`;
+31,0
+`;
+
+const startModelFit = async (page: Page) => {
+    // Upload data
+    await uploadCSVData(page, realisticFitData);
+
+    // link variables
+    await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
+    const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
+    const select1 = await linkContainer.locator(":nth-match(select, 1)");
+    await select1.selectOption("I");
+
+    // run fit
+    await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
+    await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Fit");
+    await page.click(".wodin-right .wodin-content div.mt-4 button#fit-btn");
+};
 
 test.describe("Wodin App model fit tests", () => {
     test.beforeEach(async ({ page }) => {
@@ -77,19 +94,7 @@ test.describe("Wodin App model fit tests", () => {
     });
 
     test("can run model fit", async ({ page }) => {
-        // Upload data
-        await uploadCSVData(page, realisticFitData);
-
-        // link variables
-        await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
-        const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
-        const select1 = await linkContainer.locator(":nth-match(select, 1)");
-        await select1.selectOption("I");
-
-        // run fit
-        await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
-        await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Fit");
-        await page.click(".wodin-right .wodin-content div.mt-4 button");
+        await startModelFit(page);
 
         // wait til fit completes
         await expect(await page.getAttribute(".run-plot-container .vue-feather", "data-type")).toBe("check");
@@ -112,5 +117,16 @@ test.describe("Wodin App model fit tests", () => {
 
         // Test modebar menu is present
         await expect(await page.isVisible(`${plotSelector} .modebar`)).toBe(true);
+    });
+
+    test("can cancel model fit", async ({ page }) => {
+        await startModelFit(page);
+        await page.click(".wodin-right .wodin-content div.mt-4 button#cancel-fit-btn");
+
+        await expect(await page.getAttribute(".run-plot-container .vue-feather", "data-type")).toBe("alert-circle");
+        await expect(await page.innerText(":nth-match(.run-plot-container span, 1)")).toContain("Iterations:");
+        await expect(await page.innerText(":nth-match(.run-plot-container span, 2)"))
+            .toContain("Sum of squares:");
+        await expect(await page.innerText("#fit-cancelled-msg")).toBe("Model fit was cancelled before converging");
     });
 });

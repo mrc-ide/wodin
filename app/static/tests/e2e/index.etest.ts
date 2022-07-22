@@ -1,5 +1,6 @@
 import { expect, test, Page } from "@playwright/test";
 import * as fs from "fs";
+import { realisticFitData } from "./fit.etest";
 
 test.describe("Index tests", () => {
     const tmpPath = "tmp";
@@ -57,9 +58,8 @@ test.describe("Index tests", () => {
         await expect(downloadContent).toBe(expectedContent);
     };
 
-    test("can download day 2 sample files", async ({ page }) => {
-        await testDownloadFile("files/day2/sample1.csv", "sample2-1.csv", "2,1\n", page);
-        await testDownloadFile("files/day2/sample2.csv", "sample2-2.csv", "2,2\n", page);
+    test("can download day 2 sample file", async ({ page }) => {
+        await testDownloadFile("files/day2/influenza_data.csv", "influenza_data.csv", realisticFitData, page);
     });
 
     test("can download day 3 sample file", async ({ page }) => {
