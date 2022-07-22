@@ -9,6 +9,7 @@ export const defaultState: FitDataState = {
     timeVariableCandidates: null,
     timeVariable: null,
     linkedVariables: {},
+    columnToFit: null,
     error: null
 };
 

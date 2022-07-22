@@ -8,13 +8,16 @@
         </div>
         <run-model-plot :fade-plot="!!updateMsg"></run-model-plot>
         <error-info :error="error"></error-info>
-    </div>
+    <action-required-message :message="updateMsg"></action-required-message>
+    <run-model-plot :fade-plot="!!updateMsg" :model-fit="false"></run-model-plot>
+  </div>
 </template>
 
 <script lang="ts">
 import { useStore } from "vuex";
 import { computed, defineComponent } from "vue";
 import RunModelPlot from "./RunModelPlot.vue";
+import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { ModelAction } from "../../store/model/actions";
 import { RequiredModelAction } from "../../store/model/state";
 import userMessages from "../../userMessages";
@@ -24,7 +27,8 @@ export default defineComponent({
     name: "RunTab",
     components: {
         RunModelPlot,
-        ErrorInfo
+        ErrorInfo,
+        ActionRequiredMessage
     },
     setup() {
         const store = useStore();
@@ -56,11 +60,3 @@ export default defineComponent({
     }
 });
 </script>
-<style scoped lang="scss">
-  .run-update-msg {
-    min-height:1.6rem;
-    span {
-      border: 1px solid #dee2e6;
-    }
-  }
-</style>

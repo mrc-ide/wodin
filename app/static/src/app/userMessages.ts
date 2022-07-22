@@ -26,6 +26,11 @@ export default {
     },
     run: {
         compileRequired: "Model code has been updated. Compile code and Run Model to view updated graph.",
-        runRequired: "Model code has been recompiled or options have been updated. Run Model to view updated graph."
+        runRequired: "Model code has been recompiled or options have been updated. Run Model to view updated graph.",
+        notRunYet: "Model has not been run."
+    },
+    modelFit: {
+        cannotFit: "Cannot fit model. Please provide valid data and code, and link at least one variable.",
+        notFittedYet: "Model has not been fitted."
     }
 };

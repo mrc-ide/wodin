@@ -1,3 +1,5 @@
+import { Dict } from "./utilTypes";
+
 export interface Error {
     error: string,
     detail: string | null
@@ -64,9 +66,41 @@ export interface OdinModelResponse{
 
 export type OdinSolution = (t0: number, t1: number, nPoints: number) => {x: number, y: number}[];
 
+export interface OdinFitData {
+    time: number[],
+    value: number[]
+}
+
+export interface OdinFitParameters {
+    base: Map<string, number>,
+    vary: string[]
+}
+
+export interface SimplexResult {
+    iterations: number;
+    converged: boolean;
+    value: number;
+    data: {
+        solutionFit: OdinSolution,
+        pars: Map<string, number>
+    }
+}
+
+export interface Simplex {
+    step: () => boolean;
+    result: () => SimplexResult;
+}
+
 export interface OdinRunner {
     wodinRun: (odin: Odin,
                pars: Map<string, number>,
                tStart: number,
                tEnd: number) => OdinSolution;
+
+    wodinFit: (odin: Odin,
+               data: OdinFitData,
+               pars: OdinFitParameters,
+               modelledSeries: string,
+               odeParams: Dict<unknown>,
+               simplexParams: Dict<unknown>) => Simplex;
 }

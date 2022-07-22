@@ -62,7 +62,7 @@ test.describe("Options Tab tests", () => {
 
         await page.fill(":nth-match(#model-params input, 1)", "3");
 
-        await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
             "Model code has been recompiled or options have been updated. Run Model to view updated graph.", {
                 timeout
             }
@@ -70,7 +70,7 @@ test.describe("Options Tab tests", () => {
 
         // Re-run model
         await page.click("#run-btn");
-        await expect(await page.locator(".run-tab .run-update-msg")).toHaveText("");
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("");
 
         const newPath = await page.getAttribute(graphPathSelector, "d");
         expect(newPath!.startsWith("M0")).toBe(true);
@@ -87,7 +87,7 @@ test.describe("Options Tab tests", () => {
         await page.fill(".monaco-editor textarea", "");
         await page.fill(".monaco-editor textarea", newValidCode);
 
-        await expect(page.locator(".run-tab .run-update-msg")).toHaveText(
+        await expect(page.locator(".run-tab .action-required-msg")).toHaveText(
             "Model code has been updated. Compile code and Run Model to view updated graph.", {
                 timeout
             }
@@ -95,7 +95,7 @@ test.describe("Options Tab tests", () => {
 
         // Compile code
         await page.click("#compile-btn");
-        await expect(page.locator(".run-tab .run-update-msg")).toHaveText(
+        await expect(page.locator(".run-tab .action-required-msg")).toHaveText(
             "Model code has been recompiled or options have been updated. Run Model to view updated graph.", {
                 timeout
             }
@@ -119,7 +119,7 @@ test.describe("Options Tab tests", () => {
 
         await page.fill("#run-options input", "200");
 
-        await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
             "Model code has been recompiled or options have been updated. Run Model to view updated graph.", {
                 timeout
             }
@@ -127,7 +127,7 @@ test.describe("Options Tab tests", () => {
 
         // Re-run model
         await page.click("#run-btn");
-        await expect(await page.locator(".run-tab .run-update-msg")).toHaveText("");
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("");
 
         // Expect run plot's x axis final tick to now be 200
         await expect(await page.locator(xAxisTickSelector).last().innerHTML()).toBe("200");

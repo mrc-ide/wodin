@@ -45,15 +45,15 @@ test.describe("Link Variables tests", () => {
         await expect(await page.inputValue(":nth-match(.collapse select, 1)")).toBe("");
         const select1 = await linkContainer.locator(":nth-match(select, 1)");
         const options1 = await select1.locator("option");
-        const expectedVariableOptions = ["-- no link --", "S", "I", "R"];
-        await expect(options1).toHaveCount(4);
+        const expectedVariableOptions = ["-- no link --", "S", "E", "I", "R", "onset"];
+        await expect(options1).toHaveCount(6);
         await expect(await options1.allInnerTexts()).toStrictEqual(expectedVariableOptions);
 
         await expect(await page.innerText(":nth-match(.collapse label, 2)")).toBe("Admissions");
         await expect(await page.inputValue(":nth-match(.collapse select, 2)")).toBe("");
         const select2 = await linkContainer.locator(":nth-match(select, 2)");
         const options2 = await select2.locator("option");
-        await expect(options2).toHaveCount(4);
+        await expect(options2).toHaveCount(6);
         await expect(await options2.allInnerTexts()).toStrictEqual(expectedVariableOptions);
     });
 
@@ -102,13 +102,13 @@ test.describe("Link Variables tests", () => {
         await page.press(".monaco-editor textarea", "Delete");
         await page.fill(".monaco-editor textarea", newVariableCode);
 
-        await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
             "Model code has been updated. Compile code and Run Model to view updated graph.", {
                 timeout
             }
         );
         await page.click("#compile-btn");
-        await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
             "Model code has been recompiled or options have been updated. Run Model to view updated graph.", {
                 timeout
             }

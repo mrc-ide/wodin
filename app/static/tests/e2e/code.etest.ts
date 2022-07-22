@@ -47,7 +47,7 @@ test.describe("Code Tab tests", () => {
     });
 
     const getRunPlotOpacity = async (page: Page) => {
-        const plot = await page.locator(".run-model-plot");
+        const plot = await page.locator(".run-plot-container");
         return plot.evaluate((el) => window.getComputedStyle(el).getPropertyValue("opacity"));
     };
 
@@ -57,7 +57,7 @@ test.describe("Code Tab tests", () => {
         // how monaco responds to DOM events.
         await writeCode(page, newValidCode);
 
-        await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
             "Model code has been updated. Compile code and Run Model to view updated graph.", {
                 timeout
             }
@@ -69,7 +69,7 @@ test.describe("Code Tab tests", () => {
 
         // Compile code - see new update message
         await page.click("#compile-btn");
-        await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
             "Model code has been recompiled or options have been updated. Run Model to view updated graph.", {
                 timeout
             }
@@ -79,7 +79,7 @@ test.describe("Code Tab tests", () => {
 
         // Run code - should no longer need update, and traces should have changed
         await page.click("#run-btn");
-        await expect(await page.locator(".run-tab .run-update-msg")).toHaveText("", { timeout });
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("", { timeout });
         await expect(await getRunPlotOpacity(page)).toBe("1");
         const legendTextSelector = ".js-plotly-plot .legendtext";
         await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("y1");
@@ -91,7 +91,7 @@ test.describe("Code Tab tests", () => {
         const invalidCode = "deriv(y1) test * faker";
         await writeCode(page, invalidCode);
 
-        await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
             "Model code has been updated. Compile code and Run Model to view updated graph.", {
                 timeout
             }
@@ -105,7 +105,7 @@ test.describe("Code Tab tests", () => {
         const defaultCode = await page.innerText(".wodin-left .wodin-content .editor-container");
         const invalidCode = "faker\n";
         await writeCode(page, invalidCode);
-        await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
             "Model code has been updated. Compile code and Run Model to view updated graph.", {
                 timeout
             }

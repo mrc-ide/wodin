@@ -24,7 +24,7 @@ describe("Model actions", () => {
     const mockRunner = () => {
         return {
             wodinRun: jest.fn((odin, pars, start, end) => "test solution" as any)
-        };
+        } as any;
     };
 
     it("fetches odin runner", async () => {
@@ -240,14 +240,14 @@ describe("Model actions", () => {
         expect(runner.wodinRun).not.toHaveBeenCalled();
     });
 
-    it("runs model and updates required action xyz", () => {
+    it("runs model throws exception when error in code evaluation", () => {
         const mockOdin = {} as any;
         const mockRunnerWithThrownException = () => {
             return {
                 wodinRun: jest.fn().mockImplementation(() => {
                     throw new Error();
                 })
-            };
+            } as any;
         };
 
         const parameterValues = new Map([["p1", 1], ["p2", 2]]);
