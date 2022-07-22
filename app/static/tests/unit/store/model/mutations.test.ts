@@ -25,7 +25,7 @@ describe("Model mutations", () => {
         expect(state.odinModelResponseError).toBe(null);
     });
 
-    it("sets  odin response error", () => {
+    it("sets odin response error", () => {
         const error = {
             line: [],
             message: "a test message"
@@ -39,6 +39,25 @@ describe("Model mutations", () => {
         mutations.SetOdinResponse(state, mockOdinModelResponse);
         expect(state.odinModelResponse).toBe(mockOdinModelResponse);
         expect(state.odinModelResponseError).toStrictEqual({ error: "OTHER_ERROR", detail: error.message });
+    });
+
+    it("sets odin response error with line", () => {
+        const error = {
+            line: [1],
+            message: "a test message"
+        };
+        const mockOdinModelResponse = {
+            valid: false,
+            error
+        };
+        const state = mockModelState();
+
+        mutations.SetOdinResponse(state, mockOdinModelResponse);
+        expect(state.odinModelResponse).toBe(mockOdinModelResponse);
+        expect(state.odinModelResponseError).toStrictEqual({
+            error: "OTHER_ERROR",
+            detail: `Error on line 1: ${error.message}`
+        });
     });
 
     it("sets odin", () => {

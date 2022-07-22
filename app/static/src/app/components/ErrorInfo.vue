@@ -1,5 +1,5 @@
 <template>
-  <div class="small text-danger mt-2">{{displayError}}</div>
+  <div id="error-info" class="small text-danger mt-2">{{displayError}}</div>
 </template>
 
 <script>

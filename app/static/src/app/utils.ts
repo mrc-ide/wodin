@@ -33,7 +33,10 @@ export interface ProcessFitDataResult {
 }
 
 export function getFormedError(errorResponse: OdinModelResponseError): Error {
-    return { error: "OTHER_ERROR", detail: errorResponse.message };
+    const line = errorResponse.line.join();
+    const detail = line ? `Error on line ${line}: ${errorResponse.message}` : errorResponse.message;
+    const error = "OTHER_ERROR";
+    return { error, detail };
 }
 
 export function processFitData(data: Dict<string>[], errorMsg: string): ProcessFitDataResult {
