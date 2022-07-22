@@ -113,26 +113,12 @@ test.describe("Code Tab tests", () => {
         await expect(await page.innerText(".wodin-left .wodin-content #reset-btn")).toBe("Reset");
         expect(await page.innerText(".wodin-left .wodin-content .editor-container")).not.toBe(defaultCode);
         await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is not valid");
+        await expect(await page.innerText(".wodin-left .wodin-content #error-info"))
+            .toBe("OTHER_ERROR: Error on line 1: Every line must contain an assignment");
         await page.click("#reset-btn");
         await page.waitForResponse((response) => response.url().includes("/odin"));
         expect(await page.innerText(".wodin-left .wodin-content .editor-container")).toBe(defaultCode);
         await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is valid");
-    });
-
-    test("can display code error message below code editor", async ({ page }) => {
-        const defaultCode = await page.innerText(".wodin-left .wodin-content .editor-container");
-        const invalidCode = "faker\n";
-        await writeCode(page, invalidCode);
-        await expect(await page.locator(".run-tab .run-update-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to view updated graph.", {
-                timeout
-            }
-        );
-        await expect(await page.innerText(".wodin-left .wodin-content #reset-btn")).toBe("Reset");
-        expect(await page.innerText(".wodin-left .wodin-content .editor-container")).not.toBe(defaultCode);
-        await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is not valid");
-        await expect(await page.innerText(".wodin-left .wodin-content #error-info"))
-            .toBe("OTHER_ERROR: Error on line 1: Every line must contain an assignment");
     });
 
     test("can display model error message when evaluating script", async ({ page }) => {

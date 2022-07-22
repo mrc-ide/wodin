@@ -3,13 +3,9 @@
         <div>
             <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
         </div>
-        <div class="run-update-msg text-danger text-center">
-            <span v-if="updateMsg" class="p-1">{{ updateMsg }}</span>
-        </div>
-        <run-model-plot :fade-plot="!!updateMsg"></run-model-plot>
+        <action-required-message :message="updateMsg"></action-required-message>
+        <run-model-plot :fade-plot="!!updateMsg" :model-fit="false"></run-model-plot>
         <error-info :error="error"></error-info>
-    <action-required-message :message="updateMsg"></action-required-message>
-    <run-model-plot :fade-plot="!!updateMsg" :model-fit="false"></run-model-plot>
   </div>
 </template>
 

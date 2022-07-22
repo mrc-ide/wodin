@@ -35,11 +35,12 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
         commit, state, rootState, dispatch
     } = context;
 
-    if (state?.odinModelResponse?.model && state.odinModelResponse?.metadata) {
-        const odin = evaluateScript<Odin>(state.odinModelResponse.model);
-        commit(ModelMutation.SetOdin, odin);
+    if (state.odinModelResponse) {
+        const model = state.odinModelResponse.model || "";
+        const parameters = state.odinModelResponse.metadata?.parameters || [];
 
-        const { parameters } = state.odinModelResponse.metadata;
+        const odin = evaluateScript<Odin>(model);
+        commit(ModelMutation.SetOdin, odin);
 
         // Overwrite any existing parameter values in the model
         const newValues = new Map<string, number>();
