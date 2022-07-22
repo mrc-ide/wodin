@@ -5,11 +5,12 @@ import { errors } from "../errors/errors";
 import { StochasticState } from "./state";
 import { model } from "../model/model";
 import { code } from "../code/code";
+import { AppType } from "../appState/state";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
     return {
-        appType: "stochastic",
+        appType: AppType.Stochastic,
         appName: null,
         config: null
     };

@@ -46,14 +46,20 @@ export interface OdinParameter {
     rank: number
 }
 
+export interface OdinModelResponseError {
+    line: string[],
+    message: string
+}
+
 export interface OdinModelResponse{
     valid: boolean,
-    metadata: {
+    metadata?: {
         variables: string[],
         parameters: OdinParameter[],
         messages: string[]
     },
-    model: string
+    model?: string,
+    error?: OdinModelResponseError
 }
 
 export type OdinSolution = (t0: number, t1: number, nPoints: number) => {x: number, y: number}[];

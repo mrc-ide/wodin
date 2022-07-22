@@ -1,5 +1,6 @@
 import { expect, test, Page } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
+import { uploadCSVData } from "./utils";
 
 test.describe("Data tab tests", () => {
     const { timeout } = PlaywrightConfig;
@@ -7,15 +8,6 @@ test.describe("Data tab tests", () => {
     test.beforeEach(async ({ page }) => {
         await page.goto("/apps/day2");
     });
-
-    const uploadCSVData = async (page: Page, data: string) => {
-        const file = {
-            name: "file.csv",
-            mimeType: "text/plain",
-            buffer: Buffer.from(data)
-        };
-        await page.setInputFiles("#fitDataUpload", file);
-    };
 
     test("can upload valid csv file", async ({ page }) => {
         await uploadCSVData(page, "a,b\n1,2\n3,4\n5,6\n7,8\n9,10");

@@ -7,6 +7,7 @@ import { ResponseSuccess, ResponseFailure, Error } from "../src/app/types/respon
 import { ModelState } from "../src/app/store/model/state";
 import { CodeState } from "../src/app/store/code/state";
 import { FitDataState } from "../src/app/store/fitData/state";
+import { AppType } from "../src/app/store/appState/state";
 
 export const mockAxios = new MockAdapter(axios);
 
@@ -64,13 +65,14 @@ export const mockFitDataState = (state:Partial<FitDataState> = {}): FitDataState
         error: null,
         timeVariableCandidates: null,
         timeVariable: null,
+        linkedVariables: {},
         ...state
     };
 };
 
 export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
     return {
-        appType: "basic",
+        appType: AppType.Basic,
         appName: "",
         config: {
             basicProp: "",
@@ -84,7 +86,7 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
 
 export const mockFitState = (state: Partial<FitState> = {}): FitState => {
     return {
-        appType: "fit",
+        appType: AppType.Fit,
         appName: "",
         config: {
             fitProp: "",
@@ -98,7 +100,7 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
 
 export const mockStochasticState = (state: Partial<StochasticState> = {}): StochasticState => {
     return {
-        appType: "stochastic",
+        appType: AppType.Stochastic,
         appName: "",
         config: {
             stochasticProp: "",

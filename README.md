@@ -28,6 +28,9 @@ WODIN fetches compiled odin code from [odin.api](https://github.com/mrc-ide/odin
 
 For development, you can install dependencies, build and run the app locally in one step using `./scripts/build-and-run.sh`. The app will be available at http://localhost:3000 
 
+To build front end changes only for a given app type run, `./scripts/build-frontend.sh basic` (or replace `basic` with `fit` or
+`stochastic` as the script argument).
+
 WODIN is deployable via an npm package: https://www.npmjs.com/package/wodin
 
 To run an instance of WODIN with custom configuration, install the package and use `npx wodin --config=/path/to/config`
