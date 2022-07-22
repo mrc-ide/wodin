@@ -1,14 +1,16 @@
 import { ActionTree, ActionContext } from "vuex";
 import { FitDataState } from "./state";
-import { FitDataMutation } from "./mutations";
+import {FitDataMutation, SetLinkedVariablePayload} from "./mutations";
 import { FitState } from "../fit/state";
 import { Dict } from "../../types/utilTypes";
 import { csvUpload } from "../../csvUpload";
+import {ModelFitMutation} from "../modelFit/mutations";
 
 export enum FitDataAction {
     Upload = "Upload",
     UpdateTimeVariable = "UpdateTimeVariable",
-    UpdateLinkedVariables = "UpdateLinkedVariables"
+    UpdateLinkedVariables = "UpdateLinkedVariables",
+    UpdateLinkedVariable = "UpdateLinkedVariable"
 }
 
 const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) => {
@@ -34,10 +36,14 @@ const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) =
 
 export const actions: ActionTree<FitDataState, FitState> = {
     [FitDataAction.Upload](context, file) {
+        const { commit } = context;
         csvUpload(context)
             .withSuccess(FitDataMutation.SetData)
             .withError(FitDataMutation.SetError)
-            .then(() => updateLinkedVariables(context))
+            .then(() => {
+                updateLinkedVariables(context);
+                commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true);
+            })
             .upload(file);
     },
 
@@ -45,9 +51,18 @@ export const actions: ActionTree<FitDataState, FitState> = {
         const { commit } = context;
         commit(FitDataMutation.SetTimeVariable, timeVariable);
         updateLinkedVariables(context);
+        commit(ModelFitMutation.SetFitUpdateRequired, true);
     },
 
     [FitDataAction.UpdateLinkedVariables](context) {
         updateLinkedVariables(context);
+    },
+
+    [FitDataAction.UpdateLinkedVariable](context, payload: SetLinkedVariablePayload) {
+        const { commit, state } = context;
+        commit(FitDataMutation.SetLinkedVariable, payload);
+        if (payload.column === state.columnToFit) {
+            commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true);
+        }
     }
 };

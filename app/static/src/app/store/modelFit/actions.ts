@@ -37,6 +37,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
 
             const simplex = odinRunner!.wodinFit(odin!, data, pars, linkedVariable, {}, {});
 
+            commit(ModelFitMutation.SetFitUpdateRequired, false);
             dispatch(ModelFitAction.FitModelStep, simplex);
         }
     },
