@@ -29,6 +29,7 @@ import { useStore } from "vuex";
 import { FitDataMutation } from "../../store/fitData/mutations";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
+import {FitDataAction} from "../../store/fitData/actions";
 
 export default defineComponent({
     name: "LinkData",
@@ -57,7 +58,7 @@ export default defineComponent({
 
         const updateLinkedVariable = (dataColumn: string, event: Event) => {
             const selectValue = (event.target as HTMLSelectElement).value;
-            store.commit(`${namespace}/${FitDataMutation.SetLinkedVariable}`,
+            store.dispatch(`${namespace}/${FitDataAction.UpdateLinkedVariable}`,
                 { column: dataColumn, variable: selectValue || null });
         };
 
