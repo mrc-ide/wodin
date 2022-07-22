@@ -29,14 +29,15 @@ export default defineComponent({
         const textValue = ref("");
 
         const formatTextValue = () => {
-            // display value with thousands format
+            // display value with thousands formats
             textValue.value = format(",")(props.value);
         };
 
         const updateValue = (event: Event) => {
-            // 1. Apply character mask - only allow numerics, decimal point and comma
+            // 1. Apply character mask - only allow numerics, decimal point, comma, and accept both hyphen and minus
+            // sign for negatives
             const element = event.target as HTMLInputElement;
-            const newVal = element.value.replace(/[^0-9,.]/g, "");
+            const newVal = element.value.replace(/[^0-9,.−-]/g, "");
 
             // within the event handler we need to update the element directly to apply character mask as well as
             // updating reactive value

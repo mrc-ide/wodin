@@ -153,6 +153,10 @@ test.describe("Options Tab tests", () => {
         await page.fill(":nth-match(#model-params input, 1)", "10000");
         await page.click(":nth-match(#model-params input, 2)");
         await expect(await page.inputValue(":nth-match(#model-params input, 1)")).toBe("10,000");
+
+        await page.fill(":nth-match(#model-params input, 1)", "-10000");
+        await page.click(":nth-match(#model-params input, 2)");
+        await expect(await page.inputValue(":nth-match(#model-params input, 1)")).toBe("−10,000");
     });
 
     test("Non-numbers are reverted to previous value when blur input", async ({ page }) => {

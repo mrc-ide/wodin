@@ -19,6 +19,8 @@ describe("NumericInput", () => {
         await expectInitialValueOnMount(10000000, "10,000,000");
         await expectInitialValueOnMount(0.25, "0.25");
         await expectInitialValueOnMount(1234.5, "1,234.5");
+        await expectInitialValueOnMount(-0.5, "−0.5");
+        await expectInitialValueOnMount(-9999.9, "−9,999.9");
     });
 
     it("Updates and formats input when prop updates to externally changed value", async () => {
@@ -53,6 +55,7 @@ describe("NumericInput", () => {
     it("emits new value on input change, and does not reformat", async () => {
         await expectEmitOnInputChange("9999", 9999);
         await expectEmitOnInputChange("0.1", 0.1);
+        await expectEmitOnInputChange("-10", -10);
         // expect commas to be ignored
         await expectEmitOnInputChange("9,999", 9999);
         await expectEmitOnInputChange("1,00,00", 10000);
