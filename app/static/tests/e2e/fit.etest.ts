@@ -1,7 +1,7 @@
 import { expect, test, Page } from "@playwright/test";
 import { uploadCSVData } from "./utils";
 
-const realisticFitData = `Day,Cases
+export const realisticFitData = `Day,Cases
 0,1
 1,1
 2,0
@@ -33,7 +33,8 @@ const realisticFitData = `Day,Cases
 28,2
 29,0
 30,2
-31,0`;
+31,0
+`;
 
 const startModelFit = async (page: Page) => {
     // Upload data
