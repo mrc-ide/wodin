@@ -5,7 +5,7 @@
         <label class="col-form-label">{{paramName}}</label>
       </div>
       <div class="col-6">
-        <numeric-input :value="paramValues.get(paramName)"
+        <numeric-input :value="paramValues[paramName]"
                        @update="(n) => updateValue(n, paramName)"/>
       </div>
     </div>
@@ -19,6 +19,7 @@ import {
 import { useStore } from "vuex";
 import { ModelMutation } from "../../store/model/mutations";
 import NumericInput from "./NumericInput.vue";
+import { Dict } from "../../types/utilTypes";
 
 export default defineComponent({
     name: "ParameterValues",
@@ -27,8 +28,17 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
-        const paramValues = computed(() => store.state.model.parameterValues);
-        const paramNames = computed(() => (paramValues.value ? Array.from(paramValues.value.keys()) as string[] : []));
+        const paramValuesMap = computed(() => store.state.model.parameterValues);
+        const paramNames = computed(
+            () => (paramValuesMap.value ? Array.from(paramValuesMap.value.keys()) as string[] : [])
+        );
+        const paramValues = computed(() => {
+            return paramNames.value.reduce((values: Dict<number>, key: string) => {
+                // eslint-disable-next-line no-param-reassign
+                values[key] = paramValuesMap.value.get(key)!;
+                return values;
+            }, {} as Dict<number>);
+        });
 
         const timestampParamNames = () => paramNames.value.map((name: string) => name + Date.now());
 

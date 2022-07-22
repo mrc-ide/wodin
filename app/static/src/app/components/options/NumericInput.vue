@@ -7,10 +7,19 @@
 </template>
 
 <script lang="ts">
-import { format } from "d3-format";
+import { formatLocale } from "d3-format";
 import {
     defineComponent, ref, onMounted, watch
 } from "vue";
+
+// Provide a d3 format which uses hyphen for negatives rather than minus sign
+const d3Locale = formatLocale({
+    decimal: ".",
+    thousands: ",",
+    grouping: [3],
+    currency: ["£", ""],
+    minus: "-"
+});
 
 export default defineComponent({
     name: "NumericInput",
@@ -30,14 +39,13 @@ export default defineComponent({
 
         const formatTextValue = () => {
             // display value with thousands formats
-            textValue.value = format(",")(props.value);
+            textValue.value = d3Locale.format(",")(props.value);
         };
 
         const updateValue = (event: Event) => {
-            // 1. Apply character mask - only allow numerics, decimal point, comma, and accept both hyphen and minus
-            // sign for negatives
+            // 1. Apply character mask - only allow numerics, decimal point, comma, and hyphen (for negatives)
             const element = event.target as HTMLInputElement;
-            const newVal = element.value.replace(/[^0-9,.−-]/g, "");
+            const newVal = element.value.replace(/[^0-9,.-]/g, "");
 
             // within the event handler we need to update the element directly to apply character mask as well as
             // updating reactive value

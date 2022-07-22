@@ -19,8 +19,7 @@ describe("NumericInput", () => {
         await expectInitialValueOnMount(10000000, "10,000,000");
         await expectInitialValueOnMount(0.25, "0.25");
         await expectInitialValueOnMount(1234.5, "1,234.5");
-        await expectInitialValueOnMount(-0.5, "−0.5");
-        await expectInitialValueOnMount(-9999.9, "−9,999.9");
+        await expectInitialValueOnMount(-9999.9, "-9,999.9");
     });
 
     it("Updates and formats input when prop updates to externally changed value", async () => {

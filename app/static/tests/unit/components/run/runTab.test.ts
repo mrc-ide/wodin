@@ -9,6 +9,7 @@ import { mockBasicState, mockModelState } from "../../../mocks";
 import { RequiredModelAction } from "../../../../src/app/store/model/state";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
 import RunModelPlot from "../../../../src/app/components/run/RunModelPlot.vue";
+import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
 
 describe("RunTab", () => {
     const getWrapper = (odinRunner = {} as any,
@@ -42,7 +43,7 @@ describe("RunTab", () => {
         const wrapper = getWrapper();
         expect(wrapper.find("button").text()).toBe("Run model");
         expect(wrapper.find("button").element.disabled).toBe(false);
-        expect(wrapper.find(".run-update-msg").text()).toBe("");
+        expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         expect(wrapper.findComponent(RunModelPlot).props("fadePlot")).toBe(false);
     });
 
@@ -63,7 +64,7 @@ describe("RunTab", () => {
 
     it("fades plot and shows message when compile required", () => {
         const wrapper = getWrapper({} as any, {} as any, RequiredModelAction.Compile);
-        expect(wrapper.find(".run-update-msg").text()).toBe(
+        expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Model code has been updated. Compile code and Run Model to view updated graph."
         );
         expect(wrapper.findComponent(RunModelPlot).props("fadePlot")).toBe(true);
@@ -71,7 +72,7 @@ describe("RunTab", () => {
 
     it("fades plot and shows message when model run required", () => {
         const wrapper = getWrapper({} as any, {} as any, RequiredModelAction.Run);
-        expect(wrapper.find(".run-update-msg").text()).toBe(
+        expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Model code has been recompiled or options have been updated. Run Model to view updated graph."
         );
         expect(wrapper.findComponent(RunModelPlot).props("fadePlot")).toBe(true);
