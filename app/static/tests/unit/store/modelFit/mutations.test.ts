@@ -25,4 +25,11 @@ describe("ModeilFit mutations", () => {
         expect(state.sumOfSquares).toBe(1.2);
         expect(state.solution).toBe(solutionFit);
     });
+
+    it("sets fitUpdateRequired", () => {
+        const state = mockModelFitState();
+        expect(state.fitUpdateRequired).toBe(true);
+        mutations.SetFitUpdateRequired(state, false);
+        expect(state.fitUpdateRequired).toBe(false);
+    });
 });

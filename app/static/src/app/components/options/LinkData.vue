@@ -26,10 +26,9 @@
 <script lang="ts">
 import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
-import { FitDataMutation } from "../../store/fitData/mutations";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
-import {FitDataAction} from "../../store/fitData/actions";
+import { FitDataAction } from "../../store/fitData/actions";
 
 export default defineComponent({
     name: "LinkData",

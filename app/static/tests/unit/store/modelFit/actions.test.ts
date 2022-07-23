@@ -51,9 +51,11 @@ describe("ModelFit actions", () => {
             commit, dispatch, state, rootState, getters
         });
 
-        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetFitting);
         expect(commit.mock.calls[0][1]).toBe(true);
+        expect(commit.mock.calls[1][0]).toBe(ModelFitMutation.SetFitUpdateRequired);
+        expect(commit.mock.calls[1][1]).toBe(false);
 
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch.mock.calls[0][0]).toBe(ModelFitAction.FitModelStep);

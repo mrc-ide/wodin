@@ -4,7 +4,7 @@ import LinkData from "../../../../src/app/components/options/LinkData.vue";
 import { FitState } from "../../../../src/app/store/fit/state";
 import { getters } from "../../../../src/app/store/fitData/getters";
 import { mockFitDataState, mockFitState, mockModelState } from "../../../mocks";
-import {FitDataAction} from "../../../../src/app/store/fitData/actions";
+import { FitDataAction } from "../../../../src/app/store/fitData/actions";
 
 describe("LinkData", () => {
     const getWrapper = (includeColumns = true, includeValidModel = true, mockUpdateLinkedVariable = jest.fn()) => {

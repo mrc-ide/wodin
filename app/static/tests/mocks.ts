@@ -89,6 +89,7 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
 export const mockModelFitState = (state: Partial<ModelFitState> = {}): ModelFitState => {
     return {
         fitting: false,
+        fitUpdateRequired: true,
         iterations: null,
         converged: null,
         sumOfSquares: null,

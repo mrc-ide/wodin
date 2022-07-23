@@ -1,13 +1,13 @@
-import {ActionContext, ActionTree} from "vuex";
-import {ModelState, RequiredModelAction} from "./state";
-import {api} from "../../apiService";
-import {ModelMutation} from "./mutations";
-import {AppState, AppType} from "../appState/state";
-import {ErrorsMutation} from "../errors/mutations";
-import {Odin, OdinModelResponse, OdinParameter} from "../../types/responseTypes";
-import {evaluateScript} from "../../utils";
-import {FitDataAction} from "../fitData/actions";
-import {ModelFitMutation} from "../modelFit/mutations";
+import { ActionContext, ActionTree } from "vuex";
+import { ModelState, RequiredModelAction } from "./state";
+import { api } from "../../apiService";
+import { ModelMutation } from "./mutations";
+import { AppState, AppType } from "../appState/state";
+import { ErrorsMutation } from "../errors/mutations";
+import { Odin, OdinModelResponse, OdinParameter } from "../../types/responseTypes";
+import { evaluateScript } from "../../utils";
+import { FitDataAction } from "../fitData/actions";
+import { ModelFitMutation } from "../modelFit/mutations";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
@@ -53,10 +53,7 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
         }
 
         if (rootState.appType === AppType.Fit) {
-            commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, {root: true});
-        }
-
-        if (rootState.appType === AppType.Fit) {
+            commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
             // initialise data links
             dispatch(`fitData/${FitDataAction.UpdateLinkedVariables}`, null, { root: true });
         }

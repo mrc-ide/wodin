@@ -1,10 +1,10 @@
 import { ActionTree, ActionContext } from "vuex";
 import { FitDataState } from "./state";
-import {FitDataMutation, SetLinkedVariablePayload} from "./mutations";
+import { FitDataMutation, SetLinkedVariablePayload } from "./mutations";
 import { FitState } from "../fit/state";
 import { Dict } from "../../types/utilTypes";
 import { csvUpload } from "../../csvUpload";
-import {ModelFitMutation} from "../modelFit/mutations";
+import { ModelFitMutation } from "../modelFit/mutations";
 
 export enum FitDataAction {
     Upload = "Upload",
@@ -42,7 +42,7 @@ export const actions: ActionTree<FitDataState, FitState> = {
             .withError(FitDataMutation.SetError)
             .then(() => {
                 updateLinkedVariables(context);
-                commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, {root: true});
+                commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
             })
             .upload(file);
     },
@@ -51,7 +51,7 @@ export const actions: ActionTree<FitDataState, FitState> = {
         const { commit } = context;
         commit(FitDataMutation.SetTimeVariable, timeVariable);
         updateLinkedVariables(context);
-        commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, {root: true});
+        commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
     },
 
     [FitDataAction.UpdateLinkedVariables](context) {
@@ -62,7 +62,7 @@ export const actions: ActionTree<FitDataState, FitState> = {
         const { commit, state } = context;
         commit(FitDataMutation.SetLinkedVariable, payload);
         if (payload.column === state.columnToFit) {
-            commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, {root: true});
+            commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
         }
     }
 };

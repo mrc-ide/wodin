@@ -1,6 +1,4 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via RunModelPlot
-import {RequiredModelAction} from "../../../../src/app/store/model/state";
-
 jest.mock("plotly.js", () => {});
 
 /* eslint-disable import/first */
@@ -12,6 +10,7 @@ import { FitState } from "../../../../src/app/store/fit/state";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import RunModelPlot from "../../../../src/app/components/run/RunModelPlot.vue";
+import { RequiredModelAction } from "../../../../src/app/store/model/state";
 import { mockFitState } from "../../../mocks";
 
 describe("Fit Tab", () => {
@@ -125,7 +124,8 @@ describe("Fit Tab", () => {
         const wrapper = getWrapper(true, false, true);
         expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Model code has been recompiled, or options or data have been updated. Fit Model for updated best fit.");
+            .toBe("Model code has been recompiled, or options or data have been updated. "
+                + "Fit Model for updated best fit.");
         const runModelPlot = wrapper.findComponent(RunModelPlot);
         expect(runModelPlot.props("fadePlot")).toBe(true);
         expect(runModelPlot.findComponent(LoadingSpinner).exists()).toBe(false);
@@ -135,7 +135,7 @@ describe("Fit Tab", () => {
 
     it("dispatches fit action on click button", async () => {
         const mockFitModel = jest.fn();
-        const wrapper = getWrapper(true, false, false,null, null, false, null, mockFitModel);
+        const wrapper = getWrapper(true, false, false, null, null, false, null, mockFitModel);
         await wrapper.find("#fit-btn").trigger("click");
         expect(mockFitModel).toHaveBeenCalledTimes(1);
     });
