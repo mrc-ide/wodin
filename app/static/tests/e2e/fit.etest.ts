@@ -99,6 +99,8 @@ beta <- R_0 * sigma
 output(onset) <- if(t == 0) I_0 else gamma*E
 `;
 
+const { timeout } = PlaywrightConfig;
+
 const startModelFit = async (page: Page) => {
     // Upload data
     await uploadCSVData(page, realisticFitData);
@@ -137,8 +139,6 @@ const reRunFit = async (page: Page) => {
 };
 
 test.describe("Wodin App model fit tests", () => {
-    const { timeout } = PlaywrightConfig;
-
     test.beforeEach(async ({ page }) => {
         await page.goto("/apps/day2");
     });
