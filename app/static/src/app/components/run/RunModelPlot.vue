@@ -88,6 +88,13 @@ export default defineComponent({
             responsive: true
         };
 
+        // This is enough top margin to accomodate the plotly options
+        // bar without it interfering with the first series in the
+        // legend.
+        const margin = {
+            t: 25
+        };
+
         const relayout = async (event: PlotRelayoutEvent) => {
             let data;
             if (event["xaxis.autorange"] === true) {
@@ -102,6 +109,7 @@ export default defineComponent({
             }
 
             const layout = {
+                margin,
                 uirevision: "true",
                 xaxis: { autorange: true },
                 yaxis: { autorange: true }
@@ -126,7 +134,7 @@ export default defineComponent({
                 if (hasPlotData.value) {
                     const el = plot.value as unknown;
                     const layout = {
-                        margin: { t: 0 }
+                        margin
                     };
                     newPlot(el as HTMLElement, baseData.value, layout, config);
                     (el as EventEmitter).on("plotly_relayout", relayout);
