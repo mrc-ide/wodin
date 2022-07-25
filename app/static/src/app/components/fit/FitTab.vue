@@ -66,14 +66,11 @@ export default {
             return null;
         });
         const iconClass = computed(() => {
-            switch (iconType.value) {
-            case "alert-circle":
-                return "text-secondary";
-            case "check":
-                return "text-success";
-            default:
-                return null;
-            }
+            const classes = {
+                "alert-circle": "text-secondary",
+                check: "text-success"
+            };
+            return iconType.value ? classes[iconType.value] : null;
         });
 
         return {
