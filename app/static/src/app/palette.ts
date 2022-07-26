@@ -36,11 +36,15 @@ export function interpolateColours(pal: string[], len: number) {
 
 export function paletteModel(names: string[]): Palette {
     const cols = ["#2e5cb8", "#39ac73", "#cccc00", "#ff884d", "#cc0044"];
-    const pal = interpolateColours(cols, names.length);
     const ret: Palette = {};
-    names.forEach((el: string, index: number) => {
-        ret[el] = pal(index);
-    });
+    if (names.length === 1) {
+        ret[names[0]] = cols[0];
+    } else {
+        const pal = interpolateColours(cols, names.length);
+        names.forEach((el: string, index: number) => {
+            ret[el] = pal(index);
+        });
+    }
     return ret;
 }
 

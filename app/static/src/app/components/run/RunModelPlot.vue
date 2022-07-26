@@ -46,9 +46,6 @@ export default defineComponent({
             return props.modelFit ? store.getters[`fitData/${FitDataGetter.dataEnd}`] : store.state.model.endTime;
         });
 
-        // This will no longer be enough once we allow filtering
-        // default trajectories to display, we'll need to use some
-        // other list here instead but the principle will be the same.
         const palette = computed(() => store.state.model.paletteModel);
 
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template

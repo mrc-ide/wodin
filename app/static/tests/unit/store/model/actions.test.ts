@@ -152,7 +152,7 @@ describe("Model actions", () => {
                 model: "1+2",
                 metadata: {
                     parameters: [],
-                    variables: ["x", "y"] // TODO: error if length 1?
+                    variables: ["x", "y"]
                 }
             } as any,
             requiredAction: RequiredModelAction.Run
