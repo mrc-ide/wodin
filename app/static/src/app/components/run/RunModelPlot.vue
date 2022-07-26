@@ -21,6 +21,53 @@ import {
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
 import { Dict } from "../../types/utilTypes";
+// import { paletteData, paletteModel } from "../../colours;"
+
+// import interpolate from "color-interpolate";
+
+export function parseColour(col: string): number[] {
+    const r = parseInt(col.slice(1, 3), 16) / 255;
+    const g = parseInt(col.slice(3, 5), 16) / 255;
+    const b = parseInt(col.slice(5, 7), 16) / 255;
+    return [r, g, b];
+}
+
+export function rgb(r: number, g: number, b: number): string {
+    const roundcolour = (x: number) =>
+        Math.round(Math.max(Math.min(x, 1), 0) * 255).toString(16);
+    return `#${roundcolour(r)}${roundcolour(g)}${roundcolour(b)}`;
+}
+
+// TODO: cope with single colour case, I think it fails?
+export function palette(pal: string[], len: number) {
+    const cols = pal.map(parseColour);
+    return (i: number): string => {
+        const idx = i / (len - 1) * (cols.length - 1);
+        const lo = Math.floor(idx);
+        const p = idx % 1;
+        if (lo >= cols.length - 1) {
+            return pal[cols.length - 1];
+        }
+        if (p === 0) {
+            return pal[lo];
+        }
+        const r = cols[lo][0] * (1 - p) + cols[lo + 1][0] * p;
+        const g = cols[lo][1] * (1 - p) + cols[lo + 1][1] * p;
+        const b = cols[lo][2] * (1 - p) + cols[lo + 1][2] * p;
+        return rgb(r, g, b);
+    }
+}
+
+function paletteModel(n: number) {
+    const cols = ["#2e5cb8", "#39ac73", "#cccc00", "#ff884d", "#cc0044"];
+    return palette(cols, n);
+}
+
+function paletteData(n: number) {
+    // First few of these used, derived from ColorBrewer set 1
+    const cols = ["#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", "#FFFF33", "#A65628", "#F781BF"];
+    return (i: number): string => cols[i];
+}
 
 export default defineComponent({
     name: "RunModelPlot",
