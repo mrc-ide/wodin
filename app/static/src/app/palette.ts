@@ -15,7 +15,7 @@ export function rgb(r: number, g: number, b: number): string {
     return `#${roundcolour(r)}${roundcolour(g)}${roundcolour(b)}`;
 }
 
-export function colorInterpolate(pal: string[], len: number) {
+export function interpolateColours(pal: string[], len: number) {
     const cols = pal.map(parseColour);
     return (i: number): string => {
         const idx = i / (len - 1) * (cols.length - 1);
@@ -36,7 +36,7 @@ export function colorInterpolate(pal: string[], len: number) {
 
 export function paletteModel(names: string[]): Palette {
     const cols = ["#2e5cb8", "#39ac73", "#cccc00", "#ff884d", "#cc0044"];
-    const pal = colorInterpolate(cols, names.length);
+    const pal = interpolateColours(cols, names.length);
     const ret: Palette = {};
     names.forEach((el: string, index: number) => {
         ret[el] = pal(index);

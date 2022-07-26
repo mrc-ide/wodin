@@ -89,7 +89,8 @@ describe("Model actions", () => {
                         { name: "p2", default: 20 },
                         { name: "p3", default: 30 },
                         { name: "p4", default: 40 }
-                    ]
+                    ],
+                    variables: ["x", "y"]
                 }
             },
             requiredAction: RequiredModelAction.Compile,
@@ -102,14 +103,16 @@ describe("Model actions", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
         (actions[ModelAction.CompileModel] as any)({ commit, state, rootState });
-        expect(commit.mock.calls.length).toBe(3);
+        expect(commit.mock.calls.length).toBe(4);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[0][1]).toBe(3);
         expect(commit.mock.calls[1][0]).toBe(ModelMutation.SetParameterValues);
         const expectedParams = new Map([["p2", 20], ["p3", 30], ["p4", 40]]);
         expect(commit.mock.calls[1][1]).toStrictEqual(expectedParams);
-        expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetRequiredAction);
-        expect(commit.mock.calls[2][1]).toBe(RequiredModelAction.Run);
+        expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetPaletteModel);
+        expect(commit.mock.calls[2][1]).toStrictEqual({"x": "#2e5cb8", "y": "#cc0044"});
+        expect(commit.mock.calls[3][0]).toBe(ModelMutation.SetRequiredAction);
+        expect(commit.mock.calls[3][1]).toBe(RequiredModelAction.Run);
 
         // does not dispatch updated linked variables if app type is not Fit
         expect(dispatch).not.toHaveBeenCalled();
@@ -120,7 +123,8 @@ describe("Model actions", () => {
             odinModelResponse: {
                 model: "1+2",
                 metadata: {
-                    parameters: []
+                    parameters: [],
+                    variables: ["x", "y"]
                 }
             },
             requiredAction: RequiredModelAction.Compile,
@@ -132,10 +136,11 @@ describe("Model actions", () => {
         (actions[ModelAction.CompileModel] as any)({
             commit, dispatch, state, rootState: fitRootState
         });
-        expect(commit.mock.calls.length).toBe(3);
+        expect(commit.mock.calls.length).toBe(4);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[1][0]).toBe(ModelMutation.SetParameterValues);
-        expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetRequiredAction);
+        expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetPaletteModel);
+        expect(commit.mock.calls[3][0]).toBe(ModelMutation.SetRequiredAction);
 
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch.mock.calls[0][0]).toBe(`fitData/${FitDataAction.UpdateLinkedVariables}`);
@@ -146,14 +151,15 @@ describe("Model actions", () => {
             odinModelResponse: {
                 model: "1+2",
                 metadata: {
-                    parameters: []
+                    parameters: [],
+                    variables: ["x", "y"] // TODO: error if length 1?
                 }
             } as any,
             requiredAction: RequiredModelAction.Run
         });
         const commit = jest.fn();
         (actions[ModelAction.CompileModel] as any)({ commit, state, rootState });
-        expect(commit.mock.calls.length).toBe(2);
+        expect(commit.mock.calls.length).toBe(3);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[0][1]).toBe(3);
         expect(commit.mock.calls[1][0]).toBe(ModelMutation.SetParameterValues);
@@ -267,7 +273,8 @@ describe("Model actions", () => {
         const testModel = {
             model: "1+2",
             metadata: {
-                parameters: [{ name: "p1", default: 1 }]
+                parameters: [{ name: "p1", default: 1 }],
+                variables: ["x", "y"]
             }
         };
         mockAxios.onPost("/odin/model")
@@ -276,7 +283,7 @@ describe("Model actions", () => {
         const commit = jest.spyOn(store, "commit");
 
         await store.dispatch(`model/${ModelAction.DefaultModel}`);
-        expect(commit.mock.calls.length).toBe(7);
+        expect(commit.mock.calls.length).toBe(8);
 
         // fetch
         const postData = JSON.parse(mockAxios.history.post[0].data);
@@ -292,8 +299,12 @@ describe("Model actions", () => {
         expect(commit.mock.calls[2][1]).toBe(3); // evaluated value of test model
         expect(commit.mock.calls[3][0]).toBe(`model/${ModelMutation.SetParameterValues}`);
         expect(commit.mock.calls[3][1]).toStrictEqual(new Map([["p1", 1]]));
-        expect(commit.mock.calls[4][0]).toBe(`model/${ModelMutation.SetRequiredAction}`);
-        expect(commit.mock.calls[4][1]).toBe(RequiredModelAction.Run);
+
+        expect(commit.mock.calls[4][0]).toBe(`model/${ModelMutation.SetPaletteModel}`);
+        expect(commit.mock.calls[4][1]).toStrictEqual({"x": "#2e5cb8", "y": "#cc0044"});
+
+        expect(commit.mock.calls[5][0]).toBe(`model/${ModelMutation.SetRequiredAction}`);
+        expect(commit.mock.calls[5][1]).toBe(RequiredModelAction.Run);
 
         // runs
         const run = runner.wodinRun;
@@ -302,9 +313,9 @@ describe("Model actions", () => {
         expect(run.mock.calls[0][2]).toBe(0); // start
         expect(run.mock.calls[0][3]).toBe(99); // end
 
-        expect(commit.mock.calls[5][0]).toBe(`model/${ModelMutation.SetOdinSolution}`);
-        expect(commit.mock.calls[5][1]).toBe("test solution");
-        expect(commit.mock.calls[6][0]).toBe(`model/${ModelMutation.SetRequiredAction}`);
-        expect(commit.mock.calls[6][1]).toBe(null);
+        expect(commit.mock.calls[6][0]).toBe(`model/${ModelMutation.SetOdinSolution}`);
+        expect(commit.mock.calls[6][1]).toBe("test solution");
+        expect(commit.mock.calls[7][0]).toBe(`model/${ModelMutation.SetRequiredAction}`);
+        expect(commit.mock.calls[7][1]).toBe(null);
     });
 });
