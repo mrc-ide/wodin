@@ -18,11 +18,11 @@ describe("Model mutations", () => {
             metadata: {},
             model: "() => 'hello'"
         };
-        const state = mockModelState({ odinModelResponseError: mockError("error") });
+        const state = mockModelState({ odinModelCodeError: mockError("error") });
 
         mutations.SetOdinResponse(state, mockOdinModelResponse);
         expect(state.odinModelResponse).toBe(mockOdinModelResponse);
-        expect(state.odinModelResponseError).toBe(null);
+        expect(state.odinModelCodeError).toBe(null);
     });
 
     it("sets odin response error", () => {
@@ -38,10 +38,10 @@ describe("Model mutations", () => {
 
         mutations.SetOdinResponse(state, mockOdinModelResponse);
         expect(state.odinModelResponse).toBe(mockOdinModelResponse);
-        expect(state.odinModelResponseError).toStrictEqual({ error: "OTHER_ERROR", detail: error.message });
+        expect(state.odinModelCodeError).toStrictEqual({ error: "ERROR", detail: error.message });
     });
 
-    it("sets odin response error with line", () => {
+    it("sets odin code error text for a single line", () => {
         const error = {
             line: [1],
             message: "a test message"
@@ -54,9 +54,28 @@ describe("Model mutations", () => {
 
         mutations.SetOdinResponse(state, mockOdinModelResponse);
         expect(state.odinModelResponse).toBe(mockOdinModelResponse);
-        expect(state.odinModelResponseError).toStrictEqual({
-            error: "OTHER_ERROR",
+        expect(state.odinModelCodeError).toStrictEqual({
+            error: "ERROR",
             detail: `Error on line 1: ${error.message}`
+        });
+    });
+
+    it("sets odin code error text for multiple lines", () => {
+        const error = {
+            line: [1, 2],
+            message: "a test message"
+        };
+        const mockOdinModelResponse = {
+            valid: false,
+            error
+        };
+        const state = mockModelState();
+
+        mutations.SetOdinResponse(state, mockOdinModelResponse);
+        expect(state.odinModelResponse).toBe(mockOdinModelResponse);
+        expect(state.odinModelCodeError).toStrictEqual({
+            error: "ERROR",
+            detail: `Error on lines 1,2: ${error.message}`
         });
     });
 

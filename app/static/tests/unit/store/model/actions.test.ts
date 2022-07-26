@@ -240,12 +240,13 @@ describe("Model actions", () => {
         expect(runner.wodinRun).not.toHaveBeenCalled();
     });
 
-    it("runs model throws exception when error in code evaluation", () => {
+    it("runs model throws exception when error in code run model", () => {
+        const mockError = new Error("test");
         const mockOdin = {} as any;
         const mockRunnerWithThrownException = () => {
             return {
                 wodinRun: jest.fn().mockImplementation(() => {
-                    throw new Error();
+                    throw mockError;
                 })
             } as any;
         };
@@ -267,8 +268,8 @@ describe("Model actions", () => {
         expect(commit.mock.calls.length).toBe(2);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinRunnerError);
         expect(commit.mock.calls[0][1]).toStrictEqual({
-            detail: "An unexpected error occurred while evaluating script. Please contact support.",
-            error: "OTHER_ERROR"
+            detail: mockError,
+            error: "An error occurred while running model"
         });
     });
 

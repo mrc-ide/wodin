@@ -29,7 +29,7 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const codeIsValid = computed(() => store.state.model.odinModelResponse?.valid);
-        const error = computed(() => store.state.model.odinModelResponseError);
+        const error = computed(() => store.state.model.odinModelCodeError);
         const validMsg = computed(() => (codeIsValid.value ? userMessages.code.isValid : userMessages.code.isNotValid));
         const validIcon = computed(() => (codeIsValid.value ? "check" : "x"));
         const iconClass = computed(() => (codeIsValid.value ? "text-success" : "text-danger"));

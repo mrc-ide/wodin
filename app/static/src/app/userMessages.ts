@@ -6,10 +6,7 @@ export default {
         isNotValid: "Code is not valid"
     },
     errors: {
-        evaluateScript: {
-            error: "OTHER_ERROR",
-            detail: "An unexpected error occurred while evaluating script. Please contact support."
-        }
+        wodinRunError: "An error occurred while running model"
     },
     fitData: {
         errorLoadingData: "An error occurred when loading data",

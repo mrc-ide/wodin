@@ -7,7 +7,7 @@ import {
     OdinSolution,
     Error
 } from "../../types/responseTypes";
-import { evaluateScript, getFormedError } from "../../utils";
+import { evaluateScript, getCodeErrorFromResponse } from "../../utils";
 import { Dict } from "../../types/utilTypes";
 
 export enum ModelMutation {
@@ -36,9 +36,9 @@ export const mutations: MutationTree<ModelState> = {
 
     [ModelMutation.SetOdinResponse](state: ModelState, payload: OdinModelResponse) {
         state.odinModelResponse = payload;
-        state.odinModelResponseError = null;
+        state.odinModelCodeError = null;
         if (!payload.valid && payload.error) {
-            state.odinModelResponseError = getFormedError(payload.error);
+            state.odinModelCodeError = getCodeErrorFromResponse(payload.error);
         }
     },
 
@@ -48,6 +48,7 @@ export const mutations: MutationTree<ModelState> = {
 
     [ModelMutation.SetOdinSolution](state: ModelState, payload: OdinSolution) {
         state.odinSolution = payload;
+        state.odinRunnerError = null;
     },
 
     [ModelMutation.SetRequiredAction](state: ModelState, payload: RequiredModelAction | null) {

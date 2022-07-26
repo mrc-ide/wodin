@@ -71,7 +71,8 @@ const runModel = (context: ActionContext<ModelState, AppState>) => {
             const solution = state.odinRunner.wodinRun(state.odin, parameters, start, end);
             commit(ModelMutation.SetOdinSolution, solution);
         } catch (e) {
-            commit(ModelMutation.SetOdinRunnerError, userMessages.errors.evaluateScript);
+            const wodinRunError = { error: userMessages.errors.wodinRunError, detail: e };
+            commit(ModelMutation.SetOdinRunnerError, wodinRunError);
         }
 
         if (state.requiredAction === RequiredModelAction.Run) {

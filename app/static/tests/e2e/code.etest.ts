@@ -17,7 +17,7 @@ R     <- user(28.0)
 b     <-  user(3.0)
 `;
 
-const newValidCodesThrowError = `# variables
+const newInvalidCode = `# variables
 deriv(S) <-  - beta * S * I / N
 deriv(I) <- beta * S * I / N - sigma * I
 deriv(R) <- sigma * I
@@ -130,12 +130,12 @@ test.describe("Code Tab tests", () => {
         );
         await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is not valid");
         await expect(await page.innerText(".wodin-left .wodin-content #error-info"))
-            .toBe("OTHER_ERROR: Error on line 1: Every line must contain an assignment");
+            .toBe("ERROR: Error on line 1: Every line must contain an assignment");
     });
 
-    test("can display model error message when evaluating script", async ({ page }) => {
+    test("can display model error message when running model", async ({ page }) => {
         const defaultCode = await page.innerText(".wodin-left .wodin-content .editor-container");
-        await writeCode(page, newValidCodesThrowError);
+        await writeCode(page, newInvalidCode);
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
             "Model code has been updated. Compile code and Run Model to view updated graph.", {
                 timeout
@@ -154,6 +154,6 @@ test.describe("Code Tab tests", () => {
         await runBtn.click();
 
         await expect(await page.innerText(".run-tab #error-info"))
-            .toBe("OTHER_ERROR: An unexpected error occurred while evaluating script. Please contact support.");
+            .toBe("An error occurred while running model: Error: Integration failure: too many steps at 0");
     });
 });

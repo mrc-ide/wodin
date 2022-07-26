@@ -32,10 +32,11 @@ export interface ProcessFitDataResult {
     error?: Error
 }
 
-export function getFormedError(errorResponse: OdinModelResponseError): Error {
+export function getCodeErrorFromResponse(errorResponse: OdinModelResponseError): Error {
     const line = errorResponse.line.join();
-    const detail = line ? `Error on line ${line}: ${errorResponse.message}` : errorResponse.message;
-    const error = "OTHER_ERROR";
+    const lineWord = errorResponse.line.length > 1 ? "lines" : "line";
+    const detail = line ? `Error on ${lineWord} ${line}: ${errorResponse.message}` : errorResponse.message;
+    const error = "ERROR";
     return { error, detail };
 }
 

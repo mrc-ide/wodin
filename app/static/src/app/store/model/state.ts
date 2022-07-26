@@ -15,6 +15,6 @@ export interface ModelState {
     odinSolution: null | OdinSolution
     parameterValues: null | Map<string, number>
     endTime: number,
-    odinModelResponseError: Error | null
+    odinModelCodeError: Error | null
     odinRunnerError: Error | null
 }
