@@ -108,17 +108,21 @@ export default defineComponent({
         const fitDataSeries = (start: number, end: number) => {
             const { fitData } = store.state;
             const timeVar = fitData?.timeVariable;
-            if (props.modelFit && fitData.data && fitData.columnToFit && timeVar) {
+            const dataVar = fitData?.columnToFit;
+            if (props.modelFit && fitData.data && dataVar && timeVar) {
                 const filteredData = fitData.data.filter(
                     (row: Dict<number>) => row[timeVar] >= start && row[timeVar] <= end
                 );
+                const modelVar = fitData.linkedVariables[dataVar];
+                const col = palette.value(vars.value.indexOf(modelVar));
+                console.log(`Will plot data ${dataVar} against series ${modelVar} in ${col}`);
                 return [{
-                    name: fitData.columnToFit,
+                    name: dataVar,
                     x: filteredData.map((row: Dict<number>) => row[fitData.timeVariable!]),
                     y: filteredData.map((row: Dict<number>) => row[fitData.columnToFit!]),
                     mode: "markers",
-                    type: "scatter"
-
+                    type: "scatter",
+                    marker: {color: col}
                 }];
             }
             return [];
