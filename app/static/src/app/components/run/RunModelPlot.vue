@@ -21,9 +21,6 @@ import {
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
 import { Dict } from "../../types/utilTypes";
-// import { paletteData, paletteModel } from "../../colours;"
-
-// import interpolate from "color-interpolate";
 
 export function parseColour(col: string): number[] {
     const r = parseInt(col.slice(1, 3), 16) / 255;
@@ -58,12 +55,7 @@ export function palette(pal: string[], len: number) {
     }
 }
 
-function paletteModel(n: number) {
-    const cols = ["#2e5cb8", "#39ac73", "#cccc00", "#ff884d", "#cc0044"];
-    return palette(cols, n);
-}
-
-function paletteModel2(names: string[]) {
+function paletteModel(names: string[]) {
     const cols = ["#2e5cb8", "#39ac73", "#cccc00", "#ff884d", "#cc0044"];
     const pal = palette(cols, names.length);
     return (name: string) => pal(names.indexOf(name));
@@ -103,7 +95,7 @@ export default defineComponent({
         // default trajectories to display, we'll need to use some
         // other list here instead but the principle will be the same.
         const vars = computed(() => store.state.model.odinModelResponse.metadata.variables);
-        const palette = computed(() => paletteModel2(vars.value));
+        const palette = computed(() => paletteModel(vars.value));
 
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
         const baseData = ref<Data[]>([]);
@@ -121,15 +113,13 @@ export default defineComponent({
                     (row: Dict<number>) => row[timeVar] >= start && row[timeVar] <= end
                 );
                 const modelVar = fitData.linkedVariables[dataVar];
-                const col = palette.value(modelVar);
-                console.log(`Will plot data ${dataVar} against series ${modelVar} in ${col}`);
                 return [{
                     name: dataVar,
                     x: filteredData.map((row: Dict<number>) => row[fitData.timeVariable!]),
                     y: filteredData.map((row: Dict<number>) => row[fitData.columnToFit!]),
                     mode: "markers",
                     type: "scatter",
-                    marker: {color: col}
+                    marker: {color: palette.value(modelVar)}
                 }];
             }
             return [];
@@ -143,20 +133,11 @@ export default defineComponent({
 
             // model fit partial solution returns single series - convert to array
             if (props.modelFit) {
-                // We'll only be plotting a single series here, so we
-                // need to look up which colour we should use from our
-                // palette.
-                const col = palette.value(dataToPlot.name);
-                dataToPlot.line = {color: col};
+                dataToPlot.line = {color: palette.value(dataToPlot.name)};
                 dataToPlot = [dataToPlot] as Data[];
             } else {
-                // Colouring the series for the basic fit is easy,
-                // because we can just spread the palette over the
-                // different traces regardless of how we got to this
-                // number.
-                const colsModel = paletteModel(dataToPlot.length);
                 for (let i = 0; i < dataToPlot.length; ++i) {
-                    dataToPlot[i].line = {color: colsModel(i)};
+                    dataToPlot[i].line = {color: palette.value(dataToPlot[i].name)};
                 }
             }
             return [...dataToPlot, ...fitDataSeries(start, end)];
