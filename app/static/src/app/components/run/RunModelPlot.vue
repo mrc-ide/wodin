@@ -63,9 +63,15 @@ function paletteModel(n: number) {
     return palette(cols, n);
 }
 
+function paletteModel2(names: string[]) {
+    const cols = ["#2e5cb8", "#39ac73", "#cccc00", "#ff884d", "#cc0044"];
+    const pal = palette(cols, names.length);
+    return (name: string) => pal(names.indexOf(name));
+}
+
 function paletteData(n: number) {
     // First few of these used, derived from ColorBrewer set 1
-    const cols = ["#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", "#FFFF33", "#A65628", "#F781BF"];
+    const cols = ["#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628", "#f781bf"];
     return (i: number): string => cols[i];
 }
 
@@ -85,6 +91,7 @@ export default defineComponent({
         const solution = computed(() => (props.modelFit ? store.state.modelFit.solution
             : store.state.model.odinSolution));
 
+        // mrc-3331 start time should always be zero.
         const startTime = computed(() => {
             return props.modelFit ? store.getters[`fitData/${FitDataGetter.dataStart}`] : 0;
         });
@@ -96,7 +103,7 @@ export default defineComponent({
         // default trajectories to display, we'll need to use some
         // other list here instead but the principle will be the same.
         const vars = computed(() => store.state.model.odinModelResponse.metadata.variables);
-        const palette = computed(() => paletteModel(vars.value.length));
+        const palette = computed(() => paletteModel2(vars.value));
 
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
         const baseData = ref<Data[]>([]);
@@ -114,7 +121,7 @@ export default defineComponent({
                     (row: Dict<number>) => row[timeVar] >= start && row[timeVar] <= end
                 );
                 const modelVar = fitData.linkedVariables[dataVar];
-                const col = palette.value(vars.value.indexOf(modelVar));
+                const col = palette.value(modelVar);
                 console.log(`Will plot data ${dataVar} against series ${modelVar} in ${col}`);
                 return [{
                     name: dataVar,
@@ -139,7 +146,7 @@ export default defineComponent({
                 // We'll only be plotting a single series here, so we
                 // need to look up which colour we should use from our
                 // palette.
-                const col = palette.value(vars.value.indexOf(dataToPlot.name));
+                const col = palette.value(dataToPlot.name);
                 dataToPlot.line = {color: col};
                 dataToPlot = [dataToPlot] as Data[];
             } else {
