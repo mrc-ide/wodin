@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed } from "vue";
 import WodinApp from "../WodinApp.vue";
 import WodinTabs from "../WodinTabs.vue";
 import CodeTab from "../code/CodeTab.vue";
@@ -58,12 +58,12 @@ export default defineComponent({
     setup() {
         const selectedRightTab = ref("Run");
         const rightTabSelected = (tab: string) => {
-          selectedRightTab.value = tab;
+            selectedRightTab.value = tab;
         };
-        const fitTabIsOpen = () => selectedRightTab.value === "Fit"
+        const fitTabIsOpen = computed(() => selectedRightTab.value === "Fit");
         return {
-          rightTabSelected,
-          fitTabIsOpen
+            rightTabSelected,
+            fitTabIsOpen
         };
     }
 });

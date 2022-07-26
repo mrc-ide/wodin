@@ -1,14 +1,15 @@
 <template>
   <div class="container">
     <div v-for="(paramName, index) in paramNames" class="row my-2" :key="paramKeys[index]">
-      <div ?class="isFitTab ? col-5 : col-6">
+      <div class="col-5">
         <label class="col-form-label">{{paramName}}</label>
       </div>
       <div class="col-6">
         <numeric-input :value="paramValues[paramName]"
                        @update="(n) => updateValue(n, paramName)"/>
       </div>
-      <div v-if="fitTabIsOpen">
+      <div v-if="fitTabIsOpen" class="col-1">
+        <input class="form-check-input" type="checkbox" value="">
       </div>
     </div>
   </div>

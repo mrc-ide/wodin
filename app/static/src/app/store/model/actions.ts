@@ -7,6 +7,7 @@ import { ErrorsMutation } from "../errors/mutations";
 import { Odin, OdinModelResponse, OdinParameter } from "../../types/responseTypes";
 import { evaluateScript } from "../../utils";
 import { FitDataAction } from "../fitData/actions";
+import { ModelFitAction } from "../modelFit/actions";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
