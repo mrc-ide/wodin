@@ -84,7 +84,7 @@ export default defineComponent({
             store.commit(`modelFit/${ModelFitMutation.SetParamsToVary}`, newParams)
         };
 
-        const selectParamToVaryMsg = computed(() => (!props.fitTabIsOpen && paramsToVary.value.length) ? "" : userMessages.modelFit.selectParamToVary);
+        const selectParamToVaryMsg = computed(() => (!props.fitTabIsOpen || paramsToVary.value.length) ? "" : userMessages.modelFit.selectParamToVary);
 
         watch(odinSolution, () => {
             // force inputs to update when model is run to show actual values
