@@ -92,6 +92,12 @@ export default defineComponent({
             return props.modelFit ? store.getters[`fitData/${FitDataGetter.dataEnd}`] : store.state.model.endTime;
         });
 
+        // This will no longer be enough once we allow filtering
+        // default trajectories to display, we'll need to use some
+        // other list here instead but the principle will be the same.
+        const vars = computed(() => store.state.model.odinModelResponse.metadata.variables);
+        const palette = computed(() => paletteModel(vars.value.length));
+
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
         const baseData = ref<Data[]>([]);
         const nPoints = 1000; // TODO: appropriate value could be derived from width of element
@@ -126,7 +132,21 @@ export default defineComponent({
 
             // model fit partial solution returns single series - convert to array
             if (props.modelFit) {
+                // We'll only be plotting a single series here, so we
+                // need to look up which colour we should use from our
+                // palette.
+                const col = palette.value(vars.value.indexOf(dataToPlot.name));
+                dataToPlot.line = {color: col};
                 dataToPlot = [dataToPlot] as Data[];
+            } else {
+                // Colouring the series for the basic fit is easy,
+                // because we can just spread the palette over the
+                // different traces regardless of how we got to this
+                // number.
+                const colsModel = paletteModel(dataToPlot.length);
+                for (let i = 0; i < dataToPlot.length; ++i) {
+                    dataToPlot[i].line = {color: colsModel(i)};
+                }
             }
             return [...dataToPlot, ...fitDataSeries(start, end)];
         };
