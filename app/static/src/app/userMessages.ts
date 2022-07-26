@@ -25,6 +25,7 @@ export default {
     },
     modelFit: {
         cannotFit: "Cannot fit model. Please provide valid data and code, and link at least one variable.",
-        notFittedYet: "Model has not been fitted."
+        notFittedYet: "Model has not been fitted.",
+        selectParamToVary: "Please select at least one parameter to vary during model fit."
     }
 };
