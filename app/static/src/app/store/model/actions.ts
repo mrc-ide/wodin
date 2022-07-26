@@ -7,6 +7,7 @@ import { ErrorsMutation } from "../errors/mutations";
 import { Odin, OdinModelResponse, OdinParameter } from "../../types/responseTypes";
 import { evaluateScript } from "../../utils";
 import { FitDataAction } from "../fitData/actions";
+import { paletteModel } from "../../palette";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
@@ -46,6 +47,9 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
             newValues.set(param.name, value === null ? 0 : value);
         });
         commit(ModelMutation.SetParameterValues, newValues);
+
+        const palette = paletteModel(state.odinModelResponse.metadata.variables);
+        commit(ModelMutation.SetPaletteModel, palette);
 
         if (state.requiredAction === RequiredModelAction.Compile) {
             commit(ModelMutation.SetRequiredAction, RequiredModelAction.Run);

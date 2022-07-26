@@ -21,7 +21,6 @@ import {
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
 import { Dict } from "../../types/utilTypes";
-import { paletteModel } from "../../palette";
 
 export default defineComponent({
     name: "RunModelPlot",
@@ -50,8 +49,7 @@ export default defineComponent({
         // This will no longer be enough once we allow filtering
         // default trajectories to display, we'll need to use some
         // other list here instead but the principle will be the same.
-        const vars = computed(() => store.state.model.odinModelResponse.metadata.variables);
-        const palette = computed(() => paletteModel(vars.value));
+        const palette = computed(() => store.state.model.paletteModel);
 
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
         const baseData = ref<Data[]>([]);

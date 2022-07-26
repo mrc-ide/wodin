@@ -5,6 +5,7 @@ import {
 } from "../../types/responseTypes";
 import { evaluateScript } from "../../utils";
 import { Dict } from "../../types/utilTypes";
+import { Palette } from "../../palette";
 
 export enum ModelMutation {
     SetOdinRunner = "SetOdinRunner",
@@ -14,6 +15,7 @@ export enum ModelMutation {
     SetRequiredAction = "SetRequiredAction",
     SetParameterValues = "SetParameterValues",
     UpdateParameterValues = "UpdateParameterValues",
+    SetPaletteModel = "SetPaletteModel",
     SetEndTime = "SetEndTime"
 }
 
@@ -57,6 +59,10 @@ export const mutations: MutationTree<ModelState> = {
 
             runRequired(state);
         }
+    },
+
+    [ModelMutation.SetPaletteModel](state: ModelState, payload: Palette | null) {
+        state.paletteModel = payload;
     },
 
     [ModelMutation.SetEndTime](state: ModelState, payload: number) {
