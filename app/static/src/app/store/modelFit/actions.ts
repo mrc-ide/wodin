@@ -7,7 +7,8 @@ import { ModelFitGetter } from "./getters";
 
 export enum ModelFitAction {
     FitModel = "FitModel",
-    FitModelStep = "FitModelStep"
+    FitModelStep = "FitModelStep",
+    UpdateParamsToVary = "ParamsToVary"
 }
 
 export const actions: ActionTree<ModelFitState, FitState> = {
@@ -57,5 +58,14 @@ export const actions: ActionTree<ModelFitState, FitState> = {
                 dispatch(ModelFitAction.FitModelStep, simplex);
             }, 0);
         }
+    },
+
+    [ModelFitAction.UpdateParamsToVary](context) {
+        const {rootState, state, commit} = context;
+        const paramValues = rootState.model.parameterValues;
+        const newParams = paramValues ? Array.from(paramValues.keys()) : [];
+        // Retain selected values if we can
+        const newParamsToVary = state.paramsToVary.filter((param) => newParams.includes(param));
+        commit(ModelFitMutation.SetParamsToVary, newParamsToVary);
     }
 };

@@ -1,12 +1,14 @@
 <template>
   <div class="container">
     <div v-for="(paramName, index) in paramNames" class="row my-2" :key="paramKeys[index]">
-      <div class="col-6">
+      <div ?class="isFitTab ? col-5 : col-6">
         <label class="col-form-label">{{paramName}}</label>
       </div>
       <div class="col-6">
         <numeric-input :value="paramValues[paramName]"
                        @update="(n) => updateValue(n, paramName)"/>
+      </div>
+      <div v-if="fitTabIsOpen">
       </div>
     </div>
   </div>
@@ -23,6 +25,12 @@ import { Dict } from "../../types/utilTypes";
 
 export default defineComponent({
     name: "ParameterValues",
+    props: {
+        fitTabIsOpen: {
+            type: Boolean,
+            required: true
+        }
+    },
     components: {
         NumericInput
     },

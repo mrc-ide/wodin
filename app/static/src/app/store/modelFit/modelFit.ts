@@ -8,7 +8,8 @@ export const defaultState: ModelFitState = {
     iterations: null,
     converged: null,
     sumOfSquares: null,
-    solution: null
+    solution: null,
+    paramsToVary: []
 };
 
 export const modelFit = {

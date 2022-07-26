@@ -9,12 +9,12 @@
           <code-tab></code-tab>
         </template>
         <template v-slot:Options>
-          <options-tab></options-tab>
+          <options-tab :fit-tab-is-open="fitTabIsOpen"></options-tab>
         </template>
       </wodin-tabs>
     </template>
     <template v-slot:right>
-      <wodin-tabs id="right-tabs" :tabNames="['Run', 'Fit', 'Sensitivity']">
+      <wodin-tabs id="right-tabs" :tabNames="['Run', 'Fit', 'Sensitivity']" @tabSelected="rightTabSelected">
         <template v-slot:Run>
           <run-tab></run-tab>
         </template>
@@ -29,8 +29,8 @@
   </wodin-app>
 </template>
 
-<script>
-import { defineComponent } from "vue";
+<script lang="ts">
+import { defineComponent, ref } from "vue";
 import WodinApp from "../WodinApp.vue";
 import WodinTabs from "../WodinTabs.vue";
 import CodeTab from "../code/CodeTab.vue";
@@ -54,6 +54,17 @@ export default defineComponent({
         SensitivityTab,
         WodinApp,
         WodinTabs
+    },
+    setup() {
+        const selectedRightTab = ref("Run");
+        const rightTabSelected = (tab: string) => {
+          selectedRightTab.value = tab;
+        };
+        const fitTabIsOpen = () => selectedRightTab.value === "Fit"
+        return {
+          rightTabSelected,
+          fitTabIsOpen
+        };
     }
 });
 </script>
