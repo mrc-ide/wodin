@@ -1,3 +1,7 @@
+import { Dict } from "./types/utilTypes";
+
+export type Palette = Dict<string>;
+
 export function parseColour(col: string): number[] {
     const r = parseInt(col.slice(1, 3), 16) / 255;
     const g = parseInt(col.slice(3, 5), 16) / 255;
@@ -11,8 +15,7 @@ export function rgb(r: number, g: number, b: number): string {
     return `#${roundcolour(r)}${roundcolour(g)}${roundcolour(b)}`;
 }
 
-// TODO: cope with single colour case, I think it fails?
-export function palette(pal: string[], len: number) {
+export function colorInterpolate(pal: string[], len: number) {
     const cols = pal.map(parseColour);
     return (i: number): string => {
         const idx = i / (len - 1) * (cols.length - 1);
@@ -31,14 +34,21 @@ export function palette(pal: string[], len: number) {
     }
 }
 
-export function paletteModel(names: string[]) {
+export function paletteModel(names: string[]): Palette {
     const cols = ["#2e5cb8", "#39ac73", "#cccc00", "#ff884d", "#cc0044"];
-    const pal = palette(cols, names.length);
-    return (name: string) => pal(names.indexOf(name));
+    const pal = colorInterpolate(cols, names.length);
+    const ret: Palette = {};
+    names.forEach((el: string, index: number) => {
+        ret[el] = pal(index);
+    });
+    return ret;
 }
 
-export function paletteData(n: number) {
-    // First few of these used, derived from ColorBrewer set 1
+export function paletteData(names: string[]): Palette {
     const cols = ["#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628", "#f781bf"];
-    return (i: number): string => cols[i];
+    const ret: Palette = {};
+    names.forEach((el: string, index: number) => {
+        ret[el] = cols[index];
+    });
+    return ret;
 }

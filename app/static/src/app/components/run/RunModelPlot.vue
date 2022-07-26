@@ -75,7 +75,7 @@ export default defineComponent({
                     y: filteredData.map((row: Dict<number>) => row[fitData.columnToFit!]),
                     mode: "markers",
                     type: "scatter",
-                    marker: {color: palette.value(modelVar)}
+                    marker: {color: palette.value[modelVar]}
                 }];
             }
             return [];
@@ -89,11 +89,11 @@ export default defineComponent({
 
             // model fit partial solution returns single series - convert to array
             if (props.modelFit) {
-                dataToPlot.line = {color: palette.value(dataToPlot.name)};
+                dataToPlot.line = {color: palette.value[dataToPlot.name]};
                 dataToPlot = [dataToPlot] as Data[];
             } else {
                 for (let i = 0; i < dataToPlot.length; ++i) {
-                    dataToPlot[i].line = {color: palette.value(dataToPlot[i].name)};
+                    dataToPlot[i].line = {color: palette.value[dataToPlot[i].name]};
                 }
             }
             return [...dataToPlot, ...fitDataSeries(start, end)];
