@@ -1,4 +1,6 @@
-import { evaluateScript, freezer, processFitData } from "../../src/app/utils";
+import {
+    evaluateScript, freezer, getCodeErrorFromResponse, processFitData
+} from "../../src/app/utils";
 
 describe("freezer", () => {
     it("deep freezes an object", () => {
@@ -224,6 +226,44 @@ describe("processFitData", () => {
         expect(result.error).toStrictEqual({
             error: "Error occurred",
             detail: "File must contain at least 5 data rows."
+        });
+    });
+
+    it("can get code error from model response", () => {
+        const error = {
+            line: [],
+            message: "a test message"
+        };
+        const transformedError = getCodeErrorFromResponse(error);
+
+        expect(transformedError).toStrictEqual({
+            error: "Code error", detail: error.message
+        });
+    });
+
+    it("can get code error with a single line number from model response", () => {
+        const error = {
+            line: ["1"],
+            message: "a test message"
+        };
+        const transformedError = getCodeErrorFromResponse(error);
+
+        expect(transformedError).toStrictEqual({
+            error: "Code error",
+            detail: `Error on line 1: ${error.message}`
+        });
+    });
+
+    it("can get code error with multiple line numbers from model response", () => {
+        const error = {
+            line: ["1", "2"],
+            message: "a test message"
+        };
+        const transformedError = getCodeErrorFromResponse(error);
+
+        expect(transformedError).toStrictEqual({
+            error: "Code error",
+            detail: `Error on lines 1,2: ${error.message}`
         });
     });
 });

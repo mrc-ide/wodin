@@ -3,11 +3,12 @@ import { ModelState, RequiredModelAction } from "./state";
 import { api } from "../../apiService";
 import { ModelMutation } from "./mutations";
 import { AppState, AppType } from "../appState/state";
-import { ErrorsMutation } from "../errors/mutations";
 import { Odin, OdinModelResponse, OdinParameter } from "../../types/responseTypes";
 import { evaluateScript } from "../../utils";
 import { FitDataAction } from "../fitData/actions";
 import { paletteModel } from "../../palette";
+import userMessages from "../../userMessages";
+import { ErrorsMutation } from "../errors/mutations";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
@@ -34,11 +35,13 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
     const {
         commit, state, rootState, dispatch
     } = context;
-    if (state.odinModelResponse) {
-        const odin = evaluateScript<Odin>(state.odinModelResponse.model);
-        commit(ModelMutation.SetOdin, odin);
 
-        const { parameters } = state.odinModelResponse.metadata;
+    if (state.odinModelResponse) {
+        const model = state.odinModelResponse.model || "";
+        const parameters = state.odinModelResponse.metadata?.parameters || [];
+
+        const odin = evaluateScript<Odin>(model);
+        commit(ModelMutation.SetOdin, odin);
 
         // Overwrite any existing parameter values in the model
         const newValues = new Map<string, number>();
@@ -68,8 +71,13 @@ const runModel = (context: ActionContext<ModelState, AppState>) => {
     if (state.odinRunner && state.odin && parameters) {
         const start = 0;
         const end = state.endTime;
-        const solution = state.odinRunner.wodinRun(state.odin, parameters, start, end);
-        commit(ModelMutation.SetOdinSolution, solution);
+        try {
+            const solution = state.odinRunner.wodinRun(state.odin, parameters, start, end);
+            commit(ModelMutation.SetOdinSolution, solution);
+        } catch (e) {
+            const wodinRunError = { error: userMessages.errors.wodinRunError, detail: e };
+            commit(ModelMutation.SetOdinRunnerError, wodinRunError);
+        }
 
         if (state.requiredAction === RequiredModelAction.Run) {
             commit(ModelMutation.SetRequiredAction, null);

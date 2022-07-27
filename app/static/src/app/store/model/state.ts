@@ -1,5 +1,5 @@
 import {
-    Odin, OdinModelResponse, OdinSolution, OdinRunner
+    Odin, OdinModelResponse, OdinSolution, OdinRunner, Error
 } from "../../types/responseTypes";
 import type { Palette } from "../../palette";
 
@@ -17,5 +17,8 @@ export interface ModelState {
     parameterValues: null | Map<string, number>
     endTime: number
     // contains a palette mapping variable name to colour
-    paletteModel: null | Palette
+    paletteModel: null | Palette,
+    endTime: number,
+    odinModelCodeError: Error | null
+    odinRunnerError: Error | null
 }
