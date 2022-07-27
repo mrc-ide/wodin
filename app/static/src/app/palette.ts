@@ -10,15 +10,14 @@ export function parseColour(col: string): number[] {
 }
 
 export function rgb(r: number, g: number, b: number): string {
-    const roundcolour = (x: number) =>
-        Math.round(Math.max(Math.min(x, 1), 0) * 255).toString(16);
+    const roundcolour = (x: number) => Math.round(Math.max(Math.min(x, 1), 0) * 255).toString(16);
     return `#${roundcolour(r)}${roundcolour(g)}${roundcolour(b)}`;
 }
 
-export function interpolateColours(pal: string[], len: number) {
+export function interpolateColours(pal: string[], len: number): (i: number) => string {
     const cols = pal.map(parseColour);
     return (i: number): string => {
-        const idx = i / (len - 1) * (cols.length - 1);
+        const idx = (i / (len - 1)) * (cols.length - 1);
         const lo = Math.floor(idx);
         const p = idx % 1;
         if (lo >= cols.length - 1) {
@@ -31,14 +30,15 @@ export function interpolateColours(pal: string[], len: number) {
         const g = cols[lo][1] * (1 - p) + cols[lo + 1][1] * p;
         const b = cols[lo][2] * (1 - p) + cols[lo + 1][2] * p;
         return rgb(r, g, b);
-    }
+    };
 }
 
 export function paletteModel(names: string[]): Palette {
     const cols = ["#2e5cb8", "#39ac73", "#cccc00", "#ff884d", "#cc0044"];
     const ret: Palette = {};
     if (names.length === 1) {
-        ret[names[0]] = cols[0];
+        const col = cols[0];
+        ret[names[0]] = col;
     } else {
         const pal = interpolateColours(cols, names.length);
         names.forEach((el: string, index: number) => {

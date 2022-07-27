@@ -110,7 +110,7 @@ describe("Model actions", () => {
         const expectedParams = new Map([["p2", 20], ["p3", 30], ["p4", 40]]);
         expect(commit.mock.calls[1][1]).toStrictEqual(expectedParams);
         expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetPaletteModel);
-        expect(commit.mock.calls[2][1]).toStrictEqual({"x": "#2e5cb8", "y": "#cc0044"});
+        expect(commit.mock.calls[2][1]).toStrictEqual({ x: "#2e5cb8", y: "#cc0044" });
         expect(commit.mock.calls[3][0]).toBe(ModelMutation.SetRequiredAction);
         expect(commit.mock.calls[3][1]).toBe(RequiredModelAction.Run);
 
@@ -301,7 +301,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[3][1]).toStrictEqual(new Map([["p1", 1]]));
 
         expect(commit.mock.calls[4][0]).toBe(`model/${ModelMutation.SetPaletteModel}`);
-        expect(commit.mock.calls[4][1]).toStrictEqual({"x": "#2e5cb8", "y": "#cc0044"});
+        expect(commit.mock.calls[4][1]).toStrictEqual({ x: "#2e5cb8", y: "#cc0044" });
 
         expect(commit.mock.calls[5][0]).toBe(`model/${ModelMutation.SetRequiredAction}`);
         expect(commit.mock.calls[5][1]).toBe(RequiredModelAction.Run);

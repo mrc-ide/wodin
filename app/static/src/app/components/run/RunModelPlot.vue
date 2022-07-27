@@ -64,14 +64,13 @@ export default defineComponent({
                     (row: Dict<number>) => row[timeVar] >= start && row[timeVar] <= end
                 );
                 const modelVar = fitData.linkedVariables[dataVar];
-                const col = palette.value[modelVar];
                 return [{
                     name: dataVar,
                     x: filteredData.map((row: Dict<number>) => row[fitData.timeVariable!]),
                     y: filteredData.map((row: Dict<number>) => row[fitData.columnToFit!]),
                     mode: "markers",
                     type: "scatter",
-                    marker: {color: palette.value[modelVar]}
+                    marker: { color: palette.value[modelVar] }
                 }];
             }
             return [];
@@ -85,11 +84,11 @@ export default defineComponent({
 
             // model fit partial solution returns single series - convert to array
             if (props.modelFit) {
-                dataToPlot.line = {color: palette.value[dataToPlot.name]};
+                dataToPlot.line = { color: palette.value[dataToPlot.name] };
                 dataToPlot = [dataToPlot] as Data[];
             } else {
-                for (let i = 0; i < dataToPlot.length; ++i) {
-                    dataToPlot[i].line = {color: palette.value[dataToPlot[i].name]};
+                for (let i = 0; i < dataToPlot.length; i += 1) {
+                    dataToPlot[i].line = { color: palette.value[dataToPlot[i].name] };
                 }
             }
             return [...dataToPlot, ...fitDataSeries(start, end)];

@@ -116,23 +116,23 @@ describe("RunModelPlot", () => {
         expect(wrapper.find("div.run-plot-container").find("h3").text()).toBe("test slot content");
     });
 
-
     const mockSolutionNull = (param1: number, param2: number) => null;
     const mockSolutionRun = (param1: number, param2: number) => [
-        {name: "y", x: [0, 0.5, 1], y: [5, 6, 7]},
-        {name: "z", x: [0, 0.5, 1], y: [1, 2, 3]}
+        { name: "y", x: [0, 0.5, 1], y: [5, 6, 7] },
+        { name: "z", x: [0, 0.5, 1], y: [1, 2, 3] }
     ];
     const mockSolutionFit = (pram1: number, param2: number) => (
-        {name: "y", x: [0, 0.5, 1], y: [5, 6, 7]});
+        { name: "y", x: [0, 0.5, 1], y: [5, 6, 7] }
+    );
 
     const mockFitData = {
         data: [{ t: 0, v: 10 }, { t: 1, v: 20 }],
         timeVariable: "t",
         columnToFit: "v",
-        linkedVariables: {"v": "y"}
+        linkedVariables: { v: "y" }
     };
 
-    const mockPalette = {"y": "#0000ff", "z": "#ff0000"};
+    const mockPalette = { y: "#0000ff", z: "#ff0000" };
 
     const expectedModelPlotDataRun = [
         {

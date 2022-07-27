@@ -1,4 +1,10 @@
-import { interpolateColours, paletteData, paletteModel, parseColour, rgb, } from "../../src/app/palette";
+import {
+    interpolateColours,
+    paletteData,
+    paletteModel,
+    parseColour,
+    rgb
+} from "../../src/app/palette";
 
 describe("parse colours", () => {
     it("can roundtrip", () => {
@@ -12,7 +18,7 @@ describe("interpolate colours", () => {
     const cols = ["#2e5cb8", "#39ac73", "#cccc00", "#ff884d", "#cc0044"];
     it("returns exact solutions", () => {
         const p = interpolateColours(cols, cols.length);
-        for (let i = 0; i < cols.length; ++i) {
+        for (let i = 0; i < cols.length; i += 1) {
             expect(p(i)).toEqual(cols[i]);
         }
     });
@@ -29,7 +35,7 @@ describe("interpolate colours", () => {
     it("interpolates up", () => {
         const p = interpolateColours(cols, 9);
         const res = [];
-        for (let i = 0; i < 9; ++i) {
+        for (let i = 0; i < 9; i += 1) {
             res.push(p(i));
         }
         const expected = [
@@ -43,15 +49,25 @@ describe("interpolate colours", () => {
 describe("create palettes", () => {
     it("creates palettes for model", () => {
         const pal = paletteModel(["a", "b", "c", "d"]);
-        expect(pal).toEqual({a: "#2e5cb8", b: "#6ab74d", c: "#ee9f33", d: "#cc0044"});
+        expect(pal).toEqual({
+            a: "#2e5cb8",
+            b: "#6ab74d",
+            c: "#ee9f33",
+            d: "#cc0044"
+        });
     });
 
     it("creates palettes for data", () => {
         const pal = paletteData(["a", "b", "c", "d"]);
-        expect(pal).toEqual({a: "#e41a1c", b: "#377eb8", c: "#4daf4a", d: "#984ea3"});
+        expect(pal).toEqual({
+            a: "#e41a1c",
+            b: "#377eb8",
+            c: "#4daf4a",
+            d: "#984ea3"
+        });
     });
 
     it("allows single-variable palette", () => {
-        expect(paletteModel(["a"])).toEqual({a: "#2e5cb8"});
+        expect(paletteModel(["a"])).toEqual({ a: "#2e5cb8" });
     });
 });
