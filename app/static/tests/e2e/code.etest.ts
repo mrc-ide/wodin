@@ -154,6 +154,6 @@ test.describe("Code Tab tests", () => {
         await runBtn.click();
 
         await expect(await page.innerText(".run-tab #error-info"))
-            .toBe("An error occurred while running model: Error: Integration failure: too many steps at 0");
+            .toBe("An error occurred while running the model: Error: Integration failure: too many steps at 0");
     });
 });

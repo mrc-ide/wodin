@@ -269,7 +269,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinRunnerError);
         expect(commit.mock.calls[0][1]).toStrictEqual({
             detail: mockError,
-            error: "An error occurred while running model"
+            error: "An error occurred while running the model"
         });
     });
 
