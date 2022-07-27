@@ -156,7 +156,7 @@ describe("ModelFit actions", () => {
         };
 
         const commit = jest.fn();
-        (actions[ModelFitAction.UpdateParamsToVary] as any)({commit, state: modelFitState, rootState});
+        (actions[ModelFitAction.UpdateParamsToVary] as any)({ commit, state: modelFitState, rootState });
 
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetParamsToVary);

@@ -8,7 +8,7 @@ import { RequiredModelAction } from "../../../../src/app/store/model/state";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { AppType } from "../../../../src/app/store/appState/state";
 import { FitDataAction } from "../../../../src/app/store/fitData/actions";
-import {ModelFitAction} from "../../../../src/app/store/modelFit/actions";
+import { ModelFitAction } from "../../../../src/app/store/modelFit/actions";
 
 describe("Model actions", () => {
     beforeEach(() => {

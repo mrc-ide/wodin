@@ -1,18 +1,18 @@
-import Vuex, {Store} from "vuex";
-import {nextTick} from "vue";
-import {mount, shallowMount, VueWrapper} from "@vue/test-utils";
-import {BasicState} from "../../../../src/app/store/basic/state";
+import Vuex, { Store } from "vuex";
+import { nextTick } from "vue";
+import { mount, shallowMount, VueWrapper } from "@vue/test-utils";
+import { BasicState } from "../../../../src/app/store/basic/state";
 import ParameterValues from "../../../../src/app/components/options/ParameterValues.vue";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
-import {mockModelFitState, mockModelState} from "../../../mocks";
-import {ModelMutation, mutations} from "../../../../src/app/store/model/mutations";
-import {AppType} from "../../../../src/app/store/appState/state";
+import { mockModelFitState, mockModelState } from "../../../mocks";
+import { ModelMutation, mutations } from "../../../../src/app/store/model/mutations";
+import { AppType } from "../../../../src/app/store/appState/state";
 import Mock = jest.Mock;
-import {ModelFitMutation} from "../../../../src/app/store/modelFit/mutations";
+import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
 
 describe("ParameterValues", () => {
     const getStore = (mockUpdateParameterValues: Mock<any, any> | null = null, paramsToVary: string[] = [],
-                      mockSetParamsToVary = jest.fn()) => {
+        mockSetParamsToVary = jest.fn()) => {
         // Use mock or real mutations
         const storeMutations = mockUpdateParameterValues
             ? { UpdateParameterValues: mockUpdateParameterValues } : mutations;
@@ -92,7 +92,8 @@ describe("ParameterValues", () => {
     it("shows select param to vary message if fit tab is open and none are selected", () => {
         const wrapper = getWrapper(getStore(null, []), true);
         expect(wrapper.find("#select-param-msg").text()).toBe(
-            "Please select at least one parameter to vary during model fit.");
+            "Please select at least one parameter to vary during model fit."
+        );
     });
 
     it("commits parameter value change", async () => {

@@ -86,16 +86,22 @@ test.describe("Wodin App model fit tests", () => {
         const select1 = await linkContainer.locator(":nth-match(select, 1)");
         await select1.selectOption("I");
 
-        // run fit
+        // select param to vary
         await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
         await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Fit");
+        await expect(await page.innerText("#select-param-msg"))
+            .toBe("Please select at least one parameter to vary during model fit.");
+        await page.click(":nth-match(input.vary-param-check, 1)");
+        await expect(await page.innerText("#select-param-msg")).toBe("");
+
+        // run fit
         await page.click(".wodin-right .wodin-content div.mt-4 button");
 
         // wait til fit completes
         await expect(await page.getAttribute(".run-plot-container .vue-feather", "data-type")).toBe("check");
         await expect(await page.innerText(":nth-match(.run-plot-container span, 1)")).toContain("Iterations:");
-        await expect(await page.innerText(":nth-match(.run-plot-container span, 2)"))
-            .toContain("Sum of squares:");
+        const sumOfSquares = await page.innerText(":nth-match(.run-plot-container span, 2)");
+        expect(sumOfSquares).toContain("Sum of squares:");
 
         const plotSelector = ".wodin-right .wodin-content div.mt-4 .js-plotly-plot";
 
@@ -112,5 +118,12 @@ test.describe("Wodin App model fit tests", () => {
 
         // Test modebar menu is present
         await expect(await page.isVisible(`${plotSelector} .modebar`)).toBe(true);
+
+        // Test can run again with different params to vary, and get different result
+        await page.click(":nth-match(input.vary-param-check, 2)");
+        await page.click(".wodin-right .wodin-content div.mt-4 button");
+        await expect(await page.getAttribute(".run-plot-container .vue-feather", "data-type")).toBe("check");
+        const newSumOfSquares = await page.innerText(":nth-match(.run-plot-container span, 2)");
+        expect(newSumOfSquares).not.toEqual(sumOfSquares);
     });
 });

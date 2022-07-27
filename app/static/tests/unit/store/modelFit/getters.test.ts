@@ -13,7 +13,7 @@ describe("ModelFit getters", () => {
         columnToFit: "v"
     };
 
-    const state = mockModelFitState({paramsToVary: ["p1"]});
+    const state = mockModelFitState({ paramsToVary: ["p1"] });
 
     it("canRunFit is true when all prerequisites are met", () => {
         const rootState = { model, fitData };

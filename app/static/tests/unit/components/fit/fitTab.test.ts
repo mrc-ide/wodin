@@ -90,7 +90,8 @@ describe("Fit Tab", () => {
         const wrapper = getWrapper(false, null, null, false, null);
         expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(true);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Cannot fit model. Please provide valid data and code, link at least one variable and select parameters to vary.");
+            .toBe("Cannot fit model. Please provide valid data and code, link at least one variable and "
+                + "select parameters to vary.");
         const runModelPlot = wrapper.findComponent(RunModelPlot);
         expect(runModelPlot.props("fadePlot")).toBe(true);
         expect(runModelPlot.findComponent(VueFeather).exists()).toBe(false);

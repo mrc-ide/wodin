@@ -24,7 +24,8 @@ export default {
         notRunYet: "Model has not been run."
     },
     modelFit: {
-        cannotFit: "Cannot fit model. Please provide valid data and code, link at least one variable and select parameters to vary.",
+        cannotFit: "Cannot fit model. Please provide valid data and code, link at least one variable "
+            + "and select parameters to vary.",
         notFittedYet: "Model has not been fitted.",
         selectParamToVary: "Please select at least one parameter to vary during model fit."
     }
