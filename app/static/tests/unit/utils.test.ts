@@ -1,4 +1,6 @@
-import {evaluateScript, freezer, getCodeErrorFromResponse, processFitData} from "../../src/app/utils";
+import {
+    evaluateScript, freezer, getCodeErrorFromResponse, processFitData
+} from "../../src/app/utils";
 
 describe("freezer", () => {
     it("deep freezes an object", () => {
