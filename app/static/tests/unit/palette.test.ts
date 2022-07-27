@@ -70,4 +70,8 @@ describe("create palettes", () => {
     it("allows single-variable palette", () => {
         expect(paletteModel(["a"])).toEqual({ a: "#2e5cb8" });
     });
+
+    it("allows zero-variable palette", () => {
+        expect(paletteModel([])).toEqual({});
+    });
 });

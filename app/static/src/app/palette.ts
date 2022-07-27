@@ -39,7 +39,7 @@ export function paletteModel(names: string[]): Palette {
     if (names.length === 1) {
         const col = cols[0];
         ret[names[0]] = col;
-    } else {
+    } else if (names.length > 0) {
         const pal = interpolateColours(cols, names.length);
         names.forEach((el: string, index: number) => {
             ret[el] = pal(index);

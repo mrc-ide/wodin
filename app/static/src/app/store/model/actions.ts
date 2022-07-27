@@ -51,8 +51,8 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
         });
         commit(ModelMutation.SetParameterValues, newValues);
 
-        const palette = paletteModel(state.odinModelResponse.metadata.variables);
-        commit(ModelMutation.SetPaletteModel, palette);
+        const variables = state.odinModelResponse.metadata?.variables || [];
+        commit(ModelMutation.SetPaletteModel, paletteModel(variables));
 
         if (state.requiredAction === RequiredModelAction.Compile) {
             commit(ModelMutation.SetRequiredAction, RequiredModelAction.Run);
