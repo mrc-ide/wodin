@@ -1,10 +1,11 @@
 <template>
-  <div class="run-tab">
-    <div>
-      <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
-    </div>
-    <action-required-message :message="updateMsg"></action-required-message>
-    <run-model-plot :fade-plot="!!updateMsg" :model-fit="false"></run-model-plot>
+    <div class="run-tab">
+        <div>
+            <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
+        </div>
+        <action-required-message :message="updateMsg"></action-required-message>
+        <run-model-plot :fade-plot="!!updateMsg" :model-fit="false"></run-model-plot>
+        <error-info :error="error"></error-info>
   </div>
 </template>
 
@@ -16,17 +17,20 @@ import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { ModelAction } from "../../store/model/actions";
 import { RequiredModelAction } from "../../store/model/state";
 import userMessages from "../../userMessages";
+import ErrorInfo from "../ErrorInfo.vue";
 
 export default defineComponent({
     name: "RunTab",
     components: {
         RunModelPlot,
+        ErrorInfo,
         ActionRequiredMessage
     },
     setup() {
         const store = useStore();
 
         const requiredAction = computed(() => store.state.model.requiredAction);
+        const error = computed(() => store.state.model.odinRunnerError);
 
         // Enable run button if model has initialised and compile is not required
         const canRunModel = computed(() => !!store.state.model.odinRunner && !!store.state.model.odin
@@ -46,7 +50,8 @@ export default defineComponent({
         return {
             canRunModel,
             updateMsg,
-            runModel
+            runModel,
+            error
         };
     }
 });

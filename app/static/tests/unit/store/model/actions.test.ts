@@ -240,6 +240,39 @@ describe("Model actions", () => {
         expect(runner.wodinRun).not.toHaveBeenCalled();
     });
 
+    it("runs model throws exception when error in code run model", () => {
+        const mockError = new Error("test");
+        const mockOdin = {} as any;
+        const mockRunnerWithThrownException = () => {
+            return {
+                wodinRun: jest.fn().mockImplementation(() => {
+                    throw mockError;
+                })
+            } as any;
+        };
+
+        const parameterValues = new Map([["p1", 1], ["p2", 2]]);
+        const runner = mockRunnerWithThrownException();
+        const state = mockModelState({
+            odinRunner: runner,
+            odin: mockOdin,
+            requiredAction: RequiredModelAction.Run,
+            parameterValues,
+            endTime: 99
+        });
+        const commit = jest.fn();
+
+        (actions[ModelAction.RunModel] as any)({ commit, state });
+
+        expect(runner.wodinRun.mock.calls[0][0]).toBe(mockOdin);
+        expect(commit.mock.calls.length).toBe(2);
+        expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinRunnerError);
+        expect(commit.mock.calls[0][1]).toStrictEqual({
+            detail: mockError,
+            error: "An error occurred while running the model"
+        });
+    });
+
     it("DefaultModel fetches, compiles and runs default model synchronously", async () => {
         // Use real store so can trace the flow of updates through the state
         const runner = mockRunner();
