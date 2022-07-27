@@ -64,6 +64,7 @@ export default defineComponent({
                     (row: Dict<number>) => row[timeVar] >= start && row[timeVar] <= end
                 );
                 const modelVar = fitData.linkedVariables[dataVar];
+                const col = palette.value[modelVar];
                 return [{
                     name: dataVar,
                     x: filteredData.map((row: Dict<number>) => row[fitData.timeVariable!]),
