@@ -8,6 +8,7 @@ import { RequiredModelAction } from "../../../../src/app/store/model/state";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { AppType } from "../../../../src/app/store/appState/state";
 import { FitDataAction } from "../../../../src/app/store/fitData/actions";
+import {ModelFitAction} from "../../../../src/app/store/modelFit/actions";
 
 describe("Model actions", () => {
     beforeEach(() => {
@@ -111,11 +112,11 @@ describe("Model actions", () => {
         expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetRequiredAction);
         expect(commit.mock.calls[2][1]).toBe(RequiredModelAction.Run);
 
-        // does not dispatch updated linked variables if app type is not Fit
+        // does not dispatch updated linked variables or update params to vary if app type is not Fit
         expect(dispatch).not.toHaveBeenCalled();
     });
 
-    it("compile model dipatches update linked variables for Fit apps", () => {
+    it("compile model dispatches update linked variables and update params to vary for Fit apps", () => {
         const state = {
             odinModelResponse: {
                 model: "1+2",
@@ -137,8 +138,9 @@ describe("Model actions", () => {
         expect(commit.mock.calls[1][0]).toBe(ModelMutation.SetParameterValues);
         expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetRequiredAction);
 
-        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(dispatch).toHaveBeenCalledTimes(2);
         expect(dispatch.mock.calls[0][0]).toBe(`fitData/${FitDataAction.UpdateLinkedVariables}`);
+        expect(dispatch.mock.calls[1][0]).toBe(`modelFit/${ModelFitAction.UpdateParamsToVary}`);
     });
 
     it("compile model does not update required action if required action was not Compile", () => {

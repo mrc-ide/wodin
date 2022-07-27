@@ -36,7 +36,9 @@ describe("ModelFit actions", () => {
         fitData: fitDataState
     } as any;
 
-    const state = mockModelFitState();
+    const state = mockModelFitState({
+        paramsToVary: ["p1"]
+    });
 
     afterEach(() => {
         resetAllMocks();
@@ -67,7 +69,7 @@ describe("ModelFit actions", () => {
         });
         expect(mockWodinFit.mock.calls[0][2]).toStrictEqual({
             base: parameterValues,
-            vary: ["p1", "p2"]
+            vary: ["p1"]
         });
         expect(mockWodinFit.mock.calls[0][3]).toBe("S");
         expect(mockWodinFit.mock.calls[0][4]).toStrictEqual({});
@@ -146,5 +148,18 @@ describe("ModelFit actions", () => {
             expect(dispatch).not.toHaveBeenCalled();
             done();
         });
+    });
+
+    it("UpdateParamsToVary retains params to vary if possible", () => {
+        const modelFitState = {
+            paramsToVary: ["p1", "p3"]
+        };
+
+        const commit = jest.fn();
+        (actions[ModelFitAction.UpdateParamsToVary] as any)({commit, state: modelFitState, rootState});
+
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetParamsToVary);
+        expect(commit.mock.calls[0][1]).toStrictEqual(["p1"]);
     });
 });
