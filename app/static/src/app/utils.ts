@@ -36,7 +36,7 @@ export function getCodeErrorFromResponse(errorResponse: OdinModelResponseError):
     const line = errorResponse.line.join();
     const lineWord = errorResponse.line.length > 1 ? "lines" : "line";
     const detail = line ? `Error on ${lineWord} ${line}: ${errorResponse.message}` : errorResponse.message;
-    const error = "ERROR";
+    const error = "Code error";
     return { error, detail };
 }
 
