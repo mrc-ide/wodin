@@ -59,7 +59,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
     },
 
     [ModelFitAction.UpdateParamsToVary](context) {
-        const {rootState, state, commit} = context;
+        const { rootState, state, commit } = context;
         const paramValues = rootState.model.parameterValues;
         const newParams = paramValues ? Array.from(paramValues.keys()) : [];
         // Retain selected values if we can

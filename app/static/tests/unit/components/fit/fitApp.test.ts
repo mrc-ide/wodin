@@ -103,7 +103,9 @@ describe("FitApp", () => {
 
         // Change to Options tab
         await leftTabs.findAll("li a").at(2)!.trigger("click");
-        expect(leftTabs.find("div.mt-4").findComponent(OptionsTab).exists()).toBe(true);
+        const optionsTab = leftTabs.find("div.mt-4").findComponent(OptionsTab);
+        expect(optionsTab.exists()).toBe(true);
+        expect(optionsTab.props("fitTabIsOpen")).toBe(false);
     });
 
     it("renders Fit as expected", async () => {
@@ -122,5 +124,22 @@ describe("FitApp", () => {
         // Change to Sensitivity tab
         await rightTabs.findAll("li a").at(2)!.trigger("click");
         expect(rightTabs.find("div.mt-4").text()).toBe("Coming soon: Sensitivity plot");
+    });
+
+    it("updates fitTabIsOpen on OptionsTab when change to Fit tab and back", async () => {
+        const wrapper = getWrapper();
+        const rightTabs = wrapper.find("#right-tabs");
+        const leftTabs = wrapper.find("#left-tabs");
+
+        await leftTabs.findAll("li a").at(2)!.trigger("click"); // Click Options tab
+        await rightTabs.findAll("li a").at(1)!.trigger("click"); // Click Fit Tab
+        const optionsTab = leftTabs.findComponent(OptionsTab);
+        expect(optionsTab.props("fitTabIsOpen")).toBe(true);
+
+        await rightTabs.findAll("li a").at(0)!.trigger("click"); // Click Run tab
+        expect(optionsTab.props("fitTabIsOpen")).toBe(false);
+
+        await rightTabs.findAll("li a").at(2)!.trigger("click"); // Click Sensitivity tab
+        expect(optionsTab.props("fitTabIsOpen")).toBe(false);
     });
 });

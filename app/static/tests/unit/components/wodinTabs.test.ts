@@ -31,7 +31,7 @@ describe("WodinTabs", () => {
         expect(slotContainer.html()).not.toContain("<div>TWO</div>");
     });
 
-    it("clicking tab makes it active and shows its content", async () => {
+    it("clicking tab makes it active and shows its content, and emits tabSelected", async () => {
         const wrapper = getWrapper();
         const tabLinks = wrapper.findAll("ul.nav-tabs li a");
 
@@ -41,10 +41,14 @@ describe("WodinTabs", () => {
         const slotContainer = wrapper.find("div");
         expect(slotContainer.html()).toContain("<div>TWO</div>");
         expect(slotContainer.html()).not.toContain("<div>ONE</div>");
+        expect(wrapper.emitted("tabSelected")!.length).toBe(1);
+        expect(wrapper.emitted("tabSelected")![0]).toStrictEqual(["two"]);
 
         // can click back too
         await tabLinks.at(0)!.trigger("click");
         expect(tabLinks.at(0)!.classes()).toContain("active");
         expect(slotContainer.html())!.toContain("<div>ONE</div>");
+        expect(wrapper.emitted("tabSelected")!.length).toBe(2);
+        expect(wrapper.emitted("tabSelected")![1]).toStrictEqual(["one"]);
     });
 });

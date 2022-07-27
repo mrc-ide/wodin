@@ -55,7 +55,7 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
         if (rootState.appType === AppType.Fit) {
             // initialise data links
             dispatch(`fitData/${FitDataAction.UpdateLinkedVariables}`, null, { root: true });
-            dispatch(`modelFit/${ModelFitAction.UpdateParamsToVary}`, null, {root: true})
+            dispatch(`modelFit/${ModelFitAction.UpdateParamsToVary}`, null, { root: true });
         }
     }
 };

@@ -24,10 +24,10 @@ import { AppType } from "../../store/appState/state";
 export default {
     name: "OptionsTab",
     props: {
-      fitTabIsOpen: {
-        type: Boolean,
-        required: true
-      }
+        fitTabIsOpen: {
+            type: Boolean,
+            required: true
+        }
     },
     components: {
         LinkData,
