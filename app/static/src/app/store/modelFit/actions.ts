@@ -14,7 +14,7 @@ export enum ModelFitAction {
 export const actions: ActionTree<ModelFitState, FitState> = {
     [ModelFitAction.FitModel](context) {
         const {
-            commit, dispatch, rootState, getters
+            commit, dispatch, state, rootState, getters
         } = context;
 
         if (getters[ModelFitGetter.canRunFit]) {
@@ -27,9 +27,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
             const linkedVariable = rootState.fitData.linkedVariables[linkedColumn]!;
             const value = rootState.fitData.data!.map((row) => row[linkedColumn]);
             const data = { time, value };
-
-            // TODO: only vary user selected parameters
-            const vary = Array.from(rootState.model.parameterValues!.keys()) as string[];
+            const vary = state.paramsToVary;
 
             const pars = {
                 base: rootState.model.parameterValues!,
