@@ -8,6 +8,7 @@ import LinkData from "../../../../src/app/components/options/LinkData.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { FitState } from "../../../../src/app/store/fit/state";
 import { AppType } from "../../../../src/app/store/appState/state";
+import OptimisationOptions from "../../../../src/app/components/options/OptimisationOptions.vue";
 
 describe("OptionsTab", () => {
     it("renders as expected for Basic app", () => {
@@ -48,6 +49,9 @@ describe("OptionsTab", () => {
                 },
                 modelFit: {
                     paramsToVary: []
+                },
+                fitData: {
+                    columnToFit: null
                 }
             } as any
         });
@@ -60,7 +64,7 @@ describe("OptionsTab", () => {
             }
         });
         const collapses = wrapper.findAllComponents(VerticalCollapse);
-        expect(collapses.length).toBe(3);
+        expect(collapses.length).toBe(4);
         expect(collapses.at(0)!.props("title")).toBe("Link");
         expect(collapses.at(0)!.props("collapseId")).toBe("link-data");
         expect(collapses.at(0)!.findComponent(LinkData).exists()).toBe(true);
@@ -72,5 +76,8 @@ describe("OptionsTab", () => {
         expect(collapses.at(2)!.props("title")).toBe("Run Options");
         expect(collapses.at(2)!.props("collapseId")).toBe("run-options");
         expect(collapses.at(2)!.findComponent(RunOptions).exists()).toBe(true);
+        expect(collapses.at(3)!.props("title")).toBe("Optimisation");
+        expect(collapses.at(3)!.props("collapseId")).toBe("optimisation");
+        expect(collapses.at(3)!.findComponent(OptimisationOptions).exists()).toBe(true);
     });
 });
