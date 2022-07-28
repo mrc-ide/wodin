@@ -23,8 +23,8 @@ describe("redis", () => {
         setTimeout(() => {
             redis.disconnect();
             expect(mockConsoleLog).toBeCalledTimes(1);
-            expect(mockConsoleLog.mock.calls[0][0]).toBe(
-                "Connected to Redis server redis://localhost:6379");
+            expect(mockConsoleLog.mock.calls[0][0])
+                .toBe("Connected to Redis server redis://localhost:6379");
             done();
         }, 200);
     });
