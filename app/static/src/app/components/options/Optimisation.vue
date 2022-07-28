@@ -1,10 +1,10 @@
 <template>
-$END$
+ Optimisation goes here
 </template>
 
 <script>
 export default {
-name: "Optimisation"
+  name: "Optimisation"
 }
 </script>
 

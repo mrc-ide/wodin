@@ -9,6 +9,9 @@
         <vertical-collapse title="Run Options" collapse-id="run-options">
           <run-options></run-options>
         </vertical-collapse>
+        <vertical-collapse title="Optimisation" collapse-id="optimisation">
+          <optimisation></optimisation>
+        </vertical-collapse>
     </div>
 </template>
 
