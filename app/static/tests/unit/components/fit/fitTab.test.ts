@@ -108,7 +108,7 @@ describe("Fit Tab", () => {
     });
 
     it("renders as expected when fit has been cancelled", () => {
-        const wrapper = getWrapper(true, false, false, 1, false, false,  121.2);
+        const wrapper = getWrapper(true, false, false, 1, false, false, 121.2);
         expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect((wrapper.find("#cancel-fit-btn").element as HTMLButtonElement).disabled).toBe(true);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
