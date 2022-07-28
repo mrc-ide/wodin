@@ -28,7 +28,7 @@ describe("OptimisationOptions", () => {
 
     it("renders as expected when no linked variables", () => {
         const wrapper = getWrapper();
-        expect(wrapper.find(".row").text()).toBe("Please link at least one column in order to set target to fit");
+        expect(wrapper.find(".row").text()).toBe("Please link at least one column in order to set target to fit.");
         expect(wrapper.find("select").exists()).toBe(false);
     });
 
