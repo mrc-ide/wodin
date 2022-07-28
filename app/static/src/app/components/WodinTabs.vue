@@ -29,11 +29,13 @@ export default defineComponent({
     props: {
         tabNames: { type: Array as PropType<string[]>, required: true }
     },
-    setup(props: Props) {
+    emits: ["tabSelected"],
+    setup(props: Props, { emit }) {
         const selectedTabName = ref(props.tabNames[0]);
 
         const tabSelected = (tabName: string) => {
             selectedTabName.value = tabName;
+            emit("tabSelected", tabName);
         };
 
         return {

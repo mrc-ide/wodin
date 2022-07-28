@@ -96,6 +96,7 @@ export const mockModelFitState = (state: Partial<ModelFitState> = {}): ModelFitS
         converged: null,
         sumOfSquares: null,
         solution: null,
+        paramsToVary: [],
         ...state
     };
 };

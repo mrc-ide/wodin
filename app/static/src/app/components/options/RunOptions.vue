@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="row my-2">
-      <div class="col-6">
+      <div class="col-5">
         <label class="col-form-label">End time</label>
       </div>
       <div class="col-6">

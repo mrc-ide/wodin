@@ -6,7 +6,7 @@
           <code-tab></code-tab>
         </template>
         <template v-slot:Options>
-          <options-tab></options-tab>
+          <options-tab :fit-tab-is-open="false"></options-tab>
         </template>
       </wodin-tabs>
     </template>

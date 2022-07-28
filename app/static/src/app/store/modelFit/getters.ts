@@ -13,6 +13,6 @@ export interface ModelFitGetters {
 export const getters: ModelFitGetters & GetterTree<ModelFitState, FitState> = {
     [ModelFitGetter.canRunFit]: (state: ModelFitState, _: ModelFitGetters, rootState: FitState) => {
         return !!(rootState.model.odin && rootState.model.odinRunner && rootState.fitData.data
-            && rootState.fitData.timeVariable && rootState.fitData.columnToFit);
+            && rootState.fitData.timeVariable && rootState.fitData.columnToFit && state.paramsToVary.length);
     }
 };

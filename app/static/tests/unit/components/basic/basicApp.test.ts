@@ -79,7 +79,9 @@ describe("BasicApp", () => {
 
         // Change to Options tab
         await leftTabs.findAll("li a").at(1)!.trigger("click");
-        expect(leftTabs.find("div.mt-4").findComponent(OptionsTab).exists()).toBe(true);
+        const optionsTab = leftTabs.find("div.mt-4").findComponent(OptionsTab);
+        expect(optionsTab.exists()).toBe(true);
+        expect(optionsTab.props("fitTabIsOpen")).toBe(false);
     });
 
     it("renders Sensitivity as expected", async () => {
