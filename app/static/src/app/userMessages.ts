@@ -19,7 +19,8 @@ export default {
             prefix: "Please complete the following in order to select links:",
             data: "Upload valid data",
             model: "Compile model"
-        }
+        },
+        columnToFitPrerequisites: "Please link at least one column in order to set target to fit"
     },
     run: {
         compileRequired: "Model code has been updated. Compile code and Run Model to view updated graph.",

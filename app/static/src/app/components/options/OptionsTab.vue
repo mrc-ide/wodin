@@ -9,8 +9,8 @@
         <vertical-collapse title="Run Options" collapse-id="run-options">
           <run-options></run-options>
         </vertical-collapse>
-        <vertical-collapse title="Optimisation" collapse-id="optimisation">
-          <optimisation></optimisation>
+        <vertical-collapse v-if="fitTabIsOpen" title="Optimisation" collapse-id="optimisation">
+          <optimisation-options></optimisation-options>
         </vertical-collapse>
     </div>
 </template>
@@ -22,6 +22,7 @@ import VerticalCollapse from "../VerticalCollapse.vue";
 import ParameterValues from "./ParameterValues.vue";
 import RunOptions from "./RunOptions.vue";
 import LinkData from "./LinkData.vue";
+import OptimisationOptions from "./OptimisationOptions.vue";
 import { AppType } from "../../store/appState/state";
 
 export default {
@@ -34,6 +35,7 @@ export default {
     },
     components: {
         LinkData,
+        OptimisationOptions,
         ParameterValues,
         RunOptions,
         VerticalCollapse
