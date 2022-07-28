@@ -3,7 +3,7 @@ import { uploadCSVData } from "./utils";
 import { writeCode } from "./code.etest";
 import PlaywrightConfig from "../../playwright.config";
 
-const realisticFitData = `Day,Cases
+export const realisticFitData = `Day,Cases
 0,1
 1,1
 2,0
@@ -35,7 +35,8 @@ const realisticFitData = `Day,Cases
 28,2
 29,0
 30,2
-31,0`;
+31,0
+`;
 
 const multiTimeFitData = `Day,Cases,Day2
 0,1,0
@@ -182,6 +183,7 @@ test.describe("Wodin App model fit tests", () => {
     test("can run model fit", async ({ page }) => {
         await startModelFit(page);
         await waitForModelFitCompletion(page);
+
         await expect(await page.innerText(":nth-match(.run-plot-container span, 1)")).toContain("Iterations:");
         await expect(await page.innerText(":nth-match(.run-plot-container span, 2)"))
             .toContain("Sum of squares:");
@@ -249,5 +251,16 @@ test.describe("Wodin App model fit tests", () => {
         await expectUpdateFitMsg(page, fitRequiredMsg);
 
         await reRunFit(page); // checks message is reset
+    });
+
+    test("can cancel model fit", async ({ page }) => {
+        await startModelFit(page);
+        await page.click(".wodin-right .wodin-content div.mt-4 button#cancel-fit-btn");
+
+        await expect(await page.getAttribute(".run-plot-container .vue-feather", "data-type")).toBe("alert-circle");
+        await expect(await page.innerText(":nth-match(.run-plot-container span, 1)")).toContain("Iterations:");
+        await expect(await page.innerText(":nth-match(.run-plot-container span, 2)"))
+            .toContain("Sum of squares:");
+        await expect(await page.innerText("#fit-cancelled-msg")).toBe("Model fit was cancelled before converging");
     });
 });

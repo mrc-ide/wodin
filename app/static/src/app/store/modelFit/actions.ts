@@ -43,7 +43,13 @@ export const actions: ActionTree<ModelFitState, FitState> = {
     },
 
     [ModelFitAction.FitModelStep](context, simplex) {
-        const { commit, dispatch } = context;
+        const { commit, dispatch, state } = context;
+
+        // Exit if fit has been cancelled
+        if (!state.fitting) {
+            return;
+        }
+
         simplex.step();
         const result = simplex.result();
         commit(ModelFitMutation.SetResult, result);
