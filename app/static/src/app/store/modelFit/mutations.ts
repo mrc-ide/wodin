@@ -4,7 +4,8 @@ import { SimplexResult } from "../../types/responseTypes";
 
 export enum ModelFitMutation {
     SetFitting = "SetFitting",
-    SetResult = "SetResult"
+    SetResult = "SetResult",
+    SetFitUpdateRequired = "SetFitUpdateRequired"
 }
 
 export const mutations: MutationTree<ModelFitState> = {
@@ -17,5 +18,9 @@ export const mutations: MutationTree<ModelFitState> = {
         state.iterations = payload.iterations;
         state.sumOfSquares = payload.value;
         state.solution = payload.data.solutionFit;
+    },
+
+    [ModelFitMutation.SetFitUpdateRequired](state: ModelFitState, payload: boolean) {
+        state.fitUpdateRequired = payload;
     }
 };

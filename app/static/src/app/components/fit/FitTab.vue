@@ -31,6 +31,7 @@ import { ModelFitAction } from "../../store/modelFit/actions";
 import { ModelFitGetter } from "../../store/modelFit/getters";
 import userMessages from "../../userMessages";
 import LoadingSpinner from "../LoadingSpinner.vue";
+import { RequiredModelAction } from "../../store/model/state";
 import { ModelFitMutation } from "../../store/modelFit/mutations";
 
 export default {
@@ -46,6 +47,8 @@ export default {
         const namespace = "modelFit";
 
         const canFitModel = computed(() => store.getters[`${namespace}/${ModelFitGetter.canRunFit}`]);
+        const compileRequired = computed(() => store.state.model.requiredAction === RequiredModelAction.Compile);
+        const fitUpdateRequired = computed(() => store.state.modelFit.fitUpdateRequired);
         const fitModel = () => store.dispatch(`${namespace}/${ModelFitAction.FitModel}`);
         const cancelFit = () => store.commit(`${namespace}/${ModelFitMutation.SetFitting}`, false);
 
@@ -54,7 +57,21 @@ export default {
         const fitting = computed(() => store.state.modelFit.fitting);
         const cancelled = computed(() => iterations.value && !fitting.value && !converged.value);
         const sumOfSquares = computed(() => store.state.modelFit.sumOfSquares);
-        const actionRequiredMessage = computed(() => (canFitModel.value ? "" : userMessages.modelFit.cannotFit));
+
+        const actionRequiredMessage = computed(() => {
+            if (!canFitModel.value) {
+                return userMessages.modelFit.cannotFit;
+            }
+            if (compileRequired.value) {
+                return userMessages.modelFit.compileRequired;
+            }
+            if (fitUpdateRequired.value) {
+                return userMessages.modelFit.fitRequired;
+            }
+
+            return "";
+        });
+
         const cancelledMsg = computed(() => (cancelled.value ? userMessages.modelFit.cancelled : ""));
         const iconType = computed(() => {
             if (cancelled.value) {
