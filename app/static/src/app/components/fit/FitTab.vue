@@ -2,7 +2,7 @@
   <div class="fit-tab">
     <div>
       <button class="btn btn-primary me-2" id="fit-btn" :disabled="!canFitModel" @click="fitModel">Fit model</button>
-      <button class="btn btn-primary" id="cancel-fit-btn" :disabled="!fitting" @click="cancelFit">Cancel fit</button>
+      <button class="btn btn-outline" id="cancel-fit-btn" :disabled="!fitting" @click="cancelFit">Cancel fit</button>
       <action-required-message :message="actionRequiredMessage"></action-required-message>
       <run-model-plot :fade-plot="!!actionRequiredMessage" :model-fit="true">
         <div v-if="iterations">

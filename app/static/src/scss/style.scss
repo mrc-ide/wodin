@@ -15,3 +15,9 @@ $brand: #479fb6;
 .bg-brand {
   background-color: $brand;
 }
+
+.btn-outline {
+  background-color: #fff;
+  border-color: #0d6efd;
+  color: #0d6efd !important;
+}
