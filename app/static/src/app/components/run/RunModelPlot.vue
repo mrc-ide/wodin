@@ -16,7 +16,7 @@ import {
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
 import {
-    Data, newPlot, react, PlotRelayoutEvent, Plots
+    Data, newPlot, react, PlotData, PlotRelayoutEvent, Plots
 } from "plotly.js";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
@@ -89,7 +89,7 @@ export default defineComponent({
                 dataToPlot.line = seriesColour(dataToPlot.name);
                 dataToPlot = [dataToPlot] as Data[];
             } else {
-                dataToPlot.forEach((data) => {
+                dataToPlot.forEach((data: PlotData) => {
                     data.line = seriesColour(data.name); // eslint-disable-line no-param-reassign
                 });
             }
