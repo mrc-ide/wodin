@@ -54,6 +54,8 @@ export default defineComponent({
 
         const hasPlotData = computed(() => !!(baseData.value?.length));
 
+        const seriesColour = (variable: string) => ({ color: palette.value[variable] });
+
         // translate fit data into a form that can be plotted - only supported for modelFit for now
         const fitDataSeries = (start: number, end: number) => {
             const { fitData } = store.state;
@@ -66,11 +68,11 @@ export default defineComponent({
                 const modelVar = fitData.linkedVariables[dataVar];
                 return [{
                     name: dataVar,
-                    x: filteredData.map((row: Dict<number>) => row[fitData.timeVariable!]),
-                    y: filteredData.map((row: Dict<number>) => row[fitData.columnToFit!]),
+                    x: filteredData.map((row: Dict<number>) => row[timeVar]),
+                    y: filteredData.map((row: Dict<number>) => row[dataVar]),
                     mode: "markers",
                     type: "scatter",
-                    marker: { color: palette.value[modelVar] }
+                    marker: seriesColour(modelVar)
                 }];
             }
             return [];
@@ -84,12 +86,12 @@ export default defineComponent({
 
             // model fit partial solution returns single series - convert to array
             if (props.modelFit) {
-                dataToPlot.line = { color: palette.value[dataToPlot.name] };
+                dataToPlot.line = seriesColour(dataToPlot.name);
                 dataToPlot = [dataToPlot] as Data[];
             } else {
-                for (let i = 0; i < dataToPlot.length; i += 1) {
-                    dataToPlot[i].line = { color: palette.value[dataToPlot[i].name] };
-                }
+                dataToPlot.forEach((data) => {
+                    data.line = seriesColour(data.name); // eslint-disable-line no-param-reassign
+                });
             }
             return [...dataToPlot, ...fitDataSeries(start, end)];
         };
