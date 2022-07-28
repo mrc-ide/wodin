@@ -5,6 +5,9 @@ export default {
         isValid: "Code is valid",
         isNotValid: "Code is not valid"
     },
+    errors: {
+        wodinRunError: "An error occurred while running the model"
+    },
     fitData: {
         errorLoadingData: "An error occurred when loading data",
         errorReadingFile: "An error occurred when reading data file",
