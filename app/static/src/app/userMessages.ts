@@ -27,6 +27,7 @@ export default {
         notRunYet: "Model has not been run."
     },
     modelFit: {
+        cancelled: "Model fit was cancelled before converging",
         cannotFit: "Cannot fit model. Please provide valid data and code, and link at least one variable.",
         notFittedYet: "Model has not been fitted."
     }
