@@ -102,15 +102,20 @@ output(onset) <- if(t == 0) I_0 else gamma*E
 
 const { timeout } = PlaywrightConfig;
 
-const startModelFit = async (page: Page) => {
+const startModelFit = async (page: Page, data: string = realisticFitData) => {
     // Upload data
-    await uploadCSVData(page, realisticFitData);
+    await uploadCSVData(page, data);
+    await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
 
     // link variables
     await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
+    await expect(await page.innerText("#optimisation")).toBe(
+        "Please link at least one column in order to set target to fit."
+    );
     const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
     const select1 = await linkContainer.locator(":nth-match(select, 1)");
     await select1.selectOption("I");
+    await expect(await page.inputValue("#optimisation select")).toBe("Cases");
 
     // select param to vary
     await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
@@ -121,7 +126,6 @@ const startModelFit = async (page: Page) => {
     await expect(await page.innerText("#select-param-msg")).toBe("");
 
     // run fit
-    await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
     await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Fit");
     await page.click(".wodin-right .wodin-content div.mt-4 button#fit-btn");
 };
@@ -263,6 +267,25 @@ test.describe("Wodin App model fit tests", () => {
         await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
         await expect(await page.locator("#link-data select")).toBeVisible({ timeout });
         await page.selectOption("#link-data select", "E");
+        await expectUpdateFitMsg(page, fitRequiredMsg);
+
+        await reRunFit(page); // checks message is reset
+    });
+
+    test("can see expected updated required message when target to fit changes", async ({ page }) => {
+        // run fit
+        await startModelFit(page, multiTimeFitData);
+        await waitForModelFitCompletion(page);
+
+        // Make a new link
+        const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
+        const linkSelect = await linkContainer.locator(":nth-match(select, 2)");
+        await linkSelect.selectOption("S");
+
+        // Select the new link as target
+        const targetSelect = await page.locator("#optimisation select");
+        await targetSelect.selectOption("Day2");
+
         await expectUpdateFitMsg(page, fitRequiredMsg);
 
         await reRunFit(page); // checks message is reset

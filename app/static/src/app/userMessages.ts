@@ -20,7 +20,7 @@ export default {
             data: "Upload valid data",
             model: "Compile model"
         },
-        columnToFitPrerequisites: "Please link at least one column in order to set target to fit"
+        columnToFitPrerequisites: "Please link at least one column in order to set target to fit."
     },
     run: {
         compileRequired: "Model code has been updated. Compile code and Run Model to view updated graph.",

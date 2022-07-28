@@ -295,7 +295,7 @@ describe("Fit Data actions", () => {
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetColumnToFit);
         expect(commit.mock.calls[0][1]).toBe("col1");
         expect(commit.mock.calls[1][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
-        expect(commit.mock.calls[1][1]).toBe(null);
+        expect(commit.mock.calls[1][1]).toBe(true);
         expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
     });
 });
