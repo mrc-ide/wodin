@@ -5,6 +5,7 @@ export interface WodinConfig {
     courseTitle: string,
     port: number,
     odinAPI: string,
+    redisURL: string,
     appsPath: string
 }
 
