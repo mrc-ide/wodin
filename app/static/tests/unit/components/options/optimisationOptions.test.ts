@@ -1,9 +1,9 @@
-import {mockFitDataState} from "../../../mocks";
 import Vuex from "vuex";
-import {FitState} from "../../../../src/app/store/fit/state";
-import {shallowMount} from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
+import { mockFitDataState } from "../../../mocks";
+import { FitState } from "../../../../src/app/store/fit/state";
 import OptimisationOptions from "../../../../src/app/components/options/OptimisationOptions.vue";
-import {FitDataAction} from "../../../../src/app/store/fitData/actions";
+import { FitDataAction } from "../../../../src/app/store/fitData/actions";
 
 describe("OptimisationOptions", () => {
     const getWrapper = (fitDataState = mockFitDataState(), mockUpdateColumnToFit = jest.fn()) => {

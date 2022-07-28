@@ -23,7 +23,7 @@
 <script lang="ts">
 import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
-import {FitDataAction} from "../../store/fitData/actions";
+import { FitDataAction } from "../../store/fitData/actions";
 import userMessages from "../../userMessages";
 
 export default defineComponent({
@@ -32,11 +32,13 @@ export default defineComponent({
         const store = useStore();
         const columnToFit = computed(() => store.state.fitData.columnToFit);
         const linkedVariables = computed(() => store.state.fitData.linkedVariables);
-        const columnsWithLinks = computed(() => Object.keys(linkedVariables.value).filter((col) => !!linkedVariables.value[col]));
+        const columnsWithLinks = computed(() => {
+            return Object.keys(linkedVariables.value).filter((col) => !!linkedVariables.value[col]);
+        });
 
         const updateColumnToFit = (e: Event) => {
-          const col = (e.target as HTMLInputElement).value;
-          store.dispatch(`fitData/${FitDataAction.UpdateColumnToFit}`, col);
+            const col = (e.target as HTMLInputElement).value;
+            store.dispatch(`fitData/${FitDataAction.UpdateColumnToFit}`, col);
         };
 
         const columnToFitPrerequisitesMessage = userMessages.fitData.columnToFitPrerequisites;

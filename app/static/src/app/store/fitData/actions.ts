@@ -70,6 +70,6 @@ export const actions: ActionTree<FitDataState, FitState> = {
     [FitDataAction.UpdateColumnToFit](context, payload: string) {
         const { commit } = context;
         commit(FitDataMutation.SetColumnToFit, payload);
-        commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
+        commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, null, { root: true });
     }
 };
