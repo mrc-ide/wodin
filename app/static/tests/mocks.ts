@@ -48,6 +48,8 @@ export const mockModelState = (state: Partial<ModelState> = {}): ModelState => {
         requiredAction: null,
         parameterValues: null,
         endTime: 100,
+        odinRunnerError: null,
+        odinModelCodeError: null,
         ...state
     };
 };
@@ -89,6 +91,7 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
 export const mockModelFitState = (state: Partial<ModelFitState> = {}): ModelFitState => {
     return {
         fitting: false,
+        fitUpdateRequired: true,
         iterations: null,
         converged: null,
         sumOfSquares: null,

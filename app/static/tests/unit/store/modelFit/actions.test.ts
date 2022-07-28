@@ -53,9 +53,11 @@ describe("ModelFit actions", () => {
             commit, dispatch, state, rootState, getters
         });
 
-        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetFitting);
         expect(commit.mock.calls[0][1]).toBe(true);
+        expect(commit.mock.calls[1][0]).toBe(ModelFitMutation.SetFitUpdateRequired);
+        expect(commit.mock.calls[1][1]).toBe(false);
 
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch.mock.calls[0][0]).toBe(ModelFitAction.FitModelStep);
@@ -101,9 +103,11 @@ describe("ModelFit actions", () => {
             result: () => result
         } as any;
 
+        const testState = mockModelFitState({ fitting: true });
+
         const commit = jest.fn();
         const dispatch = jest.fn();
-        (actions[ModelFitAction.FitModelStep] as any)({ commit, dispatch }, simplex);
+        (actions[ModelFitAction.FitModelStep] as any)({ commit, dispatch, state: testState }, simplex);
 
         setTimeout(() => {
             expect(simplex.step).toHaveBeenCalledTimes(1);
@@ -135,7 +139,8 @@ describe("ModelFit actions", () => {
 
         const commit = jest.fn();
         const dispatch = jest.fn();
-        (actions[ModelFitAction.FitModelStep] as any)({ commit, dispatch }, simplex);
+        const testState = mockModelFitState({ fitting: true });
+        (actions[ModelFitAction.FitModelStep] as any)({ commit, dispatch, state: testState }, simplex);
 
         setTimeout(() => {
             expect(simplex.step).toHaveBeenCalledTimes(1);
@@ -161,5 +166,21 @@ describe("ModelFit actions", () => {
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetParamsToVary);
         expect(commit.mock.calls[0][1]).toStrictEqual(["p1"]);
+    });
+
+    it("FitModelStep does nothing if not fitting", (done) => {
+        const simplex = {
+            step: jest.fn()
+        };
+        const commit = jest.fn();
+        const dispatch = jest.fn();
+        const testState = mockModelFitState({ fitting: false });
+        (actions[ModelFitAction.FitModelStep] as any)({ commit, dispatch, state: testState }, simplex);
+        setTimeout(() => {
+            expect(simplex.step).not.toHaveBeenCalled();
+            expect(commit).not.toHaveBeenCalled();
+            expect(dispatch).not.toHaveBeenCalled();
+            done();
+        });
     });
 });

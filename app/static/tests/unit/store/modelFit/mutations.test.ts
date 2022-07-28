@@ -31,4 +31,11 @@ describe("ModeilFit mutations", () => {
         mutations.SetParamsToVary(state, ["p1"]);
         expect(state.paramsToVary).toStrictEqual(["p1"]);
     });
+
+    it("sets fitUpdateRequired", () => {
+        const state = mockModelFitState();
+        expect(state.fitUpdateRequired).toBe(true);
+        mutations.SetFitUpdateRequired(state, false);
+        expect(state.fitUpdateRequired).toBe(false);
+    });
 });

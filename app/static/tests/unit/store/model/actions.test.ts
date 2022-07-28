@@ -9,6 +9,7 @@ import { BasicState } from "../../../../src/app/store/basic/state";
 import { AppType } from "../../../../src/app/store/appState/state";
 import { FitDataAction } from "../../../../src/app/store/fitData/actions";
 import { ModelFitAction } from "../../../../src/app/store/modelFit/actions";
+import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
 
 describe("Model actions", () => {
     beforeEach(() => {
@@ -133,10 +134,13 @@ describe("Model actions", () => {
         (actions[ModelAction.CompileModel] as any)({
             commit, dispatch, state, rootState: fitRootState
         });
-        expect(commit.mock.calls.length).toBe(3);
+        expect(commit.mock.calls.length).toBe(4);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[1][0]).toBe(ModelMutation.SetParameterValues);
         expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetRequiredAction);
+        expect(commit.mock.calls[3][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
+        expect(commit.mock.calls[3][1]).toBe(true);
+        expect(commit.mock.calls[3][2]).toStrictEqual({ root: true });
 
         expect(dispatch).toHaveBeenCalledTimes(2);
         expect(dispatch.mock.calls[0][0]).toBe(`fitData/${FitDataAction.UpdateLinkedVariables}`);
@@ -240,6 +244,39 @@ describe("Model actions", () => {
 
         expect(commit).not.toHaveBeenCalled();
         expect(runner.wodinRun).not.toHaveBeenCalled();
+    });
+
+    it("runs model throws exception when error in code run model", () => {
+        const mockError = new Error("test");
+        const mockOdin = {} as any;
+        const mockRunnerWithThrownException = () => {
+            return {
+                wodinRun: jest.fn().mockImplementation(() => {
+                    throw mockError;
+                })
+            } as any;
+        };
+
+        const parameterValues = new Map([["p1", 1], ["p2", 2]]);
+        const runner = mockRunnerWithThrownException();
+        const state = mockModelState({
+            odinRunner: runner,
+            odin: mockOdin,
+            requiredAction: RequiredModelAction.Run,
+            parameterValues,
+            endTime: 99
+        });
+        const commit = jest.fn();
+
+        (actions[ModelAction.RunModel] as any)({ commit, state });
+
+        expect(runner.wodinRun.mock.calls[0][0]).toBe(mockOdin);
+        expect(commit.mock.calls.length).toBe(2);
+        expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinRunnerError);
+        expect(commit.mock.calls[0][1]).toStrictEqual({
+            detail: mockError,
+            error: "An error occurred while running the model"
+        });
     });
 
     it("DefaultModel fetches, compiles and runs default model synchronously", async () => {
