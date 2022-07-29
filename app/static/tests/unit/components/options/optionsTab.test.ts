@@ -22,9 +22,6 @@ describe("OptionsTab", () => {
         const wrapper = mount(OptionsTab, {
             global: {
                 plugins: [store]
-            },
-            props: {
-                fitTabIsOpen: false
             }
         });
         const collapses = wrapper.findAllComponents(VerticalCollapse);
@@ -33,7 +30,6 @@ describe("OptionsTab", () => {
         expect(collapses.at(0)!.props("collapseId")).toBe("model-params");
         const paramValues = collapses.at(0)!.findComponent(ParameterValues);
         expect(paramValues.exists()).toBe(true);
-        expect(paramValues.props("fitTabIsOpen")).toBe(false);
         expect(collapses.at(1)!.props("title")).toBe("Run Options");
         expect(collapses.at(1)!.props("collapseId")).toBe("run-options");
         expect(collapses.at(1)!.findComponent(RunOptions).exists()).toBe(true);
@@ -54,9 +50,6 @@ describe("OptionsTab", () => {
         const wrapper = mount(OptionsTab, {
             global: {
                 plugins: [store]
-            },
-            props: {
-                fitTabIsOpen: true
             }
         });
         const collapses = wrapper.findAllComponents(VerticalCollapse);
@@ -68,7 +61,6 @@ describe("OptionsTab", () => {
         expect(collapses.at(1)!.props("collapseId")).toBe("model-params");
         const paramValues = collapses.at(1)!.findComponent(ParameterValues);
         expect(paramValues.exists()).toBe(true);
-        expect(paramValues.props("fitTabIsOpen")).toBe(true);
         expect(collapses.at(2)!.props("title")).toBe("Run Options");
         expect(collapses.at(2)!.props("collapseId")).toBe("run-options");
         expect(collapses.at(2)!.findComponent(RunOptions).exists()).toBe(true);

@@ -6,19 +6,24 @@ import ParameterValues from "../../../../src/app/components/options/ParameterVal
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
 import { mockModelFitState, mockModelState } from "../../../mocks";
 import { ModelMutation, mutations } from "../../../../src/app/store/model/mutations";
-import { AppType } from "../../../../src/app/store/appState/state";
+import { AppType, VisualisationTab } from "../../../../src/app/store/appState/state";
 import Mock = jest.Mock;
 import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
 
 describe("ParameterValues", () => {
-    const getStore = (mockUpdateParameterValues: Mock<any, any> | null = null, paramsToVary: string[] = [],
+    const getStore = (fitTabIsOpen = false,
+        mockUpdateParameterValues: Mock<any, any> | null = null,
+        paramsToVary: string[] = [],
         mockSetParamsToVary = jest.fn()) => {
         // Use mock or real mutations
         const storeMutations = mockUpdateParameterValues
             ? { UpdateParameterValues: mockUpdateParameterValues } : mutations;
 
         const store = new Vuex.Store<BasicState>({
-            state: { appType: AppType.Fit } as any,
+            state: {
+                appType: AppType.Fit,
+                openVisualisationTab: fitTabIsOpen ? VisualisationTab.Fit : VisualisationTab.Run
+            } as any,
             modules: {
                 model: {
                     namespaced: true,
@@ -39,13 +44,10 @@ describe("ParameterValues", () => {
         return store;
     };
 
-    const getWrapper = (store: Store<BasicState>, fitTabIsOpen = false) => {
+    const getWrapper = (store: Store<BasicState>) => {
         return shallowMount(ParameterValues, {
             global: {
                 plugins: [store]
-            },
-            props: {
-                fitTabIsOpen
             }
         });
     };
@@ -70,7 +72,7 @@ describe("ParameterValues", () => {
     });
 
     it("renders as expected when fit tab is open", () => {
-        const wrapper = getWrapper(getStore(null, ["param1"]), true);
+        const wrapper = getWrapper(getStore(true, null, ["param1"]));
         const rows = wrapper.findAll("div.row");
 
         const p1 = rows.at(0)!;
@@ -90,7 +92,7 @@ describe("ParameterValues", () => {
     });
 
     it("shows select param to vary message if fit tab is open and none are selected", () => {
-        const wrapper = getWrapper(getStore(null, []), true);
+        const wrapper = getWrapper(getStore(true, null, []));
         expect(wrapper.find("#select-param-msg").text()).toBe(
             "Please select at least one parameter to vary during model fit."
         );
@@ -98,7 +100,7 @@ describe("ParameterValues", () => {
 
     it("commits parameter value change", async () => {
         const mockUpdateParameterValues = jest.fn();
-        const wrapper = getWrapper(getStore(mockUpdateParameterValues));
+        const wrapper = getWrapper(getStore(false, mockUpdateParameterValues));
         const input2 = wrapper.findAllComponents(NumericInput).at(1)!;
         await input2.vm.$emit("update", 3.3);
         expect(mockUpdateParameterValues).toHaveBeenCalledTimes(1);
@@ -122,8 +124,8 @@ describe("ParameterValues", () => {
 
     it("updates params to vary when checkbox is checked", async () => {
         const mockSetParamsToVary = jest.fn();
-        const store = getStore(null, ["param1"], mockSetParamsToVary);
-        const wrapper = getWrapper(store, true);
+        const store = getStore(true, null, ["param1"], mockSetParamsToVary);
+        const wrapper = getWrapper(store);
         const row2 = wrapper.findAll("div.row").at(1)!;
         await row2.find("input.vary-param-check").setValue(true);
         expect(mockSetParamsToVary).toHaveBeenCalledTimes(1);
@@ -132,8 +134,8 @@ describe("ParameterValues", () => {
 
     it("updates params to vary when checkbox is unchecked", async () => {
         const mockSetParamsToVary = jest.fn();
-        const store = getStore(null, ["param1"], mockSetParamsToVary);
-        const wrapper = getWrapper(store, true);
+        const store = getStore(true, null, ["param1"], mockSetParamsToVary);
+        const wrapper = getWrapper(store);
         const row1 = wrapper.findAll("div.row").at(0)!;
         await row1.find("input.vary-param-check").setValue(false);
         expect(mockSetParamsToVary).toHaveBeenCalledTimes(1);

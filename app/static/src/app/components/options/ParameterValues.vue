@@ -31,22 +31,16 @@ import { useStore } from "vuex";
 import { ModelMutation } from "../../store/model/mutations";
 import NumericInput from "./NumericInput.vue";
 import { Dict } from "../../types/utilTypes";
-import { AppType } from "../../store/appState/state";
+import { AppType, VisualisationTab } from "../../store/appState/state";
 import { ModelFitMutation } from "../../store/modelFit/mutations";
 import userMessages from "../../userMessages";
 
 export default defineComponent({
     name: "ParameterValues",
-    props: {
-        fitTabIsOpen: {
-            type: Boolean,
-            required: true
-        }
-    },
     components: {
         NumericInput
     },
-    setup(props) {
+    setup() {
         const store = useStore();
         const paramValuesMap = computed(() => store.state.model.parameterValues);
         const paramNames = computed(
@@ -89,8 +83,10 @@ export default defineComponent({
             store.commit(`modelFit/${ModelFitMutation.SetParamsToVary}`, newParams);
         };
 
+        const fitTabIsOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Fit);
+
         const selectParamToVaryMsg = computed(() => {
-            return (!props.fitTabIsOpen || paramsToVary.value.length) ? "" : userMessages.modelFit.selectParamToVary;
+            return (!fitTabIsOpen.value || paramsToVary.value.length) ? "" : userMessages.modelFit.selectParamToVary;
         });
 
         watch(odinSolution, () => {
@@ -99,6 +95,7 @@ export default defineComponent({
         });
 
         return {
+            fitTabIsOpen,
             paramValues,
             paramNames,
             paramKeys,
@@ -111,7 +108,7 @@ export default defineComponent({
     }
 });
 </script>
-<style scope lang="scss">
+<style scoped lang="scss">
  .vary-param-msg {
    min-height: 1.4rem;
  }
