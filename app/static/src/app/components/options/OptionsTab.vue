@@ -33,6 +33,8 @@ export default {
         const store = useStore();
         const isFit = computed(() => store.state.appType === AppType.Fit);
 
+        // TODO: only show Sensitivity options when Sensitivity tab is open (after mrc-3322 has been merged in)
+
         return {
             isFit
         };

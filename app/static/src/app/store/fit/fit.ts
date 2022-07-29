@@ -5,6 +5,7 @@ import { errors } from "../errors/errors";
 import { FitState } from "./state";
 import { model } from "../model/model";
 import { code } from "../code/code";
+import { sensitivity } from "../sensitivity/sensitivity";
 import { fitData } from "../fitData/fitData";
 import { modelFit } from "../modelFit/modelFit";
 import { AppType } from "../appState/state";
@@ -28,7 +29,8 @@ export const storeOptions: StoreOptions<FitState> = {
         code,
         model,
         fitData,
-        modelFit
+        modelFit,
+        sensitivity
     },
     plugins: [
         logMutations

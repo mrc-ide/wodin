@@ -5,6 +5,7 @@ import { errors } from "../errors/errors";
 import { StochasticState } from "./state";
 import { model } from "../model/model";
 import { code } from "../code/code";
+import { sensitivity } from "../sensitivity/sensitivity";
 import { AppType } from "../appState/state";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -23,6 +24,7 @@ export const storeOptions: StoreOptions<StochasticState> = {
     modules: {
         errors,
         code,
-        model
+        model,
+        sensitivity
     }
 };
