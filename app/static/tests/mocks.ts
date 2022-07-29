@@ -9,7 +9,7 @@ import {
 import { ModelState } from "../src/app/store/model/state";
 import { CodeState } from "../src/app/store/code/state";
 import { FitDataState } from "../src/app/store/fitData/state";
-import {AppType, VisualisationTab} from "../src/app/store/appState/state";
+import { AppType, VisualisationTab } from "../src/app/store/appState/state";
 import { ModelFitState } from "../src/app/store/modelFit/state";
 
 export const mockAxios = new MockAdapter(axios);
