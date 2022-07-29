@@ -110,7 +110,6 @@ describe("FitApp", () => {
         await leftTabs.findAll("li a").at(2)!.trigger("click");
         const optionsTab = leftTabs.find("div.mt-4").findComponent(OptionsTab);
         expect(optionsTab.exists()).toBe(true);
-        expect(optionsTab.props("fitTabIsOpen")).toBe(false);
     });
 
     it("renders Fit as expected", async () => {
