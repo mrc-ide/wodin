@@ -35,6 +35,7 @@ export default {
             + "Fit Model for updated best fit."
     },
     sensitivity: {
-        compileRequired: "Please compile a valid model in order to set sensitivity options."
+        compileRequired: "Please compile a valid model in order to set sensitivity options.",
+        varyParamsInvalid: "To must be greater than From"
     }
 };

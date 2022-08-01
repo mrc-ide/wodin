@@ -46,13 +46,47 @@
               </div>
               <div class="col-6">
                 <numeric-input :value="settingsInternal.variationPercentage"
-                               @update="(n) => update(n)"></numeric-input>
+                               @update="(n) => settingsInternal.variationPercentage = n"></numeric-input>
+              </div>
+            </div>
+            <template v-else>
+              <div class="row mt-2">
+                <div class="col-5">
+                  <label class="col-form-label">From</label>
+                </div>
+                <div class="col-6">
+                  <numeric-input :value="settingsInternal.rangeFrom"
+                                 @update="(n) => settingsInternal.rangeFrom = n"></numeric-input>
+                </div>
+              </div>
+              <div class="row mt-2">
+                <div class="col-5">
+                  <label class="col-form-label">To</label>
+                </div>
+                <div class="col-6">
+                  <numeric-input :value="settingsInternal.rangeTo"
+                                 @update="(n) => settingsInternal.rangeTo = n"></numeric-input>
+                </div>
+              </div>
+            </template>
+            <div class="row mt-2">
+              <div class="col-5">
+                <label class="col-form-label">Number of runs</label>
+              </div>
+              <div class="col-6">
+                <numeric-input :value="settingsInternal.numberOfRuns"
+                               @update="(n) => settingsInternal.numberOfRuns = n"></numeric-input>
+              </div>
+            </div>
+            <div v-if="!valid" class="row mt-2 small text-danger">
+              <div class="col-12">
+                {{invalidMessage}}
               </div>
             </div>
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary"
-                    :disabled="!valid"
+                    :disabled="valid ? undefined : 'disabled'"
                     @click="updateSettings">OK</button>
             <button class="btn btn-outline"
                     @click="close">Cancel</button>
@@ -63,14 +97,17 @@
   </div>
 </template>
 
-<script lan="ts">
-import {
-    defineComponent, computed, reactive, watch
-} from "vue";
+<script lang="ts">
+import { computed, defineComponent, reactive, watch } from "vue";
 import { useStore } from "vuex";
-import { SensitivityMutation } from "@/app/store/sensitivity/mutations";
-import {SensitivityScaleType, SensitivityVariationType} from "@/app/store/sensitivity/state";
+import { SensitivityMutation } from "../../store/sensitivity/mutations";
+import {
+    SensitivityParameterSettings,
+    SensitivityScaleType,
+    SensitivityVariationType
+} from "../../store/sensitivity/state";
 import NumericInput from "./NumericInput.vue";
+import userMessages from "../../userMessages";
 
 export default defineComponent({
     name: "EditParamSettings.vue",
@@ -81,11 +118,11 @@ export default defineComponent({
         }
     },
     components: {
-      NumericInput
+        NumericInput
     },
     setup(props, { emit }) {
         const store = useStore();
-        const settingsInternal = reactive({});
+        const settingsInternal = reactive({} as SensitivityParameterSettings);
 
         const paramNames = computed(() => {
             return store.state.model.parameterValues ? Array.from(store.state.model.parameterValues.keys()) : [];
@@ -94,22 +131,19 @@ export default defineComponent({
         const scaleValues = Object.keys(SensitivityScaleType);
         const variationTypeValues = Object.keys(SensitivityVariationType);
 
-        // TODO: do this properly
-        const valid = computed(() => true);
+        const valid = computed(() => {
+            return settingsInternal.variationType === SensitivityVariationType.Percentage
+                    || settingsInternal.rangeFrom! < settingsInternal.rangeTo!;
+        });
+        const invalidMessage = userMessages.sensitivity.varyParamsInvalid;
+
         const style = computed(() => {
             return { display: props.open ? "block" : "none" };
         });
 
-        const update = (n) => {
-          console.log("doing update with " + n)
-          settingsInternal.variationPercentage = n;
-        };
-
         watch(() => props.open, (newValue) => {
             if (newValue) {
-                console.log(JSON.stringify(store.state.sensitivity.paramSettings));
                 Object.assign(settingsInternal, { ...store.state.sensitivity.paramSettings });
-                console.log(settingsInternal.value);
             }
         });
 
@@ -126,8 +160,8 @@ export default defineComponent({
             variationTypeValues,
             settingsInternal,
             style,
+            invalidMessage,
             close,
-            update,
             updateSettings
         };
     }
