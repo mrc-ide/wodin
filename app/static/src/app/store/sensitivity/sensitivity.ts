@@ -1,10 +1,10 @@
-import {SensitivityScapeType, SensitivityState, SensitivityVariationType} from "./state";
+import {SensitivityScaleType, SensitivityState, SensitivityVariationType} from "./state";
 import {mutations} from "./mutations";
 
 export const defaultState: SensitivityState = {
-    settings: {
+    paramSettings: {
         parameterToVary: null,
-        scaleType: SensitivityScapeType.Arithmetic,
+        scaleType: SensitivityScaleType.Arithmetic,
         variationType: SensitivityVariationType.Percentage,
         variationPercentage: 10,
         rangeFrom: null,
@@ -14,7 +14,7 @@ export const defaultState: SensitivityState = {
 };
 
 export const sensitivity = {
-    namespace: true,
+    namespaced: true,
     state: defaultState,
     mutations
 };

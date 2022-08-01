@@ -1,4 +1,4 @@
-import {SensitivitySettings, SensitivityState} from "./state";
+import {SensitivityParameterSettings, SensitivityState} from "./state";
 import {MutationTree} from "vuex";
 
 export enum SensitivityMutation {
@@ -7,11 +7,11 @@ export enum SensitivityMutation {
 }
 
 export const mutations: MutationTree<SensitivityState> = {
-    [SensitivityMutation.SetParameterToVary](state: SensitivityState, payload: string) {
-        state.settings.parameterToVary = payload;
+    [SensitivityMutation.SetParameterToVary](state: SensitivityState, payload: string | null) {
+        state.paramSettings.parameterToVary = payload;
     },
 
-    [SensitivityMutation.SetSettings](state: SensitivityState, payload: SensitivitySettings) {
-        state.settings = payload;
+    [SensitivityMutation.SetSettings](state: SensitivityState, payload: SensitivityParameterSettings) {
+        state.paramSettings = payload;
     }
 };

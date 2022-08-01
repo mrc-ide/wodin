@@ -1,4 +1,4 @@
-export enum SensitivityScapeType {
+export enum SensitivityScaleType {
     Arithmetic = "Arithmetic",
     Logarithmic = "Logarithmic"
 }
@@ -8,9 +8,9 @@ export enum SensitivityVariationType {
     Range = "Range"
 }
 
-export interface SensitivitySettings {
+export interface SensitivityParameterSettings {
     parameterToVary: string | null,
-    scaleType: SensitivityScapeType,
+    scaleType: SensitivityScaleType,
     variationType: SensitivityVariationType,
     variationPercentage: number,
     rangeFrom: number | null,
@@ -19,5 +19,5 @@ export interface SensitivitySettings {
 }
 
 export interface SensitivityState {
-    settings: SensitivitySettings
+    paramSettings: SensitivityParameterSettings
 }

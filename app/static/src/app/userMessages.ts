@@ -33,5 +33,8 @@ export default {
         compileRequired: "Model code has been updated. Compile code and Fit Model for updated best fit.",
         fitRequired: "Model code has been recompiled, or options or data have been updated. "
             + "Fit Model for updated best fit."
+    },
+    sensitivity: {
+        compileRequired: "Please compile a valid model in order to set sensitivity options."
     }
 };

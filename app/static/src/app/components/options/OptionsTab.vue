@@ -9,6 +9,7 @@
         <vertical-collapse title="Run Options" collapse-id="run-options">
           <run-options></run-options>
         </vertical-collapse>
+        <sensitivity-options></sensitivity-options>
     </div>
 </template>
 
@@ -19,6 +20,7 @@ import VerticalCollapse from "../VerticalCollapse.vue";
 import ParameterValues from "./ParameterValues.vue";
 import RunOptions from "./RunOptions.vue";
 import LinkData from "./LinkData.vue";
+import SensitivityOptions from "./SensitivityOptions.vue";
 import { AppType } from "../../store/appState/state";
 
 export default {
@@ -27,6 +29,7 @@ export default {
         LinkData,
         ParameterValues,
         RunOptions,
+        SensitivityOptions,
         VerticalCollapse
     },
     setup() {
@@ -34,6 +37,7 @@ export default {
         const isFit = computed(() => store.state.appType === AppType.Fit);
 
         // TODO: only show Sensitivity options when Sensitivity tab is open (after mrc-3322 has been merged in)
+        // TODO: at same time, default all non-sensitivity options to collapsed when switch to Sensitivity tab
 
         return {
             isFit
