@@ -6,6 +6,7 @@ import { AppState, AppType } from "../appState/state";
 import { Odin, OdinModelResponse, OdinParameter } from "../../types/responseTypes";
 import { evaluateScript } from "../../utils";
 import { FitDataAction } from "../fitData/actions";
+import { ModelFitAction } from "../modelFit/actions";
 import { paletteModel } from "../../palette";
 import { ModelFitMutation } from "../modelFit/mutations";
 import userMessages from "../../userMessages";
@@ -63,6 +64,7 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
             commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
             // initialise data links
             dispatch(`fitData/${FitDataAction.UpdateLinkedVariables}`, null, { root: true });
+            dispatch(`modelFit/${ModelFitAction.UpdateParamsToVary}`, null, { root: true });
         }
     }
 };

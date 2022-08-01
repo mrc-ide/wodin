@@ -2,7 +2,7 @@
   <div class="container">
     <template v-if="dataColumns && modelSuccess">
       <div v-for="dataColumn in dataColumns" :key="dataColumn" class="row my-2">
-        <div class="col-6">
+        <div class="col-5">
           <label class="col-form-label">{{ dataColumn }}</label>
         </div>
         <div class="col-6">

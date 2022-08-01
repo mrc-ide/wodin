@@ -16,15 +16,20 @@ import { ModelAction } from "../../../../src/app/store/model/actions";
 import CodeTab from "../../../../src/app/components/code/CodeTab.vue";
 import DataTab from "../../../../src/app/components/data/DataTab.vue";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
+import { VisualisationTab } from "../../../../src/app/store/appState/state";
+import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
 
 describe("FitApp", () => {
-    const getWrapper = () => {
+    const getWrapper = (mockSetOpenVisualisationTab = jest.fn()) => {
         const state = mockFitState({ config: {} as any });
         const props = {
             appName: "testApp"
         };
         const store = new Vuex.Store<FitState>({
             state,
+            mutations: {
+                [AppStateMutation.SetOpenVisualisationTab]: mockSetOpenVisualisationTab
+            },
             actions: {
                 [AppStateAction.FetchConfig]: jest.fn()
             },
@@ -103,7 +108,8 @@ describe("FitApp", () => {
 
         // Change to Options tab
         await leftTabs.findAll("li a").at(2)!.trigger("click");
-        expect(leftTabs.find("div.mt-4").findComponent(OptionsTab).exists()).toBe(true);
+        const optionsTab = leftTabs.find("div.mt-4").findComponent(OptionsTab);
+        expect(optionsTab.exists()).toBe(true);
     });
 
     it("renders Fit as expected", async () => {
@@ -122,5 +128,17 @@ describe("FitApp", () => {
         // Change to Sensitivity tab
         await rightTabs.findAll("li a").at(2)!.trigger("click");
         expect(rightTabs.find("div.mt-4").text()).toBe("Coming soon: Sensitivity plot");
+    });
+
+    it("commits open tab change when change tab", async () => {
+        const mockSetOpenTab = jest.fn();
+        const wrapper = getWrapper(mockSetOpenTab);
+        const rightTabs = wrapper.find("#right-tabs");
+        const leftTabs = wrapper.find("#left-tabs");
+
+        const optionsTab = leftTabs.findComponent(OptionsTab);
+        await rightTabs.findAll("li a").at(1)!.trigger("click"); // Click Fit tab
+        expect(mockSetOpenTab).toHaveBeenCalledTimes(1);
+        expect(mockSetOpenTab.mock.calls[0][1]).toBe(VisualisationTab.Fit);
     });
 });

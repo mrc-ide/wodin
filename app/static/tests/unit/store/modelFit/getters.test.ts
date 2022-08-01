@@ -13,7 +13,7 @@ describe("ModelFit getters", () => {
         columnToFit: "v"
     };
 
-    const state = mockModelFitState();
+    const state = mockModelFitState({ paramsToVary: ["p1"] });
 
     it("canRunFit is true when all prerequisites are met", () => {
         const rootState = { model, fitData };
@@ -58,5 +58,10 @@ describe("ModelFit getters", () => {
             fitData: { ...fitData, columnToFit: null }
         };
         expect((getters[ModelFitGetter.canRunFit] as any)(state, {}, rootState)).toBe(false);
+    });
+
+    it("canRunFit is false when paramsToVary is empty", () => {
+        const rootState = { model, fitData };
+        expect((getters[ModelFitGetter.canRunFit] as any)(mockModelFitState(), {}, rootState)).toBe(false);
     });
 });

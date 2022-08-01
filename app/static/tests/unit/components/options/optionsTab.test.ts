@@ -19,12 +19,17 @@ describe("OptionsTab", () => {
                 }
             } as any
         });
-        const wrapper = mount(OptionsTab, { global: { plugins: [store] } });
+        const wrapper = mount(OptionsTab, {
+            global: {
+                plugins: [store]
+            }
+        });
         const collapses = wrapper.findAllComponents(VerticalCollapse);
         expect(collapses.length).toBe(2);
         expect(collapses.at(0)!.props("title")).toBe("Model Parameters");
         expect(collapses.at(0)!.props("collapseId")).toBe("model-params");
-        expect(collapses.at(0)!.findComponent(ParameterValues).exists()).toBe(true);
+        const paramValues = collapses.at(0)!.findComponent(ParameterValues);
+        expect(paramValues.exists()).toBe(true);
         expect(collapses.at(1)!.props("title")).toBe("Run Options");
         expect(collapses.at(1)!.props("collapseId")).toBe("run-options");
         expect(collapses.at(1)!.findComponent(RunOptions).exists()).toBe(true);
@@ -36,10 +41,17 @@ describe("OptionsTab", () => {
                 appType: AppType.Fit,
                 model: {
                     parameterValues: new Map<string, number>()
+                },
+                modelFit: {
+                    paramsToVary: []
                 }
             } as any
         });
-        const wrapper = mount(OptionsTab, { global: { plugins: [store] } });
+        const wrapper = mount(OptionsTab, {
+            global: {
+                plugins: [store]
+            }
+        });
         const collapses = wrapper.findAllComponents(VerticalCollapse);
         expect(collapses.length).toBe(3);
         expect(collapses.at(0)!.props("title")).toBe("Link");
@@ -47,7 +59,8 @@ describe("OptionsTab", () => {
         expect(collapses.at(0)!.findComponent(LinkData).exists()).toBe(true);
         expect(collapses.at(1)!.props("title")).toBe("Model Parameters");
         expect(collapses.at(1)!.props("collapseId")).toBe("model-params");
-        expect(collapses.at(1)!.findComponent(ParameterValues).exists()).toBe(true);
+        const paramValues = collapses.at(1)!.findComponent(ParameterValues);
+        expect(paramValues.exists()).toBe(true);
         expect(collapses.at(2)!.props("title")).toBe("Run Options");
         expect(collapses.at(2)!.props("collapseId")).toBe("run-options");
         expect(collapses.at(2)!.findComponent(RunOptions).exists()).toBe(true);

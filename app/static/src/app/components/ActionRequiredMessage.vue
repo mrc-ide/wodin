@@ -1,5 +1,5 @@
 <template>
-  <div class="action-required-msg text-danger text-center">
+  <div class="action-required-msg text-danger text-center mt-2">
     <span v-if="message" class="p-1">{{message}}</span>
   </div>
 </template>
