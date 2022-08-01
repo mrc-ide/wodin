@@ -6,5 +6,6 @@ export interface ModelFitState {
     iterations: number | null,
     converged: boolean | null,
     sumOfSquares: number | null,
-    solution: OdinSolution | null // partial solution for current best fit
+    solution: OdinSolution | null, // partial solution for current best fit
+    paramsToVary: string[]
 }

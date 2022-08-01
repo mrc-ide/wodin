@@ -7,13 +7,14 @@ import { ModelFitGetter } from "./getters";
 
 export enum ModelFitAction {
     FitModel = "FitModel",
-    FitModelStep = "FitModelStep"
+    FitModelStep = "FitModelStep",
+    UpdateParamsToVary = "ParamsToVary"
 }
 
 export const actions: ActionTree<ModelFitState, FitState> = {
     [ModelFitAction.FitModel](context) {
         const {
-            commit, dispatch, rootState, getters
+            commit, dispatch, state, rootState, getters
         } = context;
 
         if (getters[ModelFitGetter.canRunFit]) {
@@ -26,9 +27,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
             const linkedVariable = rootState.fitData.linkedVariables[linkedColumn]!;
             const value = rootState.fitData.data!.map((row) => row[linkedColumn]);
             const data = { time, value };
-
-            // TODO: only vary user selected parameters
-            const vary = Array.from(rootState.model.parameterValues!.keys()) as string[];
+            const vary = state.paramsToVary;
 
             const pars = {
                 base: rootState.model.parameterValues!,
@@ -64,5 +63,14 @@ export const actions: ActionTree<ModelFitState, FitState> = {
                 dispatch(ModelFitAction.FitModelStep, simplex);
             }, 0);
         }
+    },
+
+    [ModelFitAction.UpdateParamsToVary](context) {
+        const { rootState, state, commit } = context;
+        const paramValues = rootState.model.parameterValues;
+        const newParams = paramValues ? Array.from(paramValues.keys()) : [];
+        // Retain selected values if we can
+        const newParamsToVary = state.paramsToVary.filter((param) => newParams.includes(param));
+        commit(ModelFitMutation.SetParamsToVary, newParamsToVary);
     }
 };

@@ -6,12 +6,13 @@ import { StochasticState } from "./state";
 import { model } from "../model/model";
 import { code } from "../code/code";
 import { sensitivity } from "../sensitivity/sensitivity";
-import { AppType } from "../appState/state";
+import { AppType, VisualisationTab } from "../appState/state";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
     return {
         appType: AppType.Stochastic,
+        openVisualisationTab: VisualisationTab.Run,
         appName: null,
         config: null
     };

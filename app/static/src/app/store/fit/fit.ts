@@ -8,13 +8,14 @@ import { code } from "../code/code";
 import { sensitivity } from "../sensitivity/sensitivity";
 import { fitData } from "../fitData/fitData";
 import { modelFit } from "../modelFit/modelFit";
-import { AppType } from "../appState/state";
+import { AppType, VisualisationTab } from "../appState/state";
 import { logMutations } from "../plugins";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
     return {
         appType: AppType.Fit,
+        openVisualisationTab: VisualisationTab.Run,
         appName: null,
         config: null
     };

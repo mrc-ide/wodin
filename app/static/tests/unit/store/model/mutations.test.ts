@@ -55,6 +55,14 @@ describe("Model mutations", () => {
         expect(state.odinSolution).toBe(mockSolution);
     });
 
+    it("sets palette", () => {
+        const mockPalette = () => [{ x: "#ff0000", y: "#0000ff" }];
+        const state = mockModelState();
+
+        mutations.SetPaletteModel(state, mockPalette);
+        expect(state.paletteModel).toBe(mockPalette);
+    });
+
     it("sets required action", () => {
         const state = mockModelState();
         mutations.SetRequiredAction(state, RequiredModelAction.Compile);
