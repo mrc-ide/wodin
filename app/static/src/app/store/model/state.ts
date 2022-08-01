@@ -1,6 +1,7 @@
 import {
     Odin, OdinModelResponse, OdinSolution, OdinRunner, Error
 } from "../../types/responseTypes";
+import type { Palette } from "../../palette";
 
 export enum RequiredModelAction {
     Compile,
@@ -14,6 +15,8 @@ export interface ModelState {
     odin: null | Odin // When we 'compile' we evaluate the response's 'model' string into a working model
     odinSolution: null | OdinSolution
     parameterValues: null | Map<string, number>
+    // contains a palette mapping variable name to colour
+    paletteModel: null | Palette,
     endTime: number,
     odinModelCodeError: Error | null
     odinRunnerError: Error | null

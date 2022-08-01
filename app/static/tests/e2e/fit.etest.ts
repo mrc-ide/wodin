@@ -84,7 +84,7 @@ deriv(E) <- beta * S * I / N - gamma * E
 deriv(I) <- gamma * E - sigma * I
 deriv(R) <- sigma * I
 
-# parameter values  
+# parameter values
 R_0 <- user(1.5)
 L <- user(1)
 D <- user(1)

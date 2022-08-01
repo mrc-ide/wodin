@@ -16,7 +16,7 @@ import {
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
 import {
-    Data, newPlot, react, PlotRelayoutEvent, Plots
+    Data, newPlot, react, PlotData, PlotRelayoutEvent, Plots
 } from "plotly.js";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
@@ -38,6 +38,7 @@ export default defineComponent({
         const solution = computed(() => (props.modelFit ? store.state.modelFit.solution
             : store.state.model.odinSolution));
 
+        // mrc-3331 start time should always be zero.
         const startTime = computed(() => {
             return props.modelFit ? store.getters[`fitData/${FitDataGetter.dataStart}`] : 0;
         });
@@ -45,27 +46,33 @@ export default defineComponent({
             return props.modelFit ? store.getters[`fitData/${FitDataGetter.dataEnd}`] : store.state.model.endTime;
         });
 
+        const palette = computed(() => store.state.model.paletteModel);
+
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
         const baseData = ref<Data[]>([]);
         const nPoints = 1000; // TODO: appropriate value could be derived from width of element
 
         const hasPlotData = computed(() => !!(baseData.value?.length));
 
+        const seriesColour = (variable: string) => ({ color: palette.value[variable] });
+
         // translate fit data into a form that can be plotted - only supported for modelFit for now
         const fitDataSeries = (start: number, end: number) => {
             const { fitData } = store.state;
             const timeVar = fitData?.timeVariable;
-            if (props.modelFit && fitData.data && fitData.columnToFit && timeVar) {
+            const dataVar = fitData?.columnToFit;
+            if (props.modelFit && fitData.data && dataVar && timeVar) {
                 const filteredData = fitData.data.filter(
                     (row: Dict<number>) => row[timeVar] >= start && row[timeVar] <= end
                 );
+                const modelVar = fitData.linkedVariables[dataVar];
                 return [{
-                    name: fitData.columnToFit,
-                    x: filteredData.map((row: Dict<number>) => row[fitData.timeVariable!]),
-                    y: filteredData.map((row: Dict<number>) => row[fitData.columnToFit!]),
+                    name: dataVar,
+                    x: filteredData.map((row: Dict<number>) => row[timeVar]),
+                    y: filteredData.map((row: Dict<number>) => row[dataVar]),
                     mode: "markers",
-                    type: "scatter"
-
+                    type: "scatter",
+                    marker: seriesColour(modelVar)
                 }];
             }
             return [];
@@ -79,13 +86,25 @@ export default defineComponent({
 
             // model fit partial solution returns single series - convert to array
             if (props.modelFit) {
+                dataToPlot.line = seriesColour(dataToPlot.name);
                 dataToPlot = [dataToPlot] as Data[];
+            } else {
+                dataToPlot.forEach((data: PlotData) => {
+                    data.line = seriesColour(data.name); // eslint-disable-line no-param-reassign
+                });
             }
             return [...dataToPlot, ...fitDataSeries(start, end)];
         };
 
         const config = {
             responsive: true
+        };
+
+        // This is enough top margin to accomodate the plotly options
+        // bar without it interfering with the first series in the
+        // legend.
+        const margin = {
+            t: 25
         };
 
         const relayout = async (event: PlotRelayoutEvent) => {
@@ -102,6 +121,7 @@ export default defineComponent({
             }
 
             const layout = {
+                margin,
                 uirevision: "true",
                 xaxis: { autorange: true },
                 yaxis: { autorange: true }
@@ -126,7 +146,7 @@ export default defineComponent({
                 if (hasPlotData.value) {
                     const el = plot.value as unknown;
                     const layout = {
-                        margin: { t: 0 }
+                        margin
                     };
                     newPlot(el as HTMLElement, baseData.value, layout, config);
                     (el as EventEmitter).on("plotly_relayout", relayout);
