@@ -10,6 +10,7 @@ export const defaultState: ModelState = {
     odinSolution: null,
     parameterValues: null,
     endTime: 100,
+    paletteModel: null,
     odinModelCodeError: null,
     odinRunnerError: null
 };
