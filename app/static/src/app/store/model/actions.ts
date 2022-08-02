@@ -7,6 +7,7 @@ import { Odin, OdinModelResponse, OdinParameter } from "../../types/responseType
 import { evaluateScript } from "../../utils";
 import { FitDataAction } from "../fitData/actions";
 import { ModelFitAction } from "../modelFit/actions";
+import { paletteModel } from "../../palette";
 import { ModelFitMutation } from "../modelFit/mutations";
 import userMessages from "../../userMessages";
 import { ErrorsMutation } from "../errors/mutations";
@@ -51,6 +52,9 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
             newValues.set(param.name, value === null ? 0 : value);
         });
         commit(ModelMutation.SetParameterValues, newValues);
+
+        const variables = state.odinModelResponse.metadata?.variables || [];
+        commit(ModelMutation.SetPaletteModel, paletteModel(variables));
 
         if (state.requiredAction === RequiredModelAction.Compile) {
             commit(ModelMutation.SetRequiredAction, RequiredModelAction.Run);

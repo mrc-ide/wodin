@@ -4,7 +4,7 @@
           <link-data></link-data>
         </vertical-collapse>
         <vertical-collapse title="Model Parameters" collapse-id="model-params">
-          <parameter-values :fit-tab-is-open="fitTabIsOpen"></parameter-values>
+          <parameter-values></parameter-values>
         </vertical-collapse>
         <vertical-collapse title="Run Options" collapse-id="run-options">
           <run-options></run-options>
@@ -27,12 +27,6 @@ import { AppType } from "../../store/appState/state";
 
 export default {
     name: "OptionsTab",
-    props: {
-        fitTabIsOpen: {
-            type: Boolean,
-            required: true
-        }
-    },
     components: {
         LinkData,
         OptimisationOptions,
