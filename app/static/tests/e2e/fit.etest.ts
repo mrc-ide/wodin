@@ -72,6 +72,40 @@ const multiTimeFitData = `Day,Cases,Day2
 30,2,30
 31,0,31`;
 
+const multiCasesFitData = `Day,Cases,Cases2
+0,1,1
+1,1,2
+2,0,1
+3,2,1
+4,5,3
+5,3,4
+6,3,4
+7,3,5
+8,6,6
+9,2,3
+10,5,4
+11,9,9
+12,13,13
+13,12,11
+14,13,12
+15,11,10
+16,12,11
+17,6,8
+18,6,7
+19,6,7
+20,3,5
+21,1,4
+22,0,3
+23,2,0
+24,0,2
+25,0,1
+26,0,0
+27,0,1
+28,2,1
+29,0,0
+30,2,0
+31,0,0`;
+
 const newFitCode = `# JUST CHANGE A COMMENT
 initial(S) <- N - I_0
 initial(E) <- 0
@@ -115,7 +149,8 @@ const startModelFit = async (page: Page, data: string = realisticFitData) => {
     const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
     const select1 = await linkContainer.locator(":nth-match(select, 1)");
     await select1.selectOption("I");
-    await expect(await page.inputValue("#optimisation select")).toBe("Cases");
+
+    await expect(await page.innerText("#optimisation label#target-fit-label")).toBe("Cases ~ I");
 
     // select param to vary
     await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
@@ -289,6 +324,26 @@ test.describe("Wodin App model fit tests", () => {
         await expectUpdateFitMsg(page, fitRequiredMsg);
 
         await reRunFit(page); // checks message is reset
+    });
+
+    test("can select from multiple targets", async ({ page }) => {
+        await uploadCSVData(page, multiCasesFitData);
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
+
+        // link variables
+        await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
+        await expect(await page.innerText("#optimisation")).toBe(
+            "Please link at least one column in order to set target to fit."
+        );
+        const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
+        const linkSelect1 = await linkContainer.locator(":nth-match(select, 1)");
+        await linkSelect1.selectOption("I");
+        const linkSelect2 = await linkContainer.locator(":nth-match(select, 2)");
+        await linkSelect2.selectOption("E");
+
+        await expect(await page.inputValue("#optimisation select")).toBe("Cases");
+        await expect(await page.innerText(":nth-match(#optimisation select option, 1)")).toBe("Cases ~ I");
+        await expect(await page.innerText(":nth-match(#optimisation select option, 2)")).toBe("Cases2 ~ E");
     });
 
     test("can cancel model fit", async ({ page }) => {
