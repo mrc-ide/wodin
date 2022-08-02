@@ -23,7 +23,7 @@ import ParameterValues from "./ParameterValues.vue";
 import RunOptions from "./RunOptions.vue";
 import LinkData from "./LinkData.vue";
 import OptimisationOptions from "./OptimisationOptions.vue";
-import { AppType } from "../../store/appState/state";
+import { AppType, VisualisationTab } from "../../store/appState/state";
 
 export default {
     name: "OptionsTab",
@@ -37,9 +37,11 @@ export default {
     setup() {
         const store = useStore();
         const isFit = computed(() => store.state.appType === AppType.Fit);
+        const fitTabIsOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Fit);
 
         return {
-            isFit
+            isFit,
+            fitTabIsOpen
         };
     }
 };

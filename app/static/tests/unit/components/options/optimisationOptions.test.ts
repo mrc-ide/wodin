@@ -32,7 +32,21 @@ describe("OptimisationOptions", () => {
         expect(wrapper.find("select").exists()).toBe(false);
     });
 
-    it("renders as expected when at least one linked variable", () => {
+    it("renders as expected when one linked variable", () => {
+        const wrapper = getWrapper(mockFitDataState({
+            columnToFit: "col1",
+            linkedVariables: {
+                col1: "A",
+                col2: null,
+                col3: null
+            }
+        }));
+        expect(wrapper.find(".row label").text()).toBe("Target to fit");
+        expect(wrapper.find(".row select").exists()).toBe(false);
+        expect(wrapper.find(".row label#target-fit-label").text()).toBe("col1 ~ A");
+    });
+
+    it("renders as expected when more than one linked variable", () => {
         const wrapper = getWrapper(mockFitDataState({
             columnToFit: "col2",
             linkedVariables: {

@@ -5,13 +5,14 @@
        <label class="col-form-label">Target to fit</label>
      </div>
      <div class="col-6">
-       <select class="form-select"
+       <select v-if="columnsWithLinks.length > 1" class="form-select"
                @change="updateColumnToFit"
                :value="columnToFit">
          <option v-for="col in columnsWithLinks" :value="col" :key="col">
-           {{col}} ~ {{linkedVariables[col]}}
+           {{ labelForLinkedCol(col) }}
          </option>
        </select>
+       <label class="col-form-label" id="target-fit-label" v-else>{{ labelForLinkedCol(columnToFit) }}</label>
      </div>
    </div>
    <div v-else class="row my-2">
@@ -41,6 +42,8 @@ export default defineComponent({
             store.dispatch(`fitData/${FitDataAction.UpdateColumnToFit}`, col);
         };
 
+        const labelForLinkedCol = (col: string) => `${col} ~ ${linkedVariables.value[col]}`;
+
         const columnToFitPrerequisitesMessage = userMessages.fitData.columnToFitPrerequisites;
 
         return {
@@ -48,7 +51,8 @@ export default defineComponent({
             columnsWithLinks,
             linkedVariables,
             columnToFitPrerequisitesMessage,
-            updateColumnToFit
+            updateColumnToFit,
+            labelForLinkedCol
         };
     }
 });

@@ -7,7 +7,7 @@ import RunOptions from "../../../../src/app/components/options/RunOptions.vue";
 import LinkData from "../../../../src/app/components/options/LinkData.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { FitState } from "../../../../src/app/store/fit/state";
-import { AppType } from "../../../../src/app/store/appState/state";
+import { AppType, VisualisationTab } from "../../../../src/app/store/appState/state";
 import OptimisationOptions from "../../../../src/app/components/options/OptimisationOptions.vue";
 
 describe("OptionsTab", () => {
@@ -15,6 +15,7 @@ describe("OptionsTab", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 appType: AppType.Basic,
+                openVisualisationTab: VisualisationTab.Run,
                 model: {
                     parameterValues: null
                 }
@@ -40,6 +41,7 @@ describe("OptionsTab", () => {
         const store = new Vuex.Store<FitState>({
             state: {
                 appType: AppType.Fit,
+                openVisualisationTab: VisualisationTab.Fit,
                 model: {
                     parameterValues: new Map<string, number>()
                 },
