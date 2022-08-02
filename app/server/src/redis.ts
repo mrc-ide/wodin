@@ -1,10 +1,10 @@
 import Redis from "ioredis";
 
-export function redisConnection(url: string): Redis {
+export function redisConnection(url: string, errorCallback: (err: Error) => void): Redis {
     const redis = new Redis(url);
-    redis.on("error", (err) => {
+    redis.on("error", (err: Error) => {
         console.log(err);
-        throw Error(`Failed to connect to redis server ${url}`);
+        errorCallback(err);
     });
     redis.on("connect", () => {
         console.log(`Connected to Redis server ${url}`);

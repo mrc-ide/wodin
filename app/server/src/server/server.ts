@@ -31,7 +31,10 @@ const defaultCodeReader = new DefaultCodeReader(`${configPath}/defaultCode`);
 // Use WODIN version from package.json
 const wodinVersion = process.env.npm_package_version;
 
-const redis = redisConnection(wodinConfig.redisURL);
+const redis = redisConnection(
+    wodinConfig.redisURL,
+    () => { throw Error(`Failed to connect to redis server ${wodinConfig.redisURL}`); }
+);
 
 // Make app locals available to controllers
 Object.assign(app.locals, {
