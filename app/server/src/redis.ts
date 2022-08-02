@@ -4,6 +4,7 @@ export function redisConnection(url: string, errorCallback: (err: Error) => void
     const redis = new Redis(url);
     redis.on("error", (err: Error) => {
         console.log(err);
+        redis.disconnect();
         errorCallback(err);
     });
     redis.on("connect", () => {
