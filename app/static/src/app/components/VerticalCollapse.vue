@@ -40,7 +40,6 @@ export default defineComponent({
         const iconType = computed(() => (collapsed.value ? "chevron-down" : "chevron-up"));
 
         watch(() => props.collapseOn, (newVal) => {
-          console.log("collapseOn changed: " + JSON.stringify(newVal))
           collapsed.value = newVal;
         });
 

@@ -3,7 +3,7 @@ import {MutationTree} from "vuex";
 
 export enum SensitivityMutation {
     SetParameterToVary = "SetParameterToVary",
-    SetSettings = "SetSettings"
+    SetParamSettings = "SetParamSettings"
 }
 
 export const mutations: MutationTree<SensitivityState> = {
@@ -11,7 +11,7 @@ export const mutations: MutationTree<SensitivityState> = {
         state.paramSettings.parameterToVary = payload;
     },
 
-    [SensitivityMutation.SetSettings](state: SensitivityState, payload: SensitivityParameterSettings) {
+    [SensitivityMutation.SetParamSettings](state: SensitivityState, payload: SensitivityParameterSettings) {
         state.paramSettings = payload;
     }
 };

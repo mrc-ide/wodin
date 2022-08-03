@@ -8,7 +8,7 @@
             <h5 class="modal-title">Vary Parameter</h5>
           </div>
           <div class="modal-body">
-            <div class="row">
+            <div class="row" id="edit-param-to-vary">
                <div class="col-5">
                  <label class="col-form-label">Parameter to vary</label>
                </div>
@@ -18,7 +18,7 @@
                  </select>
                </div>
              </div>
-             <div class="row mt-2">
+             <div class="row mt-2" id="edit-scale-type">
                <div class="col-5">
                  <label class="col-form-label">Scale type</label>
                </div>
@@ -30,7 +30,7 @@
                <div class="col-6">
              </div>
              </div>
-            <div class="row mt-2">
+            <div class="row mt-2" id="edit-variation-type">
               <div class="col-5">
                 <label class="col-form-label">Variation type</label>
               </div>
@@ -40,7 +40,7 @@
                 </select>
               </div>
             </div>
-            <div v-if="settingsInternal.variationType === 'Percentage'" class="row mt-2">
+            <div v-if="settingsInternal.variationType === 'Percentage'" class="row mt-2" id="edit-percent">
               <div class="col-5">
                 <label class="col-form-label">Variation (%)</label>
               </div>
@@ -50,7 +50,7 @@
               </div>
             </div>
             <template v-else>
-              <div class="row mt-2">
+              <div class="row mt-2" id="edit-from">
                 <div class="col-5">
                   <label class="col-form-label">From</label>
                 </div>
@@ -59,7 +59,7 @@
                                  @update="(n) => settingsInternal.rangeFrom = n"></numeric-input>
                 </div>
               </div>
-              <div class="row mt-2">
+              <div class="row mt-2" id="edit-to">
                 <div class="col-5">
                   <label class="col-form-label">To</label>
                 </div>
@@ -69,7 +69,7 @@
                 </div>
               </div>
             </template>
-            <div class="row mt-2">
+            <div class="row mt-2" id="edit-runs">
               <div class="col-5">
                 <label class="col-form-label">Number of runs</label>
               </div>
@@ -78,7 +78,7 @@
                                @update="(n) => settingsInternal.numberOfRuns = n"></numeric-input>
               </div>
             </div>
-            <div v-if="!valid" class="row mt-2 small text-danger">
+            <div v-if="!valid" class="row mt-2 small text-danger" id="invalid-msg">
               <div class="col-12">
                 {{invalidMessage}}
               </div>
@@ -87,8 +87,10 @@
           <div class="modal-footer">
             <button class="btn btn-primary"
                     :disabled="valid ? undefined : 'disabled'"
+                    id="ok-settings"
                     @click="updateSettings">OK</button>
             <button class="btn btn-outline"
+                    id="cancel-settings"
                     @click="close">Cancel</button>
           </div>
         </div>
@@ -149,7 +151,7 @@ export default defineComponent({
 
         const close = () => { emit("close"); };
         const updateSettings = () => {
-            store.commit(`sensitivity/${SensitivityMutation.SetSettings}`, { ...settingsInternal });
+            store.commit(`sensitivity/${SensitivityMutation.SetParamSettings}`, { ...settingsInternal });
             close();
         };
 
