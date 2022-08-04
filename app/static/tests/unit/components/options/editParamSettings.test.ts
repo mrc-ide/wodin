@@ -152,7 +152,7 @@ describe("EditParamSettings", () => {
         const wrapper = await getWrapper(settings);
 
         expect(wrapper.find(".modal-footer button.btn-primary").attributes("disabled")).not.toBe(undefined);
-        expect(wrapper.find("#invalid-msg").text()).toBe("To must be greater than From");
+        expect(wrapper.find("#invalid-msg").text()).toBe("To must be greater than From.");
     });
 
     it("hides modal if not open", async () => {
