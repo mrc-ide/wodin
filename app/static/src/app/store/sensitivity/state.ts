@@ -13,8 +13,8 @@ export interface SensitivityParameterSettings {
     scaleType: SensitivityScaleType,
     variationType: SensitivityVariationType,
     variationPercentage: number,
-    rangeFrom: number | null,
-    rangeTo: number | null,
+    rangeFrom: number,
+    rangeTo: number,
     numberOfRuns: number
 }
 

@@ -37,8 +37,6 @@ export default {
         const isFit = computed(() => store.state.appType === AppType.Fit);
         const sensitivityOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Sensitivity);
 
-        // TODO: at same time, default all non-sensitivity options to collapsed when switch to Sensitivity tab
-
         return {
             isFit,
             sensitivityOpen

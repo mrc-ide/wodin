@@ -1,6 +1,6 @@
 <template>
+  <h5 class="mt-4">Sensitivity Options</h5>
   <template v-if="showOptions">
-    <h5 class="mt-4">Sensitivity Options</h5>
     <vertical-collapse title="Vary Parameter" collapse-id="vary-parameter">
       <div class="mt-2">
         <div class="card">
@@ -23,7 +23,9 @@
     </vertical-collapse>
   </template>
   <template v-else>
-    {{compileModelMessage}}
+    <div id="sensitivity-options-msg">
+      {{compileModelMessage}}
+    </div>
   </template>
   <edit-param-settings :open="editOpen" @close="toggleEdit(false)"></edit-param-settings>
 </template>

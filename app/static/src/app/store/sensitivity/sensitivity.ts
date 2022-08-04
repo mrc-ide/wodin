@@ -7,8 +7,8 @@ export const defaultState: SensitivityState = {
         scaleType: SensitivityScaleType.Arithmetic,
         variationType: SensitivityVariationType.Percentage,
         variationPercentage: 10,
-        rangeFrom: null,
-        rangeTo: null,
+        rangeFrom: 0,
+        rangeTo: 0,
         numberOfRuns: 10
     }
 };
