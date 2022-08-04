@@ -10,6 +10,7 @@ import { AppType } from "../../../../src/app/store/appState/state";
 import { FitDataAction } from "../../../../src/app/store/fitData/actions";
 import { ModelFitAction } from "../../../../src/app/store/modelFit/actions";
 import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
+import {SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
 
 describe("Model actions", () => {
     beforeEach(() => {
@@ -20,6 +21,11 @@ describe("Model actions", () => {
         appType: AppType.Basic,
         code: {
             currentCode: ["line1", "line2"]
+        },
+        sensitivity: {
+            paramSettings: {
+                parameterToVary: null
+            }
         }
     };
 
@@ -105,7 +111,7 @@ describe("Model actions", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
         (actions[ModelAction.CompileModel] as any)({ commit, state, rootState });
-        expect(commit.mock.calls.length).toBe(4);
+        expect(commit.mock.calls.length).toBe(5);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[0][1]).toBe(3);
         expect(commit.mock.calls[1][0]).toBe(ModelMutation.SetParameterValues);
@@ -115,6 +121,9 @@ describe("Model actions", () => {
         expect(commit.mock.calls[2][1]).toStrictEqual({ x: "#2e5cb8", y: "#cc0044" });
         expect(commit.mock.calls[3][0]).toBe(ModelMutation.SetRequiredAction);
         expect(commit.mock.calls[3][1]).toBe(RequiredModelAction.Run);
+        expect(commit.mock.calls[4][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
+        expect(commit.mock.calls[4][1]).toBe("p2");
+        expect(commit.mock.calls[4][2]).toStrictEqual({root: true});
 
         // does not dispatch updated linked variables or update params to vary if app type is not Fit
         expect(dispatch).not.toHaveBeenCalled();
@@ -132,24 +141,73 @@ describe("Model actions", () => {
             requiredAction: RequiredModelAction.Compile,
             parameterValues: {}
         };
-        const fitRootState = { appType: AppType.Fit };
+        const fitRootState = {
+            appType: AppType.Fit,
+            sensitivity: {
+                paramSettings: {
+                    parameterToVary: "p1"
+                }
+            }
+        };
         const commit = jest.fn();
         const dispatch = jest.fn();
         (actions[ModelAction.CompileModel] as any)({
             commit, dispatch, state, rootState: fitRootState
         });
-        expect(commit.mock.calls.length).toBe(5);
+        expect(commit.mock.calls.length).toBe(6);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[1][0]).toBe(ModelMutation.SetParameterValues);
         expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetPaletteModel);
         expect(commit.mock.calls[3][0]).toBe(ModelMutation.SetRequiredAction);
-        expect(commit.mock.calls[4][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
-        expect(commit.mock.calls[4][1]).toBe(true);
-        expect(commit.mock.calls[4][2]).toStrictEqual({ root: true });
+        expect(commit.mock.calls[4][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
+        expect(commit.mock.calls[4][1]).toBe(null);
+        expect(commit.mock.calls[4][2]).toStrictEqual({root: true});
+        expect(commit.mock.calls[5][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
+        expect(commit.mock.calls[5][1]).toBe(true);
+        expect(commit.mock.calls[5][2]).toStrictEqual({ root: true });
 
         expect(dispatch).toHaveBeenCalledTimes(2);
         expect(dispatch.mock.calls[0][0]).toBe(`fitData/${FitDataAction.UpdateLinkedVariables}`);
         expect(dispatch.mock.calls[1][0]).toBe(`modelFit/${ModelFitAction.UpdateParamsToVary}`);
+    });
+
+    it("compile model does not update paramToVary if current parameter exists in new model", () => {
+        const state = {
+            odinModelResponse: {
+                model: "1+2",
+                metadata: {
+                    parameters: [
+                        { name: "p2", default: 20 },
+                        { name: "p3", default: 30 }
+                    ],
+                    variables: ["x", "y"]
+                }
+            },
+            requiredAction: RequiredModelAction.Compile,
+            parameterValues: new Map([
+                ["p2", 1],
+                ["p3", 2]
+            ])
+        };
+
+        const commit = jest.fn();
+        const dispatch = jest.fn();
+        const testRootState = {
+            ...rootState,
+            sensitivity: {
+                paramSettings: {
+                    parameterToVary: "p2"
+                }
+            }
+        } as any;
+        (actions[ModelAction.CompileModel] as any)({
+            commit, dispatch, state, rootState: testRootState
+        });
+        expect(commit.mock.calls.length).toBe(4);
+        expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
+        expect(commit.mock.calls[1][0]).toBe(ModelMutation.SetParameterValues);
+        expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetPaletteModel);
+        expect(commit.mock.calls[3][0]).toBe(ModelMutation.SetRequiredAction);
     });
 
     it("compile model does not update required action if required action was not Compile", () => {
