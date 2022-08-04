@@ -9,7 +9,9 @@
             <ul>
               <li><strong>Scale Type:</strong> {{ settings.scaleType }}</li>
               <li><strong>Variation Type:</strong> {{ settings.variationType }}</li>
-              <li v-if="settings.variationType === 'Percentage'"><strong>Variation (%):</strong> {{ settings.variationPercentage }}</li>
+              <li v-if="settings.variationType === 'Percentage'">
+                <strong>Variation (%):</strong> {{ settings.variationPercentage }}
+              </li>
               <template v-else>
                 <li><strong>From:</strong> {{ settings.rangeFrom }}</li>
                 <li><strong>To:</strong> {{ settings.rangeTo }}</li>

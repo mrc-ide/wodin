@@ -1,18 +1,17 @@
-import {mount} from "@vue/test-utils";
-import Vuex, {Store} from "vuex";
+import { mount } from "@vue/test-utils";
+import Vuex, { Store } from "vuex";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
 import VerticalCollapse from "../../../../src/app/components/VerticalCollapse.vue";
 import ParameterValues from "../../../../src/app/components/options/ParameterValues.vue";
 import RunOptions from "../../../../src/app/components/options/RunOptions.vue";
 import LinkData from "../../../../src/app/components/options/LinkData.vue";
-import {BasicState} from "../../../../src/app/store/basic/state";
-import {FitState} from "../../../../src/app/store/fit/state";
-import {AppType, VisualisationTab} from "../../../../src/app/store/appState/state";
+import { BasicState } from "../../../../src/app/store/basic/state";
+import { FitState } from "../../../../src/app/store/fit/state";
+import { AppType, VisualisationTab } from "../../../../src/app/store/appState/state";
 import SensitivityOptions from "../../../../src/app/components/options/SensitivityOptions.vue";
 
 describe("OptionsTab", () => {
-    const getWrapper = (store: Store<any>) =>
-    {
+    const getWrapper = (store: Store<any>) => {
         return mount(OptionsTab, {
             global: {
                 plugins: [store]
@@ -21,19 +20,18 @@ describe("OptionsTab", () => {
     };
 
     const fitAppState = {
-            appType: AppType.Fit,
-            openVisualisationTab: VisualisationTab.Run,
-            model: {
-                parameterValues: new Map<string, number>()
-            },
-            modelFit: {
-                paramsToVary: []
-            },
-            sensitivity:{
-                paramSettings: {}
-            }
-        } as any;
-
+        appType: AppType.Fit,
+        openVisualisationTab: VisualisationTab.Run,
+        model: {
+            parameterValues: new Map<string, number>()
+        },
+        modelFit: {
+            paramsToVary: []
+        },
+        sensitivity: {
+            paramSettings: {}
+        }
+    } as any;
 
     it("renders as expected for Basic app", () => {
         const store = new Vuex.Store<BasicState>({
@@ -57,7 +55,7 @@ describe("OptionsTab", () => {
     });
 
     it("renders as expected for Fit app", () => {
-        const store = new Vuex.Store<FitState>({state: fitAppState});
+        const store = new Vuex.Store<FitState>({ state: fitAppState });
         const wrapper = getWrapper(store);
         const collapses = wrapper.findAllComponents(VerticalCollapse);
         expect(collapses.length).toBe(3);
@@ -74,7 +72,7 @@ describe("OptionsTab", () => {
     });
 
     it("renders as expected when sensitivity tab is not open", () => {
-        const store = new Vuex.Store<FitState>({state: fitAppState});
+        const store = new Vuex.Store<FitState>({ state: fitAppState });
         const wrapper = getWrapper(store);
         const collapses = wrapper.findAllComponents(VerticalCollapse);
         expect(collapses.at(0)!.props("collapseOn")).toBe(false);

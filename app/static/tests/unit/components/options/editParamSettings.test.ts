@@ -1,15 +1,15 @@
+import Vuex from "vuex";
+import { mount, VueWrapper } from "@vue/test-utils";
 import {
     SensitivityParameterSettings,
     SensitivityScaleType,
     SensitivityVariationType
 } from "../../../../src/app/store/sensitivity/state";
-import Vuex from "vuex";
-import {mockBasicState, mockModelState} from "../../../mocks";
-import {mount, VueWrapper} from "@vue/test-utils";
+import { mockBasicState, mockModelState } from "../../../mocks";
 import EditParamSettings from "../../../../src/app/components/options/EditParamSettings.vue";
-import {BasicState} from "../../../../src/app/store/basic/state";
+import { BasicState } from "../../../../src/app/store/basic/state";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
-import {SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
+import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 
 describe("EditParamSettings", () => {
     const percentSettings = {
@@ -33,9 +33,9 @@ describe("EditParamSettings", () => {
     };
 
     const getWrapper = async (paramSettings: SensitivityParameterSettings, open = true,
-                              mockSetParamSettings = jest.fn()) => {
+        mockSetParamSettings = jest.fn()) => {
         const parameterValues = new Map<string, number>();
-        parameterValues.set("A", 1)
+        parameterValues.set("A", 1);
         parameterValues.set("B", 2);
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
@@ -68,7 +68,7 @@ describe("EditParamSettings", () => {
 
         // We open after mounting to trigger the component to take an internal copy of store settings to edit
         if (open) {
-            await wrapper.setProps({open: true});
+            await wrapper.setProps({ open: true });
         }
         return wrapper;
     };
@@ -148,7 +148,7 @@ describe("EditParamSettings", () => {
     });
 
     it("disables OK and renders message when from is not less than to", async () => {
-        const settings = {...rangeSettings, rangeFrom: 10, rangeTo: 5};
+        const settings = { ...rangeSettings, rangeFrom: 10, rangeTo: 5 };
         const wrapper = await getWrapper(settings);
 
         expect(wrapper.find(".modal-footer button.btn-primary").attributes("disabled")).not.toBe(undefined);
@@ -167,7 +167,6 @@ describe("EditParamSettings", () => {
         await wrapper.find("#cancel-settings").trigger("click");
         expect(wrapper.emitted("close")?.length).toBe(1);
     });
-
 
     const updateSelect = async (wrapper: VueWrapper<any>, rowId: string, newVal: string) => {
         const select = wrapper.find(`#${rowId} select`);

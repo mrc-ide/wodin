@@ -14,14 +14,14 @@
 </template>
 
 <script lang="ts">
-import {computed} from "vue";
-import {useStore} from "vuex";
+import { computed } from "vue";
+import { useStore } from "vuex";
 import VerticalCollapse from "../VerticalCollapse.vue";
 import ParameterValues from "./ParameterValues.vue";
 import RunOptions from "./RunOptions.vue";
 import LinkData from "./LinkData.vue";
 import SensitivityOptions from "./SensitivityOptions.vue";
-import {AppType, VisualisationTab} from "../../store/appState/state";
+import { AppType, VisualisationTab } from "../../store/appState/state";
 
 export default {
     name: "OptionsTab",

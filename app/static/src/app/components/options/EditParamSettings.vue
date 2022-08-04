@@ -100,7 +100,9 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, watch } from "vue";
+import {
+    computed, defineComponent, reactive, watch
+} from "vue";
 import { useStore } from "vuex";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import {

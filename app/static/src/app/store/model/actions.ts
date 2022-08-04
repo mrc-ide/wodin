@@ -11,8 +11,7 @@ import { paletteModel } from "../../palette";
 import { ModelFitMutation } from "../modelFit/mutations";
 import userMessages from "../../userMessages";
 import { ErrorsMutation } from "../errors/mutations";
-import {SensitivityParameterSettings} from "../sensitivity/state";
-import {SensitivityMutation} from "../sensitivity/mutations";
+import { SensitivityMutation } from "../sensitivity/mutations";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
@@ -63,11 +62,11 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
         }
 
         // set or update selected sensitivity variable
-        const {paramSettings} = rootState.sensitivity;
+        const { paramSettings } = rootState.sensitivity;
         const paramNames = Array.from(newValues.keys());
         if (!paramSettings.parameterToVary || !paramNames.includes(paramSettings.parameterToVary)) {
             const newParamToVary = paramNames.length ? parameters[0].name : null;
-            commit(`sensitivity/${SensitivityMutation.SetParameterToVary}`, newParamToVary, {root: true});
+            commit(`sensitivity/${SensitivityMutation.SetParameterToVary}`, newParamToVary, { root: true });
         }
 
         if (rootState.appType === AppType.Fit) {

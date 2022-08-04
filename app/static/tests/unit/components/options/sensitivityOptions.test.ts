@@ -1,11 +1,11 @@
+import Vuex from "vuex";
+import { mount } from "@vue/test-utils";
 import {
     SensitivityParameterSettings,
     SensitivityScaleType,
     SensitivityVariationType
 } from "../../../../src/app/store/sensitivity/state";
-import {BasicState} from "../../../../src/app/store/basic/state";
-import Vuex from "vuex";
-import {mount} from "@vue/test-utils";
+import { BasicState } from "../../../../src/app/store/basic/state";
 import SensitivityOptions from "../../../../src/app/components/options/SensitivityOptions.vue";
 import VerticalCollapse from "../../../../src/app/components/VerticalCollapse.vue";
 import EditParamSettings from "../../../../src/app/components/options/EditParamSettings.vue";
@@ -90,7 +90,7 @@ describe("SensitivityOptions", () => {
     });
 
     it("displays message if no parameter to vary", () => {
-        const wrapper = getWrapper({parameterToVary: null} as any);
+        const wrapper = getWrapper({ parameterToVary: null } as any);
         expect(wrapper.findComponent(VerticalCollapse).exists()).toBe(false);
         expect(wrapper.find("#sensitivity-options-msg").text())
             .toBe("Please compile a valid model in order to set sensitivity options.");

@@ -10,7 +10,7 @@ import { AppType } from "../../../../src/app/store/appState/state";
 import { FitDataAction } from "../../../../src/app/store/fitData/actions";
 import { ModelFitAction } from "../../../../src/app/store/modelFit/actions";
 import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
-import {SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
+import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 
 describe("Model actions", () => {
     beforeEach(() => {
@@ -123,7 +123,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[3][1]).toBe(RequiredModelAction.Run);
         expect(commit.mock.calls[4][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
         expect(commit.mock.calls[4][1]).toBe("p2");
-        expect(commit.mock.calls[4][2]).toStrictEqual({root: true});
+        expect(commit.mock.calls[4][2]).toStrictEqual({ root: true });
 
         // does not dispatch updated linked variables or update params to vary if app type is not Fit
         expect(dispatch).not.toHaveBeenCalled();
@@ -161,7 +161,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[3][0]).toBe(ModelMutation.SetRequiredAction);
         expect(commit.mock.calls[4][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
         expect(commit.mock.calls[4][1]).toBe(null);
-        expect(commit.mock.calls[4][2]).toStrictEqual({root: true});
+        expect(commit.mock.calls[4][2]).toStrictEqual({ root: true });
         expect(commit.mock.calls[5][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
         expect(commit.mock.calls[5][1]).toBe(true);
         expect(commit.mock.calls[5][2]).toStrictEqual({ root: true });

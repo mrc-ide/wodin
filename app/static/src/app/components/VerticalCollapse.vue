@@ -16,7 +16,9 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed, watch } from "vue";
+import {
+    defineComponent, ref, computed, watch
+} from "vue";
 import "bootstrap";
 import VueFeather from "vue-feather";
 
@@ -40,7 +42,7 @@ export default defineComponent({
         const iconType = computed(() => (collapsed.value ? "chevron-down" : "chevron-up"));
 
         watch(() => props.collapseOn, (newVal) => {
-          collapsed.value = newVal;
+            collapsed.value = newVal;
         });
 
         return {

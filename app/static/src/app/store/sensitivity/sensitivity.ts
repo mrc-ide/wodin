@@ -1,5 +1,5 @@
-import {SensitivityScaleType, SensitivityState, SensitivityVariationType} from "./state";
-import {mutations} from "./mutations";
+import { SensitivityScaleType, SensitivityState, SensitivityVariationType } from "./state";
+import { mutations } from "./mutations";
 
 export const defaultState: SensitivityState = {
     paramSettings: {

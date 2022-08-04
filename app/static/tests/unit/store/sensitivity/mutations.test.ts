@@ -1,4 +1,4 @@
-import {mutations, SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
+import { mutations, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 
 describe("Sensitivity mutations", () => {
     it("sets parameter to vary", () => {
