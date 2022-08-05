@@ -7,7 +7,7 @@
           <div class="modal-header">
             <h5 class="modal-title">Vary Parameter</h5>
           </div>
-          <div class="modal-body">
+          <div class="modal-body" style="min-height:24rem;">
             <div class="row" id="edit-param-to-vary">
                <div class="col-5">
                  <label class="col-form-label">Parameter to vary</label>
@@ -83,6 +83,7 @@
                 {{invalidMessage}}
               </div>
             </div>
+            <sensitivity-param-values :batch-pars="batchPars"></sensitivity-param-values>
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary"
@@ -101,7 +102,7 @@
 
 <script lang="ts">
 import {
-    computed, defineComponent, reactive, watch
+  computed, defineComponent, reactive, ref, watch, watchEffect
 } from "vue";
 import { useStore } from "vuex";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
@@ -111,7 +112,9 @@ import {
     SensitivityVariationType
 } from "../../store/sensitivity/state";
 import NumericInput from "./NumericInput.vue";
+import SensitivityParamValues from "./SensitivityParamValues.vue";
 import userMessages from "../../userMessages";
+import {generateBatchPars} from "../../utils";
 
 export default defineComponent({
     name: "EditParamSettings.vue",
@@ -122,7 +125,8 @@ export default defineComponent({
         }
     },
     components: {
-        NumericInput
+        NumericInput,
+        SensitivityParamValues
     },
     setup(props, { emit }) {
         const store = useStore();
@@ -151,6 +155,8 @@ export default defineComponent({
             }
         });
 
+        const batchPars = computed(() => generateBatchPars(store.state, settingsInternal));
+
         const close = () => { emit("close"); };
         const updateSettings = () => {
             store.commit(`sensitivity/${SensitivityMutation.SetParamSettings}`, { ...settingsInternal });
@@ -165,6 +171,7 @@ export default defineComponent({
             settingsInternal,
             style,
             invalidMessage,
+            batchPars,
             close,
             updateSettings
         };

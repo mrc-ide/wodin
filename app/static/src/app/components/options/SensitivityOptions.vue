@@ -18,6 +18,7 @@
               </template>
               <li><strong>Number of runs:</strong> {{ settings.numberOfRuns}}</li>
             </ul>
+            <sensitivity-param-values :batch-pars="batchPars"></sensitivity-param-values>
           </div>
         </div>
         <button class="btn btn-primary mt-2 float-end" @click="toggleEdit(true)">Edit</button>
@@ -38,10 +39,13 @@ import { computed, defineComponent, ref } from "vue";
 import userMessages from "../../userMessages";
 import VerticalCollapse from "../VerticalCollapse.vue";
 import EditParamSettings from "./EditParamSettings.vue";
+import {SensitivityGetter} from "../../store/sensitivity/getters";
+import SensitivityParamValues from "./SensitivityParamValues.vue";
 
 export default defineComponent({
     name: "SensitivityOptions",
     components: {
+        SensitivityParamValues,
         VerticalCollapse,
         EditParamSettings
     },
@@ -57,12 +61,15 @@ export default defineComponent({
             editOpen.value = value;
         };
 
+        const batchPars = computed(() => store.getters[`sensitivity/${SensitivityGetter.batchPars}`]);
+
         return {
             settings,
             showOptions,
             compileModelMessage,
             toggleEdit,
-            editOpen
+            editOpen,
+            batchPars
         };
     }
 });

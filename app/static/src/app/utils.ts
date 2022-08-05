@@ -2,7 +2,7 @@ import { Dict } from "./types/utilTypes";
 import { BatchPars, Error, OdinModelResponseError } from "./types/responseTypes";
 import userMessages from "./userMessages";
 import settings from "./settings";
-import { SensitivityScaleType, SensitivityVariationType } from "./store/sensitivity/state";
+import {SensitivityParameterSettings, SensitivityScaleType, SensitivityVariationType} from "./store/sensitivity/state";
 import { AppState } from "./store/appState/state";
 
 export const freezer = {
@@ -117,20 +117,26 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
     };
 }
 
-export function generateBatchPars(rootState: AppState): BatchPars | null {
+export function validateSensitivityParamsSettings(paramSettings: SensitivityParameterSettings) {
+    return (paramSettings.variationType === SensitivityVariationType.Percentage ||
+                paramSettings.rangeFrom < paramSettings.rangeTo);
+}
+
+export function generateBatchPars(rootState: AppState, paramSettings: SensitivityParameterSettings): BatchPars | null {
     const runner = rootState.model.odinRunner;
     const paramValues = rootState.model.parameterValues;
     const {
         variationType, parameterToVary, numberOfRuns, variationPercentage, scaleType, rangeFrom, rangeTo
-    } = rootState.sensitivity.paramSettings;
+    } = paramSettings;
     const logarithmic = scaleType === SensitivityScaleType.Logarithmic;
 
-    if (!runner || !paramValues || !parameterToVary) {
+    if (!runner || !paramValues || !parameterToVary || !validateSensitivityParamsSettings(paramSettings)) {
         return null;
     }
 
     if (variationType === SensitivityVariationType.Percentage) {
         return runner.batchParsDisplace(paramValues, parameterToVary, numberOfRuns, logarithmic, variationPercentage);
+    } else {
+        return runner.batchParsRange(paramValues, parameterToVary, numberOfRuns, logarithmic, rangeFrom, rangeTo);
     }
-    return runner.batchParsRange(paramValues, parameterToVary, numberOfRuns, logarithmic, rangeFrom, rangeTo);
 }
