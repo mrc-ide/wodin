@@ -7,7 +7,9 @@ HERE=$(dirname "$0")
 
 # From now on, if the user presses Ctrl+C we should teardown gracefully
 function cleanup() {
+  set +x
   docker kill odin.api
+  docker kill wodin-redis
 }
 trap cleanup EXIT
 
