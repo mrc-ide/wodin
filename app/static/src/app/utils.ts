@@ -1,7 +1,9 @@
-import { Dict } from "./types/utilTypes";
-import { Error, OdinModelResponseError } from "./types/responseTypes";
+import {Dict} from "./types/utilTypes";
+import {BatchPars, Error, OdinModelResponseError, OdinRunner} from "./types/responseTypes";
 import userMessages from "./userMessages";
 import settings from "./settings";
+import {SensitivityParameterSettings, SensitivityVariationType} from "./store/sensitivity/state";
+import {AppState} from "./store/appState/state";
 
 export const freezer = {
     /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -113,4 +115,16 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
     return {
         ...emptyResult, data: processedData, columns, timeVariableCandidates
     };
+}
+
+export function generateBatchPars(rootState: AppState): BatchPars {
+    const runner = rootState.model.odinRunner!;
+    const paramValues = rootState.model.parameterValues!;
+    const paramSettings = rootState.sensitivity.paramSettings;
+
+    if (paramSettings.variationType === SensitivityVariationType.Percentage) {
+        return runner.batchParsDisplace(paramValues, );
+    } else {
+
+    }
 }
