@@ -2,5 +2,6 @@
     "courseTitle": "WODIN Example",
     "port": 3000,
     "appsPath": "apps",
-    "odinAPI": "http://localhost:8001"
+    "odinAPI": "http://localhost:8001",
+    "redisURL": "redis://localhost:6379"
 }
