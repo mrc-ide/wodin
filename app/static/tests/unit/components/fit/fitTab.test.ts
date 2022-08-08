@@ -86,7 +86,6 @@ describe("Fit Tab", () => {
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         const fitPlot = wrapper.findComponent(FitPlot);
         expect(fitPlot.props("fadePlot")).toBe(false);
-        expect(fitPlot.props("modelFit")).toBe(true);
         expect(fitPlot.findComponent(VueFeather).exists()).toBe(false);
         expect(fitPlot.findComponent(LoadingSpinner).props("size")).toBe("xs");
         expect(fitPlot.findAll("span").at(0)!.text()).toBe("Iterations: 5");

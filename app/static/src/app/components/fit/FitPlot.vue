@@ -1,5 +1,5 @@
 <template>
-    <div class="run-plot-container" :style="plotStyle">
+    <div class="fit-plot-container" :style="plotStyle">
       <div class="fit-plot" ref="plot">
       </div>
       <div v-if="!hasPlotData" class="plot-placeholder">
@@ -26,26 +26,18 @@ import { Dict } from "../../types/utilTypes";
 export default defineComponent({
     name: "FitPlot",
     props: {
-        fadePlot: Boolean,
-        modelFit: Boolean
+        fadePlot: Boolean
     },
     setup(props) {
         const store = useStore();
 
-        const placeholderMessage = computed(() => (props.modelFit ? userMessages.modelFit.notFittedYet
-            : userMessages.run.notRunYet));
+        const placeholderMessage = computed(() => userMessages.modelFit.notFittedYet);
 
         const plotStyle = computed(() => (props.fadePlot ? "opacity:0.5;" : ""));
-        const solution = computed(() => (props.modelFit ? store.state.modelFit.solution
-            : store.state.model.odinSolution));
+        const solution = computed(() => store.state.modelFit.solution);
 
-        // mrc-3331 start time should always be zero.
-        const startTime = computed(() => {
-            return props.modelFit ? store.getters[`fitData/${FitDataGetter.dataStart}`] : 0;
-        });
-        const endTime = computed(() => {
-            return props.modelFit ? store.getters[`fitData/${FitDataGetter.dataEnd}`] : store.state.model.endTime;
-        });
+        const startTime = 0;
+        const endTime = computed(() => store.getters[`fitData/${FitDataGetter.dataEnd}`]);
 
         const palette = computed(() => store.state.model.paletteModel);
 
@@ -75,12 +67,11 @@ export default defineComponent({
             })
         );
 
-        // translate fit data into a form that can be plotted - only supported for modelFit for now
         const fitDataSeries = (start: number, end: number): Partial<PlotData>[] => {
             const { fitData } = store.state;
             const timeVar = fitData?.timeVariable;
             const dataVar = fitData?.columnToFit;
-            if (props.modelFit && fitData.data && dataVar && timeVar) {
+            if (fitData.data && dataVar && timeVar) {
                 const filteredData = fitData.data.filter(
                     (row: Dict<number>) => row[timeVar] >= start && row[timeVar] <= end
                 );
@@ -102,13 +93,10 @@ export default defineComponent({
             if (!result) {
                 return [];
             }
-            if (props.modelFit) {
-                const { fitData } = store.state;
-                const dataVar = fitData?.columnToFit;
-                const modelVar = fitData.linkedVariables[dataVar];
-                result = filterSeriesSet(result, modelVar);
-            }
-            return [...odinToPlotly(result), ...fitDataSeries(start, end)];
+            const { fitData } = store.state;
+            const dataVar = fitData?.columnToFit;
+            const modelVar = fitData.linkedVariables[dataVar];
+            return [...odinToPlotly(filterSeriesSet(result, modelVar)), ...fitDataSeries(start, end)];
         };
 
         const config = {
@@ -156,7 +144,7 @@ export default defineComponent({
 
         const drawPlot = () => {
             if (solution.value) {
-                baseData.value = allPlotData(startTime.value, endTime.value);
+                baseData.value = allPlotData(startTime, endTime.value);
 
                 if (hasPlotData.value) {
                     const el = plot.value as unknown;
