@@ -1,15 +1,15 @@
 <template>
     <div>
-        <vertical-collapse v-if="isFit" title="Link" collapse-id="link-data" :collapse-on="sensitivityOpen">
+        <sensitivity-options v-if="sensitivityOpen"></sensitivity-options>
+        <vertical-collapse v-if="isFit" title="Link" collapse-id="link-data">
           <link-data></link-data>
         </vertical-collapse>
-        <vertical-collapse title="Model Parameters" collapse-id="model-params" :collapse-on="sensitivityOpen">
+        <vertical-collapse title="Model Parameters" collapse-id="model-params">
           <parameter-values></parameter-values>
         </vertical-collapse>
-        <vertical-collapse title="Run Options" collapse-id="run-options" :collapse-on="sensitivityOpen">
+        <vertical-collapse title="Run Options" collapse-id="run-options">
           <run-options></run-options>
         </vertical-collapse>
-        <sensitivity-options v-if="sensitivityOpen"></sensitivity-options>
     </div>
 </template>
 

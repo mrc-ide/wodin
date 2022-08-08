@@ -17,7 +17,7 @@
 
 <script>
 import {
-    defineComponent, ref, computed, watch
+    defineComponent, ref, computed
 } from "vue";
 import "bootstrap";
 import VueFeather from "vue-feather";
@@ -26,13 +26,12 @@ export default defineComponent({
     name: "VerticalCollapse",
     props: {
         title: String,
-        collapseId: String,
-        collapseOn: Boolean
+        collapseId: String
     },
     components: {
         VueFeather
     },
-    setup(props) {
+    setup() {
         const collapsed = ref(false); // default to expanded view
 
         const toggleCollapse = () => {
@@ -40,10 +39,6 @@ export default defineComponent({
         };
 
         const iconType = computed(() => (collapsed.value ? "chevron-down" : "chevron-up"));
-
-        watch(() => props.collapseOn, (newVal) => {
-            collapsed.value = newVal;
-        });
 
         return {
             toggleCollapse,
