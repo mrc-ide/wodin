@@ -20,7 +20,7 @@ export default defineComponent({
         }
     },
     components: {
-      VueFeather
+        VueFeather
     },
     setup(props) {
         const paramValues = computed(() => props.batchPars?.values || []);
@@ -28,11 +28,14 @@ export default defineComponent({
             const formatValue = format(".3f");
             const { length } = paramValues.value;
             const arrStart = paramValues.value.slice(0, 3);
-            const start = arrStart.map((n) => formatValue(n)).join(", ");
-            const ellipsis = length > 4 ? "...," : "";
-            const end = length > 3 ? formatValue(paramValues.value[length - 1]) : "";
-
-            return `${start}${ellipsis}${end}`;
+            const strVals = arrStart.map((n) => formatValue(n));
+            if (length > 4) {
+                strVals.push("...");
+            }
+            if (length > 3) {
+                strVals.push(formatValue(paramValues.value[length - 1]));
+            }
+            return strVals.join(", ");
         });
         return {
             valuesText
