@@ -8,7 +8,11 @@ import LinkData from "../../../../src/app/components/options/LinkData.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { FitState } from "../../../../src/app/store/fit/state";
 import { AppType, VisualisationTab } from "../../../../src/app/store/appState/state";
+<<<<<<< HEAD
 import SensitivityOptions from "../../../../src/app/components/options/SensitivityOptions.vue";
+=======
+import OptimisationOptions from "../../../../src/app/components/options/OptimisationOptions.vue";
+>>>>>>> main
 
 describe("OptionsTab", () => {
     const getWrapper = (store: Store<any>) => {
@@ -37,6 +41,7 @@ describe("OptionsTab", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 appType: AppType.Basic,
+                openVisualisationTab: VisualisationTab.Run,
                 model: {
                     parameterValues: null
                 }
@@ -55,10 +60,33 @@ describe("OptionsTab", () => {
     });
 
     it("renders as expected for Fit app", () => {
+<<<<<<< HEAD
         const store = new Vuex.Store<FitState>({ state: fitAppState });
         const wrapper = getWrapper(store);
+=======
+        const store = new Vuex.Store<FitState>({
+            state: {
+                appType: AppType.Fit,
+                openVisualisationTab: VisualisationTab.Fit,
+                model: {
+                    parameterValues: new Map<string, number>()
+                },
+                modelFit: {
+                    paramsToVary: []
+                },
+                fitData: {
+                    columnToFit: null
+                }
+            } as any
+        });
+        const wrapper = mount(OptionsTab, {
+            global: {
+                plugins: [store]
+            }
+        });
+>>>>>>> main
         const collapses = wrapper.findAllComponents(VerticalCollapse);
-        expect(collapses.length).toBe(3);
+        expect(collapses.length).toBe(4);
         expect(collapses.at(0)!.props("title")).toBe("Link");
         expect(collapses.at(0)!.props("collapseId")).toBe("link-data");
         expect(collapses.at(0)!.findComponent(LinkData).exists()).toBe(true);
@@ -69,6 +97,9 @@ describe("OptionsTab", () => {
         expect(collapses.at(2)!.props("title")).toBe("Run Options");
         expect(collapses.at(2)!.props("collapseId")).toBe("run-options");
         expect(collapses.at(2)!.findComponent(RunOptions).exists()).toBe(true);
+        expect(collapses.at(3)!.props("title")).toBe("Optimisation");
+        expect(collapses.at(3)!.props("collapseId")).toBe("optimisation");
+        expect(collapses.at(3)!.findComponent(OptimisationOptions).exists()).toBe(true);
     });
 
     it("renders as expected when sensitivity tab is not open", () => {

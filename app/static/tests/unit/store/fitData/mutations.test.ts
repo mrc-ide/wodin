@@ -100,4 +100,10 @@ describe("FitData mutations", () => {
 
         expect(state.columnToFit).toBe(null);
     });
+
+    it("sets column to fit", () => {
+        const state = mockFitDataState();
+        mutations.SetColumnToFit(state, "col1");
+        expect(state.columnToFit).toBe("col1");
+    });
 });

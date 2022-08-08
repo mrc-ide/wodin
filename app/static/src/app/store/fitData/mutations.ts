@@ -8,7 +8,8 @@ export enum FitDataMutation {
     SetError = "SetError",
     SetTimeVariable = "SetTimeVariable",
     SetLinkedVariables = "SetLinkedVariables",
-    SetLinkedVariable = "SetLinkedVariable"
+    SetLinkedVariable = "SetLinkedVariable",
+    SetColumnToFit = "SetColumnToFit"
 }
 
 export interface SetDataPayload {
@@ -58,5 +59,9 @@ export const mutations: MutationTree<FitDataState> = {
     [FitDataMutation.SetLinkedVariable](state: FitDataState, payload: SetLinkedVariablePayload) {
         state.linkedVariables[payload.column] = payload.variable;
         updateColumnToFit(state);
+    },
+
+    [FitDataMutation.SetColumnToFit](state: FitDataState, payload: string) {
+        state.columnToFit = payload;
     }
 };

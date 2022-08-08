@@ -287,4 +287,15 @@ describe("Fit Data actions", () => {
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetLinkedVariable);
         expect(commit.mock.calls[0][1]).toBe(payload);
     });
+
+    it("updates column to fit", () => {
+        const commit = jest.fn();
+        (actions[FitDataAction.UpdateColumnToFit] as any)({ commit }, "col1");
+        expect(commit).toHaveBeenCalledTimes(2);
+        expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetColumnToFit);
+        expect(commit.mock.calls[0][1]).toBe("col1");
+        expect(commit.mock.calls[1][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
+        expect(commit.mock.calls[1][1]).toBe(true);
+        expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
+    });
 });
