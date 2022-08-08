@@ -8,11 +8,8 @@ import LinkData from "../../../../src/app/components/options/LinkData.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { FitState } from "../../../../src/app/store/fit/state";
 import { AppType, VisualisationTab } from "../../../../src/app/store/appState/state";
-<<<<<<< HEAD
 import SensitivityOptions from "../../../../src/app/components/options/SensitivityOptions.vue";
-=======
 import OptimisationOptions from "../../../../src/app/components/options/OptimisationOptions.vue";
->>>>>>> main
 
 describe("OptionsTab", () => {
     const getWrapper = (store: Store<any>) => {
@@ -60,10 +57,6 @@ describe("OptionsTab", () => {
     });
 
     it("renders as expected for Fit app", () => {
-<<<<<<< HEAD
-        const store = new Vuex.Store<FitState>({ state: fitAppState });
-        const wrapper = getWrapper(store);
-=======
         const store = new Vuex.Store<FitState>({
             state: {
                 appType: AppType.Fit,
@@ -79,12 +72,8 @@ describe("OptionsTab", () => {
                 }
             } as any
         });
-        const wrapper = mount(OptionsTab, {
-            global: {
-                plugins: [store]
-            }
-        });
->>>>>>> main
+        const wrapper = getWrapper(store);
+
         const collapses = wrapper.findAllComponents(VerticalCollapse);
         expect(collapses.length).toBe(4);
         expect(collapses.at(0)!.props("title")).toBe("Link");
