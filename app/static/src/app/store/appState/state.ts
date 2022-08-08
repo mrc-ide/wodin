@@ -1,6 +1,7 @@
 import { CodeState } from "../code/state";
 import { ModelState } from "../model/state";
 import { AppConfig } from "../../types/responseTypes";
+import { SensitivityState } from "../sensitivity/state";
 
 export enum AppType {
     Basic = "basic",
@@ -21,4 +22,5 @@ export interface AppState {
     openVisualisationTab: VisualisationTab
     code: CodeState
     model: ModelState
+    sensitivity: SensitivityState
 }

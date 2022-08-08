@@ -11,6 +11,7 @@ import { CodeState } from "../src/app/store/code/state";
 import { FitDataState } from "../src/app/store/fitData/state";
 import { AppType, VisualisationTab } from "../src/app/store/appState/state";
 import { ModelFitState } from "../src/app/store/modelFit/state";
+import { SensitivityScaleType, SensitivityState, SensitivityVariationType } from "../src/app/store/sensitivity/state";
 
 export const mockAxios = new MockAdapter(axios);
 
@@ -75,6 +76,20 @@ export const mockFitDataState = (state:Partial<FitDataState> = {}): FitDataState
     };
 };
 
+export const mockSensitivityState = (state: Partial<SensitivityState> = {}): SensitivityState => {
+    return {
+        paramSettings: {
+            parameterToVary: null,
+            scaleType: SensitivityScaleType.Arithmetic,
+            variationType: SensitivityVariationType.Percentage,
+            variationPercentage: 10,
+            rangeFrom: 0,
+            rangeTo: 0,
+            numberOfRuns: 10
+        }
+    };
+};
+
 export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
     return {
         appType: AppType.Basic,
@@ -86,6 +101,7 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
         },
         code: mockCodeState(),
         model: mockModelState(),
+        sensitivity: mockSensitivityState(),
         ...state
     };
 };
@@ -115,6 +131,7 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
         code: mockCodeState(),
         model: mockModelState(),
         fitData: mockFitDataState(),
+        sensitivity: mockSensitivityState(),
         ...state
     };
 };
@@ -130,6 +147,7 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
         },
         code: mockCodeState(),
         model: mockModelState(),
+        sensitivity: mockSensitivityState(),
         ...state
     };
 };

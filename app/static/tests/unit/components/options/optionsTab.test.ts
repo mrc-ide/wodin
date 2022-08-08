@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import Vuex from "vuex";
+import Vuex, { Store } from "vuex";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
 import VerticalCollapse from "../../../../src/app/components/VerticalCollapse.vue";
 import ParameterValues from "../../../../src/app/components/options/ParameterValues.vue";
@@ -8,9 +8,32 @@ import LinkData from "../../../../src/app/components/options/LinkData.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { FitState } from "../../../../src/app/store/fit/state";
 import { AppType, VisualisationTab } from "../../../../src/app/store/appState/state";
+import SensitivityOptions from "../../../../src/app/components/options/SensitivityOptions.vue";
 import OptimisationOptions from "../../../../src/app/components/options/OptimisationOptions.vue";
 
 describe("OptionsTab", () => {
+    const getWrapper = (store: Store<any>) => {
+        return mount(OptionsTab, {
+            global: {
+                plugins: [store]
+            }
+        });
+    };
+
+    const fitAppState = {
+        appType: AppType.Fit,
+        openVisualisationTab: VisualisationTab.Run,
+        model: {
+            parameterValues: new Map<string, number>()
+        },
+        modelFit: {
+            paramsToVary: []
+        },
+        sensitivity: {
+            paramSettings: {}
+        }
+    } as any;
+
     it("renders as expected for Basic app", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
@@ -21,11 +44,7 @@ describe("OptionsTab", () => {
                 }
             } as any
         });
-        const wrapper = mount(OptionsTab, {
-            global: {
-                plugins: [store]
-            }
-        });
+        const wrapper = getWrapper(store);
         const collapses = wrapper.findAllComponents(VerticalCollapse);
         expect(collapses.length).toBe(2);
         expect(collapses.at(0)!.props("title")).toBe("Model Parameters");
@@ -53,11 +72,8 @@ describe("OptionsTab", () => {
                 }
             } as any
         });
-        const wrapper = mount(OptionsTab, {
-            global: {
-                plugins: [store]
-            }
-        });
+        const wrapper = getWrapper(store);
+
         const collapses = wrapper.findAllComponents(VerticalCollapse);
         expect(collapses.length).toBe(4);
         expect(collapses.at(0)!.props("title")).toBe("Link");
@@ -73,5 +89,22 @@ describe("OptionsTab", () => {
         expect(collapses.at(3)!.props("title")).toBe("Optimisation");
         expect(collapses.at(3)!.props("collapseId")).toBe("optimisation");
         expect(collapses.at(3)!.findComponent(OptimisationOptions).exists()).toBe(true);
+    });
+
+    it("renders as expected when sensitivity tab is not open", () => {
+        const store = new Vuex.Store<FitState>({ state: fitAppState });
+        const wrapper = getWrapper(store);
+        expect(wrapper.findComponent(SensitivityOptions).exists()).toBe(false);
+    });
+
+    it("renders as expected when sensitivity tab is open", () => {
+        const store = new Vuex.Store<BasicState>({
+            state: {
+                ...fitAppState,
+                openVisualisationTab: VisualisationTab.Sensitivity
+            }
+        });
+        const wrapper = getWrapper(store);
+        expect(wrapper.findComponent(SensitivityOptions).exists()).toBe(true);
     });
 });
