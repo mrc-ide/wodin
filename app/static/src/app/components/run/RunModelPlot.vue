@@ -66,13 +66,14 @@ export default defineComponent({
             };
         };
 
-        const odinToPlotly = (s: OdinSeriesSet): Partial<PlotData>[] =>
-            s.y.map((el: number[], i: number): Partial<PlotData> => ({
+        const odinToPlotly = (s: OdinSeriesSet): Partial<PlotData>[] => s.y.map(
+            (el: number[], i: number): Partial<PlotData> => ({
                 line: seriesColour(s.names[i]),
                 name: s.names[i],
                 x: s.x,
                 y: s.y[i]
-            }));
+            })
+        );
 
         // translate fit data into a form that can be plotted - only supported for modelFit for now
         const fitDataSeries = (start: number, end: number): Partial<PlotData>[] => {
