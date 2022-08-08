@@ -8,5 +8,6 @@ export interface FitDataState {
     timeVariable: string | null
     linkedVariables: Dict<string | null> // Dict of data column names (keys) to linked model variables (values)
     columnToFit: string | null
+    modelToFit: string | null
     error: Error | null
 }

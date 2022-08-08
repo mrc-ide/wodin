@@ -20,6 +20,7 @@ import {
 } from "plotly.js";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
+import { OdinSeriesSet } from "../../types/responseTypes";
 import { Dict } from "../../types/utilTypes";
 
 export default defineComponent({
@@ -56,8 +57,25 @@ export default defineComponent({
 
         const seriesColour = (variable: string) => ({ color: palette.value[variable] });
 
+        const filterSeriesSet = (s: OdinSeriesSet, name: string): OdinSeriesSet => {
+            const idx = s.names.indexOf(name);
+            return {
+                names: [s.names[idx]],
+                x: s.x,
+                y: [s.y[idx]]
+            };
+        };
+
+        const odinToPlotly = (s: OdinSeriesSet): Partial<PlotData>[] =>
+            s.y.map((el: number[], i: number): Partial<PlotData> => ({
+                line: seriesColour(s.names[i]),
+                name: s.names[i],
+                x: s.x,
+                y: s.y[i]
+            }));
+
         // translate fit data into a form that can be plotted - only supported for modelFit for now
-        const fitDataSeries = (start: number, end: number) => {
+        const fitDataSeries = (start: number, end: number): Partial<PlotData>[] => {
             const { fitData } = store.state;
             const timeVar = fitData?.timeVariable;
             const dataVar = fitData?.columnToFit;
@@ -78,22 +96,20 @@ export default defineComponent({
             return [];
         };
 
-        const allPlotData = (start: number, end: number): Data[] => {
-            let dataToPlot = solution.value(start, end, nPoints);
-            if (!dataToPlot) {
+        const allPlotData = (start: number, end: number): Partial<PlotData>[] => {
+            let result = solution.value(start, end, nPoints);
+            if (!result) {
                 return [];
             }
-
-            // model fit partial solution returns single series - convert to array
             if (props.modelFit) {
-                dataToPlot.line = seriesColour(dataToPlot.name);
-                dataToPlot = [dataToPlot] as Data[];
-            } else {
-                dataToPlot.forEach((data: PlotData) => {
-                    data.line = seriesColour(data.name); // eslint-disable-line no-param-reassign
-                });
+                // TODO: modelVar should be saved into the store here, then this becomes
+                // result = filterSeriesSet(result, fitData.modelVar);
+                const { fitData } = store.state;
+                const dataVar = fitData?.columnToFit;
+                const modelVar = fitData.linkedVariables[dataVar];
+                result = filterSeriesSet(result, modelVar);
             }
-            return [...dataToPlot, ...fitDataSeries(start, end)];
+            return [...odinToPlotly(result), ...fitDataSeries(start, end)];
         };
 
         const config = {
