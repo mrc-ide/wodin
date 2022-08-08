@@ -5,11 +5,13 @@ import {
     SensitivityScaleType,
     SensitivityVariationType
 } from "../../../../src/app/store/sensitivity/state";
-import { mockBasicState, mockModelState } from "../../../mocks";
+import {mockBasicState, mockBatchParsDisplace, mockBatchParsRange, mockModelState} from "../../../mocks";
 import EditParamSettings from "../../../../src/app/components/options/EditParamSettings.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
+import {expectCloseNumericArray} from "../../../testUtils";
 
 describe("EditParamSettings", () => {
     const percentSettings = {
@@ -32,18 +34,25 @@ describe("EditParamSettings", () => {
         numberOfRuns: 5
     };
 
+    const mockRunner = {
+        batchParsDisplace: mockBatchParsDisplace,
+        batchParsRange: mockBatchParsRange
+    } as any;
+
+    const parameterValues = new Map<string, number>();
+    parameterValues.set("A", 1);
+    parameterValues.set("B", 2);
+
     const getWrapper = async (paramSettings: SensitivityParameterSettings, open = true,
         mockSetParamSettings = jest.fn()) => {
-        const parameterValues = new Map<string, number>();
-        parameterValues.set("A", 1);
-        parameterValues.set("B", 2);
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
                 model: {
                     namespaced: true,
                     state: mockModelState({
-                        parameterValues
+                        parameterValues,
+                        odinRunner: mockRunner
                     })
                 },
                 sensitivity: {
@@ -72,6 +81,10 @@ describe("EditParamSettings", () => {
         }
         return wrapper;
     };
+
+    afterEach(() => {
+        jest.resetAllMocks();
+    });
 
     it("renders as expected when variation type is Percentage", async () => {
         const wrapper = await getWrapper(percentSettings);
@@ -198,5 +211,32 @@ describe("EditParamSettings", () => {
             rangeTo: 3,
             numberOfRuns: 11
         });
+    });
+
+    it("renders and updates sensitivity param values", async () => {
+        const percentSpy = jest.spyOn(mockRunner, "batchParsDisplace");
+        const rangeSpy = jest.spyOn(mockRunner, "batchParsRange");
+        const wrapper = await getWrapper(percentSettings);
+        const sensitivityValues = wrapper.findComponent(SensitivityParamValues);
+        expectCloseNumericArray(sensitivityValues.props("batchPars").values, [1.8, 1.9, 2, 2.1, 2.2]);
+        expect(sensitivityValues.props("batchPars").name).toBe("B");
+        expect(percentSpy).toHaveBeenCalledTimes(1);
+        expect(percentSpy.mock.calls[0][0]).toStrictEqual(parameterValues);
+        expect(percentSpy.mock.calls[0][1]).toBe("B");
+        expect(percentSpy.mock.calls[0][2]).toBe(5);
+        expect(percentSpy.mock.calls[0][3]).toBe(false);
+        expect(percentSpy.mock.calls[0][4]).toBe(10);
+
+        await updateSelect(wrapper, "edit-variation-type", SensitivityVariationType.Range);
+        await wrapper.find("#edit-from").findComponent(NumericInput).vm.$emit("update", 1);
+        await wrapper.find("#edit-to").findComponent(NumericInput).vm.$emit("update", 3);
+        expectCloseNumericArray(sensitivityValues.props("batchPars").values, [1, 1.5, 2, 2.5, 3]);
+        expect(rangeSpy).toHaveBeenCalledTimes(1);
+        expect(rangeSpy.mock.calls[0][0]).toStrictEqual(parameterValues);
+        expect(rangeSpy.mock.calls[0][1]).toBe("B");
+        expect(rangeSpy.mock.calls[0][2]).toBe(5);
+        expect(rangeSpy.mock.calls[0][3]).toBe(false);
+        expect(rangeSpy.mock.calls[0][5]).toBe(1);
+        expect(rangeSpy.mock.calls[0][6]).toBe(3);
     });
 });
