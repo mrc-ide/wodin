@@ -172,6 +172,7 @@ export const mockBatchParsRange = (base: Map<string, number>, name: string, coun
 export const mockBatchParsDisplace = (base: Map<string, number>, name: string, count: number,
                                   logarithmic: boolean,
                                   displace: number): BatchPars => {
+    console.log("calling the mock")
     const paramValue = base.get(name)!;
     const max = paramValue * (1 + (displace/100));
     const min = paramValue * (1 - (displace/100));
