@@ -12,7 +12,7 @@ import { shallowMount, VueWrapper } from "@vue/test-utils";
 import { nextTick } from "vue";
 import Vuex from "vuex";
 import * as plotly from "plotly.js";
-import RunModelPlot from "../../../../src/app/components/run/RunModelPlot.vue";
+import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { ModelMutation, mutations } from "../../../../src/app/store/model/mutations";
 import { ModelFitMutation, mutations as modelFitMutations } from "../../../../src/app/store/modelFit/mutations";
@@ -21,7 +21,7 @@ import {
 } from "../../../mocks";
 import { FitDataState } from "../../../../src/app/store/fitData/state";
 
-describe("RunModelPlot", () => {
+describe("RunPlot", () => {
     const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");
     const mockPlotlyReact = jest.spyOn(plotly, "react");
 
@@ -65,7 +65,7 @@ describe("RunModelPlot", () => {
     };
 
     const getWrapper = (store = getStore(), fadePlot = false, modelFit = false) => {
-        return shallowMount(RunModelPlot, {
+        return shallowMount(RunPlot, {
             props: { fadePlot, modelFit },
             global: {
                 plugins: [store]
@@ -74,7 +74,7 @@ describe("RunModelPlot", () => {
     };
 
     const mockPlotElementOn = (wrapper: VueWrapper<any>) => {
-        const divElement = wrapper.find("div.run-model-plot").element;
+        const divElement = wrapper.find("div.run-plot").element;
         const mockOn = jest.fn();
         (divElement as any).on = mockOn;
         return mockOn;
@@ -86,7 +86,7 @@ describe("RunModelPlot", () => {
 
     it("renders plot ref element", () => {
         const wrapper = getWrapper();
-        const div = wrapper.find("div.run-model-plot");
+        const div = wrapper.find("div.run-plot");
         expect(div.exists()).toBe(true);
         expect((wrapper.vm as any).plot).toBe(div.element);
     });
@@ -105,7 +105,7 @@ describe("RunModelPlot", () => {
 
     it("renders slot content", () => {
         const store = getStore();
-        const wrapper = shallowMount(RunModelPlot, {
+        const wrapper = shallowMount(RunPlot, {
             global: {
                 plugins: [store]
             },
@@ -183,7 +183,7 @@ describe("RunModelPlot", () => {
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
         store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
         await nextTick();
-        expect(mockPlotlyNewPlot.mock.calls[0][0]).toBe(wrapper.find("div.run-model-plot").element);
+        expect(mockPlotlyNewPlot.mock.calls[0][0]).toBe(wrapper.find("div.run-plot").element);
         expect(mockPlotlyNewPlot.mock.calls[0][1]).toStrictEqual(expectedModelPlotDataRun);
         expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({ margin: { t: 25 } });
 
@@ -204,7 +204,7 @@ describe("RunModelPlot", () => {
         });
 
         await nextTick();
-        expect(mockPlotlyNewPlot.mock.calls[0][0]).toBe(wrapper.find("div.run-model-plot").element);
+        expect(mockPlotlyNewPlot.mock.calls[0][0]).toBe(wrapper.find("div.run-plot").element);
         expect(mockPlotlyNewPlot.mock.calls[0][1]).toStrictEqual(expectedModelPlotDataFit);
         expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({ margin: { t: 25 } });
 
@@ -260,7 +260,7 @@ describe("RunModelPlot", () => {
         const { relayout } = wrapper.vm as any;
         await relayout(relayoutEvent);
 
-        const divElement = wrapper.find("div.run-model-plot").element;
+        const divElement = wrapper.find("div.run-plot").element;
         expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
         expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual(expectedModelPlotDataRun);
         expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual(expectedLayout);
@@ -288,7 +288,7 @@ describe("RunModelPlot", () => {
         const { relayout } = wrapper.vm as any;
         await relayout(relayoutEvent);
 
-        const divElement = wrapper.find("div.run-model-plot").element;
+        const divElement = wrapper.find("div.run-plot").element;
         expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
         expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual([
             expectedModelPlotDataRun[0],
@@ -322,7 +322,7 @@ describe("RunModelPlot", () => {
         const { relayout } = wrapper.vm as any;
         await relayout(relayoutEvent);
 
-        const divElement = wrapper.find("div.run-model-plot").element;
+        const divElement = wrapper.find("div.run-plot").element;
         expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
         expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual(expectedModelPlotDataRun);
         expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual(expectedLayout);
@@ -348,7 +348,7 @@ describe("RunModelPlot", () => {
         const { relayout } = wrapper.vm as any;
         await relayout(relayoutEvent);
 
-        const divElement = wrapper.find("div.run-model-plot").element;
+        const divElement = wrapper.find("div.run-plot").element;
         expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
         expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual(expectedModelPlotDataFit);
         expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual(expectedLayout);
@@ -403,7 +403,7 @@ describe("RunModelPlot", () => {
         store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
         await nextTick();
 
-        const divElement = wrapper.find("div.run-model-plot").element;
+        const divElement = wrapper.find("div.run-plot").element;
         expect(mockObserve).toHaveBeenCalledWith(divElement);
     });
 
@@ -416,7 +416,7 @@ describe("RunModelPlot", () => {
         await nextTick();
 
         (wrapper.vm as any).resize();
-        const divElement = wrapper.find("div.run-model-plot").element;
+        const divElement = wrapper.find("div.run-plot").element;
         expect(plotly.Plots.resize).toHaveBeenCalledWith(divElement);
     });
 

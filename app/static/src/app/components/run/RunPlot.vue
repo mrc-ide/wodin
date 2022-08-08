@@ -1,6 +1,6 @@
 <template>
     <div class="run-plot-container" :style="plotStyle">
-      <div class="run-model-plot" ref="plot">
+      <div class="run-plot" ref="plot">
       </div>
       <div v-if="!hasPlotData" class="plot-placeholder">
         {{ placeholderMessage }}
@@ -24,7 +24,7 @@ import { OdinSeriesSet } from "../../types/responseTypes";
 import { Dict } from "../../types/utilTypes";
 
 export default defineComponent({
-    name: "RunModelPlot",
+    name: "RunPlot",
     props: {
         fadePlot: Boolean,
         modelFit: Boolean

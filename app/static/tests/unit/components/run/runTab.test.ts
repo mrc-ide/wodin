@@ -1,4 +1,4 @@
-// Mock plotly before import RunTab, which indirectly imports plotly via RunModelPlot
+// Mock plotly before import RunTab, which indirectly imports plotly via RunPlot
 jest.mock("plotly.js", () => {});
 
 /* eslint-disable import/first */
@@ -8,7 +8,7 @@ import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState, mockModelState } from "../../../mocks";
 import { ModelState, RequiredModelAction } from "../../../../src/app/store/model/state";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
-import RunModelPlot from "../../../../src/app/components/run/RunModelPlot.vue";
+import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
 
@@ -50,7 +50,7 @@ describe("RunTab", () => {
         expect(wrapper.find("button").text()).toBe("Run model");
         expect(wrapper.find("button").element.disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
-        expect(wrapper.findComponent(RunModelPlot).props("fadePlot")).toBe(false);
+        expect(wrapper.findComponent(RunPlot).props("fadePlot")).toBe(false);
     });
 
     it("disables run button when state has no odinRunner", () => {
@@ -73,7 +73,7 @@ describe("RunTab", () => {
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Model code has been updated. Compile code and Run Model to view updated graph."
         );
-        expect(wrapper.findComponent(RunModelPlot).props("fadePlot")).toBe(true);
+        expect(wrapper.findComponent(RunPlot).props("fadePlot")).toBe(true);
     });
 
     it("fades plot and shows message when model run required", () => {
@@ -81,7 +81,7 @@ describe("RunTab", () => {
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Model code has been recompiled or options have been updated. Run Model to view updated graph."
         );
-        expect(wrapper.findComponent(RunModelPlot).props("fadePlot")).toBe(true);
+        expect(wrapper.findComponent(RunPlot).props("fadePlot")).toBe(true);
     });
 
     it("invokes run model action when run button is clicked", () => {
