@@ -31,7 +31,9 @@ export interface API<S, E> {
     get<T>(url: string): Promise<void | ResponseWithType<T>>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type OnError = (failure: ResponseFailure) => void;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type OnSuccess = (success: ResponseSuccess) => void;
 
 export class APIService<S extends string, E extends string> implements API<S, E> {

@@ -40,17 +40,16 @@ describe("SensitivityOptions", () => {
     it("displays percentage variance as expected", () => {
         const wrapper = getWrapper(percentSettings);
 
-        expect(wrapper.find("h5").text()).toBe("Sensitivity Options");
-        expect(wrapper.findComponent(VerticalCollapse).props("title")).toBe("Vary Parameter");
-        expect(wrapper.findComponent(VerticalCollapse).props("collapseId")).toBe("vary-parameter");
+        expect(wrapper.findComponent(VerticalCollapse).props("title")).toBe("Sensitivity Options");
+        expect(wrapper.findComponent(VerticalCollapse).props("collapseId")).toBe("sensitivity-options");
 
-        expect(wrapper.find(".card-header").text()).toBe("B");
-        const listItems = wrapper.findAll(".card-body ul li");
-        expect(listItems.length).toBe(4);
-        expect(listItems.at(0)!.text()).toBe("Scale Type: Arithmetic");
-        expect(listItems.at(1)!.text()).toBe("Variation Type: Percentage");
-        expect(listItems.at(2)!.text()).toBe("Variation (%): 10");
-        expect(listItems.at(3)!.text()).toBe("Number of runs: 5");
+        const listItems = wrapper.findAll("ul li");
+        expect(listItems.length).toBe(5);
+        expect(listItems.at(0)!.text()).toBe("Parameter: B");
+        expect(listItems.at(1)!.text()).toBe("Scale Type: Arithmetic");
+        expect(listItems.at(2)!.text()).toBe("Variation Type: Percentage");
+        expect(listItems.at(3)!.text()).toBe("Variation (%): 10");
+        expect(listItems.at(4)!.text()).toBe("Number of runs: 5");
 
         expect(wrapper.find("button.btn-primary").text()).toBe("Edit");
         expect(wrapper.findComponent(EditParamSettings).props("open")).toBe(false);
@@ -69,14 +68,14 @@ describe("SensitivityOptions", () => {
             numberOfRuns: 5
         });
 
-        expect(wrapper.find(".card-header").text()).toBe("B");
-        const listItems = wrapper.findAll(".card-body ul li");
-        expect(listItems.length).toBe(5);
-        expect(listItems.at(0)!.text()).toBe("Scale Type: Logarithmic");
-        expect(listItems.at(1)!.text()).toBe("Variation Type: Range");
-        expect(listItems.at(2)!.text()).toBe("From: 1");
-        expect(listItems.at(3)!.text()).toBe("To: 3");
-        expect(listItems.at(4)!.text()).toBe("Number of runs: 5");
+        const listItems = wrapper.findAll("ul li");
+        expect(listItems.length).toBe(6);
+        expect(listItems.at(0)!.text()).toBe("Parameter: B");
+        expect(listItems.at(1)!.text()).toBe("Scale Type: Logarithmic");
+        expect(listItems.at(2)!.text()).toBe("Variation Type: Range");
+        expect(listItems.at(3)!.text()).toBe("From: 1");
+        expect(listItems.at(4)!.text()).toBe("To: 3");
+        expect(listItems.at(5)!.text()).toBe("Number of runs: 5");
     });
 
     it("opens and closes edit dialog", async () => {
@@ -91,7 +90,7 @@ describe("SensitivityOptions", () => {
 
     it("displays message if no parameter to vary", () => {
         const wrapper = getWrapper({ parameterToVary: null } as any);
-        expect(wrapper.findComponent(VerticalCollapse).exists()).toBe(false);
+        expect(wrapper.find("ul").exists()).toBe(false);
         expect(wrapper.find("#sensitivity-options-msg").text())
             .toBe("Please compile a valid model in order to set sensitivity options.");
     });

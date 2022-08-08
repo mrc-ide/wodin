@@ -10,7 +10,8 @@ export enum FitDataAction {
     Upload = "Upload",
     UpdateTimeVariable = "UpdateTimeVariable",
     UpdateLinkedVariables = "UpdateLinkedVariables",
-    UpdateLinkedVariable = "UpdateLinkedVariable"
+    UpdateLinkedVariable = "UpdateLinkedVariable",
+    UpdateColumnToFit = "UpdateColumnToFit"
 }
 
 const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) => {
@@ -64,5 +65,11 @@ export const actions: ActionTree<FitDataState, FitState> = {
         if (payload.column === state.columnToFit) {
             commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
         }
+    },
+
+    [FitDataAction.UpdateColumnToFit](context, payload: string) {
+        const { commit } = context;
+        commit(FitDataMutation.SetColumnToFit, payload);
+        commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
     }
 };

@@ -10,20 +10,16 @@ test.describe("Sensitivity tests", () => {
     });
 
     test("can edit Sensitivity options", async ({ page }) => {
-        // Parameters and Run Options are collapsed
-        await expect(await page.isVisible("#model-params")).toBe(false);
-        await expect(await page.isVisible("#run-options")).toBe(false);
-
         // Default settings are visible
-        await expect(await page.innerText("#vary-parameter .card-header")).toBe("beta");
-        await expect(await page.innerText(":nth-match(#vary-parameter li, 1)")).toBe("Scale Type: Arithmetic");
-        await expect(await page.innerText(":nth-match(#vary-parameter li, 2)")).toBe("Variation Type: Percentage");
-        await expect(await page.innerText(":nth-match(#vary-parameter li, 3)")).toBe("Variation (%): 10");
-        await expect(await page.innerText(":nth-match(#vary-parameter li, 4)")).toBe("Number of runs: 10");
+        await expect(await page.innerText(":nth-match(#sensitivity-options li, 1)")).toBe("Parameter: beta");
+        await expect(await page.innerText(":nth-match(#sensitivity-options li, 2)")).toBe("Scale Type: Arithmetic");
+        await expect(await page.innerText(":nth-match(#sensitivity-options li, 3)")).toBe("Variation Type: Percentage");
+        await expect(await page.innerText(":nth-match(#sensitivity-options li, 4)")).toBe("Variation (%): 10");
+        await expect(await page.innerText(":nth-match(#sensitivity-options li, 5)")).toBe("Number of runs: 10");
 
         // Edit settings
         await expect(await page.isVisible(".modal")).toBe(false);
-        await page.click("#vary-parameter .btn-primary");
+        await page.click("#sensitivity-options .btn-primary");
         await expect(await page.isVisible(".modal")).toBe(true);
         await expect(await page.innerText(".modal-title")).toBe("Vary Parameter");
         await expect(await page.locator("#invalid-msg").count()).toBe(0);
@@ -44,11 +40,11 @@ test.describe("Sensitivity tests", () => {
         await expect(await page.isVisible(".modal")).toBe(false);
 
         // New settings are visible
-        await expect(await page.innerText("#vary-parameter .card-header")).toBe("sigma");
-        await expect(await page.innerText(":nth-match(#vary-parameter li, 1)")).toBe("Scale Type: Logarithmic");
-        await expect(await page.innerText(":nth-match(#vary-parameter li, 2)")).toBe("Variation Type: Range");
-        await expect(await page.innerText(":nth-match(#vary-parameter li, 3)")).toBe("From: 1");
-        await expect(await page.innerText(":nth-match(#vary-parameter li, 4)")).toBe("To: 5");
-        await expect(await page.innerText(":nth-match(#vary-parameter li, 5)")).toBe("Number of runs: 12");
+        await expect(await page.innerText(":nth-match(#sensitivity-options li, 1)")).toBe("Parameter: sigma");
+        await expect(await page.innerText(":nth-match(#sensitivity-options li, 2)")).toBe("Scale Type: Logarithmic");
+        await expect(await page.innerText(":nth-match(#sensitivity-options li, 3)")).toBe("Variation Type: Range");
+        await expect(await page.innerText(":nth-match(#sensitivity-options li, 4)")).toBe("From: 1");
+        await expect(await page.innerText(":nth-match(#sensitivity-options li, 5)")).toBe("To: 5");
+        await expect(await page.innerText(":nth-match(#sensitivity-options li, 6)")).toBe("Number of runs: 12");
     });
 });

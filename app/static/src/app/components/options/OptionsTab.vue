@@ -1,15 +1,18 @@
 <template>
     <div>
-        <vertical-collapse v-if="isFit" title="Link" collapse-id="link-data" :collapse-on="sensitivityOpen">
+        <sensitivity-options v-if="sensitivityOpen"></sensitivity-options>
+        <vertical-collapse v-if="isFit" title="Link" collapse-id="link-data">
           <link-data></link-data>
         </vertical-collapse>
-        <vertical-collapse title="Model Parameters" collapse-id="model-params" :collapse-on="sensitivityOpen">
+        <vertical-collapse title="Model Parameters" collapse-id="model-params">
           <parameter-values></parameter-values>
         </vertical-collapse>
-        <vertical-collapse title="Run Options" collapse-id="run-options" :collapse-on="sensitivityOpen">
+        <vertical-collapse title="Run Options" collapse-id="run-options">
           <run-options></run-options>
         </vertical-collapse>
-        <sensitivity-options v-if="sensitivityOpen"></sensitivity-options>
+        <vertical-collapse v-if="fitTabIsOpen" title="Optimisation" collapse-id="optimisation">
+          <optimisation-options></optimisation-options>
+        </vertical-collapse>
     </div>
 </template>
 
@@ -21,12 +24,14 @@ import ParameterValues from "./ParameterValues.vue";
 import RunOptions from "./RunOptions.vue";
 import LinkData from "./LinkData.vue";
 import SensitivityOptions from "./SensitivityOptions.vue";
+import OptimisationOptions from "./OptimisationOptions.vue";
 import { AppType, VisualisationTab } from "../../store/appState/state";
 
 export default {
     name: "OptionsTab",
     components: {
         LinkData,
+        OptimisationOptions,
         ParameterValues,
         RunOptions,
         SensitivityOptions,
@@ -35,11 +40,14 @@ export default {
     setup() {
         const store = useStore();
         const isFit = computed(() => store.state.appType === AppType.Fit);
+
         const sensitivityOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Sensitivity);
+        const fitTabIsOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Fit);
 
         return {
             isFit,
-            sensitivityOpen
+            sensitivityOpen,
+            fitTabIsOpen
         };
     }
 };

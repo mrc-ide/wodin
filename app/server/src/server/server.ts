@@ -7,6 +7,7 @@ import { registerRoutes } from "../routes";
 import { DefaultCodeReader } from "../defaultCodeReader";
 import { handleError } from "../errors/handleError";
 import { initialiseLogging } from "../logging";
+import { redisConnection } from "../redis";
 
 const express = require("express");
 const path = require("path");
@@ -30,9 +31,14 @@ const defaultCodeReader = new DefaultCodeReader(`${configPath}/defaultCode`);
 // Use WODIN version from package.json
 const wodinVersion = process.env.npm_package_version;
 
+const redis = redisConnection(
+    wodinConfig.redisURL,
+    () => { throw Error(`Failed to connect to redis server ${wodinConfig.redisURL}`); }
+);
+
 // Make app locals available to controllers
 Object.assign(app.locals, {
-    appsPath, configPath, configReader, defaultCodeReader, odinAPI, wodinConfig, wodinVersion
+    appsPath, configPath, configReader, defaultCodeReader, odinAPI, redis, wodinConfig, wodinVersion
 });
 
 // Static content

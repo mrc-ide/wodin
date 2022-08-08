@@ -75,7 +75,7 @@ See the `/config` folder for example configuration, used in development.
 
 ## Development
 
-This codebase has been tested with Node version 16.4.2.
+This codebase has been tested with Node version 16.16.0.
 If you have recently changed node version, you may see Node Sass binding errors - running `npm rebuild node-sass --prefix=app/static`
 should fix this issue. 
 

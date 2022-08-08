@@ -9,6 +9,7 @@ import { BasicState } from "../../../../src/app/store/basic/state";
 import { FitState } from "../../../../src/app/store/fit/state";
 import { AppType, VisualisationTab } from "../../../../src/app/store/appState/state";
 import SensitivityOptions from "../../../../src/app/components/options/SensitivityOptions.vue";
+import OptimisationOptions from "../../../../src/app/components/options/OptimisationOptions.vue";
 
 describe("OptionsTab", () => {
     const getWrapper = (store: Store<any>) => {
@@ -37,6 +38,7 @@ describe("OptionsTab", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 appType: AppType.Basic,
+                openVisualisationTab: VisualisationTab.Run,
                 model: {
                     parameterValues: null
                 }
@@ -55,10 +57,25 @@ describe("OptionsTab", () => {
     });
 
     it("renders as expected for Fit app", () => {
-        const store = new Vuex.Store<FitState>({ state: fitAppState });
+        const store = new Vuex.Store<FitState>({
+            state: {
+                appType: AppType.Fit,
+                openVisualisationTab: VisualisationTab.Fit,
+                model: {
+                    parameterValues: new Map<string, number>()
+                },
+                modelFit: {
+                    paramsToVary: []
+                },
+                fitData: {
+                    columnToFit: null
+                }
+            } as any
+        });
         const wrapper = getWrapper(store);
+
         const collapses = wrapper.findAllComponents(VerticalCollapse);
-        expect(collapses.length).toBe(3);
+        expect(collapses.length).toBe(4);
         expect(collapses.at(0)!.props("title")).toBe("Link");
         expect(collapses.at(0)!.props("collapseId")).toBe("link-data");
         expect(collapses.at(0)!.findComponent(LinkData).exists()).toBe(true);
@@ -69,15 +86,14 @@ describe("OptionsTab", () => {
         expect(collapses.at(2)!.props("title")).toBe("Run Options");
         expect(collapses.at(2)!.props("collapseId")).toBe("run-options");
         expect(collapses.at(2)!.findComponent(RunOptions).exists()).toBe(true);
+        expect(collapses.at(3)!.props("title")).toBe("Optimisation");
+        expect(collapses.at(3)!.props("collapseId")).toBe("optimisation");
+        expect(collapses.at(3)!.findComponent(OptimisationOptions).exists()).toBe(true);
     });
 
     it("renders as expected when sensitivity tab is not open", () => {
         const store = new Vuex.Store<FitState>({ state: fitAppState });
         const wrapper = getWrapper(store);
-        const collapses = wrapper.findAllComponents(VerticalCollapse);
-        expect(collapses.at(0)!.props("collapseOn")).toBe(false);
-        expect(collapses.at(1)!.props("collapseOn")).toBe(false);
-        expect(collapses.at(2)!.props("collapseOn")).toBe(false);
         expect(wrapper.findComponent(SensitivityOptions).exists()).toBe(false);
     });
 
@@ -89,10 +105,6 @@ describe("OptionsTab", () => {
             }
         });
         const wrapper = getWrapper(store);
-        const collapses = wrapper.findAllComponents(VerticalCollapse);
-        expect(collapses.at(0)!.props("collapseOn")).toBe(true);
-        expect(collapses.at(1)!.props("collapseOn")).toBe(true);
-        expect(collapses.at(2)!.props("collapseOn")).toBe(true);
         expect(wrapper.findComponent(SensitivityOptions).exists()).toBe(true);
     });
 });
