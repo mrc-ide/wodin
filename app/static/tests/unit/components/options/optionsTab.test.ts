@@ -94,10 +94,6 @@ describe("OptionsTab", () => {
     it("renders as expected when sensitivity tab is not open", () => {
         const store = new Vuex.Store<FitState>({ state: fitAppState });
         const wrapper = getWrapper(store);
-        const collapses = wrapper.findAllComponents(VerticalCollapse);
-        expect(collapses.at(0)!.props("collapseOn")).toBe(false);
-        expect(collapses.at(1)!.props("collapseOn")).toBe(false);
-        expect(collapses.at(2)!.props("collapseOn")).toBe(false);
         expect(wrapper.findComponent(SensitivityOptions).exists()).toBe(false);
     });
 
@@ -109,10 +105,6 @@ describe("OptionsTab", () => {
             }
         });
         const wrapper = getWrapper(store);
-        const collapses = wrapper.findAllComponents(VerticalCollapse);
-        expect(collapses.at(0)!.props("collapseOn")).toBe(true);
-        expect(collapses.at(1)!.props("collapseOn")).toBe(true);
-        expect(collapses.at(2)!.props("collapseOn")).toBe(true);
         expect(wrapper.findComponent(SensitivityOptions).exists()).toBe(true);
     });
 });

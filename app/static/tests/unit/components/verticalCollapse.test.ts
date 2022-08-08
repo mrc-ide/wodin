@@ -36,16 +36,4 @@ describe("VerticalCollapse", () => {
         await collapse.trigger("click");
         expect(collapse.findComponent(VueFeather).props("type")).toBe("chevron-up");
     });
-
-    it("collapses and uncollapses when collapseOn value changes", async () => {
-        const wrapper = getWrapper();
-        await wrapper.setProps({ collapseOn: true });
-        const collapse = wrapper.find("a");
-        expect(collapse.attributes("aria-expanded")).toBe("false");
-        expect(wrapper.find("div.collapse").classes()).not.toContain("show");
-
-        await wrapper.setProps({ collapseOn: false });
-        expect(collapse.attributes("aria-expanded")).toBe("true");
-        expect(wrapper.find("div.collapse").classes()).toContain("show");
-    });
 });
