@@ -64,7 +64,15 @@ export interface OdinModelResponse{
     error?: OdinModelResponseError
 }
 
-export type OdinSolution = (t0: number, t1: number, nPoints: number) => {x: number, y: number}[];
+// This is Odin's SeriesSet
+export type OdinSeriesSet = {
+    names: string[];
+    x: number[];
+    y: number[][];
+}
+
+// This is Odin's InterpolatedSolution
+export type OdinSolution = (t0: number, t1: number, nPoints: number) => OdinSeriesSet;
 
 export interface OdinFitData {
     time: number[],
@@ -76,12 +84,14 @@ export interface OdinFitParameters {
     vary: string[]
 }
 
+// This is FitResult in Odin
 export interface SimplexResult {
     iterations: number;
     converged: boolean;
     value: number;
     data: {
-        solutionFit: OdinSolution,
+        names: string[],
+        solution: OdinSolution,
         pars: Map<string, number>
     }
 }
@@ -91,16 +101,19 @@ export interface Simplex {
     result: () => SimplexResult;
 }
 
+export type OdeControl = Dict<unknown>;
+
 export interface OdinRunner {
     wodinRun: (odin: Odin,
                pars: Map<string, number>,
                tStart: number,
-               tEnd: number) => OdinSolution;
+               tEnd: number,
+               control: OdeControl) => OdinSolution;
 
     wodinFit: (odin: Odin,
                data: OdinFitData,
                pars: OdinFitParameters,
                modelledSeries: string,
-               odeParams: Dict<unknown>,
+               odeParams: OdeControl,
                simplexParams: Dict<unknown>) => Simplex;
 }

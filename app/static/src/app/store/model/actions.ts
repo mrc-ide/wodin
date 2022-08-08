@@ -85,7 +85,7 @@ const runModel = (context: ActionContext<ModelState, AppState>) => {
         const start = 0;
         const end = state.endTime;
         try {
-            const solution = state.odinRunner.wodinRun(state.odin, parameters, start, end);
+            const solution = state.odinRunner.wodinRun(state.odin, parameters, start, end, {});
             commit(ModelMutation.SetOdinSolution, solution);
         } catch (e) {
             const wodinRunError = { error: userMessages.errors.wodinRunError, detail: e };

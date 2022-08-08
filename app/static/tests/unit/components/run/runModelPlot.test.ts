@@ -117,13 +117,14 @@ describe("RunModelPlot", () => {
     });
 
     const mockSolutionNull = (param1: number, param2: number) => null;
-    const mockSolutionRun = (param1: number, param2: number) => [
-        { name: "y", x: [0, 0.5, 1], y: [5, 6, 7] },
-        { name: "z", x: [0, 0.5, 1], y: [1, 2, 3] }
-    ];
-    const mockSolutionFit = (pram1: number, param2: number) => (
-        { name: "y", x: [0, 0.5, 1], y: [5, 6, 7] }
-    );
+    const mockSolution = (param1: number, param2: number) => ({
+        names: ["y", "z"],
+        x: [0, 0.5, 1],
+        y: [
+            [5, 6, 7],
+            [1, 2, 3]
+        ]
+    });
 
     const mockFitData = {
         data: [{ t: 0, v: 10 }, { t: 1, v: 20 }],
@@ -180,7 +181,7 @@ describe("RunModelPlot", () => {
         const mockOn = mockPlotElementOn(wrapper);
 
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolutionRun);
+        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
         await nextTick();
         expect(mockPlotlyNewPlot.mock.calls[0][0]).toBe(wrapper.find("div.run-model-plot").element);
         expect(mockPlotlyNewPlot.mock.calls[0][1]).toStrictEqual(expectedModelPlotDataRun);
@@ -198,7 +199,7 @@ describe("RunModelPlot", () => {
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
         store.commit(`modelFit/${ModelFitMutation.SetResult}`, {
             data: {
-                solutionFit: mockSolutionFit
+                solution: mockSolution
             }
         });
 
@@ -227,7 +228,7 @@ describe("RunModelPlot", () => {
 
         store.commit(`modelFit/${ModelFitMutation.SetResult}`, {
             data: {
-                solutionFit: mockSolutionNull
+                solution: mockSolutionNull
             }
         });
         await nextTick();
@@ -247,7 +248,7 @@ describe("RunModelPlot", () => {
         mockPlotElementOn(wrapper);
 
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolutionRun);
+        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
         await nextTick();
 
         const relayoutEvent = {
@@ -273,7 +274,7 @@ describe("RunModelPlot", () => {
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
         store.commit(`modelFit/${ModelFitMutation.SetResult}`, {
             data: {
-                solutionFit: mockSolutionFit
+                solution: mockSolution
             }
         });
         await nextTick();
@@ -311,7 +312,7 @@ describe("RunModelPlot", () => {
         mockPlotElementOn(wrapper);
 
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolutionRun);
+        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
         await nextTick();
 
         const relayoutEvent = {
@@ -335,7 +336,7 @@ describe("RunModelPlot", () => {
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
         store.commit(`modelFit/${ModelFitMutation.SetResult}`, {
             data: {
-                solutionFit: mockSolutionFit
+                solution: mockSolution
             }
         });
         await nextTick();
@@ -358,7 +359,7 @@ describe("RunModelPlot", () => {
         const wrapper = getWrapper(store);
         mockPlotElementOn(wrapper);
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolutionRun);
+        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
         await nextTick();
 
         const relayoutEvent = {
@@ -379,7 +380,7 @@ describe("RunModelPlot", () => {
         mockPlotElementOn(wrapper);
 
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolutionRun);
+        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
         await nextTick();
 
         const relayoutEvent = {
@@ -399,7 +400,7 @@ describe("RunModelPlot", () => {
         const wrapper = getWrapper(store);
         mockPlotElementOn(wrapper);
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolutionRun);
+        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
         await nextTick();
 
         const divElement = wrapper.find("div.run-model-plot").element;
@@ -411,7 +412,7 @@ describe("RunModelPlot", () => {
         const wrapper = getWrapper(store);
         mockPlotElementOn(wrapper);
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolutionRun);
+        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
         await nextTick();
 
         (wrapper.vm as any).resize();
@@ -425,7 +426,7 @@ describe("RunModelPlot", () => {
         mockPlotElementOn(wrapper);
 
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolutionRun);
+        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
         await nextTick();
 
         wrapper.unmount();
@@ -446,7 +447,7 @@ describe("RunModelPlot", () => {
         expect(wrapper.find(".plot-placeholder").text()).toBe("Model has not been run.");
 
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolutionRun);
+        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
         await nextTick();
         expect(wrapper.find(".plot-placeholder").exists()).toBe(false);
     });
