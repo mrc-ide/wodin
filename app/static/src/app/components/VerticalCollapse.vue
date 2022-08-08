@@ -2,7 +2,7 @@
   <a data-bs-toggle="collapse"
      :href="`#${collapseId}`"
      role="button"
-     aria-expanded="true"
+     :aria-expanded="!collapsed"
      :aria-controls="collapseId"
      @click="toggleCollapse">
     <div class="collapse-title p-2">
@@ -10,13 +10,15 @@
         <vue-feather class="collapse-icon" :type="iconType"></vue-feather>
     </div>
   </a>
-  <div class="collapse show" :id="collapseId">
+  <div class="collapse" :class="collapsed ? '' : 'show'" :id="collapseId">
     <slot></slot>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref, computed } from "vue";
+import {
+    defineComponent, ref, computed
+} from "vue";
 import "bootstrap";
 import VueFeather from "vue-feather";
 
@@ -40,6 +42,7 @@ export default defineComponent({
 
         return {
             toggleCollapse,
+            collapsed,
             iconType
         };
     }

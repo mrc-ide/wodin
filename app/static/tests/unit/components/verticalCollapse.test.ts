@@ -25,6 +25,7 @@ describe("VerticalCollapse", () => {
         expect(collapse.attributes("aria-expanded")).toBe("true");
         expect(collapse.attributes("aria-controls")).toBe("test-collapse-id");
         expect(collapse.findComponent(VueFeather).props("type")).toBe("chevron-up");
+        expect(wrapper.find("div.collapse").classes()).toContain("show");
     });
 
     it("toggles icon on collapse/expand", async () => {

@@ -1,5 +1,6 @@
 <template>
     <div>
+        <sensitivity-options v-if="sensitivityOpen"></sensitivity-options>
         <vertical-collapse v-if="isFit" title="Link" collapse-id="link-data">
           <link-data></link-data>
         </vertical-collapse>
@@ -22,6 +23,7 @@ import VerticalCollapse from "../VerticalCollapse.vue";
 import ParameterValues from "./ParameterValues.vue";
 import RunOptions from "./RunOptions.vue";
 import LinkData from "./LinkData.vue";
+import SensitivityOptions from "./SensitivityOptions.vue";
 import OptimisationOptions from "./OptimisationOptions.vue";
 import { AppType, VisualisationTab } from "../../store/appState/state";
 
@@ -32,15 +34,19 @@ export default {
         OptimisationOptions,
         ParameterValues,
         RunOptions,
+        SensitivityOptions,
         VerticalCollapse
     },
     setup() {
         const store = useStore();
         const isFit = computed(() => store.state.appType === AppType.Fit);
+
+        const sensitivityOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Sensitivity);
         const fitTabIsOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Fit);
 
         return {
             isFit,
+            sensitivityOpen,
             fitTabIsOpen
         };
     }
