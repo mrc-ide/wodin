@@ -103,8 +103,6 @@ export default defineComponent({
                 return [];
             }
             if (props.modelFit) {
-                // TODO: modelVar should be saved into the store here, then this becomes
-                // result = filterSeriesSet(result, fitData.modelVar);
                 const { fitData } = store.state;
                 const dataVar = fitData?.columnToFit;
                 const modelVar = fitData.linkedVariables[dataVar];
