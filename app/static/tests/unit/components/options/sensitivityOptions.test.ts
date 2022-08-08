@@ -9,14 +9,31 @@ import { BasicState } from "../../../../src/app/store/basic/state";
 import SensitivityOptions from "../../../../src/app/components/options/SensitivityOptions.vue";
 import VerticalCollapse from "../../../../src/app/components/VerticalCollapse.vue";
 import EditParamSettings from "../../../../src/app/components/options/EditParamSettings.vue";
+import {SensitivityGetter} from "../../../../src/app/store/sensitivity/getters";
+import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
 
 describe("SensitivityOptions", () => {
+    const mockBatchPars = {
+        values: [1, 2, 3],
+        name: "B"
+    } as any;
+
     const getWrapper = (paramSettings: SensitivityParameterSettings) => {
         const store = new Vuex.Store<BasicState>({
-            state: {
-                sensitivity: { paramSettings },
+            state: {} as any,
+            modules: {
+                sensitivity: {
+                    namespaced: true,
+                    state: { paramSettings },
+                    getters: {
+                        [SensitivityGetter.batchPars]: () => mockBatchPars
+                    }
+                },
                 model: {
-                    parameterValues: new Map<string, number>()
+                    namespaced: true,
+                    state: {
+                        parameterValues: new Map<string, number>()
+                    }
                 }
             } as any
         });
@@ -50,6 +67,8 @@ describe("SensitivityOptions", () => {
         expect(listItems.at(2)!.text()).toBe("Variation Type: Percentage");
         expect(listItems.at(3)!.text()).toBe("Variation (%): 10");
         expect(listItems.at(4)!.text()).toBe("Number of runs: 5");
+
+        expect(wrapper.find("#sensitivity-options").findComponent(SensitivityParamValues).props("batchPars")).toBe(mockBatchPars);
 
         expect(wrapper.find("button.btn-primary").text()).toBe("Edit");
         expect(wrapper.findComponent(EditParamSettings).props("open")).toBe(false);
@@ -93,5 +112,6 @@ describe("SensitivityOptions", () => {
         expect(wrapper.find("ul").exists()).toBe(false);
         expect(wrapper.find("#sensitivity-options-msg").text())
             .toBe("Please compile a valid model in order to set sensitivity options.");
+        expect(wrapper.find("#sensitivity-options").findComponent(SensitivityParamValues).exists()).toBe(false);
     });
 });
