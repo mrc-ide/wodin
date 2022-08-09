@@ -12,7 +12,7 @@ import { shallowMount, VueWrapper } from "@vue/test-utils";
 import { nextTick } from "vue";
 import Vuex from "vuex";
 import * as plotly from "plotly.js";
-import RunModelPlot from "../../../../src/app/components/run/RunModelPlot.vue";
+import FitPlot from "../../../../src/app/components/fit/FitPlot.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { ModelMutation, mutations } from "../../../../src/app/store/model/mutations";
 import { ModelFitMutation, mutations as modelFitMutations } from "../../../../src/app/store/modelFit/mutations";
@@ -21,7 +21,7 @@ import {
 } from "../../../mocks";
 import { FitDataState } from "../../../../src/app/store/fitData/state";
 
-describe("RunModelPlot", () => {
+describe("FitPlot", () => {
     const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");
     const mockPlotlyReact = jest.spyOn(plotly, "react");
 
@@ -64,9 +64,9 @@ describe("RunModelPlot", () => {
         });
     };
 
-    const getWrapper = (store = getStore(), fadePlot = false, modelFit = false) => {
-        return shallowMount(RunModelPlot, {
-            props: { fadePlot, modelFit },
+    const getWrapper = (store = getStore(), fadePlot = false) => {
+        return shallowMount(FitPlot, {
+            props: { fadePlot },
             global: {
                 plugins: [store]
             }
@@ -74,7 +74,7 @@ describe("RunModelPlot", () => {
     };
 
     const mockPlotElementOn = (wrapper: VueWrapper<any>) => {
-        const divElement = wrapper.find("div.run-model-plot").element;
+        const divElement = wrapper.find("div.fit-plot").element;
         const mockOn = jest.fn();
         (divElement as any).on = mockOn;
         return mockOn;
@@ -84,28 +84,9 @@ describe("RunModelPlot", () => {
         jest.clearAllMocks();
     });
 
-    it("renders plot ref element", () => {
-        const wrapper = getWrapper();
-        const div = wrapper.find("div.run-model-plot");
-        expect(div.exists()).toBe(true);
-        expect((wrapper.vm as any).plot).toBe(div.element);
-    });
-
-    it("does not render fade style when fadePlot is false", () => {
-        const wrapper = getWrapper();
-        const div = wrapper.find("div.run-plot-container");
-        expect(div.attributes("style")).toBe("");
-    });
-
-    it("renders fade style when fade plot is true", () => {
-        const wrapper = getWrapper(getStore(), true);
-        const div = wrapper.find("div.run-plot-container");
-        expect(div.attributes("style")).toBe("opacity: 0.5;");
-    });
-
     it("renders slot content", () => {
         const store = getStore();
-        const wrapper = shallowMount(RunModelPlot, {
+        const wrapper = shallowMount(FitPlot, {
             global: {
                 plugins: [store]
             },
@@ -113,7 +94,7 @@ describe("RunModelPlot", () => {
                 default: "<h3>test slot content</h3>"
             }
         });
-        expect(wrapper.find("div.run-plot-container").find("h3").text()).toBe("test slot content");
+        expect(wrapper.find("div.fit-plot-container").find("h3").text()).toBe("test slot content");
     });
 
     const mockSolutionNull = (param1: number, param2: number) => null;
@@ -125,6 +106,11 @@ describe("RunModelPlot", () => {
             [1, 2, 3]
         ]
     });
+    const mockFitResult = {
+        data: {
+            solution: mockSolution
+        }
+    };
 
     const mockFitData = {
         data: [{ t: 0, v: 10 }, { t: 1, v: 20 }],
@@ -175,36 +161,15 @@ describe("RunModelPlot", () => {
         }
     ];
 
-    it("draws run plot and sets event handler when odin solution is updated", async () => {
-        const store = getStore();
-        const wrapper = getWrapper(store);
-        const mockOn = mockPlotElementOn(wrapper);
-
-        store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
-        await nextTick();
-        expect(mockPlotlyNewPlot.mock.calls[0][0]).toBe(wrapper.find("div.run-model-plot").element);
-        expect(mockPlotlyNewPlot.mock.calls[0][1]).toStrictEqual(expectedModelPlotDataRun);
-        expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({ margin: { t: 25 } });
-
-        expect(mockOn.mock.calls[0][0]).toBe("plotly_relayout");
-        const { relayout } = wrapper.vm as any;
-        expect(mockOn.mock.calls[0][1]).toBe(relayout);
-    });
-
     it("draws model fit plot and sets event handler when modelFit solution is updated", async () => {
         const store = getStore(jest.fn(), mockFitData);
-        const wrapper = getWrapper(store, false, true);
+        const wrapper = getWrapper(store, false);
         const mockOn = mockPlotElementOn(wrapper);
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`modelFit/${ModelFitMutation.SetResult}`, {
-            data: {
-                solution: mockSolution
-            }
-        });
+        store.commit(`modelFit/${ModelFitMutation.SetResult}`, mockFitResult);
 
         await nextTick();
-        expect(mockPlotlyNewPlot.mock.calls[0][0]).toBe(wrapper.find("div.run-model-plot").element);
+        expect(mockPlotlyNewPlot.mock.calls[0][0]).toBe(wrapper.find("div.fit-plot").element);
         expect(mockPlotlyNewPlot.mock.calls[0][1]).toStrictEqual(expectedModelPlotDataFit);
         expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({ margin: { t: 25 } });
 
@@ -213,18 +178,9 @@ describe("RunModelPlot", () => {
         expect(mockOn.mock.calls[0][1]).toBe(relayout);
     });
 
-    it("does not draw run plot if base data is null", async () => {
-        const store = getStore();
-        getWrapper(store);
-
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolutionNull);
-        await nextTick();
-        expect(mockPlotlyNewPlot).not.toHaveBeenCalled();
-    });
-
     it("does not draw modelFit plot if base data is null", async () => {
         const store = getStore();
-        getWrapper(store, false, true);
+        getWrapper(store, false);
 
         store.commit(`modelFit/${ModelFitMutation.SetResult}`, {
             data: {
@@ -242,41 +198,13 @@ describe("RunModelPlot", () => {
         yaxis: { autorange: true }
     };
 
-    it("for run plot, relayout reruns solution and calls react if not autorange", async () => {
-        const store = getStore();
-        const wrapper = getWrapper(store);
-        mockPlotElementOn(wrapper);
-
-        store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
-        await nextTick();
-
-        const relayoutEvent = {
-            "xaxis.autorange": false,
-            "xaxis.range[0]": 2,
-            "xaxis.range[1]": 7
-        };
-
-        const { relayout } = wrapper.vm as any;
-        await relayout(relayoutEvent);
-
-        const divElement = wrapper.find("div.run-model-plot").element;
-        expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
-        expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual(expectedModelPlotDataRun);
-        expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual(expectedLayout);
-    });
-
     it("modelFit run plot, relayout reruns solution and calls react if not autorange", async () => {
         const store = getStore(jest.fn(), mockFitData);
-        const wrapper = getWrapper(store, false, true);
+        const wrapper = getWrapper(store, false);
         mockPlotElementOn(wrapper);
 
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`modelFit/${ModelFitMutation.SetResult}`, {
-            data: {
-                solution: mockSolution
-            }
-        });
+        store.commit(`modelFit/${ModelFitMutation.SetResult}`, mockFitResult);
         await nextTick();
 
         const relayoutEvent = {
@@ -288,7 +216,7 @@ describe("RunModelPlot", () => {
         const { relayout } = wrapper.vm as any;
         await relayout(relayoutEvent);
 
-        const divElement = wrapper.find("div.run-model-plot").element;
+        const divElement = wrapper.find("div.fit-plot").element;
         expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
         expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual([
             expectedModelPlotDataRun[0],
@@ -306,39 +234,13 @@ describe("RunModelPlot", () => {
         expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual(expectedLayout);
     });
 
-    it("for run plot, relayout uses base data and calls react if autorange", async () => {
-        const store = getStore();
-        const wrapper = getWrapper(store);
-        mockPlotElementOn(wrapper);
-
-        store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
-        await nextTick();
-
-        const relayoutEvent = {
-            "xaxis.autorange": true
-        };
-
-        const { relayout } = wrapper.vm as any;
-        await relayout(relayoutEvent);
-
-        const divElement = wrapper.find("div.run-model-plot").element;
-        expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
-        expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual(expectedModelPlotDataRun);
-        expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual(expectedLayout);
-    });
-
     it("for modelFit plot, relayout uses base data and calls react if autorange", async () => {
         const store = getStore(jest.fn(), mockFitData);
-        const wrapper = getWrapper(store, false, true);
+        const wrapper = getWrapper(store, false);
         mockPlotElementOn(wrapper);
 
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`modelFit/${ModelFitMutation.SetResult}`, {
-            data: {
-                solution: mockSolution
-            }
-        });
+        store.commit(`modelFit/${ModelFitMutation.SetResult}`, mockFitResult);
         await nextTick();
 
         const relayoutEvent = {
@@ -348,7 +250,7 @@ describe("RunModelPlot", () => {
         const { relayout } = wrapper.vm as any;
         await relayout(relayoutEvent);
 
-        const divElement = wrapper.find("div.run-model-plot").element;
+        const divElement = wrapper.find("div.fit-plot").element;
         expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
         expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual(expectedModelPlotDataFit);
         expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual(expectedLayout);
@@ -359,7 +261,7 @@ describe("RunModelPlot", () => {
         const wrapper = getWrapper(store);
         mockPlotElementOn(wrapper);
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
+        store.commit(`modelFit/${ModelFitMutation.SetResult}`, mockFitResult);
         await nextTick();
 
         const relayoutEvent = {
@@ -380,7 +282,7 @@ describe("RunModelPlot", () => {
         mockPlotElementOn(wrapper);
 
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
+        store.commit(`modelFit/${ModelFitMutation.SetResult}`, mockFitResult);
         await nextTick();
 
         const relayoutEvent = {
@@ -400,10 +302,10 @@ describe("RunModelPlot", () => {
         const wrapper = getWrapper(store);
         mockPlotElementOn(wrapper);
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
+        store.commit(`modelFit/${ModelFitMutation.SetResult}`, mockFitResult);
         await nextTick();
 
-        const divElement = wrapper.find("div.run-model-plot").element;
+        const divElement = wrapper.find("div.fit-plot").element;
         expect(mockObserve).toHaveBeenCalledWith(divElement);
     });
 
@@ -412,21 +314,21 @@ describe("RunModelPlot", () => {
         const wrapper = getWrapper(store);
         mockPlotElementOn(wrapper);
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
+        store.commit(`modelFit/${ModelFitMutation.SetResult}`, mockFitResult);
         await nextTick();
 
         (wrapper.vm as any).resize();
-        const divElement = wrapper.find("div.run-model-plot").element;
+        const divElement = wrapper.find("div.fit-plot").element;
         expect(plotly.Plots.resize).toHaveBeenCalledWith(divElement);
     });
 
     it("disconnects resizeObserver on unmount", async () => {
-        const store = getStore();
+        const store = getStore(jest.fn(), mockFitData);
         const wrapper = getWrapper(store);
         mockPlotElementOn(wrapper);
 
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
+        store.commit(`modelFit/${ModelFitMutation.SetResult}`, mockFitResult);
         await nextTick();
 
         wrapper.unmount();
@@ -444,10 +346,10 @@ describe("RunModelPlot", () => {
         const store = getStore();
         const wrapper = getWrapper(store);
         mockPlotElementOn(wrapper);
-        expect(wrapper.find(".plot-placeholder").text()).toBe("Model has not been run.");
+        expect(wrapper.find(".plot-placeholder").text()).toBe("Model has not been fitted.");
 
         store.commit(`model/${ModelMutation.SetPaletteModel}`, mockPalette);
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, mockSolution);
+        store.commit(`modelFit/${ModelFitMutation.SetResult}`, mockFitResult);
         await nextTick();
         expect(wrapper.find(".plot-placeholder").exists()).toBe(false);
     });
