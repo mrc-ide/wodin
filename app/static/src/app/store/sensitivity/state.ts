@@ -1,3 +1,5 @@
+import {OdinSolution} from "../../types/responseTypes";
+
 export enum SensitivityScaleType {
     Arithmetic = "Arithmetic",
     Logarithmic = "Logarithmic"
@@ -19,5 +21,6 @@ export interface SensitivityParameterSettings {
 }
 
 export interface SensitivityState {
-    paramSettings: SensitivityParameterSettings
+    paramSettings: SensitivityParameterSettings,
+    solutions: OdinSolution[]
 }

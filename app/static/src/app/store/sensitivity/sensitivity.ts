@@ -10,7 +10,8 @@ export const defaultState: SensitivityState = {
         rangeFrom: 0,
         rangeTo: 0,
         numberOfRuns: 10
-    }
+    },
+    solutions: []
 };
 
 export const sensitivity = {
