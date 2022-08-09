@@ -1,15 +1,15 @@
-import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
-import {mount} from "@vue/test-utils";
+import { mount } from "@vue/test-utils";
 import VueFeather from "vue-feather";
+import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
 
 describe("SensitivityParamValues", () => {
     const getWrapper = (values: number[]) => {
-        const batchPars = {values};
-        return mount(SensitivityParamValues, {props: {batchPars}});
+        const batchPars = { values };
+        return mount(SensitivityParamValues, { props: { batchPars } });
     };
 
     it("renders up to three values as expected", () => {
-        let wrapper = getWrapper([1,2]);
+        let wrapper = getWrapper([1, 2]);
         expect(wrapper.find("div.alert-success").findComponent(VueFeather).props("type")).toBe("check");
         expect(wrapper.find("div.alert-success").text()).toBe("1.000, 2.000");
 
@@ -26,7 +26,7 @@ describe("SensitivityParamValues", () => {
     });
 
     it("renders nothing if batchPars is null", () => {
-        const wrapper = mount(SensitivityParamValues, {props: {batchPars: null}});
+        const wrapper = mount(SensitivityParamValues, { props: { batchPars: null } });
         expect(wrapper.find("div").exists()).toBe(false);
     });
 });

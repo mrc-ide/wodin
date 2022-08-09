@@ -9,7 +9,7 @@ import { BasicState } from "../../../../src/app/store/basic/state";
 import SensitivityOptions from "../../../../src/app/components/options/SensitivityOptions.vue";
 import VerticalCollapse from "../../../../src/app/components/VerticalCollapse.vue";
 import EditParamSettings from "../../../../src/app/components/options/EditParamSettings.vue";
-import {SensitivityGetter} from "../../../../src/app/store/sensitivity/getters";
+import { SensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
 import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
 
 describe("SensitivityOptions", () => {
@@ -68,7 +68,8 @@ describe("SensitivityOptions", () => {
         expect(listItems.at(3)!.text()).toBe("Variation (%): 10");
         expect(listItems.at(4)!.text()).toBe("Number of runs: 5");
 
-        expect(wrapper.find("#sensitivity-options").findComponent(SensitivityParamValues).props("batchPars")).toBe(mockBatchPars);
+        expect(wrapper.find("#sensitivity-options").findComponent(SensitivityParamValues)
+            .props("batchPars")).toBe(mockBatchPars);
 
         expect(wrapper.find("button.btn-primary").text()).toBe("Edit");
         expect(wrapper.findComponent(EditParamSettings).props("open")).toBe(false);

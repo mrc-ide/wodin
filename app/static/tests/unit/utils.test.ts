@@ -1,8 +1,8 @@
 import {
     evaluateScript, freezer, generateBatchPars, getCodeErrorFromResponse, processFitData
 } from "../../src/app/utils";
-import {SensitivityScaleType, SensitivityVariationType} from "../../src/app/store/sensitivity/state";
-import {mockBatchParsDisplace, mockBatchParsRange} from "../mocks";
+import { SensitivityScaleType, SensitivityVariationType } from "../../src/app/store/sensitivity/state";
+import { mockBatchParsDisplace, mockBatchParsRange } from "../mocks";
 
 describe("freezer", () => {
     it("deep freezes an object", () => {
@@ -285,7 +285,7 @@ describe("generateBatchPars", () => {
         }
     } as any;
 
-    const spyBatchParsRange = jest.spyOn(rootState.model.odinRunner,"batchParsRange");
+    const spyBatchParsRange = jest.spyOn(rootState.model.odinRunner, "batchParsRange");
     const spyBatchParsDisplace = jest.spyOn(rootState.model.odinRunner, "batchParsDisplace");
 
     afterEach(() => {
@@ -340,7 +340,7 @@ describe("generateBatchPars", () => {
         expect(spyBatchParsRange.mock.calls[0][5]).toStrictEqual(6);
     });
 
-   it("returns null if no runner in state", () => {
+    it("returns null if no runner in state", () => {
         const noRunnerState = {
             model: {
                 odinRunner: null,
@@ -362,13 +362,13 @@ describe("generateBatchPars", () => {
     });
 
     it("returns null if no param to vary in settings", () => {
-        const settings = {...percentSettings, parameterToVary: null};
+        const settings = { ...percentSettings, parameterToVary: null };
         expect(generateBatchPars(rootState, settings)).toBe(null);
         expect(spyBatchParsDisplace).not.toHaveBeenCalled();
     });
 
     it("returns null if range settings are not valid when variation type is range", () => {
-        const settings = {...rangeSettings, rangeFrom: 0, rangeTo:0};
+        const settings = { ...rangeSettings, rangeFrom: 0, rangeTo: 0 };
         expect(generateBatchPars(rootState, settings)).toBe(null);
         expect(spyBatchParsRange).not.toHaveBeenCalled();
     });

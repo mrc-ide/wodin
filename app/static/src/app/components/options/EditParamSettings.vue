@@ -102,7 +102,7 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, reactive, ref, watch, watchEffect
+    computed, defineComponent, reactive, watch
 } from "vue";
 import { useStore } from "vuex";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
@@ -114,7 +114,7 @@ import {
 import NumericInput from "./NumericInput.vue";
 import SensitivityParamValues from "./SensitivityParamValues.vue";
 import userMessages from "../../userMessages";
-import {generateBatchPars} from "../../utils";
+import { generateBatchPars } from "../../utils";
 
 export default defineComponent({
     name: "EditParamSettings.vue",

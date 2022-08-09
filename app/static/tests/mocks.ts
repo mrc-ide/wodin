@@ -12,7 +12,7 @@ import { FitDataState } from "../src/app/store/fitData/state";
 import { AppType, VisualisationTab } from "../src/app/store/appState/state";
 import { ModelFitState } from "../src/app/store/modelFit/state";
 import { SensitivityScaleType, SensitivityState, SensitivityVariationType } from "../src/app/store/sensitivity/state";
-import {Dict} from "../src/app/types/utilTypes";
+import { Dict } from "../src/app/types/utilTypes";
 
 export const mockAxios = new MockAdapter(axios);
 
@@ -154,10 +154,10 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
 };
 
 export const mockBatchParsRange = (base: Map<string, number>, name: string, count: number,
-                                                logarithmic: boolean,
-                                                min: number, max: number): BatchPars => {
+    logarithmic: boolean,
+    min: number, max: number): BatchPars => {
     // Just return a straight arithmetic range for this mock method
-    const d = (max-min) / (count-1);
+    const d = (max - min) / (count - 1);
     const values = [];
     let current = min;
     let i = 0;
@@ -166,15 +166,14 @@ export const mockBatchParsRange = (base: Map<string, number>, name: string, coun
         current += d;
         i += 1;
     }
-    return {base, name, values};
+    return { base, name, values };
 };
 
 export const mockBatchParsDisplace = (base: Map<string, number>, name: string, count: number,
-                                  logarithmic: boolean,
-                                  displace: number): BatchPars => {
+    logarithmic: boolean,
+    displace: number): BatchPars => {
     const paramValue = base.get(name)!;
-    const max = paramValue * (1 + (displace/100));
-    const min = paramValue * (1 - (displace/100));
+    const max = paramValue * (1 + (displace / 100));
+    const min = paramValue * (1 - (displace / 100));
     return mockBatchParsRange(base, name, count, logarithmic, min, max);
-
 };

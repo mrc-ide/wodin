@@ -30,7 +30,7 @@ describe("Sensitivity getters", () => {
         const mockSpy = jest.spyOn(odinRunner, "batchParsDisplace");
 
         const result = getters[SensitivityGetter.batchPars](state, getters, rootState, {} as any);
-        expect(result.values).toStrictEqual([1,2,3]);
+        expect(result.values).toStrictEqual([1, 2, 3]);
         expect(result.name).toBe("A");
         expect(result.base).toBe(parameterValues);
         expect(mockSpy).toHaveBeenCalledTimes(1);

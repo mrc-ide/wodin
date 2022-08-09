@@ -2,7 +2,11 @@ import { Dict } from "./types/utilTypes";
 import { BatchPars, Error, OdinModelResponseError } from "./types/responseTypes";
 import userMessages from "./userMessages";
 import settings from "./settings";
-import {SensitivityParameterSettings, SensitivityScaleType, SensitivityVariationType} from "./store/sensitivity/state";
+import {
+    SensitivityParameterSettings,
+    SensitivityScaleType,
+    SensitivityVariationType
+} from "./store/sensitivity/state";
 import { AppState } from "./store/appState/state";
 
 export const freezer = {
@@ -118,8 +122,8 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
 }
 
 function validateSensitivityParamsSettings(paramSettings: SensitivityParameterSettings) {
-    return (paramSettings.variationType === SensitivityVariationType.Percentage ||
-                paramSettings.rangeFrom < paramSettings.rangeTo);
+    return (paramSettings.variationType === SensitivityVariationType.Percentage
+                || paramSettings.rangeFrom < paramSettings.rangeTo);
 }
 
 export function generateBatchPars(rootState: AppState, paramSettings: SensitivityParameterSettings): BatchPars | null {
@@ -136,7 +140,6 @@ export function generateBatchPars(rootState: AppState, paramSettings: Sensitivit
 
     if (variationType === SensitivityVariationType.Percentage) {
         return runner.batchParsDisplace(paramValues, parameterToVary, numberOfRuns, logarithmic, variationPercentage);
-    } else {
-        return runner.batchParsRange(paramValues, parameterToVary, numberOfRuns, logarithmic, rangeFrom, rangeTo);
     }
+    return runner.batchParsRange(paramValues, parameterToVary, numberOfRuns, logarithmic, rangeFrom, rangeTo);
 }

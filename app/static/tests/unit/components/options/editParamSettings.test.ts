@@ -5,13 +5,15 @@ import {
     SensitivityScaleType,
     SensitivityVariationType
 } from "../../../../src/app/store/sensitivity/state";
-import {mockBasicState, mockBatchParsDisplace, mockBatchParsRange, mockModelState} from "../../../mocks";
+import {
+    mockBasicState, mockBatchParsDisplace, mockBatchParsRange, mockModelState
+} from "../../../mocks";
 import EditParamSettings from "../../../../src/app/components/options/EditParamSettings.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
-import {expectCloseNumericArray} from "../../../testUtils";
+import { expectCloseNumericArray } from "../../../testUtils";
 
 describe("EditParamSettings", () => {
     const percentSettings = {
@@ -83,7 +85,7 @@ describe("EditParamSettings", () => {
     };
 
     afterEach(() => {
-        jest.resetAllMocks();
+        jest.clearAllMocks();
     });
 
     it("renders as expected when variation type is Percentage", async () => {
@@ -236,7 +238,7 @@ describe("EditParamSettings", () => {
         expect(rangeSpy.mock.calls[0][1]).toBe("B");
         expect(rangeSpy.mock.calls[0][2]).toBe(5);
         expect(rangeSpy.mock.calls[0][3]).toBe(false);
-        expect(rangeSpy.mock.calls[0][5]).toBe(1);
-        expect(rangeSpy.mock.calls[0][6]).toBe(3);
+        expect(rangeSpy.mock.calls[0][4]).toBe(1);
+        expect(rangeSpy.mock.calls[0][5]).toBe(3);
     });
 });
