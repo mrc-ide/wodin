@@ -3,7 +3,6 @@ import { Palette } from "./palette";
 import { OdinSeriesSet } from "./types/responseTypes";
 
 export type WodinPlotData = Partial<PlotData>[];
-export type AllPlotData = (t0: number, t1: number) => WodinPlotData;
 
 export function filterSeriesSet(s: OdinSeriesSet, name: string): OdinSeriesSet {
     const idx = s.names.indexOf(name);
