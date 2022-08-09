@@ -12,7 +12,7 @@ export default defineComponent({
     name: "SensitivityPlot",
     setup() {
         const store = useStore();
-        const solutions = computed(() => store.state.sensitivity.solutions);
+        const solutions = computed(() => store.state.sensitivity.batch?.solutions || []);
         return {
             solutions
         };

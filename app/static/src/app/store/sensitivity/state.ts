@@ -1,4 +1,4 @@
-import {OdinSolution} from "../../types/responseTypes";
+import {Batch, OdinSolution} from "../../types/responseTypes";
 
 export enum SensitivityScaleType {
     Arithmetic = "Arithmetic",
@@ -22,5 +22,5 @@ export interface SensitivityParameterSettings {
 
 export interface SensitivityState {
     paramSettings: SensitivityParameterSettings,
-    solutions: OdinSolution[]
+    batch: Batch | null
 }
