@@ -1,6 +1,8 @@
 import {
-    evaluateScript, freezer, getCodeErrorFromResponse, processFitData
+    evaluateScript, freezer, generateBatchPars, getCodeErrorFromResponse, processFitData
 } from "../../src/app/utils";
+import { SensitivityScaleType, SensitivityVariationType } from "../../src/app/store/sensitivity/state";
+import { mockBatchParsDisplace, mockBatchParsRange } from "../mocks";
 
 describe("freezer", () => {
     it("deep freezes an object", () => {
@@ -265,5 +267,115 @@ describe("processFitData", () => {
             error: "Code error",
             detail: `Error on lines 1,2: ${error.message}`
         });
+    });
+});
+
+describe("generateBatchPars", () => {
+    const parameterValues = new Map<string, number>();
+    parameterValues.set("A", 1);
+    parameterValues.set("B", 2);
+
+    const rootState = {
+        model: {
+            odinRunner: {
+                batchParsRange: mockBatchParsRange,
+                batchParsDisplace: mockBatchParsDisplace
+            },
+            parameterValues
+        }
+    } as any;
+
+    const spyBatchParsRange = jest.spyOn(rootState.model.odinRunner, "batchParsRange");
+    const spyBatchParsDisplace = jest.spyOn(rootState.model.odinRunner, "batchParsDisplace");
+
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
+    const percentSettings = {
+        parameterToVary: "A",
+        scaleType: SensitivityScaleType.Logarithmic,
+        variationType: SensitivityVariationType.Percentage,
+        variationPercentage: 50,
+        rangeFrom: 0,
+        rangeTo: 0,
+        numberOfRuns: 5
+    };
+
+    const rangeSettings = {
+        parameterToVary: "B",
+        scaleType: SensitivityScaleType.Arithmetic,
+        variationType: SensitivityVariationType.Range,
+        variationPercentage: 50,
+        rangeFrom: 2,
+        rangeTo: 6,
+        numberOfRuns: 9
+    };
+
+    it("generates BatchPars for Percentage variation type", () => {
+        const result = generateBatchPars(rootState, percentSettings)!;
+        expect(result.name).toBe("A");
+        expect(result.base).toBe(parameterValues);
+        expect(result.values).toStrictEqual([0.5, 0.75, 1, 1.25, 1.5]);
+
+        expect(spyBatchParsDisplace).toHaveBeenCalledTimes(1);
+        expect(spyBatchParsDisplace.mock.calls[0][0]).toStrictEqual(parameterValues);
+        expect(spyBatchParsDisplace.mock.calls[0][1]).toStrictEqual("A");
+        expect(spyBatchParsDisplace.mock.calls[0][2]).toStrictEqual(5);
+        expect(spyBatchParsDisplace.mock.calls[0][3]).toStrictEqual(true);
+        expect(spyBatchParsDisplace.mock.calls[0][4]).toStrictEqual(50);
+    });
+
+    it("generates BatchPars for Range variation type", () => {
+        const result = generateBatchPars(rootState, rangeSettings)!;
+        expect(result.name).toBe("B");
+        expect(result.base).toBe(parameterValues);
+        expect(result.values).toStrictEqual([2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]);
+        expect(spyBatchParsRange).toHaveBeenCalledTimes(1);
+        expect(spyBatchParsRange.mock.calls[0][0]).toStrictEqual(parameterValues);
+        expect(spyBatchParsRange.mock.calls[0][1]).toStrictEqual("B");
+        expect(spyBatchParsRange.mock.calls[0][2]).toStrictEqual(9);
+        expect(spyBatchParsRange.mock.calls[0][3]).toStrictEqual(false);
+        expect(spyBatchParsRange.mock.calls[0][4]).toStrictEqual(2);
+        expect(spyBatchParsRange.mock.calls[0][5]).toStrictEqual(6);
+    });
+
+    it("returns null if no runner in state", () => {
+        const noRunnerState = {
+            model: {
+                odinRunner: null,
+                parameterValues
+            }
+        } as any;
+        expect(generateBatchPars(noRunnerState, percentSettings)).toBe(null);
+    });
+
+    it("returns null if no param values in state", () => {
+        const noParamsState = {
+            model: {
+                odinRunner: rootState.model.odinRunner,
+                parameterValues: null
+            }
+        } as any;
+        expect(generateBatchPars(noParamsState, rangeSettings)).toBe(null);
+        expect(spyBatchParsRange).not.toHaveBeenCalled();
+    });
+
+    it("returns null if no param to vary in settings", () => {
+        const settings = { ...percentSettings, parameterToVary: null };
+        expect(generateBatchPars(rootState, settings)).toBe(null);
+        expect(spyBatchParsDisplace).not.toHaveBeenCalled();
+    });
+
+    it("returns null if range settings are not valid when variation type is range", () => {
+        const settings = { ...rangeSettings, rangeFrom: 0, rangeTo: 0 };
+        expect(generateBatchPars(rootState, settings)).toBe(null);
+        expect(spyBatchParsRange).not.toHaveBeenCalled();
+    });
+
+    it("returns null if number of runs setting is not valid", () => {
+        const settings = { ...percentSettings, numberOfRuns: 0 };
+        expect(generateBatchPars(rootState, settings)).toBe(null);
+        expect(spyBatchParsDisplace).not.toHaveBeenCalled();
     });
 });

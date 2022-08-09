@@ -101,6 +101,12 @@ export interface Simplex {
     result: () => SimplexResult;
 }
 
+export interface BatchPars {
+    base: Map<string, number>;
+    name: string;
+    values: number[];
+}
+
 export type OdeControl = Dict<unknown>;
 
 export interface OdinRunner {
@@ -116,4 +122,17 @@ export interface OdinRunner {
                modelledSeries: string,
                odeParams: OdeControl,
                simplexParams: Dict<unknown>) => Simplex;
+
+    batchParsRange: (base: Map<string, number>,
+                     name: string,
+                     count: number,
+                     logarithmic: boolean,
+                     min: number,
+                     max: number) => BatchPars;
+
+    batchParsDisplace: (base: Map<string, number>,
+                        name: string,
+                        count: number,
+                        logarithmic: boolean,
+                        displace: number) => BatchPars;
 }

@@ -16,6 +16,8 @@ test.describe("Sensitivity tests", () => {
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 3)")).toBe("Variation Type: Percentage");
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 4)")).toBe("Variation (%): 10");
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 5)")).toBe("Number of runs: 10");
+        await expect(await page.innerText("#sensitivity-options .alert-success"))
+            .toBe(" 3.600, 3.689, 3.778, ..., 4.400");
 
         // Edit settings
         await expect(await page.isVisible(".modal")).toBe(false);
@@ -23,6 +25,8 @@ test.describe("Sensitivity tests", () => {
         await expect(await page.isVisible(".modal")).toBe(true);
         await expect(await page.innerText(".modal-title")).toBe("Vary Parameter");
         await expect(await page.locator("#invalid-msg").count()).toBe(0);
+        await expect(await page.innerText(".modal .alert-success")).toBe(" 3.600, 3.689, 3.778, ..., 4.400");
+
         const paramSelect = await page.locator("#edit-param-to-vary select");
         await paramSelect.selectOption("sigma");
         const scaleSelect = await page.locator("#edit-scale-type select");
@@ -35,6 +39,7 @@ test.describe("Sensitivity tests", () => {
         await page.fill("#edit-to input", "5");
         await expect(await page.locator("#invalid-msg").count()).toBe(0);
         await page.fill("#edit-runs input", "12");
+        await expect(await page.innerText(".modal .alert-success")).toBe(" 1.000, 1.158, 1.340, ..., 5.000");
 
         await page.click("#ok-settings");
         await expect(await page.isVisible(".modal")).toBe(false);
@@ -46,5 +51,7 @@ test.describe("Sensitivity tests", () => {
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 4)")).toBe("From: 1");
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 5)")).toBe("To: 5");
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 6)")).toBe("Number of runs: 12");
+        await expect(await page.innerText("#sensitivity-options .alert-success"))
+            .toBe(" 1.000, 1.158, 1.340, ..., 5.000");
     });
 });

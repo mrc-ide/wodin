@@ -1,7 +1,13 @@
 import { Dict } from "./types/utilTypes";
-import { Error, OdinModelResponseError } from "./types/responseTypes";
+import { BatchPars, Error, OdinModelResponseError } from "./types/responseTypes";
 import userMessages from "./userMessages";
 import settings from "./settings";
+import {
+    SensitivityParameterSettings,
+    SensitivityScaleType,
+    SensitivityVariationType
+} from "./store/sensitivity/state";
+import { AppState } from "./store/appState/state";
 
 export const freezer = {
     /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -113,4 +119,30 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
     return {
         ...emptyResult, data: processedData, columns, timeVariableCandidates
     };
+}
+
+function validateSensitivityParamsSettings(paramSettings: SensitivityParameterSettings) {
+    // TODO: use this from component and return validation error message as well as boolean in mrc-3482
+    // Require range from to be less than to, if range variation
+    // Require min number of runs of 2
+    return (paramSettings.variationType === SensitivityVariationType.Percentage
+                || paramSettings.rangeFrom < paramSettings.rangeTo) && paramSettings.numberOfRuns >= 2;
+}
+
+export function generateBatchPars(rootState: AppState, paramSettings: SensitivityParameterSettings): BatchPars | null {
+    const runner = rootState.model.odinRunner;
+    const paramValues = rootState.model.parameterValues;
+    const {
+        variationType, parameterToVary, numberOfRuns, variationPercentage, scaleType, rangeFrom, rangeTo
+    } = paramSettings;
+    const logarithmic = scaleType === SensitivityScaleType.Logarithmic;
+
+    if (!runner || !paramValues || !parameterToVary || !validateSensitivityParamsSettings(paramSettings)) {
+        return null;
+    }
+
+    if (variationType === SensitivityVariationType.Percentage) {
+        return runner.batchParsDisplace(paramValues, parameterToVary, numberOfRuns, logarithmic, variationPercentage);
+    }
+    return runner.batchParsRange(paramValues, parameterToVary, numberOfRuns, logarithmic, rangeFrom, rangeTo);
 }

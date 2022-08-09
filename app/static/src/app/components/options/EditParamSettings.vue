@@ -7,9 +7,9 @@
           <div class="modal-header">
             <h5 class="modal-title">Vary Parameter</h5>
           </div>
-          <div class="modal-body">
+          <div class="modal-body" style="min-height:24rem;">
             <div class="row" id="edit-param-to-vary">
-               <div class="col-5">
+               <div class="col-6">
                  <label class="col-form-label">Parameter to vary</label>
                </div>
                <div class="col-6">
@@ -19,7 +19,7 @@
                </div>
              </div>
              <div class="row mt-2" id="edit-scale-type">
-               <div class="col-5">
+               <div class="col-6">
                  <label class="col-form-label">Scale type</label>
                </div>
                <div class="col-6">
@@ -31,7 +31,7 @@
              </div>
              </div>
             <div class="row mt-2" id="edit-variation-type">
-              <div class="col-5">
+              <div class="col-6">
                 <label class="col-form-label">Variation type</label>
               </div>
               <div class="col-6">
@@ -41,7 +41,7 @@
               </div>
             </div>
             <div v-if="settingsInternal.variationType === 'Percentage'" class="row mt-2" id="edit-percent">
-              <div class="col-5">
+              <div class="col-6">
                 <label class="col-form-label">Variation (%)</label>
               </div>
               <div class="col-6">
@@ -51,7 +51,7 @@
             </div>
             <template v-else>
               <div class="row mt-2" id="edit-from">
-                <div class="col-5">
+                <div class="col-6">
                   <label class="col-form-label">From</label>
                 </div>
                 <div class="col-6">
@@ -60,7 +60,7 @@
                 </div>
               </div>
               <div class="row mt-2" id="edit-to">
-                <div class="col-5">
+                <div class="col-6">
                   <label class="col-form-label">To</label>
                 </div>
                 <div class="col-6">
@@ -70,7 +70,7 @@
               </div>
             </template>
             <div class="row mt-2" id="edit-runs">
-              <div class="col-5">
+              <div class="col-6">
                 <label class="col-form-label">Number of runs</label>
               </div>
               <div class="col-6">
@@ -83,6 +83,7 @@
                 {{invalidMessage}}
               </div>
             </div>
+            <sensitivity-param-values :batch-pars="batchPars"></sensitivity-param-values>
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary"
@@ -111,7 +112,9 @@ import {
     SensitivityVariationType
 } from "../../store/sensitivity/state";
 import NumericInput from "./NumericInput.vue";
+import SensitivityParamValues from "./SensitivityParamValues.vue";
 import userMessages from "../../userMessages";
+import { generateBatchPars } from "../../utils";
 
 export default defineComponent({
     name: "EditParamSettings.vue",
@@ -122,7 +125,8 @@ export default defineComponent({
         }
     },
     components: {
-        NumericInput
+        NumericInput,
+        SensitivityParamValues
     },
     setup(props, { emit }) {
         const store = useStore();
@@ -151,6 +155,8 @@ export default defineComponent({
             }
         });
 
+        const batchPars = computed(() => generateBatchPars(store.state, settingsInternal));
+
         const close = () => { emit("close"); };
         const updateSettings = () => {
             store.commit(`sensitivity/${SensitivityMutation.SetParamSettings}`, { ...settingsInternal });
@@ -165,6 +171,7 @@ export default defineComponent({
             settingsInternal,
             style,
             invalidMessage,
+            batchPars,
             close,
             updateSettings
         };
