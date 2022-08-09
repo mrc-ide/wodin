@@ -117,7 +117,7 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
     };
 }
 
-export function validateSensitivityParamsSettings(paramSettings: SensitivityParameterSettings) {
+function validateSensitivityParamsSettings(paramSettings: SensitivityParameterSettings) {
     return (paramSettings.variationType === SensitivityVariationType.Percentage ||
                 paramSettings.rangeFrom < paramSettings.rangeTo);
 }
