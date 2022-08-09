@@ -9,13 +9,13 @@ export enum SensitivityAction {
 };
 
 export const actions: ActionTree<SensitivityState, AppState> = {
-    [SensitivityAction.RunSensitivity](context, end) {
+    [SensitivityAction.RunSensitivity](context) {
         const { rootState, getters, commit } = context;
-        const {odinRunner, odin} = rootState.model;
+        const {odinRunner, odin, endTime} = rootState.model;
         const batchPars = getters[SensitivityGetter.batchPars];
 
         if (odinRunner && odin && batchPars) {
-            const batch = odinRunner.batchRun(odin, batchPars, 0, end, {});
+            const batch = odinRunner.batchRun(odin, batchPars, 0, endTime, {});
             commit(SensitivityMutation.SetBatch, batch);
         }
     }
