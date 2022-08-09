@@ -10,20 +10,20 @@ describe("ModeilFit mutations", () => {
 
     it("sets model fit result", () => {
         const state = mockModelFitState();
-        const solutionFit = jest.fn();
+        const solution = jest.fn();
         const payload = {
             converged: false,
             iterations: 2,
             value: 1.2,
             data: {
-                solutionFit
+                solution
             }
         };
         mutations.SetResult(state, payload);
         expect(state.converged).toBe(false);
         expect(state.iterations).toBe(2);
         expect(state.sumOfSquares).toBe(1.2);
-        expect(state.solution).toBe(solutionFit);
+        expect(state.solution).toBe(solution);
     });
 
     it("sets paramsToVary", () => {

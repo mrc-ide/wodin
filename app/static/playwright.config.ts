@@ -7,7 +7,7 @@ const config: PlaywrightTestConfig = {
         screenshot: "only-on-failure",
         actionTimeout: 0
     },
-    timeout: 10000,
+    timeout: 20000,
     workers: 1
 };
 

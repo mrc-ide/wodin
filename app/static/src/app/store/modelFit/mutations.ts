@@ -18,7 +18,7 @@ export const mutations: MutationTree<ModelFitState> = {
         state.converged = payload.converged;
         state.iterations = payload.iterations;
         state.sumOfSquares = payload.value;
-        state.solution = payload.data.solutionFit;
+        state.solution = payload.data.solution;
     },
 
     [ModelFitMutation.SetParamsToVary](state: ModelFitState, payload: string[]) {
