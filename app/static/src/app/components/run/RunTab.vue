@@ -4,7 +4,7 @@
             <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
         </div>
         <action-required-message :message="updateMsg"></action-required-message>
-        <run-model-plot :fade-plot="!!updateMsg" :model-fit="false"></run-model-plot>
+        <run-plot :fade-plot="!!updateMsg" :model-fit="false"></run-plot>
         <error-info :error="error"></error-info>
   </div>
 </template>
@@ -12,7 +12,7 @@
 <script lang="ts">
 import { useStore } from "vuex";
 import { computed, defineComponent } from "vue";
-import RunModelPlot from "./RunModelPlot.vue";
+import RunPlot from "./RunPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { ModelAction } from "../../store/model/actions";
 import { RequiredModelAction } from "../../store/model/state";
@@ -22,7 +22,7 @@ import ErrorInfo from "../ErrorInfo.vue";
 export default defineComponent({
     name: "RunTab",
     components: {
-        RunModelPlot,
+        RunPlot,
         ErrorInfo,
         ActionRequiredMessage
     },

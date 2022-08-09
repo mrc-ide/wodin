@@ -4,7 +4,7 @@
       <button class="btn btn-primary me-2" id="fit-btn" :disabled="!canFitModel" @click="fitModel">Fit model</button>
       <button class="btn btn-outline" id="cancel-fit-btn" :disabled="!fitting" @click="cancelFit">Cancel fit</button>
       <action-required-message :message="actionRequiredMessage"></action-required-message>
-      <run-model-plot :fade-plot="!!actionRequiredMessage" :model-fit="true">
+      <fit-plot :fade-plot="!!actionRequiredMessage" :model-fit="true">
         <div v-if="iterations">
           <vue-feather v-if="iconType"
                        class="inline-icon"
@@ -16,7 +16,7 @@
           <span class="ms-2">Sum of squares: {{sumOfSquares}}</span>
           <div v-if="cancelled" id="fit-cancelled-msg" class="small text-danger">{{cancelledMsg}}</div>
         </div>
-      </run-model-plot>
+      </fit-plot>
     </div>
   </div>
 </template>
@@ -25,7 +25,7 @@
 import { computed } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
-import RunModelPlot from "../run/RunModelPlot.vue";
+import FitPlot from "./FitPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { ModelFitAction } from "../../store/modelFit/actions";
 import { ModelFitGetter } from "../../store/modelFit/getters";
@@ -38,7 +38,7 @@ export default {
     name: "FitTab",
     components: {
         LoadingSpinner,
-        RunModelPlot,
+        FitPlot,
         ActionRequiredMessage,
         VueFeather
     },

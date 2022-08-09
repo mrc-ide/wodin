@@ -1,6 +1,6 @@
 <template>
-    <div class="run-plot-container" :style="plotStyle">
-      <div class="run-model-plot" ref="plot">
+    <div class="fit-plot-container" :style="plotStyle">
+      <div class="fit-plot" ref="plot">
       </div>
       <div v-if="!hasPlotData" class="plot-placeholder">
         {{ placeholderMessage }}
@@ -16,71 +16,44 @@ import {
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
 import {
-    Data, newPlot, react, PlotData, PlotRelayoutEvent, Plots
+    newPlot, react, PlotRelayoutEvent, Plots
 } from "plotly.js";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
-import { OdinSeriesSet } from "../../types/responseTypes";
 import { Dict } from "../../types/utilTypes";
+import { filterSeriesSet, odinToPlotly, WodinPlotData } from "../../plot";
 
 export default defineComponent({
-    name: "RunModelPlot",
+    name: "FitPlot",
     props: {
-        fadePlot: Boolean,
-        modelFit: Boolean
+        fadePlot: Boolean
     },
     setup(props) {
         const store = useStore();
 
-        const placeholderMessage = computed(() => (props.modelFit ? userMessages.modelFit.notFittedYet
-            : userMessages.run.notRunYet));
+        const placeholderMessage = computed(() => userMessages.modelFit.notFittedYet);
 
         const plotStyle = computed(() => (props.fadePlot ? "opacity:0.5;" : ""));
-        const solution = computed(() => (props.modelFit ? store.state.modelFit.solution
-            : store.state.model.odinSolution));
+        const solution = computed(() => store.state.modelFit.solution);
 
-        // mrc-3331 start time should always be zero.
-        const startTime = computed(() => {
-            return props.modelFit ? store.getters[`fitData/${FitDataGetter.dataStart}`] : 0;
-        });
-        const endTime = computed(() => {
-            return props.modelFit ? store.getters[`fitData/${FitDataGetter.dataEnd}`] : store.state.model.endTime;
-        });
+        const startTime = 0;
+        const endTime = computed(() => store.getters[`fitData/${FitDataGetter.dataEnd}`]);
 
         const palette = computed(() => store.state.model.paletteModel);
 
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
-        const baseData = ref<Data[]>([]);
+        const baseData = ref<WodinPlotData>([]);
         const nPoints = 1000; // TODO: appropriate value could be derived from width of element
 
         const hasPlotData = computed(() => !!(baseData.value?.length));
 
         const seriesColour = (variable: string) => ({ color: palette.value[variable] });
 
-        const filterSeriesSet = (s: OdinSeriesSet, name: string): OdinSeriesSet => {
-            const idx = s.names.indexOf(name);
-            return {
-                names: [s.names[idx]],
-                x: s.x,
-                y: [s.y[idx]]
-            };
-        };
-
-        const odinToPlotly = (s: OdinSeriesSet): Partial<PlotData>[] => s.y.map(
-            (el: number[], i: number): Partial<PlotData> => ({
-                line: seriesColour(s.names[i]),
-                name: s.names[i],
-                x: s.x,
-                y: s.y[i]
-            })
-        );
-
-        // translate fit data into a form that can be plotted - only supported for modelFit for now
-        const fitDataSeries = (start: number, end: number): Partial<PlotData>[] => {
+        const fitDataSeries = (start: number, end: number): WodinPlotData => {
             const { fitData } = store.state;
             const timeVar = fitData?.timeVariable;
             const dataVar = fitData?.columnToFit;
-            if (props.modelFit && fitData.data && dataVar && timeVar) {
+            if (fitData.data && dataVar && timeVar) {
                 const filteredData = fitData.data.filter(
                     (row: Dict<number>) => row[timeVar] >= start && row[timeVar] <= end
                 );
@@ -97,18 +70,15 @@ export default defineComponent({
             return [];
         };
 
-        const allPlotData = (start: number, end: number): Partial<PlotData>[] => {
-            let result = solution.value(start, end, nPoints);
+        const allPlotData = (start: number, end: number): WodinPlotData => {
+            const result = solution.value(start, end, nPoints);
             if (!result) {
                 return [];
             }
-            if (props.modelFit) {
-                const { fitData } = store.state;
-                const dataVar = fitData?.columnToFit;
-                const modelVar = fitData.linkedVariables[dataVar];
-                result = filterSeriesSet(result, modelVar);
-            }
-            return [...odinToPlotly(result), ...fitDataSeries(start, end)];
+            const { fitData } = store.state;
+            const dataVar = fitData?.columnToFit;
+            const modelVar = fitData.linkedVariables[dataVar];
+            return [...odinToPlotly(filterSeriesSet(result, modelVar), palette.value), ...fitDataSeries(start, end)];
         };
 
         const config = {
@@ -156,7 +126,7 @@ export default defineComponent({
 
         const drawPlot = () => {
             if (solution.value) {
-                baseData.value = allPlotData(startTime.value, endTime.value);
+                baseData.value = allPlotData(startTime, endTime.value);
 
                 if (hasPlotData.value) {
                     const el = plot.value as unknown;
