@@ -122,8 +122,11 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
 }
 
 function validateSensitivityParamsSettings(paramSettings: SensitivityParameterSettings) {
+    // TODO: use this from component and return validation error message as well as boolean in mrc-3482
+    // Require range from to be less than to, if range variation
+    // Require min number of runs of 2
     return (paramSettings.variationType === SensitivityVariationType.Percentage
-                || paramSettings.rangeFrom < paramSettings.rangeTo);
+                || paramSettings.rangeFrom < paramSettings.rangeTo) && paramSettings.numberOfRuns >= 2;
 }
 
 export function generateBatchPars(rootState: AppState, paramSettings: SensitivityParameterSettings): BatchPars | null {

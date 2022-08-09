@@ -372,4 +372,10 @@ describe("generateBatchPars", () => {
         expect(generateBatchPars(rootState, settings)).toBe(null);
         expect(spyBatchParsRange).not.toHaveBeenCalled();
     });
+
+    it("returns null if number of runs setting is not valid", () => {
+        const settings = { ...percentSettings, numberOfRuns: 0 };
+        expect(generateBatchPars(rootState, settings)).toBe(null);
+        expect(spyBatchParsDisplace).not.toHaveBeenCalled();
+    });
 });
