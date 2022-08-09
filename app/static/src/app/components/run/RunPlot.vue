@@ -19,8 +19,7 @@ import {
     Data, newPlot, react, PlotData, PlotRelayoutEvent, Plots
 } from "plotly.js";
 import userMessages from "../../userMessages";
-import { OdinSeriesSet } from "../../types/responseTypes";
-import { Dict } from "../../types/utilTypes";
+import { odinToPlotly } from "../../plot";
 
 export default defineComponent({
     name: "RunPlot",
@@ -47,19 +46,8 @@ export default defineComponent({
 
         const hasPlotData = computed(() => !!(baseData.value?.length));
 
-        const seriesColour = (variable: string) => ({ color: palette.value[variable] });
-
-        const odinToPlotly = (s: OdinSeriesSet): Partial<PlotData>[] => s.y.map(
-            (el: number[], i: number): Partial<PlotData> => ({
-                line: seriesColour(s.names[i]),
-                name: s.names[i],
-                x: s.x,
-                y: s.y[i]
-            })
-        );
-
         const allPlotData = (start: number, end: number): Partial<PlotData>[] => {
-            let result = solution.value(start, end, nPoints);
+            const result = solution.value(start, end, nPoints);
             if (!result) {
                 return [];
             }

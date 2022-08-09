@@ -20,8 +20,8 @@ import {
 } from "plotly.js";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
-import { OdinSeriesSet } from "../../types/responseTypes";
 import { Dict } from "../../types/utilTypes";
+import { filterSeriesSet, odinToPlotly } from "../../plot";
 
 export default defineComponent({
     name: "FitPlot",
@@ -49,24 +49,6 @@ export default defineComponent({
 
         const seriesColour = (variable: string) => ({ color: palette.value[variable] });
 
-        const filterSeriesSet = (s: OdinSeriesSet, name: string): OdinSeriesSet => {
-            const idx = s.names.indexOf(name);
-            return {
-                names: [s.names[idx]],
-                x: s.x,
-                y: [s.y[idx]]
-            };
-        };
-
-        const odinToPlotly = (s: OdinSeriesSet): Partial<PlotData>[] => s.y.map(
-            (el: number[], i: number): Partial<PlotData> => ({
-                line: seriesColour(s.names[i]),
-                name: s.names[i],
-                x: s.x,
-                y: s.y[i]
-            })
-        );
-
         const fitDataSeries = (start: number, end: number): Partial<PlotData>[] => {
             const { fitData } = store.state;
             const timeVar = fitData?.timeVariable;
@@ -89,7 +71,7 @@ export default defineComponent({
         };
 
         const allPlotData = (start: number, end: number): Partial<PlotData>[] => {
-            let result = solution.value(start, end, nPoints);
+            const result = solution.value(start, end, nPoints);
             if (!result) {
                 return [];
             }

@@ -25,7 +25,7 @@
 import { computed } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
-import FitPlot from "../fit/FitPlot.vue";
+import FitPlot from "./FitPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { ModelFitAction } from "../../store/modelFit/actions";
 import { ModelFitGetter } from "../../store/modelFit/getters";
