@@ -16,10 +16,10 @@ import {
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
 import {
-    Data, newPlot, react, PlotData, PlotRelayoutEvent, Plots
+    newPlot, react, PlotRelayoutEvent, Plots
 } from "plotly.js";
 import userMessages from "../../userMessages";
-import { odinToPlotly } from "../../plot";
+import { odinToPlotly, WodinPlotData } from "../../plot";
 
 export default defineComponent({
     name: "RunPlot",
@@ -41,17 +41,17 @@ export default defineComponent({
         const palette = computed(() => store.state.model.paletteModel);
 
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
-        const baseData = ref<Data[]>([]);
+        const baseData = ref<WodinPlotData>([]);
         const nPoints = 1000; // TODO: appropriate value could be derived from width of element
 
         const hasPlotData = computed(() => !!(baseData.value?.length));
 
-        const allPlotData = (start: number, end: number): Partial<PlotData>[] => {
+        const allPlotData = (start: number, end: number): WodinPlotData => {
             const result = solution.value(start, end, nPoints);
             if (!result) {
                 return [];
             }
-            return [...odinToPlotly(result)];
+            return [...odinToPlotly(result, palette.value)];
         };
 
         const config = {

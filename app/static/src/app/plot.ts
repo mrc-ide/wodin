@@ -1,3 +1,4 @@
+import { PlotData } from "plotly.js";
 import { Palette } from "./palette";
 import { OdinSeriesSet } from "./types/responseTypes";
 
@@ -16,7 +17,7 @@ export function filterSeriesSet(s: OdinSeriesSet, name: string): OdinSeriesSet {
 export function odinToPlotly(s: OdinSeriesSet, palette: Palette): WodinPlotData {
     return s.y.map(
         (el: number[], i: number): Partial<PlotData> => ({
-            line: { color: palette[variable] },
+            line: { color: palette[s.names[i]] },
             name: s.names[i],
             x: s.x,
             y: s.y[i]

@@ -16,12 +16,12 @@ import {
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
 import {
-    Data, newPlot, react, PlotData, PlotRelayoutEvent, Plots
+    newPlot, react, PlotRelayoutEvent, Plots
 } from "plotly.js";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
 import { Dict } from "../../types/utilTypes";
-import { filterSeriesSet, odinToPlotly } from "../../plot";
+import { filterSeriesSet, odinToPlotly, WodinPlotData } from "../../plot";
 
 export default defineComponent({
     name: "FitPlot",
@@ -42,14 +42,14 @@ export default defineComponent({
         const palette = computed(() => store.state.model.paletteModel);
 
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
-        const baseData = ref<Data[]>([]);
+        const baseData = ref<WodinPlotData>([]);
         const nPoints = 1000; // TODO: appropriate value could be derived from width of element
 
         const hasPlotData = computed(() => !!(baseData.value?.length));
 
         const seriesColour = (variable: string) => ({ color: palette.value[variable] });
 
-        const fitDataSeries = (start: number, end: number): Partial<PlotData>[] => {
+        const fitDataSeries = (start: number, end: number): WodinPlotData => {
             const { fitData } = store.state;
             const timeVar = fitData?.timeVariable;
             const dataVar = fitData?.columnToFit;
@@ -70,7 +70,7 @@ export default defineComponent({
             return [];
         };
 
-        const allPlotData = (start: number, end: number): Partial<PlotData>[] => {
+        const allPlotData = (start: number, end: number): WodinPlotData => {
             const result = solution.value(start, end, nPoints);
             if (!result) {
                 return [];
@@ -78,7 +78,7 @@ export default defineComponent({
             const { fitData } = store.state;
             const dataVar = fitData?.columnToFit;
             const modelVar = fitData.linkedVariables[dataVar];
-            return [...odinToPlotly(filterSeriesSet(result, modelVar)), ...fitDataSeries(start, end)];
+            return [...odinToPlotly(filterSeriesSet(result, modelVar), palette.value), ...fitDataSeries(start, end)];
         };
 
         const config = {
