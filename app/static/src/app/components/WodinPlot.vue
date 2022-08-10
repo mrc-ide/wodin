@@ -1,0 +1,190 @@
+<template>
+  <div class="plot-container" :style="plotStyle">
+    <div class="plot" ref="plot">
+    </div>
+    <div v-if="!hasPlotData" class="plot-placeholder">
+      {{ placeholderMessage }}
+    </div>
+    <slot></slot>
+  </div>
+</template>
+
+<script lang="ts">
+import {
+  computed, defineComponent, ref, watch, onMounted, onUnmounted, PropType
+} from "vue";
+import { useStore } from "vuex";
+import { EventEmitter } from "events";
+import {
+  newPlot, react, PlotRelayoutEvent, Plots
+} from "plotly.js";
+import { FitDataGetter } from "../../store/fitData/getters";
+import userMessages from "../../userMessages";
+import { Dict } from "../../types/utilTypes";
+import { filterSeriesSet, odinToPlotly, WodinPlotData } from "../../plot";
+import { OdinSolution } from "../types/responseTypes";
+
+
+
+export default defineComponent({
+  name: "WodinPlot",
+  props: {
+    fadePlot: Boolean,
+    placeholderMessage: String,
+    endTime: {
+      type: Number,
+      required: true
+    },
+    plotData: {
+      type: Function as PropType<(start: number, end: number, points: number) => WodinPlotData>,
+      required: true
+    },
+    redrawOnChange: {
+      type: Object as PropType<OdinSolution | OdinSolution[]>
+    }
+  },
+  setup(props) {
+    const store = useStore();
+
+    const plotStyle = computed(() => (props.fadePlot ? "opacity:0.5;" : ""));
+    //const solution = computed(() => store.state.modelFit.solution);
+
+    const startTime = 0;
+    //const endTime = computed(() => store.getters[`fitData/${FitDataGetter.dataEnd}`]);
+
+    const palette = computed(() => store.state.model.paletteModel);
+
+    const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
+    const baseData = ref<WodinPlotData>([]);
+    const nPoints = 1000; // TODO: appropriate value could be derived from width of element
+
+    const hasPlotData = computed(() => !!(baseData.value?.length));
+
+    //const seriesColour = (variable: string) => ({ color: palette.value[variable] });
+
+    /*const fitDataSeries = (start: number, end: number): WodinPlotData => {
+      const { fitData } = store.state;
+      const timeVar = fitData?.timeVariable;
+      const dataVar = fitData?.columnToFit;
+      if (fitData.data && dataVar && timeVar) {
+        const filteredData = fitData.data.filter(
+            (row: Dict<number>) => row[timeVar] >= start && row[timeVar] <= end
+        );
+        const modelVar = fitData.linkedVariables[dataVar];
+        return [{
+          name: dataVar,
+          x: filteredData.map((row: Dict<number>) => row[timeVar]),
+          y: filteredData.map((row: Dict<number>) => row[dataVar]),
+          mode: "markers",
+          type: "scatter",
+          marker: seriesColour(modelVar)
+        }];
+      }
+      return [];
+    };
+
+    const allPlotData = (start: number, end: number): WodinPlotData => {
+      const result = solution.value(start, end, nPoints);
+      if (!result) {
+        return [];
+      }
+      const { fitData } = store.state;
+      const dataVar = fitData?.columnToFit;
+      const modelVar = fitData.linkedVariables[dataVar];
+      return [...odinToPlotly(filterSeriesSet(result, modelVar), palette.value), ...fitDataSeries(start, end)];
+    };
+     */
+
+    const config = {
+      responsive: true
+    };
+
+    // This is enough top margin to accommodate the plotly options
+    // bar without it interfering with the first series in the
+    // legend.
+    const margin = {
+      t: 25
+    };
+
+    const relayout = async (event: PlotRelayoutEvent) => {
+      let data;
+      if (event["xaxis.autorange"] === true) {
+        data = baseData.value;
+      } else {
+        const t0 = event["xaxis.range[0]"];
+        const t1 = event["xaxis.range[1]"];
+        if (t0 === undefined || t1 === undefined) {
+          return;
+        }
+        data = props.plotData(t0, t1, nPoints);
+      }
+
+      const layout = {
+        margin,
+        uirevision: "true",
+        xaxis: { autorange: true },
+        yaxis: { autorange: true }
+      };
+
+      const el = plot.value as HTMLElement;
+      await react(el, data, layout, config);
+    };
+
+    const resize = () => {
+      if (plot.value) {
+        Plots.resize(plot.value as HTMLElement);
+      }
+    };
+
+    let resizeObserver: null | ResizeObserver = null;
+
+    const drawPlot = () => {
+      if ((Array.isArray(props.redrawOnChange) && props.redrawOnChange.length)
+        || (!Array.isArray(props.redrawOnChange && props.redrawOnChange)){
+        baseData.value = props.plotData(startTime, props.endTime, nPoints);
+
+        if (hasPlotData.value) {
+          const el = plot.value as unknown;
+          const layout = {
+            margin
+          };
+          newPlot(el as HTMLElement, baseData.value, layout, config);
+          (el as EventEmitter).on("plotly_relayout", relayout);
+          resizeObserver = new ResizeObserver(resize);
+          resizeObserver.observe(plot.value as HTMLElement);
+        }
+      }
+    };
+
+    onMounted(drawPlot);
+
+    watch(() => props.redrawOnChange, drawPlot);
+
+    onUnmounted(() => {
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+    });
+
+    return {
+      plotStyle,
+      plot,
+      relayout,
+      resize,
+      baseData,
+      hasPlotData
+    };
+  }
+});
+</script>
+<style scoped lang="scss">
+.plot-placeholder {
+  width: 100%;
+  height: 450px;
+  background-color: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+</style>

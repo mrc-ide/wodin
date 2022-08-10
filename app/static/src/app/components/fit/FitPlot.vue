@@ -1,5 +1,5 @@
 <template>
-    <div class="fit-plot-container" :style="plotStyle">
+    <!--<div class="fit-plot-container" :style="plotStyle">
       <div class="fit-plot" ref="plot">
       </div>
       <div v-if="!hasPlotData" class="plot-placeholder">
@@ -7,6 +7,9 @@
       </div>
       <slot></slot>
     </div>
+    -->
+    <wodin-plot :fade-plot="fadePlot" :placeholder-message="placeholderMessage"
+            :end-time="endTime" :plot-data="allPlotData" :redraw-on-change="solution"></wodin-plot>
 </template>
 
 <script lang="ts">
@@ -22,9 +25,11 @@ import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
 import { Dict } from "../../types/utilTypes";
 import { filterSeriesSet, odinToPlotly, WodinPlotData } from "../../plot";
+import WodinPlot from "../WodinPlot.vue";
 
 export default defineComponent({
     name: "FitPlot",
+    components: { WodinPlot },
     props: {
         fadePlot: Boolean
     },
@@ -33,20 +38,21 @@ export default defineComponent({
 
         const placeholderMessage = computed(() => userMessages.modelFit.notFittedYet);
 
-        const plotStyle = computed(() => (props.fadePlot ? "opacity:0.5;" : ""));
+        // const plotStyle = computed(() => (props.fadePlot ? "opacity:0.5;" : ""));
         const solution = computed(() => store.state.modelFit.solution);
 
-        const startTime = 0;
+        // const startTime = 0;
         const endTime = computed(() => store.getters[`fitData/${FitDataGetter.dataEnd}`]);
 
         const palette = computed(() => store.state.model.paletteModel);
 
+        /*
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
         const baseData = ref<WodinPlotData>([]);
         const nPoints = 1000; // TODO: appropriate value could be derived from width of element
 
         const hasPlotData = computed(() => !!(baseData.value?.length));
-
+        */
         const seriesColour = (variable: string) => ({ color: palette.value[variable] });
 
         const fitDataSeries = (start: number, end: number): WodinPlotData => {
@@ -70,8 +76,8 @@ export default defineComponent({
             return [];
         };
 
-        const allPlotData = (start: number, end: number): WodinPlotData => {
-            const result = solution.value(start, end, nPoints);
+        const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
+            const result = solution.value(start, end, points);
             if (!result) {
                 return [];
             }
@@ -81,7 +87,7 @@ export default defineComponent({
             return [...odinToPlotly(filterSeriesSet(result, modelVar), palette.value), ...fitDataSeries(start, end)];
         };
 
-        const config = {
+        /* const config = {
             responsive: true
         };
 
@@ -150,16 +156,15 @@ export default defineComponent({
                 resizeObserver.disconnect();
             }
         });
+        */
+
+        // TODO: slot
 
         return {
             placeholderMessage,
-            plotStyle,
-            plot,
-            relayout,
-            resize,
             solution,
-            baseData,
-            hasPlotData
+            endTime,
+            allPlotData
         };
     }
 });
