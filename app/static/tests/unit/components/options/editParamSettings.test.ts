@@ -125,6 +125,7 @@ describe("EditParamSettings", () => {
         expect(wrapper.find("#edit-percent").findComponent(NumericInput).props("value")).toBe(10);
 
         expect(wrapper.find("#edit-from").exists()).toBe(false);
+        expect(wrapper.find("#param-central").exists()).toBe(false);
         expect(wrapper.find("#edit-to").exists()).toBe(false);
 
         expect(wrapper.find("#edit-runs label").text()).toBe("Number of runs");
@@ -153,6 +154,7 @@ describe("EditParamSettings", () => {
 
         expect(wrapper.find("#edit-from label").text()).toBe("From");
         expect(wrapper.find("#edit-from").findComponent(NumericInput).props("value")).toBe(2);
+        expect(wrapper.find("#param-central").text()).toBe("Central value 1");
         expect(wrapper.find("#edit-to label").text()).toBe("To");
         expect(wrapper.find("#edit-to").findComponent(NumericInput).props("value")).toBe(6);
 
@@ -162,12 +164,13 @@ describe("EditParamSettings", () => {
         expect(wrapper.find("#invalid-msg").exists()).toBe(false);
     });
 
-    it("disables OK and renders message when from is not less than to", async () => {
+    it("disables OK and renders message when settings are invalid", async () => {
         const settings = { ...rangeSettings, rangeFrom: 10, rangeTo: 5 };
         const wrapper = await getWrapper(settings);
 
         expect(wrapper.find(".modal-footer button.btn-primary").attributes("disabled")).not.toBe(undefined);
-        expect(wrapper.find("#invalid-msg").text()).toBe("To must be greater than From.");
+        expect(wrapper.find("#invalid-msg").text())
+            .toBe("Invalid settings: Mock error: min must be less than max");
     });
 
     it("hides modal if not open", async () => {
@@ -233,12 +236,12 @@ describe("EditParamSettings", () => {
         await wrapper.find("#edit-from").findComponent(NumericInput).vm.$emit("update", 1);
         await wrapper.find("#edit-to").findComponent(NumericInput).vm.$emit("update", 3);
         expectCloseNumericArray(sensitivityValues.props("batchPars").values, [1, 1.5, 2, 2.5, 3]);
-        expect(rangeSpy).toHaveBeenCalledTimes(1);
-        expect(rangeSpy.mock.calls[0][0]).toStrictEqual(parameterValues);
-        expect(rangeSpy.mock.calls[0][1]).toBe("B");
-        expect(rangeSpy.mock.calls[0][2]).toBe(5);
-        expect(rangeSpy.mock.calls[0][3]).toBe(false);
-        expect(rangeSpy.mock.calls[0][4]).toBe(1);
-        expect(rangeSpy.mock.calls[0][5]).toBe(3);
+        expect(rangeSpy).toHaveBeenCalledTimes(3); // called on each update
+        expect(rangeSpy.mock.calls[2][0]).toStrictEqual(parameterValues);
+        expect(rangeSpy.mock.calls[2][1]).toBe("B");
+        expect(rangeSpy.mock.calls[2][2]).toBe(5);
+        expect(rangeSpy.mock.calls[2][3]).toBe(false);
+        expect(rangeSpy.mock.calls[2][4]).toBe(1);
+        expect(rangeSpy.mock.calls[2][5]).toBe(3);
     });
 });

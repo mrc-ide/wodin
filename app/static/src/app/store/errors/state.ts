@@ -1,5 +1,5 @@
-import { Error } from "../../types/responseTypes";
+import { WodinError } from "../../types/responseTypes";
 
 export interface ErrorsState {
-    errors: Error[]
+    errors: WodinError[]
 }

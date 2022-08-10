@@ -7,7 +7,7 @@
           <div class="modal-header">
             <h5 class="modal-title">Vary Parameter</h5>
           </div>
-          <div class="modal-body" style="min-height:24rem;">
+          <div class="modal-body" style="min-height:26rem;">
             <div class="row" id="edit-param-to-vary">
                <div class="col-6">
                  <label class="col-form-label">Parameter to vary</label>
@@ -59,6 +59,14 @@
                                  @update="(n) => settingsInternal.rangeFrom = n"></numeric-input>
                 </div>
               </div>
+              <div class="row mt-2 text-muted" id="param-central">
+                <div class="col-6">
+                  Central value
+                </div>
+                <div class="col-6">
+                  {{ centralValue }}
+                </div>
+              </div>
               <div class="row mt-2" id="edit-to">
                 <div class="col-6">
                   <label class="col-form-label">To</label>
@@ -78,16 +86,16 @@
                                @update="(n) => settingsInternal.numberOfRuns = n"></numeric-input>
               </div>
             </div>
-            <div v-if="!valid" class="row mt-2 small text-danger" id="invalid-msg">
+            <div v-if="batchParsError" class="row mt-2 small text-danger" id="invalid-msg">
               <div class="col-12">
-                {{invalidMessage}}
+                <error-info :error="batchParsError"></error-info>
               </div>
             </div>
             <sensitivity-param-values :batch-pars="batchPars"></sensitivity-param-values>
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary"
-                    :disabled="valid ? undefined : 'disabled'"
+                    :disabled="batchParsError ? 'disabled' : undefined"
                     id="ok-settings"
                     @click="updateSettings">OK</button>
             <button class="btn btn-outline"
@@ -113,8 +121,8 @@ import {
 } from "../../store/sensitivity/state";
 import NumericInput from "./NumericInput.vue";
 import SensitivityParamValues from "./SensitivityParamValues.vue";
-import userMessages from "../../userMessages";
 import { generateBatchPars } from "../../utils";
+import ErrorInfo from "../ErrorInfo.vue";
 
 export default defineComponent({
     name: "EditParamSettings.vue",
@@ -125,6 +133,7 @@ export default defineComponent({
         }
     },
     components: {
+        ErrorInfo,
         NumericInput,
         SensitivityParamValues
     },
@@ -139,12 +148,6 @@ export default defineComponent({
         const scaleValues = Object.keys(SensitivityScaleType);
         const variationTypeValues = Object.keys(SensitivityVariationType);
 
-        const valid = computed(() => {
-            return settingsInternal.variationType === SensitivityVariationType.Percentage
-                    || settingsInternal.rangeFrom! < settingsInternal.rangeTo!;
-        });
-        const invalidMessage = userMessages.sensitivity.varyParamsInvalid;
-
         const style = computed(() => {
             return { display: props.open ? "block" : "none" };
         });
@@ -155,7 +158,11 @@ export default defineComponent({
             }
         });
 
-        const batchPars = computed(() => generateBatchPars(store.state, settingsInternal));
+        const centralValue = computed(() => store.state.model.parameterValues.get(settingsInternal.parameterToVary));
+
+        const batchParsResult = computed(() => generateBatchPars(store.state, settingsInternal));
+        const batchPars = computed(() => batchParsResult.value.batchPars);
+        const batchParsError = computed(() => batchParsResult.value.error);
 
         const close = () => { emit("close"); };
         const updateSettings = () => {
@@ -164,14 +171,14 @@ export default defineComponent({
         };
 
         return {
-            valid,
             paramNames,
             scaleValues,
             variationTypeValues,
             settingsInternal,
             style,
-            invalidMessage,
+            centralValue,
             batchPars,
+            batchParsError,
             close,
             updateSettings
         };

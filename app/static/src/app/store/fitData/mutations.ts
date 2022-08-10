@@ -1,7 +1,7 @@
 import { MutationTree } from "vuex";
 import { FitDataState } from "./state";
 import { Dict } from "../../types/utilTypes";
-import { Error } from "../../types/responseTypes";
+import { WodinError } from "../../types/responseTypes";
 
 export enum FitDataMutation {
     SetData = "SetData",
@@ -40,7 +40,7 @@ export const mutations: MutationTree<FitDataState> = {
         state.error = null;
     },
 
-    [FitDataMutation.SetError](state: FitDataState, payload: Error | null) {
+    [FitDataMutation.SetError](state: FitDataState, payload: WodinError | null) {
         state.error = payload;
         state.data = null;
         state.columns = null;

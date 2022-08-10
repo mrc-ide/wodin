@@ -314,9 +314,10 @@ describe("generateBatchPars", () => {
 
     it("generates BatchPars for Percentage variation type", () => {
         const result = generateBatchPars(rootState, percentSettings)!;
-        expect(result.name).toBe("A");
-        expect(result.base).toBe(parameterValues);
-        expect(result.values).toStrictEqual([0.5, 0.75, 1, 1.25, 1.5]);
+        expect(result.error).toBe(null);
+        expect(result.batchPars!.name).toBe("A");
+        expect(result.batchPars!.base).toBe(parameterValues);
+        expect(result.batchPars!.values).toStrictEqual([0.5, 0.75, 1, 1.25, 1.5]);
 
         expect(spyBatchParsDisplace).toHaveBeenCalledTimes(1);
         expect(spyBatchParsDisplace.mock.calls[0][0]).toStrictEqual(parameterValues);
@@ -328,9 +329,10 @@ describe("generateBatchPars", () => {
 
     it("generates BatchPars for Range variation type", () => {
         const result = generateBatchPars(rootState, rangeSettings)!;
-        expect(result.name).toBe("B");
-        expect(result.base).toBe(parameterValues);
-        expect(result.values).toStrictEqual([2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]);
+        expect(result.error).toBe(null);
+        expect(result.batchPars!.name).toBe("B");
+        expect(result.batchPars!.base).toBe(parameterValues);
+        expect(result.batchPars!.values).toStrictEqual([2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]);
         expect(spyBatchParsRange).toHaveBeenCalledTimes(1);
         expect(spyBatchParsRange.mock.calls[0][0]).toStrictEqual(parameterValues);
         expect(spyBatchParsRange.mock.calls[0][1]).toStrictEqual("B");
@@ -340,42 +342,57 @@ describe("generateBatchPars", () => {
         expect(spyBatchParsRange.mock.calls[0][5]).toStrictEqual(6);
     });
 
-    it("returns null if no runner in state", () => {
+    const expectedNotInitialisedError = { error: "Invalid settings", detail: "Model is not initialised" };
+
+    it("returns error if no runner in state", () => {
         const noRunnerState = {
             model: {
                 odinRunner: null,
                 parameterValues
             }
         } as any;
-        expect(generateBatchPars(noRunnerState, percentSettings)).toBe(null);
+        const result = generateBatchPars(noRunnerState, percentSettings);
+        expect(result.batchPars).toBe(null);
+        expect(result.error).toStrictEqual(expectedNotInitialisedError);
     });
 
-    it("returns null if no param values in state", () => {
+    it("returns error if no param values in state", () => {
         const noParamsState = {
             model: {
                 odinRunner: rootState.model.odinRunner,
                 parameterValues: null
             }
         } as any;
-        expect(generateBatchPars(noParamsState, rangeSettings)).toBe(null);
+        const result = generateBatchPars(noParamsState, rangeSettings);
+        expect(result.batchPars).toBe(null);
+        expect(result.error).toStrictEqual(expectedNotInitialisedError);
         expect(spyBatchParsRange).not.toHaveBeenCalled();
     });
 
-    it("returns null if no param to vary in settings", () => {
+    it("returns error if no param to vary in settings", () => {
         const settings = { ...percentSettings, parameterToVary: null };
-        expect(generateBatchPars(rootState, settings)).toBe(null);
+        const result = generateBatchPars(rootState, settings);
+        expect(result.batchPars).toBe(null);
+        expect(result.error)
+            .toStrictEqual({ error: "Invalid settings", detail: "Parameter to vary is not set" });
         expect(spyBatchParsDisplace).not.toHaveBeenCalled();
     });
 
-    it("returns null if range settings are not valid when variation type is range", () => {
+    it("returns error if batchParsRange throws error", () => {
         const settings = { ...rangeSettings, rangeFrom: 0, rangeTo: 0 };
-        expect(generateBatchPars(rootState, settings)).toBe(null);
-        expect(spyBatchParsRange).not.toHaveBeenCalled();
+        const result = generateBatchPars(rootState, settings);
+        expect(result.batchPars).toBe(null);
+        expect(result.error)
+            .toStrictEqual({ error: "Invalid settings", detail: "Mock error: min must be less than max" });
+        expect(spyBatchParsRange).toHaveBeenCalledTimes(1);
     });
 
-    it("returns null if number of runs setting is not valid", () => {
+    it("returns error if batchParsDisplace throws error", () => {
         const settings = { ...percentSettings, numberOfRuns: 0 };
-        expect(generateBatchPars(rootState, settings)).toBe(null);
-        expect(spyBatchParsDisplace).not.toHaveBeenCalled();
+        const result = generateBatchPars(rootState, settings);
+        expect(result.batchPars).toBe(null);
+        expect(result.error)
+            .toStrictEqual({ error: "Invalid settings", detail: "Mock error: count must be 2 or more" });
+        expect(spyBatchParsDisplace).toHaveBeenCalledTimes(1);
     });
 });

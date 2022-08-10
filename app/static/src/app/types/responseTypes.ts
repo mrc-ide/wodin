@@ -1,6 +1,6 @@
 import { Dict } from "./utilTypes";
 
-export interface Error {
+export interface WodinError {
     error: string,
     detail: string | null
 }
@@ -8,7 +8,7 @@ export interface Error {
 export interface ResponseFailure {
     status: "failure";
     data: null;
-    errors: Error[];
+    errors: WodinError[];
 }
 
 export interface ResponseSuccess {

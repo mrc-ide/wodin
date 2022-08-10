@@ -14,6 +14,6 @@ export interface SensitivityGetters {
 export const getters: SensitivityGetters & GetterTree<SensitivityState, AppState> = {
     [SensitivityGetter.batchPars]: (state: SensitivityState, sensitivityGetters: SensitivityGetters,
         rootState: AppState) => {
-        return generateBatchPars(rootState, state.paramSettings);
+        return generateBatchPars(rootState, state.paramSettings).batchPars;
     }
 };
