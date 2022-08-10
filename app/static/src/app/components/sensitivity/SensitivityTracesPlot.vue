@@ -5,9 +5,6 @@
     <div v-if="!hasPlotData" class="plot-placeholder">
       {{ placeholderMessage }}
     </div>
-    <div>
-      Solution count: {{solutions.length}}
-    </div>
     <slot></slot>
   </div>
 </template>
@@ -38,6 +35,7 @@ export default defineComponent({
 
         const plotStyle = computed(() => (props.fadePlot ? "opacity:0.5;" : ""));
         const solutions = computed(() => (store.state.sensitivity.batch?.solutions || []));
+        const centralSolution = computed(() => (store.state.model.odinSolution));
 
         // mrc-3331 start time should always be zero.
         const startTime = 0;
@@ -51,20 +49,37 @@ export default defineComponent({
 
         const hasPlotData = computed(() => !!(baseData.value?.length));
 
+        const updatePlotTraceNameWithParameterValue = (plotTrace: Partial<PlotData>, param: string, value: number) => {
+            plotTrace.name = `${plotTrace.name} (${param}=${value})`;
+        };
+
         const allPlotData = (start: number, end: number): WodinPlotData => {
-            /* const result = solution.value(start, end, nPoints);
-            if (!result) {
-                return [];
-            }
-            return [...odinToPlotly(result, palette.value)]; */
+            const { batch } = store.state.sensitivity;
 
             const result: Partial<PlotData>[] = [];
-            solutions.value.forEach((sln: OdinSolution) => {
+            solutions.value.forEach((sln: OdinSolution, slnIdx: number) => {
                 const data = sln(start, end, nPoints);
+                const plotlyOptions = {
+                    includeLegendGroup: true,
+                    lineWidth: 1,
+                    showLegend: false
+                };
                 if (data) {
-                    result.push(...odinToPlotly(data, palette.value));
+                    const plotData = odinToPlotly(data, palette.value, plotlyOptions);
+                    plotData.forEach((plotTrace) => {
+                        updatePlotTraceNameWithParameterValue(plotTrace, batch.pars.name, batch.pars.values[slnIdx]);
+                    });
+
+                    result.push(...plotData);
                 }
             });
+
+            const centralData = centralSolution.value(start, end, nPoints);
+            if (centralData) {
+                const plotlyOptions = { includeLegendGroup: true };
+                result.push(...odinToPlotly(centralData, palette.value, plotlyOptions));
+            }
+
             return result;
         };
 

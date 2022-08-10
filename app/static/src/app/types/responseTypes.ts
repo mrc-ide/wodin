@@ -110,6 +110,7 @@ export interface BatchPars {
 export type OdeControl = Dict<unknown>;
 
 export interface Batch {
+    pars: BatchPars,
     solutions: OdinSolution[]
 }
 
