@@ -2,12 +2,12 @@ import { Commit } from "vuex";
 import { parse } from "csv-parse";
 import { AppCtx, Dict } from "./types/utilTypes";
 import userMessages from "./userMessages";
-import { Error } from "./types/responseTypes";
+import { WodinError } from "./types/responseTypes";
 import { processFitData, ProcessFitDataResult } from "./utils";
 import { SetDataPayload } from "./store/fitData/mutations";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-type OnError = (error: Error) => void;
+type OnError = (error: WodinError) => void;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type OnSuccess = (success: SetDataPayload) => void;
 type PostSuccess = () => void;
@@ -30,7 +30,7 @@ export class CSVUpload<S extends string, E extends string> {
     }
 
     withError = (type: E) => {
-        this._onError = (error: Error) => {
+        this._onError = (error: WodinError) => {
             this._commit(type, error);
         };
         return this;
@@ -68,7 +68,7 @@ export class CSVUpload<S extends string, E extends string> {
                     const textToParse = event.target.result.toString();
                     parse(textToParse, options, (err: ParseError | null, rawData: Dict<string>[]) => {
                         const errorMsg = userMessages.fitData.errorLoadingData;
-                        let dataError: Error | null = err ? { error: errorMsg, detail: err.message } : null;
+                        let dataError: WodinError | null = err ? { error: errorMsg, detail: err.message } : null;
                         let processResult: ProcessFitDataResult | undefined;
                         if (!dataError) {
                             processResult = processFitData(rawData, errorMsg);

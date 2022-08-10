@@ -33,7 +33,8 @@ test.describe("Sensitivity tests", () => {
         await scaleSelect.selectOption("Logarithmic");
         const varSelect = await page.locator("#edit-variation-type select");
         await varSelect.selectOption("Range");
-        await expect(await page.innerText("#invalid-msg")).toBe("To must be greater than From.");
+        await expect(await page.innerText("#invalid-msg"))
+            .toBe("Invalid settings: Expected upper bound to be no less than 2");
 
         await page.fill("#edit-from input", "1");
         await page.fill("#edit-to input", "5");

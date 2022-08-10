@@ -4,7 +4,7 @@ import { BasicState } from "../src/app/store/basic/state";
 import { FitState } from "../src/app/store/fit/state";
 import { StochasticState } from "../src/app/store/stochastic/state";
 import {
-    ResponseSuccess, ResponseFailure, Error, OdinSolution, BatchPars
+    ResponseSuccess, ResponseFailure, WodinError, OdinSolution, BatchPars
 } from "../src/app/types/responseTypes";
 import { ModelState } from "../src/app/store/model/state";
 import { CodeState } from "../src/app/store/code/state";
@@ -24,7 +24,7 @@ export const mockSuccess = (data: any): ResponseSuccess => {
     };
 };
 
-export const mockError = (errorMessage = "some message"): Error => {
+export const mockError = (errorMessage = "some message"): WodinError => {
     return { error: "OTHER_ERROR", detail: errorMessage };
 };
 
@@ -156,6 +156,14 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
 export const mockBatchParsRange = (base: Map<string, number>, name: string, count: number,
     logarithmic: boolean,
     min: number, max: number): BatchPars => {
+    if (count < 2) {
+        throw new Error("Mock error: count must be 2 or more");
+    }
+
+    if (min >= max) {
+        throw new Error("Mock error: min must be less than max");
+    }
+
     // Just return a straight arithmetic range for this mock method
     const d = (max - min) / (count - 1);
     const values = [];

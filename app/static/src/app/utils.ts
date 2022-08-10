@@ -1,5 +1,5 @@
 import { Dict } from "./types/utilTypes";
-import { BatchPars, Error, OdinModelResponseError } from "./types/responseTypes";
+import { BatchPars, OdinModelResponseError, WodinError } from "./types/responseTypes";
 import userMessages from "./userMessages";
 import settings from "./settings";
 import {
@@ -35,10 +35,10 @@ export interface ProcessFitDataResult {
     data: Dict<number>[] | null;
     columns: string[] | null,
     timeVariableCandidates: string[] | null,
-    error?: Error
+    error?: WodinError
 }
 
-export function getCodeErrorFromResponse(errorResponse: OdinModelResponseError): Error {
+export function getCodeErrorFromResponse(errorResponse: OdinModelResponseError): WodinError {
     const line = errorResponse.line.join();
     const lineWord = errorResponse.line.length > 1 ? "lines" : "line";
     const detail = line ? `Error on ${lineWord} ${line}: ${errorResponse.message}` : errorResponse.message;
@@ -121,15 +121,17 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
     };
 }
 
-function validateSensitivityParamsSettings(paramSettings: SensitivityParameterSettings) {
-    // TODO: use this from component and return validation error message as well as boolean in mrc-3482
-    // Require range from to be less than to, if range variation
-    // Require min number of runs of 2
-    return (paramSettings.variationType === SensitivityVariationType.Percentage
-                || paramSettings.rangeFrom < paramSettings.rangeTo) && paramSettings.numberOfRuns >= 2;
+export interface GenerateBatchParsResult {
+    batchPars: BatchPars | null,
+    error: WodinError | null
 }
 
-export function generateBatchPars(rootState: AppState, paramSettings: SensitivityParameterSettings): BatchPars | null {
+export function generateBatchPars(
+    rootState: AppState,
+    paramSettings: SensitivityParameterSettings
+): GenerateBatchParsResult {
+    let batchPars = null;
+    let errorDetail = null;
     const runner = rootState.model.odinRunner;
     const paramValues = rootState.model.parameterValues;
     const {
@@ -137,12 +139,38 @@ export function generateBatchPars(rootState: AppState, paramSettings: Sensitivit
     } = paramSettings;
     const logarithmic = scaleType === SensitivityScaleType.Logarithmic;
 
-    if (!runner || !paramValues || !parameterToVary || !validateSensitivityParamsSettings(paramSettings)) {
-        return null;
+    if (!parameterToVary) {
+        errorDetail = "Parameter to vary is not set";
+    } else if (!runner || !paramValues) {
+        errorDetail = "Model is not initialised";
+    } else if (variationType === SensitivityVariationType.Percentage) {
+        try {
+            batchPars = runner.batchParsDisplace(
+                paramValues, parameterToVary,
+                numberOfRuns, logarithmic,
+                variationPercentage
+            );
+        } catch (e) {
+            errorDetail = (e as Error).message;
+        }
+    } else {
+        try {
+            batchPars = runner.batchParsRange(
+                paramValues,
+                parameterToVary,
+                numberOfRuns,
+                logarithmic,
+                rangeFrom,
+                rangeTo
+            );
+        } catch (e) {
+            errorDetail = (e as Error).message;
+        }
     }
 
-    if (variationType === SensitivityVariationType.Percentage) {
-        return runner.batchParsDisplace(paramValues, parameterToVary, numberOfRuns, logarithmic, variationPercentage);
-    }
-    return runner.batchParsRange(paramValues, parameterToVary, numberOfRuns, logarithmic, rangeFrom, rangeTo);
+    const error = errorDetail ? { error: userMessages.sensitivity.invalidSettings, detail: errorDetail } : null;
+    return {
+        batchPars,
+        error
+    };
 }
