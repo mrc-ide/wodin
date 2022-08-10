@@ -18,6 +18,7 @@ import { EventEmitter } from "events";
 import {
     newPlot, react, PlotRelayoutEvent, Plots, PlotData
 } from "plotly.js";
+import { format } from "d3-format";
 import userMessages from "../../userMessages";
 import { odinToPlotly, WodinPlotData } from "../../plot";
 import { OdinSolution } from "../../types/responseTypes";
@@ -50,7 +51,7 @@ export default defineComponent({
         const hasPlotData = computed(() => !!(baseData.value?.length));
 
         const updatePlotTraceNameWithParameterValue = (plotTrace: Partial<PlotData>, param: string, value: number) => {
-            plotTrace.name = `${plotTrace.name} (${param}=${value})`;
+            plotTrace.name = `${plotTrace.name} (${param}=${format(".3f")(value)})`;
         };
 
         const allPlotData = (start: number, end: number): WodinPlotData => {
