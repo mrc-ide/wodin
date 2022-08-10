@@ -125,6 +125,7 @@ describe("EditParamSettings", () => {
         expect(wrapper.find("#edit-percent").findComponent(NumericInput).props("value")).toBe(10);
 
         expect(wrapper.find("#edit-from").exists()).toBe(false);
+        expect(wrapper.find("#param-central").exists()).toBe(false);
         expect(wrapper.find("#edit-to").exists()).toBe(false);
 
         expect(wrapper.find("#edit-runs label").text()).toBe("Number of runs");
@@ -153,6 +154,7 @@ describe("EditParamSettings", () => {
 
         expect(wrapper.find("#edit-from label").text()).toBe("From");
         expect(wrapper.find("#edit-from").findComponent(NumericInput).props("value")).toBe(2);
+        expect(wrapper.find("#param-central").text()).toBe("Central value 1");
         expect(wrapper.find("#edit-to label").text()).toBe("To");
         expect(wrapper.find("#edit-to").findComponent(NumericInput).props("value")).toBe(6);
 

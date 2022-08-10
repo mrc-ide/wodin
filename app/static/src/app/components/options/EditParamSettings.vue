@@ -7,7 +7,7 @@
           <div class="modal-header">
             <h5 class="modal-title">Vary Parameter</h5>
           </div>
-          <div class="modal-body" style="min-height:24rem;">
+          <div class="modal-body" style="min-height:26rem;">
             <div class="row" id="edit-param-to-vary">
                <div class="col-6">
                  <label class="col-form-label">Parameter to vary</label>
@@ -57,6 +57,14 @@
                 <div class="col-6">
                   <numeric-input :value="settingsInternal.rangeFrom"
                                  @update="(n) => settingsInternal.rangeFrom = n"></numeric-input>
+                </div>
+              </div>
+              <div class="row mt-2 text-muted" id="param-central">
+                <div class="col-6">
+                  Central value
+                </div>
+                <div class="col-6">
+                  {{ centralValue }}
                 </div>
               </div>
               <div class="row mt-2" id="edit-to">
@@ -150,6 +158,8 @@ export default defineComponent({
             }
         });
 
+        const centralValue = computed(() => store.state.model.parameterValues.get(settingsInternal.parameterToVary));
+
         const batchParsResult = computed(() => generateBatchPars(store.state, settingsInternal));
         const batchPars = computed(() => batchParsResult.value.batchPars);
         const batchParsError = computed(() => batchParsResult.value.error);
@@ -166,6 +176,7 @@ export default defineComponent({
             variationTypeValues,
             settingsInternal,
             style,
+            centralValue,
             batchPars,
             batchParsError,
             close,
