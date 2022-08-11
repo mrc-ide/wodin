@@ -5,7 +5,7 @@ import {
     OdinModelResponse,
     OdinRunner,
     OdinSolution,
-    Error
+    WodinError
 } from "../../types/responseTypes";
 import { evaluateScript, getCodeErrorFromResponse } from "../../utils";
 import { Dict } from "../../types/utilTypes";
@@ -81,7 +81,7 @@ export const mutations: MutationTree<ModelState> = {
         runRequired(state);
     },
 
-    [ModelMutation.SetOdinRunnerError](state: ModelState, payload: Error) {
+    [ModelMutation.SetOdinRunnerError](state: ModelState, payload: WodinError) {
         state.odinRunnerError = payload;
     }
 };

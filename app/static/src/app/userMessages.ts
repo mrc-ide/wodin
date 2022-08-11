@@ -39,6 +39,6 @@ export default {
     },
     sensitivity: {
         compileRequired: "Please compile a valid model in order to set sensitivity options.",
-        varyParamsInvalid: "To must be greater than From."
+        invalidSettings: "Invalid settings"
     }
 };

@@ -7,9 +7,9 @@
           <div class="modal-header">
             <h5 class="modal-title">Vary Parameter</h5>
           </div>
-          <div class="modal-body">
+          <div class="modal-body" style="min-height:26rem;">
             <div class="row" id="edit-param-to-vary">
-               <div class="col-5">
+               <div class="col-6">
                  <label class="col-form-label">Parameter to vary</label>
                </div>
                <div class="col-6">
@@ -19,7 +19,7 @@
                </div>
              </div>
              <div class="row mt-2" id="edit-scale-type">
-               <div class="col-5">
+               <div class="col-6">
                  <label class="col-form-label">Scale type</label>
                </div>
                <div class="col-6">
@@ -31,7 +31,7 @@
              </div>
              </div>
             <div class="row mt-2" id="edit-variation-type">
-              <div class="col-5">
+              <div class="col-6">
                 <label class="col-form-label">Variation type</label>
               </div>
               <div class="col-6">
@@ -41,7 +41,7 @@
               </div>
             </div>
             <div v-if="settingsInternal.variationType === 'Percentage'" class="row mt-2" id="edit-percent">
-              <div class="col-5">
+              <div class="col-6">
                 <label class="col-form-label">Variation (%)</label>
               </div>
               <div class="col-6">
@@ -51,7 +51,7 @@
             </div>
             <template v-else>
               <div class="row mt-2" id="edit-from">
-                <div class="col-5">
+                <div class="col-6">
                   <label class="col-form-label">From</label>
                 </div>
                 <div class="col-6">
@@ -59,8 +59,16 @@
                                  @update="(n) => settingsInternal.rangeFrom = n"></numeric-input>
                 </div>
               </div>
+              <div class="row mt-2 text-muted" id="param-central">
+                <div class="col-6">
+                  Central value
+                </div>
+                <div class="col-6">
+                  {{ centralValue }}
+                </div>
+              </div>
               <div class="row mt-2" id="edit-to">
-                <div class="col-5">
+                <div class="col-6">
                   <label class="col-form-label">To</label>
                 </div>
                 <div class="col-6">
@@ -70,7 +78,7 @@
               </div>
             </template>
             <div class="row mt-2" id="edit-runs">
-              <div class="col-5">
+              <div class="col-6">
                 <label class="col-form-label">Number of runs</label>
               </div>
               <div class="col-6">
@@ -78,15 +86,16 @@
                                @update="(n) => settingsInternal.numberOfRuns = n"></numeric-input>
               </div>
             </div>
-            <div v-if="!valid" class="row mt-2 small text-danger" id="invalid-msg">
+            <div v-if="batchParsError" class="row mt-2 small text-danger" id="invalid-msg">
               <div class="col-12">
-                {{invalidMessage}}
+                <error-info :error="batchParsError"></error-info>
               </div>
             </div>
+            <sensitivity-param-values :batch-pars="batchPars"></sensitivity-param-values>
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary"
-                    :disabled="valid ? undefined : 'disabled'"
+                    :disabled="!!batchParsError"
                     id="ok-settings"
                     @click="updateSettings">OK</button>
             <button class="btn btn-outline"
@@ -111,7 +120,9 @@ import {
     SensitivityVariationType
 } from "../../store/sensitivity/state";
 import NumericInput from "./NumericInput.vue";
-import userMessages from "../../userMessages";
+import SensitivityParamValues from "./SensitivityParamValues.vue";
+import { generateBatchPars } from "../../utils";
+import ErrorInfo from "../ErrorInfo.vue";
 
 export default defineComponent({
     name: "EditParamSettings.vue",
@@ -122,7 +133,9 @@ export default defineComponent({
         }
     },
     components: {
-        NumericInput
+        ErrorInfo,
+        NumericInput,
+        SensitivityParamValues
     },
     setup(props, { emit }) {
         const store = useStore();
@@ -135,12 +148,6 @@ export default defineComponent({
         const scaleValues = Object.keys(SensitivityScaleType);
         const variationTypeValues = Object.keys(SensitivityVariationType);
 
-        const valid = computed(() => {
-            return settingsInternal.variationType === SensitivityVariationType.Percentage
-                    || settingsInternal.rangeFrom! < settingsInternal.rangeTo!;
-        });
-        const invalidMessage = userMessages.sensitivity.varyParamsInvalid;
-
         const style = computed(() => {
             return { display: props.open ? "block" : "none" };
         });
@@ -151,6 +158,12 @@ export default defineComponent({
             }
         });
 
+        const centralValue = computed(() => store.state.model.parameterValues.get(settingsInternal.parameterToVary));
+
+        const batchParsResult = computed(() => generateBatchPars(store.state, settingsInternal));
+        const batchPars = computed(() => batchParsResult.value.batchPars);
+        const batchParsError = computed(() => batchParsResult.value.error);
+
         const close = () => { emit("close"); };
         const updateSettings = () => {
             store.commit(`sensitivity/${SensitivityMutation.SetParamSettings}`, { ...settingsInternal });
@@ -158,13 +171,14 @@ export default defineComponent({
         };
 
         return {
-            valid,
             paramNames,
             scaleValues,
             variationTypeValues,
             settingsInternal,
             style,
-            invalidMessage,
+            centralValue,
+            batchPars,
+            batchParsError,
             close,
             updateSettings
         };

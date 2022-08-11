@@ -1,5 +1,5 @@
 import { Dict } from "../../types/utilTypes";
-import { Error } from "../../types/responseTypes";
+import { WodinError } from "../../types/responseTypes";
 
 export interface FitDataState {
     data: Dict<number>[] | null,
@@ -8,5 +8,5 @@ export interface FitDataState {
     timeVariable: string | null
     linkedVariables: Dict<string | null> // Dict of data column names (keys) to linked model variables (values)
     columnToFit: string | null
-    error: Error | null
+    error: WodinError | null
 }

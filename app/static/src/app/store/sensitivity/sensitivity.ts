@@ -1,5 +1,6 @@
 import { SensitivityScaleType, SensitivityState, SensitivityVariationType } from "./state";
 import { mutations } from "./mutations";
+import { getters } from "./getters";
 
 export const defaultState: SensitivityState = {
     paramSettings: {
@@ -16,5 +17,6 @@ export const defaultState: SensitivityState = {
 export const sensitivity = {
     namespaced: true,
     state: defaultState,
-    mutations
+    mutations,
+    getters
 };

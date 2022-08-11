@@ -6,7 +6,7 @@
 import { defineComponent, computed } from "vue";
 
 export default defineComponent({
-    name: "ErrorInfo.vue",
+    name: "ErrorInfo",
     props: {
         error: Object
     },
