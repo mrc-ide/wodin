@@ -27,7 +27,7 @@ export default defineComponent({
     setup() {
         const store = useStore();
 
-        const placeholderMessage = computed(() => (userMessages.run.notRunYet));
+        const placeholderMessage = userMessages.run.notRunYet;
 
         const solution = computed(() => (store.state.model.odinSolution));
 
@@ -36,7 +36,7 @@ export default defineComponent({
         const palette = computed(() => store.state.model.paletteModel);
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
-            const result = solution.value(start, end, points);
+            const result = solution.value && solution.value(start, end, points);
             if (!result) {
                 return [];
             }
