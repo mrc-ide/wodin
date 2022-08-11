@@ -95,7 +95,7 @@
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary"
-                    :disabled="batchParsError ? 'disabled' : undefined"
+                    :disabled="!!batchParsError"
                     id="ok-settings"
                     @click="updateSettings">OK</button>
             <button class="btn btn-outline"
