@@ -3,7 +3,8 @@
     <div>
       <button class="btn btn-primary" id="run-sens-btn" :disabled="!canRunSensitivity" @click="runSensitivity">Run sensitivity</button>
     </div>
-    <sensitivity-traces-plot></sensitivity-traces-plot>
+    <action-required-message :message="updateMsg"></action-required-message>
+    <sensitivity-traces-plot :fade-plot="!!updateMsg" ></sensitivity-traces-plot>
   </div>
 </template>
 
@@ -11,13 +12,16 @@
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import SensitivityTracesPlot from "./SensitivityTracesPlot.vue";
+import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { RequiredModelAction } from "../../store/model/state";
 import { SensitivityGetter } from "../../store/sensitivity/getters";
-import {SensitivityAction} from "../../store/sensitivity/actions";
+import { SensitivityAction } from "../../store/sensitivity/actions";
+import userMessages from "../../userMessages";
 
 export default defineComponent({
     name: "SensitivityTab",
     components: {
+        ActionRequiredMessage,
         SensitivityTracesPlot
     },
     setup() {
@@ -29,12 +33,25 @@ export default defineComponent({
         });
 
         const runSensitivity = () => {
-          store.dispatch(`sensitivity/${SensitivityAction.RunSensitivity}`);
+            store.dispatch(`sensitivity/${SensitivityAction.RunSensitivity}`);
         };
 
+        const modelRequiredAction = computed(() => store.state.model.requiredAction);
+        const sensitivityUpdateRequired = computed(() => store.state.sensitivity.sensitivityUpdateRequired);
+        const updateMsg = computed(() => {
+            if (modelRequiredAction.value === RequiredModelAction.Compile) {
+                return userMessages.sensitivity.compileRequiredForUpdate;
+            }
+            if (sensitivityUpdateRequired.value) {
+                return userMessages.sensitivity.runRequiredForUpdate;
+            }
+            return "";
+        });
+
         return {
-          canRunSensitivity,
-          runSensitivity
+            canRunSensitivity,
+            runSensitivity,
+            updateMsg
         };
     }
 });

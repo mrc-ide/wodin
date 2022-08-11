@@ -17,6 +17,7 @@ export const actions: ActionTree<SensitivityState, AppState> = {
         if (odinRunner && odin && batchPars) {
             const batch = odinRunner.batchRun(odin, batchPars, 0, endTime, {});
             commit(SensitivityMutation.SetBatch, batch);
+            commit(SensitivityMutation.SetUpdateRequired, false);
         }
     }
 };

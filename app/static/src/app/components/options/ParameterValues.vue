@@ -34,6 +34,7 @@ import { Dict } from "../../types/utilTypes";
 import { AppType, VisualisationTab } from "../../store/appState/state";
 import { ModelFitMutation } from "../../store/modelFit/mutations";
 import userMessages from "../../userMessages";
+import {SensitivityMutation} from "../../store/sensitivity/mutations";
 
 export default defineComponent({
     name: "ParameterValues",
@@ -74,6 +75,7 @@ export default defineComponent({
 
         const updateValue = (newValue: number, paramName: string) => {
             store.commit(`model/${ModelMutation.UpdateParameterValues}`, { [paramName]: newValue });
+            store.commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true);
         };
 
         const checkBoxChange = (paramName: string, event: Event) => {

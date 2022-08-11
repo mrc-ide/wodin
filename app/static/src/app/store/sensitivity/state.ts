@@ -22,5 +22,7 @@ export interface SensitivityParameterSettings {
 
 export interface SensitivityState {
     paramSettings: SensitivityParameterSettings,
-    batch: Batch | null
+    batch: Batch | null,
+    // Whether sensitivity needs to be re-run because of change to settings or model
+    sensitivityUpdateRequired: boolean
 }
