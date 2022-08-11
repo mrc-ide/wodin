@@ -39,11 +39,13 @@ export default defineComponent({
         const modelRequiredAction = computed(() => store.state.model.requiredAction);
         const sensitivityUpdateRequired = computed(() => store.state.sensitivity.sensitivityUpdateRequired);
         const updateMsg = computed(() => {
-            if (modelRequiredAction.value === RequiredModelAction.Compile) {
-                return userMessages.sensitivity.compileRequiredForUpdate;
-            }
-            if (sensitivityUpdateRequired.value) {
-                return userMessages.sensitivity.runRequiredForUpdate;
+            if (store.state.sensitivity.batch?.solutions.length) {
+                if (modelRequiredAction.value === RequiredModelAction.Compile) {
+                    return userMessages.sensitivity.compileRequiredForUpdate;
+                }
+                if (sensitivityUpdateRequired.value) {
+                    return userMessages.sensitivity.runRequiredForUpdate;
+                }
             }
             return "";
         });

@@ -23,7 +23,6 @@ import { OdinSolution } from "../types/responseTypes";
 export default defineComponent({
     name: "WodinPlot",
     props: {
-        //TODO: comment all these
         fadePlot: Boolean,
         placeholderMessage: String,
         endTime: {
@@ -34,7 +33,8 @@ export default defineComponent({
             type: Function as PropType<(start: number, end: number, points: number) => WodinPlotData>,
             required: true
         },
-        // Only used as an indicator that redraw is required
+        // Only used as an indicator that redraw is required when this changes - the data to display is calculated by
+        // plotData function using these solutions
         solutions: {
             type: Array as PropType<OdinSolution[]>,
             required: true

@@ -29,7 +29,7 @@ export default defineComponent({
     setup() {
         const store = useStore();
 
-        const placeholderMessage = computed(() => userMessages.modelFit.notFittedYet);
+        const placeholderMessage = userMessages.modelFit.notFittedYet;
 
         const solution = computed(() => store.state.modelFit.solution);
 

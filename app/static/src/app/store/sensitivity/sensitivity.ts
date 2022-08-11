@@ -14,7 +14,7 @@ export const defaultState: SensitivityState = {
         numberOfRuns: 10
     },
     batch: null,
-    sensitivityUpdateRequired: true
+    sensitivityUpdateRequired: false
 };
 
 export const sensitivity = {
