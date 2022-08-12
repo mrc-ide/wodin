@@ -3,10 +3,10 @@ jest.mock("plotly.js", () => {});
 
 /* eslint-disable import/first */
 import Vuex from "vuex";
-import {FitState} from "../../../../src/app/store/fit/state";
-import {FitDataGetter} from "../../../../src/app/store/fitData/getters";
+import { shallowMount } from "@vue/test-utils";
+import { FitState } from "../../../../src/app/store/fit/state";
+import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
 import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
-import {shallowMount} from "@vue/test-utils";
 import FitPlot from "../../../../src/app/components/fit/FitPlot.vue";
 
 describe("FitPlot", () => {
@@ -47,7 +47,7 @@ describe("FitPlot", () => {
         }
     ];
 
-    const getWrapper = (modelFitHasSolution = true, fadePlot = false) =>{
+    const getWrapper = (modelFitHasSolution = true, fadePlot = false) => {
         const store = new Vuex.Store<FitState>({
             state: {
                 model: {

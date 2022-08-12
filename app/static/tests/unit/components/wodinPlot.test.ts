@@ -25,7 +25,7 @@ describe("RunPlot", () => {
     }
     (global.ResizeObserver as any) = mockResizeObserver;
 
-    const mockPlotData = [{x: [1, 2], y: [3,4]}];
+    const mockPlotData = [{ x: [1, 2], y: [3, 4] }];
     const mockPlotDataFn = jest.fn().mockReturnValue(mockPlotData);
     const defaultProps = {
         fadePlot: false,
@@ -37,7 +37,7 @@ describe("RunPlot", () => {
 
     const getWrapper = (props = {}) => {
         return shallowMount(WodinPlot, {
-            props: {...defaultProps, ...props}
+            props: { ...defaultProps, ...props }
         });
     };
 
@@ -66,7 +66,7 @@ describe("RunPlot", () => {
     });
 
     it("renders fade style when fade plot is true", () => {
-        const wrapper = getWrapper({fadePlot: true});
+        const wrapper = getWrapper({ fadePlot: true });
         const div = wrapper.find("div.plot-container");
         expect(div.attributes("style")).toBe("opacity: 0.5;");
     });
@@ -85,7 +85,7 @@ describe("RunPlot", () => {
         const wrapper = getWrapper();
         const mockOn = mockPlotElementOn(wrapper);
 
-        wrapper.setProps({solutions: [{} as any]});
+        wrapper.setProps({ solutions: [{} as any] });
         await nextTick();
         expect(mockPlotDataFn.mock.calls[0][0]).toBe(0);
         expect(mockPlotDataFn.mock.calls[0][1]).toBe(99);
@@ -102,12 +102,11 @@ describe("RunPlot", () => {
 
     it("does not draw run plot if base data is null", async () => {
         const wrapper = getWrapper();
-        wrapper.setProps({solutions: [{} as any], plotData: () => null});
+        wrapper.setProps({ solutions: [{} as any], plotData: () => null });
 
         await nextTick();
         expect(mockPlotlyNewPlot).not.toHaveBeenCalled();
     });
-
 
     const expectedLayout = {
         margin: { t: 25 },
@@ -120,7 +119,7 @@ describe("RunPlot", () => {
         const wrapper = getWrapper();
         mockPlotElementOn(wrapper);
 
-        wrapper.setProps({solutions: [{} as any]});
+        wrapper.setProps({ solutions: [{} as any] });
         await nextTick();
 
         const relayoutEvent = {
@@ -148,7 +147,7 @@ describe("RunPlot", () => {
         const wrapper = getWrapper();
         mockPlotElementOn(wrapper);
 
-        wrapper.setProps({solutions: [{} as any]});
+        wrapper.setProps({ solutions: [{} as any] });
         await nextTick();
 
         const relayoutEvent = {
@@ -170,7 +169,7 @@ describe("RunPlot", () => {
         const wrapper = getWrapper();
         mockPlotElementOn(wrapper);
 
-        wrapper.setProps({solutions: [{} as any]});
+        wrapper.setProps({ solutions: [{} as any] });
         await nextTick();
 
         const relayoutEvent = {
@@ -190,7 +189,7 @@ describe("RunPlot", () => {
         const wrapper = getWrapper();
         mockPlotElementOn(wrapper);
 
-        wrapper.setProps({solutions: [{} as any]});
+        wrapper.setProps({ solutions: [{} as any] });
         await nextTick();
 
         const relayoutEvent = {
@@ -210,7 +209,7 @@ describe("RunPlot", () => {
         const wrapper = getWrapper();
         mockPlotElementOn(wrapper);
 
-        wrapper.setProps({solutions: [{} as any]});
+        wrapper.setProps({ solutions: [{} as any] });
         await nextTick();
 
         const divElement = wrapper.find("div.plot").element;
@@ -221,7 +220,7 @@ describe("RunPlot", () => {
         const wrapper = getWrapper();
         mockPlotElementOn(wrapper);
 
-        wrapper.setProps({solutions: [{} as any]});
+        wrapper.setProps({ solutions: [{} as any] });
         await nextTick();
 
         (wrapper.vm as any).resize();
@@ -233,7 +232,7 @@ describe("RunPlot", () => {
         const wrapper = getWrapper();
         mockPlotElementOn(wrapper);
 
-        wrapper.setProps({solutions: [{} as any]});
+        wrapper.setProps({ solutions: [{} as any] });
         await nextTick();
 
         wrapper.unmount();
@@ -251,7 +250,7 @@ describe("RunPlot", () => {
         expect(wrapper.find(".plot-placeholder").text()).toBe("No data available");
 
         mockPlotElementOn(wrapper);
-        wrapper.setProps({solutions: [{} as any]});
+        wrapper.setProps({ solutions: [{} as any] });
         await nextTick();
         expect(wrapper.find(".plot-placeholder").exists()).toBe(false);
     });

@@ -9,7 +9,7 @@ import { ModelMutation, mutations } from "../../../../src/app/store/model/mutati
 import { AppType, VisualisationTab } from "../../../../src/app/store/appState/state";
 import Mock = jest.Mock;
 import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
-import {SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
+import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 
 describe("ParameterValues", () => {
     const getStore = (fitTabIsOpen = false,

@@ -1,4 +1,4 @@
-import {plot, PlotData} from "plotly.js";
+import { PlotData } from "plotly.js";
 import { Palette } from "./palette";
 import { OdinSeriesSet } from "./types/responseTypes";
 

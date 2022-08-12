@@ -123,7 +123,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[3][1]).toBe(RequiredModelAction.Run);
         expect(commit.mock.calls[4][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
         expect(commit.mock.calls[4][1]).toBe(true);
-        expect(commit.mock.calls[4][2]).toStrictEqual({root: true});
+        expect(commit.mock.calls[4][2]).toStrictEqual({ root: true });
         expect(commit.mock.calls[5][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
         expect(commit.mock.calls[5][1]).toBe("p2");
         expect(commit.mock.calls[5][2]).toStrictEqual({ root: true });
@@ -394,7 +394,7 @@ describe("Model actions", () => {
         const commit = jest.spyOn(store, "commit");
 
         await store.dispatch(`model/${ModelAction.DefaultModel}`);
-        expect(commit.mock.calls.length).toBe(9);
+        expect(commit.mock.calls.length).toBe(10);
 
         // fetch
         const postData = JSON.parse(mockAxios.history.post[0].data);
@@ -417,8 +417,11 @@ describe("Model actions", () => {
         expect(commit.mock.calls[5][0]).toBe(`model/${ModelMutation.SetRequiredAction}`);
         expect(commit.mock.calls[5][1]).toBe(RequiredModelAction.Run);
 
-        expect(commit.mock.calls[6][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
-        expect(commit.mock.calls[6][1]).toStrictEqual("p1");
+        expect(commit.mock.calls[6][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
+        expect(commit.mock.calls[6][1]).toBe(true);
+
+        expect(commit.mock.calls[7][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
+        expect(commit.mock.calls[7][1]).toStrictEqual("p1");
 
         // runs
         const run = runner.wodinRun;
@@ -427,9 +430,9 @@ describe("Model actions", () => {
         expect(run.mock.calls[0][2]).toBe(0); // start
         expect(run.mock.calls[0][3]).toBe(99); // end
 
-        expect(commit.mock.calls[7][0]).toBe(`model/${ModelMutation.SetOdinSolution}`);
-        expect(commit.mock.calls[7][1]).toBe("test solution");
-        expect(commit.mock.calls[8][0]).toBe(`model/${ModelMutation.SetRequiredAction}`);
-        expect(commit.mock.calls[8][1]).toBe(null);
+        expect(commit.mock.calls[8][0]).toBe(`model/${ModelMutation.SetOdinSolution}`);
+        expect(commit.mock.calls[8][1]).toBe("test solution");
+        expect(commit.mock.calls[9][0]).toBe(`model/${ModelMutation.SetRequiredAction}`);
+        expect(commit.mock.calls[9][1]).toBe(null);
     });
 });

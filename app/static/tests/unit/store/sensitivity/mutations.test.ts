@@ -26,7 +26,7 @@ describe("Sensitivity mutations", () => {
         const state = {
             batch: null
         } as any;
-        const batch = {solutions: []} as any
+        const batch = { solutions: [] } as any;
         mutations[SensitivityMutation.SetBatch](state, batch);
         expect(state.batch).toBe(batch);
     });

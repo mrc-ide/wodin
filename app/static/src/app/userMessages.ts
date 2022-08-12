@@ -39,8 +39,10 @@ export default {
     },
     sensitivity: {
         compileRequiredForOptions: "Please compile a valid model in order to set sensitivity options.",
-        compileRequiredForUpdate: "Model code has been updated. Compile code and Run Sensitivity to view updated graph.",
-        runRequiredForUpdate: "Model code has been recompiled or options have been updated. Run Sensitivity to view updated graph.",
+        compileRequiredForUpdate: "Model code has been updated. "
+            + "Compile code and Run Sensitivity to view updated graph.",
+        runRequiredForUpdate: "Model code has been recompiled or options have been updated. "
+            + "Run Sensitivity to view updated graph.",
         invalidSettings: "Invalid settings",
         notRunYet: "Sensitivity has not been run."
     }

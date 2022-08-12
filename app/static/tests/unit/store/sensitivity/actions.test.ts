@@ -1,5 +1,5 @@
-import {actions, SensitivityAction} from "../../../../src/app/store/sensitivity/actions";
-import {SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
+import { actions, SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
+import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 
 const mockBatch = {};
 const mockRunner = {
@@ -28,7 +28,7 @@ describe("Sensitivity actions", () => {
 
         const commit = jest.fn();
 
-        (actions[SensitivityAction.RunSensitivity] as any)({rootState, getters, commit});
+        (actions[SensitivityAction.RunSensitivity] as any)({ rootState, getters, commit });
 
         expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetBatch);
@@ -48,7 +48,7 @@ describe("Sensitivity actions", () => {
         };
 
         const commit = jest.fn();
-        (actions[SensitivityAction.RunSensitivity] as any)({rootState, getters, commit});
+        (actions[SensitivityAction.RunSensitivity] as any)({ rootState, getters, commit });
 
         expect(commit).toHaveBeenCalledTimes(0);
     });
@@ -62,12 +62,11 @@ describe("Sensitivity actions", () => {
         };
 
         const commit = jest.fn();
-        (actions[SensitivityAction.RunSensitivity] as any)({rootState, getters, commit});
+        (actions[SensitivityAction.RunSensitivity] as any)({ rootState, getters, commit });
 
         expect(commit).toHaveBeenCalledTimes(0);
         expect(mockRunner.batchRun).not.toHaveBeenCalled();
     });
-
 
     it("RunSensitivity does nothing if no batchPars", () => {
         const testGetters = {
@@ -78,7 +77,7 @@ describe("Sensitivity actions", () => {
         };
 
         const commit = jest.fn();
-        (actions[SensitivityAction.RunSensitivity] as any)({rootState, getters: testGetters, commit});
+        (actions[SensitivityAction.RunSensitivity] as any)({ rootState, getters: testGetters, commit });
 
         expect(commit).toHaveBeenCalledTimes(0);
         expect(mockRunner.batchRun).not.toHaveBeenCalled();

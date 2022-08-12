@@ -1,7 +1,10 @@
 <template>
   <div class="sensitivity-tab">
     <div>
-      <button class="btn btn-primary" id="run-sens-btn" :disabled="!canRunSensitivity" @click="runSensitivity">Run sensitivity</button>
+      <button class="btn btn-primary"
+              id="run-sens-btn"
+              :disabled="!canRunSensitivity"
+              @click="runSensitivity">Run sensitivity</button>
     </div>
     <action-required-message :message="updateMsg"></action-required-message>
     <sensitivity-traces-plot :fade-plot="!!updateMsg" ></sensitivity-traces-plot>

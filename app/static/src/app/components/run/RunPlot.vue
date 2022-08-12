@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent} from "vue";
+import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import userMessages from "../../userMessages";
 import { odinToPlotly, WodinPlotData } from "../../plot";

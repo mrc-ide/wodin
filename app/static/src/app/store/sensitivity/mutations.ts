@@ -1,6 +1,6 @@
 import { MutationTree } from "vuex";
 import { SensitivityParameterSettings, SensitivityState } from "./state";
-import {Batch} from "../../types/responseTypes";
+import { Batch } from "../../types/responseTypes";
 
 export enum SensitivityMutation {
     SetParameterToVary = "SetParameterToVary",

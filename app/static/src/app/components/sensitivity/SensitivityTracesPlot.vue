@@ -10,9 +10,9 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent} from "vue";
+import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
-import {PlotData} from "plotly.js";
+import { PlotData } from "plotly.js";
 import { format } from "d3-format";
 import WodinPlot from "../WodinPlot.vue";
 import userMessages from "../../userMessages";
@@ -25,7 +25,7 @@ export default defineComponent({
         fadePlot: Boolean
     },
     components: {
-      WodinPlot
+        WodinPlot
     },
     setup() {
         const store = useStore();
@@ -40,6 +40,7 @@ export default defineComponent({
         const palette = computed(() => store.state.model.paletteModel);
 
         const updatePlotTraceNameWithParameterValue = (plotTrace: Partial<PlotData>, param: string, value: number) => {
+            // eslint-disable-next-line no-param-reassign
             plotTrace.name = `${plotTrace.name} (${param}=${format(".3f")(value)})`;
         };
 
@@ -58,7 +59,8 @@ export default defineComponent({
                     if (data) {
                         const plotData = odinToPlotly(data, palette.value, plotlyOptions);
                         plotData.forEach((plotTrace) => {
-                            updatePlotTraceNameWithParameterValue(plotTrace, batch.pars.name, batch.pars.values[slnIdx]);
+                            updatePlotTraceNameWithParameterValue(plotTrace, batch.pars.name,
+                                batch.pars.values[slnIdx]);
                         });
 
                         result.push(...plotData);

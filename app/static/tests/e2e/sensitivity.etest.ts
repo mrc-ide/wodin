@@ -58,7 +58,7 @@ test.describe("Sensitivity tests", () => {
             .toBe(" 1.000, 1.158, 1.340, ..., 5.000");
     });
 
-    test("can run sensitivity", async ({page}) => {
+    test("can run sensitivity", async ({ page }) => {
         // see pre-run placeholder
         await expect(await page.innerText(".sensitivity-tab .plot-placeholder")).toBe("Sensitivity has not been run.");
 
@@ -77,7 +77,8 @@ test.describe("Sensitivity tests", () => {
         // change parameter - should see update required message
         await page.fill("#model-params .parameter-input", "5");
         await expect(await page.innerText(".action-required-msg"))
-            .toBe("Model code has been recompiled or options have been updated. Run Sensitivity to view updated graph.");
+            .toBe("Model code has been recompiled or options have been updated. "
+                + "Run Sensitivity to view updated graph.");
 
         // re-run - message should be removed
         await page.click("#run-sens-btn");

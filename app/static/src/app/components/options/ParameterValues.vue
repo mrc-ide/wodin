@@ -34,7 +34,7 @@ import { Dict } from "../../types/utilTypes";
 import { AppType, VisualisationTab } from "../../store/appState/state";
 import { ModelFitMutation } from "../../store/modelFit/mutations";
 import userMessages from "../../userMessages";
-import {SensitivityMutation} from "../../store/sensitivity/mutations";
+import { SensitivityMutation } from "../../store/sensitivity/mutations";
 
 export default defineComponent({
     name: "ParameterValues",

@@ -19,7 +19,7 @@
 import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
 import { ModelMutation } from "../../store/model/mutations";
-import {SensitivityMutation} from "../../store/sensitivity/mutations";
+import { SensitivityMutation } from "../../store/sensitivity/mutations";
 
 export default defineComponent({
     name: "RunOptions",

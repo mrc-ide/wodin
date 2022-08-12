@@ -1,23 +1,23 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via WodinPlot
-import {ModelState, RequiredModelAction} from "../../../../src/app/store/model/state";
+import { shallowMount } from "@vue/test-utils";
+import Vuex from "vuex";
+import { ModelState, RequiredModelAction } from "../../../../src/app/store/model/state";
 /* eslint-disable import/first */
-import {shallowMount} from "@vue/test-utils";
 import SensitivityTab from "../../../../src/app/components/sensitivity/SensitivityTab.vue";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
-import {BasicState} from "../../../../src/app/store/basic/state";
-import Vuex from "vuex";
-import {SensitivityGetter} from "../../../../src/app/store/sensitivity/getters";
+import { BasicState } from "../../../../src/app/store/basic/state";
+import { SensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
 import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/SensitivityTracesPlot.vue";
-import {SensitivityState} from "../../../../src/app/store/sensitivity/state";
-import {SensitivityAction} from "../../../../src/app/store/sensitivity/actions";
-import {mouseKeyModifiers} from "@vue/test-utils/dist/constants/dom-events";
+import { SensitivityState } from "../../../../src/app/store/sensitivity/state";
+import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
 
 jest.mock("plotly.js", () => {});
 
 describe("SensitivityTab", () => {
     const mockRunSensitivity = jest.fn();
 
-    const getWrapper = (modelState: Partial<ModelState> = {}, sensitivityState: Partial<SensitivityState> = {}, batchPars: any = {}) => {
+    const getWrapper = (modelState: Partial<ModelState> = {},
+        sensitivityState: Partial<SensitivityState> = {}, batchPars: any = {}) => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 model: {
@@ -65,17 +65,17 @@ describe("SensitivityTab", () => {
     });
 
     it("disables run button when no odinRunner", () => {
-        const wrapper = getWrapper({odinRunner: null});
+        const wrapper = getWrapper({ odinRunner: null });
         expect(wrapper.find("button").element.disabled).toBe(true);
     });
 
     it("disables run button when no odin model", () => {
-        const wrapper = getWrapper({odin: null});
+        const wrapper = getWrapper({ odin: null });
         expect(wrapper.find("button").element.disabled).toBe(true);
     });
 
     it("disables run button when required action is Compile", () => {
-        const wrapper = getWrapper({requiredAction: RequiredModelAction.Compile});
+        const wrapper = getWrapper({ requiredAction: RequiredModelAction.Compile });
         expect(wrapper.find("button").element.disabled).toBe(true);
     });
 
@@ -86,9 +86,9 @@ describe("SensitivityTab", () => {
 
     it("renders expected update message when required action is Compile", () => {
         const sensitivityState = {
-            batch: {solutions: [{}]}
+            batch: { solutions: [{}] }
         } as any;
-        const wrapper = getWrapper({requiredAction: RequiredModelAction.Compile}, sensitivityState);
+        const wrapper = getWrapper({ requiredAction: RequiredModelAction.Compile }, sensitivityState);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
             .toBe("Model code has been updated. Compile code and Run Sensitivity to view updated graph.");
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);
@@ -96,12 +96,13 @@ describe("SensitivityTab", () => {
 
     it("renders expected update message when sensitivity requires update", () => {
         const sensitivityState = {
-            batch: {solutions: [{}]},
+            batch: { solutions: [{}] },
             sensitivityUpdateRequired: true
         } as any;
         const wrapper = getWrapper({}, sensitivityState);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Model code has been recompiled or options have been updated. Run Sensitivity to view updated graph.");
+            .toBe("Model code has been recompiled or options have been updated. "
+                + "Run Sensitivity to view updated graph.");
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);
     });
 

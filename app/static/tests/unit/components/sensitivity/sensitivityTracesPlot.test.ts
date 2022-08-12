@@ -3,11 +3,10 @@ jest.mock("plotly.js", () => {});
 
 /* eslint-disable import/first */
 import Vuex from "vuex";
+import { shallowMount } from "@vue/test-utils";
 import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
-import {shallowMount} from "@vue/test-utils";
 import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/SensitivityTracesPlot.vue";
-import {BasicState} from "../../../../src/app/store/basic/state";
-
+import { BasicState } from "../../../../src/app/store/basic/state";
 
 const mockSln1 = jest.fn().mockReturnValue({
     names: ["y", "z"],
@@ -38,7 +37,7 @@ const mockCentralSln = jest.fn().mockReturnValue({
 
 const mockPalette = { y: "#0000ff", z: "#ff0000" };
 
-const mockSolutions = [ mockSln1, mockSln2 ];
+const mockSolutions = [mockSln1, mockSln2];
 
 const expectedPlotData = [
     // sln1

@@ -1,4 +1,4 @@
-import {odinToPlotly} from "../../src/app/plot";
+import { odinToPlotly } from "../../src/app/plot";
 
 describe("odinToPlotly", () => {
     const palette = {
