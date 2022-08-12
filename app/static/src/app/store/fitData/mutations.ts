@@ -32,13 +32,16 @@ const updateColumnToFit = (state: FitDataState) => {
 };
 
 const updateLink = (state: FitDataState) => {
-    const modelToFit = state.columnToFit
+    const modelVariableToFit = state.columnToFit
         ? state.linkedVariables[state.columnToFit] : null;
-    if (state.timeVariable && state.columnToFit && modelToFit) {
+    if (state.timeVariable && state.columnToFit && modelVariableToFit) {
         state.link = {
+            // The name of the column representing time in the data
             time: state.timeVariable,
+            // The name of the column representing the observed values in the data
             data: state.columnToFit,
-            model: modelToFit
+            // The name of the variable representing the modelled values in the solution
+            model: modelVariableToFit
         };
     } else {
         state.link = null;
