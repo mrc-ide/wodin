@@ -64,7 +64,12 @@ describe("FitPlot", () => {
                         timeVariable: "t",
                         columnToFit: "v",
                         data: mockFitData,
-                        linkedVariables: { v: "y" }
+                        linkedVariables: { v: "y" },
+                        link: {
+                            time: "t",
+                            data: "v",
+                            model: "y"
+                        }
                     },
                     getters: {
                         [FitDataGetter.dataEnd]: () => 1

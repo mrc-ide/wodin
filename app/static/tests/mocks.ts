@@ -73,6 +73,7 @@ export const mockFitDataState = (state:Partial<FitDataState> = {}): FitDataState
         timeVariable: null,
         linkedVariables: {},
         columnToFit: null,
+        link: null,
         ...state
     };
 };
