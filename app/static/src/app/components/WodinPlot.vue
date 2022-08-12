@@ -1,5 +1,5 @@
 <template>
-  <div class="plot-container" :style="plotStyle">
+  <div class="wodin-plot-container" :style="plotStyle">
     <div class="plot" ref="plot">
     </div>
     <div v-if="!hasPlotData" class="plot-placeholder">

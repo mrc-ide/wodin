@@ -57,4 +57,30 @@ test.describe("Sensitivity tests", () => {
         await expect(await page.innerText("#sensitivity-options .alert-success"))
             .toBe(" 1.000, 1.158, 1.340, ..., 5.000");
     });
+
+    test("can run sensitivity", async ({page}) => {
+        // see pre-run placeholder
+        await expect(await page.innerText(".sensitivity-tab .plot-placeholder")).toBe("Sensitivity has not been run.");
+
+        // run and see all traces
+        page.click("#run-sens-btn");
+        const plotSelector = ".wodin-right .wodin-content div.mt-4 .js-plotly-plot";
+        const linesSelector = `${plotSelector} .scatterlayer .trace .lines path`;
+        expect((await page.locator(`:nth-match(${linesSelector}, 30)`).getAttribute("d"))!.startsWith("M0")).toBe(true);
+
+        // expected legend
+        const legendTextSelector = `${plotSelector} .legendtext`;
+        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("S");
+        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 2)`)).toBe("I");
+        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 3)`)).toBe("R");
+
+        // change parameter - should see update required message
+        await page.fill("#model-params .parameter-input", "5");
+        await expect(await page.innerText(".action-required-msg"))
+            .toBe("Model code has been recompiled or options have been updated. Run Sensitivity to view updated graph.");
+
+        // re-run - message should be removed
+        await page.click("#run-sens-btn");
+        await expect(await page.innerText(".action-required-msg")).toBe("");
+    });
 });
