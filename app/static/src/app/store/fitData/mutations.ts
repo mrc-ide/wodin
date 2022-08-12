@@ -40,10 +40,8 @@ const updateLink = (state: FitDataState) => {
             data: state.columnToFit,
             model: modelToFit
         };
-        console.log(state.link);
     } else {
         state.link = null;
-        console.log("Clearing link");
     }
 };
 
