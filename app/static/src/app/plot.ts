@@ -45,3 +45,17 @@ export function odinToPlotly(s: OdinSeriesSet, palette: Palette, options: Partia
         })
     );
 }
+
+// export function dataToPlotly(data: FitData, link: FitDataLink, start: number, end: number) {
+//     const filteredData = data.filter(
+//         (row: Dict<number>) => row[link.time] >= start && row[link.time] <= end
+//     );
+//     return [{
+//         name: link.data,
+//         x: filteredData.map((row: Dict<number>) => row[link.time]),
+//         y: filteredData.map((row: Dict<number>) => row[link.data]),
+//         mode: "markers",
+//         type: "scatter",
+//         marker: seriesColour(link.model)
+//     }];
+// }

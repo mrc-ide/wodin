@@ -31,6 +31,22 @@ const updateColumnToFit = (state: FitDataState) => {
     }
 };
 
+const updateLink = (state: FitDataState) => {
+    const modelToFit = state.columnToFit ?
+        state.linkedVariables[state.columnToFit] : null;
+    if (state.timeVariable && state.columnToFit && modelToFit) {
+        state.link = {
+            time: state.timeVariable,
+            data: state.columnToFit,
+            model: modelToFit
+        };
+        console.log(state.link);
+    } else {
+        state.link = null;
+        console.log("Clearing link");
+    }
+};
+
 export const mutations: MutationTree<FitDataState> = {
     [FitDataMutation.SetData](state: FitDataState, payload: SetDataPayload) {
         state.data = payload.data;
@@ -54,14 +70,17 @@ export const mutations: MutationTree<FitDataState> = {
     [FitDataMutation.SetLinkedVariables](state: FitDataState, payload: Dict<string | null>) {
         state.linkedVariables = payload;
         updateColumnToFit(state);
+        updateLink(state);
     },
 
     [FitDataMutation.SetLinkedVariable](state: FitDataState, payload: SetLinkedVariablePayload) {
         state.linkedVariables[payload.column] = payload.variable;
         updateColumnToFit(state);
+        updateLink(state);
     },
 
     [FitDataMutation.SetColumnToFit](state: FitDataState, payload: string) {
         state.columnToFit = payload;
+        updateLink(state);
     }
 };
