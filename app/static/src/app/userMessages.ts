@@ -42,6 +42,6 @@ export default {
         compileRequiredForUpdate: "Model code has been updated. Compile code and Run Sensitivity to view updated graph.",
         runRequiredForUpdate: "Model code has been recompiled or options have been updated. Run Sensitivity to view updated graph",
         invalidSettings: "Invalid settings",
-        notRunYet: "Sensitivity has not been run"
+        notRunYet: "Sensitivity has not been run."
     }
 };
