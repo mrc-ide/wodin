@@ -13,7 +13,7 @@ import { nextTick } from "vue";
 import * as plotly from "plotly.js";
 import WodinPlot from "../../../src/app/components/WodinPlot.vue";
 
-describe("RunPlot", () => {
+describe("WodinPlot", () => {
     const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");
     const mockPlotlyReact = jest.spyOn(plotly, "react");
 
@@ -61,13 +61,13 @@ describe("RunPlot", () => {
 
     it("does not render fade style when fadePlot is false", () => {
         const wrapper = getWrapper();
-        const div = wrapper.find("div.plot-container");
+        const div = wrapper.find("div.wodin-plot-container");
         expect(div.attributes("style")).toBe("");
     });
 
     it("renders fade style when fade plot is true", () => {
         const wrapper = getWrapper({ fadePlot: true });
-        const div = wrapper.find("div.plot-container");
+        const div = wrapper.find("div.wodin-plot-container");
         expect(div.attributes("style")).toBe("opacity: 0.5;");
     });
 
@@ -78,7 +78,7 @@ describe("RunPlot", () => {
                 default: "<h3>test slot content</h3>"
             }
         });
-        expect(wrapper.find("div.plot-container").find("h3").text()).toBe("test slot content");
+        expect(wrapper.find("div.wodin-plot-container").find("h3").text()).toBe("test slot content");
     });
 
     it("draws plot and sets event handler when solutions are updated", async () => {
