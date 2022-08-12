@@ -32,8 +32,8 @@ const updateColumnToFit = (state: FitDataState) => {
 };
 
 const updateLink = (state: FitDataState) => {
-    const modelToFit = state.columnToFit ?
-        state.linkedVariables[state.columnToFit] : null;
+    const modelToFit = state.columnToFit
+        ? state.linkedVariables[state.columnToFit] : null;
     if (state.timeVariable && state.columnToFit && modelToFit) {
         state.link = {
             time: state.timeVariable,

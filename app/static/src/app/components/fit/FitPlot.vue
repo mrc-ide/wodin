@@ -16,8 +16,9 @@ import {
 import { useStore } from "vuex";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
-import { Dict } from "../../types/utilTypes";
-import { filterSeriesSet, dataToPlotly, odinToPlotly, WodinPlotData } from "../../plot";
+import {
+    filterSeriesSet, dataToPlotly, odinToPlotly, WodinPlotData
+} from "../../plot";
 import WodinOdePlot from "../WodinOdePlot.vue";
 import WodinPlot from "../WodinPlot.vue";
 
