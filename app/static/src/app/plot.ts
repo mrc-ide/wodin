@@ -1,6 +1,8 @@
 import { PlotData } from "plotly.js";
 import { Palette } from "./palette";
+import type { FitData, FitDataLink } from "./store/fitData/state";
 import { OdinSeriesSet } from "./types/responseTypes";
+import { Dict } from "./types/utilTypes";
 
 export type WodinPlotData = Partial<PlotData>[];
 
@@ -46,16 +48,18 @@ export function odinToPlotly(s: OdinSeriesSet, palette: Palette, options: Partia
     );
 }
 
-// export function dataToPlotly(data: FitData, link: FitDataLink, start: number, end: number) {
-//     const filteredData = data.filter(
-//         (row: Dict<number>) => row[link.time] >= start && row[link.time] <= end
-//     );
-//     return [{
-//         name: link.data,
-//         x: filteredData.map((row: Dict<number>) => row[link.time]),
-//         y: filteredData.map((row: Dict<number>) => row[link.data]),
-//         mode: "markers",
-//         type: "scatter",
-//         marker: seriesColour(link.model)
-//     }];
-// }
+export function dataToPlotly(data: FitData, link: FitDataLink, palette: Palette, start: number, end: number): WodinPlotData {
+    const filteredData = data.filter(
+        (row: Dict<number>) => row[link.time] >= start && row[link.time] <= end
+    );
+    return [{
+        name: link.data,
+        x: filteredData.map((row: Dict<number>) => row[link.time]),
+        y: filteredData.map((row: Dict<number>) => row[link.data]),
+        mode: "markers",
+        type: "scatter",
+        marker: {
+            color: palette[link.model]
+        }
+    }];
+}
