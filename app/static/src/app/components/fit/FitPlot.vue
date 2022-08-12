@@ -61,7 +61,7 @@ export default defineComponent({
         };
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
-            const result = solution.value(start, end, points);
+            const result = solution.value && solution.value(start, end, points);
             if (!result) {
                 return [];
             }
