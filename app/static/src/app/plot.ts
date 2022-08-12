@@ -34,7 +34,7 @@ export function odinToPlotly(s: OdinSeriesSet, palette: Palette, options: Partia
     return s.y.map(
         (el: number[], i: number): Partial<PlotData> => ({
             line: {
-                color: palette[s.names[i]] ,
+                color: palette[s.names[i]],
                 width: plotlyOptions.lineWidth
             },
             name: s.names[i],
