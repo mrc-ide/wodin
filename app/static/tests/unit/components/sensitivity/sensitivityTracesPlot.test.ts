@@ -1,6 +1,4 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via WodinPlot
-import {BasicState} from "../../../../src/app/store/basic/state";
-
 jest.mock("plotly.js", () => {});
 
 /* eslint-disable import/first */
@@ -8,6 +6,8 @@ import Vuex from "vuex";
 import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import {shallowMount} from "@vue/test-utils";
 import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/SensitivityTracesPlot.vue";
+import {BasicState} from "../../../../src/app/store/basic/state";
+
 
 const mockSln1 = jest.fn().mockReturnValue({
     names: ["y", "z"],

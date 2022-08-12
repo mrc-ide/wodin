@@ -9,10 +9,12 @@ import { ModelMutation, mutations } from "../../../../src/app/store/model/mutati
 import { AppType, VisualisationTab } from "../../../../src/app/store/appState/state";
 import Mock = jest.Mock;
 import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
+import {SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
 
 describe("ParameterValues", () => {
     const getStore = (fitTabIsOpen = false,
         mockUpdateParameterValues: Mock<any, any> | null = null,
+        mockSetSensitivityUpdateRequired = jest.fn(),
         paramsToVary: string[] = [],
         mockSetParamsToVary = jest.fn()) => {
         // Use mock or real mutations
@@ -37,6 +39,12 @@ describe("ParameterValues", () => {
                     state: mockModelFitState({ paramsToVary }),
                     mutations: {
                         [ModelFitMutation.SetParamsToVary]: mockSetParamsToVary
+                    }
+                },
+                sensitivity: {
+                    namespaced: true,
+                    mutations: {
+                        [SensitivityMutation.SetUpdateRequired]: mockSetSensitivityUpdateRequired
                     }
                 }
             }
@@ -72,7 +80,7 @@ describe("ParameterValues", () => {
     });
 
     it("renders as expected when fit tab is open", () => {
-        const wrapper = getWrapper(getStore(true, null, ["param1"]));
+        const wrapper = getWrapper(getStore(true, null, jest.fn(), ["param1"]));
         const rows = wrapper.findAll("div.row");
 
         const p1 = rows.at(0)!;
@@ -92,7 +100,7 @@ describe("ParameterValues", () => {
     });
 
     it("shows select param to vary message if fit tab is open and none are selected", () => {
-        const wrapper = getWrapper(getStore(true, null, []));
+        const wrapper = getWrapper(getStore(true, null, jest.fn(), []));
         expect(wrapper.find("#select-param-msg").text()).toBe(
             "Please select at least one parameter to vary during model fit."
         );
@@ -100,11 +108,14 @@ describe("ParameterValues", () => {
 
     it("commits parameter value change", async () => {
         const mockUpdateParameterValues = jest.fn();
-        const wrapper = getWrapper(getStore(false, mockUpdateParameterValues));
+        const mockSetSensitivityUpdateRequired = jest.fn();
+        const wrapper = getWrapper(getStore(false, mockUpdateParameterValues, mockSetSensitivityUpdateRequired));
         const input2 = wrapper.findAllComponents(NumericInput).at(1)!;
         await input2.vm.$emit("update", 3.3);
         expect(mockUpdateParameterValues).toHaveBeenCalledTimes(1);
         expect(mockUpdateParameterValues.mock.calls[0][1]).toStrictEqual({ param2: 3.3 });
+        expect(mockSetSensitivityUpdateRequired).toHaveBeenCalledTimes(1);
+        expect(mockSetSensitivityUpdateRequired.mock.calls[0][1]).toBe(true);
     });
 
     it("refreshes cleared input when odinSolution changes", async () => {
@@ -124,7 +135,7 @@ describe("ParameterValues", () => {
 
     it("updates params to vary when checkbox is checked", async () => {
         const mockSetParamsToVary = jest.fn();
-        const store = getStore(true, null, ["param1"], mockSetParamsToVary);
+        const store = getStore(true, null, jest.fn(), ["param1"], mockSetParamsToVary);
         const wrapper = getWrapper(store);
         const row2 = wrapper.findAll("div.row").at(1)!;
         await row2.find("input.vary-param-check").setValue(true);
@@ -134,7 +145,7 @@ describe("ParameterValues", () => {
 
     it("updates params to vary when checkbox is unchecked", async () => {
         const mockSetParamsToVary = jest.fn();
-        const store = getStore(true, null, ["param1"], mockSetParamsToVary);
+        const store = getStore(true, null, jest.fn(), ["param1"], mockSetParamsToVary);
         const wrapper = getWrapper(store);
         const row1 = wrapper.findAll("div.row").at(0)!;
         await row1.find("input.vary-param-check").setValue(false);
