@@ -1,6 +1,6 @@
 <template>
   <div class="container mb-4">
-    <div class="row mb-2">
+    <div class="row mb-2" id="sensitivity-plot-type" >
       <div class="col-5">
         <label class="col-form-label">Type of plot</label>
       </div>
@@ -13,7 +13,7 @@
         </select>
       </div>
     </div>
-    <div v-if="extremePlotType" class="row mb-2">
+    <div v-if="extremePlotType" id="sensitivity-plot-extreme"  class="row mb-2">
       <div class="col-5">
         <label class="col-form-label">Min/Max</label>
       </div>
@@ -23,7 +23,7 @@
         </select>
       </div>
     </div>
-    <div v-if="timePlotType" class="row mb-2">
+    <div v-if="timePlotType" id="sensitivity-plot-time" class="row mb-2">
       <div class="col-5">
         <label class="col-form-label">Time to use</label>
       </div>
