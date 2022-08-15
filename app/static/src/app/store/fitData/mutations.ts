@@ -34,6 +34,9 @@ const updateColumnToFit = (state: FitDataState) => {
 const updateLink = (state: FitDataState) => {
     const modelVariableToFit = state.columnToFit
         ? state.linkedVariables[state.columnToFit] : null;
+    // The state.timeVariable not null constraint is automatically
+    // satisfied if state.columnToFit is, but there's no way that the
+    // type system can know that.
     if (state.timeVariable && state.columnToFit && modelVariableToFit) {
         state.link = {
             // The name of the column representing time in the data
