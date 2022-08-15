@@ -20,9 +20,28 @@ export interface SensitivityParameterSettings {
     numberOfRuns: number
 }
 
+export enum SensitivityPlotType {
+    TraceOverTime = "TraceOverTime",
+    ValueAtTime = "ValueAtTime",
+    ValueAtExtreme = "ValueAtExtreme",
+    TimeAtExtreme = "TimeAtExtreme"
+}
+
+export enum SensitivityPlotExtreme {
+    Min = "Min",
+    Max = "Max"
+}
+
+export interface SensitivityPlotSettings {
+    plotType: SensitivityPlotType,
+    extreme: SensitivityPlotExtreme,
+    time: null | number
+}
+
 export interface SensitivityState {
     paramSettings: SensitivityParameterSettings,
     batch: Batch | null,
     // Whether sensitivity needs to be re-run because of change to settings or model
     sensitivityUpdateRequired: boolean
+    plotSettings: SensitivityPlotSettings
 }

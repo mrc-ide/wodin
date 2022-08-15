@@ -18,6 +18,8 @@
         <sensitivity-param-values :batch-pars="batchPars"></sensitivity-param-values>
         <button class="btn btn-primary mb-4 float-end" @click="toggleEdit(true)">Edit</button>
       </div>
+      <hr/>
+      <sensitivity-plot-options></sensitivity-plot-options>
     </template>
     <div v-else id="sensitivity-options-msg">
       {{compileModelMessage}}
@@ -34,11 +36,13 @@ import VerticalCollapse from "../VerticalCollapse.vue";
 import EditParamSettings from "./EditParamSettings.vue";
 import { SensitivityGetter } from "../../store/sensitivity/getters";
 import SensitivityParamValues from "./SensitivityParamValues.vue";
+import SensitivityPlotOptions from "./SensitivityPlotOptions.vue";
 
 export default defineComponent({
     name: "SensitivityOptions",
     components: {
         SensitivityParamValues,
+        SensitivityPlotOptions,
         VerticalCollapse,
         EditParamSettings
     },
