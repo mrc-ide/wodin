@@ -22,4 +22,28 @@ describe("FitDataGetters", () => {
         expect((getters[FitDataGetter.dataStart] as any)(state)).toBe(0);
         expect((getters[FitDataGetter.dataEnd] as any)(state)).toBe(2);
     });
+
+    it("gets link when possible", () => {
+        const state = mockFitDataState({
+            timeVariable: "t",
+            columnToFit: "y",
+            linkedVariables: { y: "a", z: "b" }
+        });
+
+        expect((getters[FitDataGetter.link] as any)(state)).toEqual({
+            time: "t",
+            data: "y",
+            model: "a"
+        });
+    });
+
+    it("does not set link when no links are possible", () => {
+        const state = mockFitDataState({ timeVariable: "t", columnToFit: "y" });
+        expect((getters[FitDataGetter.link] as any)(state)).toBe(null);
+    });
+
+    it("does not set link when uninitialised", () => {
+        const state = mockFitDataState();
+        expect((getters[FitDataGetter.link] as any)(state)).toBe(null);
+    });
 });
