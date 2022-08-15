@@ -5,7 +5,8 @@ import { FitState } from "../fit/state";
 export enum FitDataGetter {
     nonTimeColumns ="nonTimeColumns",
     dataStart = "dataStart",
-    dataEnd = "dataEnd"
+    dataEnd = "dataEnd",
+    link = "link"
 }
 
 export interface FitDataGetters {
@@ -33,10 +34,10 @@ export const getters: FitDataGetters & GetterTree<FitDataState, FitState> = {
             result = state.data[state.data.length - 1][state.timeVariable]!;
         }
         return result;
-    }
+    },
 
-    [FitData.Getter.link]: (state: FitDataState): null | FitDataLink => {
-        let result = {};
+    [FitDataGetter.link]: (state: FitDataState): null | FitDataLink => {
+        let result = null;
         const modelVariableToFit = state.columnToFit
             ? state.linkedVariables[state.columnToFit] : null;
         // The state.timeVariable not null constraint is automatically
