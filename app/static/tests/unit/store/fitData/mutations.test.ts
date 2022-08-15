@@ -35,106 +35,70 @@ describe("FitData mutations", () => {
     it("sets linked variables", () => {
         const state = mockFitDataState();
         const linkedVars = { a: "S", b: "I" };
-        mutations.SetTimeVariable(state, "t");
         mutations.SetLinkedVariables(state, linkedVars);
         expect(state.linkedVariables).toBe(linkedVars);
         // should initialise column to fit
         expect(state.columnToFit).toBe("a");
-        expect(state.link).toEqual({
-            time: "t",
-            data: "a",
-            model: "S"
-        });
     });
 
     it("sets linked variable", () => {
         const state = mockFitDataState();
-        const expectedLink = {
-            time: "t",
-            data: "a",
-            model: "S"
-        };
-        mutations.SetTimeVariable(state, "t");
         mutations.SetLinkedVariable(state, { column: "a", variable: "S" });
         expect(state.linkedVariables).toStrictEqual({ a: "S" });
-        // should initialise column to fit and link
+        // should initialise column to fit
         expect(state.columnToFit).toBe("a");
-        expect(state.link).toEqual(expectedLink);
 
         mutations.SetLinkedVariable(state, { column: "b", variable: null });
         expect(state.linkedVariables).toStrictEqual({ a: "S", b: null });
-        // should retain column to fit and link
+        // should retain column to fit
         expect(state.columnToFit).toBe("a");
-        expect(state.link).toEqual(expectedLink);
     });
 
     it("set linked variable initialises new column to fit when previous is not available", () => {
         const state = mockFitDataState({
-            timeVariable: "t",
             linkedVariables: { a: "S", b: "I" },
             columnToFit: "a"
         });
         mutations.SetLinkedVariable(state, { column: "a", variable: null });
         expect(state.columnToFit).toBe("b");
-        expect(state.link).toEqual({
-            time: "t",
-            data: "b",
-            model: "I"
-        });
     });
 
     it("set linked variable clears column to fit if none available", () => {
         const state = mockFitDataState({
-            timeVariable: "t",
             linkedVariables: { a: "S", b: null },
             columnToFit: "a"
         });
         mutations.SetLinkedVariable(state, { column: "a", variable: null });
         expect(state.columnToFit).toBe(null);
-        expect(state.link).toBe(null);
     });
 
     it("set linked variables retains column to fit when still available", () => {
         const state = mockFitDataState({
-            timeVariable: "t",
             linkedVariables: { a: "S", b: "I" },
             columnToFit: "b"
         });
         mutations.SetLinkedVariables(state, { a: "I", b: "R" });
         expect(state.columnToFit).toBe("b");
-        expect(state.link).toEqual({
-            time: "t",
-            data: "b",
-            model: "R"
-        });
     });
 
     it("set linked variables initialises new column to fit when previous is not available", () => {
         const state = mockFitDataState({
-            timeVariable: "t",
             linkedVariables: { a: "S", b: null },
             columnToFit: "a"
         });
         mutations.SetLinkedVariables(state, { a: null, c: "I", d: "R" });
 
         expect(state.columnToFit).toBe("c");
-        expect(state.link).toEqual({
-            time: "t",
-            data: "c",
-            model: "I"
-        });
     });
 
     it("set linked variables clears column to fit if none available", () => {
         const state = mockFitDataState({
-            timeVariable: "t",
             linkedVariables: { a: "S", b: null },
             columnToFit: "a"
         });
         mutations.SetLinkedVariables(state, { a: null, b: null });
 
         expect(state.columnToFit).toBe(null);
-        expect(state.link).toBe(null);
     });
 
     it("sets column to fit", () => {
