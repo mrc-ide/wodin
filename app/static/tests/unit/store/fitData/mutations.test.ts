@@ -103,7 +103,7 @@ describe("FitData mutations", () => {
         mutations.SetLinkedVariables(state, { a: "I", b: "R" });
         expect(state.columnToFit).toBe("b");
         expect(state.link).toEqual({
-            "time": "t",
+            time: "t",
             data: "b",
             model: "R"
         });
