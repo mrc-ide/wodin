@@ -1,5 +1,5 @@
 import { GetterTree, Getter } from "vuex";
-import { FitDataState } from "./state";
+import { FitDataLink, FitDataState } from "./state";
 import { FitState } from "../fit/state";
 
 export enum FitDataGetter {
@@ -17,7 +17,7 @@ export const getters: FitDataGetters & GetterTree<FitDataState, FitState> = {
         return state.columns?.filter((column) => column !== state.timeVariable);
     },
 
-    [FitDataGetter.dataStart]: (state: FitDataState) => {
+    [FitDataGetter.dataStart]: (state: FitDataState): null | number => {
         let result = 0;
         if (state.timeVariable && state.data?.length) {
             // We should have checked that data is in order for time variable, so should just be able to use first row
@@ -26,11 +26,31 @@ export const getters: FitDataGetters & GetterTree<FitDataState, FitState> = {
         return result;
     },
 
-    [FitDataGetter.dataEnd]: (state: FitDataState) => {
+    [FitDataGetter.dataEnd]: (state: FitDataState): null | number => {
         let result = 0;
         if (state.timeVariable && state.data?.length) {
             // We should have checked that data is in order for time variable, so should just be able to use last row
             result = state.data[state.data.length - 1][state.timeVariable]!;
+        }
+        return result;
+    }
+
+    [FitData.Getter.link]: (state: FitDataState): null | FitDataLink => {
+        let result = {};
+        const modelVariableToFit = state.columnToFit
+            ? state.linkedVariables[state.columnToFit] : null;
+        // The state.timeVariable not null constraint is automatically
+        // satisfied if state.columnToFit is, but there's no way that the
+        // type system can know that.
+        if (state.timeVariable && state.columnToFit && modelVariableToFit) {
+            result = {
+                // The name of the column representing time in the data
+                time: state.timeVariable,
+                // The name of the column representing the observed values in the data
+                data: state.columnToFit,
+                // The name of the variable representing the modelled values in the solution
+                model: modelVariableToFit
+            };
         }
         return result;
     }

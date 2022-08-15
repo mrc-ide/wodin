@@ -37,16 +37,18 @@ export default defineComponent({
 
         const endTime = computed(() => store.getters[`fitData/${FitDataGetter.dataEnd}`]);
 
+        const link = computed(() => store.getters[`fitData/${FitDataGetter.link}`]);
+
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
-            const { data, link } = store.state.fitData;
+            const { data } = store.state.fitData;
             const result = solution.value && solution.value(start, end, points);
-            if (!data || !link || !result) {
+            if (!data || !link.value || !result) {
                 return [];
             }
             const palette = store.state.model.paletteModel;
             return [
-                ...odinToPlotly(filterSeriesSet(result, link.model), palette),
-                ...dataToPlotly(data, link, palette, start, end)
+                ...odinToPlotly(filterSeriesSet(result, link.value.model), palette),
+                ...dataToPlotly(data, link.value, palette, start, end)
             ];
         };
 

@@ -31,26 +31,6 @@ const updateColumnToFit = (state: FitDataState) => {
     }
 };
 
-const updateLink = (state: FitDataState) => {
-    const modelVariableToFit = state.columnToFit
-        ? state.linkedVariables[state.columnToFit] : null;
-    // The state.timeVariable not null constraint is automatically
-    // satisfied if state.columnToFit is, but there's no way that the
-    // type system can know that.
-    if (state.timeVariable && state.columnToFit && modelVariableToFit) {
-        state.link = {
-            // The name of the column representing time in the data
-            time: state.timeVariable,
-            // The name of the column representing the observed values in the data
-            data: state.columnToFit,
-            // The name of the variable representing the modelled values in the solution
-            model: modelVariableToFit
-        };
-    } else {
-        state.link = null;
-    }
-};
-
 export const mutations: MutationTree<FitDataState> = {
     [FitDataMutation.SetData](state: FitDataState, payload: SetDataPayload) {
         state.data = payload.data;
@@ -74,17 +54,14 @@ export const mutations: MutationTree<FitDataState> = {
     [FitDataMutation.SetLinkedVariables](state: FitDataState, payload: Dict<string | null>) {
         state.linkedVariables = payload;
         updateColumnToFit(state);
-        updateLink(state);
     },
 
     [FitDataMutation.SetLinkedVariable](state: FitDataState, payload: SetLinkedVariablePayload) {
         state.linkedVariables[payload.column] = payload.variable;
         updateColumnToFit(state);
-        updateLink(state);
     },
 
     [FitDataMutation.SetColumnToFit](state: FitDataState, payload: string) {
         state.columnToFit = payload;
-        updateLink(state);
     }
 };
