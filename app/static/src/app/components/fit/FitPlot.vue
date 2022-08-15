@@ -1,12 +1,12 @@
 <template>
-    <wodin-plot
+    <wodin-ode-plot
         :fade-plot="fadePlot"
         :placeholder-message="placeholderMessage"
         :end-time="endTime"
         :plot-data="allPlotData"
         :solutions="solution ? [solution] : []">
         <slot></slot>
-    </wodin-plot>
+    </wodin-ode-plot>
 </template>
 
 <script lang="ts">
@@ -18,11 +18,11 @@ import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
 import { Dict } from "../../types/utilTypes";
 import { filterSeriesSet, odinToPlotly, WodinPlotData } from "../../plot";
-import WodinPlot from "../WodinPlot.vue";
+import WodinOdePlot from "../WodinOdePlot.vue";
 
 export default defineComponent({
     name: "FitPlot",
-    components: { WodinPlot },
+    components: { WodinOdePlot },
     props: {
         fadePlot: Boolean
     },

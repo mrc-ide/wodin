@@ -6,7 +6,7 @@ import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { FitState } from "../../../../src/app/store/fit/state";
 import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
-import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
+import WodinOdePlot from "../../../../src/app/components/WodinOdePlot.vue";
 import FitPlot from "../../../../src/app/components/fit/FitPlot.vue";
 
 describe("FitPlot", () => {
@@ -86,7 +86,7 @@ describe("FitPlot", () => {
 
     it("renders as expected when modelFit has solution", () => {
         const wrapper = getWrapper();
-        const wodinPlot = wrapper.findComponent(WodinPlot);
+        const wodinPlot = wrapper.findComponent(WodinOdePlot);
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been fitted.");
         expect(wodinPlot.props("endTime")).toBe(1);
@@ -99,7 +99,7 @@ describe("FitPlot", () => {
 
     it("renders as expected whn modelFit does not have solution", () => {
         const wrapper = getWrapper(false);
-        const wodinPlot = wrapper.findComponent(WodinPlot);
+        const wodinPlot = wrapper.findComponent(WodinOdePlot);
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been fitted.");
         expect(wodinPlot.props("endTime")).toBe(1);
@@ -112,6 +112,6 @@ describe("FitPlot", () => {
 
     it("fades plot when fadePlot prop is true", () => {
         const wrapper = getWrapper(true, false);
-        expect(wrapper.findComponent(WodinPlot).props("fadePlot")).toBe(false);
+        expect(wrapper.findComponent(WodinOdePlot).props("fadePlot")).toBe(false);
     });
 });

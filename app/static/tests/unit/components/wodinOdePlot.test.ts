@@ -11,9 +11,9 @@ jest.mock("plotly.js", () => ({
 import { shallowMount, VueWrapper } from "@vue/test-utils";
 import { nextTick } from "vue";
 import * as plotly from "plotly.js";
-import WodinPlot from "../../../src/app/components/WodinPlot.vue";
+import WodinOdePlot from "../../../src/app/components/WodinOdePlot.vue";
 
-describe("WodinPlot", () => {
+describe("WodinOdePlot", () => {
     const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");
     const mockPlotlyReact = jest.spyOn(plotly, "react");
 
@@ -36,7 +36,7 @@ describe("WodinPlot", () => {
     };
 
     const getWrapper = (props = {}) => {
-        return shallowMount(WodinPlot, {
+        return shallowMount(WodinOdePlot, {
             props: { ...defaultProps, ...props }
         });
     };
@@ -72,7 +72,7 @@ describe("WodinPlot", () => {
     });
 
     it("renders slot content", () => {
-        const wrapper = shallowMount(WodinPlot, {
+        const wrapper = shallowMount(WodinOdePlot, {
             props: defaultProps,
             slots: {
                 default: "<h3>test slot content</h3>"

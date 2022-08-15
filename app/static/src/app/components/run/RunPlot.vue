@@ -1,12 +1,12 @@
 <template>
-  <wodin-plot
+  <wodin-ode-plot
       :fade-plot="fadePlot"
       :placeholder-message="placeholderMessage"
       :end-time="endTime"
       :plot-data="allPlotData"
       :solutions="solution ? [solution] : []">
     <slot></slot>
-  </wodin-plot>
+  </wodin-ode-plot>
 </template>
 
 <script lang="ts">
@@ -14,7 +14,7 @@ import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import userMessages from "../../userMessages";
 import { odinToPlotly, WodinPlotData } from "../../plot";
-import WodinPlot from "../WodinPlot.vue";
+import WodinOdePlot from "../WodinOdePlot.vue";
 
 export default defineComponent({
     name: "RunPlot",
@@ -22,7 +22,7 @@ export default defineComponent({
         fadePlot: Boolean
     },
     components: {
-        WodinPlot
+        WodinOdePlot
     },
     setup() {
         const store = useStore();

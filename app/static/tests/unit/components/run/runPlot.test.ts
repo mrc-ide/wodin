@@ -5,7 +5,7 @@ jest.mock("plotly.js", () => {});
 import { shallowMount, VueWrapper } from "@vue/test-utils";
 import Vuex from "vuex";
 import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
-import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
+import WodinOdePlot from "../../../../src/app/components/WodinOdePlot.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 
 describe("RunPlot", () => {
@@ -43,7 +43,7 @@ describe("RunPlot", () => {
                 plugins: [store]
             }
         });
-        const wodinPlot = wrapper.findComponent(WodinPlot);
+        const wodinPlot = wrapper.findComponent(WodinOdePlot);
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
@@ -98,7 +98,7 @@ describe("RunPlot", () => {
                 plugins: [store]
             }
         });
-        const wodinPlot = wrapper.findComponent(WodinPlot);
+        const wodinPlot = wrapper.findComponent(WodinOdePlot);
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
@@ -125,7 +125,7 @@ describe("RunPlot", () => {
                 plugins: [store]
             }
         });
-        const wodinPlot = wrapper.findComponent(WodinPlot);
+        const wodinPlot = wrapper.findComponent(WodinOdePlot);
         expect(wodinPlot.props("fadePlot")).toBe(true);
     });
 });

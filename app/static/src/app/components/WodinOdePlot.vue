@@ -21,7 +21,7 @@ import { WodinPlotData } from "../plot";
 import { OdinSolution } from "../types/responseTypes";
 
 export default defineComponent({
-    name: "WodinPlot",
+    name: "WodinOdePlot",
     props: {
         fadePlot: Boolean,
         placeholderMessage: String,
