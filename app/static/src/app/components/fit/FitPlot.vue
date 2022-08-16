@@ -20,7 +20,6 @@ import {
     filterSeriesSet, dataToPlotly, odinToPlotly, WodinPlotData
 } from "../../plot";
 import WodinOdePlot from "../WodinOdePlot.vue";
-import WodinPlot from "../WodinPlot.vue";
 
 export default defineComponent({
     name: "FitPlot",
