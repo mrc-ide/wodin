@@ -21,6 +21,7 @@ import {
 } from "../../plot";
 import { SensitivityPlotType } from "../../store/sensitivity/state";
 import userMessages from "../../userMessages";
+import { SensitivityMutation } from "../../store/sensitivity/mutations";
 
 export default defineComponent({
     name: "SensitivitySummaryPlot",
@@ -29,6 +30,7 @@ export default defineComponent({
     },
     setup(props) {
         const store = useStore();
+        const namespace = "sensitivity";
         const plotStyle = computed(() => (props.fadePlot ? fadePlotStyle : ""));
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
         const placeholderMessage = userMessages.sensitivity.notRunYet;
@@ -36,12 +38,26 @@ export default defineComponent({
         const batch = computed(() => store.state.sensitivity.batch);
         const plotSettings = computed(() => store.state.sensitivity.plotSettings);
         const palette = computed(() => store.state.model.paletteModel);
-        const plotData = computed(() => {
 
+        const verifyValidEndTime = () => {
+            // update plot settings' end time to be valid before we use it
+            let endTime = plotSettings.value.time;
+            const modelEndTime = store.state.model.endTime;
+            if (endTime === null) {
+                endTime = modelEndTime;
+            } else {
+                endTime = Math.max(0, Math.min(modelEndTime, endTime));
+            }
+            if (endTime !== plotSettings.value.time) {
+                store.commit(`${namespace}/${SensitivityMutation.SetPlotTime}`, endTime);
+            }
+        };
+
+        const plotData = computed(() => {
             if (batch.value) {
             // TODO: implement other summary plot types
                 if (plotSettings.value.plotType === SensitivityPlotType.ValueAtTime) {
-                    // TODO: make sure time is valid for model
+                    verifyValidEndTime();
                     const data = batch.value.valueAtTime(plotSettings.value.time);
                     return [...odinToPlotly(data, palette.value)];
                 }
