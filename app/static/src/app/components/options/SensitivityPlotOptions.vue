@@ -62,9 +62,8 @@ export default defineComponent({
         const time = computed({
             get: () => settings.value.time,
             set: (newVal) => {
-                // Don't allow time to exceed model end time, or be less than 0
-                const newTime = Math.max(0, Math.min(newVal, modelEndTime.value));
-                store.commit(`${namespace}/${SensitivityMutation.SetPlotTime}`, newTime);
+                // we let the user set any numeric value here, but will clip to 0 to endTime range when get data
+                store.commit(`${namespace}/${SensitivityMutation.SetPlotTime}`, newVal);
             }
         });
 
