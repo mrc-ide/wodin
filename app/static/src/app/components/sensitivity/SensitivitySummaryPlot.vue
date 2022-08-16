@@ -16,8 +16,10 @@ import {
 } from "vue";
 import { newPlot, Plots } from "plotly.js";
 import { useStore } from "vuex";
-import {fadePlotStyle, margin, config} from "../../plot";
-import {SensitivityPlotType} from "../../store/sensitivity/state";
+import {
+    fadePlotStyle, margin, config, odinToPlotly
+} from "../../plot";
+import { SensitivityPlotType } from "../../store/sensitivity/state";
 import userMessages from "../../userMessages";
 
 export default defineComponent({
@@ -33,16 +35,17 @@ export default defineComponent({
 
         const batch = computed(() => store.state.sensitivity.batch);
         const plotSettings = computed(() => store.state.sensitivity.plotSettings);
+        const palette = computed(() => store.state.model.paletteModel);
         const plotData = computed(() => {
-          if (batch.value) {
+            if (batch.value) {
             // TODO: implement other summary plot types
-            if (plotSettings.value.plotType === SensitivityPlotType.ValueAtTime) {
-              // TODO: check - this should update automatically when time in settings changes
-              // TODO: make sure time is valid for model
-              return [batch.value.valueAtTime(plotSettings.value.time)];
+                if (plotSettings.value.plotType === SensitivityPlotType.ValueAtTime) {
+                    // TODO: make sure time is valid for model
+                    const data = batch.value.valueAtTime(plotSettings.value.time);
+                    return [...odinToPlotly(data, palette.value)];
+                }
             }
-          }
-          return [];
+            return [];
         });
         const hasPlotData = computed(() => !!(plotData.value?.length));
 
