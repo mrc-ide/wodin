@@ -58,6 +58,30 @@ test.describe("Sensitivity tests", () => {
             .toBe(" 1.000, 1.158, 1.340, ..., 5.000");
     });
 
+    test("can edit sensitivity plot settings", async ({page}) => {
+        // Default settings are visible
+        await expect(await page.innerText("#sensitivity-plot-type label")).toBe("Type of plot");
+        await expect(await page.inputValue("#sensitivity-plot-type select")).toBe("TraceOverTime");
+
+        // Can change to extreme plot type
+        await page.locator("#sensitivity-plot-type select").selectOption("ValueAtExtreme");
+        await expect(await page.innerText("#sensitivity-plot-extreme label")).toBe("Min/Max");
+        await expect(await page.inputValue("#sensitivity-plot-extreme select")).toBe("Max");
+
+        // Can change to value at time plot type
+        await page.locator("#sensitivity-plot-type select").selectOption("ValueAtTime");
+        await expect(await page.innerText("#sensitivity-plot-time label")).toBe("Time to use");
+        await expect(await page.inputValue("#sensitivity-plot-time input")).toBe("100");
+        await page.fill("#sensitivity-plot-time input", "50");
+
+        // Changes are persisted between tabs
+        await page.click(":nth-match(.wodin-left .nav-tabs a, 1)");
+        await expect(page.locator(".code-tab")).toBeVisible();
+        await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
+        await expect(await page.inputValue("#sensitivity-plot-type select")).toBe("ValueAtTime");
+        await expect(await page.inputValue("#sensitivity-plot-time input")).toBe("50");
+    });
+
     test("can run sensitivity", async ({ page }) => {
         // see pre-run placeholder
         await expect(await page.innerText(".sensitivity-tab .plot-placeholder")).toBe("Sensitivity has not been run.");
