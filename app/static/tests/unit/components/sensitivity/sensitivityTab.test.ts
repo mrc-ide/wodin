@@ -1,8 +1,8 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via WodinPlot
+/* eslint-disable import/first */
 import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
 import { ModelState, RequiredModelAction } from "../../../../src/app/store/model/state";
-/* eslint-disable import/first */
 import SensitivityTab from "../../../../src/app/components/sensitivity/SensitivityTab.vue";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";

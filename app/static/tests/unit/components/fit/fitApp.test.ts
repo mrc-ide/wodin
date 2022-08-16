@@ -7,7 +7,7 @@ import FitApp from "../../../../src/app/components/fit/FitApp.vue";
 import { FitState } from "../../../../src/app/store/fit/state";
 import { AppStateAction } from "../../../../src/app/store/appState/actions";
 import {
-    mockFitDataState, mockFitState, mockModelFitState, mockModelState
+    mockFitDataState, mockFitState, mockModelFitState, mockModelState, mockSensitivityState
 } from "../../../mocks";
 import WodinApp from "../../../../src/app/components/WodinApp.vue";
 import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
@@ -48,6 +48,10 @@ describe("FitApp", () => {
                 modelFit: {
                     namespaced: true,
                     state: mockModelFitState()
+                },
+                sensitivity: {
+                    namespaced: true,
+                    state: mockSensitivityState()
                 },
                 errors: {
                     namespaced: true,
