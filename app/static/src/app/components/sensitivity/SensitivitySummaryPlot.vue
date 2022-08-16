@@ -37,6 +37,7 @@ export default defineComponent({
         const plotSettings = computed(() => store.state.sensitivity.plotSettings);
         const palette = computed(() => store.state.model.paletteModel);
         const plotData = computed(() => {
+
             if (batch.value) {
             // TODO: implement other summary plot types
                 if (plotSettings.value.plotType === SensitivityPlotType.ValueAtTime) {
