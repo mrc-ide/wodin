@@ -95,7 +95,7 @@ describe("BasicApp", () => {
 
         // Change to Sensitivity tab
         await rightTabs.findAll("li a").at(1)!.trigger("click");
-        expect(rightTabs.find("div.mt-4").text()).toBe("Coming soon: Sensitivity plot");
+        expect(rightTabs.find("div.mt-4 button").text()).toBe("Run sensitivity");
     });
 
     it("commits change new right tab selected", async () => {

@@ -1,3 +1,5 @@
+import { Batch } from "../../types/responseTypes";
+
 export enum SensitivityScaleType {
     Arithmetic = "Arithmetic",
     Logarithmic = "Logarithmic"
@@ -19,5 +21,8 @@ export interface SensitivityParameterSettings {
 }
 
 export interface SensitivityState {
-    paramSettings: SensitivityParameterSettings
+    paramSettings: SensitivityParameterSettings,
+    batch: Batch | null,
+    // Whether sensitivity needs to be re-run because of change to settings or model
+    sensitivityUpdateRequired: boolean
 }

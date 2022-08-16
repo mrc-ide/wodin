@@ -47,7 +47,7 @@ export default defineComponent({
         const settings = computed(() => store.state.sensitivity.paramSettings);
 
         const showOptions = computed(() => !!settings.value.parameterToVary);
-        const compileModelMessage = userMessages.sensitivity.compileRequired;
+        const compileModelMessage = userMessages.sensitivity.compileRequiredForOptions;
         const editOpen = ref(false);
 
         const toggleEdit = (value: boolean) => {

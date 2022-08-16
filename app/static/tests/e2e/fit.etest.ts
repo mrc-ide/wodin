@@ -166,7 +166,7 @@ const startModelFit = async (page: Page, data: string = realisticFitData) => {
 };
 
 const waitForModelFitCompletion = async (page: Page) => {
-    await expect(await page.getAttribute(".fit-plot-container .vue-feather", "data-type")).toBe("check");
+    await expect(await page.getAttribute(".wodin-plot-container .vue-feather", "data-type")).toBe("check");
 };
 
 const runFit = async (page: Page) => {
@@ -223,16 +223,15 @@ test.describe("Wodin App model fit tests", () => {
     test("can change to Sensitivity tab and back", async ({ page }) => {
         await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
         await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Sensitivity");
-        await expect(await page.innerText(".wodin-right .wodin-content div.mt-4"))
-            .toBe("Coming soon: Sensitivity plot");
+        await expect(await page.innerText(".wodin-right .wodin-content div.mt-4 button")).toBe("Run sensitivity");
     });
 
     test("can run model fit", async ({ page }) => {
         await startModelFit(page);
         await waitForModelFitCompletion(page);
 
-        await expect(await page.innerText(":nth-match(.fit-plot-container span, 1)")).toContain("Iterations:");
-        const sumOfSquares = await page.innerText(":nth-match(.fit-plot-container span, 2)");
+        await expect(await page.innerText(":nth-match(.wodin-plot-container span, 1)")).toContain("Iterations:");
+        const sumOfSquares = await page.innerText(":nth-match(.wodin-plot-container span, 2)");
         expect(sumOfSquares).toContain("Sum of squares:");
 
         const plotSelector = ".wodin-right .wodin-content div.mt-4 .js-plotly-plot";
@@ -255,7 +254,7 @@ test.describe("Wodin App model fit tests", () => {
         await page.click(":nth-match(input.vary-param-check, 2)");
         await page.click(".wodin-right .wodin-content div.mt-4 button");
         await waitForModelFitCompletion(page);
-        const newSumOfSquares = await page.innerText(":nth-match(.fit-plot-container span, 2)");
+        const newSumOfSquares = await page.innerText(":nth-match(.wodin-plot-container span, 2)");
         expect(newSumOfSquares).not.toEqual(sumOfSquares);
     });
 
@@ -350,9 +349,9 @@ test.describe("Wodin App model fit tests", () => {
         await startModelFit(page);
         await page.click(".wodin-right .wodin-content div.mt-4 button#cancel-fit-btn");
 
-        await expect(await page.getAttribute(".fit-plot-container .vue-feather", "data-type")).toBe("alert-circle");
-        await expect(await page.innerText(":nth-match(.fit-plot-container span, 1)")).toContain("Iterations:");
-        await expect(await page.innerText(":nth-match(.fit-plot-container span, 2)"))
+        await expect(await page.getAttribute(".wodin-plot-container .vue-feather", "data-type")).toBe("alert-circle");
+        await expect(await page.innerText(":nth-match(.wodin-plot-container span, 1)")).toContain("Iterations:");
+        await expect(await page.innerText(":nth-match(.wodin-plot-container span, 2)"))
             .toContain("Sum of squares:");
         await expect(await page.innerText("#fit-cancelled-msg")).toBe("Model fit was cancelled before converging");
     });

@@ -127,7 +127,7 @@ describe("FitApp", () => {
 
         // Change to Sensitivity tab
         await rightTabs.findAll("li a").at(2)!.trigger("click");
-        expect(rightTabs.find("div.mt-4").text()).toBe("Coming soon: Sensitivity plot");
+        expect(rightTabs.find("div.mt-4 button").text()).toBe("Run sensitivity");
     });
 
     it("commits open tab change when change tab", async () => {

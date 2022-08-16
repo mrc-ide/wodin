@@ -1,5 +1,5 @@
 import { getters, SensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
-import { mockBatchParsDisplace } from "../../../mocks";
+import { mockBatchParsDisplace, mockSensitivityState } from "../../../mocks";
 import { SensitivityScaleType, SensitivityVariationType } from "../../../../src/app/store/sensitivity/state";
 
 describe("Sensitivity getters", () => {
@@ -9,7 +9,7 @@ describe("Sensitivity getters", () => {
         const odinRunner = {
             batchParsDisplace: mockBatchParsDisplace
         };
-        const state = {
+        const state = mockSensitivityState({
             paramSettings: {
                 parameterToVary: "A",
                 scaleType: SensitivityScaleType.Arithmetic,
@@ -19,7 +19,7 @@ describe("Sensitivity getters", () => {
                 rangeTo: 0,
                 numberOfRuns: 3
             }
-        };
+        });
         const rootState = {
             model: {
                 odinRunner,

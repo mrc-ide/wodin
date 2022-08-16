@@ -4,7 +4,7 @@ import { BasicState } from "../../../../src/app/store/basic/state";
 import RunOptions from "../../../../src/app/components/options/RunOptions.vue";
 
 describe("RunOptions", () => {
-    const getWrapper = (mockSetEndTime = jest.fn()) => {
+    const getWrapper = (mockSetEndTime = jest.fn(), mockSetSensitivityUpdateRequired = jest.fn()) => {
         const store = new Vuex.Store<BasicState>({
             state: {} as any,
             modules: {
@@ -15,6 +15,12 @@ describe("RunOptions", () => {
                     },
                     mutations: {
                         SetEndTime: mockSetEndTime
+                    }
+                },
+                sensitivity: {
+                    namespaced: true,
+                    mutations: {
+                        SetUpdateRequired: mockSetSensitivityUpdateRequired
                     }
                 }
             }
@@ -37,10 +43,13 @@ describe("RunOptions", () => {
 
     it("commits end time change", () => {
         const mockSetEndTime = jest.fn();
-        const wrapper = getWrapper(mockSetEndTime);
+        const mockSetSensitivityUpdateRequired = jest.fn();
+        const wrapper = getWrapper(mockSetEndTime, mockSetSensitivityUpdateRequired);
         const input = wrapper.find("input");
         input.setValue("101");
         expect(mockSetEndTime).toHaveBeenCalledTimes(1);
         expect(mockSetEndTime.mock.calls[0][1]).toBe(101);
+        expect(mockSetSensitivityUpdateRequired).toHaveBeenCalledTimes(1);
+        expect(mockSetSensitivityUpdateRequired.mock.calls[0][1]).toBe(true);
     });
 });

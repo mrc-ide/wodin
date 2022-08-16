@@ -47,7 +47,7 @@ test.describe("Code Tab tests", () => {
     });
 
     const getRunPlotOpacity = async (page: Page) => {
-        const plot = await page.locator(".run-plot-container");
+        const plot = await page.locator(".wodin-plot-container");
         return plot.evaluate((el) => window.getComputedStyle(el).getPropertyValue("opacity"));
     };
 

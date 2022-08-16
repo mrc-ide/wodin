@@ -19,6 +19,7 @@
 import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
 import { ModelMutation } from "../../store/model/mutations";
+import { SensitivityMutation } from "../../store/sensitivity/mutations";
 
 export default defineComponent({
     name: "RunOptions",
@@ -29,6 +30,7 @@ export default defineComponent({
         const updateEndTime = (e: Event) => {
             const newValue = parseFloat((e.target as HTMLInputElement).value);
             store.commit(`model/${ModelMutation.SetEndTime}`, newValue);
+            store.commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true);
         };
 
         return {

@@ -109,6 +109,11 @@ export interface BatchPars {
 
 export type OdeControl = Dict<unknown>;
 
+export interface Batch {
+    pars: BatchPars,
+    solutions: OdinSolution[]
+}
+
 export interface OdinRunner {
     wodinRun: (odin: Odin,
                pars: Map<string, number>,
@@ -135,4 +140,9 @@ export interface OdinRunner {
                         count: number,
                         logarithmic: boolean,
                         displace: number) => BatchPars;
+    batchRun: (odin: Odin,
+               pars: BatchPars,
+               tStart: number,
+               tEnd: number,
+               control: OdeControl) => Batch;
 }
