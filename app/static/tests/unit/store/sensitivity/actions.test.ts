@@ -1,5 +1,6 @@
 import { actions, SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import { RequiredModelAction } from "../../../../src/app/store/model/state";
 
 const mockBatch = {};
 const mockRunner = {
@@ -27,8 +28,11 @@ describe("Sensitivity actions", () => {
         };
 
         const commit = jest.fn();
+        const dispatch = jest.fn();
 
-        (actions[SensitivityAction.RunSensitivity] as any)({ rootState, getters, commit });
+        (actions[SensitivityAction.RunSensitivity] as any)({
+            rootState, getters, commit, dispatch
+        });
 
         expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetBatch);
@@ -37,6 +41,8 @@ describe("Sensitivity actions", () => {
         expect(commit.mock.calls[1][1]).toBe(false);
 
         expect(mockRunner.batchRun).toHaveBeenCalledWith(rootState.model.odin, mockBatchPars, 0, 99, {});
+
+        expect(dispatch).not.toHaveBeenCalled();
     });
 
     it("RunSensitivity does nothing if no odinRunner", () => {
@@ -81,5 +87,26 @@ describe("Sensitivity actions", () => {
 
         expect(commit).toHaveBeenCalledTimes(0);
         expect(mockRunner.batchRun).not.toHaveBeenCalled();
+    });
+
+    it("run sensitivity dispatches model run if required", () => {
+        const rootState = {
+            model: { ...mockModelState, requiredAction: RequiredModelAction.Run }
+        };
+
+        const commit = jest.fn();
+        const dispatch = jest.fn();
+
+        (actions[SensitivityAction.RunSensitivity] as any)({
+            rootState, getters, commit, dispatch
+        });
+
+        expect(commit).toHaveBeenCalledTimes(2);
+        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetBatch);
+        expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetUpdateRequired);
+
+        expect(mockRunner.batchRun).toHaveBeenCalledWith(rootState.model.odin, mockBatchPars, 0, 99, {});
+
+        expect(dispatch).toHaveBeenCalledWith("model/RunModel", null, { root: true });
     });
 });
