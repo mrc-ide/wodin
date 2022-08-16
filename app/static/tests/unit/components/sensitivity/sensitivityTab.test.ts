@@ -8,7 +8,7 @@ import ActionRequiredMessage from "../../../../src/app/components/ActionRequired
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { SensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
 import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/SensitivityTracesPlot.vue";
-import { SensitivityState } from "../../../../src/app/store/sensitivity/state";
+import {SensitivityPlotType, SensitivityState} from "../../../../src/app/store/sensitivity/state";
 import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
 
 jest.mock("plotly.js", () => {});
@@ -33,6 +33,9 @@ describe("SensitivityTab", () => {
                         sensitivityUpdateRequired: false,
                         batch: {
                             solutions: []
+                        },
+                        plotSettings: {
+                            plotType: SensitivityPlotType.TraceOverTime
                         },
                         ...sensitivityState
                     },
@@ -62,6 +65,19 @@ describe("SensitivityTab", () => {
         expect(wrapper.find("button").element.disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(false);
+
+        expect(wrapper.find("#sensitivity-plot-placeholder").exists()).toBe(false);
+    });
+
+    it("renders placeholder if plot type is not Trace over time", () => {
+        const sensitivityState = {
+            plotSettings: {
+                plotType: SensitivityPlotType.ValueAtTime
+            }
+        } as any;
+        const wrapper = getWrapper({}, sensitivityState);
+        expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
+        expect(wrapper.find("#sensitivity-plot-placeholder").text()).toBe("Other plot types coming soon!");
     });
 
     it("disables run button when no odinRunner", () => {

@@ -8,7 +8,7 @@
     </div>
     <action-required-message :message="updateMsg"></action-required-message>
     <sensitivity-traces-plot v-if="tracesPlot" :fade-plot="!!updateMsg" ></sensitivity-traces-plot>
-    <div v-else>Other plot types coming soon!</div>
+    <div v-else id="sensitivity-plot-placeholder">Other plot types coming soon!</div>
   </div>
 </template>
 

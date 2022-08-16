@@ -115,4 +115,57 @@ describe("SensitivityPlotOptions", () => {
 
         expect(wrapper.find("#sensitivity-plot-time").exists()).toBe(false);
     });
+
+    it("updates plot type", async () => {
+        const wrapper = getWrapper();
+        const plotTypeSelect = wrapper.find("#sensitivity-plot-type select");
+        (plotTypeSelect.element as HTMLSelectElement).value = SensitivityPlotType.TimeAtExtreme;
+        await plotTypeSelect.trigger("change");
+
+        expect(mockSetPlotType).toHaveBeenCalledTimes(1);
+        expect(mockSetPlotType.mock.calls[0][1]).toBe(SensitivityPlotType.TimeAtExtreme);
+    });
+
+    it("updates time", async () => {
+        const wrapper = getWrapper({plotType: SensitivityPlotType.ValueAtTime});
+        const timeInput = wrapper.find("#sensitivity-plot-time input");
+        await timeInput.setValue("50");
+
+        expect(mockSetPlotTime).toHaveBeenCalledTimes(1);
+        expect(mockSetPlotTime.mock.calls[0][1]).toBe(50);
+    });
+
+    it("updates extreme type", async () => {
+        const wrapper = getWrapper({plotType: SensitivityPlotType.TimeAtExtreme});
+        const extremeSelect = wrapper.find("#sensitivity-plot-extreme select");
+        (extremeSelect.element as HTMLSelectElement).value = SensitivityPlotExtreme.Max;
+        await extremeSelect.trigger("change");
+
+        expect(mockSetPlotExtreme).toHaveBeenCalledTimes(1);
+        expect(mockSetPlotExtreme.mock.calls[0][1]).toBe(SensitivityPlotExtreme.Max);
+    });
+
+    it("reverts time to 0 if negative value entered", async () => {
+        const wrapper = getWrapper({plotType: SensitivityPlotType.ValueAtTime});
+        const timeInput = wrapper.find("#sensitivity-plot-time input");
+        await timeInput.setValue("-1");
+
+        expect(mockSetPlotTime).toHaveBeenCalledTimes(1);
+        expect(mockSetPlotTime.mock.calls[0][1]).toBe(0);
+    });
+
+    it("reverts time to model end if higher value entered", async () => {
+        const wrapper = getWrapper({plotType: SensitivityPlotType.ValueAtTime});
+        const timeInput = wrapper.find("#sensitivity-plot-time input");
+        await timeInput.setValue("200");
+
+        expect(mockSetPlotTime).toHaveBeenCalledTimes(1);
+        expect(mockSetPlotTime.mock.calls[0][1]).toBe(100);
+    });
+
+    it("on mounted, initialises time to model end if null", () => {
+        const wrapper = getWrapper({plotType: SensitivityPlotType.ValueAtTime, time: null});
+        expect(mockSetPlotTime).toHaveBeenCalledTimes(1);
+        expect(mockSetPlotTime.mock.calls[0][1]).toBe(100);
+    });
 });
