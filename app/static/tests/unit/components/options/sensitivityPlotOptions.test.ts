@@ -1,13 +1,13 @@
+import Vuex from "vuex";
+import { shallowMount } from "@vue/test-utils";
 import {
     SensitivityPlotExtreme,
     SensitivityPlotSettings,
     SensitivityPlotType
 } from "../../../../src/app/store/sensitivity/state";
-import Vuex from "vuex";
-import {mockBasicState} from "../../../mocks";
-import {BasicState} from "../../../../src/app/store/basic/state";
-import {SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
-import {shallowMount} from "@vue/test-utils";
+import { mockBasicState } from "../../../mocks";
+import { BasicState } from "../../../../src/app/store/basic/state";
+import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import SensitivityPlotOptions from "../../../../src/app/components/options/SensitivityPlotOptions.vue";
 
 describe("SensitivityPlotOptions", () => {
@@ -34,7 +34,7 @@ describe("SensitivityPlotOptions", () => {
                 sensitivity: {
                     namespaced: true,
                     state: {
-                        plotSettings: {...plotSettings, ...settings}
+                        plotSettings: { ...plotSettings, ...settings }
                     },
                     mutations: {
                         [SensitivityMutation.SetPlotType]: mockSetPlotType,
@@ -77,7 +77,7 @@ describe("SensitivityPlotOptions", () => {
     });
 
     it("renders as expected for Value at a single time", () => {
-        const wrapper = getWrapper({plotType: SensitivityPlotType.ValueAtTime});
+        const wrapper = getWrapper({ plotType: SensitivityPlotType.ValueAtTime });
         expect((wrapper.find("#sensitivity-plot-type select").element as HTMLSelectElement).value)
             .toBe(SensitivityPlotType.ValueAtTime);
 
@@ -89,7 +89,7 @@ describe("SensitivityPlotOptions", () => {
     });
 
     it("renders as expected for Value at min/max", () => {
-        const wrapper = getWrapper({plotType: SensitivityPlotType.ValueAtExtreme});
+        const wrapper = getWrapper({ plotType: SensitivityPlotType.ValueAtExtreme });
         expect((wrapper.find("#sensitivity-plot-type select").element as HTMLSelectElement).value)
             .toBe(SensitivityPlotType.ValueAtExtreme);
         expect(wrapper.find("#sensitivity-plot-extreme label").text()).toBe("Min/Max");
@@ -104,7 +104,7 @@ describe("SensitivityPlotOptions", () => {
     });
 
     it("renders as expected for Time at value's min/max", () => {
-        const wrapper = getWrapper({plotType: SensitivityPlotType.TimeAtExtreme});
+        const wrapper = getWrapper({ plotType: SensitivityPlotType.TimeAtExtreme });
         expect((wrapper.find("#sensitivity-plot-type select").element as HTMLSelectElement).value)
             .toBe(SensitivityPlotType.TimeAtExtreme);
         expect(wrapper.find("#sensitivity-plot-extreme label").text()).toBe("Min/Max");
@@ -127,7 +127,7 @@ describe("SensitivityPlotOptions", () => {
     });
 
     it("updates time", async () => {
-        const wrapper = getWrapper({plotType: SensitivityPlotType.ValueAtTime});
+        const wrapper = getWrapper({ plotType: SensitivityPlotType.ValueAtTime });
         const timeInput = wrapper.find("#sensitivity-plot-time input");
         await timeInput.setValue("50");
 
@@ -136,7 +136,7 @@ describe("SensitivityPlotOptions", () => {
     });
 
     it("updates extreme type", async () => {
-        const wrapper = getWrapper({plotType: SensitivityPlotType.TimeAtExtreme});
+        const wrapper = getWrapper({ plotType: SensitivityPlotType.TimeAtExtreme });
         const extremeSelect = wrapper.find("#sensitivity-plot-extreme select");
         (extremeSelect.element as HTMLSelectElement).value = SensitivityPlotExtreme.Max;
         await extremeSelect.trigger("change");
@@ -146,7 +146,7 @@ describe("SensitivityPlotOptions", () => {
     });
 
     it("reverts time to 0 if negative value entered", async () => {
-        const wrapper = getWrapper({plotType: SensitivityPlotType.ValueAtTime});
+        const wrapper = getWrapper({ plotType: SensitivityPlotType.ValueAtTime });
         const timeInput = wrapper.find("#sensitivity-plot-time input");
         await timeInput.setValue("-1");
 
@@ -155,7 +155,7 @@ describe("SensitivityPlotOptions", () => {
     });
 
     it("reverts time to model end if higher value entered", async () => {
-        const wrapper = getWrapper({plotType: SensitivityPlotType.ValueAtTime});
+        const wrapper = getWrapper({ plotType: SensitivityPlotType.ValueAtTime });
         const timeInput = wrapper.find("#sensitivity-plot-time input");
         await timeInput.setValue("200");
 
@@ -164,7 +164,7 @@ describe("SensitivityPlotOptions", () => {
     });
 
     it("on mounted, initialises time to model end if null", () => {
-        const wrapper = getWrapper({plotType: SensitivityPlotType.ValueAtTime, time: null});
+        const wrapper = getWrapper({ plotType: SensitivityPlotType.ValueAtTime, time: null });
         expect(mockSetPlotTime).toHaveBeenCalledTimes(1);
         expect(mockSetPlotTime.mock.calls[0][1]).toBe(100);
     });

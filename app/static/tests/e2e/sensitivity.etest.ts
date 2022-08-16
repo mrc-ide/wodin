@@ -58,7 +58,7 @@ test.describe("Sensitivity tests", () => {
             .toBe(" 1.000, 1.158, 1.340, ..., 5.000");
     });
 
-    test("can edit sensitivity plot settings", async ({page}) => {
+    test("can edit sensitivity plot settings", async ({ page }) => {
         // Default settings are visible
         await expect(await page.innerText("#sensitivity-plot-type label")).toBe("Type of plot");
         await expect(await page.inputValue("#sensitivity-plot-type select")).toBe("TraceOverTime");

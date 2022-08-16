@@ -8,7 +8,7 @@ import ActionRequiredMessage from "../../../../src/app/components/ActionRequired
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { SensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
 import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/SensitivityTracesPlot.vue";
-import {SensitivityPlotType, SensitivityState} from "../../../../src/app/store/sensitivity/state";
+import { SensitivityPlotType, SensitivityState } from "../../../../src/app/store/sensitivity/state";
 import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
 
 jest.mock("plotly.js", () => {});

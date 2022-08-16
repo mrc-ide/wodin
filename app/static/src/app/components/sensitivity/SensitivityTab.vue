@@ -21,7 +21,7 @@ import { RequiredModelAction } from "../../store/model/state";
 import { SensitivityGetter } from "../../store/sensitivity/getters";
 import { SensitivityAction } from "../../store/sensitivity/actions";
 import userMessages from "../../userMessages";
-import {SensitivityPlotType} from "../../store/sensitivity/state";
+import { SensitivityPlotType } from "../../store/sensitivity/state";
 
 export default defineComponent({
     name: "SensitivityTab",
@@ -55,7 +55,9 @@ export default defineComponent({
             return "";
         });
 
-        const tracesPlot = computed(() => store.state.sensitivity.plotSettings.plotType === SensitivityPlotType.TraceOverTime);
+        const tracesPlot = computed(
+            () => store.state.sensitivity.plotSettings.plotType === SensitivityPlotType.TraceOverTime
+        );
 
         return {
             canRunSensitivity,

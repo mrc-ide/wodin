@@ -19,7 +19,7 @@
       </div>
       <div class="col-6">
         <select class="form-select" v-model="extreme">
-          <option v-for="extremeValue in extremeValues">{{extremeValue}}</option>
+          <option v-for="extremeValue in extremeValues" :key="extremeValue">{{extremeValue}}</option>
         </select>
       </div>
     </div>
@@ -68,7 +68,9 @@ export default defineComponent({
             }
         });
 
-        const extremePlotType = computed(() => [SensitivityPlotType.TimeAtExtreme, SensitivityPlotType.ValueAtExtreme].includes(plotType.value));
+        const extremePlotType = computed(
+            () => [SensitivityPlotType.TimeAtExtreme, SensitivityPlotType.ValueAtExtreme].includes(plotType.value)
+        );
         const timePlotType = computed(() => plotType.value === SensitivityPlotType.ValueAtTime);
 
         const extremeValues = Object.keys(SensitivityPlotExtreme);
