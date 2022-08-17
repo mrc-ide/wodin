@@ -5,7 +5,7 @@ import {mockBasicState} from "../../../mocks";
 import {SensitivityPlotExtreme, SensitivityPlotType} from "../../../../src/app/store/sensitivity/state";
 import {SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
-import {shallowMount} from "@vue/test-utils";
+import {shallowMount, VueWrapper} from "@vue/test-utils";
 import * as plotly from "plotly.js";
 
 jest.mock("plotly.js", () => ({
@@ -35,8 +35,11 @@ describe("SensitivitySummaryPlot", () => {
     };
 
     const mockValueAtTime = jest.fn().mockReturnValue(mockValueAtTimeData);
+    const mockBatch = {
+        valueAtTime: mockValueAtTime
+    };
 
-    const getWrapper = () => {
+    const getWrapper = (hasData = true, time: number | null = 99) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
@@ -53,12 +56,10 @@ describe("SensitivitySummaryPlot", () => {
                 sensitivity: {
                     namespaced: true,
                     state: {
-                        batch: {
-                            valueAtTime: mockValueAtTime
-                        },
+                        batch: hasData ? mockBatch : null,
                         plotSettings: {
                             plotType: SensitivityPlotType.ValueAtTime,
-                            time: 99,
+                            time,
                             extreme: SensitivityPlotExtreme.Min
                         }
                     },
@@ -80,8 +81,7 @@ describe("SensitivitySummaryPlot", () => {
         jest.clearAllMocks();
     });
 
-    it("plots data as expected", () => {
-        const wrapper = getWrapper();
+    const expectDataToHaveBeenPlotted = (wrapper: VueWrapper<any>) => {
         expect(mockPlotlyNewPlot).toHaveBeenCalledTimes(1);
         const plotEl = wrapper.find(".plot").element;
         expect(mockPlotlyNewPlot.mock.calls[0][0]).toBe(plotEl);
@@ -118,7 +118,37 @@ describe("SensitivitySummaryPlot", () => {
             }
         });
         expect(mockPlotlyNewPlot.mock.calls[0][3]).toStrictEqual({responsive: true});
+    };
+
+    it("plots data as expected", () => {
+        const wrapper = getWrapper();
+        expect(wrapper.find(".plot-placeholder").exists()).toBe(false);
+
+        expect(mockValueAtTime).toHaveBeenCalledWith(99);
+        expectDataToHaveBeenPlotted(wrapper);
     });
 
-    //it("renders as expected when no data
+    it("renders as expected when no data", () => {
+        const wrapper = getWrapper(false);
+        expect(mockPlotlyNewPlot).not.toHaveBeenCalled();
+        expect(wrapper.find(".plot-placeholder").text()).toBe("Sensitivity has not been run.");
+    });
+
+    it("sets end time to 0 if less", () => {
+        const wrapper = getWrapper(true, -1);
+        expect(mockSetPlotTime.mock.calls[0][1]).toBe(0);
+        expectDataToHaveBeenPlotted(wrapper);
+    });
+
+    it("sets end time to model end time if greater", () => {
+        const wrapper = getWrapper(true, 101);
+        expect(mockSetPlotTime.mock.calls[0][1]).toBe(100);
+        expectDataToHaveBeenPlotted(wrapper);
+    });
+
+    it("sets end time to model end time if null", () => {
+        const wrapper = getWrapper(true, null);
+        expect(mockSetPlotTime.mock.calls[0][1]).toBe(100);
+        expectDataToHaveBeenPlotted(wrapper);
+    });
 });
