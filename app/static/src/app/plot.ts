@@ -48,7 +48,7 @@ export function odinToPlotly(s: OdinSeriesSet, palette: Palette, options: Partia
     );
 }
 
-export function dataToPlotly(data: FitData, link: FitDataLink, palette: Palette, start: number,
+export function fitDataToPlotly(data: FitData, link: FitDataLink, palette: Palette, start: number,
     end: number): WodinPlotData {
     const filteredData = data.filter(
         (row: Dict<number>) => row[link.time] >= start && row[link.time] <= end

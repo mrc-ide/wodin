@@ -17,7 +17,7 @@ import { useStore } from "vuex";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
 import {
-    filterSeriesSet, dataToPlotly, odinToPlotly, WodinPlotData
+    filterSeriesSet, fitDataToPlotly, odinToPlotly, WodinPlotData
 } from "../../plot";
 import WodinOdePlot from "../WodinOdePlot.vue";
 
@@ -47,7 +47,7 @@ export default defineComponent({
             const palette = store.state.model.paletteModel;
             return [
                 ...odinToPlotly(filterSeriesSet(result, link.value.model), palette),
-                ...dataToPlotly(data, link.value, palette, start, end)
+                ...fitDataToPlotly(data, link.value, palette, start, end)
             ];
         };
 
