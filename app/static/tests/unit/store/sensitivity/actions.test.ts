@@ -1,6 +1,5 @@
 import { actions, SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
-import { RequiredModelAction } from "../../../../src/app/store/model/state";
 
 const mockBatch = {};
 const mockRunner = {
@@ -91,7 +90,11 @@ describe("Sensitivity actions", () => {
 
     it("run sensitivity dispatches model run if required", () => {
         const rootState = {
-            model: { ...mockModelState, requiredAction: RequiredModelAction.Run }
+            model: {
+                ...mockModelState,
+                compileRequired: false,
+                runRequired: true
+            }
         };
 
         const commit = jest.fn();

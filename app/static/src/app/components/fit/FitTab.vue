@@ -31,7 +31,6 @@ import { ModelFitAction } from "../../store/modelFit/actions";
 import { ModelFitGetter } from "../../store/modelFit/getters";
 import userMessages from "../../userMessages";
 import LoadingSpinner from "../LoadingSpinner.vue";
-import { RequiredModelAction } from "../../store/model/state";
 import { ModelFitMutation } from "../../store/modelFit/mutations";
 
 export default {
@@ -47,7 +46,7 @@ export default {
         const namespace = "modelFit";
 
         const canFitModel = computed(() => store.getters[`${namespace}/${ModelFitGetter.canRunFit}`]);
-        const compileRequired = computed(() => store.state.model.requiredAction === RequiredModelAction.Compile);
+        const compileRequired = computed(() => store.state.model.compileRequired);
         const fitUpdateRequired = computed(() => store.state.modelFit.fitUpdateRequired);
         const fitModel = () => store.dispatch(`${namespace}/${ModelFitAction.FitModel}`);
         const cancelFit = () => store.commit(`${namespace}/${ModelFitMutation.SetFitting}`, false);

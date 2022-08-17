@@ -3,7 +3,6 @@ import { AppState } from "../appState/state";
 import { SensitivityState } from "./state";
 import { SensitivityGetter } from "./getters";
 import { SensitivityMutation } from "./mutations";
-import { RequiredModelAction } from "../model/state";
 import { ModelAction } from "../model/actions";
 
 export enum SensitivityAction {
@@ -24,7 +23,7 @@ export const actions: ActionTree<SensitivityState, AppState> = {
             commit(SensitivityMutation.SetUpdateRequired, false);
 
             // Also re-run model if required so that plotted central traces are correct
-            if (rootState.model.requiredAction === RequiredModelAction.Run) {
+            if (rootState.model.runRequired) {
                 dispatch(`model/${ModelAction.RunModel}`, null, { root: true });
             }
         }

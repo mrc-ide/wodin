@@ -1,5 +1,5 @@
 import { MutationTree } from "vuex";
-import { ModelState, RequiredModelAction } from "./state";
+import { ModelState } from "./state";
 import {
     Odin,
     OdinModelResponse,
@@ -16,7 +16,8 @@ export enum ModelMutation {
     SetOdinResponse = "SetOdinResponse",
     SetOdin = "SetOdin",
     SetOdinSolution = "SetOdinSolution",
-    SetRequiredAction = "SetRequiredAction",
+    SetRunRequired = "SetRunRequired",
+    SetCompileRequired = "SetCompileRequired",
     SetParameterValues = "SetParameterValues",
     UpdateParameterValues = "UpdateParameterValues",
     SetPaletteModel = "SetPaletteModel",
@@ -25,8 +26,8 @@ export enum ModelMutation {
 }
 
 const runRequired = (state: ModelState) => {
-    if (state.requiredAction !== RequiredModelAction.Compile) {
-        state.requiredAction = RequiredModelAction.Run;
+    if (!state.compileRequired) {
+        state.runRequired = true;
     }
 };
 
@@ -53,8 +54,12 @@ export const mutations: MutationTree<ModelState> = {
         state.odinRunnerError = null;
     },
 
-    [ModelMutation.SetRequiredAction](state: ModelState, payload: RequiredModelAction | null) {
-        state.requiredAction = payload;
+    [ModelMutation.SetCompileRequired](state: ModelState, payload: boolean) {
+        state.compileRequired = payload;
+    },
+
+    [ModelMutation.SetRunRequired](state: ModelState, payload: boolean) {
+        state.runRequired = payload;
     },
 
     [ModelMutation.SetParameterValues](state: ModelState, payload: Map<string, number>) {

@@ -3,13 +3,9 @@ import {
 } from "../../types/responseTypes";
 import type { Palette } from "../../palette";
 
-export enum RequiredModelAction {
-    Compile,
-    Run
-}
-
 export interface ModelState {
-    requiredAction: null | RequiredModelAction
+    compileRequired: boolean
+    runRequired: boolean
     odinRunner: null | OdinRunner
     odinModelResponse: null | OdinModelResponse // This contains all validation messages etc
     odin: null | Odin // When we 'compile' we evaluate the response's 'model' string into a working model

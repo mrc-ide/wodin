@@ -2,7 +2,8 @@
 /* eslint-disable import/first */
 import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
-import { ModelState, RequiredModelAction } from "../../../../src/app/store/model/state";
+import { ModelState } from "../../../../src/app/store/model/state";
+/* eslint-disable import/first */
 import SensitivityTab from "../../../../src/app/components/sensitivity/SensitivityTab.vue";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
@@ -91,7 +92,10 @@ describe("SensitivityTab", () => {
     });
 
     it("disables run button when required action is Compile", () => {
-        const wrapper = getWrapper({ requiredAction: RequiredModelAction.Compile });
+        const wrapper = getWrapper({
+            compileRequired: true,
+            runRequired: false
+        });
         expect(wrapper.find("button").element.disabled).toBe(true);
     });
 
@@ -104,7 +108,7 @@ describe("SensitivityTab", () => {
         const sensitivityState = {
             batch: { solutions: [{}] }
         } as any;
-        const wrapper = getWrapper({ requiredAction: RequiredModelAction.Compile }, sensitivityState);
+        const wrapper = getWrapper({ compileRequired: true, runRequired: false }, sensitivityState);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
             .toBe("Model code has been updated. Compile code and Run Sensitivity to view updated graph.");
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);

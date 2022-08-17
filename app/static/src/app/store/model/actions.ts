@@ -1,5 +1,5 @@
 import { ActionContext, ActionTree } from "vuex";
-import { ModelState, RequiredModelAction } from "./state";
+import { ModelState } from "./state";
 import { api } from "../../apiService";
 import { ModelMutation } from "./mutations";
 import { AppState, AppType } from "../appState/state";
@@ -30,7 +30,7 @@ const fetchOdin = async (context: ActionContext<ModelState, AppState>) => {
         .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
         .post<OdinModelResponse>("/odin/model", { model })
         .then(() => {
-            commit(ModelMutation.SetRequiredAction, RequiredModelAction.Compile);
+            commit(ModelMutation.SetCompileRequired, true);
         });
 };
 
@@ -57,8 +57,9 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
         const variables = state.odinModelResponse.metadata?.variables || [];
         commit(ModelMutation.SetPaletteModel, paletteModel(variables));
 
-        if (state.requiredAction === RequiredModelAction.Compile) {
-            commit(ModelMutation.SetRequiredAction, RequiredModelAction.Run);
+        if (state.compileRequired) {
+            commit(ModelMutation.SetCompileRequired, false);
+            commit(ModelMutation.SetRunRequired, true);
             commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true, { root: true });
         }
 
@@ -93,8 +94,8 @@ const runModel = (context: ActionContext<ModelState, AppState>) => {
             commit(ModelMutation.SetOdinRunnerError, wodinRunError);
         }
 
-        if (state.requiredAction === RequiredModelAction.Run) {
-            commit(ModelMutation.SetRequiredAction, null);
+        if (state.runRequired) {
+            commit(ModelMutation.SetRunRequired, false);
         }
     }
 };
