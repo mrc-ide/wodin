@@ -8,6 +8,7 @@ import { evaluateScript } from "../../utils";
 import { FitDataAction } from "../fitData/actions";
 import { ModelFitAction } from "../modelFit/actions";
 import { paletteModel } from "../../palette";
+import { RunMutation } from "../run/mutations";
 import { ModelFitMutation } from "../modelFit/mutations";
 import userMessages from "../../userMessages";
 import { ErrorsMutation } from "../errors/mutations";
@@ -17,7 +18,6 @@ export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
     FetchOdin = "FetchOdin",
     CompileModel = "CompileModel",
-    RunModel = "RunModel",
     DefaultModel = "DefaultModel"
 }
 
@@ -52,14 +52,14 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
             const value = param.default;
             newValues.set(param.name, value === null ? 0 : value);
         });
-        commit(ModelMutation.SetParameterValues, newValues);
+        commit(`run/${RunMutation.SetParameterValues}`, newValues);
 
         const variables = state.odinModelResponse.metadata?.variables || [];
         commit(ModelMutation.SetPaletteModel, paletteModel(variables));
 
         if (state.compileRequired) {
             commit(ModelMutation.SetCompileRequired, false);
-            commit(ModelMutation.SetRunRequired, true);
+            commit(`run/${RunMutation.SetRunRequired}`, true);
             commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true, { root: true });
         }
 
@@ -80,26 +80,6 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
     }
 };
 
-const runModel = (context: ActionContext<ModelState, AppState>) => {
-    const { state, commit } = context;
-    const parameters = state.parameterValues;
-    if (state.odinRunner && state.odin && parameters) {
-        const start = 0;
-        const end = state.endTime;
-        try {
-            const solution = state.odinRunner.wodinRun(state.odin, parameters, start, end, {});
-            commit(ModelMutation.SetOdinSolution, solution);
-        } catch (e) {
-            const wodinRunError = { error: userMessages.errors.wodinRunError, detail: e };
-            commit(ModelMutation.SetOdinRunnerError, wodinRunError);
-        }
-
-        if (state.runRequired) {
-            commit(ModelMutation.SetRunRequired, false);
-        }
-    }
-};
-
 export const actions: ActionTree<ModelState, AppState> = {
     async FetchOdinRunner(context) {
         await api(context)
@@ -116,13 +96,13 @@ export const actions: ActionTree<ModelState, AppState> = {
         compileModel(context);
     },
 
-    RunModel(context) {
-        runModel(context);
-    },
-
     async DefaultModel(context) {
         await fetchOdin(context);
         compileModel(context);
-        runModel(context);
+        // TODO: dispatch RunAction.RunModel too, but in the parent,
+        // after this is done.
+        //
+        // Previously, was
+        // runModel(context); // TODO: this needs replacing!
     }
 };

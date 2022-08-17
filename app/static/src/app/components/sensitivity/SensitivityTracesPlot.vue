@@ -33,9 +33,9 @@ export default defineComponent({
         const placeholderMessage = userMessages.sensitivity.notRunYet;
 
         const solutions = computed(() => (store.state.sensitivity.batch?.solutions || []));
-        const centralSolution = computed(() => (store.state.model.odinSolution));
+        const centralSolution = computed(() => (store.state.run.solution));
 
-        const endTime = computed(() => store.state.model.endTime);
+        const endTime = computed(() => store.state.run.endTime);
 
         const palette = computed(() => store.state.model.paletteModel);
 

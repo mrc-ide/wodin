@@ -3,7 +3,7 @@ import { AppState } from "../appState/state";
 import { SensitivityState } from "./state";
 import { SensitivityGetter } from "./getters";
 import { SensitivityMutation } from "./mutations";
-import { ModelAction } from "../model/actions";
+import { RunAction } from "../run/actions";
 
 export enum SensitivityAction {
     RunSensitivity = "RunSensitivity"
@@ -14,7 +14,8 @@ export const actions: ActionTree<SensitivityState, AppState> = {
         const {
             rootState, getters, commit, dispatch
         } = context;
-        const { odinRunner, odin, endTime } = rootState.model;
+        const { odinRunner, odin } = rootState.model;
+        const { endTime } = rootState.run;
         const batchPars = getters[SensitivityGetter.batchPars];
 
         if (odinRunner && odin && batchPars) {
@@ -23,8 +24,8 @@ export const actions: ActionTree<SensitivityState, AppState> = {
             commit(SensitivityMutation.SetUpdateRequired, false);
 
             // Also re-run model if required so that plotted central traces are correct
-            if (rootState.model.runRequired) {
-                dispatch(`model/${ModelAction.RunModel}`, null, { root: true });
+            if (rootState.run.runRequired) {
+                dispatch(`run/${RunAction.RunModel}`, null, { root: true });
             }
         }
     }

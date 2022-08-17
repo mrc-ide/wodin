@@ -18,18 +18,18 @@
 <script lang="ts">
 import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
-import { ModelMutation } from "../../store/model/mutations";
+import { RunMutation } from "../../store/run/mutations";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 
 export default defineComponent({
     name: "RunOptions",
     setup() {
         const store = useStore();
-        const endTime = computed(() => store.state.model.endTime);
+        const endTime = computed(() => store.state.run.endTime);
 
         const updateEndTime = (e: Event) => {
             const newValue = parseFloat((e.target as HTMLInputElement).value);
-            store.commit(`model/${ModelMutation.SetEndTime}`, newValue);
+            store.commit(`run/${RunMutation.SetEndTime}`, newValue);
             store.commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true);
         };
 

@@ -14,7 +14,7 @@ import { useStore } from "vuex";
 import { computed, defineComponent } from "vue";
 import RunPlot from "./RunPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
-import { ModelAction } from "../../store/model/actions";
+import { RunAction } from "../../store/run/actions";
 import userMessages from "../../userMessages";
 import ErrorInfo from "../ErrorInfo.vue";
 
@@ -28,18 +28,19 @@ export default defineComponent({
     setup() {
         const store = useStore();
 
-        const error = computed(() => store.state.model.odinRunnerError);
+        const error = computed(() => store.state.run.odinRunnerError);
 
         // Enable run button if model has initialised and compile is not required
         const canRunModel = computed(() => !!store.state.model.odinRunner && !!store.state.model.odin
             && !store.state.model.compileRequired);
 
-        const runModel = () => store.dispatch(`model/${ModelAction.RunModel}`);
+        const runModel = () => store.dispatch(`model/${RunAction.RunModel}`);
         const updateMsg = computed(() => {
             if (store.state.model.compileRequired) {
                 return userMessages.run.compileRequired;
             }
-            if (store.state.model.runRequired) {
+            // TOOD: eventually make runRequired to updateRequired I think?
+            if (store.state.run.runRequired) {
                 return userMessages.run.runRequired;
             }
             return "";
