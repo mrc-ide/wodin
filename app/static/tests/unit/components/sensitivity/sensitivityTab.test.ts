@@ -1,15 +1,15 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via WodinPlot
 /* eslint-disable import/first */
-import {shallowMount} from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
-import {ModelState, RequiredModelAction} from "../../../../src/app/store/model/state";
+import { ModelState, RequiredModelAction } from "../../../../src/app/store/model/state";
 import SensitivityTab from "../../../../src/app/components/sensitivity/SensitivityTab.vue";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
-import {BasicState} from "../../../../src/app/store/basic/state";
-import {SensitivityGetter} from "../../../../src/app/store/sensitivity/getters";
+import { BasicState } from "../../../../src/app/store/basic/state";
+import { SensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
 import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/SensitivityTracesPlot.vue";
-import {SensitivityPlotType, SensitivityState} from "../../../../src/app/store/sensitivity/state";
-import {SensitivityAction} from "../../../../src/app/store/sensitivity/actions";
+import { SensitivityPlotType, SensitivityState } from "../../../../src/app/store/sensitivity/state";
+import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
 
 jest.mock("plotly.js", () => {});
@@ -72,7 +72,7 @@ describe("SensitivityTab", () => {
     });
 
     it("renders as expected when Value at Time", () => {
-        const wrapper = getWrapper({}, {plotSettings: { plotType: SensitivityPlotType.ValueAtTime } as any});
+        const wrapper = getWrapper({}, { plotSettings: { plotType: SensitivityPlotType.ValueAtTime } as any });
         expect(wrapper.find("button").text()).toBe("Run sensitivity");
         expect(wrapper.find("button").element.disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");

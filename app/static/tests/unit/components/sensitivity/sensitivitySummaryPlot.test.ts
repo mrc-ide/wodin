@@ -1,13 +1,13 @@
 // Mock the import of plotly so we can mock Plotly methods
-import {BasicState} from "../../../../src/app/store/basic/state";
-import Vuex, {Store} from "vuex";
-import {mockBasicState} from "../../../mocks";
-import {SensitivityPlotExtreme, SensitivityPlotType} from "../../../../src/app/store/sensitivity/state";
-import {SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
-import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
-import {shallowMount, VueWrapper} from "@vue/test-utils";
+import Vuex, { Store } from "vuex";
+import { shallowMount, VueWrapper } from "@vue/test-utils";
 import * as plotly from "plotly.js";
-import {nextTick} from "vue";
+import { nextTick } from "vue";
+import { BasicState } from "../../../../src/app/store/basic/state";
+import { mockBasicState } from "../../../mocks";
+import { SensitivityPlotExtreme, SensitivityPlotType } from "../../../../src/app/store/sensitivity/state";
+import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
 
 jest.mock("plotly.js", () => ({
     newPlot: jest.fn(),
@@ -121,7 +121,7 @@ describe("SensitivitySummaryPlot", () => {
                 t: 25
             }
         });
-        expect(mockPlotlyNewPlot.mock.calls[0][3]).toStrictEqual({responsive: true});
+        expect(mockPlotlyNewPlot.mock.calls[0][3]).toStrictEqual({ responsive: true });
     };
 
     it("plots data as expected", () => {

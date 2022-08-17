@@ -17,7 +17,9 @@ import { EventEmitter } from "events";
 import {
     newPlot, react, PlotRelayoutEvent, Plots
 } from "plotly.js";
-import { WodinPlotData, fadePlotStyle, margin, config } from "../plot";
+import {
+    WodinPlotData, fadePlotStyle, margin, config
+} from "../plot";
 import { OdinSolution } from "../types/responseTypes";
 
 export default defineComponent({
