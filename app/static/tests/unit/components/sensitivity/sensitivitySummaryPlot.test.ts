@@ -1,12 +1,13 @@
 // Mock the import of plotly so we can mock Plotly methods
 import {BasicState} from "../../../../src/app/store/basic/state";
-import Vuex from "vuex";
+import Vuex, {Store} from "vuex";
 import {mockBasicState} from "../../../mocks";
 import {SensitivityPlotExtreme, SensitivityPlotType} from "../../../../src/app/store/sensitivity/state";
 import {SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
 import {shallowMount, VueWrapper} from "@vue/test-utils";
 import * as plotly from "plotly.js";
+import {nextTick} from "vue";
 
 jest.mock("plotly.js", () => ({
     newPlot: jest.fn(),
@@ -39,8 +40,10 @@ describe("SensitivitySummaryPlot", () => {
         valueAtTime: mockValueAtTime
     };
 
-    const getWrapper = (hasData = true, time: number | null = 99) => {
-        const store = new Vuex.Store<BasicState>({
+    let store: Store<BasicState> | null = null;
+
+    const getWrapper = (hasData = true, time: number | null = 99, fadePlot = false) => {
+        store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
                 model: {
@@ -73,7 +76,8 @@ describe("SensitivitySummaryPlot", () => {
         return shallowMount(SensitivitySummaryPlot, {
             global: {
                 plugins: [store]
-            }
+            },
+            props: { fadePlot }
         });
     };
 
@@ -150,5 +154,50 @@ describe("SensitivitySummaryPlot", () => {
         const wrapper = getWrapper(true, null);
         expect(mockSetPlotTime.mock.calls[0][1]).toBe(100);
         expectDataToHaveBeenPlotted(wrapper);
+    });
+
+    it("does not render fade style when fadePlot is false", () => {
+        const wrapper = getWrapper();
+        const div = wrapper.find("div.summary-plot-container");
+        expect(div.attributes("style")).toBe("");
+    });
+
+    it("renders fade style when fade plot is true", () => {
+        const wrapper = getWrapper(true, null, true);
+        const div = wrapper.find("div.summary-plot-container");
+        expect(div.attributes("style")).toBe("opacity: 0.5;");
+    });
+
+    it("initialises ResizeObserver", async () => {
+        const wrapper = getWrapper();
+        const divElement = wrapper.find("div.plot").element;
+        expect(mockObserve).toHaveBeenCalledWith(divElement);
+    });
+
+    it("resize method resizes Plot", async () => {
+        const wrapper = getWrapper();
+        (wrapper.vm as any).resize();
+        const divElement = wrapper.find("div.plot").element;
+        expect(plotly.Plots.resize).toHaveBeenCalledWith(divElement);
+    });
+
+    it("disconnects resizeObserver on unmount", async () => {
+        const wrapper = getWrapper();
+        wrapper.unmount();
+        expect(mockDisconnect).toHaveBeenCalled();
+    });
+
+    it("does not attempt to disconnect resizeObserver if not initialised", () => {
+        const wrapper = getWrapper(false);
+        wrapper.unmount();
+        expect(mockDisconnect).not.toHaveBeenCalled();
+    });
+
+    it("redraws plot if data changes", async () => {
+        // update store's time value to force re-compute of plotData, and then redraw
+        const wrapper = getWrapper();
+        store!.state.sensitivity.plotSettings.time = 50;
+        await nextTick();
+        expect(mockPlotlyNewPlot).toHaveBeenCalledTimes(2);
     });
 });

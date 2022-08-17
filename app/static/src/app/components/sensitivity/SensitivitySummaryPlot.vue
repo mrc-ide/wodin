@@ -101,7 +101,8 @@ export default defineComponent({
             plot,
             plotStyle,
             plotData,
-            hasPlotData
+            hasPlotData,
+            resize
         };
     }
 });
