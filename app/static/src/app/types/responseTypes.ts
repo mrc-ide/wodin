@@ -71,13 +71,6 @@ export type OdinSeriesSet = {
     y: number[][];
 }
 
-// This is Odin's Series
-export type OdinSeries = {
-    name: string,
-    x: number[],
-    y: number
-};
-
 // This is Odin's InterpolatedSolution
 export type OdinSolution = (t0: number, t1: number, nPoints: number) => OdinSeriesSet;
 
@@ -119,7 +112,7 @@ export type OdeControl = Dict<unknown>;
 export interface Batch {
     pars: BatchPars,
     solutions: OdinSolution[],
-    valueAtTime: (time: number) => OdinSeries
+    valueAtTime: (time: number) => OdinSeriesSet
 }
 
 export interface OdinRunner {
