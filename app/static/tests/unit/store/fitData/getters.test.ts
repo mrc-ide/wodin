@@ -37,12 +37,12 @@ describe("FitDataGetters", () => {
         });
     });
 
-    it("does not set link when no links are possible", () => {
+    it("link is null when no links are possible", () => {
         const state = mockFitDataState({ timeVariable: "t", columnToFit: "y" });
         expect((getters[FitDataGetter.link] as any)(state)).toBe(null);
     });
 
-    it("does not set link when uninitialised", () => {
+    it("link is null when uninitialised", () => {
         const state = mockFitDataState();
         expect((getters[FitDataGetter.link] as any)(state)).toBe(null);
     });
