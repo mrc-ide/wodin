@@ -6,7 +6,7 @@ describe("Run mutations", () => {
         const mockSolution = () => [{ x: 1, y: 2 }];
         const state = mockRunState();
 
-        mutations.SetOdinSolution(state, mockSolution);
+        mutations.SetSolution(state, mockSolution);
         expect(state.solution).toBe(mockSolution);
     });
 
@@ -48,7 +48,7 @@ describe("Run mutations", () => {
     it("sets odinRunnerResponseError", () => {
         const error = { error: "model error", detail: "with details" };
         const state = mockRunState();
-        mutations.SetOdinRunnerError(state, error);
+        mutations.SetError(state, error);
         expect(state.error).toBe(error);
     });
 });

@@ -5,15 +5,15 @@ import { Dict } from "../../types/utilTypes";
 
 export enum RunMutation {
     SetRunRequired = "SetRunRequired",
-    SetOdinSolution = "SetOdinSolution", // TODO: => SetSolution I think
+    SetSolution = "SetSolution",
     SetParameterValues = "SetParameterValues",
     UpdateParameterValues = "UpdateParameterValues",
     SetEndTime = "SetEndTime",
-    SetOdinRunnerError = "SetOdinRunnerError"
+    SetError = "SetError"
 }
 
 export const mutations: MutationTree<RunState> = {
-    [RunMutation.SetOdinSolution](state: RunState, payload: OdinSolution) {
+    [RunMutation.SetSolution](state: RunState, payload: OdinSolution) {
         state.solution = payload;
         state.error = null;
     },
@@ -37,12 +37,10 @@ export const mutations: MutationTree<RunState> = {
 
     [RunMutation.SetEndTime](state: RunState, payload: number) {
         state.endTime = payload;
-        // this is actually only needed if payload is less than the
-        // number that we were run with, which is cool.
         state.runRequired = true;
     },
 
-    [RunMutation.SetOdinRunnerError](state: RunState, payload: WodinError) {
+    [RunMutation.SetError](state: RunState, payload: WodinError) {
         state.error = payload;
     }
 };

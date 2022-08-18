@@ -17,10 +17,10 @@ export const actions: ActionTree<RunState, AppState> = {
             const end = state.endTime;
             try {
                 const solution = rootState.model.odinRunner.wodinRun(rootState.model.odin, parameters, start, end, {});
-                commit(RunMutation.SetOdinSolution, solution);
+                commit(RunMutation.SetSolution, solution);
             } catch (e) {
                 const wodinRunError = { error: userMessages.errors.wodinRunError, detail: e };
-                commit(RunMutation.SetOdinRunnerError, wodinRunError);
+                commit(RunMutation.SetError, wodinRunError);
             }
 
             if (state.runRequired) {

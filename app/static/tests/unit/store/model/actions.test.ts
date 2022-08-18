@@ -340,7 +340,7 @@ describe("Model actions", () => {
         expect(run.mock.calls[0][2]).toBe(0); // start
         expect(run.mock.calls[0][3]).toBe(99); // end
 
-        expect(commit.mock.calls[9][0]).toBe(`run/${RunMutation.SetOdinSolution}`);
+        expect(commit.mock.calls[9][0]).toBe(`run/${RunMutation.SetSolution}`);
         expect(commit.mock.calls[9][1]).toBe("test solution");
         expect(commit.mock.calls[10][0]).toBe(`run/${RunMutation.SetRunRequired}`);
         expect(commit.mock.calls[10][1]).toBe(false);
