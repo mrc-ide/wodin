@@ -32,53 +32,28 @@
         },
 
         "ModelState": {
-            "requiredAction": {
-                "oneOf": [
-                    { "type": "null" },
-                    { "$ref": "#/definitions/RequiredModelAction" }
-                ]
-            },
-            "odinModelRepsonse": {
-                "oneOf": [
-                    { "type": "null" },
-                    { "$ref": "#/definitions/OdinModelResponse" }
-                ]
-            },
-            "hasOdin": {
-                "comment": "Indicates if the 'odin' field was non-null",
-                "type": "boolean"
-            },
-            "solution": {
-                "oneOf": [
-                    { "type": "null" },
-                    { "$ref": "#/definitions/OdinSolution" }
-                ]
-            },
-            "parameterValues": {
-                "oneOf": [
-                    { "type": "null" },
-                    { "$ref": "#/definitions/OdinParameterValues" }
-                ]
-            },
-            "endTime": {
-                "type": "number"
-            },
-            "odinModelCodeError": {
-                "oneOf": [
-                    { "type": "null" },
-                    { "$ref": "#/definitions/WodinError" }
-                ]
-            },
-            "odinRunnerError": {
-                "oneOf": [
-                    { "type": "null" },
-                    { "$ref": "#/definitions/WodinError" }
-                ]
+            "type": "object",
+            "properties": {
+                "compileRequired": {
+                    "type": "boolean"
+                },
+                "odinModelRepsonse": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/OdinModelResponse" }
+                    ]
+                },
+                "hasOdin": {
+                    "comment": "Indicates if the 'odin' field was non-null",
+                    "type": "boolean"
+                },
+                "odinModelCodeError": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/WodinError" }
+                    ]
+                }
             }
-        },
-
-        "SensitivityState": {
-
         },
 
         "RequiredModelAction": {
@@ -206,42 +181,78 @@
             "additionalProperties": false
         },
 
+        "RunState": {
+            "type": "object",
+            "properties": {
+                "runRequired": {
+                    "type": "boolean"
+                },
+                "solution": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/OdinSolution" }
+                    ]
+                },
+                "parmeterValues": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/OdinParameterValues" }
+                    ]
+                },
+                "endTime": {
+                    "type": "number"
+                },
+                "error": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/WodinError" }
+                    ]
+                }
+            }
+        },
+
         "SensitivityState": {
-            "paramSettings": {
-                "$ref": "#/definitions/SensitivityParameterSettings"
-            },
-            "batch": {
-                "oneOf": [
-                    { "type": "null" },
-                    { "$ref": "#/definitions/Batch" }
-                ]
-            },
-            "sensitivityUpdateRequired": {
-                "type": "boolean"
+            "type": "object",
+            "properties": {
+                "paramSettings": {
+                    "$ref": "#/definitions/SensitivityParameterSettings"
+                },
+                "batch": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/Batch" }
+                    ]
+                },
+                "sensitivityUpdateRequired": {
+                    "type": "boolean"
+                }
             }
         },
 
         "SensitivityParameterSettings": {
-            "parameterToVary": {
-                "type": ["null", "string"]
-            },
-            "scaleType": {
-                "$ref": "#/definitions/SensitivityScaleType"
-            },
-            "variationType": {
-                "$ref": "#/definitions/SensitivityVariationType"
-            },
-            "variationPercentage": {
-                "type": "number"
-            },
-            "rangeFrom": {
-                "type": "number"
-            },
-            "rangeTo": {
-                "type": "number"
-            },
-            "numberOfRuns": {
-                "type": "number"
+            "type": "object",
+            "properties": {
+                "parameterToVary": {
+                    "type": ["null", "string"]
+                },
+                "scaleType": {
+                    "$ref": "#/definitions/SensitivityScaleType"
+                },
+                "variationType": {
+                    "$ref": "#/definitions/SensitivityVariationType"
+                },
+                "variationPercentage": {
+                    "type": "number"
+                },
+                "rangeFrom": {
+                    "type": "number"
+                },
+                "rangeTo": {
+                    "type": "number"
+                },
+                "numberOfRuns": {
+                    "type": "number"
+                }
             }
         },
 
@@ -377,6 +388,10 @@
             "$ref": "#/definitions/ModelState"
         },
 
+        "run": {
+            "$ref": "#/definitions/RunState"
+        },
+
         "sensitivity": {
             "$ref": "#/definitions/SensitivityState"
         },
@@ -386,5 +401,5 @@
         }
     },
 
-    "required": ["openVisualisationTab", "code", "model", "sensitivity"]
+    "required": ["openVisualisationTab", "code", "model", "run", "sensitivity"]
 }
