@@ -28,6 +28,11 @@ describe("SensitivityPlotOptions", () => {
                 model: {
                     namespaced: true,
                     state: {
+                    }
+                },
+                run: {
+                    namespaced: true,
+                    state: {
                         endTime: 100
                     }
                 },
