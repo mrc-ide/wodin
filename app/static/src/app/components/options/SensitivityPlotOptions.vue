@@ -1,33 +1,30 @@
 <template>
   <div class="container mb-4">
-    <div class="row mb-2" id="sensitivity-plot-type" >
-      <div class="col-5">
+    <div class="row mb-3" id="sensitivity-plot-type" >
+      <div class="col-11">
         <label class="col-form-label">Type of plot</label>
       </div>
-      <div class="col-6">
+      <div class="col-11">
         <select class="form-select" v-model="plotType">
-          <option value="TraceOverTime">Trace over time</option>
-          <option value="ValueAtTime">Value at a single time</option>
-          <option value="ValueAtExtreme">Value at its min/max</option>
-          <option value="TimeAtExtreme">Time at value's min/max</option>
+          <option v-for="option in plotTypeOptions" :value="option.value" :key="option.value">{{option.label}}</option>
         </select>
       </div>
     </div>
     <div v-if="extremePlotType" id="sensitivity-plot-extreme"  class="row mb-2">
-      <div class="col-5">
+      <div class="col-xl-5 col-11">
         <label class="col-form-label">Min/Max</label>
       </div>
-      <div class="col-6">
+      <div class="col-xl-6 col-11">
         <select class="form-select" v-model="extreme">
           <option v-for="extremeValue in extremeValues" :key="extremeValue">{{extremeValue}}</option>
         </select>
       </div>
     </div>
     <div v-if="timePlotType" id="sensitivity-plot-time" class="row mb-2">
-      <div class="col-5">
+      <div class="col-xl-5 col-11">
         <label class="col-form-label">Time to use</label>
       </div>
-      <div class="col-6">
+      <div class="col-xl-6 col-11">
         <input v-model="time" class="form-control" type="number">
       </div>
     </div>
@@ -74,6 +71,13 @@ export default defineComponent({
 
         const extremeValues = Object.keys(SensitivityPlotExtreme);
 
+        const plotTypeOptions = [
+            { value: SensitivityPlotType.TraceOverTime, label: "Trace over time" },
+            { value: SensitivityPlotType.ValueAtTime, label: "Value at a single time" },
+            { value: SensitivityPlotType.ValueAtExtreme, label: "Value at its min/max" },
+            { value: SensitivityPlotType.TimeAtExtreme, label: "Time at value's min/max" }
+        ];
+
         onMounted(() => {
         // if plot settings time has not been initialised, set to model end time
             if (store.state.sensitivity.plotSettings.time === null) {
@@ -87,7 +91,8 @@ export default defineComponent({
             extremeValues,
             plotType,
             extreme,
-            time
+            time,
+            plotTypeOptions
         };
     }
 });

@@ -2,6 +2,7 @@
   <vertical-collapse title="Sensitivity Options" collapse-id="sensitivity-options">
     <template v-if="showOptions">
       <div class="mt-2 clearfix">
+        <button class="btn btn-primary mb-4 float-end" @click="toggleEdit(true)">Edit</button>
         <ul>
           <li><strong>Parameter:</strong> {{settings.parameterToVary}}</li>
           <li><strong>Scale Type:</strong> {{ settings.scaleType }}</li>
@@ -16,7 +17,6 @@
           <li><strong>Number of runs:</strong> {{ settings.numberOfRuns}}</li>
         </ul>
         <sensitivity-param-values :batch-pars="batchPars"></sensitivity-param-values>
-        <button class="btn btn-primary mb-4 float-end" @click="toggleEdit(true)">Edit</button>
       </div>
       <hr/>
       <sensitivity-plot-options></sensitivity-plot-options>
