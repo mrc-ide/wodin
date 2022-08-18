@@ -280,7 +280,9 @@ describe("generateBatchPars", () => {
             odinRunner: {
                 batchParsRange: mockBatchParsRange,
                 batchParsDisplace: mockBatchParsDisplace
-            },
+            }
+        },
+        run: {
             parameterValues
         }
     } as any;
@@ -347,7 +349,9 @@ describe("generateBatchPars", () => {
     it("returns error if no runner in state", () => {
         const noRunnerState = {
             model: {
-                odinRunner: null,
+                odinRunner: null
+            },
+            run: {
                 parameterValues
             }
         } as any;
@@ -359,7 +363,9 @@ describe("generateBatchPars", () => {
     it("returns error if no param values in state", () => {
         const noParamsState = {
             model: {
-                odinRunner: rootState.model.odinRunner,
+                odinRunner: rootState.model.odinRunner
+            },
+            run: {
                 parameterValues: null
             }
         } as any;

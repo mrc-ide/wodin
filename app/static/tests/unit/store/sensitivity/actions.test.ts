@@ -7,7 +7,9 @@ const mockRunner = {
 };
 const mockModelState = {
     odin: {},
-    odinRunner: mockRunner,
+    odinRunner: mockRunner
+};
+const mockRunState = {
     endTime: 99
 };
 
@@ -23,7 +25,8 @@ describe("Sensitivity actions", () => {
 
     it("runs sensitivity", () => {
         const rootState = {
-            model: mockModelState
+            model: mockModelState,
+            run: mockRunState
         };
 
         const commit = jest.fn();
@@ -49,7 +52,8 @@ describe("Sensitivity actions", () => {
             model: {
                 ...mockModelState,
                 odinRunner: null
-            }
+            },
+            run: mockRunState
         };
 
         const commit = jest.fn();
@@ -63,7 +67,8 @@ describe("Sensitivity actions", () => {
             model: {
                 ...mockModelState,
                 odin: null
-            }
+            },
+            run: mockRunState
         };
 
         const commit = jest.fn();
@@ -78,7 +83,8 @@ describe("Sensitivity actions", () => {
             batchPars: null
         };
         const rootState = {
-            model: mockModelState
+            model: mockModelState,
+            run: mockRunState
         };
 
         const commit = jest.fn();
@@ -92,7 +98,10 @@ describe("Sensitivity actions", () => {
         const rootState = {
             model: {
                 ...mockModelState,
-                compileRequired: false,
+                compileRequired: false
+            },
+            run: {
+                ...mockRunState,
                 runRequired: true
             }
         };
@@ -110,6 +119,6 @@ describe("Sensitivity actions", () => {
 
         expect(mockRunner.batchRun).toHaveBeenCalledWith(rootState.model.odin, mockBatchPars, 0, 99, {});
 
-        expect(dispatch).toHaveBeenCalledWith("model/RunModel", null, { root: true });
+        expect(dispatch).toHaveBeenCalledWith("run/RunModel", null, { root: true });
     });
 });

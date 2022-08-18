@@ -93,8 +93,7 @@ describe("SensitivityTab", () => {
 
     it("disables run button when required action is Compile", () => {
         const wrapper = getWrapper({
-            compileRequired: true,
-            runRequired: false
+            compileRequired: true
         });
         expect(wrapper.find("button").element.disabled).toBe(true);
     });
@@ -108,7 +107,7 @@ describe("SensitivityTab", () => {
         const sensitivityState = {
             batch: { solutions: [{}] }
         } as any;
-        const wrapper = getWrapper({ compileRequired: true, runRequired: false }, sensitivityState);
+        const wrapper = getWrapper({ compileRequired: true }, sensitivityState);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
             .toBe("Model code has been updated. Compile code and Run Sensitivity to view updated graph.");
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);

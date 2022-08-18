@@ -7,6 +7,7 @@ import { Odin, OdinModelResponse, OdinParameter } from "../../types/responseType
 import { evaluateScript } from "../../utils";
 import { FitDataAction } from "../fitData/actions";
 import { ModelFitAction } from "../modelFit/actions";
+import { RunAction } from "../run/actions";
 import { paletteModel } from "../../palette";
 import { RunMutation } from "../run/mutations";
 import { ModelFitMutation } from "../modelFit/mutations";
@@ -52,14 +53,14 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
             const value = param.default;
             newValues.set(param.name, value === null ? 0 : value);
         });
-        commit(`run/${RunMutation.SetParameterValues}`, newValues);
+        commit(`run/${RunMutation.SetParameterValues}`, newValues, { root: true });
 
         const variables = state.odinModelResponse.metadata?.variables || [];
         commit(ModelMutation.SetPaletteModel, paletteModel(variables));
 
         if (state.compileRequired) {
             commit(ModelMutation.SetCompileRequired, false);
-            commit(`run/${RunMutation.SetRunRequired}`, true);
+            commit(`run/${RunMutation.SetRunRequired}`, true, { root: true });
             commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true, { root: true });
         }
 
@@ -99,10 +100,6 @@ export const actions: ActionTree<ModelState, AppState> = {
     async DefaultModel(context) {
         await fetchOdin(context);
         compileModel(context);
-        // TODO: dispatch RunAction.RunModel too, but in the parent,
-        // after this is done.
-        //
-        // Previously, was
-        // runModel(context); // TODO: this needs replacing!
+        context.dispatch(`run/${RunAction.RunModel}`, null, { root: true });
     }
 };

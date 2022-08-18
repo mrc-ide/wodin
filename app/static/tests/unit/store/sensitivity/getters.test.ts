@@ -22,7 +22,9 @@ describe("Sensitivity getters", () => {
         });
         const rootState = {
             model: {
-                odinRunner,
+                odinRunner
+            },
+            run: {
                 parameterValues
             }
         } as any;

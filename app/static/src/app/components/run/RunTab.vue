@@ -28,13 +28,13 @@ export default defineComponent({
     setup() {
         const store = useStore();
 
-        const error = computed(() => store.state.run.odinRunnerError);
+        const error = computed(() => store.state.run.error);
 
         // Enable run button if model has initialised and compile is not required
         const canRunModel = computed(() => !!store.state.model.odinRunner && !!store.state.model.odin
             && !store.state.model.compileRequired);
 
-        const runModel = () => store.dispatch(`model/${RunAction.RunModel}`);
+        const runModel = () => store.dispatch(`run/${RunAction.RunModel}`);
         const updateMsg = computed(() => {
             if (store.state.model.compileRequired) {
                 return userMessages.run.compileRequired;

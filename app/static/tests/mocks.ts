@@ -7,6 +7,7 @@ import {
     BatchPars, ResponseFailure, ResponseSuccess, WodinError
 } from "../src/app/types/responseTypes";
 import { ModelState } from "../src/app/store/model/state";
+import { RunState } from "../src/app/store/run/state";
 import { CodeState } from "../src/app/store/code/state";
 import { FitDataState } from "../src/app/store/fitData/state";
 import { AppType, VisualisationTab } from "../src/app/store/appState/state";
@@ -50,18 +51,24 @@ export const mockModelState = (state: Partial<ModelState> = {}): ModelState => {
     return {
         odinRunner: null,
         odin: null,
-        odinSolution: null,
         odinModelResponse: null,
         compileRequired: false,
-        runRequired: false,
-        parameterValues: null,
-        endTime: 100,
         paletteModel: null,
-        odinRunnerError: null,
         odinModelCodeError: null,
         ...state
     };
 };
+
+export const mockRunState = (state: Partial<RunState> = {}): RunState => {
+    return {
+        runRequired: false,
+        solution: null,
+        parameterValues: null,
+        endTime: 100,
+        error: null,
+        ...state
+    };
+}
 
 export const mockCodeState = (state: Partial<CodeState> = {}): CodeState => {
     return {
@@ -116,6 +123,7 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
         },
         code: mockCodeState(),
         model: mockModelState(),
+        run: mockRunState(),
         sensitivity: mockSensitivityState(),
         ...state
     };
@@ -145,6 +153,7 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
         },
         code: mockCodeState(),
         model: mockModelState(),
+        run: mockRunState(),
         fitData: mockFitDataState(),
         sensitivity: mockSensitivityState(),
         ...state
@@ -162,6 +171,7 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
         },
         code: mockCodeState(),
         model: mockModelState(),
+        run: mockRunState(),
         sensitivity: mockSensitivityState(),
         ...state
     };
@@ -198,4 +208,10 @@ export const mockBatchParsDisplace = (base: Map<string, number>, name: string, c
     const max = paramValue * (1 + (displace / 100));
     const min = paramValue * (1 - (displace / 100));
     return mockBatchParsRange(base, name, count, logarithmic, min, max);
+};
+
+export const mockRunner = () => {
+    return {
+        wodinRun: jest.fn((odin, pars, start, end) => "test solution" as any)
+    } as any;
 };
