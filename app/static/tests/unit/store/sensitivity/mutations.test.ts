@@ -1,4 +1,5 @@
 import { mutations, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import { SensitivityPlotExtreme, SensitivityPlotType } from "../../../../src/app/store/sensitivity/state";
 
 describe("Sensitivity mutations", () => {
     it("sets parameter to vary", () => {
@@ -37,5 +38,29 @@ describe("Sensitivity mutations", () => {
         } as any;
         mutations[SensitivityMutation.SetUpdateRequired](state, true);
         expect(state.sensitivityUpdateRequired).toBe(true);
+    });
+
+    const plotSettings = {
+        plotType: SensitivityPlotType.TraceOverTime,
+        extreme: SensitivityPlotExtreme.Max,
+        time: null
+    };
+
+    it("sets plot type", () => {
+        const state = { plotSettings } as any;
+        mutations[SensitivityMutation.SetPlotType](state, SensitivityPlotType.ValueAtTime);
+        expect(state.plotSettings.plotType).toBe(SensitivityPlotType.ValueAtTime);
+    });
+
+    it("sets plot extreme", () => {
+        const state = { plotSettings } as any;
+        mutations[SensitivityMutation.SetPlotExtreme](state, SensitivityPlotExtreme.Min);
+        expect(state.plotSettings.extreme).toBe(SensitivityPlotExtreme.Min);
+    });
+
+    it("sets plot time", () => {
+        const state = { plotSettings } as any;
+        mutations[SensitivityMutation.SetPlotTime](state, 50);
+        expect(state.plotSettings.time).toBe(50);
     });
 });

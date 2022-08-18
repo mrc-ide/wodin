@@ -7,7 +7,8 @@
               @click="runSensitivity">Run sensitivity</button>
     </div>
     <action-required-message :message="updateMsg"></action-required-message>
-    <sensitivity-traces-plot :fade-plot="!!updateMsg" ></sensitivity-traces-plot>
+    <sensitivity-traces-plot v-if="tracesPlot" :fade-plot="!!updateMsg" ></sensitivity-traces-plot>
+    <div v-else id="sensitivity-plot-placeholder">Other plot types coming soon!</div>
   </div>
 </template>
 
@@ -20,6 +21,7 @@ import { RequiredModelAction } from "../../store/model/state";
 import { SensitivityGetter } from "../../store/sensitivity/getters";
 import { SensitivityAction } from "../../store/sensitivity/actions";
 import userMessages from "../../userMessages";
+import { SensitivityPlotType } from "../../store/sensitivity/state";
 
 export default defineComponent({
     name: "SensitivityTab",
@@ -53,10 +55,15 @@ export default defineComponent({
             return "";
         });
 
+        const tracesPlot = computed(
+            () => store.state.sensitivity.plotSettings.plotType === SensitivityPlotType.TraceOverTime
+        );
+
         return {
             canRunSensitivity,
             runSensitivity,
-            updateMsg
+            updateMsg,
+            tracesPlot
         };
     }
 });

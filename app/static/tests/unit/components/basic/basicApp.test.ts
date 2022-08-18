@@ -5,7 +5,7 @@ import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
 import BasicApp from "../../../../src/app/components/basic/BasicApp.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import { mockBasicState, mockModelState } from "../../../mocks";
+import { mockBasicState, mockModelState, mockSensitivityState } from "../../../mocks";
 import WodinApp from "../../../../src/app/components/WodinApp.vue";
 import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
@@ -36,6 +36,10 @@ describe("BasicApp", () => {
                     actions: {
                         [ModelAction.FetchOdinRunner]: jest.fn()
                     }
+                },
+                sensitivity: {
+                    namespaced: true,
+                    state: mockSensitivityState()
                 },
                 errors: {
                     namespaced: true,

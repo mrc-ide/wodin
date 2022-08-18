@@ -11,6 +11,7 @@ import VerticalCollapse from "../../../../src/app/components/VerticalCollapse.vu
 import EditParamSettings from "../../../../src/app/components/options/EditParamSettings.vue";
 import { SensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
 import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
+import SensitivityPlotOptions from "../../../../src/app/components/options/SensitivityPlotOptions.vue";
 
 describe("SensitivityOptions", () => {
     const mockBatchPars = {
@@ -24,7 +25,10 @@ describe("SensitivityOptions", () => {
             modules: {
                 sensitivity: {
                     namespaced: true,
-                    state: { paramSettings },
+                    state: {
+                        paramSettings,
+                        plotSettings: {}
+                    },
                     getters: {
                         [SensitivityGetter.batchPars]: () => mockBatchPars
                     }
@@ -75,6 +79,8 @@ describe("SensitivityOptions", () => {
         expect(wrapper.findComponent(EditParamSettings).props("open")).toBe(false);
 
         expect(wrapper.find("#sensitivity-options-msg").exists()).toBe(false);
+
+        expect(wrapper.findComponent(SensitivityPlotOptions).exists()).toBe(true);
     });
 
     it("displays range variance as expected", () => {
@@ -114,5 +120,6 @@ describe("SensitivityOptions", () => {
         expect(wrapper.find("#sensitivity-options-msg").text())
             .toBe("Please compile a valid model in order to set sensitivity options.");
         expect(wrapper.find("#sensitivity-options").findComponent(SensitivityParamValues).exists()).toBe(false);
+        expect(wrapper.findComponent(SensitivityPlotOptions).exists()).toBe(false);
     });
 });

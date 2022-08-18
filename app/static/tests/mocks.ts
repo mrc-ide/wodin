@@ -4,15 +4,20 @@ import { BasicState } from "../src/app/store/basic/state";
 import { FitState } from "../src/app/store/fit/state";
 import { StochasticState } from "../src/app/store/stochastic/state";
 import {
-    ResponseSuccess, ResponseFailure, WodinError, OdinSolution, BatchPars
+    BatchPars, ResponseFailure, ResponseSuccess, WodinError
 } from "../src/app/types/responseTypes";
 import { ModelState } from "../src/app/store/model/state";
 import { CodeState } from "../src/app/store/code/state";
 import { FitDataState } from "../src/app/store/fitData/state";
 import { AppType, VisualisationTab } from "../src/app/store/appState/state";
 import { ModelFitState } from "../src/app/store/modelFit/state";
-import { SensitivityScaleType, SensitivityState, SensitivityVariationType } from "../src/app/store/sensitivity/state";
-import { Dict } from "../src/app/types/utilTypes";
+import {
+    SensitivityPlotExtreme,
+    SensitivityPlotType,
+    SensitivityScaleType,
+    SensitivityState,
+    SensitivityVariationType
+} from "../src/app/store/sensitivity/state";
 
 export const mockAxios = new MockAdapter(axios);
 
@@ -87,6 +92,11 @@ export const mockSensitivityState = (state: Partial<SensitivityState> = {}): Sen
             rangeFrom: 0,
             rangeTo: 0,
             numberOfRuns: 10
+        },
+        plotSettings: {
+            plotType: SensitivityPlotType.TraceOverTime,
+            extreme: SensitivityPlotExtreme.Max,
+            time: null
         },
         batch: null,
         sensitivityUpdateRequired: false,

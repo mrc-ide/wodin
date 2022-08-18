@@ -1,4 +1,10 @@
-import { SensitivityScaleType, SensitivityState, SensitivityVariationType } from "./state";
+import {
+    SensitivityPlotExtreme,
+    SensitivityPlotType,
+    SensitivityScaleType,
+    SensitivityState,
+    SensitivityVariationType
+} from "./state";
 import { mutations } from "./mutations";
 import { actions } from "./actions";
 import { getters } from "./getters";
@@ -12,6 +18,11 @@ export const defaultState: SensitivityState = {
         rangeFrom: 0,
         rangeTo: 0,
         numberOfRuns: 10
+    },
+    plotSettings: {
+        plotType: SensitivityPlotType.TraceOverTime,
+        extreme: SensitivityPlotExtreme.Max,
+        time: null
     },
     batch: null,
     sensitivityUpdateRequired: false
