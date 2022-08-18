@@ -8,8 +8,7 @@
     </div>
     <action-required-message :message="updateMsg"></action-required-message>
     <sensitivity-traces-plot v-if="tracesPlot" :fade-plot="!!updateMsg"></sensitivity-traces-plot>
-    <sensitivity-summary-plot v-else-if="valueAtTimePlot" :fade-plot="!!updateMsg"></sensitivity-summary-plot>
-    <div v-else id="sensitivity-plot-placeholder">Other plot types coming soon!</div>
+    <sensitivity-summary-plot v-else :fade-plot="!!updateMsg"></sensitivity-summary-plot>
   </div>
 </template>
 
@@ -60,17 +59,11 @@ export default defineComponent({
             () => store.state.sensitivity.plotSettings.plotType === SensitivityPlotType.TraceOverTime
         );
 
-        // TODO: we can remove this once other summary plot types are implemented
-        const valueAtTimePlot = computed(
-            () => store.state.sensitivity.plotSettings.plotType === SensitivityPlotType.ValueAtTime
-        );
-
         return {
             canRunSensitivity,
             runSensitivity,
             updateMsg,
-            tracesPlot,
-            valueAtTimePlot
+            tracesPlot
         };
     }
 });
