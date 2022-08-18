@@ -145,24 +145,6 @@ describe("SensitivityPlotOptions", () => {
         expect(mockSetPlotExtreme.mock.calls[0][1]).toBe(SensitivityPlotExtreme.Max);
     });
 
-    it("reverts time to 0 if negative value entered", async () => {
-        const wrapper = getWrapper({ plotType: SensitivityPlotType.ValueAtTime });
-        const timeInput = wrapper.find("#sensitivity-plot-time input");
-        await timeInput.setValue("-1");
-
-        expect(mockSetPlotTime).toHaveBeenCalledTimes(1);
-        expect(mockSetPlotTime.mock.calls[0][1]).toBe(0);
-    });
-
-    it("reverts time to model end if higher value entered", async () => {
-        const wrapper = getWrapper({ plotType: SensitivityPlotType.ValueAtTime });
-        const timeInput = wrapper.find("#sensitivity-plot-time input");
-        await timeInput.setValue("200");
-
-        expect(mockSetPlotTime).toHaveBeenCalledTimes(1);
-        expect(mockSetPlotTime.mock.calls[0][1]).toBe(100);
-    });
-
     it("on mounted, initialises time to model end if null", () => {
         const wrapper = getWrapper({ plotType: SensitivityPlotType.ValueAtTime, time: null });
         expect(mockSetPlotTime).toHaveBeenCalledTimes(1);

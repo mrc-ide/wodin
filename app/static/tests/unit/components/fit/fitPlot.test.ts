@@ -67,7 +67,12 @@ describe("FitPlot", () => {
                         linkedVariables: { v: "y" }
                     },
                     getters: {
-                        [FitDataGetter.dataEnd]: () => 1
+                        [FitDataGetter.dataEnd]: () => 1,
+                        [FitDataGetter.link]: () => ({
+                            time: "t",
+                            data: "v",
+                            model: "y"
+                        })
                     }
                 }
             }

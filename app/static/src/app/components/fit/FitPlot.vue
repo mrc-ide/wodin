@@ -16,8 +16,9 @@ import {
 import { useStore } from "vuex";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
-import { Dict } from "../../types/utilTypes";
-import { filterSeriesSet, odinToPlotly, WodinPlotData } from "../../plot";
+import {
+    filterSeriesSet, fitDataToPlotly, odinToPlotly, WodinPlotData
+} from "../../plot";
 import WodinOdePlot from "../WodinOdePlot.vue";
 
 export default defineComponent({
@@ -35,40 +36,19 @@ export default defineComponent({
 
         const endTime = computed(() => store.getters[`fitData/${FitDataGetter.dataEnd}`]);
 
-        const palette = computed(() => store.state.model.paletteModel);
-
-        const seriesColour = (variable: string) => ({ color: palette.value[variable] });
-
-        const fitDataSeries = (start: number, end: number): WodinPlotData => {
-            const { fitData } = store.state;
-            const timeVar = fitData?.timeVariable;
-            const dataVar = fitData?.columnToFit;
-            if (fitData.data && dataVar && timeVar) {
-                const filteredData = fitData.data.filter(
-                    (row: Dict<number>) => row[timeVar] >= start && row[timeVar] <= end
-                );
-                const modelVar = fitData.linkedVariables[dataVar];
-                return [{
-                    name: dataVar,
-                    x: filteredData.map((row: Dict<number>) => row[timeVar]),
-                    y: filteredData.map((row: Dict<number>) => row[dataVar]),
-                    mode: "markers",
-                    type: "scatter",
-                    marker: seriesColour(modelVar)
-                }];
-            }
-            return [];
-        };
+        const link = computed(() => store.getters[`fitData/${FitDataGetter.link}`]);
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
+            const { data } = store.state.fitData;
             const result = solution.value && solution.value(start, end, points);
-            if (!result) {
+            if (!data || !link.value || !result) {
                 return [];
             }
-            const { fitData } = store.state;
-            const dataVar = fitData?.columnToFit;
-            const modelVar = fitData.linkedVariables[dataVar];
-            return [...odinToPlotly(filterSeriesSet(result, modelVar), palette.value), ...fitDataSeries(start, end)];
+            const palette = store.state.model.paletteModel;
+            return [
+                ...odinToPlotly(filterSeriesSet(result, link.value.model), palette),
+                ...fitDataToPlotly(data, link.value, palette, start, end)
+            ];
         };
 
         return {
