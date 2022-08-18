@@ -19,7 +19,6 @@ export enum ModelMutation {
 export const mutations: MutationTree<ModelState> = {
     [ModelMutation.SetOdinRunner](state: ModelState, payload: string) {
         state.odinRunner = evaluateScript<OdinRunner>(payload);
-        // state.odinRunnerError = null; // TODO: dispatch to clear this?
     },
 
     [ModelMutation.SetOdinResponse](state: ModelState, payload: OdinModelResponse) {

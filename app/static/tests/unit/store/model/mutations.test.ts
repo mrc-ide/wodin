@@ -4,13 +4,10 @@ import { mockError, mockModelState } from "../../../mocks";
 describe("Model mutations", () => {
     it("evaluates and sets odin runner", () => {
         const mockRunner = "() => 'runner'";
-        // TODO: need a test that shows we can clear this...
-        // const state = mockModelState({ odinRunnerError: mockError("error") });
         const state = mockModelState();
 
         mutations.SetOdinRunner(state, mockRunner);
         expect((state.odinRunner as any)()).toBe("runner");
-        // expect(state.odinRunnerError).toBe(null); // TODO
     });
 
     it("sets  odin response", () => {
