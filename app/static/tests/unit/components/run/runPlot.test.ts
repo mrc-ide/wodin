@@ -29,9 +29,11 @@ describe("RunPlot", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 model: {
-                    endTime: 99,
-                    odinSolution: mockSolution,
                     paletteModel
+                },
+                run: {
+                    endTime: 99,
+                    solution: mockSolution
                 }
             } as any
         });
@@ -84,9 +86,11 @@ describe("RunPlot", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 model: {
-                    endTime: 99,
-                    odinSolution: null,
                     paletteModel
+                },
+                run: {
+                    endTime: 99,
+                    solution: null
                 }
             } as any
         });
@@ -113,7 +117,9 @@ describe("RunPlot", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 model: {
-                    odinSolution: null
+                },
+                run: {
+                    solution: null
                 }
             } as any
         });

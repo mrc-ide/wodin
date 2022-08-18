@@ -44,7 +44,7 @@ export default defineComponent({
         const store = useStore();
 
         const settings = computed(() => store.state.sensitivity.plotSettings);
-        const modelEndTime = computed(() => store.state.model.endTime);
+        const modelEndTime = computed(() => store.state.run.endTime);
 
         const plotType = computed({
             get: () => settings.value.plotType,

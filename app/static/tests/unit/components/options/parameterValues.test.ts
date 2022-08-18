@@ -4,8 +4,8 @@ import { mount, shallowMount, VueWrapper } from "@vue/test-utils";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import ParameterValues from "../../../../src/app/components/options/ParameterValues.vue";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
-import { mockModelFitState, mockModelState } from "../../../mocks";
-import { ModelMutation, mutations } from "../../../../src/app/store/model/mutations";
+import { mockModelFitState, mockModelState, mockRunState } from "../../../mocks";
+import { RunMutation, mutations as runMutations } from "../../../../src/app/store/run/mutations";
 import { AppType, VisualisationTab } from "../../../../src/app/store/appState/state";
 import Mock = jest.Mock;
 import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
@@ -19,7 +19,7 @@ describe("ParameterValues", () => {
         mockSetParamsToVary = jest.fn()) => {
         // Use mock or real mutations
         const storeMutations = mockUpdateParameterValues
-            ? { UpdateParameterValues: mockUpdateParameterValues } : mutations;
+            ? { UpdateParameterValues: mockUpdateParameterValues } : runMutations;
 
         const store = new Vuex.Store<BasicState>({
             state: {
@@ -29,7 +29,11 @@ describe("ParameterValues", () => {
             modules: {
                 model: {
                     namespaced: true,
-                    state: mockModelState({
+                    state: mockModelState()
+                },
+                run: {
+                    namespaced: true,
+                    state: mockRunState({
                         parameterValues: new Map([["param1", 1], ["param2", 2.2]])
                     }),
                     mutations: storeMutations
@@ -127,7 +131,7 @@ describe("ParameterValues", () => {
         });
         wrapper.findAll("input").at(1)!.setValue("");
 
-        store.commit(`model/${ModelMutation.SetOdinSolution}`, {});
+        store.commit(`run/${RunMutation.SetSolution}`, {});
         await nextTick();
         expect(wrapper.findAllComponents(NumericInput).at(1)!.props("value")).toBe(2.2);
         expect((wrapper.findAll("input").at(1)!.element as HTMLInputElement).value).toBe("2.2");

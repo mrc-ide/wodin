@@ -17,7 +17,6 @@ import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import SensitivityTracesPlot from "./SensitivityTracesPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
-import { RequiredModelAction } from "../../store/model/state";
 import { SensitivityGetter } from "../../store/sensitivity/getters";
 import { SensitivityAction } from "../../store/sensitivity/actions";
 import userMessages from "../../userMessages";
@@ -33,7 +32,7 @@ export default defineComponent({
         const store = useStore();
         const canRunSensitivity = computed(() => {
             return !!store.state.model.odinRunner && !!store.state.model.odin
-            && store.state.model.requiredAction !== RequiredModelAction.Compile
+            && !store.state.model.compileRequired
             && !!store.getters[`sensitivity/${SensitivityGetter.batchPars}`];
         });
 
@@ -41,11 +40,10 @@ export default defineComponent({
             store.dispatch(`sensitivity/${SensitivityAction.RunSensitivity}`);
         };
 
-        const modelRequiredAction = computed(() => store.state.model.requiredAction);
         const sensitivityUpdateRequired = computed(() => store.state.sensitivity.sensitivityUpdateRequired);
         const updateMsg = computed(() => {
             if (store.state.sensitivity.batch?.solutions.length) {
-                if (modelRequiredAction.value === RequiredModelAction.Compile) {
+                if (store.state.model.compileRequired) {
                     return userMessages.sensitivity.compileRequiredForUpdate;
                 }
                 if (sensitivityUpdateRequired.value) {

@@ -3,16 +3,12 @@ import { actions } from "./actions";
 import { mutations } from "./mutations";
 
 export const defaultState: ModelState = {
-    requiredAction: null,
+    compileRequired: false,
     odinRunner: null,
     odinModelResponse: null,
     odin: null,
-    odinSolution: null,
-    parameterValues: null,
-    endTime: 100,
     paletteModel: null,
-    odinModelCodeError: null,
-    odinRunnerError: null
+    odinModelCodeError: null
 };
 
 export const model = {

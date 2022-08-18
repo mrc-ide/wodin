@@ -8,7 +8,7 @@ describe("RunOptions", () => {
         const store = new Vuex.Store<BasicState>({
             state: {} as any,
             modules: {
-                model: {
+                run: {
                     namespaced: true,
                     state: {
                         endTime: 99

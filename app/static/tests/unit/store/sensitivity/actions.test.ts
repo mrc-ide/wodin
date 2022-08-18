@@ -1,6 +1,5 @@
 import { actions, SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
-import { RequiredModelAction } from "../../../../src/app/store/model/state";
 
 const mockBatch = {};
 const mockRunner = {
@@ -8,7 +7,9 @@ const mockRunner = {
 };
 const mockModelState = {
     odin: {},
-    odinRunner: mockRunner,
+    odinRunner: mockRunner
+};
+const mockRunState = {
     endTime: 99
 };
 
@@ -24,7 +25,8 @@ describe("Sensitivity actions", () => {
 
     it("runs sensitivity", () => {
         const rootState = {
-            model: mockModelState
+            model: mockModelState,
+            run: mockRunState
         };
 
         const commit = jest.fn();
@@ -50,7 +52,8 @@ describe("Sensitivity actions", () => {
             model: {
                 ...mockModelState,
                 odinRunner: null
-            }
+            },
+            run: mockRunState
         };
 
         const commit = jest.fn();
@@ -64,7 +67,8 @@ describe("Sensitivity actions", () => {
             model: {
                 ...mockModelState,
                 odin: null
-            }
+            },
+            run: mockRunState
         };
 
         const commit = jest.fn();
@@ -79,7 +83,8 @@ describe("Sensitivity actions", () => {
             batchPars: null
         };
         const rootState = {
-            model: mockModelState
+            model: mockModelState,
+            run: mockRunState
         };
 
         const commit = jest.fn();
@@ -91,7 +96,14 @@ describe("Sensitivity actions", () => {
 
     it("run sensitivity dispatches model run if required", () => {
         const rootState = {
-            model: { ...mockModelState, requiredAction: RequiredModelAction.Run }
+            model: {
+                ...mockModelState,
+                compileRequired: false
+            },
+            run: {
+                ...mockRunState,
+                runRequired: true
+            }
         };
 
         const commit = jest.fn();
@@ -107,6 +119,6 @@ describe("Sensitivity actions", () => {
 
         expect(mockRunner.batchRun).toHaveBeenCalledWith(rootState.model.odin, mockBatchPars, 0, 99, {});
 
-        expect(dispatch).toHaveBeenCalledWith("model/RunModel", null, { root: true });
+        expect(dispatch).toHaveBeenCalledWith("run/RunModel", null, { root: true });
     });
 });

@@ -28,7 +28,7 @@ import {
     defineComponent, computed, watch, ref
 } from "vue";
 import { useStore } from "vuex";
-import { ModelMutation } from "../../store/model/mutations";
+import { RunMutation } from "../../store/run/mutations";
 import NumericInput from "./NumericInput.vue";
 import { Dict } from "../../types/utilTypes";
 import { AppType, VisualisationTab } from "../../store/appState/state";
@@ -43,7 +43,7 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
-        const paramValuesMap = computed(() => store.state.model.parameterValues);
+        const paramValuesMap = computed(() => store.state.run.parameterValues);
         const paramNames = computed(
             () => (paramValuesMap.value ? Array.from(paramValuesMap.value.keys()) as string[] : [])
         );
@@ -71,10 +71,10 @@ export default defineComponent({
         const timestampParamNames = () => paramNames.value.map((name: string) => name + Date.now());
 
         const paramKeys = ref(timestampParamNames());
-        const odinSolution = computed(() => store.state.model.odinSolution);
+        const odinSolution = computed(() => store.state.run.solution);
 
         const updateValue = (newValue: number, paramName: string) => {
-            store.commit(`model/${ModelMutation.UpdateParameterValues}`, { [paramName]: newValue });
+            store.commit(`run/${RunMutation.UpdateParameterValues}`, { [paramName]: newValue });
             store.commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true);
         };
 

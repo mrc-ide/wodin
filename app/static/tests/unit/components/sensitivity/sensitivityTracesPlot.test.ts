@@ -116,9 +116,11 @@ describe("SensitivityTracesPlot", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 model: {
-                    odinSolution: mockCentralSln,
-                    endTime: 1,
                     paletteModel: mockPalette
+                },
+                run: {
+                    solution: mockCentralSln,
+                    endTime: 1
                 },
                 sensitivity: {
                     batch: {

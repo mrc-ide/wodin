@@ -4,6 +4,7 @@ import { mutations } from "./mutations";
 import { errors } from "../errors/errors";
 import { StochasticState } from "./state";
 import { model } from "../model/model";
+import { run } from "../run/run";
 import { code } from "../code/code";
 import { sensitivity } from "../sensitivity/sensitivity";
 import { AppType, VisualisationTab } from "../appState/state";
@@ -26,6 +27,7 @@ export const storeOptions: StoreOptions<StochasticState> = {
         errors,
         code,
         model,
+        run,
         sensitivity
     }
 };

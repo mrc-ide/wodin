@@ -24,6 +24,8 @@ describe("OptionsTab", () => {
         appType: AppType.Fit,
         openVisualisationTab: VisualisationTab.Run,
         model: {
+        },
+        run: {
             parameterValues: new Map<string, number>()
         },
         modelFit: {
@@ -39,7 +41,7 @@ describe("OptionsTab", () => {
             state: {
                 appType: AppType.Basic,
                 openVisualisationTab: VisualisationTab.Run,
-                model: {
+                run: {
                     parameterValues: null
                 }
             } as any
@@ -61,8 +63,10 @@ describe("OptionsTab", () => {
             state: {
                 appType: AppType.Fit,
                 openVisualisationTab: VisualisationTab.Fit,
-                model: {
+                run: {
                     parameterValues: new Map<string, number>()
+                },
+                model: {
                 },
                 modelFit: {
                     paramsToVary: []
