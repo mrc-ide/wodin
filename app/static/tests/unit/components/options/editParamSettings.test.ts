@@ -6,7 +6,7 @@ import {
     SensitivityVariationType
 } from "../../../../src/app/store/sensitivity/state";
 import {
-    mockBasicState, mockBatchParsDisplace, mockBatchParsRange, mockModelState
+    mockBasicState, mockBatchParsDisplace, mockBatchParsRange, mockModelState, mockRunState
 } from "../../../mocks";
 import EditParamSettings from "../../../../src/app/components/options/EditParamSettings.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
@@ -53,8 +53,13 @@ describe("EditParamSettings", () => {
                 model: {
                     namespaced: true,
                     state: mockModelState({
-                        parameterValues,
                         odinRunner: mockRunner
+                    })
+                },
+                run: {
+                    namespaced: true,
+                    state: mockRunState({
+                        parameterValues
                     })
                 },
                 sensitivity: {

@@ -2,7 +2,7 @@ import { ActionTree } from "vuex";
 import { FitState } from "../fit/state";
 import { ModelFitState } from "./state";
 import { ModelFitMutation } from "./mutations";
-import { ModelMutation } from "../model/mutations";
+import { RunMutation } from "../run/mutations";
 import { ModelFitGetter } from "./getters";
 
 export enum ModelFitAction {
@@ -30,7 +30,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
             const vary = state.paramsToVary;
 
             const pars = {
-                base: rootState.model.parameterValues!,
+                base: rootState.run.parameterValues!,
                 vary
             };
 
@@ -53,7 +53,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
         const result = simplex.result();
         commit(ModelFitMutation.SetResult, result);
         // update model params on every step
-        commit(`model/${ModelMutation.SetParameterValues}`, result.data.pars, { root: true });
+        commit(`run/${RunMutation.SetParameterValues}`, result.data.pars, { root: true });
 
         if (result.converged) {
             commit(ModelFitMutation.SetFitting, false);
@@ -67,7 +67,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
 
     [ModelFitAction.UpdateParamsToVary](context) {
         const { rootState, state, commit } = context;
-        const paramValues = rootState.model.parameterValues;
+        const paramValues = rootState.run.parameterValues;
         const newParams = paramValues ? Array.from(paramValues.keys()) : [];
         // Retain selected values if we can
         const newParamsToVary = state.paramsToVary.filter((param) => newParams.includes(param));

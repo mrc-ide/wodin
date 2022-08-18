@@ -133,7 +133,7 @@ export function generateBatchPars(
     let batchPars = null;
     let errorDetail = null;
     const runner = rootState.model.odinRunner;
-    const paramValues = rootState.model.parameterValues;
+    const paramValues = rootState.run.parameterValues;
     const {
         variationType, parameterToVary, numberOfRuns, variationPercentage, scaleType, rangeFrom, rangeTo
     } = paramSettings;

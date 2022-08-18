@@ -29,9 +29,9 @@ export default defineComponent({
 
         const placeholderMessage = userMessages.run.notRunYet;
 
-        const solution = computed(() => (store.state.model.odinSolution));
+        const solution = computed(() => (store.state.run.solution));
 
-        const endTime = computed(() => store.state.model.endTime);
+        const endTime = computed(() => store.state.run.endTime);
 
         const palette = computed(() => store.state.model.paletteModel);
 

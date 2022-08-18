@@ -52,7 +52,12 @@ describe("SensitivitySummaryPlot", () => {
                         paletteModel: {
                             S: "#ff0000",
                             I: "#0000ff"
-                        },
+                        }
+                    }
+                },
+                run: {
+                    namespaced: true,
+                    state: {
                         endTime: 100
                     }
                 },

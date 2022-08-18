@@ -10,7 +10,6 @@ import { FitState } from "../../../../src/app/store/fit/state";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import FitPlot from "../../../../src/app/components/fit/FitPlot.vue";
-import { RequiredModelAction } from "../../../../src/app/store/model/state";
 import { mockFitState } from "../../../mocks";
 
 describe("Fit Tab", () => {
@@ -31,7 +30,7 @@ describe("Fit Tab", () => {
                 model: {
                     namespaced: true,
                     state: {
-                        requiredAction: compileRequired ? RequiredModelAction.Compile : null
+                        compileRequired
                     }
                 },
                 modelFit: {

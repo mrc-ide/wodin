@@ -42,7 +42,7 @@ export default defineComponent({
         const verifyValidEndTime = () => {
             // update plot settings' end time to be valid before we use it
             let endTime = plotSettings.value.time;
-            const modelEndTime = store.state.model.endTime;
+            const modelEndTime = store.state.run.endTime;
             if (endTime === null) {
                 endTime = modelEndTime;
             } else {

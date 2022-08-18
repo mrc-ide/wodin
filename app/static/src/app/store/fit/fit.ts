@@ -4,6 +4,7 @@ import { mutations } from "./mutations";
 import { errors } from "../errors/errors";
 import { FitState } from "./state";
 import { model } from "../model/model";
+import { run } from "../run/run";
 import { code } from "../code/code";
 import { sensitivity } from "../sensitivity/sensitivity";
 import { fitData } from "../fitData/fitData";
@@ -29,6 +30,7 @@ export const storeOptions: StoreOptions<FitState> = {
         errors,
         code,
         model,
+        run,
         fitData,
         modelFit,
         sensitivity

@@ -4,6 +4,7 @@ import { mutations } from "./mutations";
 import { errors } from "../errors/errors";
 import { BasicState } from "./state";
 import { model } from "../model/model";
+import { run } from "../run/run";
 import { code } from "../code/code";
 import { sensitivity } from "../sensitivity/sensitivity";
 import { logMutations } from "../plugins";
@@ -26,6 +27,7 @@ export const storeOptions: StoreOptions<BasicState> = {
     modules: {
         errors,
         model,
+        run,
         code,
         sensitivity
     },
