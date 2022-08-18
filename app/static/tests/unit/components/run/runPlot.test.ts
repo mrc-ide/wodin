@@ -54,6 +54,7 @@ describe("RunPlot", () => {
         const data = plotData(0, 1, 10);
         expect(data).toStrictEqual([
             {
+                mode: "lines",
                 line: {
                     color: "#ff0000",
                     width: 2
@@ -65,6 +66,7 @@ describe("RunPlot", () => {
                 legendgroup: undefined
             },
             {
+                mode: "lines",
                 line: {
                     color: "#00ff00",
                     width: 2

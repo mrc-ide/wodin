@@ -15,6 +15,7 @@ describe("odinToPlotly", () => {
     it("uses default options", () => {
         expect(odinToPlotly(series, palette)).toStrictEqual([
             {
+                mode: "lines",
                 line: {
                     color: "#ff0000",
                     width: 2
@@ -26,6 +27,7 @@ describe("odinToPlotly", () => {
                 showlegend: true
             },
             {
+                mode: "lines",
                 line: {
                     color: "#0000ff",
                     width: 2
@@ -48,6 +50,7 @@ describe("odinToPlotly", () => {
 
         expect(odinToPlotly(series, palette, options)).toStrictEqual([
             {
+                mode: "lines",
                 line: {
                     color: "#ff0000",
                     width: 3
@@ -59,6 +62,7 @@ describe("odinToPlotly", () => {
                 showlegend: false
             },
             {
+                mode: "lines",
                 line: {
                     color: "#0000ff",
                     width: 3
