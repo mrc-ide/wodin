@@ -31,7 +31,7 @@ describe("RunTab", () => {
     const mockRunModel = jest.fn();
 
     const getWrapper = (modelState: Partial<ModelState> = defaultModelState,
-                        runState: Partial<RunState> = defaultRunState) => {
+        runState: Partial<RunState> = defaultRunState) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
@@ -93,7 +93,7 @@ describe("RunTab", () => {
     });
 
     it("fades plot and shows message when model run required", () => {
-        const wrapper = getWrapper({ compileRequired: false }, { runRequired: true } );
+        const wrapper = getWrapper({ compileRequired: false }, { runRequired: true });
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Model code has been recompiled or options have been updated. Run Model to view updated graph."
         );

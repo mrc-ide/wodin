@@ -4,7 +4,6 @@ import {
     mockModelState, mockRunState, mockRunner
 } from "../../../mocks";
 
-
 describe("Run actions", () => {
     it("runs model and updates required action", () => {
         const mockOdin = {} as any;
@@ -14,7 +13,7 @@ describe("Run actions", () => {
         const modelState = mockModelState({
             odinRunner: runner,
             odin: mockOdin,
-            compileRequired: false,
+            compileRequired: false
         });
         const rootState = {
             model: modelState
@@ -70,7 +69,7 @@ describe("Run actions", () => {
         const rootState = {
             model: modelState
         } as any;
-        const state = mockRunState()
+        const state = mockRunState();
         const commit = jest.fn();
 
         (actions[RunAction.RunModel] as any)({ commit, state, rootState });

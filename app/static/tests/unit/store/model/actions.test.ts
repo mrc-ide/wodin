@@ -265,7 +265,7 @@ describe("Model actions", () => {
                 model: {
                     namespaced: true,
                     state: mockModelState({
-                        odinRunner: runner,
+                        odinRunner: runner
                     }),
                     mutations,
                     actions

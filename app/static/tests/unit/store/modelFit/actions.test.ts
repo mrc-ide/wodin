@@ -1,6 +1,8 @@
 import resetAllMocks = jest.resetAllMocks;
 import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
-import { mockFitDataState, mockModelFitState, mockModelState, mockRunState } from "../../../mocks";
+import {
+    mockFitDataState, mockModelFitState, mockModelState, mockRunState
+} from "../../../mocks";
 import { actions, ModelFitAction } from "../../../../src/app/store/modelFit/actions";
 import { ModelMutation } from "../../../../src/app/store/model/mutations";
 import { RunMutation } from "../../../../src/app/store/run/mutations";

@@ -3,11 +3,9 @@ import { ModelState } from "./state";
 import {
     Odin,
     OdinModelResponse,
-    OdinRunner,
-    WodinError
+    OdinRunner
 } from "../../types/responseTypes";
 import { evaluateScript, getCodeErrorFromResponse } from "../../utils";
-import { Dict } from "../../types/utilTypes";
 import { Palette } from "../../palette";
 
 export enum ModelMutation {

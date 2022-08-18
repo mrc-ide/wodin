@@ -120,7 +120,7 @@ describe("SensitivityTracesPlot", () => {
                 },
                 run: {
                     solution: mockCentralSln,
-                    endTime: 1,
+                    endTime: 1
                 },
                 sensitivity: {
                     batch: {

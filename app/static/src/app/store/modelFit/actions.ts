@@ -2,7 +2,7 @@ import { ActionTree } from "vuex";
 import { FitState } from "../fit/state";
 import { ModelFitState } from "./state";
 import { ModelFitMutation } from "./mutations";
-import { RunMutation} from "../run/mutations";
+import { RunMutation } from "../run/mutations";
 import { ModelFitGetter } from "./getters";
 
 export enum ModelFitAction {

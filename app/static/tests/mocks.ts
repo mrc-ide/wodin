@@ -68,7 +68,7 @@ export const mockRunState = (state: Partial<RunState> = {}): RunState => {
         error: null,
         ...state
     };
-}
+};
 
 export const mockCodeState = (state: Partial<CodeState> = {}): CodeState => {
     return {

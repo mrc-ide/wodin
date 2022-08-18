@@ -1,5 +1,5 @@
 import {
-    Odin, OdinModelResponse, OdinSolution, OdinRunner, WodinError
+    Odin, OdinModelResponse, OdinRunner, WodinError
 } from "../../types/responseTypes";
 import type { Palette } from "../../palette";
 

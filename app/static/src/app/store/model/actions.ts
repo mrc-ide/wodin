@@ -11,7 +11,6 @@ import { RunAction } from "../run/actions";
 import { paletteModel } from "../../palette";
 import { RunMutation } from "../run/mutations";
 import { ModelFitMutation } from "../modelFit/mutations";
-import userMessages from "../../userMessages";
 import { ErrorsMutation } from "../errors/mutations";
 import { SensitivityMutation } from "../sensitivity/mutations";
 
