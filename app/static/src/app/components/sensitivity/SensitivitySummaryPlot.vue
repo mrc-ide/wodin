@@ -17,11 +17,12 @@ import {
 import { newPlot, Plots } from "plotly.js";
 import { useStore } from "vuex";
 import {
-    fadePlotStyle, margin, config, odinToPlotly
+  fadePlotStyle, margin, config, odinToPlotly
 } from "../../plot";
 import { SensitivityPlotType } from "../../store/sensitivity/state";
 import userMessages from "../../userMessages";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
+import {OdinSeriesSet} from "../../types/responseTypes";
 
 export default defineComponent({
     name: "SensitivitySummaryPlot",
@@ -55,12 +56,16 @@ export default defineComponent({
 
         const plotData = computed(() => {
             if (batch.value) {
-            // TODO: implement other summary plot types
+                let data: null | OdinSeriesSet;
                 if (plotSettings.value.plotType === SensitivityPlotType.ValueAtTime) {
                     verifyValidEndTime();
-                    const data = batch.value.valueAtTime(plotSettings.value.time);
-                    return [...odinToPlotly(data, palette.value)];
+                    data = batch.value.valueAtTime(plotSettings.value.time);
+                } else {
+                    const paramPrefix = plotSettings.value.plotType === SensitivityPlotType.TimeAtExtreme ? "t" : "y";
+                    const extremeParam = `${paramPrefix}${plotSettings.value.extreme}`;
+                    data = batch.value.extreme(extremeParam);
                 }
+                return [...odinToPlotly(data!, palette.value)];
             }
             return [];
         });
