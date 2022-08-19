@@ -77,7 +77,7 @@ describe("SensitivitySummaryPlot", () => {
                     namespaced: true,
                     state: {
                         batch: hasData ? mockBatch : null,
-                        plotSettings
+                        plotSettings: { ...plotSettings }
                     },
                     mutations: {
                         [SensitivityMutation.SetPlotTime]: mockSetPlotTime
@@ -196,19 +196,19 @@ describe("SensitivitySummaryPlot", () => {
     });
 
     it("sets end time to 0 if less", () => {
-        const wrapper = getWrapper(true, {...defaultPlotSettings, time: -1});
+        const wrapper = getWrapper(true, { ...defaultPlotSettings, time: -1 });
         expect(mockSetPlotTime.mock.calls[0][1]).toBe(0);
         expectDataToHaveBeenPlotted(wrapper);
     });
 
     it("sets end time to model end time if greater", () => {
-        const wrapper = getWrapper(true, {...defaultPlotSettings, time: 101});
+        const wrapper = getWrapper(true, { ...defaultPlotSettings, time: 101 });
         expect(mockSetPlotTime.mock.calls[0][1]).toBe(100);
         expectDataToHaveBeenPlotted(wrapper);
     });
 
     it("sets end time to model end time if null", () => {
-        const wrapper = getWrapper(true, {...defaultPlotSettings, time: null});
+        const wrapper = getWrapper(true, { ...defaultPlotSettings, time: null });
         expect(mockSetPlotTime.mock.calls[0][1]).toBe(100);
         expectDataToHaveBeenPlotted(wrapper);
     });
