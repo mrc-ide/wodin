@@ -99,9 +99,14 @@ test.describe("Sensitivity tests", () => {
         const linesSelector = `${plotSelector} .scatterlayer .trace .lines path`;
         expect((await page.locator(`:nth-match(${linesSelector}, 30)`).getAttribute("d"))!.startsWith("M0")).toBe(true);
 
-        // expected legend and x-axis
+        // expected legend and axes
         await expectLegend(page);
+        await expect(await page.locator(".plotly .xaxislayer-above .xtick").count()).toBe(6);
         await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 1)")).toBe("0");
+        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 6)")).toBe("100")
+        await expect(await page.locator(".plotly .yaxislayer-above .ytick").count()).toBe(6);
+        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 1)")).toBe("0");
+        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 6)")).toBe("1M");
 
         // change parameter - should see update required message
         await page.fill("#model-params .parameter-input", "5");
@@ -113,9 +118,41 @@ test.describe("Sensitivity tests", () => {
         await page.click("#run-sens-btn");
         await expect(await page.innerText(".action-required-msg")).toBe("");
 
-        // switch to Value at Time - expect axis to change
+        // switch to Value at Time - expect axes to change
         await page.locator("#sensitivity-plot-type select").selectOption("ValueAtTime");
+        await expect(await page.locator(".plotly .xaxislayer-above .xtick").count()).toBe(5);
         await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 1)")).toBe("4.6");
+        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 5)")).toBe("5.4");
+        await expect(await page.locator(".plotly .yaxislayer-above .ytick").count()).toBe(5);
+        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 1)")).toBe("0");
+        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 5)")).toBe("800k");
         await expectLegend(page);
+
+        // switch to Value at its Min/Max
+        await page.locator("#sensitivity-plot-type select").selectOption("ValueAtExtreme");
+        await expect(await page.locator(".plotly .xaxislayer-above .xtick").count()).toBe(5);
+        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 1)")).toBe("4.6");
+        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 5)")).toBe("5.4");
+        await expect(await page.locator(".plotly .yaxislayer-above .ytick").count()).toBe(9);
+        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 1)")).toBe("0.2M");
+        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 9)")).toBe("1M");
+
+        // Change Min/Max to Min
+        await page.locator("#sensitivity-plot-extreme select").selectOption("Min");
+        await expect(await page.locator(".plotly .xaxislayer-above .xtick").count()).toBe(5);
+        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 1)")).toBe("4.6");
+        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 5)")).toBe("5.4");
+        await expect(await page.locator(".plotly .yaxislayer-above .ytick").count()).toBe(8);
+        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 1)")).toBe("0");
+        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 8)")).toBe("140k");
+
+        // switch to Time at value's Min/Max
+        await page.locator("#sensitivity-plot-type select").selectOption("TimeAtExtreme");
+        await expect(await page.locator(".plotly .xaxislayer-above .xtick").count()).toBe(5);
+        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 1)")).toBe("4.6");
+        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 5)")).toBe("5.4");
+        await expect(await page.locator(".plotly .yaxislayer-above .ytick").count()).toBe(8);
+        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 1)")).toBe("0");
+        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 8)")).toBe("35");
     });
 });
