@@ -5,7 +5,11 @@ import * as plotly from "plotly.js";
 import { nextTick } from "vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState } from "../../../mocks";
-import { SensitivityPlotExtreme, SensitivityPlotType } from "../../../../src/app/store/sensitivity/state";
+import {
+    SensitivityPlotExtreme,
+    SensitivityPlotSettings,
+    SensitivityPlotType
+} from "../../../../src/app/store/sensitivity/state";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
 
@@ -29,20 +33,28 @@ describe("SensitivitySummaryPlot", () => {
 
     const mockSetPlotTime = jest.fn();
 
-    const mockValueAtTimeData = {
+    const mockData = {
         names: ["S", "I"],
         x: [1, 1.1],
         y: [[10, 10.1], [20, 19.9]]
     };
 
-    const mockValueAtTime = jest.fn().mockReturnValue(mockValueAtTimeData);
+    const mockValueAtTime = jest.fn().mockReturnValue(mockData);
+    const mockExtreme = jest.fn().mockReturnValue(mockData);
     const mockBatch = {
-        valueAtTime: mockValueAtTime
+        valueAtTime: mockValueAtTime,
+        extreme: mockExtreme
     };
 
     let store: Store<BasicState> | null = null;
 
-    const getWrapper = (hasData = true, time: number | null = 99, fadePlot = false) => {
+    const defaultPlotSettings = {
+        plotType: SensitivityPlotType.ValueAtTime,
+        time: 99,
+        extreme: SensitivityPlotExtreme.Min
+    };
+
+    const getWrapper = (hasData = true, plotSettings: SensitivityPlotSettings = defaultPlotSettings, fadePlot = false) => {
         store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
@@ -65,11 +77,7 @@ describe("SensitivitySummaryPlot", () => {
                     namespaced: true,
                     state: {
                         batch: hasData ? mockBatch : null,
-                        plotSettings: {
-                            plotType: SensitivityPlotType.ValueAtTime,
-                            time,
-                            extreme: SensitivityPlotExtreme.Min
-                        }
+                        plotSettings
                     },
                     mutations: {
                         [SensitivityMutation.SetPlotTime]: mockSetPlotTime
@@ -129,11 +137,55 @@ describe("SensitivitySummaryPlot", () => {
         expect(mockPlotlyNewPlot.mock.calls[0][3]).toStrictEqual({ responsive: true });
     };
 
-    it("plots data as expected", () => {
+    it("plots ValueAtTime data as expected", () => {
         const wrapper = getWrapper();
         expect(wrapper.find(".plot-placeholder").exists()).toBe(false);
 
         expect(mockValueAtTime).toHaveBeenCalledWith(99);
+        expectDataToHaveBeenPlotted(wrapper);
+    });
+
+    it("plots TimeAtExtreme min data as expected", () => {
+        const plotSettings = {
+            plotType: SensitivityPlotType.TimeAtExtreme,
+            extreme: SensitivityPlotExtreme.Min,
+            time: null
+        };
+        const wrapper = getWrapper(true, plotSettings);
+        expect(mockExtreme).toHaveBeenCalledWith("tMin");
+        expectDataToHaveBeenPlotted(wrapper);
+    });
+
+    it("plots TimeAtExtreme max data as expected", () => {
+        const plotSettings = {
+            plotType: SensitivityPlotType.TimeAtExtreme,
+            extreme: SensitivityPlotExtreme.Max,
+            time: null
+        };
+        const wrapper = getWrapper(true, plotSettings);
+        expect(mockExtreme).toHaveBeenCalledWith("tMax");
+        expectDataToHaveBeenPlotted(wrapper);
+    });
+
+    it("plots ValueAtExtreme min data as expected", () => {
+        const plotSettings = {
+            plotType: SensitivityPlotType.ValueAtExtreme,
+            extreme: SensitivityPlotExtreme.Min,
+            time: null
+        };
+        const wrapper = getWrapper(true, plotSettings);
+        expect(mockExtreme).toHaveBeenCalledWith("yMin");
+        expectDataToHaveBeenPlotted(wrapper);
+    });
+
+    it("plots ValueAtExtreme max data as expected", () => {
+        const plotSettings = {
+            plotType: SensitivityPlotType.ValueAtExtreme,
+            extreme: SensitivityPlotExtreme.Max,
+            time: null
+        };
+        const wrapper = getWrapper(true, plotSettings);
+        expect(mockExtreme).toHaveBeenCalledWith("yMax");
         expectDataToHaveBeenPlotted(wrapper);
     });
 
@@ -144,19 +196,19 @@ describe("SensitivitySummaryPlot", () => {
     });
 
     it("sets end time to 0 if less", () => {
-        const wrapper = getWrapper(true, -1);
+        const wrapper = getWrapper(true, {...defaultPlotSettings, time: -1});
         expect(mockSetPlotTime.mock.calls[0][1]).toBe(0);
         expectDataToHaveBeenPlotted(wrapper);
     });
 
     it("sets end time to model end time if greater", () => {
-        const wrapper = getWrapper(true, 101);
+        const wrapper = getWrapper(true, {...defaultPlotSettings, time: 101});
         expect(mockSetPlotTime.mock.calls[0][1]).toBe(100);
         expectDataToHaveBeenPlotted(wrapper);
     });
 
     it("sets end time to model end time if null", () => {
-        const wrapper = getWrapper(true, null);
+        const wrapper = getWrapper(true, {...defaultPlotSettings, time: null});
         expect(mockSetPlotTime.mock.calls[0][1]).toBe(100);
         expectDataToHaveBeenPlotted(wrapper);
     });
@@ -168,7 +220,7 @@ describe("SensitivitySummaryPlot", () => {
     });
 
     it("renders fade style when fade plot is true", () => {
-        const wrapper = getWrapper(true, null, true);
+        const wrapper = getWrapper(true, defaultPlotSettings, true);
         const div = wrapper.find("div.summary-plot-container");
         expect(div.attributes("style")).toBe("opacity: 0.5;");
     });
