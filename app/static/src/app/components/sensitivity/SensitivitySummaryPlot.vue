@@ -17,12 +17,12 @@ import {
 import { newPlot, Plots } from "plotly.js";
 import { useStore } from "vuex";
 import {
-  fadePlotStyle, margin, config, odinToPlotly
+    fadePlotStyle, margin, config, odinToPlotly
 } from "../../plot";
 import { SensitivityPlotType } from "../../store/sensitivity/state";
 import userMessages from "../../userMessages";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
-import {OdinSeriesSet} from "../../types/responseTypes";
+import { OdinSeriesSet } from "../../types/responseTypes";
 
 export default defineComponent({
     name: "SensitivitySummaryPlot",

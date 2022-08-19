@@ -103,7 +103,7 @@ test.describe("Sensitivity tests", () => {
         await expectLegend(page);
         await expect(await page.locator(".plotly .xaxislayer-above .xtick").count()).toBe(6);
         await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 1)")).toBe("0");
-        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 6)")).toBe("100")
+        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 6)")).toBe("100");
         await expect(await page.locator(".plotly .yaxislayer-above .ytick").count()).toBe(6);
         await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 1)")).toBe("0");
         await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 6)")).toBe("1M");

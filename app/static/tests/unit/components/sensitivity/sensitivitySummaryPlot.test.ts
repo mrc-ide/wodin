@@ -54,7 +54,8 @@ describe("SensitivitySummaryPlot", () => {
         extreme: SensitivityPlotExtreme.Min
     };
 
-    const getWrapper = (hasData = true, plotSettings: SensitivityPlotSettings = defaultPlotSettings, fadePlot = false) => {
+    const getWrapper = (hasData = true, plotSettings: SensitivityPlotSettings = defaultPlotSettings,
+        fadePlot = false) => {
         store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
