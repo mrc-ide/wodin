@@ -70,6 +70,20 @@ describe("NumericInput", () => {
         expect(wrapper.emitted("update")![0]).toStrictEqual([100]);
     });
 
+    it("masks out hyphen if allowNegative is false", async () => {
+        const wrapper = mount(NumericInput, { props: { allowNegative: false, value: 1 } });
+        await wrapper.find("input").setValue("-100");
+        expectInputToHaveValue(wrapper, "100");
+        expect(wrapper.emitted("update")![0]).toStrictEqual([100]);
+    });
+
+    it("does not mask out hyphen if allowNegative is true", async () => {
+        const wrapper = mount(NumericInput, { props: { allowNegative: true, value: 1 } });
+        await wrapper.find("input").setValue("-100");
+        expectInputToHaveValue(wrapper, "-100");
+        expect(wrapper.emitted("update")![0]).toStrictEqual([-100]);
+    });
+
     it("does not emit update if value is not parseable as numeric", async () => {
         const wrapper = mount(NumericInput, { props: { value: 12 } });
         await nextTick();

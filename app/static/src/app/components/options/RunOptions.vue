@@ -5,11 +5,9 @@
         <label class="col-form-label">End time</label>
       </div>
       <div class="col-6">
-        <input class="form-control parameter-input"
-               type="number"
-               min="1"
-               :value="endTime"
-               @input="updateEndTime"/>
+        <numeric-input :value="endTime"
+                       :allow-negative="false"
+                       @update="updateEndTime"></numeric-input>
       </div>
     </div>
   </div>
@@ -20,15 +18,18 @@ import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
 import { RunMutation } from "../../store/run/mutations";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
+import NumericInput from "./NumericInput.vue";
 
 export default defineComponent({
     name: "RunOptions",
+    components: {
+        NumericInput
+    },
     setup() {
         const store = useStore();
         const endTime = computed(() => store.state.run.endTime);
 
-        const updateEndTime = (e: Event) => {
-            const newValue = parseFloat((e.target as HTMLInputElement).value);
+        const updateEndTime = (newValue: number) => {
             store.commit(`run/${RunMutation.SetEndTime}`, newValue);
             store.commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true);
         };
