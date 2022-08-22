@@ -33,7 +33,7 @@ export default defineComponent({
         const placeholderMessage = userMessages.sensitivity.notRunYet;
 
         const solutions = computed(() => (store.state.sensitivity.batch?.solutions || []));
-        const centralSolution = computed(() => (store.state.run.solution));
+        const centralSolution = computed(() => (store.state.run.result?.result));
 
         const endTime = computed(() => store.state.run.endTime);
 

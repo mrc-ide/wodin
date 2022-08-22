@@ -62,10 +62,9 @@ export const mockModelState = (state: Partial<ModelState> = {}): ModelState => {
 export const mockRunState = (state: Partial<RunState> = {}): RunState => {
     return {
         runRequired: false,
-        solution: null,
         parameterValues: null,
         endTime: 100,
-        error: null,
+        result: null,
         ...state
     };
 };
