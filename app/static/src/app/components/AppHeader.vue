@@ -4,7 +4,10 @@
       <a class="navbar-brand pl-2" href="/">{{ courseTitle }}</a>
       <span class="nav-item navbar-app">{{ appTitle }}</span>
     </span>
-    <span class="navbar-version navbar-text">WODIN v{{ wodinVersion }}</span>
+    <span class="navbar-version navbar-text">
+      <button class="btn btn-light me-4">Sessions</button>
+      WODIN v{{ wodinVersion }}
+    </span>
   </nav>
 </template>
 

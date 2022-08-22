@@ -1,5 +1,8 @@
 <template>
-  <wodin-app :app-name="appName">
+  <!-- TODO: in implementation ticket, do this properly with router! -->
+
+  <wodin-sessions></wodin-sessions>
+  <!--<wodin-app :app-name="appName">
     <template v-slot:left>
       <wodin-tabs id="left-tabs" :tabNames="['Code', 'Options']">
         <template v-slot:Code>
@@ -21,6 +24,7 @@
       </wodin-tabs>
     </template>
   </wodin-app>
+  -->
 </template>
 
 <script lang="ts">
@@ -32,6 +36,7 @@ import CodeTab from "../code/CodeTab.vue";
 import RunTab from "../run/RunTab.vue";
 import OptionsTab from "../options/OptionsTab.vue";
 import SensitivityTab from "../sensitivity/SensitivityTab.vue";
+import WodinSessions from "../WodinSessions.vue";
 import { AppStateMutation } from "../../store/appState/mutations";
 import { VisualisationTab } from "../../store/appState/state";
 
@@ -46,7 +51,8 @@ export default defineComponent({
         OptionsTab,
         SensitivityTab,
         WodinApp,
-        WodinTabs
+        WodinTabs,
+        WodinSessions
     },
     setup() {
         const store = useStore();
