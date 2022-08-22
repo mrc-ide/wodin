@@ -29,7 +29,7 @@ import ErrorInfo from "../ErrorInfo.vue";
 export default defineComponent({
     name: "SensitivityTab",
     components: {
-      ErrorInfo,
+        ErrorInfo,
         SensitivitySummaryPlot,
         ActionRequiredMessage,
         SensitivityTracesPlot

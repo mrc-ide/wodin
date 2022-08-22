@@ -1,4 +1,4 @@
-import {Batch, WodinError} from "../../types/responseTypes";
+import { Batch, WodinError } from "../../types/responseTypes";
 
 export enum SensitivityScaleType {
     Arithmetic = "Arithmetic",
