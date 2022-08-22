@@ -17,7 +17,9 @@ import { EventEmitter } from "events";
 import {
     newPlot, react, PlotRelayoutEvent, Plots
 } from "plotly.js";
-import { WodinPlotData } from "../plot";
+import {
+    WodinPlotData, fadePlotStyle, margin, config
+} from "../plot";
 import { OdinSolution } from "../types/responseTypes";
 
 export default defineComponent({
@@ -41,7 +43,7 @@ export default defineComponent({
         }
     },
     setup(props) {
-        const plotStyle = computed(() => (props.fadePlot ? "opacity:0.5;" : ""));
+        const plotStyle = computed(() => (props.fadePlot ? fadePlotStyle : ""));
 
         const startTime = 0;
 
@@ -50,17 +52,6 @@ export default defineComponent({
         const nPoints = 1000; // TODO: appropriate value could be derived from width of element
 
         const hasPlotData = computed(() => !!(baseData.value?.length));
-
-        const config = {
-            responsive: true
-        };
-
-        // This is enough top margin to accommodate the plotly options
-        // bar without it interfering with the first series in the
-        // legend.
-        const margin = {
-            t: 25
-        };
 
         const relayout = async (event: PlotRelayoutEvent) => {
             let data;
@@ -132,14 +123,3 @@ export default defineComponent({
     }
 });
 </script>
-<style scoped lang="scss">
-.plot-placeholder {
-  width: 100%;
-  height: 450px;
-  background-color: #eee;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-</style>

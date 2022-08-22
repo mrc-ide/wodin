@@ -11,6 +11,7 @@ import { SensitivityGetter } from "../../../../src/app/store/sensitivity/getters
 import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/SensitivityTracesPlot.vue";
 import { SensitivityPlotType, SensitivityState } from "../../../../src/app/store/sensitivity/state";
 import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
+import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
 
 jest.mock("plotly.js", () => {});
 
@@ -60,20 +61,32 @@ describe("SensitivityTab", () => {
         jest.clearAllMocks();
     });
 
-    it("renders as expected", () => {
+    it("renders as expected when Trace over Time", () => {
         const wrapper = getWrapper();
         expect(wrapper.find("button").text()).toBe("Run sensitivity");
         expect(wrapper.find("button").element.disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(false);
 
+        expect(wrapper.findComponent(SensitivitySummaryPlot).exists()).toBe(false);
         expect(wrapper.find("#sensitivity-plot-placeholder").exists()).toBe(false);
     });
 
-    it("renders placeholder if plot type is not Trace over time", () => {
+    it("renders as expected when Value at Time", () => {
+        const wrapper = getWrapper({}, { plotSettings: { plotType: SensitivityPlotType.ValueAtTime } as any });
+        expect(wrapper.find("button").text()).toBe("Run sensitivity");
+        expect(wrapper.find("button").element.disabled).toBe(false);
+        expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
+        expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(false);
+
+        expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
+        expect(wrapper.find("#sensitivity-plot-placeholder").exists()).toBe(false);
+    });
+
+    it("renders placeholder if unsupported plot type", () => {
         const sensitivityState = {
             plotSettings: {
-                plotType: SensitivityPlotType.ValueAtTime
+                plotType: SensitivityPlotType.TimeAtExtreme
             }
         } as any;
         const wrapper = getWrapper({}, sensitivityState);
@@ -123,6 +136,19 @@ describe("SensitivityTab", () => {
             .toBe("Model code has been recompiled or options have been updated. "
                 + "Run Sensitivity to view updated graph.");
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);
+    });
+
+    it("fades Summary plot when updated required", () => {
+        const sensitivityState = {
+            batch: { solutions: [{}] },
+            plotSettings: { plotType: SensitivityPlotType.ValueAtTime } as any,
+            sensitivityUpdateRequired: true
+        } as any;
+        const wrapper = getWrapper({}, sensitivityState);
+        expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
+            .toBe("Model code has been recompiled or options have been updated. "
+                + "Run Sensitivity to view updated graph.");
+        expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(true);
     });
 
     it("dispatches sensitivity run when button is clicked", () => {

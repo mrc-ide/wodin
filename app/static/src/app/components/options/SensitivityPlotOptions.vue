@@ -25,7 +25,9 @@
         <label class="col-form-label">Time to use</label>
       </div>
       <div class="col-xl-6 col-11">
-        <input v-model="time" class="form-control" type="number">
+        <numeric-input  :value="time"
+                        :allow-negative="false"
+                        @update="(n) => time = n"></numeric-input>
       </div>
     </div>
   </div>
@@ -36,9 +38,13 @@ import { computed, defineComponent, onMounted } from "vue";
 import { useStore } from "vuex";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { SensitivityPlotExtreme, SensitivityPlotType } from "../../store/sensitivity/state";
+import NumericInput from "./NumericInput.vue";
 
 export default defineComponent({
     name: "SensitivityPlotOptions.vue",
+    components: {
+        NumericInput
+    },
     setup() {
         const namespace = "sensitivity";
         const store = useStore();

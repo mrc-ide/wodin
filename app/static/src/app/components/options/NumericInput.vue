@@ -27,6 +27,10 @@ export default defineComponent({
         value: {
             type: Number,
             required: true
+        },
+        allowNegative: {
+            type: Boolean,
+            default: true
         }
     },
     emits: ["update"],
@@ -45,7 +49,10 @@ export default defineComponent({
         const updateValue = (event: Event) => {
             // 1. Apply character mask - only allow numerics, decimal point, comma, and hyphen (for negatives)
             const element = event.target as HTMLInputElement;
-            const newVal = element.value.replace(/[^0-9,.-]/g, "");
+            let newVal = element.value.replace(/[^0-9,.-]/g, "");
+            if (!props.allowNegative) {
+                newVal = newVal.replace("-", "");
+            }
 
             // within the event handler we need to update the element directly to apply character mask as well as
             // updating reactive value

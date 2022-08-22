@@ -9,6 +9,7 @@ import { mockBasicState } from "../../../mocks";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import SensitivityPlotOptions from "../../../../src/app/components/options/SensitivityPlotOptions.vue";
+import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
 
 describe("SensitivityPlotOptions", () => {
     const plotSettings = {
@@ -89,8 +90,9 @@ describe("SensitivityPlotOptions", () => {
         expect(wrapper.find("#sensitivity-plot-extreme").exists()).toBe(false);
 
         expect(wrapper.find("#sensitivity-plot-time label").text()).toBe("Time to use");
-        expect(wrapper.find("#sensitivity-plot-time input").attributes("type")).toBe("number");
-        expect((wrapper.find("#sensitivity-plot-time input").element as HTMLInputElement).value).toBe("100");
+        const timeInput = wrapper.find("#sensitivity-plot-time").findComponent(NumericInput);
+        expect(timeInput.props("value")).toBe(100);
+        expect(timeInput.props("allowNegative")).toBe(false);
     });
 
     it("renders as expected for Value at min/max", () => {
@@ -133,8 +135,8 @@ describe("SensitivityPlotOptions", () => {
 
     it("updates time", async () => {
         const wrapper = getWrapper({ plotType: SensitivityPlotType.ValueAtTime });
-        const timeInput = wrapper.find("#sensitivity-plot-time input");
-        await timeInput.setValue("50");
+        const timeInput = wrapper.find("#sensitivity-plot-time").findComponent(NumericInput);
+        await timeInput.vm.$emit("update", 50);
 
         expect(mockSetPlotTime).toHaveBeenCalledTimes(1);
         expect(mockSetPlotTime.mock.calls[0][1]).toBe(50);

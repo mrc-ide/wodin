@@ -42,6 +42,7 @@ const mockSolutions = [mockSln1, mockSln2];
 const expectedPlotData = [
     // sln1
     {
+        mode: "lines",
         line: {
             color: "#0000ff",
             width: 1
@@ -53,6 +54,7 @@ const expectedPlotData = [
         legendgroup: "y"
     },
     {
+        mode: "lines",
         line: {
             color: "#ff0000",
             width: 1
@@ -65,6 +67,7 @@ const expectedPlotData = [
     },
     // sln2
     {
+        mode: "lines",
         line: {
             color: "#0000ff",
             width: 1
@@ -76,6 +79,7 @@ const expectedPlotData = [
         legendgroup: "y"
     },
     {
+        mode: "lines",
         line: {
             color: "#ff0000",
             width: 1
@@ -88,6 +92,7 @@ const expectedPlotData = [
     },
     // central
     {
+        mode: "lines",
         line: {
             color: "#0000ff",
             width: 2
@@ -99,6 +104,7 @@ const expectedPlotData = [
         legendgroup: "y"
     },
     {
+        mode: "lines",
         line: {
             color: "#ff0000",
             width: 2

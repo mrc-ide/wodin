@@ -82,21 +82,26 @@ test.describe("Sensitivity tests", () => {
         await expect(await page.inputValue("#sensitivity-plot-time input")).toBe("50");
     });
 
+    const plotSelector = ".wodin-right .wodin-content div.mt-4 .js-plotly-plot";
+    const expectLegend = async (page: Page) => {
+        const legendTextSelector = `${plotSelector} .legendtext`;
+        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("S");
+        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 2)`)).toBe("I");
+        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 3)`)).toBe("R");
+    };
+
     test("can run sensitivity", async ({ page }) => {
         // see pre-run placeholder
         await expect(await page.innerText(".sensitivity-tab .plot-placeholder")).toBe("Sensitivity has not been run.");
 
         // run and see all traces
         page.click("#run-sens-btn");
-        const plotSelector = ".wodin-right .wodin-content div.mt-4 .js-plotly-plot";
         const linesSelector = `${plotSelector} .scatterlayer .trace .lines path`;
         expect((await page.locator(`:nth-match(${linesSelector}, 30)`).getAttribute("d"))!.startsWith("M0")).toBe(true);
 
-        // expected legend
-        const legendTextSelector = `${plotSelector} .legendtext`;
-        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("S");
-        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 2)`)).toBe("I");
-        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 3)`)).toBe("R");
+        // expected legend and x-axis
+        await expectLegend(page);
+        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 1)")).toBe("0");
 
         // change parameter - should see update required message
         await page.fill("#model-params .parameter-input", "5");
@@ -107,5 +112,10 @@ test.describe("Sensitivity tests", () => {
         // re-run - message should be removed
         await page.click("#run-sens-btn");
         await expect(await page.innerText(".action-required-msg")).toBe("");
+
+        // switch to Value at Time - expect axis to change
+        await page.locator("#sensitivity-plot-type select").selectOption("ValueAtTime");
+        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 1)")).toBe("4.6");
+        await expectLegend(page);
     });
 });

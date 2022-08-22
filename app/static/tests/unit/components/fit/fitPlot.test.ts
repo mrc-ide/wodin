@@ -25,6 +25,7 @@ describe("FitPlot", () => {
 
     const expectedPlotData = [
         {
+            mode: "lines",
             name: "y",
             x: [0, 0.5, 1],
             y: [5, 6, 7],

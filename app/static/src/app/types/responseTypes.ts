@@ -111,7 +111,8 @@ export type OdeControl = Dict<unknown>;
 
 export interface Batch {
     pars: BatchPars,
-    solutions: OdinSolution[]
+    solutions: OdinSolution[],
+    valueAtTime: (time: number) => OdinSeriesSet
 }
 
 export interface OdinRunner {
