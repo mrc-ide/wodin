@@ -47,6 +47,37 @@ describe("Sensitivity actions", () => {
         expect(dispatch).not.toHaveBeenCalled();
     });
 
+    it("catches and commits run sensitivity error", () => {
+        const errorRunner = {
+            batchRun: () => { throw new Error("a test error"); }
+        };
+        const modelState = {
+            odin: {},
+            odinRunner: errorRunner
+        };
+
+        const rootState = {
+            model: modelState,
+            run: mockRunState
+        };
+
+        const commit = jest.fn();
+        const dispatch = jest.fn();
+
+        (actions[SensitivityAction.RunSensitivity] as any)({
+            rootState, getters, commit, dispatch
+        });
+
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetError);
+        expect(commit.mock.calls[0][1]).toStrictEqual({
+            error: "An error occurred while running sensitivity",
+            detail: "a test error"
+        });
+
+        expect(dispatch).not.toHaveBeenCalled();
+    });
+
     it("RunSensitivity does nothing if no odinRunner", () => {
         const rootState = {
             model: {

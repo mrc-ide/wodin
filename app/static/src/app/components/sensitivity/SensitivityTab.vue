@@ -9,6 +9,7 @@
     <action-required-message :message="updateMsg"></action-required-message>
     <sensitivity-traces-plot v-if="tracesPlot" :fade-plot="!!updateMsg"></sensitivity-traces-plot>
     <sensitivity-summary-plot v-else :fade-plot="!!updateMsg"></sensitivity-summary-plot>
+    <error-info :error="error"></error-info>
   </div>
 </template>
 
@@ -22,10 +23,12 @@ import { SensitivityAction } from "../../store/sensitivity/actions";
 import userMessages from "../../userMessages";
 import { SensitivityPlotType } from "../../store/sensitivity/state";
 import SensitivitySummaryPlot from "./SensitivitySummaryPlot.vue";
+import ErrorInfo from "../ErrorInfo.vue";
 
 export default defineComponent({
     name: "SensitivityTab",
     components: {
+        ErrorInfo,
         SensitivitySummaryPlot,
         ActionRequiredMessage,
         SensitivityTracesPlot
@@ -59,11 +62,14 @@ export default defineComponent({
             () => store.state.sensitivity.plotSettings.plotType === SensitivityPlotType.TraceOverTime
         );
 
+        const error = computed(() => store.state.sensitivity.error);
+
         return {
             canRunSensitivity,
             runSensitivity,
             updateMsg,
-            tracesPlot
+            tracesPlot,
+            error
         };
     }
 });

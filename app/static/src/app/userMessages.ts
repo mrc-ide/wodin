@@ -6,7 +6,8 @@ export default {
         isNotValid: "Code is not valid"
     },
     errors: {
-        wodinRunError: "An error occurred while running the model"
+        wodinRunError: "An error occurred while running the model",
+        wodinSensitivityError: "An error occurred while running sensitivity"
     },
     fitData: {
         errorLoadingData: "An error occurred when loading data",

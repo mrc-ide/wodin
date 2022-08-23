@@ -12,6 +12,7 @@ import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/Se
 import { SensitivityPlotType, SensitivityState } from "../../../../src/app/store/sensitivity/state";
 import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
+import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 
 jest.mock("plotly.js", () => {});
 
@@ -39,6 +40,7 @@ describe("SensitivityTab", () => {
                         plotSettings: {
                             plotType: SensitivityPlotType.TraceOverTime
                         },
+                        error: null,
                         ...sensitivityState
                     },
                     getters: {
@@ -67,6 +69,7 @@ describe("SensitivityTab", () => {
         expect(wrapper.find("button").element.disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(false);
+        expect(wrapper.findComponent(ErrorInfo).props("error")).toBe(null);
 
         expect(wrapper.findComponent(SensitivitySummaryPlot).exists()).toBe(false);
     });
@@ -91,6 +94,12 @@ describe("SensitivityTab", () => {
         const wrapper = getWrapper({}, { plotSettings: { plotType: SensitivityPlotType.ValueAtExtreme } as any });
         expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(false);
         expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
+    });
+
+    it("renders error", () => {
+        const testError = { error: "Test Error", detail: "test error detail" };
+        const wrapper = getWrapper({}, { error: testError });
+        expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(testError);
     });
 
     it("disables run button when no odinRunner", () => {
