@@ -1,4 +1,5 @@
 import { OdinSolution } from "../../types/responseTypes";
+import { OdinRunResult } from "../../types/wrapperTypes";
 
 export interface ModelFitState {
     fitting: boolean,
@@ -6,6 +7,6 @@ export interface ModelFitState {
     iterations: number | null,
     converged: boolean | null,
     sumOfSquares: number | null,
-    solution: OdinSolution | null, // full solution for current best fit
-    paramsToVary: string[]
+    paramsToVary: string[],
+    result: OdinRunResult | null, // full solution for current best fit
 }

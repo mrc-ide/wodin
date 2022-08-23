@@ -55,7 +55,9 @@ describe("FitPlot", () => {
                     paletteModel: mockPalette
                 },
                 modelFit: {
-                    solution: modelFitHasSolution ? mockSolution : null
+                    result: {
+                        result: modelFitHasSolution ? mockSolution : null
+                    }
                 }
             } as any,
             modules: {
