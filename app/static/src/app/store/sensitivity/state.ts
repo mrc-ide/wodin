@@ -1,4 +1,4 @@
-import { Batch } from "../../types/responseTypes";
+import { Batch, WodinError } from "../../types/responseTypes";
 
 export enum SensitivityScaleType {
     Arithmetic = "Arithmetic",
@@ -43,5 +43,6 @@ export interface SensitivityState {
     batch: Batch | null,
     // Whether sensitivity needs to be re-run because of change to settings or model
     sensitivityUpdateRequired: boolean
-    plotSettings: SensitivityPlotSettings
+    plotSettings: SensitivityPlotSettings,
+    error: WodinError | null
 }
