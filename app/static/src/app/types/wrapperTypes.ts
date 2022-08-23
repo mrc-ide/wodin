@@ -8,9 +8,7 @@ export interface OdinRunResultInputs {
 export interface OdinRunResult {
     inputs: OdinRunResultInputs;
     result: OdinSolution | null;
-    // TODO: Fixing this typo causes a different error to appear on
-    // compilation (WodinErrr -> WodinError)
-    error: WodinErrr | null;
+    error: WodinError | null;
 }
 
 export interface OdinFitResultInputs {
