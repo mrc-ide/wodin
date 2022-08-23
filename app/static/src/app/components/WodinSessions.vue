@@ -5,44 +5,72 @@
         <div class="col-22">
           The current Session is <a href="#">Vary D Parameter (19/08/2022 14:37:12)</a>
         </div>
+        <div class="mt-2 fst-italic">
+          Don't see the session you're looking for? It could be in <a href="#">another app</a>.
+        </div>
+        <div class="mt-2">
+          Load another user's session:
+          <input type="text" class="form-control" placeholder="Enter share code" style="display:inline;width:20rem;">
+          <button class="btn btn-primary ms-2">Load</button>
+        </div>
       </div>
 
       <div class="row fw-bold py-2">
         <div class="col-3">Saved</div>
-        <div class="col-3">Label</div>
+        <div class="col-2">Label</div>
         <div class="col-2 text-center" id="edit-label">Edit Label</div>
         <div class="col-2 text-center">Load</div>
-        <div class="col-2 text-center">Share</div>
+        <div class="col-3 text-center">Share</div>
       </div>
       <div class="row py-2">
         <div class="col-3">19/08/2022 14:37:12</div>
-        <div class="col-3">Vary D Parameter</div>
+        <div class="col-2">Vary D Parameter</div>
         <div class="col-2 text-center"><vue-feather type="edit-2" style="vertical-align: bottom;"></vue-feather></div>
         <div class="col-2 text-center"><vue-feather type="upload" style="vertical-align: bottom;"></vue-feather></div>
-        <div class="col-2 text-center"><vue-feather type="share-2" style="vertical-align: bottom;"></vue-feather></div>
+        <div class="col-3 text-center">
+          <vue-feather class="me-2" type="copy" style="vertical-align: bottom;"></vue-feather>
+          <a href="#">Copy link</a>
+          <vue-feather class="ms-4 me-2" type="copy" style="vertical-align: bottom;"></vue-feather>
+          <a href="#">Copy code</a>
+        </div>
       </div>
       <div class="row py-2">
         <div class="col-3">19/08/2022 11:19:04</div>
-        <div class="col-3 text-muted">--no label--</div>
+        <div class="col-2 text-muted">--no label--</div>
         <div class="col-2 text-center"><vue-feather type="edit-2" style="vertical-align: bottom;"></vue-feather></div>
         <div class="col-2 text-center"><vue-feather type="upload" style="vertical-align: bottom;"></vue-feather></div>
-        <div class="col-2 text-center"><vue-feather type="share-2" style="vertical-align: bottom;"></vue-feather></div>
+        <div class="col-3 text-center">
+          <vue-feather class="me-2" type="copy" style="vertical-align: bottom;"></vue-feather>
+          <a href="#">Copy link</a>
+          <vue-feather class="ms-4 me-2" type="copy" style="vertical-align: bottom;"></vue-feather>
+          <a href="#">Copy code</a>
+        </div>
       </div>
 
       <div class="row py-2">
         <div class="col-3">18/08/2022 16:22:40</div>
-        <div class="col-3 text-muted">--no label--</div>
+        <div class="col-2 text-muted">--no label--</div>
         <div class="col-2 text-center"><vue-feather type="edit-2" style="vertical-align: bottom;"></vue-feather></div>
         <div class="col-2 text-center"><vue-feather type="upload" style="vertical-align: bottom;"></vue-feather></div>
-        <div class="col-2 text-center"><vue-feather type="share-2" style="vertical-align: bottom;"></vue-feather></div>
+        <div class="col-3 text-center">
+          <vue-feather class="me-2" type="copy" style="vertical-align: bottom;"></vue-feather>
+          <a href="#">Copy link</a>
+          <vue-feather class="ms-4 me-2" type="copy" style="vertical-align: bottom;"></vue-feather>
+          <a href="#">Copy code</a>
+        </div>
       </div>
 
       <div class="row py-2">
         <div class="col-3">18/08/2022 16:01:59</div>
-        <div class="col-3">Default run</div>
+        <div class="col-2">Default run</div>
         <div class="col-2 text-center"><vue-feather type="edit-2" style="vertical-align: bottom;"></vue-feather></div>
         <div class="col-2 text-center"><vue-feather type="upload" style="vertical-align: bottom;"></vue-feather></div>
-        <div class="col-2 text-center"><vue-feather type="share-2" style="vertical-align: bottom;"></vue-feather></div>
+        <div class="col-3 text-center">
+          <vue-feather class="me-2" type="copy" style="vertical-align: bottom;"></vue-feather>
+          <a href="#">Copy link</a>
+          <vue-feather class="ms-4 me-2" type="copy" style="vertical-align: bottom;"></vue-feather>
+          <a href="#">Copy code</a>
+        </div>
       </div>
     </div>
   <!-- SHARE MODAL -->
@@ -69,7 +97,7 @@
     </div>
   </div>-->
   <!-- EDIT LABEL DIALOG -->
-  <!--<div class="modal-backdrop fade show"></div>
+  <div class="modal-backdrop fade show"></div>
   <div class="modal show" style="display: block">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -92,7 +120,7 @@
         </div>
       </div>
     </div>
-  </div>-->
+  </div>
 </template>
 
 <script lang="ts">
