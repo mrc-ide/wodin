@@ -72,7 +72,6 @@ describe("SensitivityTab", () => {
         expect(wrapper.findComponent(ErrorInfo).props("error")).toBe(null);
 
         expect(wrapper.findComponent(SensitivitySummaryPlot).exists()).toBe(false);
-        expect(wrapper.find("#sensitivity-plot-placeholder").exists()).toBe(false);
     });
 
     it("renders as expected when Value at Time", () => {
@@ -83,18 +82,18 @@ describe("SensitivityTab", () => {
         expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(false);
 
         expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
-        expect(wrapper.find("#sensitivity-plot-placeholder").exists()).toBe(false);
     });
 
-    it("renders placeholder if unsupported plot type", () => {
-        const sensitivityState = {
-            plotSettings: {
-                plotType: SensitivityPlotType.TimeAtExtreme
-            }
-        } as any;
-        const wrapper = getWrapper({}, sensitivityState);
+    it("renders as expected when Time at Extreme", () => {
+        const wrapper = getWrapper({}, { plotSettings: { plotType: SensitivityPlotType.TimeAtExtreme } as any });
+        expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(false);
         expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
-        expect(wrapper.find("#sensitivity-plot-placeholder").text()).toBe("Other plot types coming soon!");
+    });
+
+    it("renders as expected when Value at Extreme", () => {
+        const wrapper = getWrapper({}, { plotSettings: { plotType: SensitivityPlotType.ValueAtExtreme } as any });
+        expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(false);
+        expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
     });
 
     it("renders error", () => {
