@@ -10,6 +10,7 @@ export const defaultState: ModelFitState = {
     converged: null,
     sumOfSquares: null,
     paramsToVary: [],
+    inputs: null,
     result: null
 };
 

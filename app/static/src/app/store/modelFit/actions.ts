@@ -4,6 +4,7 @@ import { ModelFitState } from "./state";
 import { ModelFitMutation } from "./mutations";
 import { RunMutation } from "../run/mutations";
 import { ModelFitGetter } from "./getters";
+import { FitDataGetter } from "../fitData/getters";
 
 export enum ModelFitAction {
     FitModel = "FitModel",
@@ -14,7 +15,7 @@ export enum ModelFitAction {
 export const actions: ActionTree<ModelFitState, FitState> = {
     [ModelFitAction.FitModel](context) {
         const {
-            commit, dispatch, state, rootState, getters
+            commit, dispatch, state, rootState, getters, rootGetters
         } = context;
 
         if (getters[ModelFitGetter.canRunFit]) {
@@ -22,6 +23,8 @@ export const actions: ActionTree<ModelFitState, FitState> = {
 
             const { odin, odinRunner } = rootState.model;
 
+            const link = rootGetters[`fitData/${FitDataGetter.link}`];
+            const endTime = rootGetters[`fitData/${FitDataGetter.dataEnd}`];
             const time = rootState.fitData.data!.map((row) => row[rootState.fitData.timeVariable!]);
             const linkedColumn = rootState.fitData.columnToFit!;
             const linkedVariable = rootState.fitData.linkedVariables[linkedColumn]!;
@@ -36,7 +39,14 @@ export const actions: ActionTree<ModelFitState, FitState> = {
 
             const simplex = odinRunner!.wodinFit(odin!, data, pars, linkedVariable, {}, {});
 
+            const inputs = {
+                data,
+                endTime,
+                link,
+            };
+
             commit(ModelFitMutation.SetFitUpdateRequired, false);
+            commit(ModelFitMutation.SetInputs, inputs);
             dispatch(ModelFitAction.FitModelStep, simplex);
         }
     },
