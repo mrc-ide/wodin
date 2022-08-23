@@ -25,7 +25,8 @@ export const defaultState: SensitivityState = {
         time: null
     },
     batch: null,
-    sensitivityUpdateRequired: false
+    sensitivityUpdateRequired: false,
+    error: null
 };
 
 export const sensitivity = {

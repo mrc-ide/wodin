@@ -108,6 +108,7 @@ export const mockSensitivityState = (state: Partial<SensitivityState> = {}): Sen
         },
         batch: null,
         sensitivityUpdateRequired: false,
+        error: null,
         ...state
     };
 };
