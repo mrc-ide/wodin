@@ -10,14 +10,14 @@ export const post =  async (url: string, body: any) => {
     return response;
 };
 
-export const expectRedisValue = async (key: string, field: string, expectedValue: any) => {
+export const getRedisValue = async (key: string, field: string) => {
     const redis = new Redis(redisUrl);
-    const value = await redis.hget(key, field);
-    if (expectedValue === null) {
-        expect(value).toBe(null);
-    } else {
-        expect(JSON.parse(value!)).toStrictEqual(expectedValue);
-    }
+    return redis.hget(key, field);
+};
+
+export const expectRedisJSONValue = async (key: string, field: string, expectedValue: any) => {
+    const value = await getRedisValue(key, field);
+    expect(JSON.parse(value!)).toStrictEqual(expectedValue);
 };
 
 export const flushRedis = async () => {

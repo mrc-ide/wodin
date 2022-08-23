@@ -13,8 +13,6 @@ export class SessionStore {
     private sessionKey = (name: string) => `${this._sessionPrefix}${name}`;
 
     async saveSession(id: string, data: any) {
-        console.log(`posting data to key: ${this.sessionKey("data")}`);
-        console.log(`posting data: ${JSON.stringify(data)}`);
         await this._redis.pipeline()
             .hset(this.sessionKey("time"), id, new Date().toISOString())
             .hset(this.sessionKey("data"), id, JSON.stringify(data))
