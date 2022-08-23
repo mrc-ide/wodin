@@ -1,4 +1,3 @@
-import { OdinSolution, WodinError } from "../../types/responseTypes";
 import { OdinRunResult } from "../../types/wrapperTypes";
 
 export interface RunState {

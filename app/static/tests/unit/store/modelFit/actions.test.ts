@@ -50,7 +50,7 @@ describe("ModelFit actions", () => {
 
     it("FitModel calls wodinFit and dispatches FitModelStep action", () => {
         const getters = { canRunFit: true };
-        const link = {time: "t", data: "v", model: "S" };
+        const link = { time: "t", data: "v", model: "S" };
         const rootGetters = {
             "fitData/link": link,
             "fitData/dataEnd": 100

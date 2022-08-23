@@ -42,7 +42,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
             const inputs = {
                 data,
                 endTime,
-                link,
+                link
             };
 
             commit(ModelFitMutation.SetFitUpdateRequired, false);

@@ -1,5 +1,4 @@
-import { OdinSolution } from "../../types/responseTypes";
-import { OdinRunResult } from "../../types/wrapperTypes";
+import { OdinFitResult } from "../../types/wrapperTypes";
 import type { FitData, FitDataLink } from "../fitData/state";
 
 export interface ModelFitInputs {

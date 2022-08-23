@@ -12,17 +12,18 @@ export enum RunAction {
 export const actions: ActionTree<RunState, AppState> = {
     RunModel(context) {
         const { rootState, state, commit } = context;
-        const parameterValues = state.parameterValues;
+        const { parameterValues } = state;
         if (rootState.model.odinRunner && rootState.model.odin && parameterValues) {
             const startTime = 0;
-            const endTime = state.endTime;
+            const { endTime } = state;
             const payload : OdinRunResult = {
                 inputs: { endTime, parameterValues },
                 result: null,
                 error: null
             };
             try {
-                const solution = rootState.model.odinRunner.wodinRun(rootState.model.odin, parameterValues, startTime, endTime, {});
+                const solution = rootState.model.odinRunner.wodinRun(rootState.model.odin, parameterValues,
+                    startTime, endTime, {});
                 payload.result = solution;
             } catch (e) {
                 payload.error = {

@@ -9,7 +9,7 @@ describe("Run mutations", () => {
             inputs: { endTime: 99, parameterValues: new Map([["a", 1]]) },
             error: null,
             result: mockSolution
-        }
+        };
 
         mutations.SetResult(state, result);
         expect(state.result).toBe(result);
@@ -57,7 +57,7 @@ describe("Run mutations", () => {
             inputs: { endTime: 99, parameterValues: new Map([["a", 1]]) },
             error: { error: "model error", detail: "with details" },
             result: null
-        }
+        };
 
         mutations.SetResult(state, result);
         expect(state.result).toBe(result);
