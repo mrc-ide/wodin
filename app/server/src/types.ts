@@ -1,5 +1,6 @@
 import { ConfigReader } from "./configReader";
 import { DefaultCodeReader } from "./defaultCodeReader";
+import Redis from "ioredis";
 
 export interface WodinConfig {
     courseTitle: string,
@@ -22,5 +23,6 @@ export interface AppLocals {
     configReader: ConfigReader,
     defaultCodeReader: DefaultCodeReader,
     wodinConfig: WodinConfig,
-    wodinVersion: String
+    wodinVersion: String,
+    redis: Redis
 }
