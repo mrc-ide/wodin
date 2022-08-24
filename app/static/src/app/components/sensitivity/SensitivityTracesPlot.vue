@@ -47,7 +47,7 @@ export default defineComponent({
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
             const result: Partial<PlotData>[] = [];
             if (solutions.value.length) {
-                const pars = store.state.sensitivity.result!.result!.pars;
+                const { pars } = store.state.sensitivity.result!.result!;
                 solutions.value.forEach((sln: OdinSolution, slnIdx: number) => {
                     const data = sln(start, end, points);
                     const plotlyOptions = {
