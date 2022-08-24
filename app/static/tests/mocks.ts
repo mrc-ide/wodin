@@ -105,9 +105,8 @@ export const mockSensitivityState = (state: Partial<SensitivityState> = {}): Sen
             extreme: SensitivityPlotExtreme.Max,
             time: null
         },
-        batch: null,
         sensitivityUpdateRequired: false,
-        error: null,
+        result: null,
         ...state
     };
 };
