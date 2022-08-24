@@ -94,12 +94,10 @@
                     "type": ["null", "string"]
                 },
                 "error": {
-                    "type": {
-                        "oneOf": [
-                            { "type": "null" },
-                            { "$ref": "#definitions/OdinModelResponseError" }
-                        ]
-                    }
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/OdinModelResponseError" }
+                    ]
                 }
             },
             "requiredProperties": ["metadata", "model", "error"],
@@ -147,7 +145,7 @@
             "additionalProperties": false
         },
 
-        "OdinSolution": {
+        "OdinRunInputs": {
             "comment": "This is not really the solution, but the arguments used to generated the solution!",
             "type": "object",
             "properties": {
@@ -187,12 +185,6 @@
                 "runRequired": {
                     "type": "boolean"
                 },
-                "solution": {
-                    "oneOf": [
-                        { "type": "null" },
-                        { "$ref": "#/definitions/OdinSolution" }
-                    ]
-                },
                 "parmeterValues": {
                     "oneOf": [
                         { "type": "null" },
@@ -202,12 +194,32 @@
                 "endTime": {
                     "type": "number"
                 },
-                "error": {
+                "result": {
                     "oneOf": [
                         { "type": "null" },
-                        { "$ref": "#/definitions/WodinError" }
+                        { "$ref": "#/definitions/OdinRunResult" }
                     ]
                 }
+            }
+        },
+
+        "OdinRunResult": {
+            "inputs":  {
+                "endTime": {
+                    "type": "number"
+                },
+                "parameterValues": {
+                    "$ref": "#/definitions/OdinParameterValues"
+                }
+            },
+            "hasResult": {
+                "type": "boolean"
+            },
+            "error": {
+                "oneOf": [
+                    { "type": "null" },
+                    { "$ref": "#/definitions/WodinError" }
+                ]
             }
         },
 
@@ -217,14 +229,17 @@
                 "paramSettings": {
                     "$ref": "#/definitions/SensitivityParameterSettings"
                 },
-                "batch": {
-                    "oneOf": [
-                        { "type": "null" },
-                        { "$ref": "#/definitions/Batch" }
-                    ]
-                },
                 "sensitivityUpdateRequired": {
                     "type": "boolean"
+                },
+                "plotSettings": {
+                    "$ref": "#/definitions/SensitivityPlotSettings"
+                },
+                "result": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/OdinSensitivityResult" }
+                    ]
                 }
             }
         },
@@ -253,6 +268,40 @@
                 "numberOfRuns": {
                     "type": "number"
                 }
+            }
+        },
+
+        "SensitivityPlotSettings": {
+            "plotType": {
+                "type": "string",
+                "enum": ["TraceOverTime", "ValueAtTime", "ValueAtExtreme", "TimeAtExtreme"],
+            },
+            "extreme": {
+                "type": "string",
+                "enum": ["Min", "Max"]
+            },
+            "time": {
+                "type": ["null", "number"]
+            }
+        },
+
+        "OdinSensitivityResult": {
+            "inputs": {
+                "endTime": {
+                    "type": "number"
+                },
+                "pars": {
+                    "$ref": "#/definitions/BatchPars"
+                }
+            },
+            "hasResult": {
+                "type": "boolean"
+            },
+            "error": {
+                "oneOf": [
+                    { "type": "null" },
+                    { "$ref": "#/definitions/WodinError" }
+                ]
             }
         },
 
@@ -361,17 +410,70 @@
                 "sumOfSquares": {
                     "type": ["null", "number"]
                 },
-                "solution": {
+                "paramsToVary": {
+                    "$ref": "#/definitions/StringArray"
+                },
+                "result": {
                     "oneOf": [
                         { "type": "null" },
-                        { "$ref": "#/definitions/OdinSolution" }
+                        { "$ref": "#/definitions/OdinFitResult" }
                     ]
                 },
-                "paramsToVary": {
-                    "TODO": "I am not sure that we have all the state here - is there another bit where we are storing this in the interface?",
-                    "$ref": "#/definitions/StringArray"
+
+            }
+        },
+
+        "OdinFitResult": {
+            "type": "object",
+            "properties": {
+                "inputs": {
+                    "$ref": "#/definitions/OdinFitInputs"
+                },
+                "hasResult": {
+                    "type": "boolean"
+                },
+                "error": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/WodinError" }
+                    ]
                 }
             }
+        },
+
+        "OdinFitInputs": {
+            "type": "object",
+            "properties": {
+                "endTime": {
+                    "type": "number"
+                },
+                "link": {
+                    "$ref": "#/definitions/FitDataLink"
+                },
+                "data": {
+                    "$ref": "#/definitions/FitData"
+                },
+                "parameterValues": {
+                    "$ref": "#/definitions/OdinParameterValues"
+                }
+            }
+        },
+
+        "FitDataLink": {
+            "type": "object",
+            "properties": {
+                "time": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "string"
+                },
+                "model": {
+                    "type": "string"
+                }
+            },
+            "required": ["time", "data", "model"],
+            "additionalProperties": false
         }
     },
 
