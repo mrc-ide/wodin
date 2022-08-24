@@ -5,18 +5,18 @@ import {
     WodinError
 } from "./responseTypes";
 
-export interface OdinRunResultInputs {
+export interface OdinRunInputs {
     parameterValues: Map<string, number>;
     endTime: number;
 }
 
 export interface OdinRunResult {
-    inputs: OdinRunResultInputs;
+    inputs: OdinRunInputs;
     result: OdinSolution | null;
     error: WodinError | null;
 }
 
-export interface OdinFitResultInputs {
+export interface OdinFitInputs {
     parameterValues: Map<string, number>;
     endTime: number;
     data: FitData;
@@ -24,7 +24,7 @@ export interface OdinFitResultInputs {
 }
 
 export interface OdinFitResult {
-    inputs: OdinFitResultInputs;
+    inputs: OdinFitInputs;
     result: OdinSolution | null;
     error: WodinError | null;
 }
