@@ -28,7 +28,7 @@ export const actions: ActionTree<RunState, AppState> = {
             } catch (e) {
                 payload.error = {
                     error: userMessages.errors.wodinRunError,
-                    detail: e as string
+                    detail: (e as Error).message
                 };
             }
             commit(RunMutation.SetResult, payload);

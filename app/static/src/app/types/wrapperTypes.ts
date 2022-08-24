@@ -1,4 +1,9 @@
-import { OdinSolution, WodinError } from "./responseTypes";
+import {
+    Batch,
+    BatchPars,
+    OdinSolution,
+    WodinError
+} from "./responseTypes";
 
 export interface OdinRunResultInputs {
     parameterValues: Map<string, number>;
@@ -21,5 +26,16 @@ export interface OdinFitResultInputs {
 export interface OdinFitResult {
     inputs: OdinFitResultInputs;
     result: OdinSolution | null;
+    error: WodinError | null;
+}
+
+export interface OdinSensitivityInputs {
+    endTime: number;
+    pars: BatchPars;
+}
+
+export interface OdinSensitivityResult {
+    inputs: OdinSensitivityInputs;
+    result: Batch | null;
     error: WodinError | null;
 }

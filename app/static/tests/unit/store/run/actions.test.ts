@@ -136,7 +136,7 @@ describe("Run actions", () => {
             inputs: { parameterValues, endTime: 99 },
             result: null,
             error: {
-                detail: mockError,
+                detail: mockError.message,
                 error: "An error occurred while running the model"
             }
         });

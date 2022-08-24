@@ -136,8 +136,9 @@ export const mockModelFitState = (state: Partial<ModelFitState> = {}): ModelFitS
         iterations: null,
         converged: null,
         sumOfSquares: null,
-        solution: null,
         paramsToVary: [],
+        inputs: null,
+        result: null,
         ...state
     };
 };
