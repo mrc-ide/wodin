@@ -14,7 +14,7 @@ export class SessionStore {
 
     async saveSession(id: string, data: any) {
         await this._redis.pipeline()
-            .hset(this.sessionKey("time"), id, new Date().toISOString())
+            .hset(this.sessionKey("time"), id, new Date(Date.now()).toISOString())
             .hset(this.sessionKey("data"), id, JSON.stringify(data))
             .exec();
     }
