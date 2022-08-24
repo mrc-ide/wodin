@@ -99,11 +99,14 @@ describe("SensitivityTab", () => {
         expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
     });
 
-    it.skip("renders error", () => {
+    it("renders error", () => {
         const testError = { error: "Test Error", detail: "test error detail" };
         const sensitivityState = {
-            result: null,
-            error: testError
+            result: {
+                inputs: {} as any,
+                result: null,
+                error: testError
+            }
         };
         const wrapper = getWrapper({}, sensitivityState);
         expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(testError);
