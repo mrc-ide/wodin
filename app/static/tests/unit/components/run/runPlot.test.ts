@@ -15,7 +15,6 @@ describe("RunPlot", () => {
         x: [0, 1],
         y: [[3, 4], [5, 6]]
     });
-    const mockAllFitData = undefined;
 
     const paletteModel = {
         S: "#ff0000",
@@ -48,6 +47,7 @@ describe("RunPlot", () => {
             }
         });
         const wodinPlot = wrapper.findComponent(WodinOdePlot);
+        const mockAllFitData = undefined;
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
@@ -149,7 +149,7 @@ describe("RunPlot", () => {
             timeVariable: "t",
             data: mockFitData,
             linkedVariables: { v: "S" }
-        }
+        };
         const store = new Vuex.Store<BasicState>({
             state: {
                 model: {
@@ -218,8 +218,8 @@ describe("RunPlot", () => {
                 },
                 name: "v",
                 type: "scatter",
-                "x": [0, 1],
-                "y": [10, 20]
+                x: [0, 1],
+                y: [10, 20]
             }
         ]);
 
