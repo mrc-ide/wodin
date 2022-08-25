@@ -16,7 +16,6 @@ export type FitData = Dict<number>[];
 
 export interface AllFitData {
     data: FitData;
-    endTime: number;
     linkedVariables: Dict<string | null>;
     timeVariable: string;
 }

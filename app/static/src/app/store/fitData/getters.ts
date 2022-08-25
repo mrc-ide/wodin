@@ -64,7 +64,6 @@ export const getters: FitDataGetters & GetterTree<FitDataState, FitState> = {
         if (data && timeVariable) {
             result = {
                 data,
-                endTime: data[data.length - 1][timeVariable],
                 linkedVariables,
                 timeVariable
             };
