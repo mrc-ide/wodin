@@ -28,6 +28,12 @@ export function filterSeriesSet(s: OdinSeriesSet, name: string): OdinSeriesSet {
     };
 }
 
+function filterData(data: FitData, timeVariable: string, start: number, end: number) {
+    return data.filter(
+        (row: Dict<number>) => row[timeVariable] >= start && row[timeVariable] <= end
+    );
+}
+
 export interface PlotlyOptions {
     includeLegendGroup: boolean,
     lineWidth: number
@@ -64,9 +70,7 @@ export function odinToPlotly(s: OdinSeriesSet, palette: Palette, options: Partia
 
 export function fitDataToPlotly(data: FitData, link: FitDataLink, palette: Palette, start: number,
     end: number): WodinPlotData {
-    const filteredData = data.filter(
-        (row: Dict<number>) => row[link.time] >= start && row[link.time] <= end
-    );
+    const filteredData = filterData(data, link.time, start, end);
     return [{
         name: link.data,
         x: filteredData.map((row: Dict<number>) => row[link.time]),
@@ -87,9 +91,7 @@ export function allFitDataToPlotly(allFitData: AllFitData | null, paletteModel: 
     const {
         data, linkedVariables, timeVariable
     } = allFitData;
-    const filteredData = data.filter(
-        (row: Dict<number>) => row[timeVariable] >= start && row[timeVariable] <= end
-    );
+    const filteredData = filterData(data, timeVariable, start, end);
     const palette = paletteData(Object.keys(linkedVariables));
     return Object.keys(linkedVariables).map((name: string) => ({
         name,
