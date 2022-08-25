@@ -14,6 +14,11 @@ describe("RunPlot", () => {
         x: [0, 1],
         y: [[3, 4], [5, 6]]
     });
+    const mockResult = {
+        inputs: {},
+        solution: mockSolution,
+        error: null
+    };
 
     const paletteModel = {
         S: "#ff0000",
@@ -33,7 +38,7 @@ describe("RunPlot", () => {
                 },
                 run: {
                     endTime: 99,
-                    solution: mockSolution
+                    result: mockResult
                 }
             } as any
         });

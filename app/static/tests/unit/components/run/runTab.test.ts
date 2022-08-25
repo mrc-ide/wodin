@@ -108,7 +108,12 @@ describe("RunTab", () => {
 
     it("displays error info in run model", () => {
         const odinRunnerError = { error: "model error", detail: "with details" };
-        const wrapper = getWrapper({}, { error: odinRunnerError });
+        const result = {
+            inputs: { endTime: 99, parameterValues: new Map() },
+            error: odinRunnerError,
+            solution: null
+        };
+        const wrapper = getWrapper({}, { result });
         expect(wrapper.findComponent(ErrorInfo).exists()).toBe(true);
         expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(odinRunnerError);
     });

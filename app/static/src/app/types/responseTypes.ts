@@ -97,6 +97,7 @@ export interface SimplexResult {
     converged: boolean;
     value: number;
     data: {
+        endTime: number,
         names: string[],
         solution: OdinSolution,
         pars: OdinUserType

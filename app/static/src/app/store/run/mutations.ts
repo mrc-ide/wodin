@@ -1,20 +1,19 @@
 import { MutationTree } from "vuex";
 import { RunState } from "./state";
-import { OdinSolution, OdinUserType, WodinError } from "../../types/responseTypes";
+import { OdinUserType } from "../../types/responseTypes";
+import { OdinRunResult } from "../../types/wrapperTypes";
 
 export enum RunMutation {
     SetRunRequired = "SetRunRequired",
-    SetSolution = "SetSolution",
+    SetResult = "SetResult",
     SetParameterValues = "SetParameterValues",
     UpdateParameterValues = "UpdateParameterValues",
-    SetEndTime = "SetEndTime",
-    SetError = "SetError"
+    SetEndTime = "SetEndTime"
 }
 
 export const mutations: MutationTree<RunState> = {
-    [RunMutation.SetSolution](state: RunState, payload: OdinSolution) {
-        state.solution = payload;
-        state.error = null;
+    [RunMutation.SetResult](state: RunState, payload: OdinRunResult) {
+        state.result = payload;
     },
 
     [RunMutation.SetRunRequired](state: RunState, payload: boolean) {
@@ -37,9 +36,5 @@ export const mutations: MutationTree<RunState> = {
     [RunMutation.SetEndTime](state: RunState, payload: number) {
         state.endTime = payload;
         state.runRequired = true;
-    },
-
-    [RunMutation.SetError](state: RunState, payload: WodinError) {
-        state.error = payload;
     }
 };

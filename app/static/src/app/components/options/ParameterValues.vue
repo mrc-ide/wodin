@@ -64,7 +64,7 @@ export default defineComponent({
         const timestampParamNames = () => paramNames.value.map((name: string) => name + Date.now());
 
         const paramKeys = ref(timestampParamNames());
-        const odinSolution = computed(() => store.state.run.solution);
+        const odinSolution = computed(() => store.state.run.result?.solution);
 
         const updateValue = (newValue: number, paramName: string) => {
             store.commit(`run/${RunMutation.UpdateParameterValues}`, { [paramName]: newValue });
