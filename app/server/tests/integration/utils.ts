@@ -10,11 +10,19 @@ export const post = async (url: string, body: any) => {
     return response;
 };
 
-export const getRedisValue = async (key: string, field: string) => {
+const withRedis = async (func: (redis: Redis) => any) => {
     const redis = new Redis(redisUrl);
-    const value = await redis.hget(key, field);
-    redis.disconnect();
-    return value;
+    try {
+        return await func(redis);
+    } finally {
+        redis.disconnect();
+    }
+};
+
+export const getRedisValue = async (key: string, field: string) => {
+    return withRedis((redis: Redis) => {
+        return redis.hget(key, field);
+    });
 };
 
 export const expectRedisJSONValue = async (key: string, field: string, expectedValue: any) => {
@@ -23,7 +31,7 @@ export const expectRedisJSONValue = async (key: string, field: string, expectedV
 };
 
 export const flushRedis = async () => {
-    const redis = new Redis(redisUrl);
-    await redis.flushdb();
-    redis.disconnect();
+    await withRedis(async (redis: Redis) => {
+        await redis.flushdb();
+    });
 };
