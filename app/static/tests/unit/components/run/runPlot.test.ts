@@ -14,6 +14,7 @@ describe("RunPlot", () => {
         x: [0, 1],
         y: [[3, 4], [5, 6]]
     });
+    const mockAllFitData = undefined;
 
     const paletteModel = {
         S: "#ff0000",
@@ -49,7 +50,7 @@ describe("RunPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
-        expect(wodinPlot.props("solutions")).toStrictEqual([mockSolution]);
+        expect(wodinPlot.props("solutions")).toStrictEqual([mockSolution, mockAllFitData]);
 
         // Generates expected plot data from model
         const plotData = wodinPlot.props("plotData");
