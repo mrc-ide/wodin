@@ -12,7 +12,9 @@ export const post = async (url: string, body: any) => {
 
 export const getRedisValue = async (key: string, field: string) => {
     const redis = new Redis(redisUrl);
-    return redis.hget(key, field);
+    const value = await redis.hget(key, field);
+    redis.disconnect();
+    return value;
 };
 
 export const expectRedisJSONValue = async (key: string, field: string, expectedValue: any) => {
@@ -23,4 +25,5 @@ export const expectRedisJSONValue = async (key: string, field: string, expectedV
 export const flushRedis = async () => {
     const redis = new Redis(redisUrl);
     await redis.flushdb();
+    redis.disconnect();
 };
