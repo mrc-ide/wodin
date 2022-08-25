@@ -6,8 +6,7 @@ const redisUrl = "redis://localhost:6379";
 
 export const post = async (url: string, body: any) => {
     const headers = { "Content-Type": "application/json" };
-    const response = await axios.post(fullUrl(url), body, { headers });
-    return response;
+    return axios.post(fullUrl(url), body, { headers });
 };
 
 const withRedis = async (func: (redis: Redis) => any) => {
