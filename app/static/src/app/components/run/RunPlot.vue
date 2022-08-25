@@ -4,7 +4,7 @@
       :placeholder-message="placeholderMessage"
       :end-time="endTime"
       :plot-data="allPlotData"
-      :solutions="solution ? [solution] : []">
+      :solutions="solution ? [solution, allFitData] : []">
     <slot></slot>
   </wodin-ode-plot>
 </template>
@@ -12,8 +12,9 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
+import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
-import { odinToPlotly, WodinPlotData } from "../../plot";
+import { odinToPlotly, allFitDataToPlotly, WodinPlotData } from "../../plot";
 import WodinOdePlot from "../WodinOdePlot.vue";
 
 export default defineComponent({
@@ -35,18 +36,22 @@ export default defineComponent({
 
         const palette = computed(() => store.state.model.paletteModel);
 
+        const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData}`]);
+
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
             const result = solution.value && solution.value(start, end, points);
             if (!result) {
                 return [];
             }
-            return [...odinToPlotly(result, palette.value)];
+            return [...odinToPlotly(result, palette.value),
+                ...allFitDataToPlotly(allFitData.value, palette.value, start, end)];
         };
 
         return {
             placeholderMessage,
             endTime,
             solution,
+            allFitData,
             allPlotData
         };
     }

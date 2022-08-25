@@ -1,12 +1,13 @@
 import { GetterTree, Getter } from "vuex";
-import { FitDataLink, FitDataState } from "./state";
+import { FitDataLink, FitDataState, AllFitData } from "./state";
 import { FitState } from "../fit/state";
 
 export enum FitDataGetter {
     nonTimeColumns ="nonTimeColumns",
     dataStart = "dataStart",
     dataEnd = "dataEnd",
-    link = "link"
+    link = "link",
+    allData = "allData"
 }
 
 export interface FitDataGetters {
@@ -51,6 +52,21 @@ export const getters: FitDataGetters & GetterTree<FitDataState, FitState> = {
                 data: state.columnToFit,
                 // The name of the variable representing the modelled values in the solution
                 model: modelVariableToFit
+            };
+        }
+        return result;
+    },
+
+    [FitDataGetter.allData]: (state: FitDataState): null | AllFitData => {
+        console.log("Triggering allData getter");
+        let result = null;
+        const { data, timeVariable, linkedVariables } = state;
+        if (data && timeVariable) {
+            result = {
+                data,
+                endTime: data[data.length - 1][timeVariable],
+                linkedVariables,
+                timeVariable
             };
         }
         return result;

@@ -14,6 +14,13 @@ export interface FitDataLink {
 
 export type FitData = Dict<number>[];
 
+export interface AllFitData {
+    data: FitData;
+    endTime: number;
+    linkedVariables: Dict<string | null>;
+    timeVariable: string;
+}
+
 export interface FitDataState {
     data: FitData | null,
     columns: string[] | null,
