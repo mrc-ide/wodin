@@ -126,13 +126,13 @@ describe("SensitivityTracesPlot", () => {
                 },
                 run: {
                     result: {
-                        result: mockCentralSln
+                        solution: mockCentralSln
                     },
                     endTime: 1
                 },
                 sensitivity: {
                     result: {
-                        result: {
+                        batch: {
                             solutions: sensitivityHasSolutions ? mockSolutions : null,
                             pars: {
                                 name: "alpha",

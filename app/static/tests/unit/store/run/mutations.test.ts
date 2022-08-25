@@ -8,7 +8,7 @@ describe("Run mutations", () => {
         const result = {
             inputs: { endTime: 99, parameterValues: new Map([["a", 1]]) },
             error: null,
-            result: mockSolution
+            solution: mockSolution
         };
 
         mutations.SetResult(state, result);
@@ -51,12 +51,11 @@ describe("Run mutations", () => {
     });
 
     it("sets odinRunnerResponseError", () => {
-        const mockSolution = () => [{ x: 1, y: 2 }];
         const state = mockRunState();
         const result = {
             inputs: { endTime: 99, parameterValues: new Map([["a", 1]]) },
             error: { error: "model error", detail: "with details" },
-            result: null
+            solution: null
         };
 
         mutations.SetResult(state, result);

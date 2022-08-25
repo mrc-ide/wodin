@@ -40,7 +40,7 @@ describe("Sensitivity actions", () => {
         expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetResult);
         expect(commit.mock.calls[0][1]).toStrictEqual({
             inputs: { endTime: 99, pars: mockBatchPars },
-            result: mockBatch,
+            batch: mockBatch,
             error: null
         });
         expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetUpdateRequired);
@@ -79,7 +79,7 @@ describe("Sensitivity actions", () => {
                 endTime: 99,
                 pars: mockBatchPars
             },
-            result: null,
+            batch: null,
             error: {
                 error: "An error occurred while running sensitivity",
                 detail: "a test error"

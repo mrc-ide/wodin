@@ -47,7 +47,7 @@ export default defineComponent({
 
         const sensitivityUpdateRequired = computed(() => store.state.sensitivity.sensitivityUpdateRequired);
         const updateMsg = computed(() => {
-            if (store.state.sensitivity.result?.result?.solutions.length) {
+            if (store.state.sensitivity.result?.batch?.solutions.length) {
                 if (store.state.model.compileRequired) {
                     return userMessages.sensitivity.compileRequiredForUpdate;
                 }

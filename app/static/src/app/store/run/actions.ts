@@ -18,13 +18,13 @@ export const actions: ActionTree<RunState, AppState> = {
             const { endTime } = state;
             const payload : OdinRunResult = {
                 inputs: { endTime, parameterValues },
-                result: null,
+                solution: null,
                 error: null
             };
             try {
                 const solution = rootState.model.odinRunner.wodinRun(rootState.model.odin, parameterValues,
                     startTime, endTime, {});
-                payload.result = solution;
+                payload.solution = solution;
             } catch (e) {
                 payload.error = {
                     error: userMessages.errors.wodinRunError,

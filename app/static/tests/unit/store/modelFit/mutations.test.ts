@@ -50,7 +50,7 @@ describe("ModelFit mutations", () => {
                 link: mockInputs.link,
                 parameterValues: pars
             },
-            result: solution,
+            solution,
             error: null
         });
     });

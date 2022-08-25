@@ -344,9 +344,9 @@ describe("Model actions", () => {
         expect(commit.mock.calls[9][1]).toEqual({
             error: null,
             inputs: { endTime: 99, parameterValues: new Map([["p1", 1]]) },
-            result: "test solution"
+            solution: "test solution"
         });
         expect(commit.mock.calls[10][0]).toBe(`run/${RunMutation.SetRunRequired}`);
-        expect(commit.mock.calls[1][1]).toBe(true);
+        expect(commit.mock.calls[10][1]).toBe(false);
     });
 });

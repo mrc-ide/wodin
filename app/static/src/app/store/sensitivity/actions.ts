@@ -23,12 +23,12 @@ export const actions: ActionTree<SensitivityState, AppState> = {
         if (odinRunner && odin && batchPars) {
             const payload : OdinSensitivityResult = {
                 inputs: { endTime, pars: batchPars },
-                result: null,
+                batch: null,
                 error: null
             };
             try {
                 const batch = odinRunner.batchRun(odin, batchPars, 0, endTime, {});
-                payload.result = batch;
+                payload.batch = batch;
             } catch (e: unknown) {
                 payload.error = {
                     error: userMessages.errors.wodinSensitivityError,
@@ -36,7 +36,7 @@ export const actions: ActionTree<SensitivityState, AppState> = {
                 };
             }
             commit(SensitivityMutation.SetResult, payload);
-            if (payload.result !== null) {
+            if (payload.batch !== null) {
                 commit(SensitivityMutation.SetUpdateRequired, false);
                 // Also re-run model if required so that plotted central traces are correct
                 if (rootState.run.runRequired) {

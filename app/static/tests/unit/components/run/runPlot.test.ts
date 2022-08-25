@@ -16,7 +16,7 @@ describe("RunPlot", () => {
     });
     const mockResult = {
         inputs: {},
-        result: mockSolution,
+        solution: mockSolution,
         error: null
     };
 

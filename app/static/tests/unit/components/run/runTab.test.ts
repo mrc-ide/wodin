@@ -111,7 +111,7 @@ describe("RunTab", () => {
         const result = {
             inputs: { endTime: 99, parameterValues: new Map() },
             error: odinRunnerError,
-            result: null
+            solution: null
         };
         const wrapper = getWrapper({}, { result });
         expect(wrapper.findComponent(ErrorInfo).exists()).toBe(true);

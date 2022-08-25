@@ -25,7 +25,7 @@ export const mutations: MutationTree<ModelFitState> = {
         };
         state.result = {
             inputs,
-            result: payload.data.solution,
+            solution: payload.data.solution,
             error: null
         };
     },

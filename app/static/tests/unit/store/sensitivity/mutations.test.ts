@@ -27,13 +27,13 @@ describe("Sensitivity mutations", () => {
         const state = {
             result: {
                 inputs: null,
-                result: null,
+                batch: null,
                 error: { error: "TEST ERROR", detail: "test detail" }
             }
         } as any;
         const batch = {
             inputs: {},
-            result: { solutions: [] },
+            batch: { solutions: [] },
             error: null
         };
         mutations[SensitivityMutation.SetResult](state, batch);
@@ -76,7 +76,7 @@ describe("Sensitivity mutations", () => {
         const state = { } as any;
         const batch = {
             inputs: {},
-            result: null,
+            batch: null,
             error: { error: "TEST ERROR", detail: "test error detail" }
         };
         mutations[SensitivityMutation.SetResult](state, batch);

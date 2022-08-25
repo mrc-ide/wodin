@@ -12,7 +12,7 @@ export interface OdinRunInputs {
 
 export interface OdinRunResult {
     inputs: OdinRunInputs;
-    result: OdinSolution | null;
+    solution: OdinSolution | null;
     error: WodinError | null;
 }
 
@@ -25,7 +25,7 @@ export interface OdinFitInputs {
 
 export interface OdinFitResult {
     inputs: OdinFitInputs;
-    result: OdinSolution | null;
+    solution: OdinSolution | null;
     error: WodinError | null;
 }
 
@@ -36,6 +36,6 @@ export interface OdinSensitivityInputs {
 
 export interface OdinSensitivityResult {
     inputs: OdinSensitivityInputs;
-    result: Batch | null;
+    batch: Batch | null;
     error: WodinError | null;
 }

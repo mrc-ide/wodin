@@ -37,7 +37,7 @@ describe("Run actions", () => {
         expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResult);
         expect(commit.mock.calls[0][1]).toEqual({
             inputs: { parameterValues, endTime: 99 },
-            result: "test solution",
+            solution: "test solution",
             error: null
         });
         expect(commit.mock.calls[1][0]).toBe(RunMutation.SetRunRequired);
@@ -134,7 +134,7 @@ describe("Run actions", () => {
         expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResult);
         expect(commit.mock.calls[0][1]).toStrictEqual({
             inputs: { parameterValues, endTime: 99 },
-            result: null,
+            solution: null,
             error: {
                 detail: mockError.message,
                 error: "An error occurred while running the model"

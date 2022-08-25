@@ -56,7 +56,7 @@ describe("FitPlot", () => {
                 },
                 modelFit: {
                     result: {
-                        result: modelFitHasSolution ? mockSolution : null
+                        solution: modelFitHasSolution ? mockSolution : null
                     }
                 }
             } as any,

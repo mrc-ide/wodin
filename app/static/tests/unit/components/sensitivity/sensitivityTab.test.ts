@@ -36,7 +36,7 @@ describe("SensitivityTab", () => {
                         sensitivityUpdateRequired: false,
                         result: {
                             inputs: {},
-                            result: {
+                            batch: {
                                 solutions: []
                             },
                             error: null
@@ -104,7 +104,7 @@ describe("SensitivityTab", () => {
         const sensitivityState = {
             result: {
                 inputs: {} as any,
-                result: null,
+                batch: null,
                 error: testError
             }
         };
@@ -137,7 +137,7 @@ describe("SensitivityTab", () => {
     it("renders expected update message when required action is Compile", () => {
         const sensitivityState = {
             result: {
-                result: { solutions: [{}] }
+                batch: { solutions: [{}] }
             }
         } as any;
         const wrapper = getWrapper({ compileRequired: true }, sensitivityState);
@@ -149,7 +149,7 @@ describe("SensitivityTab", () => {
     it("renders expected update message when sensitivity requires update", () => {
         const sensitivityState = {
             result: {
-                result: { solutions: [{}] }
+                batch: { solutions: [{}] }
             },
             sensitivityUpdateRequired: true
         } as any;
@@ -163,7 +163,7 @@ describe("SensitivityTab", () => {
     it("fades Summary plot when updated required", () => {
         const sensitivityState = {
             result: {
-                result: { solutions: [{}] }
+                batch: { solutions: [{}] }
             },
             plotSettings: { plotType: SensitivityPlotType.ValueAtTime } as any,
             sensitivityUpdateRequired: true
