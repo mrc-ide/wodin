@@ -37,8 +37,12 @@ describe("Sensitivity actions", () => {
         });
 
         expect(commit).toHaveBeenCalledTimes(2);
-        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetBatch);
-        expect(commit.mock.calls[0][1]).toBe(mockBatch);
+        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetResult);
+        expect(commit.mock.calls[0][1]).toStrictEqual({
+            inputs: { endTime: 99, pars: mockBatchPars },
+            batch: mockBatch,
+            error: null
+        });
         expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetUpdateRequired);
         expect(commit.mock.calls[1][1]).toBe(false);
 
@@ -69,10 +73,17 @@ describe("Sensitivity actions", () => {
         });
 
         expect(commit).toHaveBeenCalledTimes(1);
-        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetError);
+        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetResult);
         expect(commit.mock.calls[0][1]).toStrictEqual({
-            error: "An error occurred while running sensitivity",
-            detail: "a test error"
+            inputs: {
+                endTime: 99,
+                pars: mockBatchPars
+            },
+            batch: null,
+            error: {
+                error: "An error occurred while running sensitivity",
+                detail: "a test error"
+            }
         });
 
         expect(dispatch).not.toHaveBeenCalled();
@@ -145,7 +156,7 @@ describe("Sensitivity actions", () => {
         });
 
         expect(commit).toHaveBeenCalledTimes(2);
-        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetBatch);
+        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetResult);
         expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetUpdateRequired);
 
         expect(mockRunner.batchRun).toHaveBeenCalledWith(rootState.model.odin, mockBatchPars, 0, 99, {});

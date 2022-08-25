@@ -77,7 +77,9 @@ describe("SensitivitySummaryPlot", () => {
                 sensitivity: {
                     namespaced: true,
                     state: {
-                        batch: hasData ? mockBatch : null,
+                        result: {
+                            batch: hasData ? mockBatch : null
+                        },
                         plotSettings: { ...plotSettings }
                     },
                     mutations: {

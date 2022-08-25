@@ -24,9 +24,8 @@ export const defaultState: SensitivityState = {
         extreme: SensitivityPlotExtreme.Max,
         time: null
     },
-    batch: null,
     sensitivityUpdateRequired: false,
-    error: null
+    result: null
 };
 
 export const sensitivity = {

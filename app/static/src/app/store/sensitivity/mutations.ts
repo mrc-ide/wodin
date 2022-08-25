@@ -2,17 +2,16 @@ import { MutationTree } from "vuex";
 import {
     SensitivityParameterSettings, SensitivityPlotExtreme, SensitivityPlotType, SensitivityState
 } from "./state";
-import { Batch, WodinError } from "../../types/responseTypes";
+import { OdinSensitivityResult } from "../../types/wrapperTypes";
 
 export enum SensitivityMutation {
     SetParameterToVary = "SetParameterToVary",
     SetParamSettings = "SetParamSettings",
-    SetBatch = "SetBatch",
+    SetResult = "SetResult",
     SetUpdateRequired = "SetUpdateRequired",
     SetPlotType = "SetPlotType",
     SetPlotExtreme = "SetPlotExtreme",
     SetPlotTime = "SetPlotTime",
-    SetError = "SetError"
 }
 
 export const mutations: MutationTree<SensitivityState> = {
@@ -26,9 +25,8 @@ export const mutations: MutationTree<SensitivityState> = {
         state.sensitivityUpdateRequired = true;
     },
 
-    [SensitivityMutation.SetBatch](state: SensitivityState, payload: Batch) {
-        state.batch = payload;
-        state.error = null;
+    [SensitivityMutation.SetResult](state: SensitivityState, payload: OdinSensitivityResult) {
+        state.result = payload;
     },
 
     [SensitivityMutation.SetUpdateRequired](state: SensitivityState, payload: boolean) {
@@ -45,9 +43,5 @@ export const mutations: MutationTree<SensitivityState> = {
 
     [SensitivityMutation.SetPlotTime](state: SensitivityState, payload: number) {
         state.plotSettings.time = payload;
-    },
-
-    [SensitivityMutation.SetError](state: SensitivityState, payload: WodinError) {
-        state.error = payload;
     }
 };

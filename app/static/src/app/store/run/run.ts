@@ -4,10 +4,9 @@ import { actions } from "./actions";
 
 export const defaultState: RunState = {
     runRequired: false,
-    solution: null,
     parameterValues: null,
     endTime: 100,
-    error: null
+    result: null
 };
 
 export const run = {

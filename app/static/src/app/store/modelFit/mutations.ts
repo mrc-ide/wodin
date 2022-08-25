@@ -1,10 +1,11 @@
 import { MutationTree } from "vuex";
-import { ModelFitState } from "./state";
+import { ModelFitInputs, ModelFitState } from "./state";
 import { SimplexResult } from "../../types/responseTypes";
 
 export enum ModelFitMutation {
     SetFitting = "SetFitting",
     SetResult = "SetResult",
+    SetInputs = "SetInputs",
     SetParamsToVary = "SetParamsToVary",
     SetFitUpdateRequired = "SetFitUpdateRequired"
 }
@@ -18,7 +19,19 @@ export const mutations: MutationTree<ModelFitState> = {
         state.converged = payload.converged;
         state.iterations = payload.iterations;
         state.sumOfSquares = payload.value;
-        state.solution = payload.data.solution;
+        const inputs = {
+            ...state.inputs!,
+            parameterValues: payload.data.pars
+        };
+        state.result = {
+            inputs,
+            solution: payload.data.solution,
+            error: null
+        };
+    },
+
+    [ModelFitMutation.SetInputs](state: ModelFitState, payload: ModelFitInputs) {
+        state.inputs = payload;
     },
 
     [ModelFitMutation.SetParamsToVary](state: ModelFitState, payload: string[]) {

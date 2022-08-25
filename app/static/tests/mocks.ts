@@ -62,10 +62,9 @@ export const mockModelState = (state: Partial<ModelState> = {}): ModelState => {
 export const mockRunState = (state: Partial<RunState> = {}): RunState => {
     return {
         runRequired: false,
-        solution: null,
         parameterValues: null,
         endTime: 100,
-        error: null,
+        result: null,
         ...state
     };
 };
@@ -106,9 +105,8 @@ export const mockSensitivityState = (state: Partial<SensitivityState> = {}): Sen
             extreme: SensitivityPlotExtreme.Max,
             time: null
         },
-        batch: null,
         sensitivityUpdateRequired: false,
-        error: null,
+        result: null,
         ...state
     };
 };
@@ -137,8 +135,9 @@ export const mockModelFitState = (state: Partial<ModelFitState> = {}): ModelFitS
         iterations: null,
         converged: null,
         sumOfSquares: null,
-        solution: null,
         paramsToVary: [],
+        inputs: null,
+        result: null,
         ...state
     };
 };
