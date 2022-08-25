@@ -18,7 +18,7 @@ describe("Sessionstore", () => {
     } as any;
 
     it("can save session", async () => {
-        const data = { value: "test" };
+        const data = "testSession";
         const sut = new SessionStore(mockRedis, "Test Course", "testApp");
         await sut.saveSession("1234", data);
 
@@ -29,7 +29,7 @@ describe("Sessionstore", () => {
         expect(mockPipeline.hset.mock.calls[0][2]).toBe("2022-01-24T17:00:00.000Z");
         expect(mockPipeline.hset.mock.calls[1][0]).toBe("Test Course:testApp:sessions:data");
         expect(mockPipeline.hset.mock.calls[1][1]).toBe("1234");
-        expect(mockPipeline.hset.mock.calls[1][2]).toBe("{\"value\":\"test\"}");
+        expect(mockPipeline.hset.mock.calls[1][2]).toBe("testSession");
         expect(mockPipeline.exec).toHaveBeenCalledTimes(1);
     });
 });

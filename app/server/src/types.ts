@@ -4,6 +4,7 @@ import { DefaultCodeReader } from "./defaultCodeReader";
 
 export interface WodinConfig {
     courseTitle: string,
+    savePrefix: string,
     port: number,
     odinAPI: string,
     redisURL: string,

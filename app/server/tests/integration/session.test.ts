@@ -7,7 +7,7 @@ describe("Session integration", () => {
         await flushRedis();
     });
 
-    const redisKeyPrefix = "WODIN Example:day1:sessions:";
+    const redisKeyPrefix = "example:day1:sessions:";
     const sessionId = "1234";
     const url = `apps/day1/sessions/${sessionId}`;
 
