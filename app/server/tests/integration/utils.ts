@@ -4,9 +4,9 @@ import Redis from "ioredis";
 const fullUrl = (url: string) => `http://localhost:3000/${url}`;
 const redisUrl = "redis://localhost:6379";
 
-export const post =  async (url: string, body: any) => {
-    const headers = {"Content-Type": "application/json"};
-    const response = await axios.post(fullUrl(url), body, {headers});
+export const post = async (url: string, body: any) => {
+    const headers = { "Content-Type": "application/json" };
+    const response = await axios.post(fullUrl(url), body, { headers });
     return response;
 };
 

@@ -1,10 +1,12 @@
 import { AppsController } from "../../src/controllers/appsController";
+import { SessionsController } from "../../src/controllers/sessionsController";
 
 describe("odin routes", () => {
     const express = require("express");
 
     const mockRouter = {
-        get: jest.fn()
+        get: jest.fn(),
+        post: jest.fn()
     };
     const realRouter = express.Router;
 
@@ -22,5 +24,7 @@ describe("odin routes", () => {
         expect(mockRouter.get).toBeCalledTimes(1);
         expect(mockRouter.get.mock.calls[0][0]).toBe("/:appName");
         expect(mockRouter.get.mock.calls[0][1]).toBe(AppsController.getApp);
+        expect(mockRouter.post.mock.calls[0][0]).toBe("/:appName/sessions/:id");
+        expect(mockRouter.post.mock.calls[0][1]).toBe(SessionsController.postSession);
     });
 });

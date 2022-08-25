@@ -1,5 +1,5 @@
 import { AppsController } from "../controllers/appsController";
-import {SessionsController} from "../controllers/sessionsController";
+import { SessionsController } from "../controllers/sessionsController";
 
 const router = require("express").Router();
 

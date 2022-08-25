@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import {AppLocals} from "../types";
-import {SessionStore} from "../db/sessionStore";
+import { AppLocals } from "../types";
+import { SessionStore } from "../db/sessionStore";
 
 export class SessionsController {
     static postSession = async (req: Request, res: Response) => {

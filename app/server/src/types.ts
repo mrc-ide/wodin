@@ -1,6 +1,6 @@
+import Redis from "ioredis";
 import { ConfigReader } from "./configReader";
 import { DefaultCodeReader } from "./defaultCodeReader";
-import Redis from "ioredis";
 
 export interface WodinConfig {
     courseTitle: string,

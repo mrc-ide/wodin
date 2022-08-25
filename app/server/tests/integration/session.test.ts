@@ -1,4 +1,6 @@
-import {flushRedis, getRedisValue, expectRedisJSONValue, post} from "./utils";
+import {
+    flushRedis, getRedisValue, expectRedisJSONValue, post
+} from "./utils";
 
 describe("Session integration", () => {
     afterEach(() => {
@@ -9,7 +11,7 @@ describe("Session integration", () => {
     const sessionId = "1234";
 
     it("can post new session", async () => {
-        const data = {test: "value"};
+        const data = { test: "value" };
         const response = await post(`apps/day1/sessions/${sessionId}`, data);
         expect(response.status).toBe(200);
         await expectRedisJSONValue(`${redisKeyPrefix}:data`, "1234", data);
@@ -19,12 +21,12 @@ describe("Session integration", () => {
     });
 
     it("can update session", async () => {
-        const oldData = {test: "oldValue"};
-        const url = `apps/day1/sessions/1234`;
+        const oldData = { test: "oldValue" };
+        const url = "apps/day1/sessions/1234";
         await post(url, oldData);
         const oldTime = await getRedisValue("WODIN Example:day1:sessions:time", "1234");
 
-        const newData = {test: "newValue"};
+        const newData = { test: "newValue" };
         const response = await post(url, newData);
         expect(response.status).toBe(200);
         await expectRedisJSONValue("WODIN Example:day1:sessions:data", "1234", newData);
