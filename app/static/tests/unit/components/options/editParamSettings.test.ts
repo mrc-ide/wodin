@@ -41,7 +41,7 @@ describe("EditParamSettings", () => {
         batchParsRange: mockBatchParsRange
     } as any;
 
-    const parameterValues = { A: 1, B: 2};
+    const parameterValues = { A: 1, B: 2 };
 
     const getWrapper = async (paramSettings: SensitivityParameterSettings, open = true,
         mockSetParamSettings = jest.fn()) => {

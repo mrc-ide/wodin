@@ -3,7 +3,9 @@ import { ModelState } from "./state";
 import { api } from "../../apiService";
 import { ModelMutation } from "./mutations";
 import { AppState, AppType } from "../appState/state";
-import { Odin, OdinModelResponse, OdinParameter, OdinUserType } from "../../types/responseTypes";
+import {
+    Odin, OdinModelResponse, OdinParameter, OdinUserType
+} from "../../types/responseTypes";
 import { evaluateScript } from "../../utils";
 import { FitDataAction } from "../fitData/actions";
 import { ModelFitAction } from "../modelFit/actions";

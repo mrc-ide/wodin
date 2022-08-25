@@ -1,7 +1,6 @@
 import { MutationTree } from "vuex";
 import { RunState } from "./state";
 import { OdinSolution, OdinUserType, WodinError } from "../../types/responseTypes";
-import { Dict } from "../../types/utilTypes";
 
 export enum RunMutation {
     SetRunRequired = "SetRunRequired",
