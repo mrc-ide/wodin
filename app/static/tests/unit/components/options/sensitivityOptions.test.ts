@@ -38,7 +38,7 @@ describe("SensitivityOptions", () => {
                 run: {
                     namespaced: true,
                     state: {
-                        parameterValues: new Map<string, number>()
+                        parameterValues: {}
                     }
                 }
             } as any

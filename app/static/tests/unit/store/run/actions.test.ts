@@ -8,7 +8,7 @@ describe("Run actions", () => {
     it("runs model and updates required action", () => {
         const mockOdin = {} as any;
 
-        const parameterValues = new Map([["p1", 1], ["p2", 2]]);
+        const parameterValues = { p1: 1, p2: 2 };
         const runner = mockRunner();
         const modelState = mockModelState({
             odinRunner: runner,
@@ -50,7 +50,7 @@ describe("Run actions", () => {
         const rootState = { model: modelState } as any;
         const state = mockRunState({
             runRequired: false,
-            parameterValues: new Map()
+            parameterValues: {}
         });
         const commit = jest.fn();
 
@@ -106,7 +106,7 @@ describe("Run actions", () => {
             } as any;
         };
 
-        const parameterValues = new Map([["p1", 1], ["p2", 2]]);
+        const parameterValues = { p1: 1, p2: 2 };
         const runner = mockRunnerWithThrownException();
         const modelState = mockModelState({
             odinRunner: runner,

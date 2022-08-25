@@ -27,11 +27,11 @@ describe("Run mutations", () => {
 
     it("updates parameter values and sets runRequired to true", () => {
         const state = mockRunState({
-            parameterValues: new Map([["p1", 1], ["p2", 2]]),
+            parameterValues: { p1: 1, p2: 2 },
             runRequired: true
         });
         mutations.UpdateParameterValues(state, { p1: 10, p3: 30 });
-        expect(state.parameterValues).toStrictEqual(new Map([["p1", 10], ["p2", 2], ["p3", 30]]));
+        expect(state.parameterValues).toStrictEqual({ p1: 10, p2: 2, p3: 30 });
         expect(state.runRequired).toBe(true);
     });
 
