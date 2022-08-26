@@ -37,7 +37,7 @@ export default defineComponent({
         },
         // Only used as an indicator that redraw is required when this changes - the data to display is calculated by
         // plotData function using these solutions
-        solutions: {
+        redrawWatches: {
             type: Array as PropType<OdinSolution[]>,
             required: true
         }
@@ -86,7 +86,7 @@ export default defineComponent({
         let resizeObserver: null | ResizeObserver = null;
 
         const drawPlot = () => {
-            if (props.solutions.length) {
+            if (props.redrawWatches.length) {
                 baseData.value = props.plotData(startTime, props.endTime, nPoints);
 
                 if (hasPlotData.value) {
@@ -104,7 +104,7 @@ export default defineComponent({
 
         onMounted(drawPlot);
 
-        watch(() => props.solutions, drawPlot);
+        watch(() => props.redrawWatches, drawPlot);
 
         onUnmounted(() => {
             if (resizeObserver) {

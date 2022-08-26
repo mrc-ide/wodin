@@ -56,7 +56,7 @@ describe("RunPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
-        expect(wodinPlot.props("solutions")).toStrictEqual([mockSolution, mockAllFitData]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution, mockAllFitData]);
 
         // Generates expected plot data from model
         const plotData = wodinPlot.props("plotData");
@@ -115,7 +115,7 @@ describe("RunPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
-        expect(wodinPlot.props("solutions")).toStrictEqual([]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([]);
 
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 1, 10);
@@ -186,7 +186,7 @@ describe("RunPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
-        expect(wodinPlot.props("solutions")).toStrictEqual([mockSolution, mockAllFitData]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution, mockAllFitData]);
 
         // Generates expected plot data from model
         const plotData = wodinPlot.props("plotData");

@@ -162,7 +162,7 @@ describe("SensitivityTracesPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Sensitivity has not been run.");
         expect(wodinPlot.props("endTime")).toBe(1);
-        expect(wodinPlot.props("solutions")).toStrictEqual(mockSolutions);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual(mockSolutions);
 
         const plotData = wodinPlot.props("plotData");
         expect(plotData(0, 1, 100)).toStrictEqual(expectedPlotData);
@@ -176,7 +176,7 @@ describe("SensitivityTracesPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Sensitivity has not been run.");
         expect(wodinPlot.props("endTime")).toBe(1);
-        expect(wodinPlot.props("solutions")).toStrictEqual([]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([]);
 
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 1, 100);
