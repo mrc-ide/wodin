@@ -5,9 +5,9 @@ jest.mock("../../../../src/app/utils", () => {
 });
 
 /* eslint-disable import/first */
-import { storeOptions } from "../../../../src/app/store/basic/basic";
+import { storeOptions } from "../../../../src/app/store/stochastic/stochastic";
 
-describe("basic", () => {
+describe("stochastic", () => {
     it("generates session id as expected", () => {
         const state = storeOptions.state as any;
         expect(state.sessionId).toBe("12345");

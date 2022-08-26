@@ -5,9 +5,9 @@ jest.mock("../../../../src/app/utils", () => {
 });
 
 /* eslint-disable import/first */
-import { storeOptions } from "../../../../src/app/store/basic/basic";
+import { storeOptions } from "../../../../src/app/store/fit/fit";
 
-describe("basic", () => {
+describe("fit", () => {
     it("generates session id as expected", () => {
         const state = storeOptions.state as any;
         expect(state.sessionId).toBe("12345");
