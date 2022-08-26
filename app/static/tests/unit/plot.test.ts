@@ -103,7 +103,7 @@ describe("allFitDataToPlotly", () => {
         const res = allFitDataToPlotly(allFitData, palette, 0, 4);
         expect(res).toStrictEqual([
             {
-                marker: { color: "#e41a1c" }, // first data colour
+                marker: { color: "#1c0a00" }, // first data colour
                 mode: "markers",
                 name: "a",
                 type: "scatter",
@@ -111,7 +111,7 @@ describe("allFitDataToPlotly", () => {
                 y: [1, 2, 3, 4, 5]
             },
             {
-                marker: { color: "#377eb8" }, // second data colour
+                marker: { color: "#603601" }, // second data colour
                 mode: "markers",
                 name: "b",
                 type: "scatter",
@@ -130,7 +130,7 @@ describe("allFitDataToPlotly", () => {
         const res = allFitDataToPlotly(allFitData, palette, 1, 3);
         expect(res).toStrictEqual([
             {
-                marker: { color: "#e41a1c" },
+                marker: { color: "#1c0a00" },
                 mode: "markers",
                 name: "a",
                 type: "scatter",
@@ -138,7 +138,7 @@ describe("allFitDataToPlotly", () => {
                 y: [2, 3, 4]
             },
             {
-                marker: { color: "#377eb8" },
+                marker: { color: "#603601" },
                 mode: "markers",
                 name: "b",
                 type: "scatter",
@@ -157,7 +157,7 @@ describe("allFitDataToPlotly", () => {
         const res = allFitDataToPlotly(allFitDataLinked, palette, 0, 4);
         expect(res).toStrictEqual([
             {
-                marker: { color: "#e41a1c" }, // first data colour
+                marker: { color: "#1c0a00" }, // first data colour
                 mode: "markers",
                 name: "a",
                 type: "scatter",
