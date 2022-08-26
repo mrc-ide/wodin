@@ -34,7 +34,7 @@ describe("ParameterValues", () => {
                 run: {
                     namespaced: true,
                     state: mockRunState({
-                        parameterValues: new Map([["param1", 1], ["param2", 2.2]])
+                        parameterValues: { param1: 1, param2: 2.2 }
                     }),
                     mutations: storeMutations
                 },

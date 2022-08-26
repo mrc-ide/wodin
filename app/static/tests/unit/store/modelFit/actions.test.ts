@@ -14,9 +14,7 @@ describe("ModelFit actions", () => {
         wodinFit: mockWodinFit
     } as any;
     const mockOdin = {} as any;
-    const parameterValues = new Map<string, number>();
-    parameterValues.set("p1", 1.1);
-    parameterValues.set("p2", 2.2);
+    const parameterValues = { p1: 1.1, p2: 2.2 };
     const modelState = mockModelState({
         odin: mockOdin,
         odinRunner: mockOdinRunner
@@ -111,7 +109,7 @@ describe("ModelFit actions", () => {
         const result = {
             converged: false,
             data: {
-                pars: new Map<string, number>()
+                pars: {}
             }
         };
         const simplex = {
@@ -145,7 +143,7 @@ describe("ModelFit actions", () => {
         const result = {
             converged: true,
             data: {
-                pars: new Map<string, number>()
+                pars: {}
             }
         };
         const simplex = {

@@ -79,8 +79,15 @@ export interface OdinFitData {
     value: number[]
 }
 
+// This is strictly a little more restrictive than what odin supports,
+// but wodin does not support fancy user variables yet and we can sort
+// that out later (odin allows the union of number, number[], and a
+// tensor type - the latter two will be a challenge to expose nicely
+// in the interface).
+export type OdinUserType = Dict<number>;
+
 export interface OdinFitParameters {
-    base: Map<string, number>,
+    base: OdinUserType,
     vary: string[]
 }
 
@@ -93,7 +100,7 @@ export interface SimplexResult {
         endTime: number,
         names: string[],
         solution: OdinSolution,
-        pars: Map<string, number>
+        pars: OdinUserType
     }
 }
 
@@ -103,7 +110,7 @@ export interface Simplex {
 }
 
 export interface BatchPars {
-    base: Map<string, number>;
+    base: OdinUserType;
     name: string;
     values: number[];
 }
@@ -118,7 +125,7 @@ export interface Batch {
 
 export interface OdinRunner {
     wodinRun: (odin: Odin,
-               pars: Map<string, number>,
+               pars: OdinUserType,
                tStart: number,
                tEnd: number,
                control: OdeControl) => OdinSolution;
@@ -130,14 +137,14 @@ export interface OdinRunner {
                odeParams: OdeControl,
                simplexParams: Dict<unknown>) => Simplex;
 
-    batchParsRange: (base: Map<string, number>,
+    batchParsRange: (base: OdinUserType,
                      name: string,
                      count: number,
                      logarithmic: boolean,
                      min: number,
                      max: number) => BatchPars;
 
-    batchParsDisplace: (base: Map<string, number>,
+    batchParsDisplace: (base: OdinUserType,
                         name: string,
                         count: number,
                         logarithmic: boolean,

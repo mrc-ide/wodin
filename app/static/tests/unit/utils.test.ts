@@ -271,9 +271,7 @@ describe("processFitData", () => {
 });
 
 describe("generateBatchPars", () => {
-    const parameterValues = new Map<string, number>();
-    parameterValues.set("A", 1);
-    parameterValues.set("B", 2);
+    const parameterValues = { A: 1, B: 2 };
 
     const rootState = {
         model: {

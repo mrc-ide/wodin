@@ -2,11 +2,12 @@ import {
     Batch,
     BatchPars,
     OdinSolution,
+    OdinUserType,
     WodinError
 } from "./responseTypes";
 
 export interface OdinRunInputs {
-    parameterValues: Map<string, number>;
+    parameterValues: OdinUserType;
     endTime: number;
 }
 
@@ -17,7 +18,7 @@ export interface OdinRunResult {
 }
 
 export interface OdinFitInputs {
-    parameterValues: Map<string, number>;
+    parameterValues: OdinUserType;
     endTime: number;
     data: FitData;
     link: FitDataLink;

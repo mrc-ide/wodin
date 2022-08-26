@@ -30,11 +30,7 @@ describe("Model actions", () => {
         },
         run: {
             runRequired: false,
-            parameterValues: new Map([
-                ["p1", 1],
-                ["p2", 2],
-                ["p3", 3]
-            ])
+            parameterValues: { p1: 1, p2: 2, p3: 3 }
         }
     };
 
@@ -113,7 +109,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[0][1]).toBe(3);
         expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
-        const expectedParams = new Map([["p2", 20], ["p3", 30], ["p4", 40]]);
+        const expectedParams = { p2: 20, p3: 30, p4: 40 };
         expect(commit.mock.calls[1][1]).toStrictEqual(expectedParams);
         expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetPaletteModel);
         expect(commit.mock.calls[2][1]).toStrictEqual({ x: "#2e5cb8", y: "#cc0044" });
@@ -191,10 +187,7 @@ describe("Model actions", () => {
             },
             compileRequired: true,
             runRequired: false,
-            parameterValues: new Map([
-                ["p2", 1],
-                ["p3", 2]
-            ])
+            parameterValues: { p2: 1, p3: 2 }
         };
 
         const commit = jest.fn();
@@ -236,7 +229,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[0][1]).toBe(3);
         expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
-        expect(commit.mock.calls[1][1]).toStrictEqual(new Map());
+        expect(commit.mock.calls[1][1]).toStrictEqual({});
         expect(commit.mock.calls[3][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
         expect(commit.mock.calls[3][1]).toBe(null);
     });
@@ -316,7 +309,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[2][0]).toBe(`model/${ModelMutation.SetOdin}`);
         expect(commit.mock.calls[2][1]).toBe(3); // evaluated value of test model
         expect(commit.mock.calls[3][0]).toBe(`run/${RunMutation.SetParameterValues}`);
-        expect(commit.mock.calls[3][1]).toStrictEqual(new Map([["p1", 1]]));
+        expect(commit.mock.calls[3][1]).toStrictEqual({ p1: 1 });
 
         expect(commit.mock.calls[4][0]).toBe(`model/${ModelMutation.SetPaletteModel}`);
         expect(commit.mock.calls[4][1]).toStrictEqual({ x: "#2e5cb8", y: "#cc0044" });
@@ -336,14 +329,14 @@ describe("Model actions", () => {
         // runs
         const run = runner.wodinRun;
         expect(run.mock.calls[0][0]).toBe(3);
-        expect(run.mock.calls[0][1]).toStrictEqual(new Map([["p1", 1]]));
+        expect(run.mock.calls[0][1]).toStrictEqual({ p1: 1 });
         expect(run.mock.calls[0][2]).toBe(0); // start
         expect(run.mock.calls[0][3]).toBe(99); // end
 
         expect(commit.mock.calls[9][0]).toBe(`run/${RunMutation.SetResult}`);
         expect(commit.mock.calls[9][1]).toEqual({
             error: null,
-            inputs: { endTime: 99, parameterValues: new Map([["p1", 1]]) },
+            inputs: { endTime: 99, parameterValues: { p1: 1 } },
             solution: "test solution"
         });
         expect(commit.mock.calls[10][0]).toBe(`run/${RunMutation.SetRunRequired}`);

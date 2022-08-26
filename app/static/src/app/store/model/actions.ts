@@ -3,7 +3,9 @@ import { ModelState } from "./state";
 import { api } from "../../apiService";
 import { ModelMutation } from "./mutations";
 import { AppState, AppType } from "../appState/state";
-import { Odin, OdinModelResponse, OdinParameter } from "../../types/responseTypes";
+import {
+    Odin, OdinModelResponse, OdinParameter, OdinUserType
+} from "../../types/responseTypes";
 import { evaluateScript } from "../../utils";
 import { FitDataAction } from "../fitData/actions";
 import { ModelFitAction } from "../modelFit/actions";
@@ -47,10 +49,10 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
         commit(ModelMutation.SetOdin, odin);
 
         // Overwrite any existing parameter values in the model
-        const newValues = new Map<string, number>();
+        const newValues: OdinUserType = {};
         parameters.forEach((param: OdinParameter) => {
             const value = param.default;
-            newValues.set(param.name, value === null ? 0 : value);
+            newValues[param.name] = value === null ? 0 : value;
         });
         commit(`run/${RunMutation.SetParameterValues}`, newValues, { root: true });
 
@@ -65,7 +67,7 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
 
         // set or update selected sensitivity variable
         const { paramSettings } = rootState.sensitivity;
-        const paramNames = Array.from(newValues.keys());
+        const paramNames = Object.keys(newValues);
         if (!paramSettings.parameterToVary || !paramNames.includes(paramSettings.parameterToVary)) {
             const newParamToVary = paramNames.length ? parameters[0].name : null;
             commit(`sensitivity/${SensitivityMutation.SetParameterToVary}`, newParamToVary, { root: true });

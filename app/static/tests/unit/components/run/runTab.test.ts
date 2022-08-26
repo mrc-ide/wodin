@@ -109,7 +109,7 @@ describe("RunTab", () => {
     it("displays error info in run model", () => {
         const odinRunnerError = { error: "model error", detail: "with details" };
         const result = {
-            inputs: { endTime: 99, parameterValues: new Map() },
+            inputs: { endTime: 99, parameterValues: {} },
             error: odinRunnerError,
             solution: null
         };

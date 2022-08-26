@@ -1,7 +1,7 @@
 import { MutationTree } from "vuex";
 import { RunState } from "./state";
+import { OdinUserType } from "../../types/responseTypes";
 import { OdinRunResult } from "../../types/wrapperTypes";
-import { Dict } from "../../types/utilTypes";
 
 export enum RunMutation {
     SetRunRequired = "SetRunRequired",
@@ -20,14 +20,14 @@ export const mutations: MutationTree<RunState> = {
         state.runRequired = payload;
     },
 
-    [RunMutation.SetParameterValues](state: RunState, payload: Map<string, number>) {
+    [RunMutation.SetParameterValues](state: RunState, payload: OdinUserType) {
         state.parameterValues = payload;
     },
 
-    [RunMutation.UpdateParameterValues](state: RunState, payload: Dict<number>) {
+    [RunMutation.UpdateParameterValues](state: RunState, payload: OdinUserType) {
         if (state.parameterValues) {
             Object.keys(payload).forEach((key) => {
-                state.parameterValues!.set(key, payload[key]);
+                state.parameterValues![key] = payload[key];
             });
             state.runRequired = true;
         }

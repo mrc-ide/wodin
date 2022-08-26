@@ -27,7 +27,7 @@ describe("ModelFit mutations", () => {
     it("sets model fit result", () => {
         const state = mockModelFitState({ inputs: mockInputs });
         const solution = jest.fn();
-        const pars = new Map([["x", 1]]);
+        const pars = { x: 1 };
 
         const payload = {
             converged: false,

@@ -6,7 +6,7 @@ describe("Run mutations", () => {
         const mockSolution = () => [{ x: 1, y: 2 }];
         const state = mockRunState();
         const result = {
-            inputs: { endTime: 99, parameterValues: new Map([["a", 1]]) },
+            inputs: { endTime: 99, parameterValues: { a: 1 } },
             error: null,
             solution: mockSolution
         };
@@ -32,11 +32,11 @@ describe("Run mutations", () => {
 
     it("updates parameter values and sets runRequired to true", () => {
         const state = mockRunState({
-            parameterValues: new Map([["p1", 1], ["p2", 2]]),
+            parameterValues: { p1: 1, p2: 2 },
             runRequired: true
         });
         mutations.UpdateParameterValues(state, { p1: 10, p3: 30 });
-        expect(state.parameterValues).toStrictEqual(new Map([["p1", 10], ["p2", 2], ["p3", 30]]));
+        expect(state.parameterValues).toStrictEqual({ p1: 10, p2: 2, p3: 30 });
         expect(state.runRequired).toBe(true);
     });
 
@@ -53,7 +53,7 @@ describe("Run mutations", () => {
     it("sets odinRunnerResponseError", () => {
         const state = mockRunState();
         const result = {
-            inputs: { endTime: 99, parameterValues: new Map([["a", 1]]) },
+            inputs: { endTime: 99, parameterValues: { a: 1 } },
             error: { error: "model error", detail: "with details" },
             solution: null
         };
