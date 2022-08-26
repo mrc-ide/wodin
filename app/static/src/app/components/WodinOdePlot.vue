@@ -20,7 +20,6 @@ import {
 import {
     WodinPlotData, fadePlotStyle, margin, config
 } from "../plot";
-import { OdinSolution } from "../types/responseTypes";
 
 export default defineComponent({
     name: "WodinOdePlot",
@@ -38,7 +37,7 @@ export default defineComponent({
         // Only used as an indicator that redraw is required when this changes - the data to display is calculated by
         // plotData function using these solutions
         redrawWatches: {
-            type: Array as PropType<OdinSolution[]>,
+            type: Array as PropType<any[]>,
             required: true
         }
     },
