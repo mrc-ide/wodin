@@ -26,7 +26,6 @@ export const getRedisValue = async (key: string, field: string) => {
 
 export const expectRedisJSONValue = async (key: string, field: string, expectedValue: any) => {
     const value = await getRedisValue(key, field);
-    console.log(`Value is: ${value}`);
     expect(JSON.parse(value!)).toStrictEqual(expectedValue);
 };
 
