@@ -49,7 +49,14 @@ export function paletteModel(names: string[]): Palette {
 }
 
 export function paletteData(names: string[]): Palette {
-    const cols = ["#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628", "#f781bf"];
+    // This is not a lot of colours, but we don't really expect that
+    // many columns to come in here (if a user is adding more than 3
+    // columns we might want some interface to filter down to
+    // interesting ones, we will also bail on any non-numeric column).
+    //
+    // These are all brownish so that the colours will contrast nicely
+    // with the model series (a rainbow, above)
+    const cols = ["#1c0a00", "#603601", "#cc9544"];
     const ret: Palette = {};
     names.forEach((el: string, index: number) => {
         ret[el] = cols[index];

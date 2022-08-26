@@ -1,6 +1,6 @@
 import { PlotData } from "plotly.js";
-import { Palette } from "./palette";
-import type { FitData, FitDataLink } from "./store/fitData/state";
+import { paletteData, Palette } from "./palette";
+import type { AllFitData, FitData, FitDataLink } from "./store/fitData/state";
 import { OdinSeriesSet } from "./types/responseTypes";
 import { Dict } from "./types/utilTypes";
 
@@ -26,6 +26,12 @@ export function filterSeriesSet(s: OdinSeriesSet, name: string): OdinSeriesSet {
         x: s.x,
         y: [s.y[idx]]
     };
+}
+
+function filterData(data: FitData, timeVariable: string, start: number, end: number) {
+    return data.filter(
+        (row: Dict<number>) => row[timeVariable] >= start && row[timeVariable] <= end
+    );
 }
 
 export interface PlotlyOptions {
@@ -64,9 +70,7 @@ export function odinToPlotly(s: OdinSeriesSet, palette: Palette, options: Partia
 
 export function fitDataToPlotly(data: FitData, link: FitDataLink, palette: Palette, start: number,
     end: number): WodinPlotData {
-    const filteredData = data.filter(
-        (row: Dict<number>) => row[link.time] >= start && row[link.time] <= end
-    );
+    const filteredData = filterData(data, link.time, start, end);
     return [{
         name: link.data,
         x: filteredData.map((row: Dict<number>) => row[link.time]),
@@ -77,4 +81,26 @@ export function fitDataToPlotly(data: FitData, link: FitDataLink, palette: Palet
             color: palette[link.model]
         }
     }];
+}
+
+export function allFitDataToPlotly(allFitData: AllFitData | null, paletteModel: Palette,
+    start: number, end: number): WodinPlotData {
+    if (!allFitData) {
+        return [];
+    }
+    const {
+        data, linkedVariables, timeVariable
+    } = allFitData;
+    const filteredData = filterData(data, timeVariable, start, end);
+    const palette = paletteData(Object.keys(linkedVariables));
+    return Object.keys(linkedVariables).map((name: string) => ({
+        name,
+        x: filteredData.map((row: Dict<number>) => row[timeVariable]),
+        y: filteredData.map((row: Dict<number>) => row[name]),
+        mode: "markers",
+        type: "scatter",
+        marker: {
+            color: linkedVariables[name] ? paletteModel[linkedVariables[name]!] : palette[name]
+        }
+    }));
 }
