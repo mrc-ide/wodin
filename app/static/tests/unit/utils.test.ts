@@ -1,5 +1,5 @@
 import {
-    evaluateScript, freezer, generateBatchPars, getCodeErrorFromResponse, processFitData
+    evaluateScript, freezer, generateBatchPars, getCodeErrorFromResponse, processFitData, newSessionId
 } from "../../src/app/utils";
 import { SensitivityScaleType, SensitivityVariationType } from "../../src/app/store/sensitivity/state";
 import { mockBatchParsDisplace, mockBatchParsRange } from "../mocks";
@@ -398,5 +398,12 @@ describe("generateBatchPars", () => {
         expect(result.error)
             .toStrictEqual({ error: "Invalid settings", detail: "Mock error: count must be 2 or more" });
         expect(spyBatchParsDisplace).toHaveBeenCalledTimes(1);
+    });
+});
+
+describe("newSesionId", () => {
+    it("generates expected id format", () => {
+        const id = newSessionId();
+        expect(id).toMatch(/^[a-z0-9]{32}$/);
     });
 });

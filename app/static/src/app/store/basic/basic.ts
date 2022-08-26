@@ -9,10 +9,12 @@ import { code } from "../code/code";
 import { sensitivity } from "../sensitivity/sensitivity";
 import { logMutations } from "../plugins";
 import { AppType, VisualisationTab } from "../appState/state";
+import { newSessionId } from "../../utils";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
     return {
+        sessionId: newSessionId(),
         appType: AppType.Basic,
         openVisualisationTab: VisualisationTab.Run,
         appName: null,
