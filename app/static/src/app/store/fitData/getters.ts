@@ -73,7 +73,7 @@ export const getters: FitDataGetters & GetterTree<FitDataState, FitState> = {
         if (data && timeVariable) {
             result = {
                 data,
-                { ...linkedVariables },
+                linkedVariables: { ...linkedVariables },
                 timeVariable
             };
         }
