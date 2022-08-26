@@ -32,8 +32,8 @@ export default defineComponent({
 
         const placeholderMessage = userMessages.sensitivity.notRunYet;
 
-        const solutions = computed(() => (store.state.sensitivity.batch?.solutions || []));
-        const centralSolution = computed(() => (store.state.run.solution));
+        const solutions = computed(() => (store.state.sensitivity.result?.batch?.solutions || []));
+        const centralSolution = computed(() => (store.state.run.result?.solution));
 
         const endTime = computed(() => store.state.run.endTime);
 
@@ -45,10 +45,9 @@ export default defineComponent({
         };
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
-            const { batch } = store.state.sensitivity;
-
             const result: Partial<PlotData>[] = [];
             if (solutions.value.length) {
+                const { pars } = store.state.sensitivity.result!.batch!;
                 solutions.value.forEach((sln: OdinSolution, slnIdx: number) => {
                     const data = sln(start, end, points);
                     const plotlyOptions = {
@@ -59,8 +58,8 @@ export default defineComponent({
                     if (data) {
                         const plotData = odinToPlotly(data, palette.value, plotlyOptions);
                         plotData.forEach((plotTrace) => {
-                            updatePlotTraceNameWithParameterValue(plotTrace, batch.pars.name,
-                                batch.pars.values[slnIdx]);
+                            updatePlotTraceNameWithParameterValue(plotTrace, pars.name,
+                                pars.values[slnIdx]);
                         });
 
                         result.push(...plotData);

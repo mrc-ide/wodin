@@ -34,7 +34,7 @@ describe("ParameterValues", () => {
                 run: {
                     namespaced: true,
                     state: mockRunState({
-                        parameterValues: new Map([["param1", 1], ["param2", 2.2]])
+                        parameterValues: { param1: 1, param2: 2.2 }
                     }),
                     mutations: storeMutations
                 },
@@ -131,7 +131,7 @@ describe("ParameterValues", () => {
         });
         wrapper.findAll("input").at(1)!.setValue("");
 
-        store.commit(`run/${RunMutation.SetSolution}`, {});
+        store.commit(`run/${RunMutation.SetResult}`, { solution: {} });
         await nextTick();
         expect(wrapper.findAllComponents(NumericInput).at(1)!.props("value")).toBe(2.2);
         expect((wrapper.findAll("input").at(1)!.element as HTMLInputElement).value).toBe("2.2");

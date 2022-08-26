@@ -125,15 +125,19 @@ describe("SensitivityTracesPlot", () => {
                     paletteModel: mockPalette
                 },
                 run: {
-                    solution: mockCentralSln,
+                    result: {
+                        solution: mockCentralSln
+                    },
                     endTime: 1
                 },
                 sensitivity: {
-                    batch: {
-                        solutions: sensitivityHasSolutions ? mockSolutions : null,
-                        pars: {
-                            name: "alpha",
-                            values: [1.11111, 2.22222]
+                    result: {
+                        batch: {
+                            solutions: sensitivityHasSolutions ? mockSolutions : null,
+                            pars: {
+                                name: "alpha",
+                                values: [1.11111, 2.22222]
+                            }
                         }
                     }
                 }

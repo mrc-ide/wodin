@@ -36,7 +36,7 @@ export default defineComponent({
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
         const placeholderMessage = userMessages.sensitivity.notRunYet;
 
-        const batch = computed(() => store.state.sensitivity.batch);
+        const batch = computed(() => store.state.sensitivity.result.batch);
         const plotSettings = computed(() => store.state.sensitivity.plotSettings);
         const palette = computed(() => store.state.model.paletteModel);
 

@@ -14,9 +14,7 @@ describe("ModelFit actions", () => {
         wodinFit: mockWodinFit
     } as any;
     const mockOdin = {} as any;
-    const parameterValues = new Map<string, number>();
-    parameterValues.set("p1", 1.1);
-    parameterValues.set("p2", 2.2);
+    const parameterValues = { p1: 1.1, p2: 2.2 };
     const modelState = mockModelState({
         odin: mockOdin,
         odinRunner: mockOdinRunner
@@ -50,18 +48,33 @@ describe("ModelFit actions", () => {
 
     it("FitModel calls wodinFit and dispatches FitModelStep action", () => {
         const getters = { canRunFit: true };
+        const link = { time: "t", data: "v", model: "S" };
+        const rootGetters = {
+            "fitData/link": link,
+            "fitData/dataEnd": 100
+        };
         const commit = jest.fn();
         const dispatch = jest.fn();
+        const expectedData = {
+            time: [0, 1, 2],
+            value: [10, 20, 30]
+        };
 
         (actions[ModelFitAction.FitModel] as any)({
-            commit, dispatch, state, rootState, getters
+            commit, dispatch, state, rootState, rootGetters, getters
         });
 
-        expect(commit).toHaveBeenCalledTimes(2);
+        expect(commit).toHaveBeenCalledTimes(3);
         expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetFitting);
         expect(commit.mock.calls[0][1]).toBe(true);
         expect(commit.mock.calls[1][0]).toBe(ModelFitMutation.SetFitUpdateRequired);
         expect(commit.mock.calls[1][1]).toBe(false);
+        expect(commit.mock.calls[2][0]).toBe(ModelFitMutation.SetInputs);
+        expect(commit.mock.calls[2][1]).toEqual({
+            data: expectedData,
+            endTime: 100,
+            link
+        });
 
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch.mock.calls[0][0]).toBe(ModelFitAction.FitModelStep);
@@ -69,10 +82,7 @@ describe("ModelFit actions", () => {
 
         expect(mockWodinFit).toHaveBeenCalledTimes(1);
         expect(mockWodinFit.mock.calls[0][0]).toBe(mockOdin);
-        expect(mockWodinFit.mock.calls[0][1]).toStrictEqual({
-            time: [0, 1, 2],
-            value: [10, 20, 30]
-        });
+        expect(mockWodinFit.mock.calls[0][1]).toStrictEqual(expectedData);
         expect(mockWodinFit.mock.calls[0][2]).toStrictEqual({
             base: parameterValues,
             vary: ["p1"]
@@ -99,7 +109,7 @@ describe("ModelFit actions", () => {
         const result = {
             converged: false,
             data: {
-                pars: new Map<string, number>()
+                pars: {}
             }
         };
         const simplex = {
@@ -133,7 +143,7 @@ describe("ModelFit actions", () => {
         const result = {
             converged: true,
             data: {
-                pars: new Map<string, number>()
+                pars: {}
             }
         };
         const simplex = {

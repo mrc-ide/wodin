@@ -1,4 +1,11 @@
-import { OdinSolution } from "../../types/responseTypes";
+import { OdinFitResult } from "../../types/wrapperTypes";
+import type { FitData, FitDataLink } from "../fitData/state";
+
+export interface ModelFitInputs {
+    data: FitData;
+    endTime: number;
+    link: FitDataLink;
+}
 
 export interface ModelFitState {
     fitting: boolean,
@@ -6,6 +13,7 @@ export interface ModelFitState {
     iterations: number | null,
     converged: boolean | null,
     sumOfSquares: number | null,
-    solution: OdinSolution | null, // full solution for current best fit
-    paramsToVary: string[]
+    paramsToVary: string[],
+    inputs: ModelFitInputs | null, // all inputs except parameters, which vary
+    result: OdinFitResult | null, // full solution for current best fit,
 }

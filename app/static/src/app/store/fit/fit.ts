@@ -11,10 +11,12 @@ import { fitData } from "../fitData/fitData";
 import { modelFit } from "../modelFit/modelFit";
 import { AppType, VisualisationTab } from "../appState/state";
 import { logMutations } from "../plugins";
+import { newSessionId } from "../../utils";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
     return {
+        sessionId: newSessionId(),
         appType: AppType.Fit,
         openVisualisationTab: VisualisationTab.Run,
         appName: null,

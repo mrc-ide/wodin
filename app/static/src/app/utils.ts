@@ -1,3 +1,4 @@
+import { uid } from "uid";
 import { Dict } from "./types/utilTypes";
 import { BatchPars, OdinModelResponseError, WodinError } from "./types/responseTypes";
 import userMessages from "./userMessages";
@@ -174,3 +175,5 @@ export function generateBatchPars(
         error
     };
 }
+
+export const newSessionId = () => uid(32);

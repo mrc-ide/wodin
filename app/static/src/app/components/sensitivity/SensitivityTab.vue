@@ -47,7 +47,7 @@ export default defineComponent({
 
         const sensitivityUpdateRequired = computed(() => store.state.sensitivity.sensitivityUpdateRequired);
         const updateMsg = computed(() => {
-            if (store.state.sensitivity.batch?.solutions.length) {
+            if (store.state.sensitivity.result?.batch?.solutions.length) {
                 if (store.state.model.compileRequired) {
                     return userMessages.sensitivity.compileRequiredForUpdate;
                 }
@@ -62,7 +62,7 @@ export default defineComponent({
             () => store.state.sensitivity.plotSettings.plotType === SensitivityPlotType.TraceOverTime
         );
 
-        const error = computed(() => store.state.sensitivity.error);
+        const error = computed(() => store.state.sensitivity.result?.error);
 
         return {
             canRunSensitivity,
