@@ -12,7 +12,7 @@ import { modelFit } from "../modelFit/modelFit";
 import { AppType, VisualisationTab } from "../appState/state";
 import { logMutations } from "../plugins";
 import { newSessionId } from "../../utils";
-import {localStorageManager} from "../../localStorageManager";
+import { localStorageManager } from "../../localStorageManager";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
