@@ -57,14 +57,23 @@ export const getters: FitDataGetters & GetterTree<FitDataState, FitState> = {
         return result;
     },
 
+    // This is used by plots (*except the FitPlot*) that want to
+    // display the data time series. In this case there's no concept
+    // of which data stream is being present, but we do need the time
+    // variable to exist. In the case where no data is present or time
+    // is not known we return null. It's not a problem if no linked
+    // variables are known - we'll use the data palette in that case;
+    // if links exist we'll colour following the model.
+    //
+    // We need to copy the linkedVariables so that a change to them
+    // will trigger replotting.
     [FitDataGetter.allData]: (state: FitDataState): null | AllFitData => {
-        console.log("Triggering allData getter");
         let result = null;
         const { data, timeVariable, linkedVariables } = state;
         if (data && timeVariable) {
             result = {
                 data,
-                linkedVariables,
+                { ...linkedVariables },
                 timeVariable
             };
         }
