@@ -7,7 +7,7 @@ import NumericInput from "../../../../src/app/components/options/NumericInput.vu
 
 describe("RunOptions", () => {
     const getWrapper = (mockSetEndTime = jest.fn(), mockSetSensitivityUpdateRequired = jest.fn(),
-                        mockDataEnd = 0) => {
+        mockDataEnd = 0) => {
         const store = new Vuex.Store<BasicState>({
             state: {} as any,
             modules: {

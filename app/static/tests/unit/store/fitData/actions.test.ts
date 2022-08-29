@@ -78,7 +78,7 @@ describe("Fit Data actions", () => {
             const expectedSetDataPayload = {
                 data: mockData,
                 columns: ["a", "b"],
-                timeVariableCandidates: ["a"],
+                timeVariableCandidates: ["a"]
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedSetDataPayload);
             expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetLinkedVariables);

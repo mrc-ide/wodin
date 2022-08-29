@@ -38,21 +38,18 @@ const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) =
 };
 
 const updateTimeVariable = (context: ActionContext<FitDataState, FitState>) => {
-    const {
-        commit, state, rootState, getters
-    } = context;
+    const { commit, state } = context;
     const { timeVariable, data } = state;
     if (timeVariable && data) {
         const endTime = data[data.length - 1][timeVariable]!;
         commit(`run/${RunMutation.SetEndTime}`, endTime, { root: true });
         commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
-        commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true, { root: true});
+        commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true, { root: true });
     }
-}
+};
 
 export const actions: ActionTree<FitDataState, FitState> = {
     [FitDataAction.Upload](context, file) {
-        const { commit } = context;
         csvUpload(context)
             .withSuccess(FitDataMutation.SetData)
             .withError(FitDataMutation.SetError)
@@ -64,7 +61,7 @@ export const actions: ActionTree<FitDataState, FitState> = {
     },
 
     [FitDataAction.UpdateTimeVariable](context, timeVariable) {
-        const { commit, state } = context;
+        const { commit } = context;
         commit(FitDataMutation.SetTimeVariable, timeVariable);
         updateLinkedVariables(context);
         updateTimeVariable(context);
