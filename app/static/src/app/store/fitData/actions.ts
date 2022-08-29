@@ -4,7 +4,9 @@ import { FitDataMutation, SetLinkedVariablePayload } from "./mutations";
 import { FitState } from "../fit/state";
 import { Dict } from "../../types/utilTypes";
 import { csvUpload } from "../../csvUpload";
+import { RunMutation } from "../run/mutations";
 import { ModelFitMutation } from "../modelFit/mutations";
+import { SensitivityMutation } from "../sensitivity/mutations";
 
 export enum FitDataAction {
     Upload = "Upload",
@@ -35,6 +37,19 @@ const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) =
     commit(FitDataMutation.SetLinkedVariables, newLinks);
 };
 
+const updateTimeVariable = (context: ActionContext<FitDataState, FitState>) => {
+    const {
+        commit, state, rootState, getters
+    } = context;
+    const { timeVariable, data } = state;
+    if (timeVariable && data) {
+        const endTime = data[data.length - 1][timeVariable]!;
+        commit(`run/${RunMutation.SetEndTime}`, endTime, { root: true });
+        commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
+        commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true, { root: true});
+    }
+}
+
 export const actions: ActionTree<FitDataState, FitState> = {
     [FitDataAction.Upload](context, file) {
         const { commit } = context;
@@ -43,16 +58,16 @@ export const actions: ActionTree<FitDataState, FitState> = {
             .withError(FitDataMutation.SetError)
             .then(() => {
                 updateLinkedVariables(context);
-                commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
+                updateTimeVariable(context);
             })
             .upload(file);
     },
 
     [FitDataAction.UpdateTimeVariable](context, timeVariable) {
-        const { commit } = context;
+        const { commit, state } = context;
         commit(FitDataMutation.SetTimeVariable, timeVariable);
         updateLinkedVariables(context);
-        commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
+        updateTimeVariable(context);
     },
 
     [FitDataAction.UpdateLinkedVariables](context) {
