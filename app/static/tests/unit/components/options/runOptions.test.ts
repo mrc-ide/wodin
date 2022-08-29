@@ -1,11 +1,13 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../../src/app/store/basic/state";
+import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
 import RunOptions from "../../../../src/app/components/options/RunOptions.vue";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
 
 describe("RunOptions", () => {
-    const getWrapper = (mockSetEndTime = jest.fn(), mockSetSensitivityUpdateRequired = jest.fn()) => {
+    const getWrapper = (mockSetEndTime = jest.fn(), mockSetSensitivityUpdateRequired = jest.fn(),
+                        mockDataEnd = 0) => {
         const store = new Vuex.Store<BasicState>({
             state: {} as any,
             modules: {
@@ -16,6 +18,12 @@ describe("RunOptions", () => {
                     },
                     mutations: {
                         SetEndTime: mockSetEndTime
+                    }
+                },
+                fitData: {
+                    namespaced: true,
+                    getters: {
+                        [FitDataGetter.dataEnd]: () => mockDataEnd
                     }
                 },
                 sensitivity: {
@@ -33,12 +41,20 @@ describe("RunOptions", () => {
         });
     };
 
-    it("renders as expected", () => {
+    it("renders as expected when no data present", () => {
         const wrapper = getWrapper();
         expect(wrapper.find("label").text()).toBe("End time");
         const input = wrapper.findComponent(NumericInput);
         expect(input.props("value")).toBe(99);
         expect(input.props("allowNegative")).toBe(false);
+    });
+
+    it("renders as expected when data present", () => {
+        const wrapper = getWrapper(jest.fn(), jest.fn(), 10);
+        const labels = wrapper.findAll("label");
+        expect(labels.length).toBe(2);
+        expect(labels[0].text()).toBe("End time");
+        expect(labels[1].text()).toBe("10 (from data)");
     });
 
     it("commits end time change", () => {
