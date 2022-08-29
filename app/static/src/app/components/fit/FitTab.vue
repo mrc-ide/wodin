@@ -28,7 +28,7 @@ import VueFeather from "vue-feather";
 import FitPlot from "./FitPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { ModelFitAction } from "../../store/modelFit/actions";
-import { ModelFitGetter } from "../../store/modelFit/getters";
+import { ModelFitGetter, fitRequirementsExplanation } from "../../store/modelFit/getters";
 import userMessages from "../../userMessages";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import { ModelFitMutation } from "../../store/modelFit/mutations";
@@ -49,6 +49,7 @@ export default {
         const compileRequired = computed(() => store.state.model.compileRequired);
         const fitUpdateRequired = computed(() => store.state.modelFit.fitUpdateRequired);
         const fitModel = () => store.dispatch(`${namespace}/${ModelFitAction.FitModel}`);
+        const fitRequirements = computed(() => store.getters[`${namespace}/${ModelFitGetter.fitRequirements}`]);
         const cancelFit = () => store.commit(`${namespace}/${ModelFitMutation.SetFitting}`, false);
 
         const iterations = computed(() => store.state.modelFit.iterations);
@@ -58,8 +59,8 @@ export default {
         const sumOfSquares = computed(() => store.state.modelFit.sumOfSquares);
 
         const actionRequiredMessage = computed(() => {
-            if (!canFitModel.value) {
-                return userMessages.modelFit.cannotFit;
+            if (!fitRequirements.value.hasEverything) {
+                return fitRequirementsExplanation(fitRequirements.value);
             }
             if (compileRequired.value) {
                 return userMessages.modelFit.compileRequired;

@@ -36,7 +36,15 @@ export default {
         selectParamToVary: "Please select at least one parameter to vary during model fit.",
         compileRequired: "Model code has been updated. Compile code and Fit Model for updated best fit.",
         fitRequired: "Model code has been recompiled, or options or data have been updated. "
-            + "Fit Model for updated best fit."
+            + "Fit Model for updated best fit.",
+        fitRequirements: {
+            prefix: "Cannot fit model. Please",
+            needsModel: "compile a model (code tab)",
+            needsData: "upload a data set (data tab)",
+            needsTimeVariable: "select a time variable for the data (data tab)", // only if !needsModel though!
+            needsTarget: "select a target to fit (options tab)",
+            needsParamsToVary: "select at least one parameter to vary (options tab)"
+        }
     },
     sensitivity: {
         compileRequiredForOptions: "Please compile a valid model in order to set sensitivity options.",

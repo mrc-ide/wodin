@@ -1,5 +1,5 @@
 import {
-    evaluateScript, freezer, generateBatchPars, getCodeErrorFromResponse, processFitData, newSessionId
+    evaluateScript, freezer, generateBatchPars, getCodeErrorFromResponse, processFitData, newSessionId, joinStringsSentence
 } from "../../src/app/utils";
 import { SensitivityScaleType, SensitivityVariationType } from "../../src/app/store/sensitivity/state";
 import { mockBatchParsDisplace, mockBatchParsRange } from "../mocks";
@@ -405,5 +405,20 @@ describe("newSesionId", () => {
     it("generates expected id format", () => {
         const id = newSessionId();
         expect(id).toMatch(/^[a-z0-9]{32}$/);
+    });
+});
+
+describe("join strings", () => {
+    it("handles empty corner case", () => {
+        expect(joinStringsSentence([])).toBe("");
+    });
+    it("handles single corner case", () => {
+        expect(joinStringsSentence(["x"])).toBe("x");
+    });
+    it("handles pair", () => {
+        expect(joinStringsSentence(["x", "y"])).toBe("x and y");
+    });
+    it("handles longer list", () => {
+        expect(joinStringsSentence(["a", "b", "c", "d"], ", and ")).toBe("a, b, c, and d");
     });
 });

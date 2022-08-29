@@ -18,7 +18,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
             commit, dispatch, state, rootState, getters, rootGetters
         } = context;
 
-        if (getters[ModelFitGetter.canRunFit]) {
+        if (getters[ModelFitGetter.canRunFit]) { // todo fix this to use hasEverything
             commit(ModelFitMutation.SetFitting, true);
 
             const { odin, odinRunner } = rootState.model;
