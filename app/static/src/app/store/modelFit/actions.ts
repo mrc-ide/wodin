@@ -5,6 +5,7 @@ import { ModelFitMutation } from "./mutations";
 import { RunMutation } from "../run/mutations";
 import { ModelFitGetter } from "./getters";
 import { FitDataGetter } from "../fitData/getters";
+import { allTrue } from "../../utils";
 
 export enum ModelFitAction {
     FitModel = "FitModel",
@@ -18,7 +19,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
             commit, dispatch, state, rootState, getters, rootGetters
         } = context;
 
-        if (getters[ModelFitGetter.canRunFit]) { // todo fix this to use hasEverything
+        if (allTrue(getters[ModelFitGetter.fitRequirements])) {
             commit(ModelFitMutation.SetFitting, true);
 
             const { odin, odinRunner } = rootState.model;

@@ -24,5 +24,4 @@ export interface ModelFitRequirements {
     hasTimeVariable: boolean;
     hasTarget: boolean;
     hasParamsToVary: boolean;
-    hasEverything: boolean;
 }

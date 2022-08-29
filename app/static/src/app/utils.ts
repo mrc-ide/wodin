@@ -188,3 +188,7 @@ export const joinStringsSentence = (strings: string[], last: string = " and ", s
 }
 
 export const newSessionId = () => uid(32);
+
+export const allTrue = (x: Dict<boolean>) => {
+    return Object.values(x).every((el: boolean) => el);
+}

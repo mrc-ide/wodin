@@ -5,12 +5,11 @@ import userMessages from "../../userMessages";
 import { joinStringsSentence } from "../../utils";
 
 export enum ModelFitGetter {
-    canRunFit = "canRunFit",
     fitRequirements = "fitRequirements"
 }
 
 export interface ModelFitGetters {
-    [ModelFitGetter.canRunFit]: Getter<ModelFitState, FitState>
+    [ModelFitGetter.fitRequirements]: Getter<ModelFitState, FitState>
 }
 
 // I've put this here for want of a better place. Within userMessages
@@ -25,29 +24,28 @@ export const fitRequirementsExplanation = (reqs: ModelFitRequirements): string =
     const help = userMessages.modelFit.fitRequirements;
     appendIf(!reqs.hasModel, help.needsModel);
     appendIf(!reqs.hasData, help.needsData);
+    // Can only tell the user to set a time variable if we have data
     appendIf(reqs.hasData && !reqs.hasTimeVariable, help.needsTimeVariable);
-    appendIf(!reqs.hasTarget, help.needsTarget);
-    appendIf(!reqs.hasParamsToVary, help.needsParamsToVary);
+    // Can only tell the user to set a target if we have both a model
+    // and data
+    appendIf(reqs.hasModel && reqs.hasData && !reqs.hasTarget, help.needsTarget);
+    // Can only tell the user to change parameters if we have a
+    // model. This shold be announced last as it's on the tab they are
+    // looking at
+    appendIf(reqs.hasModel && !reqs.hasParamsToVary, help.needsParamsToVary);
 
     return `${help.prefix} ${joinStringsSentence(reasons)}.`;
 }
 
 export const getters: ModelFitGetters & GetterTree<ModelFitState, FitState> = {
-    [ModelFitGetter.canRunFit]: (state: ModelFitState, _: ModelFitGetters, rootState: FitState) => {
-        return !!(rootState.model.odin && rootState.model.odinRunner && rootState.fitData.data
-            && rootState.fitData.timeVariable && rootState.fitData.columnToFit && state.paramsToVary.length);
-    },
-
     [ModelFitGetter.fitRequirements]: (state: ModelFitState, _: ModelFitGetters, rootState: FitState): ModelFitRequirements => {
         const checklist = {
             hasModel: !!rootState.model.odin,
             hasData: !!rootState.fitData.data,
             hasTimeVariable: !!rootState.fitData.timeVariable,
             hasTarget: !!rootState.fitData.columnToFit,
-            hasParamsToVary: !!state.paramsToVary.length,
-            hasEverything: true
+            hasParamsToVary: !!state.paramsToVary.length
         };
-        checklist.hasEverything = Object.values(checklist).every((x: boolean) => x);
         return checklist;
     }
 };
