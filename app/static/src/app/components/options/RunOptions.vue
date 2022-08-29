@@ -5,9 +5,12 @@
         <label class="col-form-label">End time</label>
       </div>
       <div class="col-6">
-        <numeric-input :value="endTime"
+        <numeric-input
+                       v-if="endTimeData === 0"
+                       :value="endTime"
                        :allow-negative="false"
                        @update="updateEndTime"></numeric-input>
+        <label v-if="endTimeData > 0" class="col-form-label">{{ endTimeData }} (from data)</label>
       </div>
     </div>
   </div>
@@ -18,6 +21,7 @@ import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
 import { RunMutation } from "../../store/run/mutations";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
+import { FitDataGetter } from "../../store/fitData/getters";
 import NumericInput from "./NumericInput.vue";
 
 export default defineComponent({
@@ -27,6 +31,7 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
+        const endTimeData = computed(() => store.getters[`fitData/${FitDataGetter.dataEnd}`]);
         const endTime = computed(() => store.state.run.endTime);
 
         const updateEndTime = (newValue: number) => {
@@ -36,6 +41,7 @@ export default defineComponent({
 
         return {
             endTime,
+            endTimeData,
             updateEndTime
         };
     }
