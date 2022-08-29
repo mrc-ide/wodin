@@ -1,5 +1,6 @@
 import {
-    evaluateScript, freezer, generateBatchPars, getCodeErrorFromResponse, processFitData, newSessionId, joinStringsSentence
+    evaluateScript, freezer, generateBatchPars, getCodeErrorFromResponse,
+    processFitData, newSessionId, joinStringsSentence
 } from "../../src/app/utils";
 import { SensitivityScaleType, SensitivityVariationType } from "../../src/app/store/sensitivity/state";
 import { mockBatchParsDisplace, mockBatchParsRange } from "../mocks";

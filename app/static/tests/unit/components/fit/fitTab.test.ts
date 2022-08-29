@@ -130,7 +130,7 @@ describe("Fit Tab", () => {
         expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(true);
         expect((wrapper.find("#cancel-fit-btn").element as HTMLButtonElement).disabled).toBe(true);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe( "Cannot fit model. Please compile a model (code tab) and upload a data set (data tab).");
+            .toBe("Cannot fit model. Please compile a model (code tab) and upload a data set (data tab).");
         const fitPlot = wrapper.findComponent(FitPlot);
         expect(fitPlot.props("fadePlot")).toBe(true);
         expect(fitPlot.findComponent(VueFeather).exists()).toBe(false);

@@ -20,7 +20,7 @@ export const fitRequirementsExplanation = (reqs: ModelFitRequirements): string =
         if (test) {
             reasons.push(value);
         }
-    }
+    };
     const help = userMessages.modelFit.fitRequirements;
     appendIf(!reqs.hasModel, help.needsModel);
     appendIf(!reqs.hasData, help.needsData);
@@ -35,10 +35,11 @@ export const fitRequirementsExplanation = (reqs: ModelFitRequirements): string =
     appendIf(reqs.hasModel && !reqs.hasParamsToVary, help.needsParamsToVary);
 
     return `${help.prefix} ${joinStringsSentence(reasons)}.`;
-}
+};
 
 export const getters: ModelFitGetters & GetterTree<ModelFitState, FitState> = {
-    [ModelFitGetter.fitRequirements]: (state: ModelFitState, _: ModelFitGetters, rootState: FitState): ModelFitRequirements => {
+    [ModelFitGetter.fitRequirements]: (state: ModelFitState, _: ModelFitGetters,
+        rootState: FitState): ModelFitRequirements => {
         const checklist = {
             hasModel: !!rootState.model.odin,
             hasData: !!rootState.fitData.data,
