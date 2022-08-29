@@ -22,6 +22,8 @@ export interface AppState {
     appName: null | string,
     appType: AppType
     openVisualisationTab: VisualisationTab
+    queuedStateUploadIntervalId: number
+    stateUploadInProgress: boolean
     code: CodeState
     model: ModelState
     run: RunState

@@ -9,6 +9,7 @@ import { code } from "../code/code";
 import { sensitivity } from "../sensitivity/sensitivity";
 import { AppType, VisualisationTab } from "../appState/state";
 import { newSessionId } from "../../utils";
+import {logMutations, persistState} from "../plugins";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
@@ -17,7 +18,9 @@ const defaultState: () => any = () => {
         appType: AppType.Stochastic,
         openVisualisationTab: VisualisationTab.Run,
         appName: null,
-        config: null
+        config: null,
+        queuedStateUploadIntervalId: -1,
+        stateUploadInProgress: false
     };
 };
 
@@ -31,5 +34,9 @@ export const storeOptions: StoreOptions<StochasticState> = {
         model,
         run,
         sensitivity
-    }
+    },
+    plugins: [
+        logMutations,
+        persistState
+    ]
 };
