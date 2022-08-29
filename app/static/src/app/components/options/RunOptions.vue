@@ -31,7 +31,12 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
-        const endTimeData = computed(() => store.getters[`fitData/${FitDataGetter.dataEnd}`]);
+        const endTimeData = computed(() => {
+            // The fitData getter won't be defined in the basic app,
+            // so make sure that we return something sensible.
+            const dataEnd = store.getters[`fitData/${FitDataGetter.dataEnd}`];
+            return dataEnd === undefined ? 0 : dataEnd;
+        });
         const endTime = computed(() => store.state.run.endTime);
 
         const updateEndTime = (newValue: number) => {
