@@ -9,6 +9,7 @@ import { code } from "../code/code";
 import { sensitivity } from "../sensitivity/sensitivity";
 import { AppType, VisualisationTab } from "../appState/state";
 import { newSessionId } from "../../utils";
+import { localStorageManager } from "../../localStorageManager";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
@@ -33,3 +34,5 @@ export const storeOptions: StoreOptions<StochasticState> = {
         sensitivity
     }
 };
+
+localStorageManager.addSessionId((storeOptions.state as StochasticState).sessionId);
