@@ -39,6 +39,7 @@ export default {
             + "Fit Model for updated best fit.",
         fitRequirements: {
             prefix: "Cannot fit model. Please",
+            unknown: "contact the administrator, as this is unexpected",
             needsModel: "compile a model (code tab)",
             needsData: "upload a data set (data tab)",
             needsTimeVariable: "select a time variable for the data (data tab)", // only if !needsModel though!

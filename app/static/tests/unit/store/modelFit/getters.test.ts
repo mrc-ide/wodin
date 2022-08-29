@@ -1,5 +1,5 @@
 import { mockModelFitState } from "../../../mocks";
-import { getters, ModelFitGetter } from "../../../../src/app/store/modelFit/getters";
+import { getters, fitRequirementsExplanation, ModelFitGetter } from "../../../../src/app/store/modelFit/getters";
 
 describe("ModelFit getters", () => {
     const model = {
@@ -83,5 +83,51 @@ describe("ModelFit getters", () => {
             hasParamsToVary: false
         };
         expect((getters[ModelFitGetter.fitRequirements] as any)(mockModelFitState(), {}, rootState)).toEqual(expected);
+    });
+});
+
+describe("construct actionable error messages from requirements", () => {
+    const reqsTrue = {
+        hasData: true,
+        hasModel: true,
+        hasTimeVariable: true,
+        hasTarget: true,
+        hasParamsToVary: true
+    };
+    const reqsFalse = {
+        hasData: false,
+        hasModel: false,
+        hasTimeVariable: false,
+        hasTarget: false,
+        hasParamsToVary: false
+    };
+    it("shows fallback when no reason can be found", () => {
+        expect(fitRequirementsExplanation(reqsTrue))
+            .toBe("Cannot fit model. Please contact the administrator, as this is unexpected.");
+    });
+
+    it("tells the user to get started when nothing present", () => {
+        expect(fitRequirementsExplanation(reqsFalse))
+            .toBe("Cannot fit model. Please compile a model (code tab) and upload a data set (data tab).");
+    });
+
+    it("tells the user to set dependent things when model and data present", () => {
+        const reqs = {
+            ...reqsFalse,
+            hasData: true,
+            hasModel: true
+        };
+        expect(fitRequirementsExplanation(reqs))
+            .toBe("Cannot fit model. Please select a time variable for the data (data tab), "
+                  + "select a target to fit (options tab) and select at least one parameter to vary (options tab).");
+    });
+
+    it("gives specific messages when the user is close", () => {
+        expect(fitRequirementsExplanation({ ...reqsTrue, hasParamsToVary: false }))
+            .toBe("Cannot fit model. Please select at least one parameter to vary (options tab).");
+        expect(fitRequirementsExplanation({ ...reqsTrue, hasTarget: false }))
+            .toBe("Cannot fit model. Please select a target to fit (options tab).");
+        expect(fitRequirementsExplanation({ ...reqsTrue, hasTimeVariable: false }))
+            .toBe("Cannot fit model. Please select a time variable for the data (data tab).");
     });
 });

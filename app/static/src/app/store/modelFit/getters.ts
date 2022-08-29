@@ -13,7 +13,9 @@ export interface ModelFitGetters {
 }
 
 // I've put this here for want of a better place. Within userMessages
-// feels possible but that would break the default import.
+// feels possible but that would break the default import. Putting it
+// directly in the component makes testing feel much harder. There are
+// tests within getters.test.ts that need moving if this moves.
 export const fitRequirementsExplanation = (reqs: ModelFitRequirements): string => {
     const reasons: string[] = [];
     const appendIf = (test: boolean, value: string) => {
@@ -33,6 +35,9 @@ export const fitRequirementsExplanation = (reqs: ModelFitRequirements): string =
     // model. This shold be announced last as it's on the tab they are
     // looking at
     appendIf(reqs.hasModel && !reqs.hasParamsToVary, help.needsParamsToVary);
+
+    // Fallback reason if something unexpected has happened.
+    appendIf(reasons.length === 0, help.unknown);
 
     return `${help.prefix} ${joinStringsSentence(reasons)}.`;
 };
