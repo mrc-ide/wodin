@@ -10,6 +10,7 @@ import { sensitivity } from "../sensitivity/sensitivity";
 import { logMutations, persistState } from "../plugins";
 import { AppType, VisualisationTab } from "../appState/state";
 import { newSessionId } from "../../utils";
+import { localStorageManager } from "../../localStorageManager";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
@@ -40,3 +41,5 @@ export const storeOptions: StoreOptions<BasicState> = {
         persistState
     ]
 };
+
+localStorageManager.addSessionId((storeOptions.state as BasicState).sessionId);
