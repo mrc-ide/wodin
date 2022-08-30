@@ -10,7 +10,7 @@
                        :value="endTime"
                        :allow-negative="false"
                        @update="updateEndTime"></numeric-input>
-        <label v-if="endTimeData > 0" class="col-form-label">{{ endTimeData }} (from data)</label>
+        <label v-else class="col-form-label">{{ endTimeData }} (from data)</label>
       </div>
     </div>
   </div>
