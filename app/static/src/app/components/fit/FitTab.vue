@@ -28,10 +28,11 @@ import VueFeather from "vue-feather";
 import FitPlot from "./FitPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { ModelFitAction } from "../../store/modelFit/actions";
-import { ModelFitGetter, fitRequirementsExplanation } from "../../store/modelFit/getters";
+import { ModelFitGetter } from "../../store/modelFit/getters";
 import userMessages from "../../userMessages";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import { ModelFitMutation } from "../../store/modelFit/mutations";
+import { fitRequirementsExplanation } from "./support";
 import { allTrue } from "../../utils";
 
 export default {
