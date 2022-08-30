@@ -72,6 +72,9 @@
                         {
                             "type": "object",
                             "properties": {
+                                "valid": {
+                                    "type": "boolean"
+                                },
                                 "variables": {
                                     "$ref": "#/definitions/StringArray"
                                 },
