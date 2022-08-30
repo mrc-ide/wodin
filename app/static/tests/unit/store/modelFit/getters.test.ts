@@ -108,7 +108,7 @@ describe("construct actionable error messages from requirements", () => {
 
     it("tells the user to get started when nothing present", () => {
         expect(fitRequirementsExplanation(reqsFalse))
-            .toBe("Cannot fit model. Please compile a model (code tab) and upload a data set (data tab).");
+            .toBe("Cannot fit model. Please compile a model (Code tab) and upload a data set (Data tab).");
     });
 
     it("tells the user to set dependent things when model and data present", () => {
@@ -118,16 +118,16 @@ describe("construct actionable error messages from requirements", () => {
             hasModel: true
         };
         expect(fitRequirementsExplanation(reqs))
-            .toBe("Cannot fit model. Please select a time variable for the data (data tab), "
-                  + "select a target to fit (options tab) and select at least one parameter to vary (options tab).");
+            .toBe("Cannot fit model. Please select a time variable for the data (Data tab), "
+                  + "select a target to fit (Options tab) and select at least one parameter to vary (Options tab).");
     });
 
     it("gives specific messages when the user is close", () => {
         expect(fitRequirementsExplanation({ ...reqsTrue, hasParamsToVary: false }))
-            .toBe("Cannot fit model. Please select at least one parameter to vary (options tab).");
+            .toBe("Cannot fit model. Please select at least one parameter to vary (Options tab).");
         expect(fitRequirementsExplanation({ ...reqsTrue, hasTarget: false }))
-            .toBe("Cannot fit model. Please select a target to fit (options tab).");
+            .toBe("Cannot fit model. Please select a target to fit (Options tab).");
         expect(fitRequirementsExplanation({ ...reqsTrue, hasTimeVariable: false }))
-            .toBe("Cannot fit model. Please select a time variable for the data (data tab).");
+            .toBe("Cannot fit model. Please select a time variable for the data (Data tab).");
     });
 });
