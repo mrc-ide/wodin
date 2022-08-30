@@ -30,8 +30,6 @@ export default {
     },
     modelFit: {
         cancelled: "Model fit was cancelled before converging",
-        cannotFit: "Cannot fit model. Please provide valid data and code, link at least one variable "
-            + "and select parameters to vary.",
         notFittedYet: "Model has not been fitted.",
         selectParamToVary: "Please select at least one parameter to vary during model fit.",
         compileRequired: "Model code has been updated. Compile code and Fit Model for updated best fit.",
