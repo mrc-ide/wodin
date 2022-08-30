@@ -1,8 +1,6 @@
 import { Getter, GetterTree } from "vuex";
 import { ModelFitState, ModelFitRequirements } from "./state";
 import { FitState } from "../fit/state";
-import userMessages from "../../userMessages";
-import { joinStringsSentence } from "../../utils";
 
 export enum ModelFitGetter {
     fitRequirements = "fitRequirements"
@@ -16,8 +14,8 @@ export const getters: ModelFitGetters & GetterTree<ModelFitState, FitState> = {
     [ModelFitGetter.fitRequirements]: (state: ModelFitState, _: ModelFitGetters,
         rootState: FitState): ModelFitRequirements => {
         const linkedVariables = rootState.fitData?.linkedVariables;
-        const hasLinkedVariables = linkedVariables !== null &&
-            Object.values(linkedVariables).some((el: string | null) => el !== null);
+        const hasLinkedVariables = linkedVariables !== null
+            && Object.values(linkedVariables).some((el: string | null) => el !== null);
         const checklist = {
             hasModel: !!rootState.model.odin,
             hasData: !!rootState.fitData.data,

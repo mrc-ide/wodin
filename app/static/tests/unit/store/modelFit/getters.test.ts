@@ -17,7 +17,7 @@ describe("ModelFit getters", () => {
     const state = mockModelFitState({ paramsToVary: ["p1"] });
 
     const expectedTrue = {
-       hasData: true,
+        hasData: true,
         hasModel: true,
         hasTimeVariable: true,
         hasTarget: true,
@@ -69,7 +69,7 @@ describe("ModelFit getters", () => {
     it("fitRequirements is false when no linked variables", () => {
         const rootState = {
             model,
-            fitData: { ...fitData, linkedVariables: { "v": null } }
+            fitData: { ...fitData, linkedVariables: { v: null } }
         };
         const expected = {
             ...expectedTrue,
