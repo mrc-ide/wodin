@@ -395,9 +395,6 @@
         "ModelFitState": {
             "type": "object",
             "properties": {
-                "fitting": {
-                    "type": "boolean"
-                },
                 "fitUpdateRequired": {
                     "type": "boolean"
                 },
