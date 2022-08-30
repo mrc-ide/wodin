@@ -37,13 +37,14 @@ const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) =
     commit(FitDataMutation.SetLinkedVariables, newLinks);
 };
 
-const updateTimeVariable = (context: ActionContext<FitDataState, FitState>) => {
+// Runs after a change to the time variable, updating things that depend on it
+const respondUpdatedTimeVariable = (context: ActionContext<FitDataState, FitState>) => {
     const { commit, state } = context;
     const { timeVariable, data } = state;
     if (timeVariable && data) {
         const endTime = data[data.length - 1][timeVariable]!;
         commit(`run/${RunMutation.SetEndTime}`, endTime, { root: true });
-        commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
+        commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root true });
         commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true, { root: true });
     }
 };
@@ -55,7 +56,7 @@ export const actions: ActionTree<FitDataState, FitState> = {
             .withError(FitDataMutation.SetError)
             .then(() => {
                 updateLinkedVariables(context);
-                updateTimeVariable(context);
+                respondUpdatedTimeVariable(context);
             })
             .upload(file);
     },
@@ -64,7 +65,7 @@ export const actions: ActionTree<FitDataState, FitState> = {
         const { commit } = context;
         commit(FitDataMutation.SetTimeVariable, timeVariable);
         updateLinkedVariables(context);
-        updateTimeVariable(context);
+        respondUpdatedTimeVariable(context);
     },
 
     [FitDataAction.UpdateLinkedVariables](context) {
