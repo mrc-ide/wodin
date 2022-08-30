@@ -50,6 +50,30 @@ describe("Run mutations", () => {
         expect(state.runRequired).toBe(true);
     });
 
+    it("sets end time does not require run if it shrinks", () => {
+        const state = mockRunState({
+            endTime: 100,
+            runRequired: false,
+            result: {
+                inputs: {
+                    endTime: 100
+                }
+            } as any
+        });
+        // shrinking is fine
+        mutations.SetEndTime(state, 50);
+        expect(state.endTime).toBe(50);
+        expect(state.runRequired).toBe(false);
+        // increasing, even right up to the original limit, is fine
+        mutations.SetEndTime(state, 100);
+        expect(state.endTime).toBe(100);
+        expect(state.runRequired).toBe(false);
+        // but any additional time requires a rerun
+        mutations.SetEndTime(state, 101);
+        expect(state.endTime).toBe(101);
+        expect(state.runRequired).toBe(true);
+    });
+
     it("sets odinRunnerResponseError", () => {
         const state = mockRunState();
         const result = {

@@ -4,7 +4,9 @@ import { FitDataMutation, SetLinkedVariablePayload } from "./mutations";
 import { FitState } from "../fit/state";
 import { Dict } from "../../types/utilTypes";
 import { csvUpload } from "../../csvUpload";
+import { RunMutation } from "../run/mutations";
 import { ModelFitMutation } from "../modelFit/mutations";
+import { SensitivityMutation } from "../sensitivity/mutations";
 
 export enum FitDataAction {
     Upload = "Upload",
@@ -35,15 +37,26 @@ const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) =
     commit(FitDataMutation.SetLinkedVariables, newLinks);
 };
 
+// Runs after a change to the time variable, updating things that depend on it
+const respondUpdatedTimeVariable = (context: ActionContext<FitDataState, FitState>) => {
+    const { commit, state } = context;
+    const { timeVariable, data } = state;
+    if (timeVariable && data) {
+        const endTime = data[data.length - 1][timeVariable]!;
+        commit(`run/${RunMutation.SetEndTime}`, endTime, { root: true });
+        commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
+        commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true, { root: true });
+    }
+};
+
 export const actions: ActionTree<FitDataState, FitState> = {
     [FitDataAction.Upload](context, file) {
-        const { commit } = context;
         csvUpload(context)
             .withSuccess(FitDataMutation.SetData)
             .withError(FitDataMutation.SetError)
             .then(() => {
                 updateLinkedVariables(context);
-                commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
+                respondUpdatedTimeVariable(context);
             })
             .upload(file);
     },
@@ -52,7 +65,7 @@ export const actions: ActionTree<FitDataState, FitState> = {
         const { commit } = context;
         commit(FitDataMutation.SetTimeVariable, timeVariable);
         updateLinkedVariables(context);
-        commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
+        respondUpdatedTimeVariable(context);
     },
 
     [FitDataAction.UpdateLinkedVariables](context) {

@@ -35,6 +35,7 @@ export const mutations: MutationTree<RunState> = {
 
     [RunMutation.SetEndTime](state: RunState, payload: number) {
         state.endTime = payload;
-        state.runRequired = true;
+        const prevEndTime = state.result?.inputs?.endTime ? state.result.inputs.endTime : -1;
+        state.runRequired = payload > prevEndTime;
     }
 };

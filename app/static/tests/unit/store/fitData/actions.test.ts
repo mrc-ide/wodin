@@ -4,6 +4,8 @@ import resetAllMocks = jest.resetAllMocks;
 import { mockFitDataState } from "../../../mocks";
 import { fileTimeout } from "../../../testUtils";
 import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
+import { RunMutation } from "../../../../src/app/store/run/mutations";
+import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 
 describe("Fit Data actions", () => {
     const file = { name: "testFile" } as any;
@@ -34,7 +36,7 @@ describe("Fit Data actions", () => {
     };
 
     it("Upload commits data and updates linked variables on success", (done) => {
-        const mockFileReader = getMockFileReader("a,b\n1,2\n3,4\n5,6\n7,8\n9,10");
+        const mockFileReader = getMockFileReader("a,b\n1,2\n3,4\n5,6\n7,8\n9,1");
         const mockGetters = {
             nonTimeColumns: ["a"]
         };
@@ -48,8 +50,17 @@ describe("Fit Data actions", () => {
                 }
             }
         };
+        const mockData = [
+            { a: 1, b: 2 },
+            { a: 3, b: 4 },
+            { a: 5, b: 6 },
+            { a: 7, b: 8 },
+            { a: 9, b: 1 }
+        ];
         const mockState = {
-            linkedVariables: { a: "X", b: "Y" }
+            linkedVariables: { a: "X", b: "Y" },
+            data: mockData,
+            timeVariable: "a"
         };
 
         const commit = jest.fn();
@@ -62,25 +73,25 @@ describe("Fit Data actions", () => {
         (actions[FitDataAction.Upload] as any)(context, file);
         expectFileRead(mockFileReader);
         setTimeout(() => {
-            expect(commit).toHaveBeenCalledTimes(3);
+            expect(commit).toHaveBeenCalledTimes(5);
             expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetData);
             const expectedSetDataPayload = {
-                data: [
-                    { a: 1, b: 2 },
-                    { a: 3, b: 4 },
-                    { a: 5, b: 6 },
-                    { a: 7, b: 8 },
-                    { a: 9, b: 10 }
-                ],
+                data: mockData,
                 columns: ["a", "b"],
-                timeVariableCandidates: ["a", "b"]
+                timeVariableCandidates: ["a"]
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedSetDataPayload);
             expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetLinkedVariables);
             expect(commit.mock.calls[1][1]).toStrictEqual({ a: "X" });
-            expect(commit.mock.calls[2][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
-            expect(commit.mock.calls[2][1]).toBe(true);
+            expect(commit.mock.calls[2][0]).toBe(`run/${RunMutation.SetEndTime}`);
+            expect(commit.mock.calls[2][1]).toBe(9);
             expect(commit.mock.calls[2][2]).toStrictEqual({ root: true });
+            expect(commit.mock.calls[3][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
+            expect(commit.mock.calls[3][1]).toBe(true);
+            expect(commit.mock.calls[3][2]).toStrictEqual({ root: true });
+            expect(commit.mock.calls[4][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
+            expect(commit.mock.calls[4][1]).toBe(true);
+            expect(commit.mock.calls[4][2]).toStrictEqual({ root: true });
             done();
         }, fileTimeout);
     });
@@ -216,13 +227,22 @@ describe("Fit Data actions", () => {
     });
 
     it("Update time variable commits new time variable and updates linked variables", () => {
+        const mockData = [
+            { Day1: 1, Day2: 2, Cases: 10 },
+            { Day1: 3, Day2: 4, Cases: 11 },
+            { Day1: 5, Day2: 6, Cases: 12 },
+            { Day1: 7, Day2: 8, Cases: 13 },
+            { Day1: 9, Day2: 10, Cases: 14 }
+        ];
+
         const testState = {
-            timeVariable: "Day1",
+            timeVariable: "Day2",
             columns: ["Day1", "Day2", "Cases"],
             linkedVariables: {
                 Day2: "A",
                 Cases: "B"
-            }
+            },
+            data: mockData
         };
 
         const rootState = {
@@ -249,14 +269,20 @@ describe("Fit Data actions", () => {
         (actions[FitDataAction.UpdateTimeVariable] as any)({
             commit, state: testState, rootState, getters: testGetters
         }, "Day2");
-        expect(commit).toHaveBeenCalledTimes(3);
+        expect(commit).toHaveBeenCalledTimes(5);
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetTimeVariable);
         expect(commit.mock.calls[0][1]).toBe("Day2");
         expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetLinkedVariables);
         expect(commit.mock.calls[1][1]).toStrictEqual({ Day1: null, Cases: "B" });
-        expect(commit.mock.calls[2][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
-        expect(commit.mock.calls[2][1]).toBe(true);
+        expect(commit.mock.calls[2][0]).toBe(`run/${RunMutation.SetEndTime}`);
+        expect(commit.mock.calls[2][1]).toBe(10);
         expect(commit.mock.calls[2][2]).toStrictEqual({ root: true });
+        expect(commit.mock.calls[3][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
+        expect(commit.mock.calls[3][1]).toBe(true);
+        expect(commit.mock.calls[3][2]).toStrictEqual({ root: true });
+        expect(commit.mock.calls[4][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
+        expect(commit.mock.calls[4][1]).toBe(true);
+        expect(commit.mock.calls[4][2]).toStrictEqual({ root: true });
     });
 
     it("UpdateLinkedVariable sets link and sets fitUpdate required if column is columnToFit", () => {
