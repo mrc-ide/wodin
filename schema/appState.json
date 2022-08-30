@@ -185,7 +185,7 @@
                 "runRequired": {
                     "type": "boolean"
                 },
-                "parmeterValues": {
+                "parameterValues": {
                     "oneOf": [
                         { "type": "null" },
                         { "$ref": "#/definitions/OdinParameterValues" }
