@@ -28,9 +28,11 @@ export const fitRequirementsExplanation = (reqs: ModelFitRequirements): string =
     appendIf(!reqs.hasData, help.needsData);
     // Can only tell the user to set a time variable if we have data
     appendIf(reqs.hasData && !reqs.hasTimeVariable, help.needsTimeVariable);
-    // Can only tell the user to set a target if we have both a model
-    // and data
-    appendIf(reqs.hasModel && reqs.hasData && !reqs.hasTarget, help.needsTarget);
+    // Can only tell the user to link variables if they have model and data
+    appendIf(reqs.hasModel && reqs.hasData && !reqs.hasLinkedVariables, help.needsLinkedVariables);
+    // Can only tell the user to set a target if we have all of the
+    // above (checking hasLinkedVariables is sufficient)
+    appendIf(reqs.hasLinkedVariables && !reqs.hasTarget, help.needsTarget);
     // Can only tell the user to change parameters if we have a
     // model. This shold be announced last as it's on the tab they are
     // looking at
@@ -45,10 +47,14 @@ export const fitRequirementsExplanation = (reqs: ModelFitRequirements): string =
 export const getters: ModelFitGetters & GetterTree<ModelFitState, FitState> = {
     [ModelFitGetter.fitRequirements]: (state: ModelFitState, _: ModelFitGetters,
         rootState: FitState): ModelFitRequirements => {
+        const linkedVariables = rootState.fitData?.linkedVariables;
+        const hasLinkedVariables = linkedVariables !== null &&
+            Object.values(linkedVariables).some((el: string | null) => el !== null);
         const checklist = {
             hasModel: !!rootState.model.odin,
             hasData: !!rootState.fitData.data,
             hasTimeVariable: !!rootState.fitData.timeVariable,
+            hasLinkedVariables,
             hasTarget: !!rootState.fitData.columnToFit,
             hasParamsToVary: !!state.paramsToVary.length
         };

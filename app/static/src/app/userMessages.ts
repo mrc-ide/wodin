@@ -40,7 +40,8 @@ export default {
             unknown: "contact the administrator, as this is unexpected",
             needsModel: "compile a model (Code tab)",
             needsData: "upload a data set (Data tab)",
-            needsTimeVariable: "select a time variable for the data (Data tab)", // only if !needsModel though!
+            needsTimeVariable: "select a time variable for the data (Data tab)",
+            needsLinkedVariables: "link your model and data (Options tab)",
             needsTarget: "select a target to fit (Options tab)",
             needsParamsToVary: "select at least one parameter to vary (Options tab)"
         }

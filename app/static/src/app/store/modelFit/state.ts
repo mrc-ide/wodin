@@ -22,6 +22,7 @@ export interface ModelFitRequirements {
     hasModel: boolean;
     hasData: boolean;
     hasTimeVariable: boolean;
+    hasLinkedVariables: boolean;
     hasTarget: boolean;
     hasParamsToVary: boolean;
 }

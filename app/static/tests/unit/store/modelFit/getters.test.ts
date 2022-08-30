@@ -10,7 +10,8 @@ describe("ModelFit getters", () => {
     const fitData = {
         data: [{ t: 1, v: 2 }],
         timeVariable: "t",
-        columnToFit: "v"
+        columnToFit: "v",
+        linkedVariables: { v: "y" }
     };
 
     const state = mockModelFitState({ paramsToVary: ["p1"] });
@@ -20,6 +21,7 @@ describe("ModelFit getters", () => {
         hasModel: true,
         hasTimeVariable: true,
         hasTarget: true,
+        hasLinkedVariables: true,
         hasParamsToVary: true
     };
 
@@ -64,6 +66,18 @@ describe("ModelFit getters", () => {
         expect((getters[ModelFitGetter.fitRequirements] as any)(state, {}, rootState)).toEqual(expected);
     });
 
+    it("fitRequirements is false when no linked variables", () => {
+        const rootState = {
+            model,
+            fitData: { ...fitData, linkedVariables: { "v": null } }
+        };
+        const expected = {
+            ...expectedTrue,
+            hasLinkedVariables: false
+        };
+        expect((getters[ModelFitGetter.fitRequirements] as any)(state, {}, rootState)).toEqual(expected);
+    });
+
     it("fitRequirements is false when columnToFit is not set", () => {
         const rootState = {
             model,
@@ -91,6 +105,7 @@ describe("construct actionable error messages from requirements", () => {
         hasData: true,
         hasModel: true,
         hasTimeVariable: true,
+        hasLinkedVariables: true,
         hasTarget: true,
         hasParamsToVary: true
     };
@@ -98,6 +113,7 @@ describe("construct actionable error messages from requirements", () => {
         hasData: false,
         hasModel: false,
         hasTimeVariable: false,
+        hasLinkedVariables: false,
         hasTarget: false,
         hasParamsToVary: false
     };
@@ -119,7 +135,7 @@ describe("construct actionable error messages from requirements", () => {
         };
         expect(fitRequirementsExplanation(reqs))
             .toBe("Cannot fit model. Please select a time variable for the data (Data tab), "
-                  + "select a target to fit (Options tab) and select at least one parameter to vary (Options tab).");
+                  + "link your model and data (Options tab) and select at least one parameter to vary (Options tab).");
     });
 
     it("gives specific messages when the user is close", () => {
@@ -129,5 +145,7 @@ describe("construct actionable error messages from requirements", () => {
             .toBe("Cannot fit model. Please select a target to fit (Options tab).");
         expect(fitRequirementsExplanation({ ...reqsTrue, hasTimeVariable: false }))
             .toBe("Cannot fit model. Please select a time variable for the data (Data tab).");
+        expect(fitRequirementsExplanation({ ...reqsTrue, hasTarget: false }))
+            .toBe("Cannot fit model. Please select a target to fit (Options tab).");
     });
 });
