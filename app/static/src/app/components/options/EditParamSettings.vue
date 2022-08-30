@@ -142,7 +142,7 @@ export default defineComponent({
         const settingsInternal = reactive({} as SensitivityParameterSettings);
 
         const paramNames = computed(() => {
-            return store.state.run.parameterValues ? Array.from(store.state.run.parameterValues.keys()) : [];
+            return store.state.run.parameterValues ? Object.keys(store.state.run.parameterValues) : [];
         });
 
         const scaleValues = Object.keys(SensitivityScaleType);
@@ -158,7 +158,7 @@ export default defineComponent({
             }
         });
 
-        const centralValue = computed(() => store.state.run.parameterValues.get(settingsInternal.parameterToVary));
+        const centralValue = computed(() => store.state.run.parameterValues[settingsInternal.parameterToVary!]);
 
         const batchParsResult = computed(() => generateBatchPars(store.state, settingsInternal));
         const batchPars = computed(() => batchParsResult.value.batchPars);

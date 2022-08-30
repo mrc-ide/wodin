@@ -30,7 +30,7 @@ describe("WodinOdePlot", () => {
     const defaultProps = {
         fadePlot: false,
         endTime: 99,
-        solutions: [],
+        redrawWatches: [],
         plotData: mockPlotDataFn,
         placeholderMessage: "No data available"
     };
@@ -85,7 +85,7 @@ describe("WodinOdePlot", () => {
         const wrapper = getWrapper();
         const mockOn = mockPlotElementOn(wrapper);
 
-        wrapper.setProps({ solutions: [{} as any] });
+        wrapper.setProps({ redrawWatches: [{} as any] });
         await nextTick();
         expect(mockPlotDataFn.mock.calls[0][0]).toBe(0);
         expect(mockPlotDataFn.mock.calls[0][1]).toBe(99);
@@ -102,7 +102,7 @@ describe("WodinOdePlot", () => {
 
     it("does not draw run plot if base data is null", async () => {
         const wrapper = getWrapper();
-        wrapper.setProps({ solutions: [{} as any], plotData: () => null });
+        wrapper.setProps({ redrawWatches: [{} as any], plotData: () => null });
 
         await nextTick();
         expect(mockPlotlyNewPlot).not.toHaveBeenCalled();
@@ -119,7 +119,7 @@ describe("WodinOdePlot", () => {
         const wrapper = getWrapper();
         mockPlotElementOn(wrapper);
 
-        wrapper.setProps({ solutions: [{} as any] });
+        wrapper.setProps({ redrawWatches: [{} as any] });
         await nextTick();
 
         const relayoutEvent = {
@@ -147,7 +147,7 @@ describe("WodinOdePlot", () => {
         const wrapper = getWrapper();
         mockPlotElementOn(wrapper);
 
-        wrapper.setProps({ solutions: [{} as any] });
+        wrapper.setProps({ redrawWatches: [{} as any] });
         await nextTick();
 
         const relayoutEvent = {
@@ -169,7 +169,7 @@ describe("WodinOdePlot", () => {
         const wrapper = getWrapper();
         mockPlotElementOn(wrapper);
 
-        wrapper.setProps({ solutions: [{} as any] });
+        wrapper.setProps({ redrawWatches: [{} as any] });
         await nextTick();
 
         const relayoutEvent = {
@@ -189,7 +189,7 @@ describe("WodinOdePlot", () => {
         const wrapper = getWrapper();
         mockPlotElementOn(wrapper);
 
-        wrapper.setProps({ solutions: [{} as any] });
+        wrapper.setProps({ redrawWatches: [{} as any] });
         await nextTick();
 
         const relayoutEvent = {
@@ -209,7 +209,7 @@ describe("WodinOdePlot", () => {
         const wrapper = getWrapper();
         mockPlotElementOn(wrapper);
 
-        wrapper.setProps({ solutions: [{} as any] });
+        wrapper.setProps({ redrawWatches: [{} as any] });
         await nextTick();
 
         const divElement = wrapper.find("div.plot").element;
@@ -220,7 +220,7 @@ describe("WodinOdePlot", () => {
         const wrapper = getWrapper();
         mockPlotElementOn(wrapper);
 
-        wrapper.setProps({ solutions: [{} as any] });
+        wrapper.setProps({ redrawWatches: [{} as any] });
         await nextTick();
 
         (wrapper.vm as any).resize();
@@ -232,7 +232,7 @@ describe("WodinOdePlot", () => {
         const wrapper = getWrapper();
         mockPlotElementOn(wrapper);
 
-        wrapper.setProps({ solutions: [{} as any] });
+        wrapper.setProps({ redrawWatches: [{} as any] });
         await nextTick();
 
         wrapper.unmount();
@@ -250,7 +250,7 @@ describe("WodinOdePlot", () => {
         expect(wrapper.find(".plot-placeholder").text()).toBe("No data available");
 
         mockPlotElementOn(wrapper);
-        wrapper.setProps({ solutions: [{} as any] });
+        wrapper.setProps({ redrawWatches: [{} as any] });
         await nextTick();
         expect(wrapper.find(".plot-placeholder").exists()).toBe(false);
     });

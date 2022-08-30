@@ -8,8 +8,8 @@
     </div>
     <action-required-message :message="updateMsg"></action-required-message>
     <sensitivity-traces-plot v-if="tracesPlot" :fade-plot="!!updateMsg"></sensitivity-traces-plot>
-    <sensitivity-summary-plot v-else-if="valueAtTimePlot" :fade-plot="!!updateMsg"></sensitivity-summary-plot>
-    <div v-else id="sensitivity-plot-placeholder">Other plot types coming soon!</div>
+    <sensitivity-summary-plot v-else :fade-plot="!!updateMsg"></sensitivity-summary-plot>
+    <error-info :error="error"></error-info>
   </div>
 </template>
 
@@ -23,10 +23,12 @@ import { SensitivityAction } from "../../store/sensitivity/actions";
 import userMessages from "../../userMessages";
 import { SensitivityPlotType } from "../../store/sensitivity/state";
 import SensitivitySummaryPlot from "./SensitivitySummaryPlot.vue";
+import ErrorInfo from "../ErrorInfo.vue";
 
 export default defineComponent({
     name: "SensitivityTab",
     components: {
+        ErrorInfo,
         SensitivitySummaryPlot,
         ActionRequiredMessage,
         SensitivityTracesPlot
@@ -45,7 +47,7 @@ export default defineComponent({
 
         const sensitivityUpdateRequired = computed(() => store.state.sensitivity.sensitivityUpdateRequired);
         const updateMsg = computed(() => {
-            if (store.state.sensitivity.batch?.solutions.length) {
+            if (store.state.sensitivity.result?.batch?.solutions.length) {
                 if (store.state.model.compileRequired) {
                     return userMessages.sensitivity.compileRequiredForUpdate;
                 }
@@ -60,17 +62,14 @@ export default defineComponent({
             () => store.state.sensitivity.plotSettings.plotType === SensitivityPlotType.TraceOverTime
         );
 
-        // TODO: we can remove this once other summary plot types are implemented
-        const valueAtTimePlot = computed(
-            () => store.state.sensitivity.plotSettings.plotType === SensitivityPlotType.ValueAtTime
-        );
+        const error = computed(() => store.state.sensitivity.result?.error);
 
         return {
             canRunSensitivity,
             runSensitivity,
             updateMsg,
             tracesPlot,
-            valueAtTimePlot
+            error
         };
     }
 });

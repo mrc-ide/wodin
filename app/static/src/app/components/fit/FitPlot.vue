@@ -4,7 +4,7 @@
         :placeholder-message="placeholderMessage"
         :end-time="endTime"
         :plot-data="allPlotData"
-        :solutions="solution ? [solution] : []">
+        :redrawWatches="solution ? [solution] : []">
         <slot></slot>
     </wodin-ode-plot>
 </template>
@@ -32,7 +32,7 @@ export default defineComponent({
 
         const placeholderMessage = userMessages.modelFit.notFittedYet;
 
-        const solution = computed(() => store.state.modelFit.solution);
+        const solution = computed(() => store.state.modelFit.result?.solution);
 
         const endTime = computed(() => store.getters[`fitData/${FitDataGetter.dataEnd}`]);
 

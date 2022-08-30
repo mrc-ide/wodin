@@ -2,6 +2,7 @@ import { OdinController } from "../../src/controllers/odinController";
 
 describe("odin routes", () => {
     const express = require("express");
+    const bodyParser = require("body-parser");
 
     const mockRouter = {
         get: jest.fn(),
@@ -9,12 +10,15 @@ describe("odin routes", () => {
     };
     const realRouter = express.Router;
 
+    const spyJson = jest.spyOn(bodyParser, "json");
+
     beforeAll(() => {
         express.Router = () => mockRouter;
     });
 
     afterAll(() => {
         express.Router = realRouter;
+        jest.clearAllMocks();
     });
 
     it("registers expected routes", async () => {
@@ -25,6 +29,8 @@ describe("odin routes", () => {
         expect(mockRouter.get.mock.calls[0][1]).toBe(OdinController.getRunner);
         expect(mockRouter.post).toBeCalledTimes(1);
         expect(mockRouter.post.mock.calls[0][0]).toBe("/model");
-        expect(mockRouter.post.mock.calls[0][1]).toBe(OdinController.postModel);
+        expect(mockRouter.post.mock.calls[0][2]).toBe(OdinController.postModel);
+
+        expect(spyJson).toHaveBeenCalledTimes(1);
     });
 });

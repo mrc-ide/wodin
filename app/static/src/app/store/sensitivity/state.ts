@@ -1,4 +1,4 @@
-import { Batch } from "../../types/responseTypes";
+import { OdinSensitivityResult } from "../../types/wrapperTypes";
 
 export enum SensitivityScaleType {
     Arithmetic = "Arithmetic",
@@ -40,8 +40,8 @@ export interface SensitivityPlotSettings {
 
 export interface SensitivityState {
     paramSettings: SensitivityParameterSettings,
-    batch: Batch | null,
     // Whether sensitivity needs to be re-run because of change to settings or model
     sensitivityUpdateRequired: boolean
-    plotSettings: SensitivityPlotSettings
+    plotSettings: SensitivityPlotSettings,
+    result: OdinSensitivityResult | null;
 }

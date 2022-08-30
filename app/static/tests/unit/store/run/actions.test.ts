@@ -8,7 +8,7 @@ describe("Run actions", () => {
     it("runs model and updates required action", () => {
         const mockOdin = {} as any;
 
-        const parameterValues = new Map([["p1", 1], ["p2", 2]]);
+        const parameterValues = { p1: 1, p2: 2 };
         const runner = mockRunner();
         const modelState = mockModelState({
             odinRunner: runner,
@@ -34,8 +34,12 @@ describe("Run actions", () => {
         expect(run.mock.calls[0][3]).toBe(99); // end time from state
 
         expect(commit.mock.calls.length).toBe(2);
-        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetSolution);
-        expect(commit.mock.calls[0][1]).toBe("test solution");
+        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResult);
+        expect(commit.mock.calls[0][1]).toEqual({
+            inputs: { parameterValues, endTime: 99 },
+            solution: "test solution",
+            error: null
+        });
         expect(commit.mock.calls[1][0]).toBe(RunMutation.SetRunRequired);
         expect(commit.mock.calls[1][1]).toBe(false);
     });
@@ -50,13 +54,13 @@ describe("Run actions", () => {
         const rootState = { model: modelState } as any;
         const state = mockRunState({
             runRequired: false,
-            parameterValues: new Map()
+            parameterValues: {}
         });
         const commit = jest.fn();
 
         (actions[RunAction.RunModel] as any)({ commit, state, rootState });
         expect(commit.mock.calls.length).toBe(1);
-        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetSolution);
+        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResult);
     });
 
     it("run model does nothing if odin runner is not set", () => {
@@ -106,7 +110,7 @@ describe("Run actions", () => {
             } as any;
         };
 
-        const parameterValues = new Map([["p1", 1], ["p2", 2]]);
+        const parameterValues = { p1: 1, p2: 2 };
         const runner = mockRunnerWithThrownException();
         const modelState = mockModelState({
             odinRunner: runner,
@@ -127,10 +131,14 @@ describe("Run actions", () => {
 
         expect(runner.wodinRun.mock.calls[0][0]).toBe(mockOdin);
         expect(commit.mock.calls.length).toBe(2);
-        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetError);
+        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResult);
         expect(commit.mock.calls[0][1]).toStrictEqual({
-            detail: mockError,
-            error: "An error occurred while running the model"
+            inputs: { parameterValues, endTime: 99 },
+            solution: null,
+            error: {
+                detail: mockError.message,
+                error: "An error occurred while running the model"
+            }
         });
     });
 });

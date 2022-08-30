@@ -25,11 +25,19 @@ describe("Sensitivity mutations", () => {
 
     it("sets batch", () => {
         const state = {
-            batch: null
+            result: {
+                inputs: null,
+                batch: null,
+                error: { error: "TEST ERROR", detail: "test detail" }
+            }
         } as any;
-        const batch = { solutions: [] } as any;
-        mutations[SensitivityMutation.SetBatch](state, batch);
-        expect(state.batch).toBe(batch);
+        const batch = {
+            inputs: {},
+            batch: { solutions: [] },
+            error: null
+        };
+        mutations[SensitivityMutation.SetResult](state, batch);
+        expect(state.result).toBe(batch);
     });
 
     it("sets update required", () => {
@@ -62,5 +70,16 @@ describe("Sensitivity mutations", () => {
         const state = { plotSettings } as any;
         mutations[SensitivityMutation.SetPlotTime](state, 50);
         expect(state.plotSettings.time).toBe(50);
+    });
+
+    it("sets error", () => {
+        const state = { } as any;
+        const batch = {
+            inputs: {},
+            batch: null,
+            error: { error: "TEST ERROR", detail: "test error detail" }
+        };
+        mutations[SensitivityMutation.SetResult](state, batch);
+        expect(state.result).toBe(batch);
     });
 });

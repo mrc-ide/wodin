@@ -46,4 +46,38 @@ describe("FitDataGetters", () => {
         const state = mockFitDataState();
         expect((getters[FitDataGetter.link] as any)(state)).toBe(null);
     });
+
+    it("gets model data where possible", () => {
+        const allData = {
+            timeVariable: "t",
+            data: [
+                { t: 0, v: 10 },
+                { t: 1, v: 20 },
+                { t: 2, v: 0 }
+            ],
+            linkedVariables: {}
+        };
+
+        const state = mockFitDataState(allData);
+        expect((getters[FitDataGetter.allData] as any)(state)).toStrictEqual(allData);
+    });
+
+    it("model data is null when uninitialised", () => {
+        const state = mockFitDataState();
+        expect((getters[FitDataGetter.allData] as any)(state)).toBe(null);
+    });
+
+    it("gets model data where partially initialised", () => {
+        const allData = {
+            data: [
+                { t: 0, v: 10 },
+                { t: 1, v: 20 },
+                { t: 2, v: 0 }
+            ],
+            linkedVariables: {}
+        };
+
+        const state = mockFitDataState(allData);
+        expect((getters[FitDataGetter.allData] as any)(state)).toBe(null);
+    });
 });

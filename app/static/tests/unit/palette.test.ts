@@ -58,12 +58,11 @@ describe("create palettes", () => {
     });
 
     it("creates palettes for data", () => {
-        const pal = paletteData(["a", "b", "c", "d"]);
+        const pal = paletteData(["a", "b", "c"]);
         expect(pal).toEqual({
-            a: "#e41a1c",
-            b: "#377eb8",
-            c: "#4daf4a",
-            d: "#984ea3"
+            a: "#1c0a00",
+            b: "#603601",
+            c: "#cc9544"
         });
     });
 

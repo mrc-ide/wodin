@@ -12,6 +12,7 @@ import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/Se
 import { SensitivityPlotType, SensitivityState } from "../../../../src/app/store/sensitivity/state";
 import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
+import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 
 jest.mock("plotly.js", () => {});
 
@@ -33,8 +34,12 @@ describe("SensitivityTab", () => {
                     namespaced: true,
                     state: {
                         sensitivityUpdateRequired: false,
-                        batch: {
-                            solutions: []
+                        result: {
+                            inputs: {},
+                            batch: {
+                                solutions: []
+                            },
+                            error: null
                         },
                         plotSettings: {
                             plotType: SensitivityPlotType.TraceOverTime
@@ -67,9 +72,9 @@ describe("SensitivityTab", () => {
         expect(wrapper.find("button").element.disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(false);
+        expect(wrapper.findComponent(ErrorInfo).props("error")).toBe(null);
 
         expect(wrapper.findComponent(SensitivitySummaryPlot).exists()).toBe(false);
-        expect(wrapper.find("#sensitivity-plot-placeholder").exists()).toBe(false);
     });
 
     it("renders as expected when Value at Time", () => {
@@ -80,18 +85,31 @@ describe("SensitivityTab", () => {
         expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(false);
 
         expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
-        expect(wrapper.find("#sensitivity-plot-placeholder").exists()).toBe(false);
     });
 
-    it("renders placeholder if unsupported plot type", () => {
-        const sensitivityState = {
-            plotSettings: {
-                plotType: SensitivityPlotType.TimeAtExtreme
-            }
-        } as any;
-        const wrapper = getWrapper({}, sensitivityState);
+    it("renders as expected when Time at Extreme", () => {
+        const wrapper = getWrapper({}, { plotSettings: { plotType: SensitivityPlotType.TimeAtExtreme } as any });
+        expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(false);
         expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
-        expect(wrapper.find("#sensitivity-plot-placeholder").text()).toBe("Other plot types coming soon!");
+    });
+
+    it("renders as expected when Value at Extreme", () => {
+        const wrapper = getWrapper({}, { plotSettings: { plotType: SensitivityPlotType.ValueAtExtreme } as any });
+        expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(false);
+        expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
+    });
+
+    it("renders error", () => {
+        const testError = { error: "Test Error", detail: "test error detail" };
+        const sensitivityState = {
+            result: {
+                inputs: {} as any,
+                batch: null,
+                error: testError
+            }
+        };
+        const wrapper = getWrapper({}, sensitivityState);
+        expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(testError);
     });
 
     it("disables run button when no odinRunner", () => {
@@ -118,7 +136,9 @@ describe("SensitivityTab", () => {
 
     it("renders expected update message when required action is Compile", () => {
         const sensitivityState = {
-            batch: { solutions: [{}] }
+            result: {
+                batch: { solutions: [{}] }
+            }
         } as any;
         const wrapper = getWrapper({ compileRequired: true }, sensitivityState);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
@@ -128,7 +148,9 @@ describe("SensitivityTab", () => {
 
     it("renders expected update message when sensitivity requires update", () => {
         const sensitivityState = {
-            batch: { solutions: [{}] },
+            result: {
+                batch: { solutions: [{}] }
+            },
             sensitivityUpdateRequired: true
         } as any;
         const wrapper = getWrapper({}, sensitivityState);
@@ -140,7 +162,9 @@ describe("SensitivityTab", () => {
 
     it("fades Summary plot when updated required", () => {
         const sensitivityState = {
-            batch: { solutions: [{}] },
+            result: {
+                batch: { solutions: [{}] }
+            },
             plotSettings: { plotType: SensitivityPlotType.ValueAtTime } as any,
             sensitivityUpdateRequired: true
         } as any;

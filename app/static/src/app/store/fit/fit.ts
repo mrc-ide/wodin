@@ -11,10 +11,13 @@ import { fitData } from "../fitData/fitData";
 import { modelFit } from "../modelFit/modelFit";
 import { AppType, VisualisationTab } from "../appState/state";
 import { logMutations } from "../plugins";
+import { newSessionId } from "../../utils";
+import { localStorageManager } from "../../localStorageManager";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
     return {
+        sessionId: newSessionId(),
         appType: AppType.Fit,
         openVisualisationTab: VisualisationTab.Run,
         appName: null,
@@ -39,3 +42,5 @@ export const storeOptions: StoreOptions<FitState> = {
         logMutations
     ]
 };
+
+localStorageManager.addSessionId((storeOptions.state as FitState).sessionId);

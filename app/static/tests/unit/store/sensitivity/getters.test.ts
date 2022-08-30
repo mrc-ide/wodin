@@ -4,8 +4,7 @@ import { SensitivityScaleType, SensitivityVariationType } from "../../../../src/
 
 describe("Sensitivity getters", () => {
     it("generates batchPars", () => {
-        const parameterValues = new Map<string, number>();
-        parameterValues.set("A", 2);
+        const parameterValues = { A: 2 };
         const odinRunner = {
             batchParsDisplace: mockBatchParsDisplace
         };

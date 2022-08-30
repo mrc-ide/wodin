@@ -55,7 +55,9 @@ describe("FitPlot", () => {
                     paletteModel: mockPalette
                 },
                 modelFit: {
-                    solution: modelFitHasSolution ? mockSolution : null
+                    result: {
+                        solution: modelFitHasSolution ? mockSolution : null
+                    }
                 }
             } as any,
             modules: {
@@ -96,7 +98,7 @@ describe("FitPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been fitted.");
         expect(wodinPlot.props("endTime")).toBe(1);
-        expect(wodinPlot.props("solutions")).toStrictEqual([mockSolution]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution]);
 
         const plotData = wodinPlot.props("plotData");
         expect(plotData(0, 1, 100)).toStrictEqual(expectedPlotData);
@@ -109,7 +111,7 @@ describe("FitPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been fitted.");
         expect(wodinPlot.props("endTime")).toBe(1);
-        expect(wodinPlot.props("solutions")).toStrictEqual([]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([]);
 
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 1, 100);

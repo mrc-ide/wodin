@@ -43,22 +43,15 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
-        const paramValuesMap = computed(() => store.state.run.parameterValues);
-        const paramNames = computed(
-            () => (paramValuesMap.value ? Array.from(paramValuesMap.value.keys()) as string[] : [])
-        );
 
         const paramsToVary = computed<string[]>(() => {
             return store.state.appType === AppType.Fit ? store.state.modelFit.paramsToVary : [];
         });
 
-        const paramValues = computed(() => {
-            return paramNames.value.reduce((values: Dict<number>, key: string) => {
-                // eslint-disable-next-line no-param-reassign
-                values[key] = paramValuesMap.value.get(key)!;
-                return values;
-            }, {} as Dict<number>);
-        });
+        const paramValues = computed(() => store.state.run.parameterValues);
+        const paramNames = computed(
+            () => (paramValues.value ? Object.keys(paramValues.value) : [])
+        );
 
         const paramVaryFlags = computed(() => {
             return paramNames.value.reduce((values: Dict<boolean>, key: string) => {
@@ -71,7 +64,7 @@ export default defineComponent({
         const timestampParamNames = () => paramNames.value.map((name: string) => name + Date.now());
 
         const paramKeys = ref(timestampParamNames());
-        const odinSolution = computed(() => store.state.run.solution);
+        const odinSolution = computed(() => store.state.run.result?.solution);
 
         const updateValue = (newValue: number, paramName: string) => {
             store.commit(`run/${RunMutation.UpdateParameterValues}`, { [paramName]: newValue });
