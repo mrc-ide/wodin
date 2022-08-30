@@ -499,7 +499,17 @@
         },
 
         "fitData": {
-            "$ref": "#/definitions/FitDataState"
+            "oneOf": [
+                { "type": "null" },
+                { "$ref": "#/definitions/FitDataState" }
+            ]
+        },
+
+        "modelFit": {
+            "oneOf": [
+                { "type": "null" },
+                { "$ref": "#/definitions/ModelFitState" }
+            ]
         }
     },
 
