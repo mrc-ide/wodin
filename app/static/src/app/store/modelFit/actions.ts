@@ -64,6 +64,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
         commit(ModelFitMutation.SetResult, result);
         // update model params on every step
         commit(`run/${RunMutation.SetParameterValues}`, result.data.pars, { root: true });
+        commit(`run/${RunMutation.SetResult}`, state.result, { root: true });
 
         if (result.converged) {
             commit(ModelFitMutation.SetFitting, false);

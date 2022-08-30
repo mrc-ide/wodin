@@ -117,7 +117,13 @@ describe("ModelFit actions", () => {
             result: () => result
         } as any;
 
-        const testState = mockModelFitState({ fitting: true });
+        const testState = mockModelFitState({
+            fitting: true,
+            result: {
+                inputs: {},
+                solution: "solution"
+            } as any
+        });
 
         const commit = jest.fn();
         const dispatch = jest.fn();
@@ -125,12 +131,15 @@ describe("ModelFit actions", () => {
 
         setTimeout(() => {
             expect(simplex.step).toHaveBeenCalledTimes(1);
-            expect(commit).toHaveBeenCalledTimes(2);
+            expect(commit).toHaveBeenCalledTimes(3);
             expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetResult);
             expect(commit.mock.calls[0][1]).toBe(result);
             expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
             expect(commit.mock.calls[1][1]).toBe(result.data.pars);
             expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
+            expect(commit.mock.calls[2][0]).toBe(`run/${RunMutation.SetResult}`);
+            expect(commit.mock.calls[2][1]).toStrictEqual(testState.result);
+            expect(commit.mock.calls[2][2]).toStrictEqual({ root: true });
 
             expect(dispatch).toHaveBeenCalledTimes(1);
             expect(dispatch.mock.calls[0][0]).toBe(ModelFitAction.FitModelStep);
@@ -158,11 +167,12 @@ describe("ModelFit actions", () => {
 
         setTimeout(() => {
             expect(simplex.step).toHaveBeenCalledTimes(1);
-            expect(commit).toHaveBeenCalledTimes(3);
+            expect(commit).toHaveBeenCalledTimes(4);
             expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetResult);
             expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
-            expect(commit.mock.calls[2][0]).toBe(ModelFitMutation.SetFitting);
-            expect(commit.mock.calls[2][1]).toBe(false);
+            expect(commit.mock.calls[2][0]).toBe(`run/${RunMutation.SetResult}`);
+            expect(commit.mock.calls[3][0]).toBe(ModelFitMutation.SetFitting);
+            expect(commit.mock.calls[3][1]).toBe(false);
 
             expect(dispatch).not.toHaveBeenCalled();
             done();
