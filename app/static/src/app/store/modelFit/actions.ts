@@ -65,7 +65,21 @@ export const actions: ActionTree<ModelFitState, FitState> = {
         commit(ModelFitMutation.SetResult, result);
         // update model params on every step
         commit(`run/${RunMutation.SetParameterValues}`, result.data.pars, { root: true });
-        commit(`run/${RunMutation.SetResult}`, state.result, { root: true });
+
+        // Recast things slightly (really just the inputs) to get a
+        // suitable bit of data for the run tab and update the central
+        // solution. The assuption here is that the solution does not
+        // fail (error not null) which will be the case if the fit
+        // starts at all.
+        const runResult = {
+            inputs: {
+                parameterValues: result.data.pars,
+                endTime: result.data.endTime
+            },
+            solution: result.data.solution,
+            error: null
+        };
+        commit(`run/${RunMutation.SetResult}`, runResult, { root: true });
 
         if (result.converged) {
             commit(ModelFitMutation.SetFitting, false);

@@ -109,7 +109,9 @@ describe("ModelFit actions", () => {
         const result = {
             converged: false,
             data: {
-                pars: {}
+                pars: {},
+                endTime: 99,
+                solution: "solution"
             }
         };
         const simplex = {
@@ -118,11 +120,7 @@ describe("ModelFit actions", () => {
         } as any;
 
         const testState = mockModelFitState({
-            fitting: true,
-            result: {
-                inputs: {},
-                solution: "solution"
-            } as any
+            fitting: true
         });
 
         const commit = jest.fn();
@@ -138,7 +136,11 @@ describe("ModelFit actions", () => {
             expect(commit.mock.calls[1][1]).toBe(result.data.pars);
             expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
             expect(commit.mock.calls[2][0]).toBe(`run/${RunMutation.SetResult}`);
-            expect(commit.mock.calls[2][1]).toStrictEqual(testState.result);
+            expect(commit.mock.calls[2][1]).toStrictEqual({
+                inputs: { endTime: 99, parameterValues: {} },
+                solution: "solution",
+                error: null
+            });
             expect(commit.mock.calls[2][2]).toStrictEqual({ root: true });
 
             expect(dispatch).toHaveBeenCalledTimes(1);
