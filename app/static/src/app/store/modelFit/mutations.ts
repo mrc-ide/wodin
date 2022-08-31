@@ -7,7 +7,6 @@ export enum ModelFitMutation {
     SetResult = "SetResult",
     SetInputs = "SetInputs",
     SetParamsToVary = "SetParamsToVary",
-    SetFitUpdateRequired = "SetFitUpdateRequired",
     // TODO: rename to SetFitUpdateRequired when working
     SetFitUpdateRequiredReasons = "SetFitUpdateRequiredReasons"
 }
@@ -38,10 +37,6 @@ export const mutations: MutationTree<ModelFitState> = {
 
     [ModelFitMutation.SetParamsToVary](state: ModelFitState, payload: string[]) {
         state.paramsToVary = payload;
-    },
-
-    [ModelFitMutation.SetFitUpdateRequired](state: ModelFitState, payload: boolean) {
-        state.fitUpdateRequired = payload;
     },
 
     [ModelFitMutation.SetFitUpdateRequiredReasons](state: ModelFitState, payload: null | Partial<RerunFitReasons>) {

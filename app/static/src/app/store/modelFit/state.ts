@@ -16,7 +16,6 @@ export interface RerunFitReasons {
 
 export interface ModelFitState {
     fitting: boolean,
-    fitUpdateRequired: boolean,
     fitUpdateRequiredReasons: RerunFitReasons,
     iterations: number | null,
     converged: boolean | null,

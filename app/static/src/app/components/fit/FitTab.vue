@@ -50,7 +50,6 @@ export default {
         const fitRequirements = computed(() => store.getters[`${namespace}/${ModelFitGetter.fitRequirements}`]);
         const canFitModel = computed(() => allTrue(fitRequirements.value));
         const compileRequired = computed(() => store.state.model.compileRequired);
-        const fitUpdateRequired = computed(() => store.state.modelFit.fitUpdateRequired);
         const fitUpdateRequiredReasons = computed(() => store.state.modelFit.fitUpdateRequiredReasons);
         const fitModel = () => store.dispatch(`${namespace}/${ModelFitAction.FitModel}`);
 

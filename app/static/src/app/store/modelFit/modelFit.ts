@@ -5,7 +5,6 @@ import { getters } from "./getters";
 
 export const defaultState: ModelFitState = {
     fitting: false,
-    fitUpdateRequired: true,
     fitUpdateRequiredReasons: {
         modelChanged: false,
         dataChanged: false,
