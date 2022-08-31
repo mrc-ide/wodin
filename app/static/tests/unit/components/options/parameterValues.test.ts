@@ -117,7 +117,7 @@ describe("ParameterValues", () => {
         const mockSetSensitivityUpdateRequired = jest.fn();
         const mockSetFitUpdateRequired = jest.fn();
         const wrapper = getWrapper(getStore(false, mockUpdateParameterValues, mockSetSensitivityUpdateRequired,
-                                            mockSetFitUpdateRequired));
+            mockSetFitUpdateRequired));
         const input2 = wrapper.findAllComponents(NumericInput).at(1)!;
         await input2.vm.$emit("update", 3.3);
         expect(mockUpdateParameterValues).toHaveBeenCalledTimes(1);
