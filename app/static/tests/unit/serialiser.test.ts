@@ -232,5 +232,73 @@ describe("serialise", () => {
         expect(JSON.parse(serialised)).toStrictEqual(expected);
     });
 
-    //it("serialises as expected when no solutions or model");
+    it("serialises as expected when no solutions", () => {
+        const state = {
+            ...fitState,
+            run: {
+                ...runState,
+                result: {
+                    ...runState.result,
+                    solution: null
+                }
+            },
+            sensitivity: {
+                ...sensitivityState,
+                result: {
+                    ...sensitivityState.result,
+                    batch: null
+                }
+            },
+            modelFit: {
+                ...modelFitState,
+                result: {
+                    ...modelFitState.result,
+                    solution: null
+                }
+            }
+        };
+        const serialised = serialiseState(state);
+
+        const expected = {
+            openVisualisationTab: VisualisationTab.Fit,
+            code: expectedCode,
+            model: expectedModel,
+            run: {
+                ...expectedRun,
+                result: {...expectedRun.result, hasResult: false}
+            },
+            sensitivity: {
+                ...expectedSensitivity,
+                result: {...expectedSensitivity.result, hasResult: false}
+            },
+            fitData: expectedFitData,
+            modelFit: {
+                ...expectedModelFit,
+                result: {...expectedModelFit.result, hasResult: false}
+            }
+        };
+        expect(JSON.parse(serialised)).toStrictEqual(expected);
+    });
+
+    it("serialises as expected when no model or results", () => {
+        const state = {
+            ...fitState,
+            model: {...modelState, odin: null},
+            run: {...runState, result: null},
+            sensitivity: {...sensitivityState, result: null},
+            modelFit: {...modelFitState, result: null}
+        };
+        const serialised = serialiseState(state);
+
+        const expected = {
+            openVisualisationTab: VisualisationTab.Fit,
+            code: expectedCode,
+            model: {...expectedModel, hasOdin: false},
+            run: {...expectedRun, result: null },
+            sensitivity: {...expectedSensitivity, result: null},
+            fitData: expectedFitData,
+            modelFit: {...expectedModelFit, result: null}
+        };
+        expect(JSON.parse(serialised)).toStrictEqual(expected);
+    });
 });
