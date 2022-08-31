@@ -81,9 +81,14 @@ export const serialiseState = (state: AppState) => {
         code: serialiseCode(state.code),
         model: serialiseModel(state.model),
         run: serialiseRun(state.run),
-        sensitivity: serialiseSensitivity(state.sensitivity),
-        fitData: (state.appType === AppType.Fit) ?  serialiseFitData((state as FitState).fitData) : undefined,
-        modelFit: (state.appType === AppType.Fit) ? serialiseModelFit((state as FitState).modelFit) : undefined
-    };
+        sensitivity: serialiseSensitivity(state.sensitivity)
+    } as any; //TODO: generate type from schema
+
+    if (state.appType === AppType.Fit) {
+        const fitState = state as FitState;
+        result.fitData = serialiseFitData(fitState.fitData);
+        result.modelFit = serialiseModelFit(fitState.modelFit);
+    }
+
     return JSON.stringify(result);
 };
