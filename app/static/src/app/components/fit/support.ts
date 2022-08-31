@@ -40,4 +40,4 @@ export const fitUpdateRequiredExplanation = (reasons: FitUpdateRequiredReasons):
     // Fallback reason if something unexpected has happened.
     appendIf(explanation, explanation.length === 0, help.unknown);
     return `${help.prefix} ${joinStringsSentence(explanation)}. ${help.suffix}.`;
-}
+};

@@ -194,4 +194,4 @@ export const allTrue = (x: Dict<boolean>): boolean => {
 
 export const anyTrue = (x: Dict<boolean>): boolean => {
     return Object.values(x).some((el: boolean) => el);
-}
+};

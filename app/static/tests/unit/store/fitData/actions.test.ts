@@ -87,7 +87,7 @@ describe("Fit Data actions", () => {
             expect(commit.mock.calls[2][1]).toBe(9);
             expect(commit.mock.calls[2][2]).toStrictEqual({ root: true });
             expect(commit.mock.calls[3][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
-            expect(commit.mock.calls[3][1]).toBe(true);
+            expect(commit.mock.calls[3][1]).toStrictEqual({ linkChanged: true });
             expect(commit.mock.calls[3][2]).toStrictEqual({ root: true });
             expect(commit.mock.calls[4][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
             expect(commit.mock.calls[4][1]).toBe(true);
@@ -278,7 +278,7 @@ describe("Fit Data actions", () => {
         expect(commit.mock.calls[2][1]).toBe(10);
         expect(commit.mock.calls[2][2]).toStrictEqual({ root: true });
         expect(commit.mock.calls[3][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
-        expect(commit.mock.calls[3][1]).toBe(true);
+        expect(commit.mock.calls[3][1]).toStrictEqual({ linkChanged: true });
         expect(commit.mock.calls[3][2]).toStrictEqual({ root: true });
         expect(commit.mock.calls[4][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
         expect(commit.mock.calls[4][1]).toBe(true);
@@ -297,7 +297,7 @@ describe("Fit Data actions", () => {
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetLinkedVariable);
         expect(commit.mock.calls[0][1]).toBe(payload);
         expect(commit.mock.calls[1][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
-        expect(commit.mock.calls[1][1]).toBe(true);
+        expect(commit.mock.calls[1][1]).toStrictEqual({ linkChanged: true });
         expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
     });
 
@@ -321,7 +321,7 @@ describe("Fit Data actions", () => {
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetColumnToFit);
         expect(commit.mock.calls[0][1]).toBe("col1");
         expect(commit.mock.calls[1][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
-        expect(commit.mock.calls[1][1]).toBe(true);
+        expect(commit.mock.calls[1][1]).toStrictEqual({ linkChanged: true });
         expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
     });
 });

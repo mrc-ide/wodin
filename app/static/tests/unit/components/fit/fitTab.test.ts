@@ -16,7 +16,7 @@ describe("Fit Tab", () => {
     const getWrapper = (
         fitRequirements = {}, // ends up being true
         compileRequired = false,
-        fitUpdateRequired = false,
+        fitUpdateRequired = {},
         iterations: number | null = 10,
         converged: boolean | null = true,
         fitting = false,
@@ -40,8 +40,10 @@ describe("Fit Tab", () => {
                         converged,
                         fitting,
                         sumOfSquares,
-                        fitUpdateRequired
-
+                        fitUpdateRequired,
+                        result: {
+                            solution: jest.fn()
+                        }
                     } as any,
                     getters: {
                         fitRequirements: () => fitRequirements
@@ -152,11 +154,10 @@ describe("Fit Tab", () => {
     });
 
     it("renders as expected when fit update is required", () => {
-        const wrapper = getWrapper({}, false, true);
+        const wrapper = getWrapper({}, false, { dataChanged: true });
         expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Model code has been recompiled, or options or data have been updated. "
-                + "Fit Model for updated best fit.");
+            .toBe("Fit is out of date: data have been updated. Rerun fit to view updated result.");
         const fitPlot = wrapper.findComponent(FitPlot);
         expect(fitPlot.props("fadePlot")).toBe(true);
         expect(fitPlot.findComponent(LoadingSpinner).exists()).toBe(false);

@@ -68,7 +68,7 @@ describe("ModelFit actions", () => {
         expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetFitting);
         expect(commit.mock.calls[0][1]).toBe(true);
         expect(commit.mock.calls[1][0]).toBe(ModelFitMutation.SetFitUpdateRequired);
-        expect(commit.mock.calls[1][1]).toBe(false);
+        expect(commit.mock.calls[1][1]).toBe(null);
         expect(commit.mock.calls[2][0]).toBe(ModelFitMutation.SetInputs);
         expect(commit.mock.calls[2][1]).toEqual({
             data: expectedData,
