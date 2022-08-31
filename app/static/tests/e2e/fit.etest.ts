@@ -269,7 +269,8 @@ test.describe("Wodin App model fit tests", () => {
 
         // Compile code
         await page.click("#compile-btn");
-        await expectUpdateFitMsg(page, "Fit is out of date: model has been recompiled. Rerun fit to view updated result.");
+        await expectUpdateFitMsg(page, "Fit is out of date: model has been recompiled. "
+                                 + "Rerun fit to view updated result.");
 
         await reRunFit(page); // checks message is reset
     });
@@ -288,7 +289,8 @@ test.describe("Wodin App model fit tests", () => {
 
         // Change time variable
         await page.selectOption("#select-time-variable", "Day2");
-        await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. Rerun fit to view updated result.");
+        await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. "
+                                 + "Rerun fit to view updated result.");
 
         await reRunFit(page); // checks message is reset
     });
@@ -299,7 +301,8 @@ test.describe("Wodin App model fit tests", () => {
         await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
         await expect(await page.locator("#link-data select")).toBeVisible({ timeout });
         await page.selectOption("#link-data select", "E");
-        await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. Rerun fit to view updated result.");
+        await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. "
+                                 + "Rerun fit to view updated result.");
 
         await reRunFit(page); // checks message is reset
     });
@@ -318,7 +321,8 @@ test.describe("Wodin App model fit tests", () => {
         const targetSelect = await page.locator("#optimisation select");
         await targetSelect.selectOption("Day2");
 
-        await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. Rerun fit to view updated result.");
+        await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. "
+                                 + "Rerun fit to view updated result.");
 
         await reRunFit(page); // checks message is reset
     });
