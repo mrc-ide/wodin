@@ -57,6 +57,8 @@ export const actions: ActionTree<FitDataState, FitState> = {
             .then(() => {
                 updateLinkedVariables(context);
                 respondUpdatedTimeVariable(context);
+                commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
+                commit(`modelFit/${ModelFitMutation.SetFitUpdateRequiredReasons}`, { dataChanged: true }, { root: true });
             })
             .upload(file);
     },
@@ -66,6 +68,8 @@ export const actions: ActionTree<FitDataState, FitState> = {
         commit(FitDataMutation.SetTimeVariable, timeVariable);
         updateLinkedVariables(context);
         respondUpdatedTimeVariable(context);
+        commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
+        commit(`modelFit/${ModelFitMutation.SetFitUpdateRequiredReasons}`, { linkChanged: true }, { root: true });
     },
 
     [FitDataAction.UpdateLinkedVariables](context) {
@@ -77,6 +81,8 @@ export const actions: ActionTree<FitDataState, FitState> = {
         commit(FitDataMutation.SetLinkedVariable, payload);
         if (payload.column === state.columnToFit) {
             commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
+            // TODO: as above
+            commit(`modelFit/${ModelFitMutation.SetFitUpdateRequiredReasons}`, { linkChanged: true }, { root: true });
         }
     },
 
@@ -84,5 +90,6 @@ export const actions: ActionTree<FitDataState, FitState> = {
         const { commit } = context;
         commit(FitDataMutation.SetColumnToFit, payload);
         commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
+        commit(`modelFit/${ModelFitMutation.SetFitUpdateRequiredReasons}`, { linkChanged: true }, { root: true });
     }
 };

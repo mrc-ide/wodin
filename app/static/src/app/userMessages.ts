@@ -35,6 +35,15 @@ export default {
         compileRequired: "Model code has been updated. Compile code and Fit Model for updated best fit.",
         fitRequired: "Model code has been recompiled, or options or data have been updated. "
             + "Fit Model for updated best fit.",
+        updateFitReasons: {
+            prefix: "Fit is out of date:",
+            unknown: "unknown reasons, contact the administrator, as this is unexpected",
+            modelChanged: "model has been recompiled",
+            dataChanged: "data have been updated",
+            linkChanged: "model-data link has changed",
+            parametersChanged: "parameters have been updated",
+            suffix: "Rerun fit to view updated result"
+        },
         fitRequirements: {
             prefix: "Cannot fit model. Please",
             unknown: "contact the administrator, as this is unexpected",

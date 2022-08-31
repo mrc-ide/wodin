@@ -191,3 +191,7 @@ export const joinStringsSentence = (strings: string[], last = " and ", sep = ", 
 export const allTrue = (x: Dict<boolean>): boolean => {
     return Object.values(x).every((el: boolean) => el);
 };
+
+export const anyTrue = (x: Dict<boolean>): boolean => {
+    return Object.values(x).some((el: boolean) => el);
+}
