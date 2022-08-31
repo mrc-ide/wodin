@@ -51,12 +51,14 @@ const respondUpdatedTimeVariable = (context: ActionContext<FitDataState, FitStat
 
 export const actions: ActionTree<FitDataState, FitState> = {
     [FitDataAction.Upload](context, file) {
+        const { commit } = context;
         csvUpload(context)
             .withSuccess(FitDataMutation.SetData)
             .withError(FitDataMutation.SetError)
             .then(() => {
                 updateLinkedVariables(context);
                 respondUpdatedTimeVariable(context);
+                commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { dataChanged: true }, { root: true });
             })
             .upload(file);
     },
