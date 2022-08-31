@@ -4,9 +4,10 @@ import {ErrorsMutation} from "../errors/mutations";
 import {AppConfig} from "../../types/responseTypes";
 import {CodeMutation} from "../code/mutations";
 import {ModelAction} from "../model/actions";
-import {AppState} from "./state";
+import {AppState, AppType} from "./state";
 import {AppStateMutation} from "./mutations";
 import {serialiseState} from "../../serialise";
+import {FitState} from "../fit/state";
 
 export enum AppStateAction {
     FetchConfig = "FetchConfig",
@@ -34,16 +35,18 @@ export const appStateActions: ActionTree<AppState, AppState> = {
     },
 
     async [AppStateAction.QueueStateUpload](context) {
-        const {state, dispatch, commit} = context;
-        // Do not queue uploads while fitting is true
-        if (!(state as any).modelFit?.fitting) {
+        const {state, commit} = context;
+        const isFitting = () => { return (state.appType === AppType.Fit) && ((state as FitState).modelFit.fitting); };
+
+        // Do not queue uploads while fitting is true - we'll upload when fit finishes
+        if (!isFitting()) {
             // remove any existing queued upload, as this request should supersede it
             commit(AppStateMutation.ClearQueuedStateUpload);
 
             const queuedId: number = window.setInterval(() => {
                 // wait for any ongoing uploads to finish before starting a new one
                 // and do not actually upload while fitting is true
-                if (!state.stateUploadInProgress && !(state as any).modelFit?.fitting) {
+                if (!state.stateUploadInProgress && !isFitting()) {
                     commit(AppStateMutation.ClearQueuedStateUpload);
                     immediateUploadState(context);
                 }

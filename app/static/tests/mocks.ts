@@ -117,6 +117,8 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
         appType: AppType.Basic,
         openVisualisationTab: VisualisationTab.Run,
         appName: "",
+        queuedStateUploadIntervalId: -1,
+        stateUploadInProgress: false,
         config: {
             basicProp: "",
             ...mockAppConfig
@@ -149,6 +151,8 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
         appType: AppType.Fit,
         openVisualisationTab: VisualisationTab.Run,
         appName: "",
+        queuedStateUploadIntervalId: -1,
+        stateUploadInProgress: false,
         config: {
             fitProp: "",
             ...mockAppConfig
@@ -158,6 +162,7 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
         run: mockRunState(),
         fitData: mockFitDataState(),
         sensitivity: mockSensitivityState(),
+        modelFit: mockModelFitState(),
         ...state
     };
 };
@@ -168,6 +173,8 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
         appType: AppType.Stochastic,
         openVisualisationTab: VisualisationTab.Run,
         appName: "",
+        queuedStateUploadIntervalId: -1,
+        stateUploadInProgress: false,
         config: {
             stochasticProp: "",
             ...mockAppConfig
