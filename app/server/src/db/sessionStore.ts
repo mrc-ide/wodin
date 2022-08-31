@@ -18,4 +18,8 @@ export class SessionStore {
             .hset(this.sessionKey("data"), id, data)
             .exec();
     }
+
+    async saveSessionLabel(id: string, label: string) {
+        await this._redis.hset(this.sessionKey("label"), id, label);
+    }
 }
