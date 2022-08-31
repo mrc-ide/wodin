@@ -1,0 +1,517 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+
+    "definitions": {
+        "StringArray": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+
+        "NumberArray": {
+            "type": "array",
+            "items": {
+                "type": "number"
+            }
+        },
+
+        "VisualisationTab": {
+            "type": "string",
+            "enum": ["Run", "Fit", "Sensitivity"]
+        },
+
+        "CodeState": {
+            "type": "object",
+            "properties": {
+                "currentCode": {
+                    "$ref": "#/definitions/StringArray"
+                }
+            }
+        },
+
+        "ModelState": {
+            "type": "object",
+            "properties": {
+                "compileRequired": {
+                    "type": "boolean"
+                },
+                "odinModelRepsonse": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/OdinModelResponse" }
+                    ]
+                },
+                "hasOdin": {
+                    "comment": "Indicates if the 'odin' field was non-null",
+                    "type": "boolean"
+                },
+                "odinModelCodeError": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/WodinError" }
+                    ]
+                }
+            }
+        },
+
+        "RequiredModelAction": {
+            "type": "string",
+            "enum": ["Compile", "Run"]
+        },
+
+        "OdinModelResponse": {
+            "type": "object",
+            "properties": {
+                "metadata": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "object",
+                            "properties": {
+                                "valid": {
+                                    "type": "boolean"
+                                },
+                                "variables": {
+                                    "$ref": "#/definitions/StringArray"
+                                },
+                                "parameters": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/OdinParameter"
+                                    }
+                                },
+                                "messages": {
+                                    "$ref": "#/definitions/StringArray"
+                                }
+                            },
+                            "required": ["variables", "parameters", "messages"],
+                            "additionalProperties": false
+                        }
+                    ]
+                },
+                "model": {
+                    "type": ["null", "string"]
+                },
+                "error": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/OdinModelResponseError" }
+                    ]
+                }
+            },
+            "requiredProperties": ["metadata", "model", "error"],
+            "additionalProperties": false
+        },
+
+        "OdinParameter": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "default": {
+                    "type": ["null", "number"]
+                },
+                "min": {
+                    "type": ["null", "number"]
+                },
+                "max": {
+                    "type": ["null", "number"]
+                },
+                "is_integer": {
+                    "type": "boolean"
+                },
+                "rank": {
+                    "type": "number"
+                }
+            },
+            "additionalProperties": false,
+            "required": ["name", "default", "min", "max", "is_integer", "rank"]
+        },
+
+        "OdinModelResponseError": {
+            "type": "object",
+            "properties": {
+                "line": {
+                    "comment": "This is surprising to me, but matches the current type - I'd have thought this would be number[]",
+                    "$ref": "#/definitions/StringArray"
+                },
+                "message": {
+                    "type": "string"
+                }
+            },
+            "required": [],
+            "additionalProperties": false
+        },
+
+        "OdinRunInputs": {
+            "comment": "This is not really the solution, but the arguments used to generated the solution!",
+            "type": "object",
+            "properties": {
+                "parameterValues": {
+                    "$ref": "#/definitions/OdinParameterValues"
+                },
+                "endTime": {
+                    "type": "number"
+                }
+            }
+        },
+
+        "OdinParameterValues": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "number"
+            }
+        },
+
+        "WodinError": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "detail": {
+                    "type": ["null", "string"]
+                }
+            },
+            "required": ["error", "detail"],
+            "additionalProperties": false
+        },
+
+        "RunState": {
+            "type": "object",
+            "properties": {
+                "runRequired": {
+                    "type": "boolean"
+                },
+                "parameterValues": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/OdinParameterValues" }
+                    ]
+                },
+                "endTime": {
+                    "type": "number"
+                },
+                "result": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/OdinRunResult" }
+                    ]
+                }
+            }
+        },
+
+        "OdinRunResult": {
+            "inputs":  {
+                "endTime": {
+                    "type": "number"
+                },
+                "parameterValues": {
+                    "$ref": "#/definitions/OdinParameterValues"
+                }
+            },
+            "hasResult": {
+                "type": "boolean"
+            },
+            "error": {
+                "oneOf": [
+                    { "type": "null" },
+                    { "$ref": "#/definitions/WodinError" }
+                ]
+            }
+        },
+
+        "SensitivityState": {
+            "type": "object",
+            "properties": {
+                "paramSettings": {
+                    "$ref": "#/definitions/SensitivityParameterSettings"
+                },
+                "sensitivityUpdateRequired": {
+                    "type": "boolean"
+                },
+                "plotSettings": {
+                    "$ref": "#/definitions/SensitivityPlotSettings"
+                },
+                "result": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/OdinSensitivityResult" }
+                    ]
+                }
+            }
+        },
+
+        "SensitivityParameterSettings": {
+            "type": "object",
+            "properties": {
+                "parameterToVary": {
+                    "type": ["null", "string"]
+                },
+                "scaleType": {
+                    "$ref": "#/definitions/SensitivityScaleType"
+                },
+                "variationType": {
+                    "$ref": "#/definitions/SensitivityVariationType"
+                },
+                "variationPercentage": {
+                    "type": "number"
+                },
+                "rangeFrom": {
+                    "type": "number"
+                },
+                "rangeTo": {
+                    "type": "number"
+                },
+                "numberOfRuns": {
+                    "type": "number"
+                }
+            }
+        },
+
+        "SensitivityPlotSettings": {
+            "plotType": {
+                "type": "string",
+                "enum": ["TraceOverTime", "ValueAtTime", "ValueAtExtreme", "TimeAtExtreme"],
+            },
+            "extreme": {
+                "type": "string",
+                "enum": ["Min", "Max"]
+            },
+            "time": {
+                "type": ["null", "number"]
+            }
+        },
+
+        "OdinSensitivityResult": {
+            "inputs": {
+                "endTime": {
+                    "type": "number"
+                },
+                "pars": {
+                    "$ref": "#/definitions/BatchPars"
+                }
+            },
+            "hasResult": {
+                "type": "boolean"
+            },
+            "error": {
+                "oneOf": [
+                    { "type": "null" },
+                    { "$ref": "#/definitions/WodinError" }
+                ]
+            }
+        },
+
+        "SensitivityScaleType": {
+            "type": "string",
+            "enum": ["Arithmetic", "Logarithmic"]
+        },
+
+        "SensitivityVariationType": {
+            "type": "string",
+            "enum": ["Percentage", "Range"]
+        },
+
+        "Batch": {
+            "type": "object",
+            "properties": {
+                "pars": {
+                    "$ref": "#/definitions/BatchPars"
+                },
+                "endTime": {
+                    "type": "number"
+                }
+            },
+            "required": ["pars", "endTime"],
+            "additionalProperties": false
+        },
+
+        "BatchPars": {
+            "type": "object",
+            "properties": {
+                "base": {
+                    "$ref": "#/definitions/OdinParameterValues"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "values": {
+                    "$ref": "#/definitions/NumberArray"
+                }
+            },
+            "required": ["base", "name", "values"],
+            "additionalProperties": false
+        },
+
+        "FitDataState": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/FitData"
+                },
+                "columns": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/StringArray" }
+                    ]
+                },
+                "timeVariableCandidates": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/StringArray" }
+                    ]
+                },
+                "timeVariable": {
+                    "type": ["null", "string"]
+                },
+                "linkedVariables": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": ["null", "string"]
+                    }
+                },
+                "columnToFit": {
+                    "type": ["null", "string"]
+                },
+                "error": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/WodinError" }
+                    ]
+                }
+            }
+        },
+
+        "FitData": {
+            "type": "object",
+            "additionalProperties": {
+                "$ref": "#/definitions/NumberArray"
+            }
+        },
+
+        "ModelFitState": {
+            "type": "object",
+            "properties": {
+                "fitUpdateRequired": {
+                    "type": "boolean"
+                },
+                "iterations": {
+                    "type": ["null", "number"]
+                },
+                "converged": {
+                    "type": ["null", "boolean"]
+                },
+                "sumOfSquares": {
+                    "type": ["null", "number"]
+                },
+                "paramsToVary": {
+                    "$ref": "#/definitions/StringArray"
+                },
+                "result": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/OdinFitResult" }
+                    ]
+                },
+
+            }
+        },
+
+        "OdinFitResult": {
+            "type": "object",
+            "properties": {
+                "inputs": {
+                    "$ref": "#/definitions/OdinFitInputs"
+                },
+                "hasResult": {
+                    "type": "boolean"
+                },
+                "error": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/WodinError" }
+                    ]
+                }
+            }
+        },
+
+        "OdinFitInputs": {
+            "type": "object",
+            "properties": {
+                "endTime": {
+                    "type": "number"
+                },
+                "link": {
+                    "$ref": "#/definitions/FitDataLink"
+                },
+                "data": {
+                    "$ref": "#/definitions/FitData"
+                },
+                "parameterValues": {
+                    "$ref": "#/definitions/OdinParameterValues"
+                }
+            }
+        },
+
+        "FitDataLink": {
+            "type": "object",
+            "properties": {
+                "time": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "string"
+                },
+                "model": {
+                    "type": "string"
+                }
+            },
+            "required": ["time", "data", "model"],
+            "additionalProperties": false
+        }
+    },
+
+    "properties": {
+        "openVisualisationTab": {
+            "$ref": "#/definitions/VisualisationTab"
+        },
+
+        "code": {
+            "$ref": "#/definitions/CodeState"
+        },
+
+        "model": {
+            "$ref": "#/definitions/ModelState"
+        },
+
+        "run": {
+            "$ref": "#/definitions/RunState"
+        },
+
+        "sensitivity": {
+            "$ref": "#/definitions/SensitivityState"
+        },
+
+        "fitData": {
+            "oneOf": [
+                { "type": "null" },
+                { "$ref": "#/definitions/FitDataState" }
+            ]
+        },
+
+        "modelFit": {
+            "oneOf": [
+                { "type": "null" },
+                { "$ref": "#/definitions/ModelFitState" }
+            ]
+        }
+    },
+
+    "required": ["openVisualisationTab", "code", "model", "run", "sensitivity"]
+}

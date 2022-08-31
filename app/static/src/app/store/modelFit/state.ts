@@ -17,3 +17,12 @@ export interface ModelFitState {
     inputs: ModelFitInputs | null, // all inputs except parameters, which vary
     result: OdinFitResult | null, // full solution for current best fit,
 }
+
+export interface ModelFitRequirements {
+    hasModel: boolean;
+    hasData: boolean;
+    hasTimeVariable: boolean;
+    hasLinkedVariables: boolean;
+    hasTarget: boolean;
+    hasParamsToVary: boolean;
+}

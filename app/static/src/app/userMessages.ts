@@ -30,13 +30,21 @@ export default {
     },
     modelFit: {
         cancelled: "Model fit was cancelled before converging",
-        cannotFit: "Cannot fit model. Please provide valid data and code, link at least one variable "
-            + "and select parameters to vary.",
         notFittedYet: "Model has not been fitted.",
         selectParamToVary: "Please select at least one parameter to vary during model fit.",
         compileRequired: "Model code has been updated. Compile code and Fit Model for updated best fit.",
         fitRequired: "Model code has been recompiled, or options or data have been updated. "
-            + "Fit Model for updated best fit."
+            + "Fit Model for updated best fit.",
+        fitRequirements: {
+            prefix: "Cannot fit model. Please",
+            unknown: "contact the administrator, as this is unexpected",
+            needsModel: "compile a model (Code tab)",
+            needsData: "upload a data set (Data tab)",
+            needsTimeVariable: "select a time variable for the data (Data tab)",
+            needsLinkedVariables: "link your model and data (Options tab)",
+            needsTarget: "select a target to fit (Options tab)",
+            needsParamsToVary: "select at least one parameter to vary (Options tab)"
+        }
     },
     sensitivity: {
         compileRequiredForOptions: "Please compile a valid model in order to set sensitivity options.",
