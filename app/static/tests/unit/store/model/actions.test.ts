@@ -294,7 +294,7 @@ describe("Model actions", () => {
 
         await store.dispatch(`model/${ModelAction.DefaultModel}`);
 
-        expect(commit.mock.calls.length).toBe(11);
+        expect(commit.mock.calls.length).toBe(10);
 
         // fetch
         const postData = JSON.parse(mockAxios.history.post[0].data);
@@ -339,7 +339,5 @@ describe("Model actions", () => {
             inputs: { endTime: 99, parameterValues: { p1: 1 } },
             solution: "test solution"
         });
-        expect(commit.mock.calls[10][0]).toBe(`run/${RunMutation.SetRunRequired}`);
-        expect(commit.mock.calls[10][1]).toBe(false);
     });
 });
