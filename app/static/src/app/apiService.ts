@@ -45,6 +45,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
     }
 
     private _ignoreErrors = false;
+
     private _ignoreSuccess = false;
 
     private _freezeResponse = false;

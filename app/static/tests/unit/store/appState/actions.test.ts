@@ -8,7 +8,7 @@ import { ErrorsMutation } from "../../../../src/app/store/errors/mutations";
 import { CodeMutation, mutations as codeMutations } from "../../../../src/app/store/code/mutations";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { ModelAction } from "../../../../src/app/store/model/actions";
-import {serialiseState} from "../../../../src/app/serialise";
+import { serialiseState } from "../../../../src/app/serialise";
 
 describe("AppState actions", () => {
     const getStore = () => {
@@ -113,10 +113,10 @@ describe("AppState actions", () => {
         jest.useFakeTimers();
         const mockSetInterval = jest.spyOn(window, "setInterval");
         const state = mockFitState({
-            modelFit: mockModelFitState({fitting: true})
+            modelFit: mockModelFitState({ fitting: true })
         });
         const commit = jest.fn();
-        await (appStateActions[AppStateAction.QueueStateUpload] as any)({commit, state});
+        await (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
         expect(commit).not.toHaveBeenCalled();
         expect(mockSetInterval).not.toHaveBeenCalled();
     });
@@ -124,12 +124,12 @@ describe("AppState actions", () => {
     it("QueueStateUpload sets new state upload pending", (done) => {
         jest.useFakeTimers();
         const mockSetInterval = jest.spyOn(window, "setInterval");
-        const state = mockFitState({sessionId: "1234", appName: "testApp"});
+        const state = mockFitState({ sessionId: "1234", appName: "testApp" });
         const commit = jest.fn();
         mockAxios.onPost("/apps/testApp/sessions/1234")
             .reply(200, "");
 
-        (appStateActions[AppStateAction.QueueStateUpload] as any)({commit, state});
+        (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
         expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.ClearQueuedStateUpload);
         expect(commit.mock.calls[1][0]).toBe(AppStateMutation.SetQueuedStateUpload);
@@ -162,12 +162,12 @@ describe("AppState actions", () => {
     it("QueueStateUpload callback does not upload pending if upload is in progress", async () => {
         jest.useFakeTimers();
         const mockSetInterval = jest.spyOn(window, "setInterval");
-        const state = mockFitState({sessionId: "1234", appName: "testApp"});
+        const state = mockFitState({ sessionId: "1234", appName: "testApp" });
         const commit = jest.fn();
         mockAxios.onPost("/apps/testApp/sessions/1234")
             .reply(200);
 
-        await (appStateActions[AppStateAction.QueueStateUpload] as any)({commit, state});
+        await (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
         expect(commit).toHaveBeenCalledTimes(2);
         expect(mockSetInterval).toHaveBeenCalledTimes(1);
         expect(mockAxios.history.post.length).toBe(0);
@@ -185,12 +185,12 @@ describe("AppState actions", () => {
     it("QueueStateUpload callback does not upload pending if fitting is in progress", async () => {
         jest.useFakeTimers();
         const mockSetInterval = jest.spyOn(window, "setInterval");
-        const state = mockFitState({sessionId: "1234", appName: "testApp"});
+        const state = mockFitState({ sessionId: "1234", appName: "testApp" });
         const commit = jest.fn();
         mockAxios.onPost("/apps/testApp/sessions/1234")
             .reply(200);
 
-        await (appStateActions[AppStateAction.QueueStateUpload] as any)({commit, state});
+        await (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
         expect(commit).toHaveBeenCalledTimes(2);
         expect(mockSetInterval).toHaveBeenCalledTimes(1);
         expect(mockAxios.history.post.length).toBe(0);
@@ -207,12 +207,12 @@ describe("AppState actions", () => {
 
     it("QueueStatusUpload callback commits api error", (done) => {
         jest.useFakeTimers();
-        const state = mockFitState({sessionId: "1234", appName: "testApp"});
+        const state = mockFitState({ sessionId: "1234", appName: "testApp" });
         const commit = jest.fn();
         mockAxios.onPost("/apps/testApp/sessions/1234")
             .reply(500, mockFailure("upload failure"));
 
-        (appStateActions[AppStateAction.QueueStateUpload] as any)({commit, state});
+        (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
         jest.advanceTimersByTime(2000);
 
         expect(commit).toHaveBeenCalledTimes(4);
@@ -227,7 +227,7 @@ describe("AppState actions", () => {
         setTimeout(() => {
             expect(commit).toHaveBeenCalledTimes(6);
             expect(commit.mock.calls[4][0]).toBe(ErrorsMutation.AddError);
-            expect(commit.mock.calls[4][1]).toStrictEqual({error: "OTHER_ERROR", detail: "upload failure"});
+            expect(commit.mock.calls[4][1]).toStrictEqual({ error: "OTHER_ERROR", detail: "upload failure" });
             expect(commit.mock.calls[5][0]).toBe(AppStateMutation.SetStateUploadInProgress);
             expect(commit.mock.calls[5][1]).toBe(false);
             done();

@@ -1,16 +1,15 @@
-import {BasicState} from "../../src/app/store/basic/state";
-import {AppType, VisualisationTab} from "../../src/app/store/appState/state";
+import { BasicState } from "../../src/app/store/basic/state";
+import { AppType, VisualisationTab } from "../../src/app/store/appState/state";
 import {
     SensitivityPlotExtreme,
     SensitivityPlotType,
     SensitivityScaleType,
     SensitivityVariationType
 } from "../../src/app/store/sensitivity/state";
-import {serialiseState} from "../../src/app/serialise";
-import {FitState} from "../../src/app/store/fit/state";
+import { serialiseState } from "../../src/app/serialise";
+import { FitState } from "../../src/app/store/fit/state";
 
 describe("serialise", () => {
-
     const codeState = {
         currentCode: ["some code"]
     };
@@ -29,35 +28,39 @@ describe("serialise", () => {
             metadata: {
                 variables: ["S", "I", "R"],
                 parameters: [
-                    {name: "alpha", default: 1, min: 0, max: 2, is_integer: true, rank: 0},
-                    {name: "beta", default: 0.1, min: -1, max: 10.5, is_integer: false, rank: 1}
+                    {
+                        name: "alpha", default: 1, min: 0, max: 2, is_integer: true, rank: 0
+                    },
+                    {
+                        name: "beta", default: 0.1, min: -1, max: 10.5, is_integer: false, rank: 1
+                    }
                 ],
                 messages: ["a test message"]
             },
             model: "a test model",
-            error: {line: ["test error line 1"], message: "test model error"}
+            error: { line: ["test error line 1"], message: "test model error" }
         },
         odin: jest.fn(),
-        paletteModel: {S: "#f00", I: "#0f0", R: "#00f"},
-        odinModelCodeError: {error: "odin error", detail: "test odin error"}
+        paletteModel: { S: "#f00", I: "#0f0", R: "#00f" },
+        odinModelCodeError: { error: "odin error", detail: "test odin error" }
     };
 
     const runState = {
         runRequired: true,
-        parameterValues: {alpha: 1, beta: 1.1},
+        parameterValues: { alpha: 1, beta: 1.1 },
         endTime: 20,
         result: {
             inputs: {
-                parameterValues: {alpha: 0, beta: 2.2},
+                parameterValues: { alpha: 0, beta: 2.2 },
                 endTime: 10
             },
             solution: jest.fn(),
-            error: {error: "run error", detail: "run error detail"}
+            error: { error: "run error", detail: "run error detail" }
         }
     };
 
     const sensitivityBatchPars = {
-        base: {alpha: 1, beta: 1.1},
+        base: { alpha: 1, beta: 1.1 },
         name: "alpha",
         values: [0.5, 0.75, 1, 1.25, 1.5]
     };
@@ -87,18 +90,18 @@ describe("serialise", () => {
                 solutions: [jest.fn(), jest.fn()],
                 valueAtTime: jest.fn()
             },
-            error: {error: "sensitivity error", detail: "sensitivity error detail"}
+            error: { error: "sensitivity error", detail: "sensitivity error detail" }
         }
     };
 
     const fitDataState = {
-        data: [{time: 0, cases: 0}, {time: 1, cases: 2}],
+        data: [{ time: 0, cases: 0 }, { time: 1, cases: 2 }],
         columns: ["time", "cases"],
         timeVariableCandidates: ["time"],
         timeVariable: "time",
-        linkedVariables: {cases: "I"},
+        linkedVariables: { cases: "I" },
         columnToFit: "cases",
-        error: {error: "fit error", detail: "fit error detail"}
+        error: { error: "fit error", detail: "fit error detail" }
     };
 
     const modelFitState = {
@@ -109,19 +112,19 @@ describe("serialise", () => {
         sumOfSquares: 21.43,
         paramsToVary: ["beta"],
         inputs: {
-            data: [{t: 0, cases: 1}, {t: 1, cases: 3}],
+            data: [{ t: 0, cases: 1 }, { t: 1, cases: 3 }],
             endTime: 5,
-            link: {time: "t", data: "cases", model: "S"}
+            link: { time: "t", data: "cases", model: "S" }
         },
         result: {
             inputs: {
-                parameterValues: {alpha: 0, beta: 3.2},
+                parameterValues: { alpha: 0, beta: 3.2 },
                 endTime: 15,
-                data: [{t: 0, cases: 2}, {t: 2, cases: 4}],
-                link: {time: "t", data: "cases", model: "R"}
+                data: [{ t: 0, cases: 2 }, { t: 2, cases: 4 }],
+                link: { time: "t", data: "cases", model: "R" }
             },
             solution: jest.fn(),
-            error: {error: "fit error", detail: "fit error detail"}
+            error: { error: "fit error", detail: "fit error detail" }
         }
     };
 
@@ -155,7 +158,7 @@ describe("serialise", () => {
         modelFit: modelFitState
     };
 
-    const expectedCode = {currentCode: ["some code"]};
+    const expectedCode = { currentCode: ["some code"] };
     const expectedModel = {
         compileRequired: true,
         odinModelResponse: modelState.odinModelResponse,
@@ -188,7 +191,7 @@ describe("serialise", () => {
         columns: ["time", "cases"],
         timeVariableCandidates: ["time"],
         timeVariable: "time",
-        linkedVariables: {cases: "I"},
+        linkedVariables: { cases: "I" },
         columnToFit: "cases",
         error: fitDataState.error
     };
@@ -265,16 +268,16 @@ describe("serialise", () => {
             model: expectedModel,
             run: {
                 ...expectedRun,
-                result: {...expectedRun.result, hasResult: false}
+                result: { ...expectedRun.result, hasResult: false }
             },
             sensitivity: {
                 ...expectedSensitivity,
-                result: {...expectedSensitivity.result, hasResult: false}
+                result: { ...expectedSensitivity.result, hasResult: false }
             },
             fitData: expectedFitData,
             modelFit: {
                 ...expectedModelFit,
-                result: {...expectedModelFit.result, hasResult: false}
+                result: { ...expectedModelFit.result, hasResult: false }
             }
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
@@ -283,21 +286,21 @@ describe("serialise", () => {
     it("serialises as expected when no model or results", () => {
         const state = {
             ...fitState,
-            model: {...modelState, odin: null},
-            run: {...runState, result: null},
-            sensitivity: {...sensitivityState, result: null},
-            modelFit: {...modelFitState, result: null}
+            model: { ...modelState, odin: null },
+            run: { ...runState, result: null },
+            sensitivity: { ...sensitivityState, result: null },
+            modelFit: { ...modelFitState, result: null }
         };
         const serialised = serialiseState(state);
 
         const expected = {
             openVisualisationTab: VisualisationTab.Fit,
             code: expectedCode,
-            model: {...expectedModel, hasOdin: false},
-            run: {...expectedRun, result: null },
-            sensitivity: {...expectedSensitivity, result: null},
+            model: { ...expectedModel, hasOdin: false },
+            run: { ...expectedRun, result: null },
+            sensitivity: { ...expectedSensitivity, result: null },
             fitData: expectedFitData,
-            modelFit: {...expectedModelFit, result: null}
+            modelFit: { ...expectedModelFit, result: null }
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
     });

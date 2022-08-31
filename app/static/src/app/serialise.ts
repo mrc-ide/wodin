@@ -1,11 +1,11 @@
-import {AppState, AppType} from "./store/appState/state";
-import {FitState} from "./store/fit/state";
-import {CodeState} from "./store/code/state";
-import {ModelState} from "./store/model/state";
-import {RunState} from "./store/run/state";
-import {SensitivityState} from "./store/sensitivity/state";
-import {FitDataState} from "./store/fitData/state";
-import {ModelFitState} from "./store/modelFit/state";
+import { AppState, AppType } from "./store/appState/state";
+import { FitState } from "./store/fit/state";
+import { CodeState } from "./store/code/state";
+import { ModelState } from "./store/model/state";
+import { RunState } from "./store/run/state";
+import { SensitivityState } from "./store/sensitivity/state";
+import { FitDataState } from "./store/fitData/state";
+import { ModelFitState } from "./store/modelFit/state";
 
 function serialiseCode(code: CodeState) {
     return {
@@ -82,7 +82,7 @@ export const serialiseState = (state: AppState) => {
         model: serialiseModel(state.model),
         run: serialiseRun(state.run),
         sensitivity: serialiseSensitivity(state.sensitivity)
-    } as any; //TODO: generate type from schema
+    } as any; // TODO: generate type from schema
 
     if (state.appType === AppType.Fit) {
         const fitState = state as FitState;

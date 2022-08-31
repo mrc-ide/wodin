@@ -1,17 +1,29 @@
-import {ActionContext, ActionTree} from "vuex";
-import {api} from "../../apiService";
-import {ErrorsMutation} from "../errors/mutations";
-import {AppConfig} from "../../types/responseTypes";
-import {CodeMutation} from "../code/mutations";
-import {ModelAction} from "../model/actions";
-import {AppState, AppType} from "./state";
-import {AppStateMutation} from "./mutations";
-import {serialiseState} from "../../serialise";
-import {FitState} from "../fit/state";
+import { ActionContext, ActionTree } from "vuex";
+import { api } from "../../apiService";
+import { ErrorsMutation } from "../errors/mutations";
+import { AppConfig } from "../../types/responseTypes";
+import { CodeMutation } from "../code/mutations";
+import { ModelAction } from "../model/actions";
+import { AppState, AppType } from "./state";
+import { AppStateMutation } from "./mutations";
+import { serialiseState } from "../../serialise";
+import { FitState } from "../fit/state";
 
 export enum AppStateAction {
     FetchConfig = "FetchConfig",
     QueueStateUpload = "QueueStateUpload"
+}
+
+async function immediateUploadState(context: ActionContext<AppState, AppState>) {
+    const { commit, state } = context;
+    const { appName, sessionId } = state;
+
+    commit(AppStateMutation.SetStateUploadInProgress, true);
+    await api<AppStateMutation, ErrorsMutation>(context)
+        .ignoreSuccess()
+        .withError(ErrorsMutation.AddError)
+        .post(`/apps/${appName}/sessions/${sessionId}`, serialiseState(state));
+    commit(AppStateMutation.SetStateUploadInProgress, false);
 }
 
 export const appStateActions: ActionTree<AppState, AppState> = {
@@ -35,7 +47,7 @@ export const appStateActions: ActionTree<AppState, AppState> = {
     },
 
     async [AppStateAction.QueueStateUpload](context) {
-        const {state, commit} = context;
+        const { state, commit } = context;
         const isFitting = () => { return (state.appType === AppType.Fit) && ((state as FitState).modelFit.fitting); };
 
         // Do not queue uploads while fitting is true - we'll upload when fit finishes
@@ -57,15 +69,3 @@ export const appStateActions: ActionTree<AppState, AppState> = {
         }
     }
 };
-
-async function immediateUploadState(context: ActionContext<AppState, AppState>) {
-    const {commit, state} = context;
-    const {appName, sessionId} = state;
-
-    commit(AppStateMutation.SetStateUploadInProgress, true);
-    await api<AppStateMutation, ErrorsMutation>(context)
-        .ignoreSuccess()
-        .withError(ErrorsMutation.AddError)
-        .post(`/apps/${appName}/sessions/${sessionId}`, serialiseState(state));
-    commit(AppStateMutation.SetStateUploadInProgress, false);
-}

@@ -1,8 +1,8 @@
 import Vuex from "vuex";
 import { logMutations, persistState } from "../../../src/app/store/plugins";
 import { AppState } from "../../../src/app/store/appState/state";
-import {AppStateAction} from "../../../src/app/store/appState/actions";
-import {AppStateMutation} from "../../../src/app/store/appState/mutations";
+import { AppStateAction } from "../../../src/app/store/appState/actions";
+import { AppStateMutation } from "../../../src/app/store/appState/mutations";
 
 describe("plugins", () => {
     it("logMutations logs mutations to console", () => {
@@ -49,7 +49,7 @@ describe("plugins", () => {
     it("persistState does not dispatch QueueStateUpload for any StateUploadMutation", () => {
         const store = new Vuex.Store<AppState>({
             mutations: {
-                [AppStateMutation.ClearQueuedStateUpload]:  () => {},
+                [AppStateMutation.ClearQueuedStateUpload]: () => {},
                 [AppStateMutation.SetQueuedStateUpload]: () => {},
                 [AppStateMutation.SetStateUploadInProgress]: () => {}
             }
