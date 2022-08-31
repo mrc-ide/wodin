@@ -46,7 +46,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
                 link
             };
 
-            commit(ModelFitMutation.SetFitUpdateRequiredReasons, null);
+            commit(ModelFitMutation.SetFitUpdateRequired, null);
             commit(ModelFitMutation.SetInputs, inputs);
             dispatch(ModelFitAction.FitModelStep, simplex);
         }

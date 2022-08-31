@@ -8,7 +8,7 @@ export interface ModelFitInputs {
 }
 
 // TODO: perhaps UpdatefitRequiredReasons?
-export interface RerunFitReasons {
+export interface FitUpdateRequiredReasons /* RerunFitReasons */ {
     modelChanged: boolean,
     dataChanged: boolean,
     linkChanged: boolean
@@ -16,7 +16,7 @@ export interface RerunFitReasons {
 
 export interface ModelFitState {
     fitting: boolean,
-    fitUpdateRequiredReasons: RerunFitReasons,
+    fitUpdateRequired: FitUpdateRequiredReasons, // TODO: rename member
     iterations: number | null,
     converged: boolean | null,
     sumOfSquares: number | null,

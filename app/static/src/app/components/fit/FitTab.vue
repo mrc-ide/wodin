@@ -50,7 +50,7 @@ export default {
         const fitRequirements = computed(() => store.getters[`${namespace}/${ModelFitGetter.fitRequirements}`]);
         const canFitModel = computed(() => allTrue(fitRequirements.value));
         const compileRequired = computed(() => store.state.model.compileRequired);
-        const fitUpdateRequiredReasons = computed(() => store.state.modelFit.fitUpdateRequiredReasons);
+        const fitUpdateRequired = computed(() => store.state.modelFit.fitUpdateRequired);
         const fitModel = () => store.dispatch(`${namespace}/${ModelFitAction.FitModel}`);
 
         const cancelFit = () => store.commit(`${namespace}/${ModelFitMutation.SetFitting}`, false);
@@ -75,8 +75,8 @@ export default {
             if (compileRequired.value) {
                 return userMessages.modelFit.compileRequired;
             }
-            if (anyTrue(fitUpdateRequiredReasons.value)) {
-                return fitUpdateRequiredExplanation(fitUpdateRequiredReasons.value);
+            if (anyTrue(fitUpdateRequired.value)) {
+                return fitUpdateRequiredExplanation(fitUpdateRequired.value);
             }
 
             return "";

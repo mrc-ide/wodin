@@ -1,5 +1,5 @@
 import { MutationTree } from "vuex";
-import { ModelFitInputs, ModelFitState, RerunFitReasons } from "./state";
+import { ModelFitInputs, ModelFitState, FitUpdateRequiredReasons } from "./state";
 import { SimplexResult } from "../../types/responseTypes";
 
 export enum ModelFitMutation {
@@ -7,8 +7,7 @@ export enum ModelFitMutation {
     SetResult = "SetResult",
     SetInputs = "SetInputs",
     SetParamsToVary = "SetParamsToVary",
-    // TODO: rename to SetFitUpdateRequired when working
-    SetFitUpdateRequiredReasons = "SetFitUpdateRequiredReasons"
+    SetFitUpdateRequired = "SetFitUpdateRequired"
 }
 
 export const mutations: MutationTree<ModelFitState> = {
@@ -39,16 +38,16 @@ export const mutations: MutationTree<ModelFitState> = {
         state.paramsToVary = payload;
     },
 
-    [ModelFitMutation.SetFitUpdateRequiredReasons](state: ModelFitState, payload: null | Partial<RerunFitReasons>) {
+    [ModelFitMutation.SetFitUpdateRequired](state: ModelFitState, payload: null | Partial<FitUpdateRequiredReasons>) {
         if (payload === null) {
-            state.fitUpdateRequiredReasons = {
+            state.fitUpdateRequired = {
                 modelChanged: false,
                 dataChanged: false,
                 linkChanged: false
             };
         } else {
-            state.fitUpdateRequiredReasons = {
-                ...state.fitUpdateRequiredReasons,
+            state.fitUpdateRequired = {
+                ...state.fitUpdateRequired,
                 ...payload
             };
         }
