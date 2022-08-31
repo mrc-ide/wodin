@@ -32,6 +32,8 @@ import { ModelFitGetter } from "../../store/modelFit/getters";
 import userMessages from "../../userMessages";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import { ModelFitMutation } from "../../store/modelFit/mutations";
+import { fitRequirementsExplanation } from "./support";
+import { allTrue } from "../../utils";
 
 export default {
     name: "FitTab",
@@ -45,10 +47,12 @@ export default {
         const store = useStore();
         const namespace = "modelFit";
 
-        const canFitModel = computed(() => store.getters[`${namespace}/${ModelFitGetter.canRunFit}`]);
+        const fitRequirements = computed(() => store.getters[`${namespace}/${ModelFitGetter.fitRequirements}`]);
+        const canFitModel = computed(() => allTrue(fitRequirements.value));
         const compileRequired = computed(() => store.state.model.compileRequired);
         const fitUpdateRequired = computed(() => store.state.modelFit.fitUpdateRequired);
         const fitModel = () => store.dispatch(`${namespace}/${ModelFitAction.FitModel}`);
+
         const cancelFit = () => store.commit(`${namespace}/${ModelFitMutation.SetFitting}`, false);
 
         const iterations = computed(() => store.state.modelFit.iterations);
@@ -58,8 +62,8 @@ export default {
         const sumOfSquares = computed(() => store.state.modelFit.sumOfSquares);
 
         const actionRequiredMessage = computed(() => {
-            if (!canFitModel.value) {
-                return userMessages.modelFit.cannotFit;
+            if (!allTrue(fitRequirements.value)) {
+                return fitRequirementsExplanation(fitRequirements.value);
             }
             if (compileRequired.value) {
                 return userMessages.modelFit.compileRequired;

@@ -176,4 +176,18 @@ export function generateBatchPars(
     };
 }
 
-export const newSessionId = () => uid(32);
+export const newSessionId = (): string => uid(32);
+
+export const joinStringsSentence = (strings: string[], last = " and ", sep = ", "): string => {
+    const n = strings.length;
+    if (n === 0) {
+        return "";
+    } if (n === 1) {
+        return strings[0];
+    }
+    return strings.slice(0, n - 1).join(sep) + last + strings[n - 1];
+};
+
+export const allTrue = (x: Dict<boolean>): boolean => {
+    return Object.values(x).every((el: boolean) => el);
+};

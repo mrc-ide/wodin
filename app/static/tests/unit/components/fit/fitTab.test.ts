@@ -14,7 +14,7 @@ import { mockFitState } from "../../../mocks";
 
 describe("Fit Tab", () => {
     const getWrapper = (
-        canRunFit = true,
+        fitRequirements = {}, // ends up being true
         compileRequired = false,
         fitUpdateRequired = false,
         iterations: number | null = 10,
@@ -44,7 +44,7 @@ describe("Fit Tab", () => {
 
                     } as any,
                     getters: {
-                        canRunFit: () => canRunFit
+                        fitRequirements: () => fitRequirements
                     } as any,
                     actions: {
                         FitModel: mockFitModel
@@ -79,7 +79,7 @@ describe("Fit Tab", () => {
     });
 
     it("renders as expected when fit is running", () => {
-        const wrapper = getWrapper(true, false, false, 5, false, true, 123.45);
+        const wrapper = getWrapper({}, false, false, 5, false, true, 123.45);
         expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect((wrapper.find("#cancel-fit-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
@@ -93,7 +93,7 @@ describe("Fit Tab", () => {
     });
 
     it("renders as expected before fit runs", () => {
-        const wrapper = getWrapper(true, false, false, null, null, false, null);
+        const wrapper = getWrapper({}, false, false, null, null, false, null);
         expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect((wrapper.find("#cancel-fit-btn").element as HTMLButtonElement).disabled).toBe(true);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
@@ -106,7 +106,7 @@ describe("Fit Tab", () => {
     });
 
     it("renders as expected when fit has been cancelled", () => {
-        const wrapper = getWrapper(true, false, false, 1, false, false, 121.2);
+        const wrapper = getWrapper({}, false, false, 1, false, false, 121.2);
         expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect((wrapper.find("#cancel-fit-btn").element as HTMLButtonElement).disabled).toBe(true);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
@@ -122,12 +122,15 @@ describe("Fit Tab", () => {
     });
 
     it("renders as expected when cannot run fit", () => {
-        const wrapper = getWrapper(false, false, false, null, null, false, null);
+        const fitRequirements = {
+            hasModel: false,
+            hasData: false
+        };
+        const wrapper = getWrapper(fitRequirements, false, false, null, null, false, null);
         expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(true);
         expect((wrapper.find("#cancel-fit-btn").element as HTMLButtonElement).disabled).toBe(true);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Cannot fit model. Please provide valid data and code, link at least one variable and "
-                + "select parameters to vary.");
+            .toBe("Cannot fit model. Please compile a model (Code tab) and upload a data set (Data tab).");
         const fitPlot = wrapper.findComponent(FitPlot);
         expect(fitPlot.props("fadePlot")).toBe(true);
         expect(fitPlot.findComponent(VueFeather).exists()).toBe(false);
@@ -137,7 +140,7 @@ describe("Fit Tab", () => {
     });
 
     it("renders as expected when compile is required", () => {
-        const wrapper = getWrapper(true, true, false);
+        const wrapper = getWrapper({}, true, false);
         expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
             .toBe("Model code has been updated. Compile code and Fit Model for updated best fit.");
@@ -149,7 +152,7 @@ describe("Fit Tab", () => {
     });
 
     it("renders as expected when fit update is required", () => {
-        const wrapper = getWrapper(true, false, true);
+        const wrapper = getWrapper({}, false, true);
         expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
             .toBe("Model code has been recompiled, or options or data have been updated. "
@@ -163,14 +166,14 @@ describe("Fit Tab", () => {
 
     it("dispatches fit action on click button", async () => {
         const mockFitModel = jest.fn();
-        const wrapper = getWrapper(true, false, false, null, null, false, null, mockFitModel);
+        const wrapper = getWrapper({}, false, false, null, null, false, null, mockFitModel);
         await wrapper.find("#fit-btn").trigger("click");
         expect(mockFitModel).toHaveBeenCalledTimes(1);
     });
 
     it("cancel button sets fitting to false", async () => {
         const mockSetFitting = jest.fn();
-        const wrapper = getWrapper(true, false, false, 1, false, true, 25.6, jest.fn(), mockSetFitting);
+        const wrapper = getWrapper({}, false, false, 1, false, true, 25.6, jest.fn(), mockSetFitting);
         await wrapper.find("#cancel-fit-btn").trigger("click");
         expect(mockSetFitting).toHaveBeenCalledTimes(1);
         expect(mockSetFitting.mock.calls[0][1]).toBe(false);

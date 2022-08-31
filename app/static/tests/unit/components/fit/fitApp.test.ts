@@ -18,6 +18,7 @@ import DataTab from "../../../../src/app/components/data/DataTab.vue";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
 import { VisualisationTab } from "../../../../src/app/store/appState/state";
 import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
+import { ModelFitGetter } from "../../../../src/app/store/modelFit/getters";
 
 describe("FitApp", () => {
     const getWrapper = (mockSetOpenVisualisationTab = jest.fn()) => {
@@ -47,7 +48,10 @@ describe("FitApp", () => {
                 },
                 modelFit: {
                     namespaced: true,
-                    state: mockModelFitState()
+                    state: mockModelFitState(),
+                    getters: {
+                        [ModelFitGetter.fitRequirements]: () => ({})
+                    }
                 },
                 sensitivity: {
                     namespaced: true,
