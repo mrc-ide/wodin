@@ -66,7 +66,8 @@ describe("ModelFit mutations", () => {
         const base = {
             dataChanged: false,
             linkChanged: false,
-            modelChanged: false
+            modelChanged: false,
+            parameterChanged: false
         };
         expect(state.fitUpdateRequired).toEqual(base);
         mutations.SetFitUpdateRequired(state, { dataChanged: true });

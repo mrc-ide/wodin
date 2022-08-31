@@ -8,7 +8,8 @@ export const defaultState: ModelFitState = {
     fitUpdateRequired: {
         modelChanged: false,
         dataChanged: false,
-        linkChanged: false
+        linkChanged: false,
+        parameterChanged: false
     },
     iterations: null,
     converged: null,

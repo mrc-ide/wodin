@@ -37,6 +37,7 @@ export const fitUpdateRequiredExplanation = (reasons: FitUpdateRequiredReasons):
     appendIf(explanation, reasons.modelChanged, help.modelChanged);
     appendIf(explanation, reasons.dataChanged, help.dataChanged);
     appendIf(explanation, reasons.linkChanged && !reasons.modelChanged && !reasons.dataChanged, help.linkChanged);
+    appendIf(explanation, reasons.parameterChanged && !reasons.modelChanged, help.parameterChanged);
     // Fallback reason if something unexpected has happened.
     appendIf(explanation, explanation.length === 0, help.unknown);
     return `${help.prefix} ${joinStringsSentence(explanation)}. ${help.suffix}.`;

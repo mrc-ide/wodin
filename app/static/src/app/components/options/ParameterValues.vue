@@ -68,6 +68,7 @@ export default defineComponent({
 
         const updateValue = (newValue: number, paramName: string) => {
             store.commit(`run/${RunMutation.UpdateParameterValues}`, { [paramName]: newValue });
+            store.commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { parameterChanged: true });
             store.commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true);
         };
 

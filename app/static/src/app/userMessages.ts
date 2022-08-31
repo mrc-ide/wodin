@@ -39,7 +39,7 @@ export default {
             modelChanged: "model has been recompiled",
             dataChanged: "data have been updated",
             linkChanged: "model-data link has changed",
-            parametersChanged: "parameters have been updated",
+            parameterChanged: "parameters have been updated",
             suffix: "Rerun fit to view updated result"
         },
         fitRequirements: {

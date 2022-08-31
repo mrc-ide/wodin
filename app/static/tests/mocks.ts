@@ -135,7 +135,8 @@ export const mockModelFitState = (state: Partial<ModelFitState> = {}): ModelFitS
         fitUpdateRequired: {
             modelChanged: false,
             dataChanged: false,
-            linkChanged: false
+            linkChanged: false,
+            parameterChanged: false
         },
         iterations: null,
         converged: null,
