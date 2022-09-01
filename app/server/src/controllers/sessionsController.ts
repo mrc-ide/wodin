@@ -22,7 +22,8 @@ export class SessionsController {
         if (sessionIdsString) {
             const sessionIds = sessionIdsString.split(",");
             const store = SessionsController.getStore(req);
-            const metadata = store.getSessionsMetadata(sessionIds);
+            const metadata = await store.getSessionsMetadata(sessionIds);
+            console.log("metadata is: " + JSON.stringify(metadata))
             jsonResponseSuccess(metadata, res);
         } else {
             res.end();
