@@ -6,6 +6,7 @@ import { RunState } from "./store/run/state";
 import { SensitivityState } from "./store/sensitivity/state";
 import { FitDataState } from "./store/fitData/state";
 import { ModelFitState } from "./store/modelFit/state";
+import {OdinFitResult, OdinRunResult} from "./types/wrapperTypes";
 
 function serialiseCode(code: CodeState) {
     return {
@@ -22,16 +23,20 @@ function serialiseModel(model: ModelState) {
     };
 }
 
+function serialiseSolutionResult(result: OdinRunResult | OdinFitResult | null) {
+    return result ? {
+        inputs: result.inputs,
+        hasResult: !!result.solution,
+        error: result.error
+    } : null;
+}
+
 function serialiseRun(run: RunState) {
     return {
         runRequired: run.runRequired,
         parameterValues: run.parameterValues,
         endTime: run.endTime,
-        result: run.result ? {
-            inputs: run.result.inputs,
-            hasResult: !!run.result.solution,
-            error: run.result.error
-        } : null
+        result: serialiseSolutionResult(run.result)
     };
 }
 
@@ -67,11 +72,7 @@ function serialiseModelFit(modelFit: ModelFitState) {
         converged: modelFit.converged,
         sumOfSquares: modelFit.sumOfSquares,
         paramsToVary: modelFit.paramsToVary,
-        result: modelFit.result ? {
-            inputs: modelFit.result.inputs,
-            hasResult: !!modelFit.result.solution,
-            error: modelFit.result.error
-        } : null
+        result: serialiseSolutionResult(modelFit.result)
     };
 }
 
