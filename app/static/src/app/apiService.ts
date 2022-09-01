@@ -27,6 +27,7 @@ export interface API<S, E> {
     withError: (type: E, root: boolean) => API<S, E>
     withSuccess: (type: S, root: boolean) => API<S, E>
     ignoreErrors: () => API<S, E>
+    ignoreSuccess: () => API<S, E>
 
     get<T>(url: string): Promise<void | ResponseWithType<T>>
 }
@@ -44,6 +45,8 @@ export class APIService<S extends string, E extends string> implements API<S, E>
     }
 
     private _ignoreErrors = false;
+
+    private _ignoreSuccess = false;
 
     private _freezeResponse = false;
 
@@ -80,6 +83,11 @@ export class APIService<S extends string, E extends string> implements API<S, E>
 
     ignoreErrors = () => {
         this._ignoreErrors = true;
+        return this;
+    };
+
+    ignoreSuccess = () => {
+        this._ignoreSuccess = true;
         return this;
     };
 
@@ -129,7 +137,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         if (this._onError == null && !this._ignoreErrors) {
             console.warn(`No error handler registered for request ${url}.`);
         }
-        if (this._onSuccess == null) {
+        if (this._onSuccess == null && !this._ignoreSuccess) {
             console.warn(`No success handler registered for request ${url}.`);
         }
     }

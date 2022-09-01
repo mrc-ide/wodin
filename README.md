@@ -62,6 +62,8 @@ Each app config file should contain the following settings:
 - `appType`: "basic", "fit" or "stochastic"
 - `title`: the app title which will be visible to the user
 - `readOnlyCode`: boolean indicating whether default code should not be editable by the user
+- `stateUploadIntervalMillis` (optional): number of milliseconds to wait after front end state changes before state will be 
+saved to the server. Increase this value if too frequent requests are causing issues. Default is 2000.
 
 ### /defaultCode/*.R
 
