@@ -23,7 +23,6 @@ export class SessionsController {
             const sessionIds = sessionIdsString.split(",");
             const store = SessionsController.getStore(req);
             const metadata = await store.getSessionsMetadata(sessionIds);
-            console.log("metadata is: " + JSON.stringify(metadata))
             jsonResponseSuccess(metadata, res);
         } else {
             res.end();

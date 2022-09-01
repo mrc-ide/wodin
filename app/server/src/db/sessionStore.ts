@@ -21,15 +21,14 @@ export class SessionStore {
     }
 
     async getSessionsMetadata(ids: string[]) {
-        console.log("ids:" + JSON.stringify(ids))
-        const result = [];
-        console.log("session key on get is: " + this.sessionKey("time"))
+        const result: any[] = [];
         for (const id of ids) {
-            // eslint-disable-next-line no-await-in-loop
-            const time = await this._redis.hget(this.sessionKey("time"), id);
-            console.log("got time value: " + time)
-            const label = await this._redis.hget(this.sessionKey("label"), id);
-            result.push({id, time, label});
+            await Promise.all([
+                this._redis.hget(this.sessionKey("time"), id),
+                this._redis.hget(this.sessionKey("label"), id)
+            ]).then((values) => {
+                result.push({id, time: values[0], label: values[1]});
+            });
         }
         return result;
     }
