@@ -35,9 +35,8 @@ describe("Sessionstore", () => {
     });
 
     it("can save label", async () => {
-        const data = "testSession";
         const id = "1234";
-        const label = "some label"
+        const label = "some label";
         const sut = new SessionStore(mockRedis, "Test Course", "testApp");
         await sut.saveSessionLabel(id, label);
         expect(mockRedis.hset).toHaveBeenCalledTimes(1);
