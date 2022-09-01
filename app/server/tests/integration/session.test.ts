@@ -43,14 +43,14 @@ describe("Session id integration", () => {
         const response2 = await get(url);
         expect(response2.status).toBe(200);
         expect(response2.headers["content-type"]).toMatch("application/json");
-        expect(response2.data).toStrictEqual(data);
+        expect(response2.data.data).toStrictEqual(data);
     });
 
     it("can get null value fetching nonexistant session", async () => {
         const response = await get(url);
         expect(response.status).toBe(200);
         expect(response.headers["content-type"]).toMatch("application/json");
-        expect(response.data).toBe(null);
+        expect(response.data.data).toBe(null);
     });
 });
 

@@ -1,6 +1,6 @@
 import { SessionStore } from "../../src/db/sessionStore";
 import Mock = jest.Mock;
-import { SessionsController } from "../../src/controllers/sessionsController";
+import { SessionsController, serialiseSession } from "../../src/controllers/sessionsController";
 
 jest.mock("../../src/db/sessionStore");
 
@@ -10,7 +10,8 @@ describe("SessionsController", () => {
     const res = {
         end: jest.fn(),
         set: jest.fn(),
-        send: jest.fn()
+        send: jest.fn(),
+        header: jest.fn()
     } as any;
 
     beforeEach(() => {
@@ -75,7 +76,7 @@ describe("SessionsController", () => {
 
     // Some additional mocking tomfoolery is needed here in order to
     // get the getSession bit to actually respond
-    it.skip("can fetch session", () => {
+    it("can fetch session", () => {
         const req = {
             app: {
                 locals: {
@@ -98,5 +99,14 @@ describe("SessionsController", () => {
         const storeInstance = mockSessionStore.mock.instances[0];
         expect(storeInstance.getSession).toHaveBeenCalledTimes(1);
         expect(storeInstance.getSession.mock.calls[0][0]).toBe("1234");
+    });
+});
+
+describe("Sessions serialise correctly", () => {
+    it("serialises json string", () => {
+        expect(serialiseSession('{"a":1}')).toBe('{"status":"success","errors":null,"data":{"a":1}}');
+    });
+    it("serialises null response", () => {
+        expect(serialiseSession(null)).toBe('{"status":"success","errors":null,"data":null}');
     });
 });
