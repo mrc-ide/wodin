@@ -8,10 +8,11 @@ export interface ModelFitInputs {
 }
 
 export interface FitUpdateRequiredReasons {
-    modelChanged: boolean,
-    dataChanged: boolean,
-    linkChanged: boolean,
-    parameterChanged: boolean
+    modelChanged: boolean;
+    dataChanged: boolean;
+    linkChanged: boolean;
+    parameterValueChanged: boolean;
+    parameterToVaryChanged: boolean;
 }
 
 export interface ModelFitState {

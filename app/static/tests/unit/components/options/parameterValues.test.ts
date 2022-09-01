@@ -125,7 +125,7 @@ describe("ParameterValues", () => {
         expect(mockSetSensitivityUpdateRequired).toHaveBeenCalledTimes(1);
         expect(mockSetSensitivityUpdateRequired.mock.calls[0][1]).toBe(true);
         expect(mockSetFitUpdateRequired).toHaveBeenCalledTimes(1);
-        expect(mockSetFitUpdateRequired.mock.calls[0][1]).toStrictEqual({ parameterChanged: true });
+        expect(mockSetFitUpdateRequired.mock.calls[0][1]).toStrictEqual({ parameterValueChanged: true });
     });
 
     it("refreshes cleared input when odinSolution changes", async () => {
