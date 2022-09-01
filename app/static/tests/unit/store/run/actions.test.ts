@@ -33,15 +33,13 @@ describe("Run actions", () => {
         expect(run.mock.calls[0][2]).toBe(0); // start
         expect(run.mock.calls[0][3]).toBe(99); // end time from state
 
-        expect(commit.mock.calls.length).toBe(2);
+        expect(commit.mock.calls.length).toBe(1);
         expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResult);
         expect(commit.mock.calls[0][1]).toEqual({
             inputs: { parameterValues, endTime: 99 },
             solution: "test solution",
             error: null
         });
-        expect(commit.mock.calls[1][0]).toBe(RunMutation.SetRunRequired);
-        expect(commit.mock.calls[1][1]).toBe(false);
     });
 
     it("run model does not update required action if required action was not run", () => {
@@ -130,7 +128,7 @@ describe("Run actions", () => {
         (actions[RunAction.RunModel] as any)({ commit, state, rootState });
 
         expect(runner.wodinRun.mock.calls[0][0]).toBe(mockOdin);
-        expect(commit.mock.calls.length).toBe(2);
+        expect(commit.mock.calls.length).toBe(1);
         expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResult);
         expect(commit.mock.calls[0][1]).toStrictEqual({
             inputs: { parameterValues, endTime: 99 },
