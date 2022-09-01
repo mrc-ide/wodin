@@ -106,7 +106,13 @@ describe("serialise", () => {
 
     const modelFitState = {
         fitting: false,
-        fitUpdateRequired: true,
+        fitUpdateRequired: {
+            modelChanged: false,
+            dataChanged: false,
+            linkChanged: true,
+            parameterValueChanged: false,
+            parameterToVaryChanged: false
+        },
         iterations: 28,
         converged: true,
         sumOfSquares: 21.43,
@@ -197,7 +203,13 @@ describe("serialise", () => {
     };
 
     const expectedModelFit = {
-        fitUpdateRequired: true,
+        fitUpdateRequired: {
+            modelChanged: false,
+            dataChanged: false,
+            linkChanged: true,
+            parameterValueChanged: false,
+            parameterToVaryChanged: false
+        },
         iterations: 28,
         converged: true,
         sumOfSquares: 21.43,
