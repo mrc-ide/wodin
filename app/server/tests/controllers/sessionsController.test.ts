@@ -57,7 +57,7 @@ describe("SessionsController", () => {
                 appName: "testApp",
                 id: "1234"
             },
-            body: "some label"
+            body: "\"some label\""
         } as any;
 
         SessionsController.postSessionLabel(req, res);
