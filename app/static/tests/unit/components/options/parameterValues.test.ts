@@ -145,21 +145,27 @@ describe("ParameterValues", () => {
 
     it("updates params to vary when checkbox is checked", async () => {
         const mockSetParamsToVary = jest.fn();
-        const store = getStore(true, null, jest.fn(), jest.fn(), ["param1"], mockSetParamsToVary);
+        const mockSetFitUpdateRequired = jest.fn();
+        const store = getStore(true, null, jest.fn(), mockSetFitUpdateRequired, ["param1"], mockSetParamsToVary);
         const wrapper = getWrapper(store);
         const row2 = wrapper.findAll("div.row").at(1)!;
         await row2.find("input.vary-param-check").setValue(true);
         expect(mockSetParamsToVary).toHaveBeenCalledTimes(1);
         expect(mockSetParamsToVary.mock.calls[0][1]).toStrictEqual(["param1", "param2"]);
+        expect(mockSetFitUpdateRequired).toHaveBeenCalledTimes(1);
+        expect(mockSetFitUpdateRequired.mock.calls[0][1]).toStrictEqual({ parameterToVaryChanged: true });
     });
 
     it("updates params to vary when checkbox is unchecked", async () => {
         const mockSetParamsToVary = jest.fn();
-        const store = getStore(true, null, jest.fn(), jest.fn(), ["param1"], mockSetParamsToVary);
+        const mockSetFitUpdateRequired = jest.fn();
+        const store = getStore(true, null, jest.fn(), mockSetFitUpdateRequired, ["param1"], mockSetParamsToVary);
         const wrapper = getWrapper(store);
         const row1 = wrapper.findAll("div.row").at(0)!;
         await row1.find("input.vary-param-check").setValue(false);
         expect(mockSetParamsToVary).toHaveBeenCalledTimes(1);
         expect(mockSetParamsToVary.mock.calls[0][1]).toStrictEqual([]);
+        expect(mockSetFitUpdateRequired).toHaveBeenCalledTimes(1);
+        expect(mockSetFitUpdateRequired.mock.calls[0][1]).toStrictEqual({ parameterToVaryChanged: true });
     });
 });
