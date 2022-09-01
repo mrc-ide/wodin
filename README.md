@@ -114,3 +114,13 @@ To publish to npm:
 ### Usage via docker
 
 The build includes a docker image build which may be easier to deploy. See [wodin-demo](https://github.com/mrc-ide/wodin-demo) for an example.
+
+### Quickly test drive a feature branch
+
+Use the `./scripts/run-version.sh` script
+
+```
+./scripts/run-version.sh --app mrc-1234 --api mrc-2345
+```
+
+setting the branch references for the app and api (defaults to main for both).
