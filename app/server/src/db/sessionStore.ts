@@ -18,4 +18,15 @@ export class SessionStore {
             .hset(this.sessionKey("data"), id, data)
             .exec();
     }
+
+    async getSessionsMetadata(ids: string[]) {
+        const result = [];
+        for (const id of ids) {
+            // eslint-disable-next-line no-await-in-loop
+            const time = await this._redis.hget(this.sessionKey(id), "time");
+            const label = await this._redis.hget(this.sessionKey(id), "label");
+            result.push({id, time, label});
+        }
+        return result;
+    }
 }
