@@ -8,7 +8,9 @@ describe("SessionsController", () => {
     const mockSessionStore = SessionStore as Mock;
 
     const res = {
-        end: jest.fn()
+        end: jest.fn(),
+        set: jest.fn(),
+        send: jest.fn()
     } as any;
 
     beforeEach(() => {
@@ -69,5 +71,32 @@ describe("SessionsController", () => {
         expect(storeInstance.saveSessionLabel).toHaveBeenCalledTimes(1);
         expect(storeInstance.saveSessionLabel.mock.calls[0][0]).toBe("1234");
         expect(storeInstance.saveSessionLabel.mock.calls[0][1]).toBe("some label");
+    });
+
+    // Some additional mocking tomfoolery is needed here in order to
+    // get the getSession bit to actually respond
+    it.skip("can fetch session", () => {
+        const req = {
+            app: {
+                locals: {
+                    redis: {},
+                    wodinConfig: {
+                        savePrefix: "testPrefix"
+                    }
+                }
+            },
+            params: {
+                appName: "testApp",
+                id: "1234"
+            }
+        } as any;
+        SessionsController.getSession(req, res);
+        expect(mockSessionStore).toHaveBeenCalledTimes(1); // expect store constructor
+        expect(mockSessionStore.mock.calls[0][0]).toBe(req.app.locals.redis);
+        expect(mockSessionStore.mock.calls[0][1]).toBe("testPrefix");
+        expect(mockSessionStore.mock.calls[0][2]).toBe("testApp");
+        const storeInstance = mockSessionStore.mock.instances[0];
+        expect(storeInstance.getSession).toHaveBeenCalledTimes(1);
+        expect(storeInstance.getSession.mock.calls[0][0]).toBe("1234");
     });
 });

@@ -1,5 +1,5 @@
 import {
-    flushRedis, getRedisValue, expectRedisJSONValue, post
+    flushRedis, getRedisValue, expectRedisJSONValue, get, post
 } from "./utils";
 
 describe("Session id integration", () => {
@@ -33,6 +33,25 @@ describe("Session id integration", () => {
 
         const newTime = await getRedisValue(`${redisKeyPrefix}time`, sessionId);
         expect(Date.parse(newTime!)).toBeGreaterThan(Date.parse(oldTime!));
+    });
+
+    it("can fetch session", async () => {
+        const data = { test: "value" };
+        const response1 = await post(url, data);
+        expect(response1.status).toBe(200);
+
+        const response2 = await get(url);
+        expect(response2.status).toBe(200);
+        expect(response2.headers["content-type"]).toMatch("application/json");
+        expect(response2.data).toStrictEqual(data);
+    });
+
+    it("can get null value fetching nonexistant session", async () => {
+        const data = { test: "value" };
+        const response = await get(url);
+        expect(response.status).toBe(200);
+        expect(response.headers["content-type"]).toMatch("application/json");
+        expect(response.data).toBe(null);
     });
 });
 

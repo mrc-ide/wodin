@@ -15,6 +15,7 @@ describe("Sessionstore", () => {
 
     const mockRedis = {
         pipeline: jest.fn().mockReturnValue(mockPipeline),
+        hget: jest.fn().mockReturnValue(mockPipeline),
         hset: jest.fn().mockReturnValue(mockPipeline)
     } as any;
 
@@ -43,5 +44,16 @@ describe("Sessionstore", () => {
         expect(mockRedis.hset.mock.calls[0][0]).toBe("Test Course:testApp:sessions:label");
         expect(mockRedis.hset.mock.calls[0][1]).toBe("1234");
         expect(mockRedis.hset.mock.calls[0][2]).toBe("some label");
+    });
+
+    it("can fetch session", async () => {
+        const id = "1234";
+        const sut = new SessionStore(mockRedis, "Test Course", "testApp");
+        await sut.getSession(id);
+
+        expect(mockRedis.hget).toHaveBeenCalledTimes(1);
+        expect(mockRedis.hget.mock.calls[0].length).toBe(2);
+        expect(mockRedis.hget.mock.calls[0][0]).toBe("Test Course:testApp:sessions:data");
+        expect(mockRedis.hget.mock.calls[0][1]).toBe("1234");
     });
 });

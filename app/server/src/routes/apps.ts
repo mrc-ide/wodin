@@ -13,5 +13,6 @@ router.post(
     bodyParser.text(),
     SessionsController.postSessionLabel
 );
+router.get("/:appName/sessions/:id", SessionsController.getSession);
 
 export default router;

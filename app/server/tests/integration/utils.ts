@@ -9,6 +9,11 @@ export const post = async (url: string, body: any, contentType: string = "applic
     return axios.post(fullUrl(url), body, { headers });
 };
 
+export const get = async (url: string) => {
+    const headers = { "Content-Type": "application/json" };
+    return axios.get(fullUrl(url), { headers });
+};
+
 const withRedis = async (func: (redis: Redis) => any) => {
     const redis = new Redis(redisUrl);
     try {
