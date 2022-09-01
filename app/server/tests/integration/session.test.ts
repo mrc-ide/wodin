@@ -46,12 +46,12 @@ describe("Session label integration", () => {
     const url = `apps/day1/sessions/${sessionId}/label`;
 
     it("can post and update new label", async () => {
-        const response1 = await post(url, "some label");
+        const response1 = await post(url, "some label", "text/plain");
         expect(response1.status).toBe(200);
         const label1 = await getRedisValue(`${redisKeyPrefix}label`, sessionId);
         expect(label1).toBe("some label");
 
-        const response2 = await post(url, "some other label");
+        const response2 = await post(url, "some other label", "text/plain");
         expect(response2.status).toBe(200);
         const label2 = await getRedisValue(`${redisKeyPrefix}label`, sessionId);
         expect(label2).toBe("some other label");

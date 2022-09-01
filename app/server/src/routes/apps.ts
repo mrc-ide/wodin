@@ -10,7 +10,7 @@ router.get("/:appName", AppsController.getApp);
 router.post("/:appName/sessions/:id", bodyParser.text({ type: "application/json" }), SessionsController.postSession);
 router.post(
     "/:appName/sessions/:id/label",
-    bodyParser.text({ type: "application/json" }),
+    bodyParser.text(),
     SessionsController.postSessionLabel
 );
 
