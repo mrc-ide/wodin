@@ -69,7 +69,6 @@ describe("Session integration", () => {
         const getMetadataUrl = "apps/day1/sessions/metadata";
         const response = await get(getMetadataUrl);
         const sessions = response.data.data;
-        console.log(JSON.stringify(sessions));
         expect(Array.isArray(sessions)).toBe(true);
         expect(sessions.length).toBe(0);
     });
