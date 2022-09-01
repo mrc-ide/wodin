@@ -6,7 +6,7 @@ import { RunState } from "./store/run/state";
 import { SensitivityState } from "./store/sensitivity/state";
 import { FitDataState } from "./store/fitData/state";
 import { ModelFitState } from "./store/modelFit/state";
-import {OdinFitResult, OdinRunResult} from "./types/wrapperTypes";
+import { OdinFitResult, OdinRunResult } from "./types/wrapperTypes";
 
 function serialiseCode(code: CodeState) {
     return {

@@ -26,6 +26,8 @@ async function immediateUploadState(context: ActionContext<AppState, AppState>) 
     commit(AppStateMutation.SetStateUploadInProgress, false);
 }
 
+const getStateUploadInterval = (state: AppState) => state.config?.stateUploadIntervalMillis || 2000;
+
 export const appStateActions: ActionTree<AppState, AppState> = {
     async [AppStateAction.FetchConfig](context, appName) {
         const { commit, state, dispatch } = context;
@@ -62,7 +64,7 @@ export const appStateActions: ActionTree<AppState, AppState> = {
                     commit(AppStateMutation.ClearQueuedStateUpload);
                     immediateUploadState(context);
                 }
-            }, 2000);
+            }, getStateUploadInterval(state));
 
             // record the newly queued upload
             commit(AppStateMutation.SetQueuedStateUpload, queuedId);

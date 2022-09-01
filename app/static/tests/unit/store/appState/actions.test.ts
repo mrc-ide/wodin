@@ -159,6 +159,26 @@ describe("AppState actions", () => {
         });
     });
 
+    it("Uses state upload interval from config if defined", () => {
+        jest.useFakeTimers();
+        const mockSetInterval = jest.spyOn(window, "setInterval");
+        const state = mockFitState({
+            sessionId: "1234",
+            appName: "testApp",
+            config: {
+                stateUploadIntervalMillis: 1000
+            } as any
+        });
+        const commit = jest.fn();
+        mockAxios.onPost("/apps/testApp/sessions/1234")
+            .reply(200, "");
+
+        (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
+        expect(commit).toHaveBeenCalledTimes(2);
+
+        expect(mockSetInterval.mock.calls[0][1]).toBe(1000);
+    });
+
     it("QueueStateUpload callback does not upload pending if upload is in progress", async () => {
         jest.useFakeTimers();
         const mockSetInterval = jest.spyOn(window, "setInterval");
