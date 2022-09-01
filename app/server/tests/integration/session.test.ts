@@ -46,9 +46,8 @@ describe("Session integration", () => {
         const anotherSessionId = "5678";
         await post(postSessionUrl(anotherSessionId), data);
 
-        // set labels
+        // set label for one of the sessions
         await setRedisValue(`${redisKeyPrefix}label`, sessionId, "label1");
-        await setRedisValue(`${redisKeyPrefix}label`, anotherSessionId, "label2");
 
         // get sessions
         const getMetadataUrl = `apps/day1/sessions/metadata?sessionIds=${sessionId},${anotherSessionId}`;
@@ -63,14 +62,14 @@ describe("Session integration", () => {
 
         expect(sessions[1].id).toBe(anotherSessionId);
         expectRecentTime(sessions[1].time);
-        expect(sessions[1].label).toBe("label2");
+        expect(sessions[1].label).toBe(null);
     });
 
     it("gets empty sessionMetadata if sessionIds parameter omitted", async () => {
-        const getMetadataUrl = `apps/day1/sessions/metadata`;
+        const getMetadataUrl = "apps/day1/sessions/metadata";
         const response = await get(getMetadataUrl);
         const sessions = response.data.data;
-        console.log(JSON.stringify(sessions))
+        console.log(JSON.stringify(sessions));
         expect(Array.isArray(sessions)).toBe(true);
         expect(sessions.length).toBe(0);
     });

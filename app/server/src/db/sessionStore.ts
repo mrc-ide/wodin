@@ -1,5 +1,4 @@
 import Redis from "ioredis";
-import {SessionMetadata} from "../types";
 
 export class SessionStore {
     private readonly _redis: Redis;
@@ -28,7 +27,7 @@ export class SessionStore {
             const times = values[0];
             const labels = values[1];
             return ids.map((id: string, idx: number) => {
-                return {id, time: times[idx], label: labels[idx]};
+                return { id, time: times[idx], label: labels[idx] };
             });
         });
     }

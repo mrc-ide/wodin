@@ -14,7 +14,10 @@ describe("Sessionstore", () => {
     mockPipeline.hset = jest.fn().mockReturnValue(mockPipeline);
 
     const mockRedis = {
-        pipeline: jest.fn().mockReturnValue(mockPipeline)
+        pipeline: jest.fn().mockReturnValue(mockPipeline),
+        hmget: jest.fn().mockImplementation(async (key: string, ...fields: string[]) => {
+            return fields.map((field: string) => `${field} value for ${key}`);
+        })
     } as any;
 
     it("can save session", async () => {
@@ -31,5 +34,22 @@ describe("Sessionstore", () => {
         expect(mockPipeline.hset.mock.calls[1][1]).toBe("1234");
         expect(mockPipeline.hset.mock.calls[1][2]).toBe("testSession");
         expect(mockPipeline.exec).toHaveBeenCalledTimes(1);
+    });
+
+    it("cam get session metadata", async () => {
+        const sut = new SessionStore(mockRedis, "Test Course", "testApp");
+        const result = await sut.getSessionsMetadata(["1234", "5678"]);
+        expect(result).toStrictEqual([
+            {
+                id: "1234",
+                time: "1234 value for Test Course:testApp:sessions:time",
+                label: "1234 value for Test Course:testApp:sessions:label"
+            },
+            {
+                id: "5678",
+                time: "5678 value for Test Course:testApp:sessions:time",
+                label: "5678 value for Test Course:testApp:sessions:label"
+            }
+        ]);
     });
 });

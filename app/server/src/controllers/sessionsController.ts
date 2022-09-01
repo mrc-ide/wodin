@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
-import {AppLocals, SessionMetadata} from "../types";
+import { AppLocals, SessionMetadata } from "../types";
 import { SessionStore } from "../db/sessionStore";
-import {jsonResponseSuccess} from "../jsonResponse";
+import { jsonResponseSuccess } from "../jsonResponse";
 
 export class SessionsController {
     private static getStore = (req: Request) => {
         const { redis, wodinConfig } = req.app.locals as AppLocals;
-        const {appName} = req.params;
+        const { appName } = req.params;
         return new SessionStore(redis, wodinConfig.savePrefix, appName);
     };
 

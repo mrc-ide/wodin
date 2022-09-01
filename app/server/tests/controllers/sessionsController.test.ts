@@ -1,7 +1,6 @@
 import { SessionStore } from "../../src/db/sessionStore";
 import Mock = jest.Mock;
 import { SessionsController } from "../../src/controllers/sessionsController";
-import mock = jest.mock;
 
 jest.mock("../../src/db/sessionStore");
 
@@ -67,7 +66,7 @@ describe("SessionsController", () => {
         expect(res.end).toHaveBeenCalledTimes(1);
     });
 
-    it("can get empty session metadata with missing ids parameter", async () =>{
+    it("can get empty session metadata with missing ids parameter", async () => {
         await SessionsController.getSessionsMetadata(req, res);
         expect(mockSessionStore).not.toHaveBeenCalled();
         expect(res.header).toHaveBeenCalledWith("Content-Type", "application/json");
