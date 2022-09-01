@@ -72,7 +72,7 @@ describe("construct actionable fit update messages from fit state changes", () =
             dataChanged: true,
             linkChanged: true,
             parameterValueChanged: true,
-            parameterToVaryChanged: true,
+            parameterToVaryChanged: true
         };
         expect(fitUpdateRequiredExplanation(everything))
             .toBe("Fit is out of date: model has been recompiled and data have been updated. "

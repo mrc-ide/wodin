@@ -10,7 +10,7 @@ export const defaultState: ModelFitState = {
         dataChanged: false,
         linkChanged: false,
         parameterValueChanged: false,
-        parameterToVaryChanged: false,
+        parameterToVaryChanged: false
     },
     iterations: null,
     converged: null,
