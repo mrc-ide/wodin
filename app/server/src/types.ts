@@ -27,3 +27,9 @@ export interface AppLocals {
     wodinVersion: String,
     redis: Redis
 }
+
+export interface SessionMetadata {
+    id: string,
+    time: string | null,
+    label: string | null
+}

@@ -53,7 +53,6 @@ describe("Session integration", () => {
         // get sessions
         const getMetadataUrl = `apps/day1/sessions/metadata?sessionIds=${sessionId},${anotherSessionId}`;
         const response = await get(getMetadataUrl);
-        console.log(response.data);
         const sessions = response.data.data;
         expect(Array.isArray(sessions)).toBe(true);
         expect(sessions.length).toBe(2);
@@ -65,5 +64,14 @@ describe("Session integration", () => {
         expect(sessions[1].id).toBe(anotherSessionId);
         expectRecentTime(sessions[1].time);
         expect(sessions[1].label).toBe("label2");
+    });
+
+    it("gets empty sessionMetadata if sessionIds parameter omitted", async () => {
+        const getMetadataUrl = `apps/day1/sessions/metadata`;
+        const response = await get(getMetadataUrl);
+        const sessions = response.data.data;
+        console.log(JSON.stringify(sessions))
+        expect(Array.isArray(sessions)).toBe(true);
+        expect(sessions.length).toBe(0);
     });
 });

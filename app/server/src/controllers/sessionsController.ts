@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { AppLocals } from "../types";
+import {AppLocals, SessionMetadata} from "../types";
 import { SessionStore } from "../db/sessionStore";
 import {jsonResponseSuccess} from "../jsonResponse";
 
@@ -19,13 +19,12 @@ export class SessionsController {
 
     static getSessionsMetadata = async (req: Request, res: Response) => {
         const sessionIdsString = req.query.sessionIds as string;
+        let metadata: SessionMetadata[] = [];
         if (sessionIdsString) {
             const sessionIds = sessionIdsString.split(",");
             const store = SessionsController.getStore(req);
-            const metadata = await store.getSessionsMetadata(sessionIds);
-            jsonResponseSuccess(metadata, res);
-        } else {
-            res.end();
+            metadata = await store.getSessionsMetadata(sessionIds);
         }
+        jsonResponseSuccess(metadata, res);
     };
 }

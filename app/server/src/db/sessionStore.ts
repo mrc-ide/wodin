@@ -1,4 +1,5 @@
 import Redis from "ioredis";
+import {SessionMetadata} from "../types";
 
 export class SessionStore {
     private readonly _redis: Redis;
@@ -13,7 +14,6 @@ export class SessionStore {
     private sessionKey = (name: string) => `${this._sessionPrefix}${name}`;
 
     async saveSession(id: string, data: string) {
-        console.log("session key on save is: " + this.sessionKey("time"))
         await this._redis.pipeline()
             .hset(this.sessionKey("time"), id, new Date(Date.now()).toISOString())
             .hset(this.sessionKey("data"), id, data)
@@ -21,15 +21,15 @@ export class SessionStore {
     }
 
     async getSessionsMetadata(ids: string[]) {
-        const result: any[] = [];
-        for (const id of ids) {
-            await Promise.all([
-                this._redis.hget(this.sessionKey("time"), id),
-                this._redis.hget(this.sessionKey("label"), id)
-            ]).then((values) => {
-                result.push({id, time: values[0], label: values[1]});
+        return Promise.all([
+            this._redis.hmget(this.sessionKey("time"), ...ids),
+            this._redis.hmget(this.sessionKey("label"), ...ids)
+        ]).then((values) => {
+            const times = values[0];
+            const labels = values[1];
+            return ids.map((id: string, idx: number) => {
+                return {id, time: times[idx], label: labels[idx]};
             });
-        }
-        return result;
+        });
     }
 }
