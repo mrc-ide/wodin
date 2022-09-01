@@ -258,9 +258,6 @@ test.describe("Wodin App model fit tests", () => {
         expect(newSumOfSquares).not.toEqual(sumOfSquares);
     });
 
-    const fitRequiredMsg = "Model code has been recompiled, or options or data have been updated. "
-        + "Fit Model for updated best fit.";
-
     test("can see expected update required messages when code changes", async ({ page }) => {
         await runFit(page);
         await expectUpdateFitMsg(page, "");
@@ -272,7 +269,8 @@ test.describe("Wodin App model fit tests", () => {
 
         // Compile code
         await page.click("#compile-btn");
-        await expectUpdateFitMsg(page, fitRequiredMsg);
+        await expectUpdateFitMsg(page, "Fit is out of date: model has been recompiled. "
+                                 + "Rerun fit to view updated result.");
 
         await reRunFit(page); // checks message is reset
     });
@@ -284,13 +282,15 @@ test.describe("Wodin App model fit tests", () => {
         await expect(await page.locator("#fitDataUpload")).toBeVisible({ timeout });
 
         await uploadCSVData(page, multiTimeFitData);
-        await expectUpdateFitMsg(page, fitRequiredMsg);
+
+        await expectUpdateFitMsg(page, "Fit is out of date: data have been updated. Rerun fit to view updated result.");
 
         await reRunFit(page); // checks message is reset
 
         // Change time variable
         await page.selectOption("#select-time-variable", "Day2");
-        await expectUpdateFitMsg(page, fitRequiredMsg);
+        await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. "
+                                 + "Rerun fit to view updated result.");
 
         await reRunFit(page); // checks message is reset
     });
@@ -301,7 +301,8 @@ test.describe("Wodin App model fit tests", () => {
         await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
         await expect(await page.locator("#link-data select")).toBeVisible({ timeout });
         await page.selectOption("#link-data select", "E");
-        await expectUpdateFitMsg(page, fitRequiredMsg);
+        await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. "
+                                 + "Rerun fit to view updated result.");
 
         await reRunFit(page); // checks message is reset
     });
@@ -320,7 +321,8 @@ test.describe("Wodin App model fit tests", () => {
         const targetSelect = await page.locator("#optimisation select");
         await targetSelect.selectOption("Day2");
 
-        await expectUpdateFitMsg(page, fitRequiredMsg);
+        await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. "
+                                 + "Rerun fit to view updated result.");
 
         await reRunFit(page); // checks message is reset
     });

@@ -73,7 +73,7 @@ describe("Fit Data actions", () => {
         (actions[FitDataAction.Upload] as any)(context, file);
         expectFileRead(mockFileReader);
         setTimeout(() => {
-            expect(commit).toHaveBeenCalledTimes(5);
+            expect(commit).toHaveBeenCalledTimes(6);
             expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetData);
             const expectedSetDataPayload = {
                 data: mockData,
@@ -87,11 +87,14 @@ describe("Fit Data actions", () => {
             expect(commit.mock.calls[2][1]).toBe(9);
             expect(commit.mock.calls[2][2]).toStrictEqual({ root: true });
             expect(commit.mock.calls[3][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
-            expect(commit.mock.calls[3][1]).toBe(true);
+            expect(commit.mock.calls[3][1]).toStrictEqual({ linkChanged: true });
             expect(commit.mock.calls[3][2]).toStrictEqual({ root: true });
             expect(commit.mock.calls[4][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
             expect(commit.mock.calls[4][1]).toBe(true);
             expect(commit.mock.calls[4][2]).toStrictEqual({ root: true });
+            expect(commit.mock.calls[5][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
+            expect(commit.mock.calls[5][1]).toStrictEqual({ dataChanged: true });
+            expect(commit.mock.calls[5][2]).toStrictEqual({ root: true });
             done();
         }, fileTimeout);
     });
@@ -278,7 +281,7 @@ describe("Fit Data actions", () => {
         expect(commit.mock.calls[2][1]).toBe(10);
         expect(commit.mock.calls[2][2]).toStrictEqual({ root: true });
         expect(commit.mock.calls[3][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
-        expect(commit.mock.calls[3][1]).toBe(true);
+        expect(commit.mock.calls[3][1]).toStrictEqual({ linkChanged: true });
         expect(commit.mock.calls[3][2]).toStrictEqual({ root: true });
         expect(commit.mock.calls[4][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
         expect(commit.mock.calls[4][1]).toBe(true);
@@ -297,7 +300,7 @@ describe("Fit Data actions", () => {
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetLinkedVariable);
         expect(commit.mock.calls[0][1]).toBe(payload);
         expect(commit.mock.calls[1][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
-        expect(commit.mock.calls[1][1]).toBe(true);
+        expect(commit.mock.calls[1][1]).toStrictEqual({ linkChanged: true });
         expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
     });
 
@@ -321,7 +324,7 @@ describe("Fit Data actions", () => {
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetColumnToFit);
         expect(commit.mock.calls[0][1]).toBe("col1");
         expect(commit.mock.calls[1][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
-        expect(commit.mock.calls[1][1]).toBe(true);
+        expect(commit.mock.calls[1][1]).toStrictEqual({ linkChanged: true });
         expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
     });
 });

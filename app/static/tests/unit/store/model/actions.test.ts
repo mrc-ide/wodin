@@ -165,7 +165,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[6][1]).toBe(null);
         expect(commit.mock.calls[6][2]).toStrictEqual({ root: true });
         expect(commit.mock.calls[7][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
-        expect(commit.mock.calls[7][1]).toBe(true);
+        expect(commit.mock.calls[7][1]).toStrictEqual({ modelChanged: true });
         expect(commit.mock.calls[7][2]).toStrictEqual({ root: true });
 
         expect(dispatch).toHaveBeenCalledTimes(2);

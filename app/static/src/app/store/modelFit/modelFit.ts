@@ -5,7 +5,13 @@ import { getters } from "./getters";
 
 export const defaultState: ModelFitState = {
     fitting: false,
-    fitUpdateRequired: true,
+    fitUpdateRequired: {
+        modelChanged: false,
+        dataChanged: false,
+        linkChanged: false,
+        parameterValueChanged: false,
+        parameterToVaryChanged: false
+    },
     iterations: null,
     converged: null,
     sumOfSquares: null,
