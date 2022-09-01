@@ -45,11 +45,6 @@ export default defineComponent({
         const appType = computed(() => store.state.appType);
         const loading = computed(() => !store.state.config);
 
-        onMounted(() => {
-            store.dispatch(AppStateAction.FetchConfig, props.appName);
-            store.dispatch(`model/${ModelAction.FetchOdinRunner}`);
-        });
-
         return {
             appType,
             loading

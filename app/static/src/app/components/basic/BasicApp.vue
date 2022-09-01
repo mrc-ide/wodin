@@ -1,5 +1,5 @@
 <template>
-  <wodin-app :app-name="appName">
+  <wodin-app>
     <template v-slot:left>
       <wodin-tabs id="left-tabs" :tabNames="['Code', 'Options']">
         <template v-slot:Code>
@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {computed, defineComponent} from "vue";
 import { useStore } from "vuex";
 import WodinApp from "../WodinApp.vue";
 import WodinTabs from "../WodinTabs.vue";
@@ -37,9 +37,6 @@ import { VisualisationTab } from "../../store/appState/state";
 
 export default defineComponent({
     name: "BasicApp",
-    props: {
-        appName: String
-    },
     components: {
         CodeTab,
         RunTab,
