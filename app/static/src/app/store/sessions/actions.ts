@@ -4,6 +4,7 @@ import {SessionsState} from "./state";
 import {localStorageManager} from "../../localStorageManager";
 import { api } from "../../apiService";
 import {SessionsMutation} from "./mutations";
+import {ErrorsMutation} from "../errors/mutations";
 
 export enum SessionsAction {
     GetSessions = "GetSessions"
@@ -19,6 +20,7 @@ export const actions: ActionTree<SessionsState, AppState> = {
         const url = `/apps/${appName}/sessions/metadata?sessionIds=${sessionIdsQs}`;
         await api(context)
             .withSuccess(SessionsMutation.SetSessionsMetadata)
+            .withError(`/errors/${ErrorsMutation.AddError}`, true)
             .get(url)
 
     }

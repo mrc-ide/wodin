@@ -8,9 +8,19 @@
 </template>
 
 <script>
-export default {
-    name: "SessionsPage"
-};
+import {onMounted, defineComponent} from "vue";
+import {useStore} from "vuex";
+import {SessionsAction} from "@/app/store/sessions/actions";
+
+export default defineComponent({
+    name: "SessionsPage",
+    setup() {
+      const store = useStore();
+      onMounted(() => {
+        store.dispatch(`sessions/${SessionsAction.GetSessions}`);
+      });
+    }
+});
 </script>
 
 <style scoped>
