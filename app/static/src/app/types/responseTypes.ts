@@ -156,3 +156,9 @@ export interface OdinRunner {
                tEnd: number,
                control: OdeControl) => Batch;
 }
+
+export interface SessionMetadata {
+    id: string,
+    time: string,
+    label: string | null
+}
