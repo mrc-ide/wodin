@@ -9,6 +9,10 @@ export const post = async (url: string, body: any, contentType: string = "applic
     return axios.post(fullUrl(url), body, { headers });
 };
 
+export const get = async (url: string) => {
+    return axios.get(fullUrl(url));
+};
+
 const withRedis = async (func: (redis: Redis) => any) => {
     const redis = new Redis(redisUrl);
     try {
@@ -21,6 +25,12 @@ const withRedis = async (func: (redis: Redis) => any) => {
 export const getRedisValue = async (key: string, field: string) => {
     return withRedis((redis: Redis) => {
         return redis.hget(key, field);
+    });
+};
+
+export const setRedisValue = async (key: string, field: string, value: string) => {
+    await withRedis(async (redis: Redis) => {
+        await redis.hset(key, field, value);
     });
 };
 
