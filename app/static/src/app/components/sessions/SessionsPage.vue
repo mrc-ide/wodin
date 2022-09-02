@@ -1,5 +1,10 @@
 <template>
-  <div>here is where the Sessions Page will go</div>
+  <div class="container">
+    <div class="row">
+      <h2>Sessions</h2>
+      <div> Coming soon - Sessions list!</div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -9,5 +14,7 @@ export default {
 </script>
 
 <style scoped>
-
+  .container {
+    max-width: 1140px;
+  }
 </style>
