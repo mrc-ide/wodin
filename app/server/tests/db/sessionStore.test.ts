@@ -15,13 +15,10 @@ describe("Sessionstore", () => {
 
     const mockRedis = {
         pipeline: jest.fn().mockReturnValue(mockPipeline),
-<<<<<<< HEAD
         hmget: jest.fn().mockImplementation(async (key: string, ...fields: string[]) => {
             return fields.map((field: string) => `${field} value for ${key}`);
-        })
-=======
+        }),
         hset: jest.fn().mockReturnValue(mockPipeline)
->>>>>>> main
     } as any;
 
     it("can save session", async () => {
