@@ -5,11 +5,11 @@
       <span class="nav-item navbar-app">{{ appTitle }}</span>
     </span>
     <span class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <a id="sessions-menu" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
         Sessions
       </a>
       <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-        <li><router-link class="dropdown-item" to="/sessions">All Sessions</router-link></li>
+        <li><router-link id="all-sessions-link" class="dropdown-item" to="/sessions">All Sessions</router-link></li>
       </ul>
     </span>
     <span class="navbar-version navbar-text">WODIN v{{ wodinVersion }}</span>
