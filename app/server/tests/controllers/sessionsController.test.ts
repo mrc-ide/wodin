@@ -34,10 +34,6 @@ describe("SessionsController", () => {
 
     it("can save session", async () => {
         await SessionsController.postSession(req, res);
-    });
-
-    it("can save session", () => {
-        SessionsController.postSession(req, res);
         expect(mockSessionStore).toHaveBeenCalledTimes(1); // expect store constructor
         expect(mockSessionStore.mock.calls[0][0]).toBe(req.app.locals.redis);
         expect(mockSessionStore.mock.calls[0][1]).toBe("testPrefix");
