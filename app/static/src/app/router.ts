@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory, RouteComponent} from "vue-router";
+import { createRouter, createWebHistory, RouteComponent } from "vue-router";
 import SessionsPage from "./components/sessions/SessionsPage.vue";
 
 export function getRouter(appComponent: RouteComponent) {
@@ -13,8 +13,8 @@ export function getRouter(appComponent: RouteComponent) {
     return createRouter({
         history: createWebHistory(routeBase),
         routes: [
-            {path: "/", component: appComponent},
-            {path: sessionsRoute, component: SessionsPage}
+            { path: "/", component: appComponent },
+            { path: sessionsRoute, component: SessionsPage }
         ]
     });
 }

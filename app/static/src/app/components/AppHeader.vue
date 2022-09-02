@@ -5,7 +5,8 @@
       <span class="nav-item navbar-app">{{ appTitle }}</span>
     </span>
     <span class="nav-item dropdown">
-      <a id="sessions-menu" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <a id="sessions-menu" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+         aria-expanded="false">
         Sessions
       </a>
       <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -18,7 +19,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import {RouterLink} from "vue-router";
+import { RouterLink } from "vue-router";
 
 export default defineComponent({
     name: "AppHeader",
@@ -28,7 +29,7 @@ export default defineComponent({
         wodinVersion: String
     },
     components: {
-      RouterLink
+        RouterLink
     }
 });
 </script>

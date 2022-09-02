@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent} from "vue";
+import { defineComponent } from "vue";
 import { useStore } from "vuex";
 import WodinApp from "../WodinApp.vue";
 import WodinTabs from "../WodinTabs.vue";

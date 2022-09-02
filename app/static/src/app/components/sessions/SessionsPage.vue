@@ -9,8 +9,8 @@
 
 <script>
 export default {
-  name: "SessionsPage"
-}
+    name: "SessionsPage"
+};
 </script>
 
 <style scoped>

@@ -18,9 +18,7 @@ import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
 describe("BasicApp", () => {
     const getWrapper = (mockSetOpenVisualisationTab = jest.fn()) => {
         const state = mockBasicState({ config: {} as any });
-        const props = {
-            appName: "testApp"
-        };
+
         const store = new Vuex.Store<BasicState>({
             state,
             actions: {
@@ -53,8 +51,7 @@ describe("BasicApp", () => {
         const options = {
             global: {
                 plugins: [store]
-            },
-            props
+            }
         };
 
         return mount(BasicApp, options);
@@ -63,7 +60,6 @@ describe("BasicApp", () => {
     it("renders content as expected", () => {
         const wrapper = getWrapper();
         const wodinApp = wrapper.findComponent(WodinApp);
-        expect(wodinApp.props("appName")).toBe("testApp");
 
         const wodinPanels = wodinApp.findComponent(WodinPanels);
         const leftPanel = wodinPanels.find(".wodin-left");

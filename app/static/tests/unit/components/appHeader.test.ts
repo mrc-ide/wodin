@@ -1,4 +1,5 @@
 import { shallowMount } from "@vue/test-utils";
+import { RouterLink } from "vue-router";
 import AppHeader from "../../../src/app/components/AppHeader.vue";
 
 describe("AppHeader", () => {
@@ -14,5 +15,10 @@ describe("AppHeader", () => {
         expect(wrapper.find("a.navbar-brand").attributes("href")).toBe("/");
         expect(wrapper.find(".navbar-app").text()).toBe("Test App Title");
         expect(wrapper.find(".navbar-version").text()).toBe("WODIN v1.2.3");
+
+        const sessionsDropDown = wrapper.find(".dropdown");
+        expect(sessionsDropDown.find("a#sessions-menu").text()).toBe("Sessions");
+        const routerLink = sessionsDropDown.find("ul.dropdown-menu li").findComponent(RouterLink);
+        expect(routerLink.attributes("to")).toBe("/sessions");
     });
 });

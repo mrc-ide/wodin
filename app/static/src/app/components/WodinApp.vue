@@ -21,25 +21,20 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted } from "vue";
+import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import ErrorsAlert from "./ErrorsAlert.vue";
 import WodinPanels from "./WodinPanels.vue";
-import { ModelAction } from "../store/model/actions";
 import LoadingSpinner from "./LoadingSpinner.vue";
-import { AppStateAction } from "../store/appState/actions";
 
 export default defineComponent({
     name: "WodinApp",
-    props: {
-        appName: String
-    },
     components: {
         LoadingSpinner,
         ErrorsAlert,
         WodinPanels
     },
-    setup(props) {
+    setup() {
         const store = useStore();
 
         const appType = computed(() => store.state.appType);
