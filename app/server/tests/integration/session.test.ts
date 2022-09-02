@@ -2,7 +2,7 @@ import {
     flushRedis, getRedisValue, setRedisValue, expectRedisJSONValue, post, get
 } from "./utils";
 
-describe("Session integration", () => {
+describe("Session id integration", () => {
     afterEach(async () => {
         await flushRedis();
     });
@@ -90,5 +90,27 @@ describe("Session integration", () => {
         expect(sessions[0].id).toBe(sessionId);
         expectRecentTime(sessions[0].time);
         expect(sessions[0].label).toBe(null);
+    });
+});
+
+describe("Session label integration", () => {
+    afterEach(async () => {
+        await flushRedis();
+    });
+
+    const redisKeyPrefix = "example:day1:sessions:";
+    const sessionId = "1234";
+    const url = `apps/day1/sessions/${sessionId}/label`;
+
+    it("can post and update new label", async () => {
+        const response1 = await post(url, "some label", "text/plain");
+        expect(response1.status).toBe(200);
+        const label1 = await getRedisValue(`${redisKeyPrefix}label`, sessionId);
+        expect(label1).toBe("some label");
+
+        const response2 = await post(url, "some other label", "text/plain");
+        expect(response2.status).toBe(200);
+        const label2 = await getRedisValue(`${redisKeyPrefix}label`, sessionId);
+        expect(label2).toBe("some other label");
     });
 });

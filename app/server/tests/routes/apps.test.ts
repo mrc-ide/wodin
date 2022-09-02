@@ -31,6 +31,8 @@ describe("odin routes", () => {
         expect(mockRouter.get.mock.calls[1][1]).toBe(SessionsController.getSessionsMetadata);
         expect(mockRouter.post.mock.calls[0][0]).toBe("/:appName/sessions/:id");
         expect(mockRouter.post.mock.calls[0][2]).toBe(SessionsController.postSession);
+        expect(mockRouter.post.mock.calls[1][0]).toBe("/:appName/sessions/:id/label");
+        expect(mockRouter.post.mock.calls[1][2]).toBe(SessionsController.postSessionLabel);
         expect(spyText).toHaveBeenCalledWith({ type: "application/json" });
     });
 });

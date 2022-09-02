@@ -7,7 +7,7 @@ import { model } from "../model/model";
 import { run } from "../run/run";
 import { code } from "../code/code";
 import { sensitivity } from "../sensitivity/sensitivity";
-import { logMutations } from "../plugins";
+import { logMutations, persistState } from "../plugins";
 import { AppType, VisualisationTab } from "../appState/state";
 import { newSessionId } from "../../utils";
 import { localStorageManager } from "../../localStorageManager";
@@ -19,7 +19,9 @@ const defaultState: () => any = () => {
         appType: AppType.Basic,
         openVisualisationTab: VisualisationTab.Run,
         appName: null,
-        config: null
+        config: null,
+        queuedStateUploadIntervalId: -1,
+        stateUploadInProgress: false
     };
 };
 
@@ -35,7 +37,8 @@ export const storeOptions: StoreOptions<BasicState> = {
         sensitivity
     },
     plugins: [
-        logMutations
+        logMutations,
+        persistState
     ]
 };
 

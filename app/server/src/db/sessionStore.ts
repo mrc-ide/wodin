@@ -28,9 +28,13 @@ export class SessionStore {
             const times = values[0];
             const labels = values[1];
             const allResults = ids.map((id: string, idx: number) => {
-                return { id, time: times[idx], label: labels[idx] };
+                return {id, time: times[idx], label: labels[idx]};
             });
             return allResults.filter((session) => session.time !== null) as SessionMetadata[];
         });
-    }
+    };
+
+    async saveSessionLabel(id: string, label: string) {
+        await this._redis.hset(this.sessionKey("label"), id, label);
+    };
 }

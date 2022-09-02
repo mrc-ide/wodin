@@ -74,7 +74,7 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
         }
 
         if (rootState.appType === AppType.Fit) {
-            commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
+            commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { modelChanged: true }, { root: true });
             // initialise data links
             dispatch(`fitData/${FitDataAction.UpdateLinkedVariables}`, null, { root: true });
             dispatch(`modelFit/${ModelFitAction.UpdateParamsToVary}`, null, { root: true });

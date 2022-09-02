@@ -27,4 +27,12 @@ export class SessionsController {
         }
         jsonResponseSuccess(metadata, res);
     };
+
+    static postSessionLabel = async (req: Request, res: Response) => {
+        const { redis, wodinConfig } = req.app.locals as AppLocals;
+        const { appName, id } = req.params;
+        const store = new SessionStore(redis, wodinConfig.savePrefix, appName);
+        await store.saveSessionLabel(id, req.body as string);
+        res.end();
+    };
 }

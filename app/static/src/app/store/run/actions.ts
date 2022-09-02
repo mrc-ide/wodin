@@ -32,10 +32,6 @@ export const actions: ActionTree<RunState, AppState> = {
                 };
             }
             commit(RunMutation.SetResult, payload);
-
-            if (state.runRequired) {
-                commit(RunMutation.SetRunRequired, false);
-            }
         }
     }
 };

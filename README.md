@@ -62,6 +62,8 @@ Each app config file should contain the following settings:
 - `appType`: "basic", "fit" or "stochastic"
 - `title`: the app title which will be visible to the user
 - `readOnlyCode`: boolean indicating whether default code should not be editable by the user
+- `stateUploadIntervalMillis` (optional): number of milliseconds to wait after front end state changes before state will be 
+saved to the server. Increase this value if too frequent requests are causing issues. Default is 2000.
 
 ### /defaultCode/*.R
 
@@ -114,3 +116,13 @@ To publish to npm:
 ### Usage via docker
 
 The build includes a docker image build which may be easier to deploy. See [wodin-demo](https://github.com/mrc-ide/wodin-demo) for an example.
+
+### Quickly test drive a feature branch
+
+Use the `./scripts/run-version.sh` script
+
+```
+./scripts/run-version.sh --app mrc-1234 --api mrc-2345
+```
+
+setting the branch references for the app and api (defaults to main for both).
