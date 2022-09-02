@@ -36,7 +36,7 @@ describe("Sessionstore", () => {
         expect(mockPipeline.exec).toHaveBeenCalledTimes(1);
     });
 
-    it("cam get session metadata", async () => {
+    it("can get session metadata", async () => {
         const sut = new SessionStore(mockRedis, "Test Course", "testApp");
         const result = await sut.getSessionsMetadata(["1234", "5678"]);
         expect(result).toStrictEqual([
@@ -51,5 +51,16 @@ describe("Sessionstore", () => {
                 label: "5678 value for Test Course:testApp:sessions:label"
             }
         ]);
+    });
+
+    it("filters out session metadata for session ids with no values in db", async () => {
+        const mockNullResultRedis = {
+            hmget: jest.fn().mockImplementation(async (key: string, ...fields: string[]) => {
+                return fields.map(() => null);
+            })
+        } as any;
+        const sut = new SessionStore(mockNullResultRedis, "Test Course", "testApp");
+        const result = await sut.getSessionsMetadata(["1234", "5678"]);
+        expect(result).toStrictEqual([]);
     });
 });

@@ -72,4 +72,23 @@ describe("Session integration", () => {
         expect(Array.isArray(sessions)).toBe(true);
         expect(sessions.length).toBe(0);
     });
+
+    it("does not return metadata for non-existent sessions", async () => {
+        let getMetadataUrl = "apps/day1/sessions/metadata?sessionIds=nonexistent1,nonexistent2";
+        let response = await get(getMetadataUrl);
+        let sessions = response.data.data;
+        expect(Array.isArray(sessions)).toBe(true);
+        expect(sessions.length).toBe(0);
+
+        // check can also handle a mixture of existent and non-existent ids
+        await post(postSessionUrl(sessionId), { test: "value" });
+        getMetadataUrl = `apps/day1/sessions/metadata?sessionIds=nonexistent1,${sessionId}`;
+        response = await get(getMetadataUrl);
+        sessions = response.data.data;
+        expect(Array.isArray(sessions)).toBe(true);
+        expect(sessions.length).toBe(1);
+        expect(sessions[0].id).toBe(sessionId);
+        expectRecentTime(sessions[0].time);
+        expect(sessions[0].label).toBe(null);
+    });
 });
