@@ -73,7 +73,7 @@ describe("SessionsController", () => {
     });
 
     it("can save label", () => {
-        const req = {
+        const labelReq = {
             app: {
                 locals: {
                     redis: {},
@@ -89,9 +89,9 @@ describe("SessionsController", () => {
             body: "some label"
         } as any;
 
-        SessionsController.postSessionLabel(req, res);
+        SessionsController.postSessionLabel(labelReq, res);
         expect(mockSessionStore).toHaveBeenCalledTimes(1); // expect store constructor
-        expect(mockSessionStore.mock.calls[0][0]).toBe(req.app.locals.redis);
+        expect(mockSessionStore.mock.calls[0][0]).toBe(labelReq.app.locals.redis);
         expect(mockSessionStore.mock.calls[0][1]).toBe("testPrefix");
         expect(mockSessionStore.mock.calls[0][2]).toBe("testApp");
         const storeInstance = mockSessionStore.mock.instances[0];
