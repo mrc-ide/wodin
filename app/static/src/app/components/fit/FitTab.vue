@@ -32,8 +32,8 @@ import { ModelFitGetter } from "../../store/modelFit/getters";
 import userMessages from "../../userMessages";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import { ModelFitMutation } from "../../store/modelFit/mutations";
-import { fitRequirementsExplanation } from "./support";
-import { allTrue } from "../../utils";
+import { fitRequirementsExplanation, fitUpdateRequiredExplanation } from "./support";
+import { allTrue, anyTrue } from "../../utils";
 
 export default {
     name: "FitTab",
@@ -65,11 +65,18 @@ export default {
             if (!allTrue(fitRequirements.value)) {
                 return fitRequirementsExplanation(fitRequirements.value);
             }
+            // This is confusing if the user has not run a fit as it
+            // makes it look like some additional action needs
+            // taking. The plot already tells the user that the fit
+            // needs running, so don't add a message.
+            if (!store.state.modelFit.result?.solution) {
+                return "";
+            }
             if (compileRequired.value) {
                 return userMessages.modelFit.compileRequired;
             }
-            if (fitUpdateRequired.value) {
-                return userMessages.modelFit.fitRequired;
+            if (anyTrue(fitUpdateRequired.value)) {
+                return fitUpdateRequiredExplanation(fitUpdateRequired.value);
             }
 
             return "";

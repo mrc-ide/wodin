@@ -63,8 +63,17 @@ describe("ModelFit mutations", () => {
 
     it("sets fitUpdateRequired", () => {
         const state = mockModelFitState();
-        expect(state.fitUpdateRequired).toBe(true);
-        mutations.SetFitUpdateRequired(state, false);
-        expect(state.fitUpdateRequired).toBe(false);
+        const base = {
+            dataChanged: false,
+            linkChanged: false,
+            modelChanged: false,
+            parameterValueChanged: false,
+            parameterToVaryChanged: false
+        };
+        expect(state.fitUpdateRequired).toEqual(base);
+        mutations.SetFitUpdateRequired(state, { dataChanged: true });
+        expect(state.fitUpdateRequired).toEqual({ ...base, dataChanged: true });
+        mutations.SetFitUpdateRequired(state, null);
+        expect(state.fitUpdateRequired).toEqual(base);
     });
 });

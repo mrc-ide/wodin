@@ -371,7 +371,19 @@ describe("ApiService", () => {
         expect(commit.mock.calls.length).toBe(0);
     });
 
-    it("warns if error and success handlers are not set", async () => {
+    it("does not warn that no success handler if ignoring success", async () => {
+        mockAxios.onGet(TEST_ROUTE)
+            .reply(200, mockSuccess(true));
+
+        await api({ commit: jest.fn(), rootState } as any)
+            .ignoreSuccess()
+            .withError("whatever")
+            .get(TEST_ROUTE);
+
+        expect((console.warn as jest.Mock).mock.calls.length).toBe(0);
+    });
+
+    it("warns if error and success handlers are not set if not ignoring", async () => {
         mockAxios.onGet(TEST_ROUTE)
             .reply(200, mockSuccess(true));
 

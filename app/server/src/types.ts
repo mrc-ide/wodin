@@ -30,6 +30,6 @@ export interface AppLocals {
 
 export interface SessionMetadata {
     id: string,
-    time: string | null,
+    time: string,
     label: string | null
 }

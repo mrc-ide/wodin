@@ -1,4 +1,5 @@
 import Redis from "ioredis";
+import { SessionMetadata } from "../types";
 
 export class SessionStore {
     private readonly _redis: Redis;
@@ -26,9 +27,14 @@ export class SessionStore {
         ]).then((values) => {
             const times = values[0];
             const labels = values[1];
-            return ids.map((id: string, idx: number) => {
+            const allResults = ids.map((id: string, idx: number) => {
                 return { id, time: times[idx], label: labels[idx] };
             });
+            return allResults.filter((session) => session.time !== null) as SessionMetadata[];
         });
+    }
+
+    async saveSessionLabel(id: string, label: string) {
+        await this._redis.hset(this.sessionKey("label"), id, label);
     }
 }

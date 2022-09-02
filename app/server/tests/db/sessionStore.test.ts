@@ -17,7 +17,8 @@ describe("Sessionstore", () => {
         pipeline: jest.fn().mockReturnValue(mockPipeline),
         hmget: jest.fn().mockImplementation(async (key: string, ...fields: string[]) => {
             return fields.map((field: string) => `${field} value for ${key}`);
-        })
+        }),
+        hset: jest.fn().mockReturnValue(mockPipeline)
     } as any;
 
     it("can save session", async () => {
@@ -36,7 +37,7 @@ describe("Sessionstore", () => {
         expect(mockPipeline.exec).toHaveBeenCalledTimes(1);
     });
 
-    it("cam get session metadata", async () => {
+    it("can get session metadata", async () => {
         const sut = new SessionStore(mockRedis, "Test Course", "testApp");
         const result = await sut.getSessionsMetadata(["1234", "5678"]);
         expect(result).toStrictEqual([
@@ -51,5 +52,27 @@ describe("Sessionstore", () => {
                 label: "5678 value for Test Course:testApp:sessions:label"
             }
         ]);
+    });
+
+    it("filters out session metadata for session ids with no values in db", async () => {
+        const mockNullResultRedis = {
+            hmget: jest.fn().mockImplementation(async (key: string, ...fields: string[]) => {
+                return fields.map(() => null);
+            })
+        } as any;
+        const sut = new SessionStore(mockNullResultRedis, "Test Course", "testApp");
+        const result = await sut.getSessionsMetadata(["1234", "5678"]);
+        expect(result).toStrictEqual([]);
+    });
+
+    it("can save label", async () => {
+        const id = "1234";
+        const label = "some label";
+        const sut = new SessionStore(mockRedis, "Test Course", "testApp");
+        await sut.saveSessionLabel(id, label);
+        expect(mockRedis.hset).toHaveBeenCalledTimes(1);
+        expect(mockRedis.hset.mock.calls[0][0]).toBe("Test Course:testApp:sessions:label");
+        expect(mockRedis.hset.mock.calls[0][1]).toBe("1234");
+        expect(mockRedis.hset.mock.calls[0][2]).toBe("some label");
     });
 });

@@ -4,7 +4,7 @@ import { mockError, mockRunState } from "../../../mocks";
 describe("Run mutations", () => {
     it("sets odin solution", () => {
         const mockSolution = () => [{ x: 1, y: 2 }];
-        const state = mockRunState();
+        const state = mockRunState({ runRequired: true });
         const result = {
             inputs: { endTime: 99, parameterValues: { a: 1 } },
             error: null,
@@ -13,6 +13,7 @@ describe("Run mutations", () => {
 
         mutations.SetResult(state, result);
         expect(state.result).toBe(result);
+        expect(state.runRequired).toBe(false);
     });
 
     it("sets run required", () => {

@@ -19,7 +19,8 @@ export interface ResponseSuccess {
 
 export interface AppConfig {
     defaultCode: string[],
-    readOnlyCode: boolean
+    readOnlyCode: boolean,
+    stateUploadIntervalMillis?: number | null
 }
 
 export interface BasicConfig extends AppConfig {

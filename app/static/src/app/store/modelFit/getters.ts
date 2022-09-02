@@ -16,7 +16,7 @@ export const getters: ModelFitGetters & GetterTree<ModelFitState, FitState> = {
         const linkedVariables = rootState.fitData?.linkedVariables;
         const hasLinkedVariables = linkedVariables !== null
             && Object.values(linkedVariables).some((el: string | null) => el !== null);
-        const checklist = {
+        return {
             hasModel: !!rootState.model.odin,
             hasData: !!rootState.fitData.data,
             hasTimeVariable: !!rootState.fitData.timeVariable,
@@ -24,6 +24,5 @@ export const getters: ModelFitGetters & GetterTree<ModelFitState, FitState> = {
             hasTarget: !!rootState.fitData.columnToFit,
             hasParamsToVary: !!state.paramsToVary.length
         };
-        return checklist;
     }
 };

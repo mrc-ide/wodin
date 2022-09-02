@@ -1,4 +1,4 @@
-import { fitRequirementsExplanation } from "../../../../src/app/components/fit/support";
+import { fitRequirementsExplanation, fitUpdateRequiredExplanation } from "../../../../src/app/components/fit/support";
 
 describe("construct actionable error messages from requirements", () => {
     const reqsTrue = {
@@ -48,5 +48,49 @@ describe("construct actionable error messages from requirements", () => {
             .toBe("Cannot fit model. Please select a time variable for the data (Data tab).");
         expect(fitRequirementsExplanation({ ...reqsTrue, hasTarget: false }))
             .toBe("Cannot fit model. Please select a target to fit (Options tab).");
+    });
+});
+
+describe("construct actionable fit update messages from fit state changes", () => {
+    const base = {
+        modelChanged: false,
+        dataChanged: false,
+        linkChanged: false,
+        parameterValueChanged: false,
+        parameterToVaryChanged: false
+    };
+
+    it("shows fallback when no reason can be found", () => {
+        expect(fitUpdateRequiredExplanation(base))
+            .toBe("Fit is out of date: unknown reasons, contact the administrator, as this is unexpected. "
+                  + "Rerun fit to view updated result.");
+    });
+
+    it("shows sensible message when everything has changed", () => {
+        const everything = {
+            modelChanged: true,
+            dataChanged: true,
+            linkChanged: true,
+            parameterValueChanged: true,
+            parameterToVaryChanged: true
+        };
+        expect(fitUpdateRequiredExplanation(everything))
+            .toBe("Fit is out of date: model has been recompiled and data have been updated. "
+                  + "Rerun fit to view updated result.");
+    });
+
+    it("gives specific messages when little has changed", () => {
+        const prefix = "Fit is out of date";
+        const suffix = "Rerun fit to view updated result.";
+        expect(fitUpdateRequiredExplanation({ ...base, modelChanged: true }))
+            .toBe(`${prefix}: model has been recompiled. ${suffix}`);
+        expect(fitUpdateRequiredExplanation({ ...base, dataChanged: true }))
+            .toBe(`${prefix}: data have been updated. ${suffix}`);
+        expect(fitUpdateRequiredExplanation({ ...base, linkChanged: true }))
+            .toBe(`${prefix}: model-data link has changed. ${suffix}`);
+        expect(fitUpdateRequiredExplanation({ ...base, parameterValueChanged: true }))
+            .toBe(`${prefix}: parameters have been updated. ${suffix}`);
+        expect(fitUpdateRequiredExplanation({ ...base, parameterToVaryChanged: true }))
+            .toBe(`${prefix}: parameters to vary have been updated. ${suffix}`);
     });
 });

@@ -68,7 +68,7 @@ describe("ModelFit actions", () => {
         expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetFitting);
         expect(commit.mock.calls[0][1]).toBe(true);
         expect(commit.mock.calls[1][0]).toBe(ModelFitMutation.SetFitUpdateRequired);
-        expect(commit.mock.calls[1][1]).toBe(false);
+        expect(commit.mock.calls[1][1]).toBe(null);
         expect(commit.mock.calls[2][0]).toBe(ModelFitMutation.SetInputs);
         expect(commit.mock.calls[2][1]).toEqual({
             data: expectedData,
@@ -109,7 +109,9 @@ describe("ModelFit actions", () => {
         const result = {
             converged: false,
             data: {
-                pars: {}
+                pars: {},
+                endTime: 99,
+                solution: "solution"
             }
         };
         const simplex = {
@@ -117,7 +119,9 @@ describe("ModelFit actions", () => {
             result: () => result
         } as any;
 
-        const testState = mockModelFitState({ fitting: true });
+        const testState = mockModelFitState({
+            fitting: true
+        });
 
         const commit = jest.fn();
         const dispatch = jest.fn();
@@ -125,12 +129,19 @@ describe("ModelFit actions", () => {
 
         setTimeout(() => {
             expect(simplex.step).toHaveBeenCalledTimes(1);
-            expect(commit).toHaveBeenCalledTimes(2);
+            expect(commit).toHaveBeenCalledTimes(3);
             expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetResult);
             expect(commit.mock.calls[0][1]).toBe(result);
             expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
             expect(commit.mock.calls[1][1]).toBe(result.data.pars);
             expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
+            expect(commit.mock.calls[2][0]).toBe(`run/${RunMutation.SetResult}`);
+            expect(commit.mock.calls[2][1]).toStrictEqual({
+                inputs: { endTime: 99, parameterValues: {} },
+                solution: "solution",
+                error: null
+            });
+            expect(commit.mock.calls[2][2]).toStrictEqual({ root: true });
 
             expect(dispatch).toHaveBeenCalledTimes(1);
             expect(dispatch.mock.calls[0][0]).toBe(ModelFitAction.FitModelStep);
@@ -158,11 +169,12 @@ describe("ModelFit actions", () => {
 
         setTimeout(() => {
             expect(simplex.step).toHaveBeenCalledTimes(1);
-            expect(commit).toHaveBeenCalledTimes(3);
+            expect(commit).toHaveBeenCalledTimes(4);
             expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetResult);
             expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
-            expect(commit.mock.calls[2][0]).toBe(ModelFitMutation.SetFitting);
-            expect(commit.mock.calls[2][1]).toBe(false);
+            expect(commit.mock.calls[2][0]).toBe(`run/${RunMutation.SetResult}`);
+            expect(commit.mock.calls[3][0]).toBe(ModelFitMutation.SetFitting);
+            expect(commit.mock.calls[3][1]).toBe(false);
 
             expect(dispatch).not.toHaveBeenCalled();
             done();

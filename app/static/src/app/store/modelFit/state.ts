@@ -7,9 +7,17 @@ export interface ModelFitInputs {
     link: FitDataLink;
 }
 
+export interface FitUpdateRequiredReasons {
+    modelChanged: boolean;
+    dataChanged: boolean;
+    linkChanged: boolean;
+    parameterValueChanged: boolean;
+    parameterToVaryChanged: boolean;
+}
+
 export interface ModelFitState {
     fitting: boolean,
-    fitUpdateRequired: boolean,
+    fitUpdateRequired: FitUpdateRequiredReasons,
     iterations: number | null,
     converged: boolean | null,
     sumOfSquares: number | null,

@@ -10,7 +10,7 @@ import { sensitivity } from "../sensitivity/sensitivity";
 import { fitData } from "../fitData/fitData";
 import { modelFit } from "../modelFit/modelFit";
 import { AppType, VisualisationTab } from "../appState/state";
-import { logMutations } from "../plugins";
+import { logMutations, persistState } from "../plugins";
 import { newSessionId } from "../../utils";
 import { localStorageManager } from "../../localStorageManager";
 
@@ -21,7 +21,9 @@ const defaultState: () => any = () => {
         appType: AppType.Fit,
         openVisualisationTab: VisualisationTab.Run,
         appName: null,
-        config: null
+        config: null,
+        queuedStateUploadIntervalId: -1,
+        stateUploadInProgress: false
     };
 };
 
@@ -39,7 +41,8 @@ export const storeOptions: StoreOptions<FitState> = {
         sensitivity
     },
     plugins: [
-        logMutations
+        logMutations,
+        persistState
     ]
 };
 

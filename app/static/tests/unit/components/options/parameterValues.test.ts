@@ -15,6 +15,7 @@ describe("ParameterValues", () => {
     const getStore = (fitTabIsOpen = false,
         mockUpdateParameterValues: Mock<any, any> | null = null,
         mockSetSensitivityUpdateRequired = jest.fn(),
+        mockSetFitUpdateRequired = jest.fn(),
         paramsToVary: string[] = [],
         mockSetParamsToVary = jest.fn()) => {
         // Use mock or real mutations
@@ -42,7 +43,8 @@ describe("ParameterValues", () => {
                     namespaced: true,
                     state: mockModelFitState({ paramsToVary }),
                     mutations: {
-                        [ModelFitMutation.SetParamsToVary]: mockSetParamsToVary
+                        [ModelFitMutation.SetParamsToVary]: mockSetParamsToVary,
+                        [ModelFitMutation.SetFitUpdateRequired]: mockSetFitUpdateRequired
                     }
                 },
                 sensitivity: {
@@ -84,7 +86,7 @@ describe("ParameterValues", () => {
     });
 
     it("renders as expected when fit tab is open", () => {
-        const wrapper = getWrapper(getStore(true, null, jest.fn(), ["param1"]));
+        const wrapper = getWrapper(getStore(true, null, jest.fn(), jest.fn(), ["param1"]));
         const rows = wrapper.findAll("div.row");
 
         const p1 = rows.at(0)!;
@@ -104,7 +106,7 @@ describe("ParameterValues", () => {
     });
 
     it("shows select param to vary message if fit tab is open and none are selected", () => {
-        const wrapper = getWrapper(getStore(true, null, jest.fn(), []));
+        const wrapper = getWrapper(getStore(true, null, jest.fn(), jest.fn(), []));
         expect(wrapper.find("#select-param-msg").text()).toBe(
             "Please select at least one parameter to vary during model fit."
         );
@@ -113,13 +115,17 @@ describe("ParameterValues", () => {
     it("commits parameter value change", async () => {
         const mockUpdateParameterValues = jest.fn();
         const mockSetSensitivityUpdateRequired = jest.fn();
-        const wrapper = getWrapper(getStore(false, mockUpdateParameterValues, mockSetSensitivityUpdateRequired));
+        const mockSetFitUpdateRequired = jest.fn();
+        const wrapper = getWrapper(getStore(false, mockUpdateParameterValues, mockSetSensitivityUpdateRequired,
+            mockSetFitUpdateRequired));
         const input2 = wrapper.findAllComponents(NumericInput).at(1)!;
         await input2.vm.$emit("update", 3.3);
         expect(mockUpdateParameterValues).toHaveBeenCalledTimes(1);
         expect(mockUpdateParameterValues.mock.calls[0][1]).toStrictEqual({ param2: 3.3 });
         expect(mockSetSensitivityUpdateRequired).toHaveBeenCalledTimes(1);
         expect(mockSetSensitivityUpdateRequired.mock.calls[0][1]).toBe(true);
+        expect(mockSetFitUpdateRequired).toHaveBeenCalledTimes(1);
+        expect(mockSetFitUpdateRequired.mock.calls[0][1]).toStrictEqual({ parameterValueChanged: true });
     });
 
     it("refreshes cleared input when odinSolution changes", async () => {
@@ -139,21 +145,27 @@ describe("ParameterValues", () => {
 
     it("updates params to vary when checkbox is checked", async () => {
         const mockSetParamsToVary = jest.fn();
-        const store = getStore(true, null, jest.fn(), ["param1"], mockSetParamsToVary);
+        const mockSetFitUpdateRequired = jest.fn();
+        const store = getStore(true, null, jest.fn(), mockSetFitUpdateRequired, ["param1"], mockSetParamsToVary);
         const wrapper = getWrapper(store);
         const row2 = wrapper.findAll("div.row").at(1)!;
         await row2.find("input.vary-param-check").setValue(true);
         expect(mockSetParamsToVary).toHaveBeenCalledTimes(1);
         expect(mockSetParamsToVary.mock.calls[0][1]).toStrictEqual(["param1", "param2"]);
+        expect(mockSetFitUpdateRequired).toHaveBeenCalledTimes(1);
+        expect(mockSetFitUpdateRequired.mock.calls[0][1]).toStrictEqual({ parameterToVaryChanged: true });
     });
 
     it("updates params to vary when checkbox is unchecked", async () => {
         const mockSetParamsToVary = jest.fn();
-        const store = getStore(true, null, jest.fn(), ["param1"], mockSetParamsToVary);
+        const mockSetFitUpdateRequired = jest.fn();
+        const store = getStore(true, null, jest.fn(), mockSetFitUpdateRequired, ["param1"], mockSetParamsToVary);
         const wrapper = getWrapper(store);
         const row1 = wrapper.findAll("div.row").at(0)!;
         await row1.find("input.vary-param-check").setValue(false);
         expect(mockSetParamsToVary).toHaveBeenCalledTimes(1);
         expect(mockSetParamsToVary.mock.calls[0][1]).toStrictEqual([]);
+        expect(mockSetFitUpdateRequired).toHaveBeenCalledTimes(1);
+        expect(mockSetFitUpdateRequired.mock.calls[0][1]).toStrictEqual({ parameterToVaryChanged: true });
     });
 });

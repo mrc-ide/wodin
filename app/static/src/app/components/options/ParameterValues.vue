@@ -68,6 +68,7 @@ export default defineComponent({
 
         const updateValue = (newValue: number, paramName: string) => {
             store.commit(`run/${RunMutation.UpdateParameterValues}`, { [paramName]: newValue });
+            store.commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { parameterValueChanged: true });
             store.commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true);
         };
 
@@ -76,6 +77,7 @@ export default defineComponent({
             const currentParams = paramsToVary.value;
             const newParams = checked ? [...currentParams, paramName] : currentParams.filter((p) => p !== paramName);
             store.commit(`modelFit/${ModelFitMutation.SetParamsToVary}`, newParams);
+            store.commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { parameterToVaryChanged: true });
         };
 
         const fitTabIsOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Fit);

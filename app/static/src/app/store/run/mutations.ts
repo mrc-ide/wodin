@@ -14,6 +14,7 @@ export enum RunMutation {
 export const mutations: MutationTree<RunState> = {
     [RunMutation.SetResult](state: RunState, payload: OdinRunResult) {
         state.result = payload;
+        state.runRequired = false;
     },
 
     [RunMutation.SetRunRequired](state: RunState, payload: boolean) {

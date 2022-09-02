@@ -44,19 +44,21 @@ const respondUpdatedTimeVariable = (context: ActionContext<FitDataState, FitStat
     if (timeVariable && data) {
         const endTime = data[data.length - 1][timeVariable]!;
         commit(`run/${RunMutation.SetEndTime}`, endTime, { root: true });
-        commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
+        commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { linkChanged: true }, { root: true });
         commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true, { root: true });
     }
 };
 
 export const actions: ActionTree<FitDataState, FitState> = {
     [FitDataAction.Upload](context, file) {
+        const { commit } = context;
         csvUpload(context)
             .withSuccess(FitDataMutation.SetData)
             .withError(FitDataMutation.SetError)
             .then(() => {
                 updateLinkedVariables(context);
                 respondUpdatedTimeVariable(context);
+                commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { dataChanged: true }, { root: true });
             })
             .upload(file);
     },
@@ -76,13 +78,13 @@ export const actions: ActionTree<FitDataState, FitState> = {
         const { commit, state } = context;
         commit(FitDataMutation.SetLinkedVariable, payload);
         if (payload.column === state.columnToFit) {
-            commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
+            commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { linkChanged: true }, { root: true });
         }
     },
 
     [FitDataAction.UpdateColumnToFit](context, payload: string) {
         const { commit } = context;
         commit(FitDataMutation.SetColumnToFit, payload);
-        commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, true, { root: true });
+        commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { linkChanged: true }, { root: true });
     }
 };

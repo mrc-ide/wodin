@@ -6,7 +6,6 @@ jest.mock("../../src/db/sessionStore");
 
 describe("SessionsController", () => {
     const mockSessionStore = SessionStore as Mock;
-
     const req = {
         app: {
             locals: {
@@ -71,5 +70,33 @@ describe("SessionsController", () => {
         expect(mockSessionStore).not.toHaveBeenCalled();
         expect(res.header).toHaveBeenCalledWith("Content-Type", "application/json");
         expect(res.end).toHaveBeenCalledTimes(1);
+    });
+
+    it("can save label", () => {
+        const labelReq = {
+            app: {
+                locals: {
+                    redis: {},
+                    wodinConfig: {
+                        savePrefix: "testPrefix"
+                    }
+                }
+            },
+            params: {
+                appName: "testApp",
+                id: "1234"
+            },
+            body: "some label"
+        } as any;
+
+        SessionsController.postSessionLabel(labelReq, res);
+        expect(mockSessionStore).toHaveBeenCalledTimes(1); // expect store constructor
+        expect(mockSessionStore.mock.calls[0][0]).toBe(labelReq.app.locals.redis);
+        expect(mockSessionStore.mock.calls[0][1]).toBe("testPrefix");
+        expect(mockSessionStore.mock.calls[0][2]).toBe("testApp");
+        const storeInstance = mockSessionStore.mock.instances[0];
+        expect(storeInstance.saveSessionLabel).toHaveBeenCalledTimes(1);
+        expect(storeInstance.saveSessionLabel.mock.calls[0][0]).toBe("1234");
+        expect(storeInstance.saveSessionLabel.mock.calls[0][1]).toBe("some label");
     });
 });
