@@ -12,15 +12,18 @@ import { ModelAction } from "../store/model/actions";
 export default defineComponent({
     name: "WodinSession",
     props: {
-        appName: String
+        appName: String,
+        loadSessionId: String
     },
     components: {
         RouterView
     },
     setup(props) {
+        console.log("load session id: " + props.loadSessionId)
         const store = useStore();
         onMounted(() => {
-            store.dispatch(AppStateAction.FetchConfig, props.appName);
+            const { appName, loadSessionId } = props;
+            store.dispatch(AppStateAction.FetchConfig, {appName, loadSessionId});
             store.dispatch(`model/${ModelAction.FetchOdinRunner}`);
         });
     }

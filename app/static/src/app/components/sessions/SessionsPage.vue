@@ -2,23 +2,62 @@
   <div class="container">
     <div class="row">
       <h2>Sessions</h2>
-      <div> Coming soon - Sessions list!</div>
+    </div>
+    <template v-if="sessionsMetadata">
+      <div class="row fw-bold py-2">
+        <div class="col-3">Saved</div>
+        <div class="col-2">Label</div>
+        <div class="col-2 text-center">Load</div>
+      </div>
+      <div class="row py-2" v-for="session in sessionsMetadata">
+        <div class="col-3">{{formatDateTime(session.time)}}</div>
+        <div class="col-2">{{session.label || "--no label--"}}</div>
+        <div class="col-2 text-center">
+          <a :href="sessionUrl(session.id)">
+            <vue-feather type="upload" style="vertical-align: bottom;"></vue-feather>
+          </a>
+        </div>
+      </div>
+    </template>
+    <div v-else>
+      Loading sessions...
     </div>
   </div>
 </template>
 
-<script>
-import {onMounted, defineComponent} from "vue";
+<script lang="ts">
+import {utc} from "moment";
+import {onMounted, defineComponent, computed} from "vue";
 import {useStore} from "vuex";
-import {SessionsAction} from "@/app/store/sessions/actions";
+import VueFeather from "vue-feather"
+import {SessionsAction} from "../../store/sessions/actions";
 
 export default defineComponent({
     name: "SessionsPage",
+    components: {
+      VueFeather
+    },
     setup() {
       const store = useStore();
+
+      const sessionsMetadata = computed(() => store.state.sessions.sessionsMetadata);
+      const appName = computed(() => store.state.appName);
+
+      const formatDateTime = (isoUTCString: string) => {
+        return utc(isoUTCString).local().format('DD/MM/YYYY HH:mm:ss');
+      };
+
+      const sessionUrl = (sessionId: string) => `/apps/${appName.value}/sessions/${sessionId}`;
+
       onMounted(() => {
         store.dispatch(`sessions/${SessionsAction.GetSessions}`);
       });
+
+      return {
+        sessionsMetadata,
+        formatDateTime,
+        sessionUrl
+      }
     }
 });
 </script>

@@ -8,6 +8,7 @@ import { AppState, AppType } from "./state";
 import { AppStateMutation } from "./mutations";
 import { serialiseState } from "../../serialise";
 import { FitState } from "../fit/state";
+import {SessionsAction} from "../sessions/actions";
 
 export enum AppStateAction {
     FetchConfig = "FetchConfig",
@@ -28,9 +29,16 @@ async function immediateUploadState(context: ActionContext<AppState, AppState>) 
 
 const getStateUploadInterval = (state: AppState) => state.config?.stateUploadIntervalMillis || 2000;
 
+interface InitialisePayload {
+    appName: String,
+    loadSessionId: String
+}
+
 export const appStateActions: ActionTree<AppState, AppState> = {
-    async [AppStateAction.FetchConfig](context, appName) {
+    // TODO: We should rename FetchConfig to something a bit more more accurate e.g. Populate or Initialise
+    async [AppStateAction.FetchConfig](context, payload: InitialisePayload) {
         const { commit, state, dispatch } = context;
+        const { appName, loadSessionId } = payload;
         commit(AppStateMutation.SetAppName, appName);
         const response = await api(context)
             .freezeResponse()
@@ -42,8 +50,13 @@ export const appStateActions: ActionTree<AppState, AppState> = {
             commit(`code/${CodeMutation.SetCurrentCode}`, state.config!.defaultCode, { root: true });
 
             if (state.code.currentCode.length) {
-                // Fetch and run model for default code
-                await dispatch(`model/${ModelAction.DefaultModel}`);
+                if (!loadSessionId) {
+                    // Fetch and run model for default code
+                    await dispatch(`model/${ModelAction.DefaultModel}`);
+                } else {
+                    // Fetch and rehydrate session data
+                    await dispatch(`sessions/${SessionsAction.Rehydrate}`, loadSessionId);
+                }
             }
         }
     },
