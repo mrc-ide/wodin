@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import { AppLocals } from "../types";
+import { AppLocals, SessionMetadata } from "../types";
 import { SessionStore } from "../db/sessionStore";
+import { jsonResponseSuccess } from "../jsonResponse";
 
 export const serialiseSession = (session: string | null) => {
     // On failure to get a session we could return 404 with some
@@ -18,12 +19,28 @@ export const serialiseSession = (session: string | null) => {
 };
 
 export class SessionsController {
-    static postSession = async (req: Request, res: Response) => {
+    private static getStore = (req: Request) => {
         const { redis, wodinConfig } = req.app.locals as AppLocals;
-        const { appName, id } = req.params;
-        const store = new SessionStore(redis, wodinConfig.savePrefix, appName);
+        const { appName } = req.params;
+        return new SessionStore(redis, wodinConfig.savePrefix, appName);
+    };
+
+    static postSession = async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const store = SessionsController.getStore(req);
         await store.saveSession(id, req.body as string);
         res.end();
+    };
+
+    static getSessionsMetadata = async (req: Request, res: Response) => {
+        const sessionIdsString = req.query.sessionIds as string;
+        let metadata: SessionMetadata[] = [];
+        if (sessionIdsString) {
+            const sessionIds = sessionIdsString.split(",");
+            const store = SessionsController.getStore(req);
+            metadata = await store.getSessionsMetadata(sessionIds);
+        }
+        jsonResponseSuccess(metadata, res);
     };
 
     static postSessionLabel = async (req: Request, res: Response) => {

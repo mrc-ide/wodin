@@ -29,6 +29,12 @@ export const getRedisValue = async (key: string, field: string) => {
     });
 };
 
+export const setRedisValue = async (key: string, field: string, value: string) => {
+    await withRedis(async (redis: Redis) => {
+        await redis.hset(key, field, value);
+    });
+};
+
 export const expectRedisJSONValue = async (key: string, field: string, expectedValue: any) => {
     const value = await getRedisValue(key, field);
     expect(JSON.parse(value!)).toStrictEqual(expectedValue);
