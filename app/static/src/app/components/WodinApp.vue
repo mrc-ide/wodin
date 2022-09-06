@@ -48,6 +48,7 @@ export default defineComponent({
         onMounted(() => {
             store.dispatch(AppStateAction.FetchConfig, props.appName);
             store.dispatch(`model/${ModelAction.FetchOdinRunner}`);
+            console.log("endtime in wodin app", store.state)
         });
 
         return {

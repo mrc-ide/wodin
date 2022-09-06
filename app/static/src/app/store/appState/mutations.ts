@@ -24,6 +24,8 @@ export const appStateMutations: MutationTree<AppState> = {
 
     [AppStateMutation.SetConfig](state: AppState, payload: AppConfig) {
         state.config = payload;
+        state.run.endTime = payload.endTime
+        console.log("app config", state.config, state.run.endTime)
     },
 
     [AppStateMutation.SetOpenVisualisationTab](state: AppState, payload: VisualisationTab) {
