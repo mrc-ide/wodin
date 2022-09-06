@@ -105,7 +105,7 @@ describe("SessionsController", () => {
     // Some additional mocking tomfoolery is needed here in order to
     // get the getSession bit to actually respond
     it("can fetch session", () => {
-        const req = {
+        const sessionReq = {
             app: {
                 locals: {
                     redis: {},
@@ -119,9 +119,9 @@ describe("SessionsController", () => {
                 id: "1234"
             }
         } as any;
-        SessionsController.getSession(req, res);
+        SessionsController.getSession(sessionReq, res);
         expect(mockSessionStore).toHaveBeenCalledTimes(1); // expect store constructor
-        expect(mockSessionStore.mock.calls[0][0]).toBe(req.app.locals.redis);
+        expect(mockSessionStore.mock.calls[0][0]).toBe(sessionReq.app.locals.redis);
         expect(mockSessionStore.mock.calls[0][1]).toBe("testPrefix");
         expect(mockSessionStore.mock.calls[0][2]).toBe("testApp");
         const storeInstance = mockSessionStore.mock.instances[0];
