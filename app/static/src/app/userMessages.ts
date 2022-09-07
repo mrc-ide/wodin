@@ -26,7 +26,15 @@ export default {
     run: {
         compileRequired: "Model code has been updated. Compile code and Run Model to view updated graph.",
         runRequired: "Model code has been recompiled or options have been updated. Run Model to view updated graph.",
-        notRunYet: "Model has not been run."
+        notRunYet: "Model has not been run.",
+        updateReasons: {
+            prefix: "Plot is out of date:",
+            modelChanged: "model code has been recompiled",
+            parameterValueChanged: "parameters have been changed",
+            endTimeChanged: "end time has changed",
+            unknown: "unknown reasons, contact the administrator, as this is unexpected",
+            suffix: "Run model to view updated graph"
+        }
     },
     modelFit: {
         cancelled: "Model fit was cancelled before converging",
@@ -61,6 +69,13 @@ export default {
         runRequiredForUpdate: "Model code has been recompiled or options have been updated. "
             + "Run Sensitivity to view updated graph.",
         invalidSettings: "Invalid settings",
-        notRunYet: "Sensitivity has not been run."
+        notRunYet: "Sensitivity has not been run.",
+        updateReasons: {
+            prefix: "Plot is out of date:",
+            modelChanged: "model code has been recompiled",
+            parameterValueChanged: "parameters have been changed",
+            sensitivityOptionschanged: "sensitivity options have been changed",
+            suffix: "Run model to view updated graph"
+        }
     }
 };

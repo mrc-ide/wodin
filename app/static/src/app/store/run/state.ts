@@ -1,9 +1,15 @@
 import { OdinUserType } from "../../types/responseTypes";
 import { OdinRunResult } from "../../types/wrapperTypes";
 
+export interface RunUpdateRequiredReasons {
+    modelChanged: boolean;
+    parameterValueChanged: boolean;
+    endTimeChanged: boolean;
+}
+
 export interface RunState {
     // Set to true if the stored solution at `result` is out of date
-    runRequired: boolean;
+    runRequired: RunUpdateRequiredReasons;
     // Parameter values to pass into the next solution
     parameterValues: null | OdinUserType;
     // End time for the next solution

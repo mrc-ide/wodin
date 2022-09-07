@@ -61,7 +61,7 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
 
         if (state.compileRequired) {
             commit(ModelMutation.SetCompileRequired, false);
-            commit(`run/${RunMutation.SetRunRequired}`, true, { root: true });
+            commit(`run/${RunMutation.SetRunRequired}`, { modelChanged: true }, { root: true });
             commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true, { root: true });
         }
 

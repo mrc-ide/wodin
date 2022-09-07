@@ -117,7 +117,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[3][0]).toBe(ModelMutation.SetCompileRequired);
         expect(commit.mock.calls[3][1]).toBe(false);
         expect(commit.mock.calls[4][0]).toBe(`run/${RunMutation.SetRunRequired}`);
-        expect(commit.mock.calls[4][1]).toBe(true);
+        expect(commit.mock.calls[4][1]).toStrictEqual({ modelChanged: true });
         expect(commit.mock.calls[5][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
         expect(commit.mock.calls[5][1]).toBe(true);
         expect(commit.mock.calls[5][2]).toStrictEqual({ root: true });
@@ -318,7 +318,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[5][1]).toBe(false);
 
         expect(commit.mock.calls[6][0]).toBe(`run/${RunMutation.SetRunRequired}`);
-        expect(commit.mock.calls[6][1]).toBe(true);
+        expect(commit.mock.calls[6][1]).toStrictEqual({ modelChanged: true });
 
         expect(commit.mock.calls[7][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
         expect(commit.mock.calls[7][1]).toBe(true);

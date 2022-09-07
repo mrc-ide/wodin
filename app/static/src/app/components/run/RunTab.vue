@@ -17,6 +17,8 @@ import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { RunAction } from "../../store/run/actions";
 import userMessages from "../../userMessages";
 import ErrorInfo from "../ErrorInfo.vue";
+import { runRequiredExplanation } from "./support";
+import { anyTrue } from "../../utils";
 
 export default defineComponent({
     name: "RunTab",
@@ -39,9 +41,9 @@ export default defineComponent({
             if (store.state.model.compileRequired) {
                 return userMessages.run.compileRequired;
             }
-            // TOOD: eventually make runRequired to updateRequired I think?
-            if (store.state.run.runRequired) {
-                return userMessages.run.runRequired;
+            // TOOD: eventually make runRequired to runUpdateRequired I think?
+            if (anyTrue(store.state.run.runRequired)) {
+                return runRequiredExplanation(store.state.run.runRequired);
             }
             return "";
         });
