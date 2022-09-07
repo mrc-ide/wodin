@@ -34,7 +34,7 @@ describe("appsController", () => {
     });
 
     it("renders view with app config", () => {
-        const appConfig = { title: "testTitle", appType: "testType" };
+        const appConfig = {title: "testTitle", appType: "testType", endTime: 101};
         const request = getMockRequest(appConfig);
         AppsController.getApp(request, mockResponse);
 
@@ -44,6 +44,24 @@ describe("appsController", () => {
             appName: "test",
             appTitle: "testTitle",
             courseTitle: "Test Course Title",
+            endTime: 101,
+            wodinVersion: "1.2.3"
+        });
+        expect(mockStatus).not.toBeCalled();
+    });
+
+    it("endTime in view options defaults to 100 if not provided in app config", () => {
+        const appConfig = {title: "testTitle", appType: "testType"};
+        const request = getMockRequest(appConfig);
+        AppsController.getApp(request, mockResponse);
+
+        expect(mockRender).toBeCalledTimes(1);
+        expect(mockRender.mock.calls[0][0]).toBe("testType-app");
+        expect(mockRender.mock.calls[0][1]).toStrictEqual({
+            appName: "test",
+            appTitle: "testTitle",
+            courseTitle: "Test Course Title",
+            endTime: 100,
             wodinVersion: "1.2.3"
         });
         expect(mockStatus).not.toBeCalled();

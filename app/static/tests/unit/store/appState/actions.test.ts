@@ -4,6 +4,7 @@ import {
 } from "../../../mocks";
 import { AppStateAction, appStateActions } from "../../../../src/app/store/appState/actions";
 import { AppStateMutation, appStateMutations } from "../../../../src/app/store/appState/mutations";
+import {RunMutation} from "../../../../src/app/store/run/mutations";
 import { ErrorsMutation } from "../../../../src/app/store/errors/mutations";
 import { CodeMutation, mutations as codeMutations } from "../../../../src/app/store/code/mutations";
 import { BasicState } from "../../../../src/app/store/basic/state";
@@ -35,6 +36,7 @@ describe("AppState actions", () => {
         const config = {
             basicProp: "testValue",
             defaultCode: [],
+            endTime: 101,
             readOnlyCode: false
         };
         mockAxios.onGet("/config/test-app")
@@ -45,7 +47,7 @@ describe("AppState actions", () => {
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
         await (appStateActions[AppStateAction.FetchConfig] as any)({ commit, state, dispatch }, "test-app");
-        expect(commit.mock.calls.length).toBe(3);
+        expect(commit.mock.calls.length).toBe(4);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
         expect(commit.mock.calls[0][1]).toBe("test-app");
@@ -58,6 +60,9 @@ describe("AppState actions", () => {
         expect(commit.mock.calls[2][0]).toBe(`code/${CodeMutation.SetCurrentCode}`);
         expect(commit.mock.calls[2][1]).toStrictEqual([]);
 
+        expect(commit.mock.calls[3][0]).toBe(`run/${RunMutation.SetDefaultEndTime}`);
+        expect(commit.mock.calls[3][1]).toStrictEqual(101);
+
         // no code model fetch as defaultCode is empty
         expect(dispatch).not.toBeCalled();
     });
@@ -66,6 +71,7 @@ describe("AppState actions", () => {
         const config = {
             basicProp: "testValue",
             defaultCode: ["line1", "line2"],
+            endTime: 101,
             readOnlyCode: true
         };
         mockAxios.onGet("/config/test-app")
@@ -77,13 +83,16 @@ describe("AppState actions", () => {
         const { state } = store;
 
         await (appStateActions[AppStateAction.FetchConfig] as any)({ commit, state, dispatch }, "test-app");
-        expect(commit.mock.calls.length).toBe(3);
+        expect(commit.mock.calls.length).toBe(4);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
         expect(commit.mock.calls[1][0]).toBe(AppStateMutation.SetConfig);
 
         expect(commit.mock.calls[2][0]).toBe(`code/${CodeMutation.SetCurrentCode}`);
         expect(commit.mock.calls[2][1]).toStrictEqual(["line1", "line2"]);
+
+        expect(commit.mock.calls[3][0]).toBe(`run/${RunMutation.SetDefaultEndTime}`);
+        expect(commit.mock.calls[3][1]).toStrictEqual(101);
 
         expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.DefaultModel}`);
     });

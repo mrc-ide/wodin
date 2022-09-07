@@ -86,4 +86,12 @@ describe("Run mutations", () => {
         mutations.SetResult(state, result);
         expect(state.result).toBe(result);
     });
+
+    it("sets default end time", () => {
+        const state = mockRunState({
+            endTime: 99
+        });
+        mutations.SetDefaultEndTime(state, 101);
+        expect(state.endTime).toBe(101);
+    });
 });
