@@ -1,14 +1,27 @@
 import Redis from "ioredis";
 import { SessionMetadata } from "../types";
+import { generateId } from "zoo-ids";
+
+export const friendlyAdjectiveAnimal = () => {
+    return generateId(null, {
+        caseStyle: "lowercase",
+        delimiter: "-",
+        numAdjectives: 1
+    });
+};
 
 export class SessionStore {
     private readonly _redis: Redis;
 
     private readonly _sessionPrefix: string;
 
-    constructor(redis: Redis, savePrefix: string, app: string) {
+    private readonly _newFriendlyId: () => string;
+
+    constructor(redis: Redis, savePrefix: string, app: string,
+                newFriendlyId: () => string = friendlyAdjectiveAnimal) {
         this._redis = redis;
         this._sessionPrefix = `${savePrefix}:${app}:sessions:`;
+        this._newFriendlyId = newFriendlyId;
     }
 
     private sessionKey = (name: string) => `${this._sessionPrefix}${name}`;
@@ -40,5 +53,34 @@ export class SessionStore {
 
     async getSession(id: string) {
         return this._redis.hget(this.sessionKey("data"), id);
+    }
+
+    async generateFriendlyId(id: string, retries: number = 10) : Promise<string> {
+        // Try several times to generate a friendly id but fall back
+        // on the machine readable id (which should be globally
+        // unique) in the unlikely event that we can't find a free
+        // friendly id, avoiding both collisions and infinite
+        // loops. There are ~300k possible friendly ids with our
+        // current configuration so is essentially impossible unless
+        // we have something on the order of 100k sessions, but single
+        // collisions are likely enough to be worth the faff of
+        // retrying, and it makes sense to avoid an infinite loop...
+        const keyFriendlyToMachine = this.sessionKey("machine");
+        const keyMachineToFriendly = this.sessionKey("friendly");
+
+        while (retries > 0) {
+            const friendly = this._newFriendlyId();
+            const wasSet = await this._redis.hsetnx(keyFriendlyToMachine, friendly, id);
+            if (wasSet) {
+                this._redis.hset(keyMachineToFriendly, id, friendly);
+                return friendly;
+            }
+            retries -= 1;
+        }
+
+        // Fall-back on linking machine to machine
+        await this._redis.hset(keyFriendlyToMachine, id, id);
+        await this._redis.hset(keyMachineToFriendly, id, id);
+        return id;
     }
 }

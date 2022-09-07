@@ -56,4 +56,13 @@ export class SessionsController {
         const session = await store.getSession(id);
         serialiseSession(session, res);
     };
+
+    static generateFriendlyId = async (req: Request, res: Response) => {
+        const { redis, wodinConfig } = req.app.locals as AppLocals;
+        const { appName, id } = req.params;
+        const store = new SessionStore(redis, wodinConfig.savePrefix, appName);
+        const friendly = store.generateFriendlyId(id);
+        res.header("Content-Type", "application/json");
+        res.end(friendly);
+    };
 }
