@@ -63,7 +63,7 @@ test.describe("Options Tab tests", () => {
         await page.fill(":nth-match(#model-params input, 1)", "3");
 
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been recompiled or options have been updated. Run Model to view updated graph.", {
+            "Plot is out of date: parameters have been changed. Run model to view updated graph.", {
                 timeout
             }
         );
@@ -96,7 +96,7 @@ test.describe("Options Tab tests", () => {
         // Compile code
         await page.click("#compile-btn");
         await expect(page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been recompiled or options have been updated. Run Model to view updated graph.", {
+            "Plot is out of date: model code has been recompiled. Run model to view updated graph.", {
                 timeout
             }
         );
@@ -120,7 +120,7 @@ test.describe("Options Tab tests", () => {
         await page.fill("#run-options input", "200");
 
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been recompiled or options have been updated. Run Model to view updated graph.", {
+            "Plot is out of date: end time has changed. Run model to view updated graph.", {
                 timeout
             }
         );

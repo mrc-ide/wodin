@@ -109,7 +109,7 @@ test.describe("Link Variables tests", () => {
         );
         await page.click("#compile-btn");
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been recompiled or options have been updated. Run Model to view updated graph.", {
+            "Plot is out of date: model code has been recompiled. Run model to view updated graph.", {
                 timeout
             }
         );
