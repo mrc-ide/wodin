@@ -149,7 +149,11 @@ describe("Sensitivity actions", () => {
             },
             run: {
                 ...mockRunState,
-                runRequired: true
+                runRequired: {
+                    modelChanged: true,
+                    parameterValueChanged: true,
+                    endTimeChanged: true
+                }
             }
         };
 

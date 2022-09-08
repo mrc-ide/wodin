@@ -29,7 +29,11 @@ describe("Model actions", () => {
             }
         },
         run: {
-            runRequired: false,
+            runRequired: {
+                modelChanged: false,
+                parameterValueChanged: false,
+                endTimeChanged: false
+            },
             parameterValues: { p1: 1, p2: 2, p3: 3 }
         }
     };
@@ -187,7 +191,11 @@ describe("Model actions", () => {
                 }
             },
             compileRequired: true,
-            runRequired: false,
+            runRequired: {
+                modelChanged: false,
+                parameterValueChanged: false,
+                endTimeChanged: false
+            },
             parameterValues: { p2: 1, p3: 2 }
         };
 
