@@ -25,7 +25,6 @@ export default {
     },
     run: {
         compileRequired: "Model code has been updated. Compile code and Run Model to view updated graph.",
-        runRequired: "Model code has been recompiled or options have been updated. Run Model to view updated graph.",
         notRunYet: "Model has not been run.",
         updateReasons: {
             prefix: "Plot is out of date:",
@@ -66,8 +65,6 @@ export default {
         compileRequiredForOptions: "Please compile a valid model in order to set sensitivity options.",
         compileRequiredForUpdate: "Model code has been updated. "
             + "Compile code and Run Sensitivity to view updated graph.",
-        runRequiredForUpdate: "Model code has been recompiled or options have been updated. "
-            + "Run Sensitivity to view updated graph.",
         invalidSettings: "Invalid settings",
         notRunYet: "Sensitivity has not been run.",
         updateReasons: {
