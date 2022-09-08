@@ -2,6 +2,13 @@ import { mutations, SensitivityMutation } from "../../../../src/app/store/sensit
 import { SensitivityPlotExtreme, SensitivityPlotType } from "../../../../src/app/store/sensitivity/state";
 
 describe("Sensitivity mutations", () => {
+    const noUpdateRequired = {
+        endTimeChanged: false,
+        modelChanged: false,
+        parameterValueChanged: false,
+        sensitivityOptionsChanged: false
+    };
+
     it("sets parameter to vary", () => {
         const state = {
             paramSettings: {
@@ -15,12 +22,7 @@ describe("Sensitivity mutations", () => {
     it("sets param settings", () => {
         const state = {
             paramSettings: {},
-            sensitivityUpdateRequired: {
-                modelChanged: false,
-                parameterValueChanged: false,
-                endTimeChanged: false,
-                sensitivityOptionsChanged: false
-            }
+            sensitivityUpdateRequired: noUpdateRequired
         } as any;
         const newSettings = { parameterToVary: "A" };
         mutations[SensitivityMutation.SetParamSettings](state, newSettings);
@@ -95,5 +97,42 @@ describe("Sensitivity mutations", () => {
         };
         mutations[SensitivityMutation.SetResult](state, batch);
         expect(state.result).toBe(batch);
+    });
+
+    it("sets end time and updates update required", () => {
+        const state = {
+            result: {
+                inputs: null,
+                batch: null
+            },
+            sensitivityUpdateRequired: noUpdateRequired
+        } as any;
+        mutations.SetEndTime(state, 100);
+        expect(state.sensitivityUpdateRequired).toStrictEqual({
+            ...state.sensitivityUpdateRequired,
+            endTimeChanged: true
+        });
+    });
+
+    it("sets end time does not require run if it shrinks", () => {
+        const state = {
+            result: {
+                inputs: { endTime: 100 },
+                batch: null
+            },
+            sensitivityUpdateRequired: noUpdateRequired
+        } as any;
+
+        // shrinking is fine
+        mutations.SetEndTime(state, 50);
+        expect(state.sensitivityUpdateRequired.endTimeChanged).toBe(false);
+
+        // increasing, even right up to the original limit, is fine
+        mutations.SetEndTime(state, 100);
+        expect(state.sensitivityUpdateRequired.endTimeChanged).toBe(false);
+
+        // but any additional time requires a rerun
+        mutations.SetEndTime(state, 101);
+        expect(state.sensitivityUpdateRequired.endTimeChanged).toBe(true);
     });
 });

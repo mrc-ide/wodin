@@ -41,9 +41,7 @@ export default defineComponent({
 
         const updateEndTime = (newValue: number) => {
             store.commit(`run/${RunMutation.SetEndTime}`, newValue);
-            // TODO: perhaps not, see elsewhere
-            // app/static/src/app/store/fitData/actions.ts
-            store.commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, { endTimeChanged: true });
+            store.commit(`sensitivity/${SensitivityMutation.SetEndTime}`, newValue);
         };
 
         return {

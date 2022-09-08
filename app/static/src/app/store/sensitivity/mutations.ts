@@ -12,6 +12,7 @@ export enum SensitivityMutation {
     SetParameterToVary = "SetParameterToVary",
     SetParamSettings = "SetParamSettings",
     SetResult = "SetResult",
+    SetEndTime = "SetEndTime",
     SetUpdateRequired = "SetUpdateRequired",
     SetPlotType = "SetPlotType",
     SetPlotExtreme = "SetPlotExtreme",
@@ -44,6 +45,14 @@ export const mutations: MutationTree<SensitivityState> = {
         state.sensitivityUpdateRequired = {
             ...state.sensitivityUpdateRequired,
             ...payload
+        };
+    },
+
+    [SensitivityMutation.SetEndTime](state: SensitivityState, payload: number) {
+        const prevEndTime = state.result?.inputs?.endTime ? state.result.inputs.endTime : -1;
+        state.sensitivityUpdateRequired = {
+            ...state.sensitivityUpdateRequired,
+            endTimeChanged: payload > prevEndTime
         };
     },
 
