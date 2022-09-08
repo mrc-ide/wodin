@@ -44,7 +44,12 @@ describe("Sensitivity actions", () => {
             error: null
         });
         expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetUpdateRequired);
-        expect(commit.mock.calls[1][1]).toBe(false);
+        expect(commit.mock.calls[1][1]).toStrictEqual({
+            endTimeChanged: false,
+            modelChanged: false,
+            parameterValueChanged: false,
+            sensitivityOptionsChanged: false
+        });
 
         expect(mockRunner.batchRun).toHaveBeenCalledWith(rootState.model.odin, mockBatchPars, 0, 99, {});
 

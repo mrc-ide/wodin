@@ -24,6 +24,8 @@ import userMessages from "../../userMessages";
 import { SensitivityPlotType } from "../../store/sensitivity/state";
 import SensitivitySummaryPlot from "./SensitivitySummaryPlot.vue";
 import ErrorInfo from "../ErrorInfo.vue";
+import { sensitivityUpdateRequiredExplanation } from "./support";
+import { anyTrue } from "../../utils";
 
 export default defineComponent({
     name: "SensitivityTab",
@@ -51,8 +53,8 @@ export default defineComponent({
                 if (store.state.model.compileRequired) {
                     return userMessages.sensitivity.compileRequiredForUpdate;
                 }
-                if (sensitivityUpdateRequired.value) {
-                    return userMessages.sensitivity.runRequiredForUpdate;
+                if (anyTrue(sensitivityUpdateRequired.value)) {
+                    return sensitivityUpdateRequiredExplanation(sensitivityUpdateRequired.value);
                 }
             }
             return "";

@@ -77,6 +77,6 @@ describe("RunOptions", () => {
         expect(mockSetEndTime).toHaveBeenCalledTimes(1);
         expect(mockSetEndTime.mock.calls[0][1]).toBe(101);
         expect(mockSetSensitivityUpdateRequired).toHaveBeenCalledTimes(1);
-        expect(mockSetSensitivityUpdateRequired.mock.calls[0][1]).toBe(true);
+        expect(mockSetSensitivityUpdateRequired.mock.calls[0][1]).toStrictEqual({ endTimeChanged: true });
     });
 });

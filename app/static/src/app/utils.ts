@@ -188,7 +188,7 @@ export const joinStringsSentence = (strings: string[], last = " and ", sep = ", 
     return strings.slice(0, n - 1).join(sep) + last + strings[n - 1];
 };
 
-export const appendIf = (container: string[], test: boolean, value: string) => {
+export const appendIf = (container: string[], test: boolean, value: string): void => {
     if (test) {
         container.push(value);
     }

@@ -15,12 +15,20 @@ describe("Sensitivity mutations", () => {
     it("sets param settings", () => {
         const state = {
             paramSettings: {},
-            sensitivityUpdateRequired: false
+            sensitivityUpdateRequired: {
+                modelChanged: false,
+                parameterValueChanged: false,
+                endTimeChanged: false,
+                sensitivityOptionsChanged: false
+            }
         } as any;
         const newSettings = { parameterToVary: "A" };
         mutations[SensitivityMutation.SetParamSettings](state, newSettings);
         expect(state.paramSettings).toBe(newSettings);
-        expect(state.sensitivityUpdateRequired).toBe(true);
+        expect(state.sensitivityUpdateRequired).toStrictEqual({
+            ...state.sensitivityUpdateRequired,
+            sensitivityOptionsChanged: true
+        });
     });
 
     it("sets batch", () => {
@@ -42,10 +50,16 @@ describe("Sensitivity mutations", () => {
 
     it("sets update required", () => {
         const state = {
-            sensitivityUpdateRequired: false
+            sensitivityUpdateRequired: {
+                modelChanged: false,
+                parameterValueChanged: false
+            }
         } as any;
-        mutations[SensitivityMutation.SetUpdateRequired](state, true);
-        expect(state.sensitivityUpdateRequired).toBe(true);
+        mutations[SensitivityMutation.SetUpdateRequired](state, { modelChanged: true });
+        expect(state.sensitivityUpdateRequired).toStrictEqual({
+            modelChanged: true,
+            parameterValueChanged: false
+        });
     });
 
     const plotSettings = {

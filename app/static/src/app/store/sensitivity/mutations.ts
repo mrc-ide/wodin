@@ -1,6 +1,10 @@
 import { MutationTree } from "vuex";
 import {
-    SensitivityParameterSettings, SensitivityPlotExtreme, SensitivityPlotType, SensitivityState
+    SensitivityParameterSettings,
+    SensitivityPlotExtreme,
+    SensitivityPlotType,
+    SensitivityState,
+    SensitivityUpdateRequiredReasons
 } from "./state";
 import { OdinSensitivityResult } from "../../types/wrapperTypes";
 
@@ -17,20 +21,30 @@ export enum SensitivityMutation {
 export const mutations: MutationTree<SensitivityState> = {
     [SensitivityMutation.SetParameterToVary](state: SensitivityState, payload: string | null) {
         state.paramSettings.parameterToVary = payload;
-        state.sensitivityUpdateRequired = true;
+        state.sensitivityUpdateRequired = {
+            ...state.sensitivityUpdateRequired,
+            sensitivityOptionsChanged: true
+        };
     },
 
     [SensitivityMutation.SetParamSettings](state: SensitivityState, payload: SensitivityParameterSettings) {
         state.paramSettings = payload;
-        state.sensitivityUpdateRequired = true;
+        state.sensitivityUpdateRequired = {
+            ...state.sensitivityUpdateRequired,
+            sensitivityOptionsChanged: true
+        };
     },
 
     [SensitivityMutation.SetResult](state: SensitivityState, payload: OdinSensitivityResult) {
         state.result = payload;
     },
 
-    [SensitivityMutation.SetUpdateRequired](state: SensitivityState, payload: boolean) {
-        state.sensitivityUpdateRequired = payload;
+    [SensitivityMutation.SetUpdateRequired](state: SensitivityState,
+        payload: Partial<SensitivityUpdateRequiredReasons>) {
+        state.sensitivityUpdateRequired = {
+            ...state.sensitivityUpdateRequired,
+            ...payload
+        };
     },
 
     [SensitivityMutation.SetPlotType](state: SensitivityState, payload: SensitivityPlotType) {

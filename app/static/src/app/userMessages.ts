@@ -74,8 +74,10 @@ export default {
             prefix: "Plot is out of date:",
             modelChanged: "model code has been recompiled",
             parameterValueChanged: "parameters have been changed",
-            sensitivityOptionschanged: "sensitivity options have been changed",
-            suffix: "Run model to view updated graph"
+            sensitivityOptionsChanged: "sensitivity options have been changed",
+            endTimeChanged: "end time has changed",
+            unknown: "unknown reasons, contact the administrator, as this is unexpected",
+            suffix: "Run sensitivity to view updated graph"
         }
     }
 };

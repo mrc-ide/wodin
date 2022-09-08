@@ -50,6 +50,6 @@ export const mutations: MutationTree<RunState> = {
         state.runRequired = {
             ...state.runRequired,
             endTimeChanged: payload > prevEndTime
-        }
+        };
     }
 };

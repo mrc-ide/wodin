@@ -6,7 +6,7 @@ describe("Run mutations", () => {
         endTimeChanged: false,
         modelChanged: false,
         parameterValueChanged: false
-    }
+    };
     it("sets odin solution", () => {
         const mockSolution = () => [{ x: 1, y: 2 }];
         const state = mockRunState({
