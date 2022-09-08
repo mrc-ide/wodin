@@ -34,7 +34,7 @@ describe("appsController", () => {
     });
 
     it("renders view with app config", () => {
-        const appConfig = {title: "testTitle", appType: "testType", endTime: 101};
+        const appConfig = { title: "testTitle", appType: "testType", endTime: 101 };
         const request = getMockRequest(appConfig);
         AppsController.getApp(request, mockResponse);
 
@@ -51,7 +51,7 @@ describe("appsController", () => {
     });
 
     it("endTime in view options defaults to 100 if not provided in app config", () => {
-        const appConfig = {title: "testTitle", appType: "testType"};
+        const appConfig = { title: "testTitle", appType: "testType" };
         const request = getMockRequest(appConfig);
         AppsController.getApp(request, mockResponse);
 

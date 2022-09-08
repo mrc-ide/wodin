@@ -14,7 +14,8 @@ export class AppsController {
             const view = `${config.appType}-app`;
             // TODO: validate config against schema for app type
             const viewOptions = {
-                appName, appTitle: config.title, courseTitle: wodinConfig.courseTitle, wodinVersion, endTime: config.endTime || 100
+                appName, appTitle: config.title, courseTitle: wodinConfig.courseTitle, wodinVersion,
+                endTime: config.endTime || 100
             };
             res.render(view, viewOptions);
         } else {

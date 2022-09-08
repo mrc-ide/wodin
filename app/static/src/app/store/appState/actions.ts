@@ -3,7 +3,7 @@ import { api } from "../../apiService";
 import { ErrorsMutation } from "../errors/mutations";
 import { AppConfig } from "../../types/responseTypes";
 import { CodeMutation } from "../code/mutations";
-import {RunMutation} from "../run/mutations";
+import { RunMutation } from "../run/mutations";
 import { ModelAction } from "../model/actions";
 import { AppState, AppType } from "./state";
 import { AppStateMutation } from "./mutations";
