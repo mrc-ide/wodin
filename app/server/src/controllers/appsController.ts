@@ -11,7 +11,6 @@ export class AppsController {
         const { appName } = req.params;
         const config = configReader.readConfigFile(appsPath, `${appName}.config.json`) as any;
         if (config) {
-            console.log("app config", config)
             const view = `${config.appType}-app`;
             // TODO: validate config against schema for app type
             const viewOptions = {
