@@ -8,7 +8,7 @@ import { DefaultCodeReader } from "../defaultCodeReader";
 import { handleError } from "../errors/handleError";
 import { initialiseLogging } from "../logging";
 import { redisConnection } from "../redis";
-import { version as wodinVersion } from "../version"
+import { version as wodinVersion } from "../version";
 
 const express = require("express");
 const path = require("path");
