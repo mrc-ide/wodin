@@ -8,6 +8,7 @@ import { DefaultCodeReader } from "../defaultCodeReader";
 import { handleError } from "../errors/handleError";
 import { initialiseLogging } from "../logging";
 import { redisConnection } from "../redis";
+import { version as wodinVersion } from "../version"
 
 const express = require("express");
 const path = require("path");
@@ -25,9 +26,6 @@ const configReader = new ConfigReader(configPath);
 const wodinConfig = configReader.readConfigFile("wodin.config.json") as WodinConfig;
 const { port, appsPath, odinAPI } = wodinConfig;
 const defaultCodeReader = new DefaultCodeReader(`${configPath}/defaultCode`);
-
-// Use WODIN version from package.json
-const wodinVersion = process.env.npm_package_version;
 
 const redis = redisConnection(
     wodinConfig.redisURL,
