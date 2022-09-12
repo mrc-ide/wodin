@@ -24,9 +24,16 @@ export default {
         columnToFitPrerequisites: "Please link at least one column in order to set target to fit."
     },
     run: {
-        compileRequired: "Model code has been updated. Compile code and Run Model to view updated graph.",
-        runRequired: "Model code has been recompiled or options have been updated. Run Model to view updated graph.",
-        notRunYet: "Model has not been run."
+        compileRequired: "Model code has been updated. Compile code and Run Model to update.",
+        notRunYet: "Model has not been run.",
+        updateReasons: {
+            prefix: "Plot is out of date:",
+            modelChanged: "model code has been recompiled",
+            parameterValueChanged: "parameters have been changed",
+            endTimeChanged: "end time has changed",
+            unknown: "unknown reasons, contact the administrator, as this is unexpected",
+            suffix: "Run model to update"
+        }
     },
     modelFit: {
         cancelled: "Model fit was cancelled before converging",
@@ -41,7 +48,7 @@ export default {
             linkChanged: "model-data link has changed",
             parameterValueChanged: "parameters have been updated",
             parameterToVaryChanged: "parameters to vary have been updated",
-            suffix: "Rerun fit to view updated result"
+            suffix: "Rerun fit to update"
         },
         fitRequirements: {
             prefix: "Cannot fit model. Please",
@@ -57,10 +64,17 @@ export default {
     sensitivity: {
         compileRequiredForOptions: "Please compile a valid model in order to set sensitivity options.",
         compileRequiredForUpdate: "Model code has been updated. "
-            + "Compile code and Run Sensitivity to view updated graph.",
-        runRequiredForUpdate: "Model code has been recompiled or options have been updated. "
-            + "Run Sensitivity to view updated graph.",
+            + "Compile code and Run Sensitivity to update.",
         invalidSettings: "Invalid settings",
-        notRunYet: "Sensitivity has not been run."
+        notRunYet: "Sensitivity has not been run.",
+        updateReasons: {
+            prefix: "Plot is out of date:",
+            modelChanged: "model code has been recompiled",
+            parameterValueChanged: "parameters have been changed",
+            sensitivityOptionsChanged: "sensitivity options have been changed",
+            endTimeChanged: "end time has changed",
+            unknown: "unknown reasons, contact the administrator, as this is unexpected",
+            suffix: "Run sensitivity to update"
+        }
     }
 };

@@ -270,7 +270,7 @@ test.describe("Wodin App model fit tests", () => {
         // Compile code
         await page.click("#compile-btn");
         await expectUpdateFitMsg(page, "Fit is out of date: model has been recompiled. "
-                                 + "Rerun fit to view updated result.");
+                                 + "Rerun fit to update.");
 
         await reRunFit(page); // checks message is reset
     });
@@ -283,14 +283,14 @@ test.describe("Wodin App model fit tests", () => {
 
         await uploadCSVData(page, multiTimeFitData);
 
-        await expectUpdateFitMsg(page, "Fit is out of date: data have been updated. Rerun fit to view updated result.");
+        await expectUpdateFitMsg(page, "Fit is out of date: data have been updated. Rerun fit to update.");
 
         await reRunFit(page); // checks message is reset
 
         // Change time variable
         await page.selectOption("#select-time-variable", "Day2");
         await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. "
-                                 + "Rerun fit to view updated result.");
+                                 + "Rerun fit to update.");
 
         await reRunFit(page); // checks message is reset
     });
@@ -302,7 +302,7 @@ test.describe("Wodin App model fit tests", () => {
         await expect(await page.locator("#link-data select")).toBeVisible({ timeout });
         await page.selectOption("#link-data select", "E");
         await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. "
-                                 + "Rerun fit to view updated result.");
+                                 + "Rerun fit to update.");
 
         await reRunFit(page); // checks message is reset
     });
@@ -322,7 +322,7 @@ test.describe("Wodin App model fit tests", () => {
         await targetSelect.selectOption("Day2");
 
         await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. "
-                                 + "Rerun fit to view updated result.");
+                                 + "Rerun fit to update.");
 
         await reRunFit(page); // checks message is reset
     });

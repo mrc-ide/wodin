@@ -38,10 +38,17 @@ export interface SensitivityPlotSettings {
     time: null | number
 }
 
+export interface SensitivityUpdateRequiredReasons {
+    modelChanged: boolean;
+    parameterValueChanged: boolean;
+    endTimeChanged: boolean;
+    sensitivityOptionsChanged: boolean;
+}
+
 export interface SensitivityState {
     paramSettings: SensitivityParameterSettings,
     // Whether sensitivity needs to be re-run because of change to settings or model
-    sensitivityUpdateRequired: boolean
+    sensitivityUpdateRequired: SensitivityUpdateRequiredReasons
     plotSettings: SensitivityPlotSettings,
     result: OdinSensitivityResult | null;
 }

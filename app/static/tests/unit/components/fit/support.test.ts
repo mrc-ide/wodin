@@ -63,7 +63,7 @@ describe("construct actionable fit update messages from fit state changes", () =
     it("shows fallback when no reason can be found", () => {
         expect(fitUpdateRequiredExplanation(base))
             .toBe("Fit is out of date: unknown reasons, contact the administrator, as this is unexpected. "
-                  + "Rerun fit to view updated result.");
+                  + "Rerun fit to update.");
     });
 
     it("shows sensible message when everything has changed", () => {
@@ -76,12 +76,12 @@ describe("construct actionable fit update messages from fit state changes", () =
         };
         expect(fitUpdateRequiredExplanation(everything))
             .toBe("Fit is out of date: model has been recompiled and data have been updated. "
-                  + "Rerun fit to view updated result.");
+                  + "Rerun fit to update.");
     });
 
     it("gives specific messages when little has changed", () => {
         const prefix = "Fit is out of date";
-        const suffix = "Rerun fit to view updated result.";
+        const suffix = "Rerun fit to update.";
         expect(fitUpdateRequiredExplanation({ ...base, modelChanged: true }))
             .toBe(`${prefix}: model has been recompiled. ${suffix}`);
         expect(fitUpdateRequiredExplanation({ ...base, dataChanged: true }))
