@@ -8,7 +8,7 @@ export interface RunUpdateRequiredReasons {
 }
 
 export interface RunState {
-    // Set to true if the stored solution at `result` is out of date
+    // Contains reasons why the run miht be out of date
     runRequired: RunUpdateRequiredReasons;
     // Parameter values to pass into the next solution
     parameterValues: null | OdinUserType;
