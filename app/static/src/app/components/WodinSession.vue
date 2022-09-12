@@ -1,9 +1,9 @@
 <template>
-  <router-view></router-view>
+  <router-view v-if="initialised"></router-view>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import { RouterView } from "vue-router";
 import { useStore } from "vuex";
 import { AppStateAction } from "../store/appState/actions";
@@ -19,10 +19,13 @@ export default defineComponent({
     },
     setup(props) {
         const store = useStore();
+        const initialised = computed(() => !!store.state.appName);
         onMounted(() => {
             store.dispatch(AppStateAction.FetchConfig, props.appName);
             store.dispatch(`model/${ModelAction.FetchOdinRunner}`);
         });
+
+        return { initialised };
     }
 });
 </script>

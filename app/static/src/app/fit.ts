@@ -9,9 +9,9 @@ import { getRouter } from "./router";
 
 export const store = new Vuex.Store<FitState>(storeOptions);
 
-const router = getRouter(FitApp);
-
 const app = createApp({ components: { WodinSession, AppHeader } });
 app.use(store);
-app.use(router);
 app.mount("#app");
+
+const router = getRouter(FitApp, store.state.appName!);
+app.use(router);

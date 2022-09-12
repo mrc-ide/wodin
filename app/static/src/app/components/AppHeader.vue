@@ -9,7 +9,7 @@
          aria-expanded="false">
         Sessions
       </a>
-      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+      <ul v-if="initialised" class="dropdown-menu" aria-labelledby="navbarDropdown">
         <li><router-link id="all-sessions-link" class="dropdown-item" to="/sessions">All Sessions</router-link></li>
       </ul>
     </span>
@@ -17,9 +17,10 @@
   </nav>
 </template>
 
-<script>
-import { defineComponent } from "vue";
+<script lang="ts">
+import { defineComponent, computed } from "vue";
 import { RouterLink } from "vue-router";
+import { useStore } from "vuex";
 
 export default defineComponent({
     name: "AppHeader",
@@ -30,6 +31,11 @@ export default defineComponent({
     },
     components: {
         RouterLink
+    },
+    setup() {
+        const store = useStore();
+        const initialised = computed(() => !!store.state.appName);
+        return { initialised };
     }
 });
 </script>

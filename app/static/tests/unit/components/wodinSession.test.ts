@@ -15,9 +15,9 @@ describe("WodinSession", () => {
         jest.clearAllMocks();
     });
 
-    const getWrapper = () => {
+    const getWrapper = (appName: string | null = "test") => {
         const store = new Vuex.Store<BasicState>({
-            state: mockBasicState(),
+            state: mockBasicState({ appName }),
             actions: {
                 [AppStateAction.FetchConfig]: mockFetchConfig
             },
@@ -54,5 +54,10 @@ describe("WodinSession", () => {
         expect(mockFetchOdinRunner).toHaveBeenCalledTimes(1);
         expect(mockFetchConfig).toHaveBeenCalledTimes(1);
         expect(mockFetchConfig.mock.calls[0][1]).toBe("testApp");
+    });
+
+    it("does not render RouterView when appName is not initialised", () => {
+        const wrapper = getWrapper(null);
+        expect(wrapper.findComponent(RouterView).exists()).toBe(false);
     });
 });
