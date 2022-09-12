@@ -24,13 +24,11 @@ describe("odin routes", () => {
     it("registers expected routes", async () => {
         await import("../../src/routes/apps");
 
-        expect(mockRouter.get).toBeCalledTimes(3);
-        expect(mockRouter.get.mock.calls[0][0]).toBe("/:appName");
+        expect(mockRouter.get).toBeCalledTimes(2);
+        expect(mockRouter.get.mock.calls[0][0]).toStrictEqual(["/:appName", "/:appName/sessions"]);
         expect(mockRouter.get.mock.calls[0][1]).toBe(AppsController.getApp);
-        expect(mockRouter.get.mock.calls[1][0]).toBe("/:appName/sessions");
-        expect(mockRouter.get.mock.calls[1][1]).toBe(AppsController.getApp);
-        expect(mockRouter.get.mock.calls[2][0]).toBe("/:appName/sessions/metadata");
-        expect(mockRouter.get.mock.calls[2][1]).toBe(SessionsController.getSessionsMetadata);
+        expect(mockRouter.get.mock.calls[1][0]).toBe("/:appName/sessions/metadata");
+        expect(mockRouter.get.mock.calls[1][1]).toBe(SessionsController.getSessionsMetadata);
         expect(mockRouter.post.mock.calls[0][0]).toBe("/:appName/sessions/:id");
         expect(mockRouter.post.mock.calls[0][2]).toBe(SessionsController.postSession);
         expect(mockRouter.post.mock.calls[1][0]).toBe("/:appName/sessions/:id/label");
