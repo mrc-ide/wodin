@@ -5,7 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
-    "serve": "node dist/server/server.js --config=$(realpath \"$(dirname $0)\")/../../config",
+    "serve": "node dist/server/server.js --config=../../config",
     "test": "jest",
     "lint": "eslint src tests --ext .ts,.js",
     "lint:fix": "eslint src tests --ext .ts,.js --fix"
