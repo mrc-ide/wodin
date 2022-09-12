@@ -147,7 +147,7 @@ describe("SensitivityTab", () => {
         } as any;
         const wrapper = getWrapper({ compileRequired: true }, sensitivityState);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Model code has been updated. Compile code and Run Sensitivity to view updated graph.");
+            .toBe("Model code has been updated. Compile code and Run Sensitivity to update.");
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);
     });
 
@@ -163,7 +163,7 @@ describe("SensitivityTab", () => {
         } as any;
         const wrapper = getWrapper({}, sensitivityState);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Plot is out of date: model code has been recompiled. Run sensitivity to view updated graph.");
+            .toBe("Plot is out of date: model code has been recompiled. Run sensitivity to update.");
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);
     });
 
@@ -181,7 +181,7 @@ describe("SensitivityTab", () => {
         } as any;
         const wrapper = getWrapper({}, sensitivityState);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Plot is out of date: parameters have been changed. Run sensitivity to view updated graph.");
+            .toBe("Plot is out of date: parameters have been changed. Run sensitivity to update.");
         expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(true);
     });
 

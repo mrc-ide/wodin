@@ -10,7 +10,7 @@ describe("construct actionable fit update messages from fit state changes", () =
     it("shows fallback when no reason can be found", () => {
         expect(runRequiredExplanation(base))
             .toBe("Plot is out of date: unknown reasons, contact the administrator, as this is unexpected. "
-                  + "Run model to view updated graph.");
+                  + "Run model to update.");
     });
 
     it("shows sensible message when everything has changed", () => {
@@ -21,12 +21,12 @@ describe("construct actionable fit update messages from fit state changes", () =
         };
         expect(runRequiredExplanation(everything))
             .toBe("Plot is out of date: model code has been recompiled. "
-                  + "Run model to view updated graph.");
+                  + "Run model to update.");
     });
 
     it("gives specific messages when little has changed", () => {
         const prefix = "Plot is out of date";
-        const suffix = "Run model to view updated graph.";
+        const suffix = "Run model to update.";
         expect(runRequiredExplanation({ ...base, modelChanged: true }))
             .toBe(`${prefix}: model code has been recompiled. ${suffix}`);
         expect(runRequiredExplanation({ ...base, parameterValueChanged: true }))

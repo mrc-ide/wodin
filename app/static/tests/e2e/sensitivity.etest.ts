@@ -111,7 +111,7 @@ test.describe("Sensitivity tests", () => {
         // change parameter - should see update required message
         await page.fill("#model-params .parameter-input", "5");
         await expect(await page.innerText(".action-required-msg"))
-            .toBe("Plot is out of date: parameters have been changed. Run sensitivity to view updated graph.");
+            .toBe("Plot is out of date: parameters have been changed. Run sensitivity to update.");
 
         // re-run - message should be removed
         await page.click("#run-sens-btn");

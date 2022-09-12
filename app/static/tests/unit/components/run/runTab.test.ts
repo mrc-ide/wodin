@@ -91,7 +91,7 @@ describe("RunTab", () => {
             compileRequired: true
         });
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
-            "Model code has been updated. Compile code and Run Model to view updated graph."
+            "Model code has been updated. Compile code and Run Model to update."
         );
         expect(wrapper.findComponent(RunPlot).props("fadePlot")).toBe(true);
     });
@@ -104,7 +104,7 @@ describe("RunTab", () => {
         };
         const wrapper = getWrapper({ compileRequired: false }, { runRequired });
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
-            "Plot is out of date: model code has been recompiled. Run model to view updated graph."
+            "Plot is out of date: model code has been recompiled. Run model to update."
         );
         expect(wrapper.findComponent(RunPlot).props("fadePlot")).toBe(true);
     });
