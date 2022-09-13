@@ -3,7 +3,7 @@ import { ErrorType } from "../../src/errors/errorType";
 import { WodinWebError } from "../../src/errors/wodinWebError";
 
 describe("appsController", () => {
-    const getMockRequest = (appConfig: any) => {
+    const getMockRequest = (appConfig: any, sessionId: string | undefined) => {
         const mockConfigReader = {
             readConfigFile: jest.fn().mockReturnValue(appConfig)
         };
@@ -18,6 +18,9 @@ describe("appsController", () => {
             },
             params: {
                 appName: "test"
+            },
+            query: {
+                sessionId
             }
         } as any;
     };
@@ -35,7 +38,7 @@ describe("appsController", () => {
 
     it("renders view with app config", () => {
         const appConfig = { title: "testTitle", appType: "testType" };
-        const request = getMockRequest(appConfig);
+        const request = getMockRequest(appConfig, "1234");
         AppsController.getApp(request, mockResponse);
 
         expect(mockRender).toBeCalledTimes(1);
@@ -44,13 +47,27 @@ describe("appsController", () => {
             appName: "test",
             appTitle: "testTitle",
             courseTitle: "Test Course Title",
-            wodinVersion: "1.2.3"
+            wodinVersion: "1.2.3",
+            loadSessionId: "1234"
         });
         expect(mockStatus).not.toBeCalled();
     });
 
+    it("sets loadSessionId to be empty when not in query string", () => {
+        const request = getMockRequest({ title: "testTitle", appType: "testType" }, undefined);
+        AppsController.getApp(request, mockResponse);
+
+        expect(mockRender.mock.calls[0][1]).toStrictEqual({
+            appName: "test",
+            appTitle: "testTitle",
+            courseTitle: "Test Course Title",
+            wodinVersion: "1.2.3",
+            loadSessionId: ""
+        });
+    });
+
     it("throws expected error when no config", () => {
-        const request = getMockRequest(null);
+        const request = getMockRequest(null, "12345");
         const expectedErr = new WodinWebError(
             "App not found: test",
             404,
