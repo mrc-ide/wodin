@@ -33,7 +33,12 @@ describe("SensitivityTab", () => {
                 sensitivity: {
                     namespaced: true,
                     state: {
-                        sensitivityUpdateRequired: false,
+                        sensitivityUpdateRequired: {
+                            modelChanged: false,
+                            parameterValueChanged: false,
+                            endTimeChanged: false,
+                            sensitivityOptionsChanged: false
+                        },
                         result: {
                             inputs: {},
                             batch: {
@@ -142,7 +147,7 @@ describe("SensitivityTab", () => {
         } as any;
         const wrapper = getWrapper({ compileRequired: true }, sensitivityState);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Model code has been updated. Compile code and Run Sensitivity to view updated graph.");
+            .toBe("Model code has been updated. Compile code and Run Sensitivity to update.");
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);
     });
 
@@ -151,12 +156,14 @@ describe("SensitivityTab", () => {
             result: {
                 batch: { solutions: [{}] }
             },
-            sensitivityUpdateRequired: true
+            sensitivityUpdateRequired: {
+                modelChanged: true,
+                endTimeChanged: false
+            }
         } as any;
         const wrapper = getWrapper({}, sensitivityState);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Model code has been recompiled or options have been updated. "
-                + "Run Sensitivity to view updated graph.");
+            .toBe("Plot is out of date: model code has been recompiled. Run sensitivity to update.");
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);
     });
 
@@ -166,12 +173,15 @@ describe("SensitivityTab", () => {
                 batch: { solutions: [{}] }
             },
             plotSettings: { plotType: SensitivityPlotType.ValueAtTime } as any,
-            sensitivityUpdateRequired: true
+            sensitivityUpdateRequired: {
+                modelChanged: false,
+                parameterValueChanged: true,
+                endTimeChanged: false
+            }
         } as any;
         const wrapper = getWrapper({}, sensitivityState);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Model code has been recompiled or options have been updated. "
-                + "Run Sensitivity to view updated graph.");
+            .toBe("Plot is out of date: parameters have been changed. Run sensitivity to update.");
         expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(true);
     });
 

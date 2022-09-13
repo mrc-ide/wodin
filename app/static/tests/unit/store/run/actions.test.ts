@@ -19,7 +19,11 @@ describe("Run actions", () => {
             model: modelState
         } as any;
         const state = mockRunState({
-            runRequired: true,
+            runRequired: {
+                modelChanged: true,
+                parameterValueChanged: true,
+                endTimeChanged: true
+            },
             parameterValues,
             endTime: 99
         });
@@ -51,7 +55,11 @@ describe("Run actions", () => {
         });
         const rootState = { model: modelState } as any;
         const state = mockRunState({
-            runRequired: false,
+            runRequired: {
+                modelChanged: false,
+                parameterValueChanged: false,
+                endTimeChanged: false
+            },
             parameterValues: {}
         });
         const commit = jest.fn();
@@ -119,7 +127,11 @@ describe("Run actions", () => {
             model: modelState
         } as any;
         const state = mockRunState({
-            runRequired: true,
+            runRequired: {
+                modelChanged: true,
+                parameterValueChanged: true,
+                endTimeChanged: true
+            },
             parameterValues,
             endTime: 99
         });

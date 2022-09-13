@@ -44,8 +44,8 @@ const respondUpdatedTimeVariable = (context: ActionContext<FitDataState, FitStat
     if (timeVariable && data) {
         const endTime = data[data.length - 1][timeVariable]!;
         commit(`run/${RunMutation.SetEndTime}`, endTime, { root: true });
+        commit(`sensitivity/${SensitivityMutation.SetEndTime}`, endTime, { root: true });
         commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { linkChanged: true }, { root: true });
-        commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true, { root: true });
     }
 };
 

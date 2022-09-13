@@ -6,8 +6,8 @@ import RunOptions from "../../../../src/app/components/options/RunOptions.vue";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
 
 describe("RunOptions", () => {
-    const getWrapper = (mockSetEndTime = jest.fn(), mockSetSensitivityUpdateRequired = jest.fn(),
-        mockDataEnd: number | null = 0) => {
+    const getWrapper = (mockRunSetEndTime = jest.fn(), mockSetSensitivityUpdateRequired = jest.fn(),
+        mockDataEnd: number | null = 0, mockSensitivitySetEndTime = jest.fn()) => {
         const modules = {
             run: {
                 namespaced: true,
@@ -15,13 +15,14 @@ describe("RunOptions", () => {
                     endTime: 99
                 },
                 mutations: {
-                    SetEndTime: mockSetEndTime
+                    SetEndTime: mockRunSetEndTime
                 }
             },
             sensitivity: {
                 namespaced: true,
                 mutations: {
-                    SetUpdateRequired: mockSetSensitivityUpdateRequired
+                    SetUpdateRequired: mockSetSensitivityUpdateRequired,
+                    SetEndTime: mockSensitivitySetEndTime
                 }
             }
         } as any;
@@ -69,14 +70,14 @@ describe("RunOptions", () => {
     });
 
     it("commits end time change", () => {
-        const mockSetEndTime = jest.fn();
-        const mockSetSensitivityUpdateRequired = jest.fn();
-        const wrapper = getWrapper(mockSetEndTime, mockSetSensitivityUpdateRequired);
+        const mockRunSetEndTime = jest.fn();
+        const mockSensitivitySetEndTime = jest.fn();
+        const wrapper = getWrapper(mockRunSetEndTime, jest.fn(), 0, mockSensitivitySetEndTime);
         const input = wrapper.findComponent(NumericInput);
         input.vm.$emit("update", 101);
-        expect(mockSetEndTime).toHaveBeenCalledTimes(1);
-        expect(mockSetEndTime.mock.calls[0][1]).toBe(101);
-        expect(mockSetSensitivityUpdateRequired).toHaveBeenCalledTimes(1);
-        expect(mockSetSensitivityUpdateRequired.mock.calls[0][1]).toBe(true);
+        expect(mockRunSetEndTime).toHaveBeenCalledTimes(1);
+        expect(mockRunSetEndTime.mock.calls[0][1]).toBe(101);
+        expect(mockSensitivitySetEndTime).toHaveBeenCalledTimes(1);
+        expect(mockSensitivitySetEndTime.mock.calls[0][1]).toBe(101);
     });
 });
