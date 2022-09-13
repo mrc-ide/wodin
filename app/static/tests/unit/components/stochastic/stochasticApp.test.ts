@@ -10,10 +10,6 @@ import { AppStateAction } from "../../../../src/app/store/appState/actions";
 
 describe("StochasticApp", () => {
     const getWrapper = () => {
-        const props = {
-            appName: "testApp"
-        };
-
         const store = new Vuex.Store<StochasticState>({
             state: mockStochasticState({ config: {} as any }),
             actions: {
@@ -36,8 +32,7 @@ describe("StochasticApp", () => {
         const options = {
             global: {
                 plugins: [store]
-            },
-            props
+            }
         };
 
         return mount(StochasticApp, options);
@@ -46,7 +41,6 @@ describe("StochasticApp", () => {
     it("renders content as expected", () => {
         const wrapper = getWrapper();
         const wodinApp = wrapper.findComponent(WodinApp);
-        expect(wodinApp.props("appName")).toBe("testApp");
 
         const wodinPanels = wodinApp.findComponent(WodinPanels);
         const leftPanel = wodinPanels.find(".wodin-left");

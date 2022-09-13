@@ -1,5 +1,5 @@
 <template>
-  <wodin-app :app-name="appName">
+  <wodin-app>
     <template v-slot:left>
       <wodin-tabs id="left-tabs" :tabNames="['Code', 'Options']">
         <template v-slot:Code>
@@ -37,9 +37,6 @@ import { VisualisationTab } from "../../store/appState/state";
 
 export default defineComponent({
     name: "BasicApp",
-    props: {
-        appName: String
-    },
     components: {
         CodeTab,
         RunTab,
