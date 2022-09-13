@@ -11,7 +11,7 @@ import { FitState } from "../fit/state";
 import {SessionsAction} from "../sessions/actions";
 
 export enum AppStateAction {
-    FetchConfig = "FetchConfig",
+    Initialise = "Initialise",
     QueueStateUpload = "QueueStateUpload"
 }
 
@@ -35,8 +35,7 @@ interface InitialisePayload {
 }
 
 export const appStateActions: ActionTree<AppState, AppState> = {
-    // TODO: We should rename FetchConfig to something a bit more more accurate e.g. Populate or Initialise
-    async [AppStateAction.FetchConfig](context, payload: InitialisePayload) {
+    async [AppStateAction.Initialise](context, payload: InitialisePayload) {
         const { commit, state, dispatch } = context;
         const { appName, loadSessionId } = payload;
         commit(AppStateMutation.SetAppName, appName);

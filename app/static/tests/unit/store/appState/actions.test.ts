@@ -44,7 +44,7 @@ describe("AppState actions", () => {
         const commit = jest.spyOn(store, "commit");
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
-        await (appStateActions[AppStateAction.FetchConfig] as any)({ commit, state, dispatch }, "test-app");
+        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, "test-app");
         expect(commit.mock.calls.length).toBe(3);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
@@ -76,7 +76,7 @@ describe("AppState actions", () => {
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
 
-        await (appStateActions[AppStateAction.FetchConfig] as any)({ commit, state, dispatch }, "test-app");
+        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, "test-app");
         expect(commit.mock.calls.length).toBe(3);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
@@ -97,7 +97,7 @@ describe("AppState actions", () => {
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
 
-        await (appStateActions[AppStateAction.FetchConfig] as any)({ commit, state, dispatch }, "test-app");
+        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, "test-app");
         expect(commit.mock.calls.length).toBe(2);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);

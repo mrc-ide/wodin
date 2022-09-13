@@ -22,7 +22,7 @@ describe("BasicApp", () => {
         const store = new Vuex.Store<BasicState>({
             state,
             actions: {
-                [AppStateAction.FetchConfig]: jest.fn()
+                [AppStateAction.Initialise]: jest.fn()
             },
             mutations: {
                 [AppStateMutation.SetOpenVisualisationTab]: mockSetOpenVisualisationTab

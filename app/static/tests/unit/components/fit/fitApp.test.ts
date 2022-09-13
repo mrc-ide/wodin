@@ -29,7 +29,7 @@ describe("FitApp", () => {
                 [AppStateMutation.SetOpenVisualisationTab]: mockSetOpenVisualisationTab
             },
             actions: {
-                [AppStateAction.FetchConfig]: jest.fn()
+                [AppStateAction.Initialise]: jest.fn()
             },
             modules: {
                 model: {

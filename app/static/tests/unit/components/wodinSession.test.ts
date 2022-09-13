@@ -8,7 +8,7 @@ import { ModelAction } from "../../../src/app/store/model/actions";
 import { BasicState } from "../../../src/app/store/basic/state";
 
 describe("WodinSession", () => {
-    const mockFetchConfig = jest.fn();
+    const mockInitialise = jest.fn();
     const mockFetchOdinRunner = jest.fn();
 
     beforeEach(() => {
@@ -19,7 +19,7 @@ describe("WodinSession", () => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({ appName }),
             actions: {
-                [AppStateAction.FetchConfig]: mockFetchConfig
+                [AppStateAction.Initialise]: mockInitialise
             },
             modules: {
                 model: {
@@ -53,8 +53,8 @@ describe("WodinSession", () => {
     it("dispatches actions on mount", () => {
         getWrapper();
         expect(mockFetchOdinRunner).toHaveBeenCalledTimes(1);
-        expect(mockFetchConfig).toHaveBeenCalledTimes(1);
-        expect(mockFetchConfig.mock.calls[0][1]).toStrictEqual({appName: "testApp", loadSessionId: "session1"});
+        expect(mockInitialise).toHaveBeenCalledTimes(1);
+        expect(mockInitialise.mock.calls[0][1]).toStrictEqual({appName: "testApp", loadSessionId: "session1"});
     });
 
     it("does not render RouterView when appName is not initialised", () => {
