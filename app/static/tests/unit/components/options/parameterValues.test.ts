@@ -123,7 +123,7 @@ describe("ParameterValues", () => {
         expect(mockUpdateParameterValues).toHaveBeenCalledTimes(1);
         expect(mockUpdateParameterValues.mock.calls[0][1]).toStrictEqual({ param2: 3.3 });
         expect(mockSetSensitivityUpdateRequired).toHaveBeenCalledTimes(1);
-        expect(mockSetSensitivityUpdateRequired.mock.calls[0][1]).toBe(true);
+        expect(mockSetSensitivityUpdateRequired.mock.calls[0][1]).toStrictEqual({ parameterValueChanged: true });
         expect(mockSetFitUpdateRequired).toHaveBeenCalledTimes(1);
         expect(mockSetFitUpdateRequired.mock.calls[0][1]).toStrictEqual({ parameterValueChanged: true });
     });

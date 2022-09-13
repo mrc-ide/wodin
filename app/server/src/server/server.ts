@@ -15,7 +15,7 @@ const path = require("path");
 const app = express();
 initialiseLogging(app);
 
-const rootDir = path.join(__dirname, "../..");
+const rootDir = path.resolve(path.join(__dirname, "../.."));
 
 // Get command line args
 const { configPath } = require("./args");

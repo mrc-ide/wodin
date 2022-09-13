@@ -27,6 +27,6 @@ describe("args", () => {
         const args = require("../../src/server/args");
         expect(args.configPath).toBe("/testConfig");
         expect(mockConsoleLog).toBeCalledTimes(1);
-        expect(mockConsoleLog.mock.calls[0][0]).toBe("Config path: /testConfig");
+        expect(mockConsoleLog.mock.calls[0][0]).toBe("Config path: /testConfig (/testConfig)");
     });
 });

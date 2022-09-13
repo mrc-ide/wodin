@@ -4,7 +4,7 @@
       :placeholder-message="placeholderMessage"
       :end-time="endTime"
       :plot-data="allPlotData"
-      :redrawWatches="solutions">
+      :redrawWatches="solutions ? [...solutions] : []">
     <slot></slot>
   </wodin-ode-plot>
 </template>

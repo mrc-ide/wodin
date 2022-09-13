@@ -69,7 +69,7 @@ export default defineComponent({
         const updateValue = (newValue: number, paramName: string) => {
             store.commit(`run/${RunMutation.UpdateParameterValues}`, { [paramName]: newValue });
             store.commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { parameterValueChanged: true });
-            store.commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true);
+            store.commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, { parameterValueChanged: true });
         };
 
         const checkBoxChange = (paramName: string, event: Event) => {

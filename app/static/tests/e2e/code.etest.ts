@@ -58,7 +58,7 @@ test.describe("Code Tab tests", () => {
         await writeCode(page, newValidCode);
 
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to view updated graph.", {
+            "Model code has been updated. Compile code and Run Model to update.", {
                 timeout
             }
         );
@@ -70,7 +70,7 @@ test.describe("Code Tab tests", () => {
         // Compile code - see new update message
         await page.click("#compile-btn");
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been recompiled or options have been updated. Run Model to view updated graph.", {
+            "Plot is out of date: model code has been recompiled. Run model to update.", {
                 timeout
             }
         );
@@ -92,7 +92,7 @@ test.describe("Code Tab tests", () => {
         await writeCode(page, invalidCode);
 
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to view updated graph.", {
+            "Model code has been updated. Compile code and Run Model to update.", {
                 timeout
             }
         );
@@ -106,7 +106,7 @@ test.describe("Code Tab tests", () => {
         const invalidCode = "faker\n";
         await writeCode(page, invalidCode);
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to view updated graph.", {
+            "Model code has been updated. Compile code and Run Model to update.", {
                 timeout
             }
         );
@@ -124,7 +124,7 @@ test.describe("Code Tab tests", () => {
         await writeCode(page, invalidCode);
 
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to view updated graph.", {
+            "Model code has been updated. Compile code and Run Model to update.", {
                 timeout
             }
         );
@@ -137,7 +137,7 @@ test.describe("Code Tab tests", () => {
         const defaultCode = await page.innerText(".wodin-left .wodin-content .editor-container");
         await writeCode(page, newInvalidCode);
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to view updated graph.", {
+            "Model code has been updated. Compile code and Run Model to update.", {
                 timeout
             }
         );

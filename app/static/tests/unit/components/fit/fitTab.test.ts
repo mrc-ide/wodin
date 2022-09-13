@@ -157,7 +157,7 @@ describe("Fit Tab", () => {
         const wrapper = getWrapper({}, false, { dataChanged: true });
         expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Fit is out of date: data have been updated. Rerun fit to view updated result.");
+            .toBe("Fit is out of date: data have been updated. Rerun fit to update.");
         const fitPlot = wrapper.findComponent(FitPlot);
         expect(fitPlot.props("fadePlot")).toBe(true);
         expect(fitPlot.findComponent(LoadingSpinner).exists()).toBe(false);
