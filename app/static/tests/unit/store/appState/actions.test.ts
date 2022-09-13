@@ -60,11 +60,32 @@ describe("AppState actions", () => {
         expect(commit.mock.calls[2][0]).toBe(`code/${CodeMutation.SetCurrentCode}`);
         expect(commit.mock.calls[2][1]).toStrictEqual([]);
 
-        expect(commit.mock.calls[3][0]).toBe(`run/${RunMutation.SetDefaultEndTime}`);
+        expect(commit.mock.calls[3][0]).toBe(`run/${RunMutation.SetEndTime}`);
         expect(commit.mock.calls[3][1]).toStrictEqual(101);
 
         // no code model fetch as defaultCode is empty
         expect(dispatch).not.toBeCalled();
+    });
+
+    it("does not commit endtime if not given in fetched config", async () => {
+        const config = {
+            basicProp: "testValue",
+            defaultCode: [],
+            readOnlyCode: false
+        };
+        mockAxios.onGet("/config/test-app")
+            .reply(200, mockSuccess(config));
+
+        const store = getStore();
+        const commit = jest.spyOn(store, "commit");
+        const dispatch = jest.spyOn(store, "dispatch");
+        const { state } = store;
+        await (appStateActions[AppStateAction.FetchConfig] as any)({ commit, state, dispatch }, "test-app");
+        expect(commit.mock.calls.length).toBe(3);
+
+        expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
+        expect(commit.mock.calls[1][0]).toBe(AppStateMutation.SetConfig);
+        expect(commit.mock.calls[2][0]).toBe(`code/${CodeMutation.SetCurrentCode}`);
     });
 
     it("fetches config and commits default code if any", async () => {
@@ -91,7 +112,7 @@ describe("AppState actions", () => {
         expect(commit.mock.calls[2][0]).toBe(`code/${CodeMutation.SetCurrentCode}`);
         expect(commit.mock.calls[2][1]).toStrictEqual(["line1", "line2"]);
 
-        expect(commit.mock.calls[3][0]).toBe(`run/${RunMutation.SetDefaultEndTime}`);
+        expect(commit.mock.calls[3][0]).toBe(`run/${RunMutation.SetEndTime}`);
         expect(commit.mock.calls[3][1]).toStrictEqual(101);
 
         expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.DefaultModel}`);

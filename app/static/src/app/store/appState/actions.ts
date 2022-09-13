@@ -41,7 +41,9 @@ export const appStateActions: ActionTree<AppState, AppState> = {
 
         if (response) {
             commit(`code/${CodeMutation.SetCurrentCode}`, state.config!.defaultCode, { root: true });
-            commit(`run/${RunMutation.SetDefaultEndTime}`, response.data.endTime, { root: true });
+            if (response.data.endTime){
+                commit(`run/${RunMutation.SetEndTime}`, response.data.endTime, { root: true });
+            }
 
             if (state.code.currentCode.length) {
                 // Fetch and run model for default code

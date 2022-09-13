@@ -3,6 +3,5 @@
   "title": "Day 1 - Basic Model",
   "basicProp": "day1 basic value",
   "readOnlyCode": false,
-  "stateUploadIntervalMillis": 2000,
-  "endTime": 100
+  "stateUploadIntervalMillis": 2000
 }
