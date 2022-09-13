@@ -41,7 +41,7 @@ export const appStateActions: ActionTree<AppState, AppState> = {
 
         if (response) {
             commit(`code/${CodeMutation.SetCurrentCode}`, state.config!.defaultCode, { root: true });
-            if (response.data.endTime){
+            if (response.data.endTime) {
                 commit(`run/${RunMutation.SetEndTime}`, response.data.endTime, { root: true });
             }
 
