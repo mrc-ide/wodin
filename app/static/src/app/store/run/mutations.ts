@@ -8,7 +8,8 @@ export enum RunMutation {
     SetResult = "SetResult",
     SetParameterValues = "SetParameterValues",
     UpdateParameterValues = "UpdateParameterValues",
-    SetEndTime = "SetEndTime"
+    SetEndTime = "SetEndTime",
+    SetDefaultEndTime = "SetDefaultEndTime"
 }
 
 export const mutations: MutationTree<RunState> = {
@@ -51,5 +52,9 @@ export const mutations: MutationTree<RunState> = {
             ...state.runRequired,
             endTimeChanged: payload > prevEndTime
         };
+    },
+
+    [RunMutation.SetDefaultEndTime](state: RunState, payload: number) {
+        state.endTime = payload;
     }
 };

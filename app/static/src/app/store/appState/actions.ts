@@ -3,6 +3,7 @@ import { api } from "../../apiService";
 import { ErrorsMutation } from "../errors/mutations";
 import { AppConfig } from "../../types/responseTypes";
 import { CodeMutation } from "../code/mutations";
+import { RunMutation } from "../run/mutations";
 import { ModelAction } from "../model/actions";
 import { AppState, AppType } from "./state";
 import { AppStateMutation } from "./mutations";
@@ -40,6 +41,7 @@ export const appStateActions: ActionTree<AppState, AppState> = {
 
         if (response) {
             commit(`code/${CodeMutation.SetCurrentCode}`, state.config!.defaultCode, { root: true });
+            commit(`run/${RunMutation.SetDefaultEndTime}`, response.data.endTime, { root: true });
 
             if (state.code.currentCode.length) {
                 // Fetch and run model for default code

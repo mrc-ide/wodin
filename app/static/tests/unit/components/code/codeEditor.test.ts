@@ -30,7 +30,8 @@ describe("CodeEditor", () => {
                 config: {
                     defaultCode,
                     readOnlyCode,
-                    basicProp: ""
+                    basicProp: "",
+                    endTime: 100
                 }
             }),
             modules: {

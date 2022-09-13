@@ -4,5 +4,5 @@
   "basicProp": "day1 basic value",
   "readOnlyCode": false,
   "stateUploadIntervalMillis": 2000,
-  "endTime": 101
+  "endTime": 100
 }
