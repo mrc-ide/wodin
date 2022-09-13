@@ -25,8 +25,6 @@ describe("SessionsController", () => {
 
     const res = {
         end: jest.fn(),
-        set: jest.fn(),
-        send: jest.fn(),
         header: jest.fn()
     } as any;
 
