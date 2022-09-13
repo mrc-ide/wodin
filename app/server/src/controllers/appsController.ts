@@ -8,7 +8,8 @@ export class AppsController {
         const {
             configReader, appsPath, wodinConfig, wodinVersion
         } = req.app.locals as AppLocals;
-        const { appName, id } = req.params;
+        const { appName } = req.params;
+        const { sessionId } = req.query;
         const config = configReader.readConfigFile(appsPath, `${appName}.config.json`) as any;
         if (config) {
             const view = `${config.appType}-app`;
@@ -18,7 +19,7 @@ export class AppsController {
                 appTitle: config.title,
                 courseTitle: wodinConfig.courseTitle,
                 wodinVersion,
-                loadSessionId: id || ""
+                loadSessionId: sessionId || ""
             };
             res.render(view, viewOptions);
         } else {

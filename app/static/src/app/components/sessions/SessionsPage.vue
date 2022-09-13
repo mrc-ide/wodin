@@ -47,7 +47,7 @@ export default defineComponent({
         return utc(isoUTCString).local().format('DD/MM/YYYY HH:mm:ss');
       };
 
-      const sessionUrl = (sessionId: string) => `/apps/${appName.value}/sessions/${sessionId}`;
+      const sessionUrl = (sessionId: string) => `/apps/${appName.value}?sessionId=${sessionId}`;
 
       onMounted(() => {
         store.dispatch(`sessions/${SessionsAction.GetSessions}`);
