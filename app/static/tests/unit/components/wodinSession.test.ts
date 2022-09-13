@@ -37,7 +37,8 @@ describe("WodinSession", () => {
                 plugins: [store]
             },
             props: {
-                appName: "testApp"
+                appName: "testApp",
+                loadSessionId: "session1"
             }
         };
 
@@ -53,7 +54,7 @@ describe("WodinSession", () => {
         getWrapper();
         expect(mockFetchOdinRunner).toHaveBeenCalledTimes(1);
         expect(mockFetchConfig).toHaveBeenCalledTimes(1);
-        expect(mockFetchConfig.mock.calls[0][1]).toBe("testApp");
+        expect(mockFetchConfig.mock.calls[0][1]).toStrictEqual({appName: "testApp", loadSessionId: "session1"});
     });
 
     it("does not render RouterView when appName is not initialised", () => {

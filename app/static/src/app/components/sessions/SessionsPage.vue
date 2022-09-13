@@ -5,14 +5,14 @@
     </div>
     <template v-if="sessionsMetadata">
       <div class="row fw-bold py-2">
-        <div class="col-3">Saved</div>
-        <div class="col-2">Label</div>
-        <div class="col-2 text-center">Load</div>
+        <div class="col-3 session-col-header">Saved</div>
+        <div class="col-2 session-col-header">Label</div>
+        <div class="col-2 text-center session-col-header">Load</div>
       </div>
       <div class="row py-2" v-for="session in sessionsMetadata">
-        <div class="col-3">{{formatDateTime(session.time)}}</div>
-        <div class="col-2" :class="session.label ? '' : 'text-muted'">{{session.label || "--no label--"}}</div>
-        <div class="col-2 text-center">
+        <div class="col-3 session-col-value">{{formatDateTime(session.time)}}</div>
+        <div class="col-2 session-col-value" :class="session.label ? '' : 'text-muted'">{{session.label || "--no label--"}}</div>
+        <div class="col-2 text-center session-col-value">
           <a :href="sessionUrl(session.id)">
             <vue-feather class="inline-icon brand" type="upload"></vue-feather>
           </a>

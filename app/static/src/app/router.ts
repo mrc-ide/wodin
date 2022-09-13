@@ -10,7 +10,6 @@ export function getRouter(appComponent: RouteComponent, appName: string) {
         history: createWebHistory(routeBase),
         routes: [
             { path: "/", component: appComponent },
-            { path: "/sessions/:sessionId", component: appComponent },
             { path: "/sessions", component: SessionsPage }
         ]
     });
