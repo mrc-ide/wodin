@@ -10,9 +10,9 @@
         <div class="col-2 text-center session-col-header">Load</div>
       </div>
       <div class="row py-2" v-for="session in sessionsMetadata">
-        <div class="col-3 session-col-value">{{formatDateTime(session.time)}}</div>
-        <div class="col-2 session-col-value" :class="session.label ? '' : 'text-muted'">{{session.label || "--no label--"}}</div>
-        <div class="col-2 text-center session-col-value">
+        <div class="col-3 session-col-value session-time">{{formatDateTime(session.time)}}</div>
+        <div class="col-2 session-col-value session-label" :class="session.label ? '' : 'text-muted'">{{session.label || "--no label--"}}</div>
+        <div class="col-2 text-center session-col-value session-load">
           <a :href="sessionUrl(session.id)">
             <vue-feather class="inline-icon brand" type="upload"></vue-feather>
           </a>
