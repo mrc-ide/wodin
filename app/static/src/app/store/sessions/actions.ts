@@ -22,7 +22,7 @@ export const actions: ActionTree<SessionsState, AppState> = {
         const url = `/apps/${appName}/sessions/metadata?sessionIds=${sessionIdsQs}`;
         await api(context)
             .withSuccess(SessionsMutation.SetSessionsMetadata)
-            .withError(`/errors/${ErrorsMutation.AddError}`, true)
+            .withError(`errors/${ErrorsMutation.AddError}`, true)
             .get(url)
 
     },
