@@ -2,6 +2,5 @@
   "appType": "stochastic",
   "title": "Day 3 - Stochastic Model",
   "stochasticProp": "day3 stochastic value",
-  "readOnlyCode": true,
-  "endTime": 100
+  "readOnlyCode": true
 }
