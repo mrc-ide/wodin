@@ -47,15 +47,15 @@ export const appStateActions: ActionTree<AppState, AppState> = {
             .get<AppConfig>(`/config/${appName}`);
 
         if (response) {
-            commit(`code/${CodeMutation.SetCurrentCode}`, state.config!.defaultCode, { root: true });
-
-            if (state.code.currentCode.length) {
-                if (!loadSessionId) {
+            if (loadSessionId) {
+                // Fetch and rehydrate session data
+                await dispatch(`sessions/${SessionsAction.Rehydrate}`, loadSessionId);
+            } else {
+                // If not loading a session, set code from default in config
+                commit(`code/${CodeMutation.SetCurrentCode}`, state.config!.defaultCode, {root: true});
+                if (state.code.currentCode.length) {
                     // Fetch and run model for default code
                     await dispatch(`model/${ModelAction.DefaultModel}`);
-                } else {
-                    // Fetch and rehydrate session data
-                    await dispatch(`sessions/${SessionsAction.Rehydrate}`, loadSessionId);
                 }
             }
         }
