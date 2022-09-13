@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 
 router.get("/:appName/sessions/metadata", SessionsController.getSessionsMetadata);
 
-// Support optional '/sessions' part in apps route to allow refresh of sessions page in front end, and options session
+// Support optional '/sessions' part in apps route to allow refresh of sessions page in front end, and optional session
 // id to allow load of saved session
 router.get(["/:appName", "/:appName/sessions", "/:appName/sessions/:id"], AppsController.getApp);
 

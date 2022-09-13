@@ -9,7 +9,6 @@ export class AppsController {
             configReader, appsPath, wodinConfig, wodinVersion
         } = req.app.locals as AppLocals;
         const { appName, id } = req.params;
-        console.log("session id is: " + id)
         const config = configReader.readConfigFile(appsPath, `${appName}.config.json`) as any;
         if (config) {
             const view = `${config.appType}-app`;

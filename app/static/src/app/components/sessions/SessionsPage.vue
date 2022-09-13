@@ -11,10 +11,10 @@
       </div>
       <div class="row py-2" v-for="session in sessionsMetadata">
         <div class="col-3">{{formatDateTime(session.time)}}</div>
-        <div class="col-2">{{session.label || "--no label--"}}</div>
+        <div class="col-2" :class="session.label ? '' : 'text-muted'">{{session.label || "--no label--"}}</div>
         <div class="col-2 text-center">
           <a :href="sessionUrl(session.id)">
-            <vue-feather type="upload" style="vertical-align: bottom;"></vue-feather>
+            <vue-feather class="inline-icon brand" type="upload"></vue-feather>
           </a>
         </div>
       </div>

@@ -19,7 +19,6 @@ export default defineComponent({
         RouterView
     },
     setup(props) {
-        console.log("load session id: " + props.loadSessionId)
         const store = useStore();
         const initialised = computed(() => !!store.state.appName);
         onMounted(() => {
