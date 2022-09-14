@@ -1,5 +1,5 @@
 <template>
-  <wodin-app :app-name="appName">
+  <wodin-app>
     <template v-slot:left>
       <wodin-tabs id="left-tabs" :tabNames="['Data', 'Code', 'Options']">
         <template v-slot:Data>
@@ -45,9 +45,6 @@ import { AppStateMutation } from "../../store/appState/mutations";
 
 export default defineComponent({
     name: "FitApp",
-    props: {
-        appName: String
-    },
     components: {
         CodeTab,
         DataTab,

@@ -3,7 +3,11 @@ import { mutations } from "./mutations";
 import { actions } from "./actions";
 
 export const defaultState: RunState = {
-    runRequired: false,
+    runRequired: {
+        modelChanged: false,
+        parameterValueChanged: false,
+        endTimeChanged: false
+    },
     parameterValues: null,
     endTime: 100,
     result: null

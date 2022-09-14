@@ -46,7 +46,11 @@ describe("serialise", () => {
     };
 
     const runState = {
-        runRequired: true,
+        runRequired: {
+            modelChanged: false,
+            parameterValueChanged: false,
+            endTimeChanged: false
+        },
         parameterValues: { alpha: 1, beta: 1.1 },
         endTime: 20,
         result: {
@@ -74,7 +78,12 @@ describe("serialise", () => {
             rangeTo: 1,
             numberOfRuns: 5
         },
-        sensitivityUpdateRequired: false,
+        sensitivityUpdateRequired: {
+            modelChanged: false,
+            parameterValueChanged: false,
+            endTimeChanged: false,
+            sensitivityOptionsChanged: false
+        },
         plotSettings: {
             plotType: SensitivityPlotType.ValueAtTime,
             extreme: SensitivityPlotExtreme.Min,
@@ -172,7 +181,11 @@ describe("serialise", () => {
         odinModelCodeError: modelState.odinModelCodeError
     };
     const expectedRun = {
-        runRequired: true,
+        runRequired: {
+            modelChanged: false,
+            parameterValueChanged: false,
+            endTimeChanged: false
+        },
         parameterValues: runState.parameterValues,
         endTime: 20,
         result: {
@@ -183,7 +196,12 @@ describe("serialise", () => {
     };
     const expectedSensitivity = {
         paramSettings: sensitivityState.paramSettings,
-        sensitivityUpdateRequired: false,
+        sensitivityUpdateRequired: {
+            modelChanged: false,
+            parameterValueChanged: false,
+            endTimeChanged: false,
+            sensitivityOptionsChanged: false
+        },
         plotSettings: sensitivityState.plotSettings,
         result: {
             inputs: sensitivityState.result.inputs,

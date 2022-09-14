@@ -1,12 +1,6 @@
 import { ModelFitRequirements, FitUpdateRequiredReasons } from "../../store/modelFit/state";
 import userMessages from "../../userMessages";
-import { joinStringsSentence } from "../../utils";
-
-const appendIf = (container: string[], test: boolean, value: string) => {
-    if (test) {
-        container.push(value);
-    }
-};
+import { appendIf, joinStringsSentence } from "../../utils";
 
 export const fitRequirementsExplanation = (reqs: ModelFitRequirements): string => {
     const explanation: string[] = [];

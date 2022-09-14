@@ -41,7 +41,7 @@ export default defineComponent({
 
         const updateEndTime = (newValue: number) => {
             store.commit(`run/${RunMutation.SetEndTime}`, newValue);
-            store.commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, true);
+            store.commit(`sensitivity/${SensitivityMutation.SetEndTime}`, newValue);
         };
 
         return {

@@ -23,9 +23,6 @@ import { ModelFitGetter } from "../../../../src/app/store/modelFit/getters";
 describe("FitApp", () => {
     const getWrapper = (mockSetOpenVisualisationTab = jest.fn()) => {
         const state = mockFitState({ config: {} as any });
-        const props = {
-            appName: "testApp"
-        };
         const store = new Vuex.Store<FitState>({
             state,
             mutations: {
@@ -69,8 +66,7 @@ describe("FitApp", () => {
         const options = {
             global: {
                 plugins: [store]
-            },
-            props
+            }
         };
 
         return mount(FitApp, options);
@@ -79,7 +75,6 @@ describe("FitApp", () => {
     it("renders content as expected", () => {
         const wrapper = getWrapper();
         const wodinApp = wrapper.findComponent(WodinApp);
-        expect(wodinApp.props("appName")).toBe("testApp");
 
         const wodinPanels = wodinApp.findComponent(WodinPanels);
         const leftPanel = wodinPanels.find(".wodin-left");

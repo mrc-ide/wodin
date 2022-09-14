@@ -35,6 +35,7 @@
     "uid": "2.0.0",
     "vue": "^3.2.29",
     "vue-feather": "^2.0.0",
+    "vue-router": "^4.1.5",
     "vuex": "^4.0.2"
   },
   "devDependencies": {

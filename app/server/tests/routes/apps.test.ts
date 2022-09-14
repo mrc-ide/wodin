@@ -21,11 +21,11 @@ describe("odin routes", () => {
         express.Router = realRouter;
     });
 
-    it("registers expected routes", async () => {
+    it.only("registers expected routes", async () => {
         await import("../../src/routes/apps");
 
         expect(mockRouter.get).toBeCalledTimes(3);
-        expect(mockRouter.get.mock.calls[0][0]).toBe("/:appName");
+        expect(mockRouter.get.mock.calls[0][0]).toStrictEqual(["/:appName", "/:appName/sessions"]);
         expect(mockRouter.get.mock.calls[0][1]).toBe(AppsController.getApp);
         expect(mockRouter.get.mock.calls[1][0]).toBe("/:appName/sessions/metadata");
         expect(mockRouter.get.mock.calls[1][1]).toBe(SessionsController.getSessionsMetadata);

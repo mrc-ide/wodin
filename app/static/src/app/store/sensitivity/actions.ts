@@ -37,7 +37,12 @@ export const actions: ActionTree<SensitivityState, AppState> = {
             }
             commit(SensitivityMutation.SetResult, payload);
             if (payload.batch !== null) {
-                commit(SensitivityMutation.SetUpdateRequired, false);
+                commit(SensitivityMutation.SetUpdateRequired, {
+                    modelChanged: false,
+                    parameterValueChanged: false,
+                    endTimeChanged: false,
+                    sensitivityOptionsChanged: false
+                });
                 // Also re-run model if required so that plotted central traces are correct
                 if (rootState.run.runRequired) {
                     dispatch(`run/${RunAction.RunModel}`, null, { root: true });

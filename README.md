@@ -111,6 +111,7 @@ Browser tests use [Playwright](https://playwright.dev/). Run browser tests, whil
 To publish to npm:
 - build both front end and and back end
 - increment the version in `/app/server/package.json`
+- run `npm run genversion` from `/app/server` to update the version number in `src/versions.ts`
 - then `npm publish --access public`, from `/app/server` folder (may need to `npm login` first)
 
 ### Usage via docker

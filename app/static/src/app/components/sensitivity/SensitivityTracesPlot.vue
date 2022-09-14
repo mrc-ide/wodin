@@ -4,7 +4,7 @@
       :placeholder-message="placeholderMessage"
       :end-time="endTime"
       :plot-data="allPlotData"
-      :redrawWatches="solutions">
+      :redrawWatches="solutions ? [...solutions, allFitData] : []">
     <slot></slot>
   </wodin-ode-plot>
 </template>
@@ -14,9 +14,10 @@ import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import { PlotData } from "plotly.js";
 import { format } from "d3-format";
+import { FitDataGetter } from "../../store/fitData/getters";
 import WodinOdePlot from "../WodinOdePlot.vue";
 import userMessages from "../../userMessages";
-import { odinToPlotly, WodinPlotData } from "../../plot";
+import { allFitDataToPlotly, odinToPlotly, WodinPlotData } from "../../plot";
 import { OdinSolution } from "../../types/responseTypes";
 
 export default defineComponent({
@@ -43,6 +44,8 @@ export default defineComponent({
             // eslint-disable-next-line no-param-reassign
             plotTrace.name = `${plotTrace.name} (${param}=${format(".3f")(value)})`;
         };
+
+        const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData}`]);
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
             const result: Partial<PlotData>[] = [];
@@ -73,6 +76,10 @@ export default defineComponent({
                         result.push(...odinToPlotly(centralData, palette.value, plotlyOptions));
                     }
                 }
+
+                if (allFitData.value) {
+                    result.push(...allFitDataToPlotly(allFitData.value, palette.value, start, end));
+                }
             }
 
             return result;
@@ -82,7 +89,8 @@ export default defineComponent({
             placeholderMessage,
             endTime,
             solutions,
-            allPlotData
+            allPlotData,
+            allFitData
         };
     }
 });
