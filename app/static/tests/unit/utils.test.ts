@@ -44,6 +44,7 @@ describe("evaluateScript", () => {
 });
 
 describe("processFitData", () => {
+    const noTimeVariableDetail = "Data contains no suitable time variable. A time variable must strictly increase per row, with no negative values.";
     it("processes numeric data without errors", () => {
         const data = [
             { a: "1", b: "2" },
@@ -139,7 +140,7 @@ describe("processFitData", () => {
         expect(result.data).toBe(null);
         expect(result.error).toStrictEqual({
             error: "Error occurred",
-            detail: "Data contains no suitable time variable. A time variable must strictly increase per row."
+            detail: noTimeVariableDetail
         });
     });
 
@@ -176,7 +177,24 @@ describe("processFitData", () => {
         expect(result.data).toBe(null);
         expect(result.error).toStrictEqual({
             error: "Error occurred",
-            detail: "Data contains no suitable time variable. A time variable must strictly increase per row."
+            detail: noTimeVariableDetail
+        });
+    });
+
+    it("disallows columns with negative values as time variables", () => {
+        const data = [
+            { a: "-1", b: "2" },
+            { a: "2", b: "3" },
+            { a: "5", b: "4.5" },
+            { a: "6", b: "7" },
+            { a: "9", b: "1" }
+        ];
+        const result = processFitData(data, "Error occurred");
+        console.log(result);
+        expect(result.data).toBe(null);
+        expect(result.error).toStrictEqual({
+            error: "Error occurred",
+            detail: noTimeVariableDetail
         });
     });
 
