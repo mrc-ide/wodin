@@ -39,7 +39,7 @@ export default defineComponent({
         const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData}`]);
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
-            const result = solution.value && solution.value(start, end, points);
+            const result = solution.value && solution.value({mode: "grid", tStart: start, tEnd: end, nPoints: points});
             if (!result) {
                 return [];
             }

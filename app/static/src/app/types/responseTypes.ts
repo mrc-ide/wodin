@@ -72,8 +72,20 @@ export type OdinSeriesSet = {
     y: number[][];
 }
 
+export interface TimeGrid {
+    mode: "grid";
+    tStart: number;
+    tEnd: number;
+    nPoints: number;
+}
+
+export interface TimeGiven {
+    mode: "given";
+    times: number[];
+}
+
 // This is Odin's InterpolatedSolution
-export type OdinSolution = (t0: number, t1: number, nPoints: number) => OdinSeriesSet;
+export type OdinSolution = (times: TimeGrid | TimeGiven) => OdinSeriesSet;
 
 export interface OdinFitData {
     time: number[],
