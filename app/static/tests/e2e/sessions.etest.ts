@@ -18,7 +18,7 @@ test.describe("Sessions tests", () => {
         // We need a short wait here to give the browser a chance to save a session id.
         // In future we'll load a real session's content but here we're just going to test the placeholder so we don't
         // need to edit the initial session
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(5000);
 
         await page.click("#sessions-menu");
         await page.click("#all-sessions-link");
