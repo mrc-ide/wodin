@@ -53,9 +53,10 @@ describe("Session id integration", () => {
 
     it("can get null value fetching nonexistant session", async () => {
         const response = await get(postSessionUrl());
-        expect(response.status).toBe(200);
+        expect(response.status).toBe(404);
         expect(response.headers["content-type"]).toMatch("application/json");
         expect(response.data.data).toBe(null);
+        expect(response.data.errors).toStrictEqual([{ error: "NOT_FOUND", detail: "Session not found" }]);
     });
 
     it("can get session metadata", async () => {
