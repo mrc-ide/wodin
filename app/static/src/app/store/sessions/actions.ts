@@ -30,12 +30,7 @@ export const actions: ActionTree<SessionsState, AppState> = {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async [SessionsAction.Rehydrate](context, sessionId: string) {
         // TODO: fetch data from session data endpoint, populate the current state and re-run models as necessary
-        // We may have a route clash here with the not yet merged session data endpoint at
-        // GET /apps/:appName/sessions/:id - in this branch I've used this to load the app with the session id it should
-        // rehydrate with, but this url would also make sense as the JSON endpoint to fetch the session data.
-        // Maybe the former should be GET /apps/:appName?loadSessionId=:sessionId instead?
-        // For this POC, assume we have fetched data from the endpoint and extracted some current code from it, which
-        // we set in the state
+        // For this POC, just set some hardcoded value as the new session code
         const placeholderCode = ["# Code for rehydration!", "initial(S) <- N - I_0"];
         const { commit } = context;
         commit(`code/${CodeMutation.SetCurrentCode}`, placeholderCode, { root: true });
