@@ -10,6 +10,7 @@ test.describe("Sessions tests", () => {
         // We need to use a browser with persistent context instead of the default incognito browser so that
         // we can use the session ids in local storage
         const userDataDir = os.tmpdir();
+        console.log("TEST TMP DIR: " + userDataDir)
         const browser = await chromium.launchPersistentContext(userDataDir);
         const page = await browser.newPage();
         await page.goto("/apps/day1");
