@@ -43,8 +43,10 @@ export default defineComponent({
             if (!result) {
                 return [];
             }
-            return [...odinToPlotly(result, palette.value),
-                ...allFitDataToPlotly(allFitData.value, palette.value, start, end)];
+            return [
+                ...odinToPlotly(result, palette.value),
+                ...allFitDataToPlotly(allFitData.value, palette.value, start, end)
+            ];
         };
 
         return {
