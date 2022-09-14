@@ -14,9 +14,12 @@ test.describe("Sessions tests", () => {
         const page = await browser.newPage();
         await page.goto("/apps/day1");
 
+        // We need a short wait here to give the browser a chance to save a session id.
+        await page.waitForTimeout(500);
+
         // Get storage state in order to test that something has been written to it - but reading it here also seems
         // to force Playwright to wait long enough for storage values to be available in the next page, so the session
-        // ids can be read by the Sessions page - otherwise we need to include a page.waitForTimeout
+        // ids can be read by the Sessions page - this is required by CI but not locally
         const storageState = await browser.storageState();
         expect(storageState.origins.length).toBe(1); // check there's something in storage state
 
