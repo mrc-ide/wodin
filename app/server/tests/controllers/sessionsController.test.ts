@@ -1,6 +1,6 @@
 import { SessionStore } from "../../src/db/sessionStore";
 import Mock = jest.Mock;
-import { SessionsController, serialiseSession } from "../../src/controllers/sessionsController";
+import { serialiseSession, SessionsController } from "../../src/controllers/sessionsController";
 
 jest.mock("../../src/db/sessionStore");
 
@@ -100,8 +100,6 @@ describe("SessionsController", () => {
         expect(storeInstance.saveSessionLabel.mock.calls[0][1]).toBe("some label");
     });
 
-    // Some additional mocking tomfoolery is needed here in order to
-    // get the getSession bit to actually respond
     it("can fetch session", () => {
         const sessionReq = {
             app: {
@@ -129,10 +127,44 @@ describe("SessionsController", () => {
 });
 
 describe("Sessions serialise correctly", () => {
-    it("serialises json string", () => {
-        expect(serialiseSession('{"a":1}')).toBe('{"status":"success","errors":null,"data":{"a":1}}');
+    const res = {
+        status: jest.fn(),
+        end: jest.fn(),
+        header: jest.fn()
+    } as any;
+
+    beforeEach(() => {
+        jest.clearAllMocks();
     });
+
+    it("serialises json string", () => {
+        serialiseSession('{"a":1}', res);
+        expect(res.end).toHaveBeenCalledTimes(1);
+        expect(JSON.parse(res.end.mock.calls[0][0]))
+            .toStrictEqual({
+                status: "success",
+                errors: null,
+                data: { a: 1 }
+            });
+        expect(res.header).toHaveBeenCalledTimes(1);
+        expect(res.header).toHaveBeenCalledWith("Content-Type", "application/json");
+    });
+
     it("serialises null response", () => {
-        expect(serialiseSession(null)).toBe('{"status":"success","errors":null,"data":null}');
+        serialiseSession(null, res);
+        expect(res.status).toHaveBeenCalledTimes(1);
+        expect(res.status.mock.calls[0][0]).toBe(404);
+        expect(res.end).toHaveBeenCalledTimes(1);
+        expect(JSON.parse(res.end.mock.calls[0][0]))
+            .toStrictEqual({
+                status: "failure",
+                errors: [{
+                    detail: "Session not found",
+                    error: "NOT_FOUND"
+                }],
+                data: null
+            });
+        expect(res.header).toHaveBeenCalledTimes(1);
+        expect(res.header).toHaveBeenCalledWith("Content-Type", "application/json");
     });
 });
