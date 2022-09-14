@@ -15,7 +15,7 @@ test.describe("Sessions tests", () => {
         await page.goto("/apps/day1");
 
         // We need a short wait here to give the browser a chance to save a session id.
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(1000);
 
         // Get storage state in order to test that something has been written to it - but reading it here also seems
         // to force Playwright to wait long enough for storage values to be available in the next page, so the session
