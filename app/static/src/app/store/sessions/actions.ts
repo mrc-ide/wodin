@@ -5,7 +5,7 @@ import { localStorageManager } from "../../localStorageManager";
 import { api } from "../../apiService";
 import { SessionsMutation } from "./mutations";
 import { ErrorsMutation } from "../errors/mutations";
-import { CodeMutation } from "../code/mutations";
+import {CodeAction} from "../code/actions";
 
 export enum SessionsAction {
     GetSessions = "GetSessions",
@@ -27,8 +27,8 @@ export const actions: ActionTree<SessionsState, AppState> = {
     },
 
     async [SessionsAction.Rehydrate](context, sessionId: string) {
-        // TODO: complete rehydrate, just setting code for now
-        const { rootState } = context;
+        // TODO: complete rehydrate of entire state, just setting code for now
+        const { rootState, dispatch } = context;
         const { appName } = rootState;
         const url = `/apps/${appName}/sessions/${sessionId}`;
         const response = await api(context)
@@ -37,11 +37,8 @@ export const actions: ActionTree<SessionsState, AppState> = {
             .get(url);
 
         if (response) {
-            console.log(JSON.stringify(response))
+            const sessionData = response.data as Partial<AppState>;
+            await dispatch(`code/${CodeAction.UpdateCode}`, sessionData.code!.currentCode, { root: true });
         }
-
-        const placeholderCode = ["# Code for rehydration!", "initial(S) <- N - I_0"];
-        const { commit } = context;
-        commit(`code/${CodeMutation.SetCurrentCode}`, placeholderCode, { root: true });
     }
 };
