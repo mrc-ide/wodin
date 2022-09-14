@@ -44,7 +44,8 @@ describe("evaluateScript", () => {
 });
 
 describe("processFitData", () => {
-    const noTimeVariableDetail = "Data contains no suitable time variable. A time variable must strictly increase per row, with no negative values.";
+    const noTimeVariableDetail = "Data contains no suitable time variable."
+        + " A time variable must strictly increase per row, with no negative values.";
     it("processes numeric data without errors", () => {
         const data = [
             { a: "1", b: "2" },

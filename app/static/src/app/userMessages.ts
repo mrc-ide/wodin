@@ -15,7 +15,8 @@ export default {
         tooFewRows: `File must contain at least ${settings.minFitDataRows} data rows.`,
         tooFewColumns: `File must contain at least ${settings.minFitDataColumns} columns.`,
         nonNumericValues: "Data contains non-numeric values",
-        noTimeVariables: "Data contains no suitable time variable. A time variable must strictly increase per row, with no negative values.",
+        noTimeVariables: "Data contains no suitable time variable. A time variable must strictly increase per row,"
+            + " with no negative values.",
         linkPrerequisites: {
             prefix: "Please complete the following in order to select links:",
             data: "Upload valid data",
