@@ -1,11 +1,11 @@
 import { shallowMount } from "@vue/test-utils";
-import SessionsPage from "../../../../src/app/components/sessions/SessionsPage.vue";
 import Vuex from "vuex";
-import {BasicState} from "../../../../src/app/store/basic/state";
-import {mockBasicState, mockModelState} from "../../../mocks";
-import {SessionsAction} from "../../../../src/app/store/sessions/actions";
 import VueFeather from "vue-feather";
-import {SessionMetadata} from "../../../../src/app/types/responseTypes";
+import SessionsPage from "../../../../src/app/components/sessions/SessionsPage.vue";
+import { BasicState } from "../../../../src/app/store/basic/state";
+import { mockBasicState, mockModelState } from "../../../mocks";
+import { SessionsAction } from "../../../../src/app/store/sessions/actions";
+import { SessionMetadata } from "../../../../src/app/types/responseTypes";
 
 describe("SessionsPage", () => {
     const mockGetSessions = jest.fn();
@@ -16,7 +16,7 @@ describe("SessionsPage", () => {
 
     const getWrapper = (sessionsMetadata: SessionMetadata[] | null) => {
         const store = new Vuex.Store<BasicState>({
-            state: mockBasicState({appName: "testApp"}),
+            state: mockBasicState({ appName: "testApp" }),
             modules: {
                 sessions: {
                     namespaced: true,
@@ -41,8 +41,8 @@ describe("SessionsPage", () => {
 
     it("renders as expected", () => {
         const sessionsMetadata = [
-            {id:"abc",time:"2022-01-13T09:26:36.396Z","label": "session1"},
-            {id:"def",time:"2022-01-13T10:26:36.396Z","label": null}
+            { id: "abc", time: "2022-01-13T09:26:36.396Z", label: "session1" },
+            { id: "def", time: "2022-01-13T10:26:36.396Z", label: null }
         ];
         const wrapper = getWrapper(sessionsMetadata);
         const rows = wrapper.findAll(".container .row");

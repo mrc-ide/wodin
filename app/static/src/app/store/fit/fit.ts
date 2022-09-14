@@ -13,7 +13,7 @@ import { AppType, VisualisationTab } from "../appState/state";
 import { logMutations, persistState } from "../plugins";
 import { newSessionId } from "../../utils";
 import { localStorageManager } from "../../localStorageManager";
-import {sessions} from "../sessions/sessions";
+import { sessions } from "../sessions/sessions";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {

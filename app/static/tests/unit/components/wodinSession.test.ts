@@ -54,7 +54,7 @@ describe("WodinSession", () => {
         getWrapper();
         expect(mockFetchOdinRunner).toHaveBeenCalledTimes(1);
         expect(mockInitialise).toHaveBeenCalledTimes(1);
-        expect(mockInitialise.mock.calls[0][1]).toStrictEqual({appName: "testApp", loadSessionId: "session1"});
+        expect(mockInitialise.mock.calls[0][1]).toStrictEqual({ appName: "testApp", loadSessionId: "session1" });
     });
 
     it("does not render RouterView when appName is not initialised", () => {

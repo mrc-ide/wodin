@@ -9,7 +9,7 @@ import { CodeMutation, mutations as codeMutations } from "../../../../src/app/st
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { ModelAction } from "../../../../src/app/store/model/actions";
 import { serialiseState } from "../../../../src/app/serialise";
-import {SessionsAction} from "../../../../src/app/store/sessions/actions";
+import { SessionsAction } from "../../../../src/app/store/sessions/actions";
 
 describe("AppState actions", () => {
     const getStore = () => {
@@ -45,7 +45,7 @@ describe("AppState actions", () => {
         const commit = jest.spyOn(store, "commit");
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
-        const payload = {appName: "test-app", loadSessionId: ""};
+        const payload = { appName: "test-app", loadSessionId: "" };
         await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, payload);
         expect(commit.mock.calls.length).toBe(3);
 
@@ -78,7 +78,7 @@ describe("AppState actions", () => {
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
 
-        const payload = {appName: "test-app", loadSessionId: ""};
+        const payload = { appName: "test-app", loadSessionId: "" };
         await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, payload);
         expect(commit.mock.calls.length).toBe(3);
 
@@ -100,7 +100,7 @@ describe("AppState actions", () => {
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
 
-        const payload = {appName: "test-app", loadSessionId: ""};
+        const payload = { appName: "test-app", loadSessionId: "" };
         await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, payload);
         expect(commit.mock.calls.length).toBe(2);
 
@@ -125,10 +125,10 @@ describe("AppState actions", () => {
         const store = getStore();
         const commit = jest.spyOn(store, "commit");
         const dispatch = jest.spyOn(store, "dispatch");
-        const {state} = store;
+        const { state } = store;
 
-        const payload = {appName: "test-app", loadSessionId: "1234"};
-        await (appStateActions[AppStateAction.Initialise] as any)({commit, state, dispatch}, payload);
+        const payload = { appName: "test-app", loadSessionId: "1234" };
+        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, payload);
 
         expect(commit.mock.calls.length).toBe(2);
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);

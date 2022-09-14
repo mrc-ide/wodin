@@ -8,7 +8,7 @@ import { AppState, AppType } from "./state";
 import { AppStateMutation } from "./mutations";
 import { serialiseState } from "../../serialise";
 import { FitState } from "../fit/state";
-import {SessionsAction} from "../sessions/actions";
+import { SessionsAction } from "../sessions/actions";
 
 export enum AppStateAction {
     Initialise = "Initialise",
@@ -30,8 +30,8 @@ async function immediateUploadState(context: ActionContext<AppState, AppState>) 
 const getStateUploadInterval = (state: AppState) => state.config?.stateUploadIntervalMillis || 2000;
 
 interface InitialisePayload {
-    appName: String,
-    loadSessionId: String
+    appName: string,
+    loadSessionId: string
 }
 
 export const appStateActions: ActionTree<AppState, AppState> = {
@@ -51,7 +51,7 @@ export const appStateActions: ActionTree<AppState, AppState> = {
                 await dispatch(`sessions/${SessionsAction.Rehydrate}`, loadSessionId);
             } else {
                 // If not loading a session, set code from default in config
-                commit(`code/${CodeMutation.SetCurrentCode}`, state.config!.defaultCode, {root: true});
+                commit(`code/${CodeMutation.SetCurrentCode}`, state.config!.defaultCode, { root: true });
                 if (state.code.currentCode.length) {
                     // Fetch and run model for default code
                     await dispatch(`model/${ModelAction.DefaultModel}`);
