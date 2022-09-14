@@ -20,6 +20,9 @@ test.describe("Sessions tests", () => {
         // need to edit the initial session
         await page.waitForTimeout(5000);
 
+        const storageState = await browser.storageState();
+        console.log("STORAGE STATE: " + JSON.stringify(storageState.origins))
+
         await page.click("#sessions-menu");
         await page.click("#all-sessions-link");
         console.log("TEST LOG 1")
