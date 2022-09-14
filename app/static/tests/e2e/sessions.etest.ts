@@ -14,11 +14,9 @@ test.describe("Sessions tests", () => {
         const page = await browser.newPage();
         await page.goto("/apps/day1");
 
-        // We need a short wait here to give the browser a chance to save a session id.
-        // In future we'll load a real session's content but here we're just going to test the placeholder so we don't
-        // need to edit the initial session
-        await page.waitForTimeout(5000);
-
+        // Get storage state in order to test that something has been written to it - but reading it here also seems
+        // to force Playwright to wait long enough for storage values to be available in the next page, so the session
+        // ids can be read by the Sessions page - otherwise we need to include a page.waitForTimeout
         const storageState = await browser.storageState();
         expect(storageState.origins.length).toBe(1); // check there's something in storage state
 
