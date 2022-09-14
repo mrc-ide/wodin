@@ -22,6 +22,7 @@ test.describe("Sessions tests", () => {
 
         const storageState = await browser.storageState();
         console.log("STORAGE STATE: " + JSON.stringify(storageState.origins))
+        expect(storageState.origins.length).toBe(1);
 
         await page.click("#sessions-menu");
         await page.click("#all-sessions-link");
