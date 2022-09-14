@@ -54,7 +54,6 @@ export class SessionsController {
         const { appName, id } = req.params;
         const store = new SessionStore(redis, wodinConfig.savePrefix, appName);
         const session = await store.getSession(id);
-        res.header("Content-Type", "application/json");
         serialiseSession(session, res);
     };
 }
