@@ -1,4 +1,6 @@
-import {expect, test, chromium, Page} from "@playwright/test";
+import {
+    expect, test, chromium, Page
+} from "@playwright/test";
 import * as os from "os";
 
 /* eslint-disable no-irregular-whitespace */
