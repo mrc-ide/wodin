@@ -1,6 +1,6 @@
 import Redis from "ioredis";
-import { SessionMetadata } from "../types";
 import { generateId } from "zoo-ids";
+import { SessionMetadata } from "../types";
 
 export const friendlyAdjectiveAnimal = () => {
     return generateId(null, {
@@ -17,8 +17,12 @@ export class SessionStore {
 
     private readonly _newFriendlyId: () => string;
 
-    constructor(redis: Redis, savePrefix: string, app: string,
-                newFriendlyId: () => string = friendlyAdjectiveAnimal) {
+    constructor(
+        redis: Redis,
+        savePrefix: string,
+        app: string,
+        newFriendlyId: () => string = friendlyAdjectiveAnimal
+    ) {
         this._redis = redis;
         this._sessionPrefix = `${savePrefix}:${app}:sessions:`;
         this._newFriendlyId = newFriendlyId;
@@ -55,7 +59,7 @@ export class SessionStore {
         return this._redis.hget(this.sessionKey("data"), id);
     }
 
-    async generateFriendlyId(id: string, retries: number = 10) : Promise<string> {
+    async generateFriendlyId(id: string, maxRetries: number = 10) : Promise<string> {
         // Try several times to generate a friendly id but fall back
         // on the machine readable id (which should be globally
         // unique) in the unlikely event that we can't find a free
@@ -67,6 +71,7 @@ export class SessionStore {
         // retrying, and it makes sense to avoid an infinite loop...
         const keyFriendlyToMachine = this.sessionKey("machine");
         const keyMachineToFriendly = this.sessionKey("friendly");
+        let retries = maxRetries;
 
         // The app will probably not do this, but if an id already exists, return that
         const existing = await this._redis.hget(keyMachineToFriendly, id);
@@ -76,6 +81,8 @@ export class SessionStore {
 
         while (retries > 0) {
             const friendly = this._newFriendlyId();
+            // Disable lint rule because we need this to be synchronous
+            // eslint-disable-next-line no-await-in-loop
             const wasSet = await this._redis.hsetnx(keyFriendlyToMachine, friendly, id);
             if (wasSet) {
                 this._redis.hset(keyMachineToFriendly, id, friendly);
