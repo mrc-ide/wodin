@@ -1,12 +1,12 @@
 import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
 import VueFeather from "vue-feather";
+import { RouterLink } from "vue-router";
 import SessionsPage from "../../../../src/app/components/sessions/SessionsPage.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState } from "../../../mocks";
 import { SessionsAction } from "../../../../src/app/store/sessions/actions";
 import { SessionMetadata } from "../../../../src/app/types/responseTypes";
-import {RouterLink} from "vue-router";
 
 describe("SessionsPage", () => {
     const mockGetSessions = jest.fn();
@@ -64,11 +64,21 @@ describe("SessionsPage", () => {
         expect(session2Cells.at(2)!.find("a").findComponent(VueFeather).props("type")).toBe("upload");
     });
 
-    it("does not render session rows when no session metadata in store", () => {
+    it("shows loading message when session metadata is null in store", () => {
         const wrapper = getWrapper(null);
         const rows = wrapper.findAll(".container .row");
         expect(rows.length).toBe(1);
         expect(rows.at(0)!.text()).toBe("Sessions");
+        expect(wrapper.find("#loading-sessions").text()).toBe("Loading sessions...");
+    });
+
+    it("shows no sessions yet message when session metadata is empty in store", () => {
+        const wrapper = getWrapper([]);
+        const rows = wrapper.findAll(".container .row");
+        expect(rows.length).toBe(1);
+        expect(rows.at(0)!.text()).toBe("Sessions");
+        expect(wrapper.find("#empty-sessions").text()).toContain("No saved sessions yet.");
+        expect(wrapper.find("#empty-sessions").findComponent(RouterLink).props("to")).toBe("/");
     });
 
     it("dispatches getSessions action on mount", () => {
