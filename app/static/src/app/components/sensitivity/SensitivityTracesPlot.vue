@@ -52,7 +52,9 @@ export default defineComponent({
             if (solutions.value.length) {
                 const { pars } = store.state.sensitivity.result!.batch!;
                 solutions.value.forEach((sln: OdinSolution, slnIdx: number) => {
-                    const data = sln({mode: "grid", tStart: start, tEnd: end, nPoints: points});
+                    const data = sln({
+                        mode: "grid", tStart: start, tEnd: end, nPoints: points
+                    });
                     const plotlyOptions = {
                         includeLegendGroup: true,
                         lineWidth: 1,

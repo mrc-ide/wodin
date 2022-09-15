@@ -198,8 +198,12 @@ describe("SensitivityTracesPlot", () => {
 
         const plotData = wodinPlot.props("plotData");
         expect(plotData(0, 1, 100)).toStrictEqual(expectedPlotData);
-        expect(mockSln1).toBeCalledWith({mode: "grid", tStart: 0, tEnd: 1, nPoints: 100});
-        expect(mockSln2).toBeCalledWith({mode: "grid", tStart: 0, tEnd: 1, nPoints: 100});
+        expect(mockSln1).toBeCalledWith({
+            mode: "grid", tStart: 0, tEnd: 1, nPoints: 100
+        });
+        expect(mockSln2).toBeCalledWith({
+            mode: "grid", tStart: 0, tEnd: 1, nPoints: 100
+        });
     });
 
     it("renders as expected when there are sensitivity solutions and data", () => {
@@ -212,8 +216,12 @@ describe("SensitivityTracesPlot", () => {
 
         const plotData = wodinPlot.props("plotData");
         expect(plotData(0, 1, 100)).toStrictEqual([...expectedPlotData, expectedFitPlotData]);
-        expect(mockSln1).toBeCalledWith({mode: "grid", tStart: 0, tEnd: 1, nPoints: 100});
-        expect(mockSln2).toBeCalledWith({mode: "grid", tStart: 0, tEnd: 1, nPoints: 100});
+        expect(mockSln1).toBeCalledWith({
+            mode: "grid", tStart: 0, tEnd: 1, nPoints: 100
+        });
+        expect(mockSln2).toBeCalledWith({
+            mode: "grid", tStart: 0, tEnd: 1, nPoints: 100
+        });
     });
 
     it("renders as expected when there are no sensitivity solutions", () => {
