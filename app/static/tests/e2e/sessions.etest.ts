@@ -1,4 +1,6 @@
-import { expect, test, chromium } from "@playwright/test";
+import {
+    expect, test, chromium, Page
+} from "@playwright/test";
 import * as os from "os";
 
 /* eslint-disable no-irregular-whitespace */
@@ -6,16 +8,24 @@ const placeholderCode = `# Code for rehydration!
 initial(S) <- N - I_0`;
 
 test.describe("Sessions tests", () => {
+    const loadPageWithWait = async (page: Page) => {
+        await page.goto("/apps/day1");
+        // We need a short wait here to give the browser a chance to save a session id.
+        await page.waitForTimeout(2000);
+    };
+
     test("can navigate to Sessions page from navbar, and load a session", async () => {
         // We need to use a browser with persistent context instead of the default incognito browser so that
         // we can use the session ids in local storage
         const userDataDir = os.tmpdir();
         const browser = await chromium.launchPersistentContext(userDataDir);
         const page = await browser.newPage();
-        await page.goto("/apps/day1");
 
-        // We need a short wait here to give the browser a chance to save a session id.
-        await page.waitForTimeout(1000);
+        await loadPageWithWait(page);
+
+        // We need to load the page twice so we have a current session plus an older session so we can test
+        // rehydrating the older one
+        await loadPageWithWait(page);
 
         // Get storage state in order to test that something has been written to it - but reading it here also seems
         // to force Playwright to wait long enough for storage values to be available in the next page, so the session
@@ -33,6 +43,9 @@ test.describe("Sessions tests", () => {
 
         await expect(await page.innerText(".session-label")).toBe("--no label--");
 
+        // NB this will load the first session load link, which is currently the oldest one, but this will change!
+        // If we loaded the most recent (i.e. current session), it would do just do a vue router navigate, not a
+        // reload+rehydrate, so we would not see the placeholder code
         await page.click(".session-load a");
 
         await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Code");
