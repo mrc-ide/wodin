@@ -20,6 +20,6 @@ describe("localStorageManager", () => {
         expect(spyOnGetItem).toHaveBeenCalledTimes(1);
         expect(spyOnSetItem).toHaveBeenCalledTimes(1);
         expect(spyOnSetItem.mock.calls[0][0]).toBe("sessionIds");
-        expect(spyOnSetItem.mock.calls[0][1]).toBe(JSON.stringify(["session1", "session2", "session3"]));
+        expect(spyOnSetItem.mock.calls[0][1]).toBe(JSON.stringify(["session3", "session1", "session2"]));
     });
 });
