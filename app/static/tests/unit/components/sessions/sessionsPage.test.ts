@@ -3,9 +3,10 @@ import Vuex from "vuex";
 import VueFeather from "vue-feather";
 import SessionsPage from "../../../../src/app/components/sessions/SessionsPage.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import { mockBasicState, mockModelState } from "../../../mocks";
+import { mockBasicState } from "../../../mocks";
 import { SessionsAction } from "../../../../src/app/store/sessions/actions";
 import { SessionMetadata } from "../../../../src/app/types/responseTypes";
+import {RouterLink} from "vue-router";
 
 describe("SessionsPage", () => {
     const mockGetSessions = jest.fn();
@@ -16,7 +17,7 @@ describe("SessionsPage", () => {
 
     const getWrapper = (sessionsMetadata: SessionMetadata[] | null) => {
         const store = new Vuex.Store<BasicState>({
-            state: mockBasicState({ appName: "testApp" }),
+            state: mockBasicState({ appName: "testApp", sessionId: "abc" }),
             modules: {
                 sessions: {
                     namespaced: true,
@@ -52,10 +53,10 @@ describe("SessionsPage", () => {
         expect(columnHeaders.at(1)!.text()).toBe("Label");
         expect(columnHeaders.at(2)!.text()).toBe("Load");
         const session1Cells = rows.at(2)!.findAll("div.session-col-value");
-        expect(session1Cells.at(0)!.text()).toBe("13/01/2022 09:26:36");
+        expect(session1Cells.at(0)!.text()).toBe("13/01/2022 09:26:36 (current session)");
         expect(session1Cells.at(1)!.text()).toBe("session1");
-        expect(session1Cells.at(2)!.find("a").attributes("href")).toBe("/apps/testApp?sessionId=abc");
-        expect(session1Cells.at(2)!.find("a").findComponent(VueFeather).props("type")).toBe("upload");
+        const routerLink = session1Cells.at(2)!.findComponent(RouterLink);
+        expect(routerLink.props("to")).toBe("/");
         const session2Cells = rows.at(3)!.findAll("div.session-col-value");
         expect(session2Cells.at(0)!.text()).toBe("13/01/2022 10:26:36");
         expect(session2Cells.at(1)!.text()).toBe("--no label--");
