@@ -43,10 +43,10 @@ test.describe("Sessions tests", () => {
 
         await expect(await page.innerText(".session-label")).toBe("--no label--");
 
-        // NB this will load the first session load link, which is currently the oldest one, but this will change!
+        // NB this will load the second load link, i.e. the older one
         // If we loaded the most recent (i.e. current session), it would do just do a vue router navigate, not a
         // reload+rehydrate, so we would not see the placeholder code
-        await page.click(".session-load a");
+        await page.click(":nth-match(.session-load a, 2)");
 
         await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Code");
         const editorSelector = ".wodin-left .wodin-content .editor-container .editor-scrollable";
