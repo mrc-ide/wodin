@@ -12,10 +12,15 @@ test.describe("Sessions tests", () => {
         const userDataDir = os.tmpdir();
         const browser = await chromium.launchPersistentContext(userDataDir);
         const page = await browser.newPage();
-        await page.goto("/apps/day1");
 
+        await page.goto("/apps/day1");
         // We need a short wait here to give the browser a chance to save a session id.
-        await page.waitForTimeout(2000);
+        await page.waitForTimeout(1000);
+
+        // We need to load the page twice so we have a current session plus an older session so we can test
+        // rehydrating the older one
+        await page.goto("/apps/day1");
+        await page.waitForTimeout(1000);
 
         // Get storage state in order to test that something has been written to it - but reading it here also seems
         // to force Playwright to wait long enough for storage values to be available in the next page, so the session
@@ -33,6 +38,9 @@ test.describe("Sessions tests", () => {
 
         await expect(await page.innerText(".session-label")).toBe("--no label--");
 
+        // NB this will load the first session load link, which is currently the oldest one, but this will change!
+        // If we loaded the most recent (i.e. current session), it would do just do a vue router navigate, not a
+        // reload+rehydrate, so we would not see the placeholder code
         await page.click(".session-load a");
 
         await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Code");
