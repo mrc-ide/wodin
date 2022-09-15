@@ -12,7 +12,6 @@ describe("Sessionstore", () => {
         exec: jest.fn()
     } as any;
     mockPipeline.hset = jest.fn().mockReturnValue(mockPipeline);
-    mockPipeline.hsetnx = jest.fn().mockReturnValue(mockPipeline);
 
     const mockRedis = {
         pipeline: jest.fn().mockReturnValue(mockPipeline),

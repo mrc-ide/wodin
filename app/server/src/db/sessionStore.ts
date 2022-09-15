@@ -85,7 +85,8 @@ export class SessionStore {
             // eslint-disable-next-line no-await-in-loop
             const wasSet = await this._redis.hsetnx(keyFriendlyToMachine, friendly, id);
             if (wasSet) {
-                this._redis.hset(keyMachineToFriendly, id, friendly);
+                // eslint-disable-next-line no-await-in-loop
+                await this._redis.hset(keyMachineToFriendly, id, friendly);
                 return friendly;
             }
             retries -= 1;

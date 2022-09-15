@@ -42,25 +42,22 @@ export class SessionsController {
     };
 
     static postSessionLabel = async (req: Request, res: Response) => {
-        const { redis, wodinConfig } = req.app.locals as AppLocals;
-        const { appName, id } = req.params;
-        const store = new SessionStore(redis, wodinConfig.savePrefix, appName);
+        const { id } = req.params;
+        const store = SessionsController.getStore(req);
         await store.saveSessionLabel(id, req.body as string);
         res.end();
     };
 
     static getSession = async (req: Request, res: Response) => {
-        const { redis, wodinConfig } = req.app.locals as AppLocals;
-        const { appName, id } = req.params;
-        const store = new SessionStore(redis, wodinConfig.savePrefix, appName);
+        const { id } = req.params;
+        const store = SessionsController.getStore(req);
         const session = await store.getSession(id);
         serialiseSession(session, res);
     };
 
     static generateFriendlyId = async (req: Request, res: Response) => {
-        const { redis, wodinConfig } = req.app.locals as AppLocals;
-        const { appName, id } = req.params;
-        const store = new SessionStore(redis, wodinConfig.savePrefix, appName);
+        const { id } = req.params;
+        const store = SessionsController.getStore(req);
         const friendly = await store.generateFriendlyId(id);
         jsonResponseSuccess(friendly, res);
     };
