@@ -51,10 +51,11 @@ export default defineComponent({
             const result: Partial<PlotData>[] = [];
             if (solutions.value.length) {
                 const { pars } = store.state.sensitivity.result!.batch!;
+                const time = {
+                    mode: "grid" as const, tStart: start, tEnd: end, nPoints: points
+                };
                 solutions.value.forEach((sln: OdinSolution, slnIdx: number) => {
-                    const data = sln({
-                        mode: "grid", tStart: start, tEnd: end, nPoints: points
-                    });
+                    const data = sln(time);
                     const plotlyOptions = {
                         includeLegendGroup: true,
                         lineWidth: 1,
@@ -72,7 +73,7 @@ export default defineComponent({
                 });
 
                 if (centralSolution.value) {
-                    const centralData = centralSolution.value(start, end, points);
+                    const centralData = centralSolution.value(time);
                     if (centralData) {
                         const plotlyOptions = { includeLegendGroup: true };
                         result.push(...odinToPlotly(centralData, palette.value, plotlyOptions));
