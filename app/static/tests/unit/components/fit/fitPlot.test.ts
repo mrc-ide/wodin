@@ -102,7 +102,7 @@ describe("FitPlot", () => {
 
         const plotData = wodinPlot.props("plotData");
         expect(plotData(0, 1, 100)).toStrictEqual(expectedPlotData);
-        expect(mockSolution).toBeCalledWith(0, 1, 100);
+        expect(mockSolution).toBeCalledWith({mode: "grid", tStart: 0, tEnd: 1, nPoints: 100});
     });
 
     it("renders as expected whn modelFit does not have solution", () => {

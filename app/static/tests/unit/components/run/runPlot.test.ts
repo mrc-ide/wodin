@@ -88,7 +88,7 @@ describe("RunPlot", () => {
             }
         ]);
 
-        expect(mockSolution).toBeCalledWith(0, 1, 10);
+        expect(mockSolution).toBeCalledWith({mode: "grid", tStart: 0, tEnd: 1, nPoints: 10});
     });
 
     it("renders as expected when model has no solution", () => {
@@ -228,6 +228,6 @@ describe("RunPlot", () => {
             }
         ]);
 
-        expect(mockSolution).toBeCalledWith(0, 1, 10);
+        expect(mockSolution).toBeCalledWith({mode: "grid", tStart: 0, tEnd: 1, nPoints: 10});
     });
 });
