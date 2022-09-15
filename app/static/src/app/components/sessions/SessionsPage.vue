@@ -29,12 +29,13 @@
         </div>
       </template>
       <div id="empty-sessions" v-else>
-        No saved sessions yet.
-        <router-link class="wodin-link" to="/">Load the application</router-link> to create a new session.
+        {{ messages.noSavedYet }}
+        <router-link class="wodin-link" to="/">{{ messages.loadApplication.link }}</router-link>
+        {{ messages.loadApplication.suffix }}
       </div>
     </template>
     <div id="loading-sessions" v-else>
-      Loading sessions...
+      {{ messages.loading }}
     </div>
   </div>
 </template>
@@ -46,6 +47,7 @@ import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import { RouterLink } from "vue-router";
 import { SessionsAction } from "../../store/sessions/actions";
+import userMessages from "../../userMessages";
 
 export default defineComponent({
     name: "SessionsPage",
@@ -71,11 +73,14 @@ export default defineComponent({
             store.dispatch(`sessions/${SessionsAction.GetSessions}`);
         });
 
+        const messages = userMessages.sessions;
+
         return {
             sessionsMetadata,
             formatDateTime,
             sessionUrl,
-            isCurrentSession
+            isCurrentSession,
+            messages
         };
     }
 });
