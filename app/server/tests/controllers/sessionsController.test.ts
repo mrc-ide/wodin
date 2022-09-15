@@ -124,6 +124,31 @@ describe("SessionsController", () => {
         expect(storeInstance.getSession).toHaveBeenCalledTimes(1);
         expect(storeInstance.getSession.mock.calls[0][0]).toBe("1234");
     });
+
+    it("can generate friendly ids", () => {
+        const sessionReq = {
+            app: {
+                locals: {
+                    redis: {},
+                    wodinConfig: {
+                        savePrefix: "testPrefix"
+                    }
+                }
+            },
+            params: {
+                appName: "testApp",
+                id: "1234"
+            }
+        } as any;
+        SessionsController.generateFriendlyId(sessionReq, res);
+        expect(mockSessionStore).toHaveBeenCalledTimes(1); // expect store constructor
+        expect(mockSessionStore.mock.calls[0][0]).toBe(sessionReq.app.locals.redis);
+        expect(mockSessionStore.mock.calls[0][1]).toBe("testPrefix");
+        expect(mockSessionStore.mock.calls[0][2]).toBe("testApp");
+        const storeInstance = mockSessionStore.mock.instances[0];
+        expect(storeInstance.generateFriendlyId).toHaveBeenCalledTimes(1);
+        expect(storeInstance.generateFriendlyId.mock.calls[0][0]).toBe("1234");
+    });
 });
 
 describe("Sessions serialise correctly", () => {

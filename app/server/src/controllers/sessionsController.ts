@@ -61,8 +61,7 @@ export class SessionsController {
         const { redis, wodinConfig } = req.app.locals as AppLocals;
         const { appName, id } = req.params;
         const store = new SessionStore(redis, wodinConfig.savePrefix, appName);
-        const friendly = store.generateFriendlyId(id);
-        res.header("Content-Type", "application/json");
-        res.end(friendly);
+        const friendly = await store.generateFriendlyId(id);
+        jsonResponseSuccess(friendly, res);
     };
 }

@@ -68,6 +68,12 @@ export class SessionStore {
         const keyFriendlyToMachine = this.sessionKey("machine");
         const keyMachineToFriendly = this.sessionKey("friendly");
 
+        // The app will probably not do this, but if an id already exists, return that
+        const existing = await this._redis.hget(keyMachineToFriendly, id);
+        if (existing) {
+            return existing;
+        }
+
         while (retries > 0) {
             const friendly = this._newFriendlyId();
             const wasSet = await this._redis.hsetnx(keyFriendlyToMachine, friendly, id);
