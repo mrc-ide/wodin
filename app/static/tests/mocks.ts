@@ -44,7 +44,6 @@ export const mockFailure = (errorMessage: string): ResponseFailure => {
 
 const mockAppConfig = {
     readOnlyCode: false,
-    endTime: 100,
     defaultCode: []
 };
 
