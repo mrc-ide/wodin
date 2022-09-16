@@ -4,5 +4,10 @@ steps:
 
   - wait
 
+  - label: ":playwright::chrome: Browser tests"
+    command: docker/browser_tests
+
+  - wait
+
   - label: ":shipit: Push images"
     command: docker/push
