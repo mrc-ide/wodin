@@ -5,6 +5,7 @@ import {
     OdinUserType,
     WodinError
 } from "./responseTypes";
+import {FitData, FitDataLink} from "../store/fitData/state";
 
 export interface OdinRunInputs {
     parameterValues: OdinUserType;
@@ -15,6 +16,7 @@ export interface OdinRunResult {
     inputs: OdinRunInputs;
     solution: OdinSolution | null;
     error: WodinError | null;
+    hasResult?: boolean;
 }
 
 export interface OdinFitInputs {
@@ -28,6 +30,7 @@ export interface OdinFitResult {
     inputs: OdinFitInputs;
     solution: OdinSolution | null;
     error: WodinError | null;
+    hasResult?: boolean;
 }
 
 export interface OdinSensitivityInputs {
@@ -39,4 +42,5 @@ export interface OdinSensitivityResult {
     inputs: OdinSensitivityInputs;
     batch: Batch | null;
     error: WodinError | null;
+    hasResult?: boolean;
 }

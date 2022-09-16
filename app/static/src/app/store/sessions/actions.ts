@@ -6,6 +6,9 @@ import { api } from "../../apiService";
 import { SessionsMutation } from "./mutations";
 import { ErrorsMutation } from "../errors/mutations";
 import { CodeAction } from "../code/actions";
+import {RunAction} from "../run/actions";
+import {ModelMutation} from "../model/mutations";
+import {ModelAction} from "../model/actions";
 
 export enum SessionsAction {
     GetSessions = "GetSessions",
@@ -27,7 +30,8 @@ export const actions: ActionTree<SessionsState, AppState> = {
     },
 
     async [SessionsAction.Rehydrate](context, sessionId: string) {
-        const { rootState } = context;
+        console.log("rehydrating")
+        const { rootState, dispatch, commit } = context;
         const { appName } = rootState;
         const url = `/apps/${appName}/sessions/${sessionId}`;
         const response = await api(context)
@@ -37,7 +41,22 @@ export const actions: ActionTree<SessionsState, AppState> = {
 
         if (response) {
             const sessionData = response.data as Partial<AppState>;
-            Object.assign(rootState, sessionData);
+            const {hasOdin} = (response as any).data.model;  //TODO: sort this out!
+
+            const { odinRunner } = rootState.model; // save the odin Runner to inject into the rehydrated state
+            if (!odinRunner) {
+                console.log("no runner on rehyd")
+            } else {
+                console.log("runner is: " + JSON.stringify(odinRunner))
+            }
+            Object.assign(rootState, sessionData); //TODO: REPLACE THIS WITH MORE CAUTIOUS ASSIGN
+
+            const rootOption = {root: true};
+            commit(`/model/${ModelMutation.SetOdinRunner}`, odinRunner, rootOption);
+            if (hasOdin) {
+                await dispatch(`model/${ModelAction.CompileModel}`, null, rootOption);
+                dispatch(`run/${RunAction.RunModelOnRehydrate}`, null, rootOption);
+            }
         }
     }
 };
