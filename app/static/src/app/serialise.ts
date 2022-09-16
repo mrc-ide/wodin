@@ -1,12 +1,13 @@
-import { AppState, AppType } from "./store/appState/state";
+import {AppState, AppType, VisualisationTab} from "./store/appState/state";
 import { FitState } from "./store/fit/state";
 import { CodeState } from "./store/code/state";
 import { ModelState } from "./store/model/state";
-import { RunState } from "./store/run/state";
+import {RunState, RunUpdateRequiredReasons} from "./store/run/state";
 import { SensitivityState } from "./store/sensitivity/state";
 import { FitDataState } from "./store/fitData/state";
 import { ModelFitState } from "./store/modelFit/state";
-import { OdinFitResult, OdinRunResult } from "./types/wrapperTypes";
+import {OdinFitInputs, OdinFitResult, OdinRunInputs, OdinRunResult} from "./types/wrapperTypes";
+import {OdinModelResponse, OdinUserType, WodinError} from "./types/responseTypes";
 
 function serialiseCode(code: CodeState) {
     return {
@@ -14,7 +15,7 @@ function serialiseCode(code: CodeState) {
     };
 }
 
-function serialiseModel(model: ModelState) {
+function serialiseModel(model: ModelState) : SerialisedModelState {
     return {
         compileRequired: model.compileRequired,
         odinModelResponse: model.odinModelResponse,
@@ -23,7 +24,7 @@ function serialiseModel(model: ModelState) {
     };
 }
 
-function serialiseSolutionResult(result: OdinRunResult | OdinFitResult | null) {
+function serialiseSolutionResult(result: OdinRunResult | OdinFitResult | null): SerialisedSolutionResult {
     return result ? {
         inputs: result.inputs,
         hasResult: !!result.solution,
@@ -31,7 +32,7 @@ function serialiseSolutionResult(result: OdinRunResult | OdinFitResult | null) {
     } : null;
 }
 
-function serialiseRun(run: RunState) {
+function serialiseRun(run: RunState): SerialisedRunState {
     return {
         runRequired: run.runRequired,
         parameterValues: run.parameterValues,
@@ -76,7 +77,35 @@ function serialiseModelFit(modelFit: ModelFitState) {
     };
 }
 
-export const serialiseState = (state: AppState) => {
+// TODO: mode types into types folder
+export interface SerialisedModelState {
+    compileRequired: boolean,
+    odinModelResponse: OdinModelResponse | null,
+    hasOdin: boolean,
+    odinModelCodeError: WodinError
+}
+
+export interface SerialisedRunState {
+    runRequired: RunUpdateRequiredReasons,
+    parameterValues: OdinUserType | null,
+    endTime: number,
+    result: SerialisedSolutionResult | null
+}
+
+export interface SerialisedSolutionResult {
+    inputs: OdinRunInputs | OdinFitInputs,
+    hasResult: boolean
+    error: WodinError | null
+}
+
+export interface SerialisedAppState {
+    openVisualisationTab: VisualisationTab,
+    code: CodeState,
+    model: SerialisedModelState,
+    run: SerialisedRunState
+}
+
+export const serialiseState = (state: AppState) : SerialisedAppState => {
     const result = {
         openVisualisationTab: state.openVisualisationTab,
         code: serialiseCode(state.code),
@@ -93,3 +122,9 @@ export const serialiseState = (state: AppState) => {
 
     return JSON.stringify(result);
 };
+
+
+
+export deserialiseState = (targetState: AppState, serialised: SerialisedAppState) => {
+
+}
