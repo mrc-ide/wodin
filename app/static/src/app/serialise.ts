@@ -1,15 +1,20 @@
-import {AppState, AppType, VisualisationTab} from "./store/appState/state";
+import {AppState, AppType} from "./store/appState/state";
 import { FitState } from "./store/fit/state";
 import { CodeState } from "./store/code/state";
 import { ModelState } from "./store/model/state";
-import {RunState, RunUpdateRequiredReasons} from "./store/run/state";
-import { SensitivityState } from "./store/sensitivity/state";
+import {RunState,} from "./store/run/state";
+import {SensitivityState} from "./store/sensitivity/state";
 import { FitDataState } from "./store/fitData/state";
-import { ModelFitState } from "./store/modelFit/state";
-import {OdinFitInputs, OdinFitResult, OdinRunInputs, OdinRunResult} from "./types/wrapperTypes";
-import {OdinModelResponse, OdinUserType, WodinError} from "./types/responseTypes";
+import { ModelFitState} from "./store/modelFit/state";
+import { OdinFitResult, OdinRunResult} from "./types/wrapperTypes";
+import {
+    SerialisedAppState, SerialisedModelState,
+    SerialisedRunState,
+    SerialisedSensitivityState,
+    SerialisedSolutionResult
+} from "./types/serialisationTypes";
 
-function serialiseCode(code: CodeState) {
+function serialiseCode(code: CodeState) : CodeState {
     return {
         currentCode: code.currentCode
     };
@@ -24,7 +29,7 @@ function serialiseModel(model: ModelState) : SerialisedModelState {
     };
 }
 
-function serialiseSolutionResult(result: OdinRunResult | OdinFitResult | null): SerialisedSolutionResult {
+function serialiseSolutionResult(result: OdinRunResult | OdinFitResult | null): SerialisedSolutionResult | null {
     return result ? {
         inputs: result.inputs,
         hasResult: !!result.solution,
@@ -41,7 +46,7 @@ function serialiseRun(run: RunState): SerialisedRunState {
     };
 }
 
-function serialiseSensitivity(sensitivity: SensitivityState) {
+function serialiseSensitivity(sensitivity: SensitivityState): SerialisedSensitivityState {
     return {
         paramSettings: sensitivity.paramSettings,
         sensitivityUpdateRequired: sensitivity.sensitivityUpdateRequired,
@@ -54,7 +59,7 @@ function serialiseSensitivity(sensitivity: SensitivityState) {
     };
 }
 
-function serialiseFitData(fitData: FitDataState) {
+function serialiseFitData(fitData: FitDataState) : FitDataState {
     return {
         data: fitData.data,
         columns: fitData.columns,
@@ -77,42 +82,14 @@ function serialiseModelFit(modelFit: ModelFitState) {
     };
 }
 
-// TODO: mode types into types folder
-export interface SerialisedModelState {
-    compileRequired: boolean,
-    odinModelResponse: OdinModelResponse | null,
-    hasOdin: boolean,
-    odinModelCodeError: WodinError
-}
-
-export interface SerialisedRunState {
-    runRequired: RunUpdateRequiredReasons,
-    parameterValues: OdinUserType | null,
-    endTime: number,
-    result: SerialisedSolutionResult | null
-}
-
-export interface SerialisedSolutionResult {
-    inputs: OdinRunInputs | OdinFitInputs,
-    hasResult: boolean
-    error: WodinError | null
-}
-
-export interface SerialisedAppState {
-    openVisualisationTab: VisualisationTab,
-    code: CodeState,
-    model: SerialisedModelState,
-    run: SerialisedRunState
-}
-
-export const serialiseState = (state: AppState) : SerialisedAppState => {
-    const result = {
+export const serialiseState = (state: AppState) => {
+    const result: SerialisedAppState = {
         openVisualisationTab: state.openVisualisationTab,
         code: serialiseCode(state.code),
         model: serialiseModel(state.model),
         run: serialiseRun(state.run),
         sensitivity: serialiseSensitivity(state.sensitivity)
-    } as any; // TODO: generate type from schema
+    };
 
     if (state.appType === AppType.Fit) {
         const fitState = state as FitState;
@@ -122,8 +99,6 @@ export const serialiseState = (state: AppState) : SerialisedAppState => {
 
     return JSON.stringify(result);
 };
-
-
 
 export deserialiseState = (targetState: AppState, serialised: SerialisedAppState) => {
 
