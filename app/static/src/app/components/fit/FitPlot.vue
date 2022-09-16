@@ -20,6 +20,7 @@ import {
     filterSeriesSet, fitDataToPlotly, odinToPlotly, WodinPlotData
 } from "../../plot";
 import WodinOdePlot from "../WodinOdePlot.vue";
+import {plot} from "plotly.js";
 
 export default defineComponent({
     name: "FitPlot",
@@ -32,14 +33,24 @@ export default defineComponent({
 
         const placeholderMessage = userMessages.modelFit.notFittedYet;
 
-        const solution = computed(() => store.state.modelFit.result?.solution);
+        // If we're displaying a reloaded session with fit, we should be able to plot the previous fit plot without
+        // re-running fit. Determine if this is the case, by checking if we have a fit result but no fit solution
+        // (which is not persisted)
+        const plotRehydratedFit = computed(() => {
+          const {modelFit} = store.state;
+          return modelFit.result && !modelFit.result.solution && !modelFit.result.error;
+        });
+
+        const solution = computed(() => {
+          return plotRehydratedFit.value ? store.state.modelFit.result?.solution : store.state.run.result?.solution;
+        });
 
         const endTime = computed(() => store.getters[`fitData/${FitDataGetter.dataEnd}`]);
 
         const link = computed(() => store.getters[`fitData/${FitDataGetter.link}`]);
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
-            const { data } = store.state.fitData;
+            const data = plotRehydratedFit.value ? store.state.modelFit.result.inputs.data : store.state.fitData.data;
             const result = solution.value && solution.value({
                 mode: "grid", tStart: start, tEnd: end, nPoints: points
             });
