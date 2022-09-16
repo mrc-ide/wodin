@@ -1,12 +1,17 @@
 import { createApp } from "vue";
 import Vuex from "vuex";
 import { storeOptions } from "./store/basic/basic";
+import WodinSession from "./components/WodinSession.vue";
 import BasicApp from "./components/basic/BasicApp.vue";
 import AppHeader from "./components/AppHeader.vue";
 import { BasicState } from "./store/basic/state";
+import { getRouter } from "./router";
 
 export const store = new Vuex.Store<BasicState>(storeOptions);
 
-const app = createApp({ components: { BasicApp, AppHeader } });
+const app = createApp({ components: { WodinSession, AppHeader } });
 app.use(store);
 app.mount("#app");
+
+const router = getRouter(BasicApp, store.state.appName!);
+app.use(router);

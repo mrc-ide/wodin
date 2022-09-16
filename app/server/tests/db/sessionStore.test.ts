@@ -1,4 +1,4 @@
-import { SessionStore } from "../../src/db/sessionStore";
+import { friendlyAdjectiveAnimal, SessionStore } from "../../src/db/sessionStore";
 
 // Mock Date.now to return hardcoded date
 Date.now = jest.spyOn(Date, "now").mockImplementation(() => new Date(2022, 0, 24, 17).getTime()) as any;
@@ -15,10 +15,12 @@ describe("Sessionstore", () => {
 
     const mockRedis = {
         pipeline: jest.fn().mockReturnValue(mockPipeline),
+        hget: jest.fn().mockReturnValue(mockPipeline),
         hmget: jest.fn().mockImplementation(async (key: string, ...fields: string[]) => {
             return fields.map((field: string) => `${field} value for ${key}`);
         }),
-        hset: jest.fn().mockReturnValue(mockPipeline)
+        hset: jest.fn().mockReturnValue(mockPipeline),
+        hsetnx: jest.fn().mockReturnValue(mockPipeline)
     } as any;
 
     it("can save session", async () => {
@@ -74,5 +76,97 @@ describe("Sessionstore", () => {
         expect(mockRedis.hset.mock.calls[0][0]).toBe("Test Course:testApp:sessions:label");
         expect(mockRedis.hset.mock.calls[0][1]).toBe("1234");
         expect(mockRedis.hset.mock.calls[0][2]).toBe("some label");
+    });
+
+    it("can fetch session", async () => {
+        const id = "1234";
+        const sut = new SessionStore(mockRedis, "Test Course", "testApp");
+        await sut.getSession(id);
+
+        expect(mockRedis.hget).toHaveBeenCalledTimes(1);
+        expect(mockRedis.hget.mock.calls[0].length).toBe(2);
+        expect(mockRedis.hget.mock.calls[0][0]).toBe("Test Course:testApp:sessions:data");
+        expect(mockRedis.hget.mock.calls[0][1]).toBe("1234");
+    });
+
+    it("can create friendly id with no collisions", async () => {
+        const mockRedis2 = {
+            hget: jest.fn(),
+            hset: jest.fn(),
+            hsetnx: jest.fn().mockReturnValue(1)
+        } as any;
+
+        const id = "1234";
+        const mockFriendly = jest.fn().mockReturnValue("happy-rabbit");
+        const sut = new SessionStore(mockRedis2, "Test Course", "testApp", mockFriendly);
+        const friendly = await sut.generateFriendlyId(id);
+        expect(friendly).toBe("happy-rabbit");
+    });
+
+    it("can create friendly id with collisions", async () => {
+        const mockRedis2 = {
+            hget: jest.fn(),
+            hset: jest.fn(),
+            hsetnx: jest.fn().mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValue(1)
+        } as any;
+
+        const id = "1234";
+        const mockFriendly = jest.fn().mockReturnValueOnce("a").mockReturnValueOnce("b").mockReturnValueOnce("c");
+        const sut = new SessionStore(mockRedis2, "Test Course", "testApp", mockFriendly);
+        const friendly = await sut.generateFriendlyId(id);
+        expect(friendly).toBe("c");
+        expect(mockRedis2.hset).toHaveBeenCalledTimes(1);
+        expect(mockRedis2.hset.mock.calls[0]).toEqual(["Test Course:testApp:sessions:friendly", "1234", "c"]);
+        expect(mockRedis2.hsetnx).toHaveBeenCalledTimes(3);
+        expect(mockRedis2.hsetnx.mock.calls[0]).toEqual(["Test Course:testApp:sessions:machine", "a", "1234"]);
+        expect(mockRedis2.hsetnx.mock.calls[1]).toEqual(["Test Course:testApp:sessions:machine", "b", "1234"]);
+        expect(mockRedis2.hsetnx.mock.calls[2]).toEqual(["Test Course:testApp:sessions:machine", "c", "1234"]);
+        expect(mockFriendly).toHaveBeenCalledTimes(3);
+    });
+
+    it("can fall back on machine id when there are many collisions", async () => {
+        const mockRedis2 = {
+            hget: jest.fn(),
+            hset: jest.fn(),
+            hsetnx: jest.fn().mockReturnValue(0)
+        } as any;
+
+        const id = "1234";
+        const mockFriendly = jest.fn();
+        const sut = new SessionStore(mockRedis2, "Test Course", "testApp", mockFriendly);
+        const friendly = await sut.generateFriendlyId(id);
+        expect(friendly).toBe("1234");
+        expect(mockRedis2.hset).toHaveBeenCalledTimes(2);
+        expect(mockRedis2.hsetnx).toHaveBeenCalledTimes(10);
+        expect(mockFriendly).toHaveBeenCalledTimes(10);
+
+        expect(mockRedis2.hset).toHaveBeenCalledWith("Test Course:testApp:sessions:friendly", "1234", "1234");
+        expect(mockRedis2.hset).toHaveBeenCalledWith("Test Course:testApp:sessions:machine", "1234", "1234");
+    });
+
+    it("can return existing friendly id if already set", async () => {
+        const mockRedis2 = {
+            hget: jest.fn().mockReturnValue("happy-rabbit"),
+            hset: jest.fn(),
+            hsetnx: jest.fn().mockReturnValue(1)
+        } as any;
+
+        const id = "1234";
+        const mockFriendly = jest.fn();
+        const sut = new SessionStore(mockRedis2, "Test Course", "testApp", mockFriendly);
+        const friendly = await sut.generateFriendlyId(id);
+        expect(friendly).toBe("happy-rabbit");
+        expect(mockRedis2.hget).toHaveBeenCalledTimes(1);
+        expect(mockRedis2.hget).toHaveBeenCalledWith("Test Course:testApp:sessions:friendly", "1234");
+        expect(mockRedis2.hset).not.toHaveBeenCalled();
+        expect(mockRedis2.hsetnx).not.toHaveBeenCalled();
+    });
+});
+
+describe("generate friendly id", () => {
+    it("generates ids", () => {
+        const id = friendlyAdjectiveAnimal();
+        expect(id).toMatch(/^[a-z]+-[a-z]+$/);
+        expect(friendlyAdjectiveAnimal()).not.toEqual(id);
     });
 });

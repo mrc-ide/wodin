@@ -1,7 +1,20 @@
 import { Request, Response } from "express";
 import { AppLocals, SessionMetadata } from "../types";
 import { SessionStore } from "../db/sessionStore";
-import { jsonResponseSuccess } from "../jsonResponse";
+import { ErrorType } from "../errors/errorType";
+import { jsonResponseError, jsonResponseSuccess, jsonStringResponseSuccess } from "../jsonResponse";
+
+export const serialiseSession = (session: string | null, res: Response) => {
+    if (session === null) {
+        jsonResponseError(404, ErrorType.NOT_FOUND, "Session not found", res);
+    } else {
+        // Because we store the session in the db as a jsonified
+        // string, we can't use jsonResponseSuccess and
+        // re-stringify the json, jsonStringResponseSuccess will
+        // interpolate an existing json string into a json object.
+        jsonStringResponseSuccess(session, res);
+    }
+};
 
 export class SessionsController {
     private static getStore = (req: Request) => {
@@ -29,10 +42,23 @@ export class SessionsController {
     };
 
     static postSessionLabel = async (req: Request, res: Response) => {
-        const { redis, wodinConfig } = req.app.locals as AppLocals;
-        const { appName, id } = req.params;
-        const store = new SessionStore(redis, wodinConfig.savePrefix, appName);
+        const { id } = req.params;
+        const store = SessionsController.getStore(req);
         await store.saveSessionLabel(id, req.body as string);
         res.end();
+    };
+
+    static getSession = async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const store = SessionsController.getStore(req);
+        const session = await store.getSession(id);
+        serialiseSession(session, res);
+    };
+
+    static generateFriendlyId = async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const store = SessionsController.getStore(req);
+        const friendly = await store.generateFriendlyId(id);
+        jsonResponseSuccess(friendly, res);
     };
 }

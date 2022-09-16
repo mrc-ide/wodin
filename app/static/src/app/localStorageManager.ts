@@ -8,7 +8,7 @@ class LocalStorageManager {
 
     addSessionId = (sessionId: string) => {
         const sessionIds = this.getSessionIds();
-        sessionIds.push(sessionId);
+        sessionIds.unshift(sessionId); // prepends the id
         window.localStorage.setItem(LocalStorageManager.sessionIdsKey, JSON.stringify(sessionIds));
     }
 }

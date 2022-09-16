@@ -1,6 +1,6 @@
 import { SessionStore } from "../../src/db/sessionStore";
 import Mock = jest.Mock;
-import { SessionsController } from "../../src/controllers/sessionsController";
+import { serialiseSession, SessionsController } from "../../src/controllers/sessionsController";
 
 jest.mock("../../src/db/sessionStore");
 
@@ -98,5 +98,98 @@ describe("SessionsController", () => {
         expect(storeInstance.saveSessionLabel).toHaveBeenCalledTimes(1);
         expect(storeInstance.saveSessionLabel.mock.calls[0][0]).toBe("1234");
         expect(storeInstance.saveSessionLabel.mock.calls[0][1]).toBe("some label");
+    });
+
+    it("can fetch session", () => {
+        const sessionReq = {
+            app: {
+                locals: {
+                    redis: {},
+                    wodinConfig: {
+                        savePrefix: "testPrefix"
+                    }
+                }
+            },
+            params: {
+                appName: "testApp",
+                id: "1234"
+            }
+        } as any;
+        SessionsController.getSession(sessionReq, res);
+        expect(mockSessionStore).toHaveBeenCalledTimes(1); // expect store constructor
+        expect(mockSessionStore.mock.calls[0][0]).toBe(sessionReq.app.locals.redis);
+        expect(mockSessionStore.mock.calls[0][1]).toBe("testPrefix");
+        expect(mockSessionStore.mock.calls[0][2]).toBe("testApp");
+        const storeInstance = mockSessionStore.mock.instances[0];
+        expect(storeInstance.getSession).toHaveBeenCalledTimes(1);
+        expect(storeInstance.getSession.mock.calls[0][0]).toBe("1234");
+    });
+
+    it("can generate friendly ids", () => {
+        const sessionReq = {
+            app: {
+                locals: {
+                    redis: {},
+                    wodinConfig: {
+                        savePrefix: "testPrefix"
+                    }
+                }
+            },
+            params: {
+                appName: "testApp",
+                id: "1234"
+            }
+        } as any;
+        SessionsController.generateFriendlyId(sessionReq, res);
+        expect(mockSessionStore).toHaveBeenCalledTimes(1); // expect store constructor
+        expect(mockSessionStore.mock.calls[0][0]).toBe(sessionReq.app.locals.redis);
+        expect(mockSessionStore.mock.calls[0][1]).toBe("testPrefix");
+        expect(mockSessionStore.mock.calls[0][2]).toBe("testApp");
+        const storeInstance = mockSessionStore.mock.instances[0];
+        expect(storeInstance.generateFriendlyId).toHaveBeenCalledTimes(1);
+        expect(storeInstance.generateFriendlyId.mock.calls[0][0]).toBe("1234");
+    });
+});
+
+describe("Sessions serialise correctly", () => {
+    const res = {
+        status: jest.fn(),
+        end: jest.fn(),
+        header: jest.fn()
+    } as any;
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it("serialises json string", () => {
+        serialiseSession('{"a":1}', res);
+        expect(res.end).toHaveBeenCalledTimes(1);
+        expect(JSON.parse(res.end.mock.calls[0][0]))
+            .toStrictEqual({
+                status: "success",
+                errors: null,
+                data: { a: 1 }
+            });
+        expect(res.header).toHaveBeenCalledTimes(1);
+        expect(res.header).toHaveBeenCalledWith("Content-Type", "application/json");
+    });
+
+    it("serialises null response", () => {
+        serialiseSession(null, res);
+        expect(res.status).toHaveBeenCalledTimes(1);
+        expect(res.status.mock.calls[0][0]).toBe(404);
+        expect(res.end).toHaveBeenCalledTimes(1);
+        expect(JSON.parse(res.end.mock.calls[0][0]))
+            .toStrictEqual({
+                status: "failure",
+                errors: [{
+                    detail: "Session not found",
+                    error: "NOT_FOUND"
+                }],
+                data: null
+            });
+        expect(res.header).toHaveBeenCalledTimes(1);
+        expect(res.header).toHaveBeenCalledWith("Content-Type", "application/json");
     });
 });
