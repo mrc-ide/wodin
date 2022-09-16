@@ -170,8 +170,15 @@ describe("generate friendly id", () => {
         expect(friendlyAdjectiveAnimal()).not.toEqual(id);
     });
 
-    it.only("cleans weird ids", () => {
+    it("cleans weird ids", () => {
         expect(cleanFriendlyId("Spanish-albatross")).toBe("spanish-albatross");
         expect(cleanFriendlyId("well-to-do-bug")).toBe("welltodo-bug");
+    });
+
+    it("generates ids that always match pattern", () => {
+        const n = 10000;
+        for (let i = 0; i < n; ++i) {
+            expect(friendlyAdjectiveAnimal()).toMatch(/^[a-z]+-[a-z]+$/);
+        }
     });
 });

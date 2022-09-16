@@ -12,11 +12,11 @@ export const cleanFriendlyId = (id: string): string => {
 }
 
 export const friendlyAdjectiveAnimal = (): string => {
-    return generateId(null, {
+    return cleanFriendlyId(generateId(null, {
         caseStyle: "lowercase",
         delimiter: "-",
         numAdjectives: 1
-    });
+    }));
 };
 
 export class SessionStore {
