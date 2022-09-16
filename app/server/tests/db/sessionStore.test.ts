@@ -1,4 +1,4 @@
-import { friendlyAdjectiveAnimal, SessionStore } from "../../src/db/sessionStore";
+import { friendlyAdjectiveAnimal, cleanFriendlyId, SessionStore } from "../../src/db/sessionStore";
 
 // Mock Date.now to return hardcoded date
 Date.now = jest.spyOn(Date, "now").mockImplementation(() => new Date(2022, 0, 24, 17).getTime()) as any;
@@ -168,5 +168,10 @@ describe("generate friendly id", () => {
         const id = friendlyAdjectiveAnimal();
         expect(id).toMatch(/^[a-z]+-[a-z]+$/);
         expect(friendlyAdjectiveAnimal()).not.toEqual(id);
+    });
+
+    it.only("cleans weird ids", () => {
+        expect(cleanFriendlyId("Spanish-albatross")).toBe("spanish-albatross");
+        expect(cleanFriendlyId("well-to-do-bug")).toBe("welltodo-bug");
     });
 });
