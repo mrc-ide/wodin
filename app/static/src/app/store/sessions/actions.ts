@@ -11,6 +11,7 @@ import {ModelMutation} from "../model/mutations";
 import {ModelAction} from "../model/actions";
 import {SerialisedAppState} from "../../types/serialisationTypes";
 import {deserialiseState} from "../../serialise";
+import {SensitivityAction} from "../sensitivity/actions";
 
 export enum SessionsAction {
     GetSessions = "GetSessions",
@@ -49,8 +50,15 @@ export const actions: ActionTree<SessionsState, AppState> = {
             await dispatch(`model/${ModelAction.FetchOdinRunner}`, null, rootOption);
             if (sessionData.model.hasOdin) {
                 await dispatch(`model/${ModelAction.CompileModel}`, null, rootOption);
-                if (sessionData.run.result?.hasResult) {
-                    dispatch(`run/${RunAction.RunModelOnRehydrate}`, null, rootOption);
+                // Do not auto-run anything if compile was required when session was last saved
+                if (!sessionData.model.compileRequired) {
+                    if (sessionData.run.result?.hasResult) {
+                        dispatch(`run/${RunAction.RunModelOnRehydrate}`, null, rootOption);
+                    }
+                    if (sessionData.sensitivity.result?.hasResult) {
+                        console.log("running s on r")
+                        dispatch(`sensitivity/${SensitivityAction.RunSensitivityOnRehydrate}`, null, rootOption);
+                    }
                 }
             }
         }
