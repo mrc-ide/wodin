@@ -9,6 +9,8 @@ import { CodeAction } from "../code/actions";
 import {RunAction} from "../run/actions";
 import {ModelMutation} from "../model/mutations";
 import {ModelAction} from "../model/actions";
+import {SerialisedAppState} from "../../types/serialisationTypes";
+import {deserialiseState} from "../../serialise";
 
 export enum SessionsAction {
     GetSessions = "GetSessions",
@@ -40,8 +42,7 @@ export const actions: ActionTree<SessionsState, AppState> = {
             .get(url);
 
         if (response) {
-            const sessionData = response.data as Partial<AppState>;
-            const {hasOdin} = (response as any).data.model;  //TODO: sort this out!
+            const sessionData = response.data as SerialisedAppState;
 
             const { odinRunner } = rootState.model; // save the odin Runner to inject into the rehydrated state
             if (!odinRunner) {
@@ -49,13 +50,15 @@ export const actions: ActionTree<SessionsState, AppState> = {
             } else {
                 console.log("runner is: " + JSON.stringify(odinRunner))
             }
-            Object.assign(rootState, sessionData); //TODO: REPLACE THIS WITH MORE CAUTIOUS ASSIGN
+            deserialiseState(rootState, sessionData);
 
             const rootOption = {root: true};
-            commit(`/model/${ModelMutation.SetOdinRunner}`, odinRunner, rootOption);
-            if (hasOdin) {
+            commit(`/model/${ModelMutation.SetOdinRunner}`, odinRunner, rootOption); //TODO: maybe do this in deserialise
+            if (sessionData.model.hasOdin) {
                 await dispatch(`model/${ModelAction.CompileModel}`, null, rootOption);
-                dispatch(`run/${RunAction.RunModelOnRehydrate}`, null, rootOption);
+                if (sessionData.run.result?.hasResult) {
+                    dispatch(`run/${RunAction.RunModelOnRehydrate}`, null, rootOption);
+                }
             }
         }
     }

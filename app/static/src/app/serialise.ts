@@ -100,6 +100,9 @@ export const serialiseState = (state: AppState) => {
     return JSON.stringify(result);
 };
 
-export deserialiseState = (targetState: AppState, serialised: SerialisedAppState) => {
-
-}
+export const deserialiseState = (targetState: AppState, serialised: SerialisedAppState) => {
+    Object.assign(targetState, {
+        ...targetState,
+        ...serialised
+    });
+};

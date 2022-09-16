@@ -54,10 +54,8 @@ export const actions: ActionTree<RunState, AppState> = {
     RunModelOnRehydrate(context) {
         console.log("running on rehydrate")
         const { state } = context;
-        if (state.result?.hasResult) {
-            const { parameterValues, endTime } = state.result.inputs;
-            console.log("running model")
-            runModel(parameterValues, endTime, context);
-        }
+        const { parameterValues, endTime } = state.result!.inputs;
+        console.log("running model")
+        runModel(parameterValues, endTime, context);
     }
 };
