@@ -2,7 +2,7 @@ import {
     expect, test, chromium, Page
 } from "@playwright/test";
 import * as os from "os";
-import {writeCode} from "./utils";
+import { writeCode } from "./utils";
 
 const appUrl = "/apps/day1";
 const saveSessionTimeout = 3000;

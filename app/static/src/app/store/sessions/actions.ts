@@ -5,7 +5,7 @@ import { localStorageManager } from "../../localStorageManager";
 import { api } from "../../apiService";
 import { SessionsMutation } from "./mutations";
 import { ErrorsMutation } from "../errors/mutations";
-import {CodeAction} from "../code/actions";
+import { CodeAction } from "../code/actions";
 
 export enum SessionsAction {
     GetSessions = "GetSessions",

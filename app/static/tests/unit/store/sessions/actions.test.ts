@@ -6,7 +6,7 @@ import {
 import { SessionsMutation } from "../../../../src/app/store/sessions/mutations";
 import { localStorageManager } from "../../../../src/app/localStorageManager";
 import { ErrorsMutation } from "../../../../src/app/store/errors/mutations";
-import {CodeAction} from "../../../../src/app/store/code/actions";
+import { CodeAction } from "../../../../src/app/store/code/actions";
 
 describe("SessionsActions", () => {
     const getSessionIdsSpy = jest.spyOn(localStorageManager, "getSessionIds")
@@ -28,13 +28,13 @@ describe("SessionsActions", () => {
 
         const commit = jest.fn();
         const dispatch = jest.fn();
-        const rootState = {appName: "testApp"} as any;
+        const rootState = { appName: "testApp" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(commit).toHaveBeenCalledTimes(0);
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch.mock.calls[0][0]).toBe(`code/${CodeAction.UpdateCode}`);
         expect(dispatch.mock.calls[0][1]).toStrictEqual(["some saved code"]);
-        expect(dispatch.mock.calls[0][2]).toStrictEqual({root: true});
+        expect(dispatch.mock.calls[0][2]).toStrictEqual({ root: true });
     });
 
     it("GetSessions fetches and commits session metadata", async () => {
