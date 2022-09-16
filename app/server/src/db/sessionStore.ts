@@ -9,7 +9,7 @@ export const cleanFriendlyId = (id: string): string => {
         ret = ret.replace(re, "$1$2-$3");
     }
     return ret;
-}
+};
 
 export const friendlyAdjectiveAnimal = (): string => {
     return cleanFriendlyId(generateId(null, {

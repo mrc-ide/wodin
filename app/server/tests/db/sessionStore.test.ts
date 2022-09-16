@@ -177,7 +177,7 @@ describe("generate friendly id", () => {
 
     it("generates ids that always match pattern", () => {
         const n = 10000;
-        for (let i = 0; i < n; ++i) {
+        for (let i = 0; i < n; i += 1) {
             expect(friendlyAdjectiveAnimal()).toMatch(/^[a-z]+-[a-z]+$/);
         }
     });
