@@ -34,7 +34,7 @@ describe("appsController", () => {
     });
 
     it("renders view with app config", () => {
-        const appConfig = { title: "testTitle", appType: "testType", endTime: 101 };
+        const appConfig = { title: "testTitle", appType: "testType" };
         const request = getMockRequest(appConfig);
         AppsController.getApp(request, mockResponse);
 
