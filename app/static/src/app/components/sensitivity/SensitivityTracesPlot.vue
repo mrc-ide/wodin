@@ -4,7 +4,7 @@
       :placeholder-message="placeholderMessage"
       :end-time="endTime"
       :plot-data="allPlotData"
-      :redrawWatches="solutions ? [...solutions] : []">
+      :redrawWatches="solutions ? [...solutions, allFitData] : []">
     <slot></slot>
   </wodin-ode-plot>
 </template>
@@ -14,9 +14,10 @@ import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import { PlotData } from "plotly.js";
 import { format } from "d3-format";
+import { FitDataGetter } from "../../store/fitData/getters";
 import WodinOdePlot from "../WodinOdePlot.vue";
 import userMessages from "../../userMessages";
-import { odinToPlotly, WodinPlotData } from "../../plot";
+import { allFitDataToPlotly, odinToPlotly, WodinPlotData } from "../../plot";
 import { OdinSolution } from "../../types/responseTypes";
 
 export default defineComponent({
@@ -44,12 +45,17 @@ export default defineComponent({
             plotTrace.name = `${plotTrace.name} (${param}=${format(".3f")(value)})`;
         };
 
+        const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData}`]);
+
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
             const result: Partial<PlotData>[] = [];
             if (solutions.value.length) {
                 const { pars } = store.state.sensitivity.result!.batch!;
+                const time = {
+                    mode: "grid" as const, tStart: start, tEnd: end, nPoints: points
+                };
                 solutions.value.forEach((sln: OdinSolution, slnIdx: number) => {
-                    const data = sln(start, end, points);
+                    const data = sln(time);
                     const plotlyOptions = {
                         includeLegendGroup: true,
                         lineWidth: 1,
@@ -67,11 +73,15 @@ export default defineComponent({
                 });
 
                 if (centralSolution.value) {
-                    const centralData = centralSolution.value(start, end, points);
+                    const centralData = centralSolution.value(time);
                     if (centralData) {
                         const plotlyOptions = { includeLegendGroup: true };
                         result.push(...odinToPlotly(centralData, palette.value, plotlyOptions));
                     }
+                }
+
+                if (allFitData.value) {
+                    result.push(...allFitDataToPlotly(allFitData.value, palette.value, start, end));
                 }
             }
 
@@ -82,7 +92,8 @@ export default defineComponent({
             placeholderMessage,
             endTime,
             solutions,
-            allPlotData
+            allPlotData,
+            allFitData
         };
     }
 });

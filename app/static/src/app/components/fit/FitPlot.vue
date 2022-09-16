@@ -40,7 +40,9 @@ export default defineComponent({
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
             const { data } = store.state.fitData;
-            const result = solution.value && solution.value(start, end, points);
+            const result = solution.value && solution.value({
+                mode: "grid", tStart: start, tEnd: end, nPoints: points
+            });
             if (!data || !link.value || !result) {
                 return [];
             }

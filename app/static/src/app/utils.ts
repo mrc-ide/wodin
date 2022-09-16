@@ -101,15 +101,14 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
     let timeVariableCandidates = Object.keys(data[0]);
 
     processedData.forEach((row, index) => {
-        if (index > 0) {
-            const toRemove: string[] = [];
-            timeVariableCandidates.forEach((key) => {
-                if (Number.isNaN(row[key]) || row[key] <= processedData[index - 1][key]) {
-                    toRemove.push(key);
-                }
-            });
-            timeVariableCandidates = timeVariableCandidates.filter((key) => !toRemove.includes(key));
-        }
+        const toRemove: string[] = [];
+        timeVariableCandidates.forEach((key) => {
+            const value = row[key];
+            if (Number.isNaN(value) || value < 0 || (index > 0 && value <= processedData[index - 1][key])) {
+                toRemove.push(key);
+            }
+        });
+        timeVariableCandidates = timeVariableCandidates.filter((key) => !toRemove.includes(key));
     });
 
     if (!timeVariableCandidates.length) {

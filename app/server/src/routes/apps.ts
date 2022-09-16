@@ -15,5 +15,7 @@ router.post(
     bodyParser.text(),
     SessionsController.postSessionLabel
 );
+router.get("/:appName/sessions/:id", SessionsController.getSession);
+router.post("/:appName/sessions/:id/friendly", SessionsController.generateFriendlyId);
 
 export default router;
