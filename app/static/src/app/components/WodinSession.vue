@@ -21,10 +21,9 @@ export default defineComponent({
     setup(props) {
         const store = useStore();
         const initialised = computed(() => !!store.state.appName);
-        onMounted(async () => {
-            const { appName, loadSessionId } = props;
-            store.dispatch(`model/${ModelAction.FetchOdinRunner}`);
-            store.dispatch(AppStateAction.Initialise, { appName, loadSessionId });
+        onMounted(() => {
+          const { appName, loadSessionId } = props;
+          store.dispatch(AppStateAction.Initialise, { appName, loadSessionId });
         });
 
         return { initialised };

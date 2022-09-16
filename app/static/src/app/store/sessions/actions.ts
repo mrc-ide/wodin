@@ -32,7 +32,6 @@ export const actions: ActionTree<SessionsState, AppState> = {
     },
 
     async [SessionsAction.Rehydrate](context, sessionId: string) {
-        console.log("rehydrating")
         const { rootState, dispatch, commit } = context;
         const { appName } = rootState;
         const url = `/apps/${appName}/sessions/${sessionId}`;
@@ -44,16 +43,10 @@ export const actions: ActionTree<SessionsState, AppState> = {
         if (response) {
             const sessionData = response.data as SerialisedAppState;
 
-            const { odinRunner } = rootState.model; // save the odin Runner to inject into the rehydrated state
-            if (!odinRunner) {
-                console.log("no runner on rehyd")
-            } else {
-                console.log("runner is: " + JSON.stringify(odinRunner))
-            }
             deserialiseState(rootState, sessionData);
 
             const rootOption = {root: true};
-            commit(`/model/${ModelMutation.SetOdinRunner}`, odinRunner, rootOption); //TODO: maybe do this in deserialise
+            await dispatch(`model/${ModelAction.FetchOdinRunner}`, null, rootOption);
             if (sessionData.model.hasOdin) {
                 await dispatch(`model/${ModelAction.CompileModel}`, null, rootOption);
                 if (sessionData.run.result?.hasResult) {

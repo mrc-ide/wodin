@@ -13,14 +13,8 @@ export enum RunAction {
 
 const runModel = (parameterValues: OdinUserType | null, endTime: number,
     context: ActionContext<RunState, AppState>) => {
-    console.log("0")
     const { rootState, commit } = context;
-    console.log("1")
-    if (!rootState.model.odinRunner) {
-        console.log("no runner")
-    }
     if (rootState.model.odinRunner && rootState.model.odin && parameterValues) {
-        console.log("2")
         const startTime = 0;
         const payload : OdinRunResult = {
             inputs: { endTime, parameterValues },
@@ -28,13 +22,10 @@ const runModel = (parameterValues: OdinUserType | null, endTime: number,
             error: null
         };
         try {
-            console.log("3")
             const solution = rootState.model.odinRunner.wodinRun(rootState.model.odin, parameterValues,
                 startTime, endTime, {});
             payload.solution = solution;
-            console.log("4")
         } catch (e) {
-            console.log("e5")
             payload.error = {
                 error: userMessages.errors.wodinRunError,
                 detail: (e as Error).message
@@ -52,10 +43,8 @@ export const actions: ActionTree<RunState, AppState> = {
     },
 
     RunModelOnRehydrate(context) {
-        console.log("running on rehydrate")
         const { state } = context;
         const { parameterValues, endTime } = state.result!.inputs;
-        console.log("running model")
         runModel(parameterValues, endTime, context);
     }
 };
