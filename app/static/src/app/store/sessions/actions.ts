@@ -27,8 +27,7 @@ export const actions: ActionTree<SessionsState, AppState> = {
     },
 
     async [SessionsAction.Rehydrate](context, sessionId: string) {
-        // TODO: complete rehydrate of entire state, just setting code for now
-        const { rootState, dispatch } = context;
+        const { rootState } = context;
         const { appName } = rootState;
         const url = `/apps/${appName}/sessions/${sessionId}`;
         const response = await api(context)
@@ -38,7 +37,7 @@ export const actions: ActionTree<SessionsState, AppState> = {
 
         if (response) {
             const sessionData = response.data as Partial<AppState>;
-            await dispatch(`code/${CodeAction.UpdateCode}`, sessionData.code!.currentCode, { root: true });
+            Object.assign(rootState, sessionData);
         }
     }
 };
