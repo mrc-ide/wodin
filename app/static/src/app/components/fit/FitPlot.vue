@@ -56,27 +56,17 @@ export default defineComponent({
         });
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
-            let dataToPlot = [];
-            const palette = store.state.model.paletteModel;
+            const { data } = store.state.fitData;
             const result = solution.value && solution.value({
                 mode: "grid", tStart: start, tEnd: end, nPoints: points
             });
-
-            if (plotRehydratedFit.value) {
-                dataToPlot = rehydratedFitDataToPlotly(store.state.modelFit.result.inputs.data, link.value, palette);
-            } else {
-                const { data } = store.state.fitData;
-
-                if (!data || !link.value || !result) {
-                    return [];
-                }
-
-                dataToPlot = fitDataToPlotly(data, link.value, palette, start, end);
+            if (!data || !link.value || !result) {
+              return [];
             }
-
+            const palette = store.state.model.paletteModel;
             return [
                 ...odinToPlotly(filterSeriesSet(result, link.value.model), palette),
-                ...dataToPlot
+                ...fitDataToPlotly(data, link.value, palette, start, end)
             ];
         };
 

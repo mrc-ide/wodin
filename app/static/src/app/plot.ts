@@ -83,33 +83,6 @@ export function fitDataToPlotly(data: FitData, link: FitDataLink, palette: Palet
     }];
 }
 
-function getPlotlyScatter(name: string, x: number[], y: number[], color: string): Partial<PlotData> {
-    return {
-        name,
-        x,
-        y,
-        mode: "markers",
-        type: "scatter",
-        marker: {
-            color
-        }
-    };
-}
-
-export function rehydratedFitDataToPlotly(data: Dict<number[]>, link: FitDataLink, palette: Palette): WodinPlotData {
-    return [getPlotlyScatter(link.data, data["time"] as number[], data["value"] as number[], palette[link.model])];
-    /*return [{
-        name: link.data,
-        x: data["time"] as number[],
-        y: data["value"] as number[],
-        mode: "markers",
-        type: "scatter",
-        marker: {
-            color: palette[link.model]
-        }
-    }];*/
-}
-
 export function allFitDataToPlotly(allFitData: AllFitData | null, paletteModel: Palette,
     start: number, end: number): WodinPlotData {
     if (!allFitData) {
@@ -120,11 +93,7 @@ export function allFitDataToPlotly(allFitData: AllFitData | null, paletteModel: 
     } = allFitData;
     const filteredData = filterData(data, timeVariable, start, end);
     const palette = paletteData(Object.keys(linkedVariables));
-    return Object.keys(linkedVariables).map((name: string) => getPlotlyScatter(name,
-            filteredData.map((row: Dict<number>) => row[timeVariable]),
-            filteredData.map((row: Dict<number>) => row[name]),
-            linkedVariables[name] ? paletteModel[linkedVariables[name]!] : palette[name]));
-        /*({
+    return Object.keys(linkedVariables).map((name: string) => ({
         name,
         x: filteredData.map((row: Dict<number>) => row[timeVariable]),
         y: filteredData.map((row: Dict<number>) => row[name]),
@@ -133,5 +102,5 @@ export function allFitDataToPlotly(allFitData: AllFitData | null, paletteModel: 
         marker: {
             color: linkedVariables[name] ? paletteModel[linkedVariables[name]!] : palette[name]
         }
-    }));*/
+    }));
 }
