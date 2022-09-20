@@ -111,6 +111,28 @@ describe("Session id integration", () => {
         expectRecentTime(sessions[0].time);
         expect(sessions[0].label).toBe(null);
     });
+
+    it("can create a friendly label for a session", async () => {
+        const url = `apps/day1/sessions/${sessionId}/friendly`;
+
+        // Gets created
+        const response1 = await post(url, undefined);
+        expect(response1.status).toBe(200);
+        expect(response1.headers["content-type"]).toMatch("application/json");
+        const friendly = response1.data.data;
+        expect(friendly).toMatch(/^[a-z]+-[a-z]+$/);
+
+        // Re-creating it does not change the friendly id
+        const response2 = await post(url, undefined);
+        expect(response2.status).toBe(200);
+        expect(response2.data).toStrictEqual(response1.data);
+
+        // Creating another friendly id is different
+        const response3 = await post("apps/day1/sessions/12345/friendly", undefined);
+        expect(response3.status).toBe(200);
+        expect(response3.data.data).not.toEqual(friendly);
+        expect(response3.data.data).toMatch(/^[a-z]+-[a-z]+$/);
+    });
 });
 
 describe("Session label integration", () => {

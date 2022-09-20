@@ -31,11 +31,13 @@ describe("odin routes", () => {
         expect(mockRouter.get.mock.calls[1][1]).toBe(SessionsController.getSessionsMetadata);
         expect(mockRouter.get.mock.calls[2][0]).toBe("/:appName/sessions/:id");
         expect(mockRouter.get.mock.calls[2][1]).toBe(SessionsController.getSession);
-        expect(mockRouter.post).toBeCalledTimes(2);
+        expect(mockRouter.post).toBeCalledTimes(3);
         expect(mockRouter.post.mock.calls[0][0]).toBe("/:appName/sessions/:id");
         expect(mockRouter.post.mock.calls[0][2]).toBe(SessionsController.postSession);
         expect(mockRouter.post.mock.calls[1][0]).toBe("/:appName/sessions/:id/label");
         expect(mockRouter.post.mock.calls[1][2]).toBe(SessionsController.postSessionLabel);
+        expect(mockRouter.post.mock.calls[2][0]).toBe("/:appName/sessions/:id/friendly");
+        expect(mockRouter.post.mock.calls[2][1]).toBe(SessionsController.generateFriendlyId);
         expect(spyText).toHaveBeenCalledWith({ type: "application/json" });
     });
 });
