@@ -20,6 +20,7 @@ export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
     FetchOdin = "FetchOdin",
     CompileModel = "CompileModel",
+    CompileModelOnRehydrate = "CompileModelOnRehydrate",
     DefaultModel = "DefaultModel"
 }
 
@@ -37,16 +38,23 @@ const fetchOdin = async (context: ActionContext<ModelState, AppState>) => {
 };
 
 const compileModel = (context: ActionContext<ModelState, AppState>) => {
+    const { state, commit } = context;
+    if (state.odinModelResponse) {
+        const model = state.odinModelResponse.model || "";
+        const odin = evaluateScript<Odin>(model);
+        commit(ModelMutation.SetOdin, odin);
+    }
+};
+
+const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>) => {
     const {
         commit, state, rootState, dispatch
     } = context;
 
     if (state.odinModelResponse) {
-        const model = state.odinModelResponse.model || "";
-        const parameters = state.odinModelResponse.metadata?.parameters || [];
+        compileModel(context);
 
-        const odin = evaluateScript<Odin>(model);
-        commit(ModelMutation.SetOdin, odin);
+        const parameters = state.odinModelResponse.metadata?.parameters || [];
 
         // Overwrite any existing parameter values in the model
         const newValues: OdinUserType = {};
@@ -82,6 +90,8 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
     }
 };
 
+
+
 export const actions: ActionTree<ModelState, AppState> = {
     async FetchOdinRunner(context) {
         await api(context)
@@ -95,12 +105,17 @@ export const actions: ActionTree<ModelState, AppState> = {
     },
 
     CompileModel(context) {
-        compileModel(context);
+        compileModelAndUpdateStore(context);
+    },
+
+    CompileModelOnRehydate(context) {
+        // compiled the model but do not update parameters etc as those will all be rehydrated too
+        compileModel(context)
     },
 
     async DefaultModel(context) {
         await fetchOdin(context);
-        compileModel(context);
+        compileModelAndUpdateStore(context);
         context.dispatch(`run/${RunAction.RunModel}`, null, { root: true });
     }
 };

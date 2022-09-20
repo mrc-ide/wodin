@@ -33,7 +33,7 @@ export const actions: ActionTree<SessionsState, AppState> = {
     },
 
     async [SessionsAction.Rehydrate](context, sessionId: string) {
-        const { rootState, dispatch, commit } = context;
+        const { rootState, dispatch } = context;
         const { appName } = rootState;
         const url = `/apps/${appName}/sessions/${sessionId}`;
         const response = await api(context)
@@ -52,11 +52,13 @@ export const actions: ActionTree<SessionsState, AppState> = {
                 // Don't auto-run if compile was required i.e. model was out of date when session was last saved
                 if (!sessionData.model.compileRequired) {
                     // compile the model to evaluate odin, which is not persisted
-                    await dispatch(`model/${ModelAction.CompileModel}`, null, rootOption);
+                    await dispatch(`model/${ModelAction.CompileModelOnRehydrate}`, null, rootOption);
                     if (sessionData.run.result?.hasResult) {
+                        console.log("re-running Run")
                         dispatch(`run/${RunAction.RunModelOnRehydrate}`, null, rootOption);
                     }
                     if (sessionData.sensitivity.result?.hasResult) {
+                        console.log("re-running sensitivity")
                         dispatch(`sensitivity/${SensitivityAction.RunSensitivityOnRehydrate}`, null, rootOption);
                     }
                 }
