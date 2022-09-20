@@ -54,11 +54,9 @@ export const actions: ActionTree<SessionsState, AppState> = {
                     // compile the model to evaluate odin, which is not persisted
                     await dispatch(`model/${ModelAction.CompileModelOnRehydrate}`, null, rootOption);
                     if (sessionData.run.result?.hasResult) {
-                        console.log("re-running Run")
                         dispatch(`run/${RunAction.RunModelOnRehydrate}`, null, rootOption);
                     }
                     if (sessionData.sensitivity.result?.hasResult) {
-                        console.log("re-running sensitivity")
                         dispatch(`sensitivity/${SensitivityAction.RunSensitivityOnRehydrate}`, null, rootOption);
                     }
                 }

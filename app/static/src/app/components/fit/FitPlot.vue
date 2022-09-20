@@ -38,7 +38,6 @@ export default defineComponent({
         const plotRehydratedFit = computed(() => {
             const { modelFit } = store.state;
             const result = modelFit.result && !modelFit.result.solution && !modelFit.result.error;
-            console.log(`plotting rehyd fit: ${result}`);
             return result;
         });
 

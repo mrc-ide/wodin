@@ -13,7 +13,9 @@ export enum RunAction {
 
 const runModel = (parameterValues: OdinUserType | null, endTime: number,
     context: ActionContext<RunState, AppState>) => {
+
     const { rootState, commit } = context;
+
     if (rootState.model.odinRunner && rootState.model.odin && parameterValues) {
         const startTime = 0;
         const payload : OdinRunResult = {
@@ -21,6 +23,7 @@ const runModel = (parameterValues: OdinUserType | null, endTime: number,
             solution: null,
             error: null
         };
+
         try {
             const solution = rootState.model.odinRunner.wodinRun(rootState.model.odin, parameterValues,
                 startTime, endTime, {});

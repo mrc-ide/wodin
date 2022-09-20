@@ -108,9 +108,9 @@ export const actions: ActionTree<ModelState, AppState> = {
         compileModelAndUpdateStore(context);
     },
 
-    CompileModelOnRehydate(context) {
+    CompileModelOnRehydrate(context) {
         // compiled the model but do not update parameters etc as those will all be rehydrated too
-        compileModel(context)
+        compileModel(context);
     },
 
     async DefaultModel(context) {

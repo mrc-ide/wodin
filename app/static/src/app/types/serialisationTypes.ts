@@ -10,6 +10,7 @@ import {FitUpdateRequiredReasons} from "../store/modelFit/state";
 import {VisualisationTab} from "../store/appState/state";
 import {CodeState} from "../store/code/state";
 import {FitDataState} from "../store/fitData/state";
+import {Palette} from "../palette";
 
 export interface SerialisedSolutionResult {
     inputs: OdinRunInputs | OdinFitInputs,
@@ -21,7 +22,8 @@ export interface SerialisedModelState {
     compileRequired: boolean,
     odinModelResponse: OdinModelResponse | null,
     hasOdin: boolean,
-    odinModelCodeError: WodinError | null
+    odinModelCodeError: WodinError | null,
+    paletteModel: Palette | null
 }
 
 export interface SerialisedRunState {

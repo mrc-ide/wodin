@@ -25,7 +25,8 @@ function serialiseModel(model: ModelState) : SerialisedModelState {
         compileRequired: model.compileRequired,
         odinModelResponse: model.odinModelResponse,
         hasOdin: !!model.odin,
-        odinModelCodeError: model.odinModelCodeError
+        odinModelCodeError: model.odinModelCodeError,
+        paletteModel: model.paletteModel
     };
 }
 
