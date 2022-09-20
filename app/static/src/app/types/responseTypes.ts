@@ -21,6 +21,7 @@ export interface AppConfig {
     defaultCode: string[],
     readOnlyCode: boolean,
     stateUploadIntervalMillis?: number | null
+    endTime?: number
 }
 
 export interface BasicConfig extends AppConfig {
