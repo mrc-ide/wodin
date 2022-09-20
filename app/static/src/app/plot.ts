@@ -83,6 +83,20 @@ export function fitDataToPlotly(data: FitData, link: FitDataLink, palette: Palet
     }];
 }
 
+export function rehydratedFitDataToPlotly(data: Dict<number[]>, link: FitDataLink, palette: Palette): WodinPlotData {
+    //TODO: make this more DRY
+    return [{
+        name: link.data,
+        x: data["time"] as number[],
+        y: data["value"] as number[],
+        mode: "markers",
+        type: "scatter",
+        marker: {
+            color: palette[link.model]
+        }
+    }];
+}
+
 export function allFitDataToPlotly(allFitData: AllFitData | null, paletteModel: Palette,
     start: number, end: number): WodinPlotData {
     if (!allFitData) {

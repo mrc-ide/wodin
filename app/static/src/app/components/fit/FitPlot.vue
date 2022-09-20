@@ -14,13 +14,13 @@ import {
     computed, defineComponent
 } from "vue";
 import { useStore } from "vuex";
+import { plot } from "plotly.js";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
 import {
-    filterSeriesSet, fitDataToPlotly, odinToPlotly, WodinPlotData
+  filterSeriesSet, fitDataToPlotly, odinToPlotly, rehydratedFitDataToPlotly, WodinPlotData
 } from "../../plot";
 import WodinOdePlot from "../WodinOdePlot.vue";
-import {plot} from "plotly.js";
 
 export default defineComponent({
     name: "FitPlot",
@@ -37,30 +37,46 @@ export default defineComponent({
         // re-running fit. Determine if this is the case, by checking if we have a fit result but no fit solution
         // (which is not persisted)
         const plotRehydratedFit = computed(() => {
-          const {modelFit} = store.state;
-          return modelFit.result && !modelFit.result.solution && !modelFit.result.error;
+            const { modelFit } = store.state;
+            const result = modelFit.result && !modelFit.result.solution && !modelFit.result.error;
+            console.log(`plotting rehyd fit: ${result}`);
+            return result;
         });
 
         const solution = computed(() => {
-          return plotRehydratedFit.value ? store.state.modelFit.result?.solution : store.state.run.result?.solution;
+            return plotRehydratedFit.value ? store.state.run.result?.solution : store.state.modelFit.result?.solution;
         });
 
-        const endTime = computed(() => store.getters[`fitData/${FitDataGetter.dataEnd}`]);
+        const endTime = computed(() => {
+          return plotRehydratedFit.value ? store.state.modelFit.result.inputs.endTime : store.getters[`fitData/${FitDataGetter.dataEnd}`];
+        });
 
-        const link = computed(() => store.getters[`fitData/${FitDataGetter.link}`]);
+        const link = computed(() => {
+          return plotRehydratedFit.value ? store.state.modelFit.result.inputs.link : store.getters[`fitData/${FitDataGetter.link}`]
+        });
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
-            const data = plotRehydratedFit.value ? store.state.modelFit.result.inputs.data : store.state.fitData.data;
+            let dataToPlot = [];
+            const palette = store.state.model.paletteModel;
             const result = solution.value && solution.value({
                 mode: "grid", tStart: start, tEnd: end, nPoints: points
             });
-            if (!data || !link.value || !result) {
-                return [];
+
+            if (plotRehydratedFit.value) {
+                dataToPlot = rehydratedFitDataToPlotly(store.state.modelFit.result.inputs.data, link.value, palette);
+            } else {
+                const { data } = store.state.fitData;
+
+                if (!data || !link.value || !result) {
+                    return [];
+                }
+
+                dataToPlot = fitDataToPlotly(data, link.value, palette, start, end);
             }
-            const palette = store.state.model.paletteModel;
+
             return [
                 ...odinToPlotly(filterSeriesSet(result, link.value.model), palette),
-                ...fitDataToPlotly(data, link.value, palette, start, end)
+                ...dataToPlot
             ];
         };
 
