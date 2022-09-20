@@ -5,7 +5,7 @@ import * as os from "os";
 import { writeCode } from "./utils";
 
 const appUrl = "/apps/day1";
-const saveSessionTimeout = 2100;
+const saveSessionTimeout = 3000;
 
 test.describe("Sessions tests", () => {
     test("can navigate to Sessions page from navbar, and load a session", async () => {
