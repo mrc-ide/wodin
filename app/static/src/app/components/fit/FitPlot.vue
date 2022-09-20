@@ -14,11 +14,10 @@ import {
     computed, defineComponent
 } from "vue";
 import { useStore } from "vuex";
-import { plot } from "plotly.js";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
 import {
-  filterSeriesSet, fitDataToPlotly, odinToPlotly, rehydratedFitDataToPlotly, WodinPlotData
+  filterSeriesSet, fitDataToPlotly, odinToPlotly, WodinPlotData
 } from "../../plot";
 import WodinOdePlot from "../WodinOdePlot.vue";
 
