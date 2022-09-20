@@ -48,7 +48,8 @@ describe("AppState actions", () => {
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
 
-        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, "test-app");
+        const payload = { appName: "test-app", loadSessionId: "" };
+        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, payload);
         expect(commit.mock.calls.length).toBe(4);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
@@ -82,7 +83,8 @@ describe("AppState actions", () => {
         const commit = jest.spyOn(store, "commit");
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
-        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, "test-app");
+        const payload = { appName: "test-app", loadSessionId: "" };
+        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, payload);
         expect(commit.mock.calls.length).toBe(3);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
@@ -105,7 +107,8 @@ describe("AppState actions", () => {
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
 
-        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, "test-app");
+        const payload = { appName: "test-app", loadSessionId: "" };
+        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, payload);
         expect(commit.mock.calls.length).toBe(4);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
