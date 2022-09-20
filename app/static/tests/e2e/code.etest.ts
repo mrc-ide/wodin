@@ -1,5 +1,6 @@
 import { expect, test, Page } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
+import { writeCode } from "./utils";
 
 export const newValidCode = `## Derivatives
 deriv(y1) <- sigma * (y2 - y1)
@@ -16,13 +17,6 @@ sigma <- user(10.0)
 R     <- user(28.0)
 b     <-  user(3.0)
 `;
-
-export const writeCode = async (page: Page, code: string) => {
-    await page.press(".monaco-editor textarea", "Control+A");
-    await page.press(".monaco-editor textarea", "Delete");
-    await page.fill(".monaco-editor textarea", "");
-    await page.fill(".monaco-editor textarea", code);
-};
 
 const newInvalidCode = `# variables
 deriv(S) <-  - beta * S * I / N

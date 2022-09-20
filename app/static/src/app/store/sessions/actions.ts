@@ -5,7 +5,7 @@ import { localStorageManager } from "../../localStorageManager";
 import { api } from "../../apiService";
 import { SessionsMutation } from "./mutations";
 import { ErrorsMutation } from "../errors/mutations";
-import { CodeMutation } from "../code/mutations";
+import { CodeAction } from "../code/actions";
 
 export enum SessionsAction {
     GetSessions = "GetSessions",
@@ -26,13 +26,19 @@ export const actions: ActionTree<SessionsState, AppState> = {
             .get(url);
     },
 
-    // We don't use sessionId yet!
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async [SessionsAction.Rehydrate](context, sessionId: string) {
-        // TODO: fetch data from session data endpoint, populate the current state and re-run models as necessary
-        // For this POC, just set some hardcoded value as the new session code
-        const placeholderCode = ["# Code for rehydration!", "initial(S) <- N - I_0"];
-        const { commit } = context;
-        commit(`code/${CodeMutation.SetCurrentCode}`, placeholderCode, { root: true });
+        // TODO: complete rehydrate of entire state, just setting code for now
+        const { rootState, dispatch } = context;
+        const { appName } = rootState;
+        const url = `/apps/${appName}/sessions/${sessionId}`;
+        const response = await api(context)
+            .ignoreSuccess()
+            .withError(`errors/${ErrorsMutation.AddError}`, true)
+            .get(url);
+
+        if (response) {
+            const sessionData = response.data as Partial<AppState>;
+            await dispatch(`code/${CodeAction.UpdateCode}`, sessionData.code!.currentCode, { root: true });
+        }
     }
 };

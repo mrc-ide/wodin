@@ -1,6 +1,5 @@
 import { expect, test, Page } from "@playwright/test";
-import { uploadCSVData } from "./utils";
-import { writeCode } from "./code.etest";
+import { uploadCSVData, writeCode } from "./utils";
 import PlaywrightConfig from "../../playwright.config";
 
 export const realisticFitData = `Day,Cases
