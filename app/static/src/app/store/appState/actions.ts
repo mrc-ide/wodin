@@ -3,6 +3,7 @@ import { api } from "../../apiService";
 import { ErrorsMutation } from "../errors/mutations";
 import { AppConfig } from "../../types/responseTypes";
 import { CodeMutation } from "../code/mutations";
+import { RunMutation } from "../run/mutations";
 import { ModelAction } from "../model/actions";
 import { AppState, AppType } from "./state";
 import { AppStateMutation } from "./mutations";
@@ -47,12 +48,15 @@ export const appStateActions: ActionTree<AppState, AppState> = {
 
         if (response) {
             if (loadSessionId) {
-                // Fetch and rehydrate session data
+                // Fetch and rehydrate session datas
                 await dispatch(`sessions/${SessionsAction.Rehydrate}`, loadSessionId);
             } else {
                 await dispatch(`model/${ModelAction.FetchOdinRunner}`, null, {root: true});
-                // If not loading a session, set code from default in config
+                // If not loading a session, set code and end time from default in config
                 commit(`code/${CodeMutation.SetCurrentCode}`, state.config!.defaultCode, { root: true });
+                if (response.data.endTime) {
+                    commit(`run/${RunMutation.SetEndTime}`, response.data.endTime, { root: true });
+                }
                 if (state.code.currentCode.length) {
                     // Fetch and run model for default code
                     await dispatch(`model/${ModelAction.DefaultModel}`);

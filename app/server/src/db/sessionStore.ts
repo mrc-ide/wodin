@@ -2,12 +2,21 @@ import Redis from "ioredis";
 import { generateId } from "zoo-ids";
 import { SessionMetadata } from "../types";
 
-export const friendlyAdjectiveAnimal = () => {
-    return generateId(null, {
+export const cleanFriendlyId = (id: string): string => {
+    let ret = id.toLowerCase();
+    const re = /(.+)-(.+)-(.+)/;
+    while (ret.match(re)) {
+        ret = ret.replace(re, "$1$2-$3");
+    }
+    return ret;
+};
+
+export const friendlyAdjectiveAnimal = (): string => {
+    return cleanFriendlyId(generateId(null, {
         caseStyle: "lowercase",
         delimiter: "-",
         numAdjectives: 1
-    });
+    }));
 };
 
 export class SessionStore {
