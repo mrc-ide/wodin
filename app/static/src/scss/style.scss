@@ -16,6 +16,18 @@ $brand: #479fb6;
   background-color: $brand;
 }
 
+.brand {
+  color: $brand;
+}
+
+.wodin-link {
+  color: $brand;
+  text-decoration: none;
+  &:hover {
+    color: darken($brand, 10%);
+  }
+}
+
 .btn-outline {
   background-color: #fff;
   border-color: #0d6efd;

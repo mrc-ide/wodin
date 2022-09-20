@@ -9,9 +9,10 @@ import { AppState, AppType } from "./state";
 import { AppStateMutation } from "./mutations";
 import { serialiseState } from "../../serialise";
 import { FitState } from "../fit/state";
+import { SessionsAction } from "../sessions/actions";
 
 export enum AppStateAction {
-    FetchConfig = "FetchConfig",
+    Initialise = "Initialise",
     QueueStateUpload = "QueueStateUpload"
 }
 
@@ -29,9 +30,15 @@ async function immediateUploadState(context: ActionContext<AppState, AppState>) 
 
 const getStateUploadInterval = (state: AppState) => state.config?.stateUploadIntervalMillis || 2000;
 
+interface InitialisePayload {
+    appName: string,
+    loadSessionId: string
+}
+
 export const appStateActions: ActionTree<AppState, AppState> = {
-    async [AppStateAction.FetchConfig](context, appName) {
+    async [AppStateAction.Initialise](context, payload: InitialisePayload) {
         const { commit, state, dispatch } = context;
+        const { appName, loadSessionId } = payload;
         commit(AppStateMutation.SetAppName, appName);
         const response = await api(context)
             .freezeResponse()
@@ -40,14 +47,19 @@ export const appStateActions: ActionTree<AppState, AppState> = {
             .get<AppConfig>(`/config/${appName}`);
 
         if (response) {
-            commit(`code/${CodeMutation.SetCurrentCode}`, state.config!.defaultCode, { root: true });
-            if (response.data.endTime) {
-                commit(`run/${RunMutation.SetEndTime}`, response.data.endTime, { root: true });
-            }
-
-            if (state.code.currentCode.length) {
-                // Fetch and run model for default code
-                await dispatch(`model/${ModelAction.DefaultModel}`);
+            if (loadSessionId) {
+                // Fetch and rehydrate session datas
+                await dispatch(`sessions/${SessionsAction.Rehydrate}`, loadSessionId);
+            } else {
+                // If not loading a session, set code and end time from default in config
+                commit(`code/${CodeMutation.SetCurrentCode}`, state.config!.defaultCode, { root: true });
+                if (response.data.endTime) {
+                    commit(`run/${RunMutation.SetEndTime}`, response.data.endTime, { root: true });
+                }
+                if (state.code.currentCode.length) {
+                    // Fetch and run model for default code
+                    await dispatch(`model/${ModelAction.DefaultModel}`);
+                }
             }
         }
     },

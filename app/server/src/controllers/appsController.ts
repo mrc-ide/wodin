@@ -9,12 +9,17 @@ export class AppsController {
             configReader, appsPath, wodinConfig, wodinVersion
         } = req.app.locals as AppLocals;
         const { appName } = req.params;
+        const { sessionId } = req.query;
         const config = configReader.readConfigFile(appsPath, `${appName}.config.json`) as any;
         if (config) {
             const view = `${config.appType}-app`;
             // TODO: validate config against schema for app type
             const viewOptions = {
-                appName, appTitle: config.title, courseTitle: wodinConfig.courseTitle, wodinVersion
+                appName,
+                appTitle: config.title,
+                courseTitle: wodinConfig.courseTitle,
+                wodinVersion,
+                loadSessionId: sessionId || ""
             };
             res.render(view, viewOptions);
         } else {

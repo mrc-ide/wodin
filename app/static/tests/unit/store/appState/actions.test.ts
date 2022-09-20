@@ -10,6 +10,7 @@ import { CodeMutation, mutations as codeMutations } from "../../../../src/app/st
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { ModelAction } from "../../../../src/app/store/model/actions";
 import { serialiseState } from "../../../../src/app/serialise";
+import { SessionsAction } from "../../../../src/app/store/sessions/actions";
 
 describe("AppState actions", () => {
     const getStore = () => {
@@ -32,7 +33,7 @@ describe("AppState actions", () => {
         mockAxios.reset();
     });
 
-    it("fetches config and commits result", async () => {
+    it("Initialise fetches config and commits result", async () => {
         const config = {
             basicProp: "testValue",
             defaultCode: [],
@@ -46,7 +47,9 @@ describe("AppState actions", () => {
         const commit = jest.spyOn(store, "commit");
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
-        await (appStateActions[AppStateAction.FetchConfig] as any)({ commit, state, dispatch }, "test-app");
+
+        const payload = { appName: "test-app", loadSessionId: "" };
+        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, payload);
         expect(commit.mock.calls.length).toBe(4);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
@@ -80,7 +83,8 @@ describe("AppState actions", () => {
         const commit = jest.spyOn(store, "commit");
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
-        await (appStateActions[AppStateAction.FetchConfig] as any)({ commit, state, dispatch }, "test-app");
+        const payload = { appName: "test-app", loadSessionId: "" };
+        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, payload);
         expect(commit.mock.calls.length).toBe(3);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
@@ -88,7 +92,7 @@ describe("AppState actions", () => {
         expect(commit.mock.calls[2][0]).toBe(`code/${CodeMutation.SetCurrentCode}`);
     });
 
-    it("fetches config and commits default code if any", async () => {
+    it("Initialise fetches config and commits default code if any, if no loadSessionId", async () => {
         const config = {
             basicProp: "testValue",
             defaultCode: ["line1", "line2"],
@@ -103,7 +107,8 @@ describe("AppState actions", () => {
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
 
-        await (appStateActions[AppStateAction.FetchConfig] as any)({ commit, state, dispatch }, "test-app");
+        const payload = { appName: "test-app", loadSessionId: "" };
+        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, payload);
         expect(commit.mock.calls.length).toBe(4);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
@@ -118,7 +123,7 @@ describe("AppState actions", () => {
         expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.DefaultModel}`);
     });
 
-    it("fetches result and commits error", async () => {
+    it("Initialise fetches config and commits error", async () => {
         mockAxios.onGet("/config/test-app")
             .reply(500, mockFailure("Test Error Msg"));
 
@@ -127,7 +132,8 @@ describe("AppState actions", () => {
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
 
-        await (appStateActions[AppStateAction.FetchConfig] as any)({ commit, state, dispatch }, "test-app");
+        const payload = { appName: "test-app", loadSessionId: "" };
+        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, payload);
         expect(commit.mock.calls.length).toBe(2);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
@@ -137,6 +143,32 @@ describe("AppState actions", () => {
         expect((commit.mock.calls[1][1] as any).detail).toBe("Test Error Msg");
 
         expect(dispatch).not.toBeCalled();
+    });
+
+    it("Initialise fetches config and rehydrates, if loadSessionId is set", async () => {
+        const config = {
+            basicProp: "testValue",
+            defaultCode: ["line1", "line2"],
+            readOnlyCode: true
+        };
+        mockAxios.onGet("/config/test-app")
+            .reply(200, mockSuccess(config));
+
+        const store = getStore();
+        const commit = jest.spyOn(store, "commit");
+        const dispatch = jest.spyOn(store, "dispatch");
+        const { state } = store;
+
+        const payload = { appName: "test-app", loadSessionId: "1234" };
+        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, payload);
+
+        expect(commit.mock.calls.length).toBe(2);
+        expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
+        expect(commit.mock.calls[1][0]).toBe(AppStateMutation.SetConfig);
+
+        expect(dispatch.mock.calls.length).toBe(1);
+        expect(dispatch.mock.calls[0][0]).toBe(`sessions/${SessionsAction.Rehydrate}`);
+        expect(dispatch.mock.calls[0][1]).toBe("1234");
     });
 
     it("QueueStateUpload does not queue during fitting", async () => {

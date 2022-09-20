@@ -13,7 +13,7 @@ describe("StochasticApp", () => {
         const store = new Vuex.Store<StochasticState>({
             state: mockStochasticState({ config: {} as any }),
             actions: {
-                [AppStateAction.FetchConfig]: jest.fn()
+                [AppStateAction.Initialise]: jest.fn()
             },
             modules: {
                 errors: {

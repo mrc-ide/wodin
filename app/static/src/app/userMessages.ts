@@ -77,5 +77,13 @@ export default {
             unknown: "unknown reasons, contact the administrator, as this is unexpected",
             suffix: "Run sensitivity to update"
         }
+    },
+    sessions: {
+        loading: "Loading sessions...",
+        noSavedYet: "No saved sessions yet.",
+        loadApplication: {
+            link: "Load the application",
+            suffix: " to create a new session."
+        }
     }
 };
