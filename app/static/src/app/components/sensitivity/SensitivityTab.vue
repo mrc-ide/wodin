@@ -53,6 +53,7 @@ export default defineComponent({
                 if (store.state.model.compileRequired) {
                     return userMessages.sensitivity.compileRequiredForUpdate;
                 }
+                console.log(sensitivityUpdateRequired.value);
                 if (anyTrue(sensitivityUpdateRequired.value)) {
                     return sensitivityUpdateRequiredExplanation(sensitivityUpdateRequired.value);
                 }
