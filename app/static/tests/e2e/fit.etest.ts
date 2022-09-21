@@ -356,4 +356,20 @@ test.describe("Wodin App model fit tests", () => {
             .toContain("Sum of squares:");
         await expect(await page.innerText("#fit-cancelled-msg")).toBe("Model fit was cancelled before converging");
     });
+
+    test.only("can mark sensitivity as out of date after fit", async ({ page }) => {
+        await startModelFit(page);
+        await page.click(".wodin-right .wodin-content div.mt-4 button#cancel-fit-btn");
+        // Open sensitivity tab
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
+        // // Run sensitivity
+        await page.click("#run-sens-btn");
+        // // Back to fit tab
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
+        await reRunFit(page);
+        // // Back to sensitivity tab
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
+        await expect(await page.innerText(".action-required-msg"))
+            .toBe("Plot is out of date: parameters have been changed. Run sensitivity to update.");
+    });
 });
