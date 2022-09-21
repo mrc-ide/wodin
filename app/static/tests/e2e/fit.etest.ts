@@ -362,12 +362,12 @@ test.describe("Wodin App model fit tests", () => {
         await page.click(".wodin-right .wodin-content div.mt-4 button#cancel-fit-btn");
         // Open sensitivity tab
         await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
-        // // Run sensitivity
+        // Run sensitivity
         await page.click("#run-sens-btn");
-        // // Back to fit tab
+        // Back to fit tab
         await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
         await reRunFit(page);
-        // // Back to sensitivity tab
+        // Back to sensitivity tab
         await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
         await expect(await page.innerText(".action-required-msg"))
             .toBe("Plot is out of date: parameters have been changed. Run sensitivity to update.");
