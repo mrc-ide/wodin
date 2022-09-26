@@ -6,8 +6,16 @@ import {
     SensitivityScaleType,
     SensitivityVariationType
 } from "../../src/app/store/sensitivity/state";
-import { serialiseState } from "../../src/app/serialise";
+import {deserialiseState, serialiseState} from "../../src/app/serialise";
 import { FitState } from "../../src/app/store/fit/state";
+import {
+    mockCodeState,
+    mockFitDataState,
+    mockModelFitState,
+    mockModelState,
+    mockRunState,
+    mockSensitivityState
+} from "../mocks";
 
 describe("serialise", () => {
     const codeState = {
@@ -178,7 +186,8 @@ describe("serialise", () => {
         compileRequired: true,
         odinModelResponse: modelState.odinModelResponse,
         hasOdin: true,
-        odinModelCodeError: modelState.odinModelCodeError
+        odinModelCodeError: modelState.odinModelCodeError,
+        paletteModel: modelState.paletteModel
     };
     const expectedRun = {
         runRequired: {
@@ -333,5 +342,44 @@ describe("serialise", () => {
             modelFit: { ...expectedModelFit, result: null }
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
+    });
+
+    it("deserialises as expected", () => {
+        const serialised = {
+            openVisualisationTab: VisualisationTab.Fit,
+            code: mockCodeState(),
+            model: mockModelState(),
+            run: mockRunState(),
+            sensitivity: mockSensitivityState(),
+            fitData: mockFitDataState(),
+            modelFit: mockModelFitState()
+        } as any;
+
+        const target = {
+            sessionId: "123",
+            appType: AppType.Fit,
+            config: {},
+            openVisualisationTab: VisualisationTab.Run,
+            code: {},
+            model: {},
+            run: {},
+            sensitivity: {},
+            fitData: {},
+            modelFit: {}
+        } as any;
+
+        deserialiseState(target, serialised);
+        expect(target).toStrictEqual({
+            sessionId: "123",
+            appType: AppType.Fit,
+            config: {},
+            openVisualisationTab: VisualisationTab.Fit,
+            code: mockCodeState(),
+            model: mockModelState(),
+            run: mockRunState(),
+            sensitivity: mockSensitivityState(),
+            fitData: mockFitDataState(),
+            modelFit: mockModelFitState()
+        });
     });
 });
