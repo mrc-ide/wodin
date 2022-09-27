@@ -85,11 +85,16 @@ test.describe("Sessions tests", () => {
         console.log("8 " + (Date.now()-now))
 
         await expect(await page.innerText(".container h2")).toBe("Sessions");
+        console.log("8.1 " + (Date.now()-now))
         await expect(await page.innerText(":nth-match(.session-col-header, 1)")).toBe("Saved");
+        console.log("8.2 " + (Date.now()-now))
         await expect(await page.innerText(":nth-match(.session-col-header, 2)")).toBe("Label");
+        console.log("8.3 " + (Date.now()-now))
         await expect(await page.innerText(":nth-match(.session-col-header, 3)")).toBe("Load");
+        console.log("8.4 " + (Date.now()-now))
 
         await expect(await page.innerText(".session-label")).toBe("--no label--");
+        console.log("8.5 " + (Date.now()-now))
 
         // NB this will load the second load link, i.e. the older session, not the current one
         await page.click(":nth-match(.session-load a, 2)");
