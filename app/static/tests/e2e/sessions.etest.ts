@@ -18,6 +18,8 @@ test.describe("Sessions tests", () => {
     const { timeout } = PlaywrightConfig;
 
     test("can navigate to Sessions page from navbar, and load a session", async () => {
+        test.setTimeout(120000); // This is a slow test!
+
         // We need to use a browser with persistent context instead of the default incognito browser so that
         // we can use the session ids in local storage
         const userDataDir = os.tmpdir();
