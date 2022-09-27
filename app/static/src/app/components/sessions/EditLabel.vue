@@ -1,0 +1,77 @@
+<template>
+  <div>
+    <div v-if="open" class="modal-backdrop fade show"></div>
+    <div class="modal" :class="{show: open}" :style="modalStyle">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Session Label</h5>
+          </div>
+          <div class="modal-body">
+            <div class="row" id="edit-session-label">
+              <div class="col-6">
+                <label class="col-form-label">Label</label>
+              </div>
+              <div class="col-6">
+                <input v-model="sessionLabelInternal" type="text" class="form-control">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary"
+                  id="ok-session-label"
+                  @click="updateSessionLabel">OK</button>
+          <button class="btn btn-outline"
+                  id="cancel-session-label"
+                  @click="close">Cancel</button>
+        </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import {
+    computed, defineComponent, ref, watch
+} from "vue";
+import { useStore } from "vuex";
+
+export default defineComponent({
+    name: "EditLabel",
+    props: {
+        open: {
+            type: Boolean,
+            required: true
+        }
+    },
+    setup(props, { emit }) {
+        const store = useStore();
+        const sessionLabelInternal = ref<string>("");
+
+        const modalStyle = computed(() => {
+            return { display: props.open ? "block" : "none" };
+        });
+
+        watch(() => props.open, (newValue) => {
+            if (newValue) {
+                sessionLabelInternal.value = "placeholder"; // how to get current session label??
+            }
+        });
+
+        const close = () => {
+            emit("close");
+        };
+        const updateSessionLabel = () => {
+          console.log("Dummy save session label: " + sessionLabelInternal.value)
+        };
+
+        return {
+            sessionLabelInternal,
+            modalStyle,
+            close,
+            updateSessionLabel
+        };
+    }
+
+});
+</script>
