@@ -7,7 +7,7 @@ import {
     newFitCode,
     realisticFitData,
     startModelFit,
-    waitForModelFitCompletion
+    waitForModelFitCompletion, expectWodinPlotDataSummary
 } from "./utils";
 import PlaywrightConfig from "../../playwright.config";
 
@@ -27,10 +27,8 @@ test.describe("Sessions tests", () => {
         await page.goto(appUrl);
 
         // change code in this session, which we will later reload and check that we can see the code changes
-        console.log("2")
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
         await writeCode(page, newFitCode);
-        console.log("3")
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
             "Model code has been updated. Compile code and Run Model to update.", {
                 timeout
@@ -39,40 +37,32 @@ test.describe("Sessions tests", () => {
 
         // compile and re-run
         await page.click("#compile-btn");
-        console.log("3.1")
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
             "Plot is out of date: model code has been recompiled. Run model to update.", {
                 timeout
             }
         );
-        console.log("3.2")
         await page.click("#run-btn");
-        console.log("3.3")
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("", { timeout });
-        console.log("3.4")
 
         // Upload data, link, select variables to vary and run fit
         await page.click(":nth-match(.wodin-left .nav-tabs a, 1)");
-        console.log("3.5")
         await startModelFit(page, realisticFitData);
-        console.log("3.6")
         await waitForModelFitCompletion(page);
-        console.log("3.7")
 
         // Run sensitivity
         await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
         page.click("#run-sens-btn");
-
-        // TODO: replace this with hidden element check
-        const linesSelector = `.wodin-right .wodin-content .js-plotly-plot .scatterlayer .trace .lines path`;
-        expect((await page.locator(`:nth-match(${linesSelector}, 30)`).getAttribute("d"))!.startsWith("M36")).toBe(true);
+        const hidden = await page.locator(".wodin-plot-data-summary").getAttribute("hidden");
+        expect(hidden).not.toBe(null);
+        // 5 * 10 sensitivity traces, 5 central traces, 1 data plot
+        expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(56);
 
         // give the page a chance to save the session to back end
         await page.waitForTimeout(saveSessionTimeout);
 
         // Reload the page to get fresh session, and give it time to save new session Id
         await page.goto(appUrl);
-        console.log("4")
 
         // Get storage state in order to test that something has been written to it - but reading it here also seems
         // to force Playwright to wait long enough for storage values to be available in the next page, so the session
@@ -83,7 +73,6 @@ test.describe("Sessions tests", () => {
         await page.click("#sessions-menu");
         await page.click("#all-sessions-link");
 
-        console.log("5")
         await expect(await page.innerText(".container h2")).toBe("Sessions");
         await expect(await page.innerText(":nth-match(.session-col-header, 1)")).toBe("Saved");
         await expect(await page.innerText(":nth-match(.session-col-header, 2)")).toBe("Label");
@@ -91,20 +80,15 @@ test.describe("Sessions tests", () => {
 
         await expect(await page.innerText(".session-label")).toBe("--no label--");
 
-
-        console.log("6")
-
         // NB this will load the second load link, i.e. the older session, not the current one
         await page.click(":nth-match(.session-load a, 2)");
 
-        console.log("7")
+        // Check all session values have been rehydrated:
 
         // Check data
         await page.waitForTimeout(saveSessionTimeout);
         await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Data");
         await expect(await page.innerText("#data-upload-success")).toBe(" Uploaded 32 rows and 2 columns");
-
-        console.log("8")
 
         // Check code
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
@@ -112,13 +96,52 @@ test.describe("Sessions tests", () => {
         const editorSelector = ".wodin-left .wodin-content .editor-container .editor-scrollable";
         // wait until there is some text in the code editor
         await page.waitForFunction((selector) => !!document.querySelector(selector)?.textContent, editorSelector);
-        // Check edited code
         await expect(await page.innerText(editorSelector)).toContain("# JUST CHANGE A COMMENT");
 
         // Check options
-        console.log("9")
+        await page.click(":nth-match(.wodin-left .nav-tabs a, 3)"); // Options tab
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 2)"); // Fit tab
+        await expect(await page.inputValue("#link-data select")).toBe("I");
+        await expect((await page.inputValue(":nth-match(#model-params .row .parameter-input, 1)")).startsWith("0.4925")).toBe(true);
+        await expect(await page.inputValue(":nth-match(#model-params .row .parameter-input, 2)")).toBe("1");
+        await expect(await page.inputValue(":nth-match(#model-params .row .parameter-input, 3)")).toBe("1.5");
+        await expect(await page.isChecked(":nth-match(#model-params .row .form-check-input, 1)")).toBeTruthy();
+        await expect(await page.isChecked(":nth-match(#model-params .row .form-check-input, 2)")).toBeFalsy();
+        await expect(await page.isChecked(":nth-match(#model-params .row .form-check-input, 3)")).toBeFalsy();
 
-        // Check that run, fit and sensitivity have been run
+        // Check run plot
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 1)"); // Run tab
+        expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(6);
+        const summary1 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 1)");
+        await expectWodinPlotDataSummary(summary1, "S", 1000, 0, 31, 154.64, 369, "lines", "#2e5cb8", null);
+        const summary2 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 2)");
+        await expectWodinPlotDataSummary(summary2, "E", 1000, 0, 31, 0, 16.12, "lines", "#39ac73", null);
+        const summary3 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 3)");
+        await expectWodinPlotDataSummary(summary3, "I", 1000, 0, 31, 0.3, 7.9, "lines", "#cccc00", null);
+        const summary4 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 4)");
+        await expectWodinPlotDataSummary(summary4, "R", 1000, 0, 31, 0, 214.52, "lines", "#ff884d", null);
+        const summary5 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 5)");
+        await expectWodinPlotDataSummary(summary5, "onset", 1000, 0, 31, 0.09, 16.12, "lines", "#cc0044", null);
+        const summary6 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 6)")
+        await expectWodinPlotDataSummary(summary6, "Cases", 32, 0, 31, 0, 13, "markers", null, "#cccc00");
+
+        // Check fit plot
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 2)"); // Fit tab
+        expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(2);
+        const fitSummary1 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 1)");
+        await expectWodinPlotDataSummary(fitSummary1, "I", 1000, 0, 31, 0.3, 7.9, "lines", "#cccc00", null);
+        const fitSummary2 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 2)");
+        await expectWodinPlotDataSummary(fitSummary2, "Cases", 32, 0, 31, 0, 13, "markers", null, "#cccc00");
+
+        // Check sensitivity plot - but not every trace!
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 3)"); // Sensitivity tab
+        expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(56);
+        const sensitivitySummary = await page.locator(":nth-match(.wodin-plot-data-summary-series, 1)");
+        await expectWodinPlotDataSummary(sensitivitySummary, "S (D=0.443)", 1000, 0, 31, 154.28, 369, "lines", "#2e5cb8", null);
+        const centralSummary = await page.locator(":nth-match(.wodin-plot-data-summary-series, 51)");
+        await expectWodinPlotDataSummary(centralSummary, "S", 1000, 0, 31, 154.64, 369, "lines", "#2e5cb8", null);
+        const sensitivityDataSummary = await page.locator(":nth-match(.wodin-plot-data-summary-series, 56)");
+        await expectWodinPlotDataSummary(sensitivityDataSummary, "Cases", 32, 0, 31, 0, 13, "markers", null, "#cccc00");
 
         await browser.close();
     });

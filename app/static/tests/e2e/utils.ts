@@ -1,4 +1,4 @@
-import {expect, Page} from "@playwright/test";
+import {expect, Page, Locator} from "@playwright/test";
 
 export const newFitCode = `# JUST CHANGE A COMMENT
 initial(S) <- N - I_0
@@ -110,4 +110,22 @@ export const startModelFit = async (page: Page, data: string = realisticFitData)
 
 export const waitForModelFitCompletion = async (page: Page) => {
     await expect(await page.getAttribute(".wodin-plot-container .vue-feather", "data-type")).toBe("check");
+};
+
+export const expectWodinPlotDataSummary = async (summaryLocator: Locator, name: string, count: number, xMin: number,
+                                           xMax: number, yMin: number, yMax: number, mode: string, lineColor: string | null,
+                                           markerColor: string | null) => {
+    expect(await summaryLocator.getAttribute("name")).toBe(name);
+    expect(await summaryLocator.getAttribute("count")).toBe(count.toString());
+    const attrXMin = await summaryLocator.getAttribute("x-min") as string;
+    expect(parseFloat(attrXMin)).toBeCloseTo(xMin);
+    const attrXMax = await summaryLocator.getAttribute("x-max") as string;
+    expect(parseFloat(attrXMax)).toBeCloseTo(xMax);
+    const attrYMin = await summaryLocator.getAttribute("y-min") as string;
+    expect(parseFloat(attrYMin)).toBeCloseTo(yMin);
+    const attrYMax = await summaryLocator.getAttribute("y-max") as string;
+    expect(parseFloat(attrYMax)).toBeCloseTo(yMax);
+    expect(await summaryLocator.getAttribute("mode")).toBe(mode);
+    expect(await summaryLocator.getAttribute("line-color")).toBe(lineColor);
+    expect(await summaryLocator.getAttribute("marker-color")).toBe(markerColor);
 };
