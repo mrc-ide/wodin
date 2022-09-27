@@ -10,7 +10,7 @@
         Sessions
       </a>
       <ul v-if="initialised" class="dropdown-menu" aria-labelledby="navbarDropdown">
-        <li class="dropdown-item" @click="toggleEditSessionLabel(true)">Edit Label</li>
+        <li class="dropdown-item clickable" @click="toggleEditSessionLabel(true)">Edit Label</li>
         <hr/>
         <li><router-link id="all-sessions-link" class="dropdown-item" to="/sessions">All Sessions</router-link></li>
       </ul>
@@ -38,7 +38,6 @@ export default defineComponent({
         EditSessionLabel
     },
     setup() {
-        //TODO: cursor for Edit Label li
         const store = useStore();
         const initialised = computed(() => !!store.state.appName);
         const editSessionLabelOpen = ref(false);
