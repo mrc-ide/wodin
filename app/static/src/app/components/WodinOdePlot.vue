@@ -5,6 +5,20 @@
     <div v-if="!hasPlotData" class="plot-placeholder">
       {{ placeholderMessage }}
     </div>
+    <div v-if="hasPlotData" hidden class="wodin-plot-data-summary">
+      <div class="wodin-plot-data-summary-series" v-for="(data, index) in baseData" :key="index"
+           :name="data.name"
+           :count="data.x?.length"
+           :xMin="Math.min(...data.x)"
+           :xMax="Math.max(...data.x)"
+           :yMin="Math.min(...data.y)"
+           :yMax="Math.max(...data.y)"
+           :mode="data.mode"
+           :type="data.type"
+           :lineColor="data.line?.color"
+           :markerColor="data.marker?.color"
+      ></div>
+    </div>
     <slot></slot>
   </div>
 </template>
