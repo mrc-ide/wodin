@@ -10,17 +10,21 @@
         Sessions
       </a>
       <ul v-if="initialised" class="dropdown-menu" aria-labelledby="navbarDropdown">
+        <li class="dropdown-item" @click="toggleEditSessionLabel(true)">Edit Label</li>
+        <hr/>
         <li><router-link id="all-sessions-link" class="dropdown-item" to="/sessions">All Sessions</router-link></li>
       </ul>
     </span>
     <span class="navbar-version navbar-text">WODIN v{{ wodinVersion }}</span>
   </nav>
+  <edit-session-label :open="editSessionLabelOpen" @close="toggleEditSessionLabel(false)"></edit-session-label>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import {defineComponent, computed, ref} from "vue";
 import { RouterLink } from "vue-router";
 import { useStore } from "vuex";
+import EditSessionLabel from "./sessions/EditSessionLabel.vue";
 
 export default defineComponent({
     name: "AppHeader",
@@ -30,12 +34,24 @@ export default defineComponent({
         wodinVersion: String
     },
     components: {
-        RouterLink
+        RouterLink,
+        EditSessionLabel
     },
     setup() {
+        //TODO: cursor for Edit Label li
         const store = useStore();
         const initialised = computed(() => !!store.state.appName);
-        return { initialised };
+        const editSessionLabelOpen = ref(false);
+
+        const toggleEditSessionLabel = (edit: boolean) => {
+          editSessionLabelOpen.value = edit;
+        };
+
+        return {
+          initialised,
+          toggleEditSessionLabel,
+          editSessionLabelOpen
+        };
     }
 });
 </script>

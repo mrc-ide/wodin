@@ -17,15 +17,16 @@
               </div>
             </div>
           </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary"
+                    id="ok-session-label"
+                    @click="updateSessionLabel">OK</button>
+            <button class="btn btn-outline"
+                    id="cancel-session-label"
+                    @click="close">Cancel</button>
+          </div>
         </div>
-        <div class="modal-footer">
-          <button class="btn btn-primary"
-                  id="ok-session-label"
-                  @click="updateSessionLabel">OK</button>
-          <button class="btn btn-outline"
-                  id="cancel-session-label"
-                  @click="close">Cancel</button>
-        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -37,7 +38,7 @@ import {
 import { useStore } from "vuex";
 
 export default defineComponent({
-    name: "EditLabel",
+    name: "EditSessionLabel",
     props: {
         open: {
             type: Boolean,
@@ -63,6 +64,7 @@ export default defineComponent({
         };
         const updateSessionLabel = () => {
           console.log("Dummy save session label: " + sessionLabelInternal.value)
+          close();
         };
 
         return {
