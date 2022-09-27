@@ -90,8 +90,6 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
     }
 };
 
-
-
 export const actions: ActionTree<ModelState, AppState> = {
     async FetchOdinRunner(context) {
         await api(context)

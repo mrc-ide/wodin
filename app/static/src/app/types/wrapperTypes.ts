@@ -5,7 +5,7 @@ import {
     OdinUserType,
     WodinError
 } from "./responseTypes";
-import {FitData, FitDataLink} from "../store/fitData/state";
+import { FitData, FitDataLink } from "../store/fitData/state";
 
 export interface OdinRunInputs {
     parameterValues: OdinUserType;

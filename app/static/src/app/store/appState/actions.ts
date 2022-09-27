@@ -51,7 +51,7 @@ export const appStateActions: ActionTree<AppState, AppState> = {
                 // Fetch and rehydrate session datas
                 await dispatch(`sessions/${SessionsAction.Rehydrate}`, loadSessionId);
             } else {
-                await dispatch(`model/${ModelAction.FetchOdinRunner}`, null, {root: true});
+                await dispatch(`model/${ModelAction.FetchOdinRunner}`, null, { root: true });
                 // If not loading a session, set code and end time from default in config
                 commit(`code/${CodeMutation.SetCurrentCode}`, state.config!.defaultCode, { root: true });
                 if (response.data.endTime) {

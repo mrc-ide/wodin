@@ -5,13 +5,11 @@ import { localStorageManager } from "../../localStorageManager";
 import { api } from "../../apiService";
 import { SessionsMutation } from "./mutations";
 import { ErrorsMutation } from "../errors/mutations";
-import { CodeAction } from "../code/actions";
-import {RunAction} from "../run/actions";
-import {ModelMutation} from "../model/mutations";
-import {ModelAction} from "../model/actions";
-import {SerialisedAppState} from "../../types/serialisationTypes";
-import {deserialiseState} from "../../serialise";
-import {SensitivityAction} from "../sensitivity/actions";
+import { RunAction } from "../run/actions";
+import { ModelAction } from "../model/actions";
+import { SerialisedAppState } from "../../types/serialisationTypes";
+import { deserialiseState } from "../../serialise";
+import { SensitivityAction } from "../sensitivity/actions";
 
 export enum SessionsAction {
     GetSessions = "GetSessions",
@@ -46,7 +44,7 @@ export const actions: ActionTree<SessionsState, AppState> = {
 
             deserialiseState(rootState, sessionData);
 
-            const rootOption = {root: true};
+            const rootOption = { root: true };
             await dispatch(`model/${ModelAction.FetchOdinRunner}`, null, rootOption);
             if (sessionData.model.hasOdin) {
                 // Don't auto-run if compile was required i.e. model was out of date when session was last saved

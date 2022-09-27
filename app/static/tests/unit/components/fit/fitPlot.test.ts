@@ -1,6 +1,4 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via WodinPlot
-import {OdinFitResult} from "../../../../src/app/types/wrapperTypes";
-
 jest.mock("plotly.js", () => {});
 
 /* eslint-disable import/first */
@@ -10,6 +8,7 @@ import { FitState } from "../../../../src/app/store/fit/state";
 import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
 import WodinOdePlot from "../../../../src/app/components/WodinOdePlot.vue";
 import FitPlot from "../../../../src/app/components/fit/FitPlot.vue";
+import { OdinFitResult } from "../../../../src/app/types/wrapperTypes";
 
 describe("FitPlot", () => {
     const mockSolution = jest.fn().mockReturnValue({
@@ -135,7 +134,7 @@ describe("FitPlot", () => {
     });
 
     it("renders as expected when modelFit has solution", () => {
-        const wrapper = getWrapper({solution: mockSolution} as any);
+        const wrapper = getWrapper({ solution: mockSolution } as any);
         const wodinPlot = wrapper.findComponent(WodinOdePlot);
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been fitted.");
@@ -191,7 +190,7 @@ describe("FitPlot", () => {
     });
 
     it("fades plot when fadePlot prop is true", () => {
-        const wrapper = getWrapper({solution: mockSolution} as any, false);
+        const wrapper = getWrapper({ solution: mockSolution } as any, false);
         expect(wrapper.findComponent(WodinOdePlot).props("fadePlot")).toBe(false);
     });
 });

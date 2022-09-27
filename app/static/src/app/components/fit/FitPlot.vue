@@ -17,7 +17,7 @@ import { useStore } from "vuex";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
 import {
-  filterSeriesSet, fitDataToPlotly, odinToPlotly, WodinPlotData
+    filterSeriesSet, fitDataToPlotly, odinToPlotly, WodinPlotData
 } from "../../plot";
 import WodinOdePlot from "../WodinOdePlot.vue";
 
@@ -46,11 +46,13 @@ export default defineComponent({
         });
 
         const endTime = computed(() => {
-          return plotRehydratedFit.value ? store.state.modelFit.result.inputs.endTime : store.getters[`fitData/${FitDataGetter.dataEnd}`];
+            return plotRehydratedFit.value ? store.state.modelFit.result.inputs.endTime
+                : store.getters[`fitData/${FitDataGetter.dataEnd}`];
         });
 
         const link = computed(() => {
-          return plotRehydratedFit.value ? store.state.modelFit.result.inputs.link : store.getters[`fitData/${FitDataGetter.link}`]
+            return plotRehydratedFit.value ? store.state.modelFit.result.inputs.link
+                : store.getters[`fitData/${FitDataGetter.link}`];
         });
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
@@ -59,7 +61,7 @@ export default defineComponent({
                 mode: "grid", tStart: start, tEnd: end, nPoints: points
             });
             if (!data || !link.value || !result) {
-              return [];
+                return [];
             }
             const palette = store.state.model.paletteModel;
             return [

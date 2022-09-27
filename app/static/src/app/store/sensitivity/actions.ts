@@ -1,4 +1,4 @@
-import {ActionContext, ActionTree} from "vuex";
+import { ActionContext, ActionTree } from "vuex";
 import { AppState } from "../appState/state";
 import { SensitivityState } from "./state";
 import { SensitivityGetter } from "./getters";
@@ -6,7 +6,7 @@ import { SensitivityMutation } from "./mutations";
 import { RunAction } from "../run/actions";
 import userMessages from "../../userMessages";
 import { OdinSensitivityResult } from "../../types/wrapperTypes";
-import {BatchPars} from "../../types/responseTypes";
+import { BatchPars } from "../../types/responseTypes";
 
 export enum SensitivityAction {
     RunSensitivity = "RunSensitivity",
@@ -60,9 +60,9 @@ export const actions: ActionTree<SensitivityState, AppState> = {
     },
 
     [SensitivityAction.RunSensitivityOnRehydrate](context) {
-        const {state, rootState} = context;
-        const {endTime} = rootState.run;
-        const {pars} = state.result!.inputs;
+        const { state, rootState } = context;
+        const { endTime } = rootState.run;
+        const { pars } = state.result!.inputs;
 
         runSensitivity(pars, endTime, context);
     }

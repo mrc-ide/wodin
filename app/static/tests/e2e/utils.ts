@@ -1,4 +1,4 @@
-import {expect, Page, Locator} from "@playwright/test";
+import { expect, Page, Locator } from "@playwright/test";
 
 export const newFitCode = `# JUST CHANGE A COMMENT
 initial(S) <- N - I_0
@@ -113,8 +113,8 @@ export const waitForModelFitCompletion = async (page: Page) => {
 };
 
 export const expectWodinPlotDataSummary = async (summaryLocator: Locator, name: string, count: number, xMin: number,
-                                           xMax: number, yMin: number, yMax: number, mode: string, lineColor: string | null,
-                                           markerColor: string | null) => {
+    xMax: number, yMin: number, yMax: number, mode: string, lineColor: string | null,
+    markerColor: string | null) => {
     expect(await summaryLocator.getAttribute("name")).toBe(name);
     expect(await summaryLocator.getAttribute("count")).toBe(count.toString());
     const attrXMin = await summaryLocator.getAttribute("x-min") as string;

@@ -1,5 +1,7 @@
 import { expect, test, Page } from "@playwright/test";
-import {newFitCode, realisticFitData, uploadCSVData, writeCode, startModelFit, waitForModelFitCompletion} from "./utils";
+import {
+    newFitCode, uploadCSVData, writeCode, startModelFit, waitForModelFitCompletion
+} from "./utils";
 import PlaywrightConfig from "../../playwright.config";
 
 const multiTimeFitData = `Day,Cases,Day2

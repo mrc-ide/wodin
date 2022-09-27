@@ -1,6 +1,6 @@
 import { expect, test, Page } from "@playwright/test";
 import * as fs from "fs";
-import { realisticFitData } from "./fit.etest";
+import { realisticFitData } from "./utils";
 
 test.describe("Index tests", () => {
     const tmpPath = "tmp";

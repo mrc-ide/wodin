@@ -102,7 +102,8 @@ test.describe("Sessions tests", () => {
         await page.click(":nth-match(.wodin-left .nav-tabs a, 3)"); // Options tab
         await page.click(":nth-match(.wodin-right .nav-tabs a, 2)"); // Fit tab
         await expect(await page.inputValue("#link-data select")).toBe("I");
-        await expect((await page.inputValue(":nth-match(#model-params .row .parameter-input, 1)")).startsWith("0.4925")).toBe(true);
+        expect((await page.inputValue(":nth-match(#model-params .row .parameter-input, 1)")).startsWith("0.4925"))
+            .toBe(true);
         await expect(await page.inputValue(":nth-match(#model-params .row .parameter-input, 2)")).toBe("1");
         await expect(await page.inputValue(":nth-match(#model-params .row .parameter-input, 3)")).toBe("1.5");
         await expect(await page.isChecked(":nth-match(#model-params .row .form-check-input, 1)")).toBeTruthy();
@@ -122,7 +123,7 @@ test.describe("Sessions tests", () => {
         await expectWodinPlotDataSummary(summary4, "R", 1000, 0, 31, 0, 214.52, "lines", "#ff884d", null);
         const summary5 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 5)");
         await expectWodinPlotDataSummary(summary5, "onset", 1000, 0, 31, 0.09, 16.12, "lines", "#cc0044", null);
-        const summary6 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 6)")
+        const summary6 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 6)");
         await expectWodinPlotDataSummary(summary6, "Cases", 32, 0, 31, 0, 13, "markers", null, "#cccc00");
 
         // Check fit plot
@@ -137,7 +138,8 @@ test.describe("Sessions tests", () => {
         await page.click(":nth-match(.wodin-right .nav-tabs a, 3)"); // Sensitivity tab
         expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(56);
         const sensitivitySummary = await page.locator(":nth-match(.wodin-plot-data-summary-series, 1)");
-        await expectWodinPlotDataSummary(sensitivitySummary, "S (D=0.443)", 1000, 0, 31, 154.28, 369, "lines", "#2e5cb8", null);
+        await expectWodinPlotDataSummary(sensitivitySummary, "S (D=0.443)", 1000, 0, 31, 154.28, 369, "lines",
+            "#2e5cb8", null);
         const centralSummary = await page.locator(":nth-match(.wodin-plot-data-summary-series, 51)");
         await expectWodinPlotDataSummary(centralSummary, "S", 1000, 0, 31, 154.64, 369, "lines", "#2e5cb8", null);
         const sensitivityDataSummary = await page.locator(":nth-match(.wodin-plot-data-summary-series, 56)");

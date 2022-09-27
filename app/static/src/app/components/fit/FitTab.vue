@@ -72,7 +72,7 @@ export default {
             // (We do want to show message when rehydrated - will not have a solution in that case,
             // but will have a result and no error).
             if (!store.state.modelFit.result || store.state.modelFit.error) {
-              return "";
+                return "";
             }
             if (compileRequired.value) {
                 return userMessages.modelFit.compileRequired;

@@ -13,7 +13,6 @@ export enum RunAction {
 
 const runModel = (parameterValues: OdinUserType | null, endTime: number,
     context: ActionContext<RunState, AppState>) => {
-
     const { rootState, commit } = context;
 
     if (rootState.model.odinRunner && rootState.model.odin && parameterValues) {

@@ -1,16 +1,16 @@
-import {OdinModelResponse, OdinUserType, WodinError} from "./responseTypes";
-import {RunUpdateRequiredReasons} from "../store/run/state";
-import {OdinFitInputs, OdinRunInputs, OdinSensitivityInputs} from "./wrapperTypes";
+import { OdinModelResponse, OdinUserType, WodinError } from "./responseTypes";
+import { RunUpdateRequiredReasons } from "../store/run/state";
+import { OdinFitInputs, OdinRunInputs, OdinSensitivityInputs } from "./wrapperTypes";
 import {
     SensitivityParameterSettings,
     SensitivityPlotSettings,
     SensitivityUpdateRequiredReasons
 } from "../store/sensitivity/state";
-import {FitUpdateRequiredReasons} from "../store/modelFit/state";
-import {VisualisationTab} from "../store/appState/state";
-import {CodeState} from "../store/code/state";
-import {FitDataState} from "../store/fitData/state";
-import {Palette} from "../palette";
+import { FitUpdateRequiredReasons } from "../store/modelFit/state";
+import { VisualisationTab } from "../store/appState/state";
+import { CodeState } from "../store/code/state";
+import { FitDataState } from "../store/fitData/state";
+import { Palette } from "../palette";
 
 export interface SerialisedSolutionResult {
     inputs: OdinRunInputs | OdinFitInputs,

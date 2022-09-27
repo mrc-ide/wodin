@@ -7,7 +7,6 @@ import { computed, defineComponent, onMounted } from "vue";
 import { RouterView } from "vue-router";
 import { useStore } from "vuex";
 import { AppStateAction } from "../store/appState/actions";
-import { ModelAction } from "../store/model/actions";
 
 export default defineComponent({
     name: "WodinSession",
@@ -22,8 +21,8 @@ export default defineComponent({
         const store = useStore();
         const initialised = computed(() => !!store.state.appName);
         onMounted(() => {
-          const { appName, loadSessionId } = props;
-          store.dispatch(AppStateAction.Initialise, { appName, loadSessionId });
+            const { appName, loadSessionId } = props;
+            store.dispatch(AppStateAction.Initialise, { appName, loadSessionId });
         });
 
         return { initialised };

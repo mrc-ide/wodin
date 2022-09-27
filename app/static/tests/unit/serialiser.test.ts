@@ -6,7 +6,7 @@ import {
     SensitivityScaleType,
     SensitivityVariationType
 } from "../../src/app/store/sensitivity/state";
-import {deserialiseState, serialiseState} from "../../src/app/serialise";
+import { deserialiseState, serialiseState } from "../../src/app/serialise";
 import { FitState } from "../../src/app/store/fit/state";
 import {
     mockCodeState,
