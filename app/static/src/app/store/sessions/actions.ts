@@ -46,17 +46,15 @@ export const actions: ActionTree<SessionsState, AppState> = {
 
             const rootOption = { root: true };
             await dispatch(`model/${ModelAction.FetchOdinRunner}`, null, rootOption);
-            if (sessionData.model.hasOdin) {
-                // Don't auto-run if compile was required i.e. model was out of date when session was last saved
-                if (!sessionData.model.compileRequired) {
-                    // compile the model to evaluate odin, which is not persisted
-                    await dispatch(`model/${ModelAction.CompileModelOnRehydrate}`, null, rootOption);
-                    if (sessionData.run.result?.hasResult) {
-                        dispatch(`run/${RunAction.RunModelOnRehydrate}`, null, rootOption);
-                    }
-                    if (sessionData.sensitivity.result?.hasResult) {
-                        dispatch(`sensitivity/${SensitivityAction.RunSensitivityOnRehydrate}`, null, rootOption);
-                    }
+            // Don't auto-run if compile was required i.e. model was out of date when session was last saved
+            if (sessionData.model.hasOdin && !sessionData.model.compileRequired) {
+                // compile the model to evaluate odin, which is not persisted
+                await dispatch(`model/${ModelAction.CompileModelOnRehydrate}`, null, rootOption);
+                if (sessionData.run.result?.hasResult) {
+                    dispatch(`run/${RunAction.RunModelOnRehydrate}`, null, rootOption);
+                }
+                if (sessionData.sensitivity.result?.hasResult) {
+                    dispatch(`sensitivity/${SensitivityAction.RunSensitivityOnRehydrate}`, null, rootOption);
                 }
             }
         }
