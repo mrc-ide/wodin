@@ -36,6 +36,7 @@ import {
     computed, defineComponent, ref, watch
 } from "vue";
 import { useStore } from "vuex";
+import { AppStateAction } from "../../store/appState/actions";
 
 export default defineComponent({
     name: "EditSessionLabel",
@@ -55,7 +56,7 @@ export default defineComponent({
 
         watch(() => props.open, (newValue) => {
             if (newValue) {
-                sessionLabelInternal.value = "placeholder"; // how to get current session label??
+                sessionLabelInternal.value = store.state.sessionLabel;
             }
         });
 
@@ -63,8 +64,8 @@ export default defineComponent({
             emit("close");
         };
         const updateSessionLabel = () => {
-          console.log("Dummy save session label: " + sessionLabelInternal.value)
-          close();
+            store.dispatch(`${AppStateAction.SaveSessionLabel}`, sessionLabelInternal.value);
+            close();
         };
 
         return {

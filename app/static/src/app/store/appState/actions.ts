@@ -96,6 +96,6 @@ export const appStateActions: ActionTree<AppState, AppState> = {
         await api(context)
             .ignoreSuccess()
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
-            .post(url, sessionLabel || "") // TODO: check will this send string in quotes?
+            .post(url, sessionLabel || "", "text/plain");
     }
 };
