@@ -18,9 +18,6 @@ test.describe("Sessions tests", () => {
     const { timeout } = PlaywrightConfig;
 
     test("can navigate to Sessions page from navbar, and load a session", async () => {
-        test.setTimeout(120000); // This is a slow test!
-        const now = Date.now();
-
         // We need to use a browser with persistent context instead of the default incognito browser so that
         // we can use the session ids in local storage
         const userDataDir = os.tmpdir();
@@ -28,7 +25,6 @@ test.describe("Sessions tests", () => {
         const page = await browser.newPage();
 
         await page.goto(appUrl);
-        console.log("1 " + (Date.now()-now))
 
         // change code in this session, which we will later reload and check that we can see the code changes
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
@@ -39,7 +35,6 @@ test.describe("Sessions tests", () => {
             }
         );
 
-        console.log("2 " + (Date.now()-now))
         // compile and re-run
         await page.click("#compile-btn");
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
@@ -49,13 +44,11 @@ test.describe("Sessions tests", () => {
         );
         await page.click("#run-btn");
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("", { timeout });
-        console.log("3 " + (Date.now()-now))
 
         // Upload data, link, select variables to vary and run fit
         await page.click(":nth-match(.wodin-left .nav-tabs a, 1)");
         await startModelFit(page, realisticFitData);
         await waitForModelFitCompletion(page);
-        console.log("4 " + (Date.now()-now))
 
         // Run sensitivity
         await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
@@ -64,43 +57,30 @@ test.describe("Sessions tests", () => {
         expect(hidden).not.toBe(null);
         // 5 * 10 sensitivity traces, 5 central traces, 1 data plot
         expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(56);
-        console.log("5 " + (Date.now()-now))
 
         // give the page a chance to save the session to back end
         await page.waitForTimeout(saveSessionTimeout);
 
         // Reload the page to get fresh session, and give it time to save new session Id
         await page.goto(appUrl);
-        console.log("6 " + (Date.now()-now))
         await page.waitForTimeout(saveSessionTimeout);
-        console.log("6.1"  + (Date.now()-now))
 
-        // Get storage state in order to test that something has been written to it - but reading it here also seems
-        // to force Playwright to wait long enough for storage values to be available in the next page, so the session
-        // ids can be read by the Sessions page - this is required by CI but not locally
+        // Get storage state in order to test that something has been written to it
         const storageState = await browser.storageState();
         expect(storageState.origins.length).toBe(1); // check there's something in storage state
-        console.log("7 " + (Date.now()-now))
 
         await page.click("#sessions-menu");
         await page.click("#all-sessions-link");
-        console.log("8 " + (Date.now()-now))
 
         await expect(await page.innerText(".container h2")).toBe("Sessions");
-        console.log("8.1 " + (Date.now()-now))
         await expect(await page.innerText(":nth-match(.session-col-header, 1)")).toBe("Saved");
-        console.log("8.2 " + (Date.now()-now))
         await expect(await page.innerText(":nth-match(.session-col-header, 2)")).toBe("Label");
-        console.log("8.3 " + (Date.now()-now))
         await expect(await page.innerText(":nth-match(.session-col-header, 3)")).toBe("Load");
-        console.log("8.4 " + (Date.now()-now))
 
         await expect(await page.innerText(".session-label")).toBe("--no label--");
-        console.log("8.5 " + (Date.now()-now))
 
         // NB this will load the second load link, i.e. the older session, not the current one
         await page.click(":nth-match(.session-load a, 2)");
-        console.log("9 " + (Date.now()-now))
 
         // Check all session values have been rehydrated:
 
@@ -108,7 +88,6 @@ test.describe("Sessions tests", () => {
         await page.waitForTimeout(saveSessionTimeout);
         await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Data");
         await expect(await page.innerText("#data-upload-success")).toBe(" Uploaded 32 rows and 2 columns");
-        console.log("10 " + (Date.now()-now))
 
         // Check code
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
@@ -117,7 +96,6 @@ test.describe("Sessions tests", () => {
         // wait until there is some text in the code editor
         await page.waitForFunction((selector) => !!document.querySelector(selector)?.textContent, editorSelector);
         await expect(await page.innerText(editorSelector)).toContain("# JUST CHANGE A COMMENT");
-        console.log("11 " + (Date.now()-now))
 
         // Check options
         await page.click(":nth-match(.wodin-left .nav-tabs a, 3)"); // Options tab
@@ -130,7 +108,6 @@ test.describe("Sessions tests", () => {
         await expect(await page.isChecked(":nth-match(#model-params .row .form-check-input, 1)")).toBeTruthy();
         await expect(await page.isChecked(":nth-match(#model-params .row .form-check-input, 2)")).toBeFalsy();
         await expect(await page.isChecked(":nth-match(#model-params .row .form-check-input, 3)")).toBeFalsy();
-        console.log("12 " + (Date.now()-now))
 
         // Check run plot
         await page.click(":nth-match(.wodin-right .nav-tabs a, 1)"); // Run tab
@@ -147,7 +124,6 @@ test.describe("Sessions tests", () => {
         await expectWodinPlotDataSummary(summary5, "onset", 1000, 0, 31, 0.09, 16.12, "lines", "#cc0044", null);
         const summary6 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 6)");
         await expectWodinPlotDataSummary(summary6, "Cases", 32, 0, 31, 0, 13, "markers", null, "#cccc00");
-        console.log("13 " + (Date.now()-now))
 
         // Check fit plot
         await page.click(":nth-match(.wodin-right .nav-tabs a, 2)"); // Fit tab
@@ -156,7 +132,6 @@ test.describe("Sessions tests", () => {
         await expectWodinPlotDataSummary(fitSummary1, "I", 1000, 0, 31, 0.3, 7.9, "lines", "#cccc00", null);
         const fitSummary2 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 2)");
         await expectWodinPlotDataSummary(fitSummary2, "Cases", 32, 0, 31, 0, 13, "markers", null, "#cccc00");
-        console.log("14 " + (Date.now()-now))
 
         // Check sensitivity plot - but not every trace!
         await page.click(":nth-match(.wodin-right .nav-tabs a, 3)"); // Sensitivity tab
@@ -168,9 +143,7 @@ test.describe("Sessions tests", () => {
         await expectWodinPlotDataSummary(centralSummary, "S", 1000, 0, 31, 154.64, 369, "lines", "#2e5cb8", null);
         const sensitivityDataSummary = await page.locator(":nth-match(.wodin-plot-data-summary-series, 56)");
         await expectWodinPlotDataSummary(sensitivityDataSummary, "Cases", 32, 0, 31, 0, 13, "markers", null, "#cccc00");
-        console.log("15 " + (Date.now()-now))
 
         await browser.close();
-        console.log("16 " + (Date.now()-now))
     });
 });
