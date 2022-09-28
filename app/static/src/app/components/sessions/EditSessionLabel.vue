@@ -37,12 +37,21 @@ import {
 } from "vue";
 import { useStore } from "vuex";
 import { AppStateAction } from "../../store/appState/actions";
+import {SessionsAction} from "../../store/sessions/actions";
 
 export default defineComponent({
     name: "EditSessionLabel",
     props: {
         open: {
             type: Boolean,
+            required: true
+        },
+        sessionId: {
+            type: String,
+            required: true
+        },
+        sessionLabel: {
+            type: String,
             required: true
         }
     },
@@ -56,7 +65,7 @@ export default defineComponent({
 
         watch(() => props.open, (newValue) => {
             if (newValue) {
-                sessionLabelInternal.value = store.state.sessionLabel;
+                sessionLabelInternal.value = props.sessionLabel;
             }
         });
 
@@ -64,7 +73,8 @@ export default defineComponent({
             emit("close");
         };
         const updateSessionLabel = () => {
-            store.dispatch(`${AppStateAction.SaveSessionLabel}`, sessionLabelInternal.value);
+            const payload = {id: props.sessionId, label: sessionLabelInternal.value};
+            store.dispatch(`sessions/${SessionsAction.SaveSessionLabel}`, payload);
             close();
         };
 

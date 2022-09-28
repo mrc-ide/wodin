@@ -17,7 +17,11 @@
     </span>
     <span class="navbar-version navbar-text">WODIN v{{ wodinVersion }}</span>
   </nav>
-  <edit-session-label :open="editSessionLabelOpen" @close="toggleEditSessionLabel(false)"></edit-session-label>
+  <edit-session-label :open="editSessionLabelOpen"
+                      :session-id="sessionId"
+                      :session-label="sessionLabel"
+                      @close="toggleEditSessionLabel(false)"
+  ></edit-session-label>
 </template>
 
 <script lang="ts">
@@ -46,10 +50,15 @@ export default defineComponent({
           editSessionLabelOpen.value = edit;
         };
 
+        const sessionId = computed(() => store.state.sessionId);
+        const sessionLabel = computed(() => store.state.sessionLabel);
+
         return {
           initialised,
           toggleEditSessionLabel,
-          editSessionLabelOpen
+          editSessionLabelOpen,
+          sessionId,
+          sessionLabel
         };
     }
 });

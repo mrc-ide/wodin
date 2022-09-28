@@ -6,10 +6,18 @@ import { api } from "../../apiService";
 import { SessionsMutation } from "./mutations";
 import { ErrorsMutation } from "../errors/mutations";
 import { CodeAction } from "../code/actions";
+import {AppStateAction} from "../appState/actions";
+import {AppStateMutation} from "../appState/mutations";
 
 export enum SessionsAction {
     GetSessions = "GetSessions",
-    Rehydrate = "Rehydrate"
+    Rehydrate = "Rehydrate",
+    SaveSessionLabel = "SaveSessionLabel"
+}
+
+interface SaveSessionLabelPayload {
+    id: string,
+    label: string
 }
 
 export const actions: ActionTree<SessionsState, AppState> = {
@@ -40,5 +48,20 @@ export const actions: ActionTree<SessionsState, AppState> = {
             const sessionData = response.data as Partial<AppState>;
             await dispatch(`code/${CodeAction.UpdateCode}`, sessionData.code!.currentCode, { root: true });
         }
+    },
+
+    async [SessionsAction.SaveSessionLabel](context, payload: SaveSessionLabelPayload) {
+        const {commit, rootState} = context;
+        const {appName} = rootState;
+        const {label, id} = payload;
+        const currentSessionId = rootState.sessionId;
+        if (id === currentSessionId) {
+            commit(AppStateMutation.SetSessionLabel, label, {root: true});
+        }
+        const url = `/apps/${appName}/sessions/${id}/label`;
+        await api(context)
+            .ignoreSuccess()
+            .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
+            .post(url, label || "", "text/plain");
     }
 };

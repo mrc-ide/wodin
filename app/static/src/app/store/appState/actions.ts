@@ -10,11 +10,11 @@ import { AppStateMutation } from "./mutations";
 import { serialiseState } from "../../serialise";
 import { FitState } from "../fit/state";
 import { SessionsAction } from "../sessions/actions";
+import {SessionsMutation} from "../sessions/mutations";
 
 export enum AppStateAction {
     Initialise = "Initialise",
-    QueueStateUpload = "QueueStateUpload",
-    SaveSessionLabel = "SaveSessionLabel"
+    QueueStateUpload = "QueueStateUpload"
 }
 
 async function immediateUploadState(context: ActionContext<AppState, AppState>) {
@@ -86,16 +86,5 @@ export const appStateActions: ActionTree<AppState, AppState> = {
             // record the newly queued upload
             commit(AppStateMutation.SetQueuedStateUpload, queuedId);
         }
-    },
-
-    async [AppStateAction.SaveSessionLabel](context, sessionLabel: null | string) {
-        const {state, commit} = context;
-        const {appName, sessionId} = state;
-        commit(AppStateMutation.SetSessionLabel, sessionLabel);
-        const url = `/apps/${appName}/sessions/${sessionId}/label`;
-        await api(context)
-            .ignoreSuccess()
-            .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
-            .post(url, sessionLabel || "", "text/plain");
     }
 };
