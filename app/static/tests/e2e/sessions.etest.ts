@@ -72,6 +72,8 @@ test.describe("Sessions tests", () => {
         // Reload the page to get fresh session, and give it time to save new session Id
         await page.goto(appUrl);
         console.log("6 " + (Date.now()-now))
+        await page.waitForTimeout(saveSessionTimeout);
+        console.log("6.1"  + (Date.now()-now))
 
         // Get storage state in order to test that something has been written to it - but reading it here also seems
         // to force Playwright to wait long enough for storage values to be available in the next page, so the session
