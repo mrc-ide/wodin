@@ -7,7 +7,7 @@
     <span class="nav-item dropdown">
       <a id="sessions-menu" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
          aria-expanded="false">
-        Sessions
+        {{ sessionMenuHeader }}
       </a>
       <ul v-if="initialised" class="dropdown-menu" aria-labelledby="navbarDropdown">
         <li class="dropdown-item clickable" @click="toggleEditSessionLabel(true)">Edit Label</li>
@@ -53,12 +53,17 @@ export default defineComponent({
         const sessionId = computed(() => store.state.sessionId);
         const sessionLabel = computed(() => store.state.sessionLabel);
 
+        const sessionMenuHeader = computed(() => {
+          return sessionLabel.value ? `Session: ${sessionLabel.value}` : "Sessions";
+        });
+
         return {
           initialised,
           toggleEditSessionLabel,
           editSessionLabelOpen,
           sessionId,
-          sessionLabel
+          sessionLabel,
+          sessionMenuHeader
         };
     }
 });

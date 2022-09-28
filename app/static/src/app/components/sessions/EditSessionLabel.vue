@@ -9,10 +9,10 @@
           </div>
           <div class="modal-body">
             <div class="row" id="edit-session-label">
-              <div class="col-6">
+              <div class="col-2">
                 <label class="col-form-label">Label</label>
               </div>
-              <div class="col-6">
+              <div class="col-10">
                 <input v-model="sessionLabelInternal" type="text" class="form-control">
               </div>
             </div>

@@ -51,7 +51,7 @@ export const actions: ActionTree<SessionsState, AppState> = {
     },
 
     async [SessionsAction.SaveSessionLabel](context, payload: SaveSessionLabelPayload) {
-        const {commit, rootState} = context;
+        const {commit, dispatch, rootState} = context;
         const {appName} = rootState;
         const {label, id} = payload;
         const currentSessionId = rootState.sessionId;
@@ -63,5 +63,8 @@ export const actions: ActionTree<SessionsState, AppState> = {
             .ignoreSuccess()
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
             .post(url, label || "", "text/plain");
+
+        // refresh sessions metadata so sessions page updates
+        await dispatch(SessionsAction.GetSessions);
     }
 };
