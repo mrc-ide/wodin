@@ -13,7 +13,8 @@ import { SessionsAction } from "../sessions/actions";
 
 export enum AppStateAction {
     Initialise = "Initialise",
-    QueueStateUpload = "QueueStateUpload"
+    QueueStateUpload = "QueueStateUpload",
+    SaveSessionLabel = "SaveSessionLabel"
 }
 
 async function immediateUploadState(context: ActionContext<AppState, AppState>) {
@@ -85,5 +86,16 @@ export const appStateActions: ActionTree<AppState, AppState> = {
             // record the newly queued upload
             commit(AppStateMutation.SetQueuedStateUpload, queuedId);
         }
+    },
+
+    async [AppStateAction.SaveSessionLabel](context, sessionLabel: null | string) {
+        const {state, commit} = context;
+        const {appName, sessionId} = state;
+        commit(AppStateMutation.SetSessionLabel, sessionLabel);
+        const url = `/apps/${appName}/sessions/${sessionId}/label`;
+        await api(context)
+            .ignoreSuccess()
+            .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
+            .post(url, sessionLabel || "") // TODO: check will this send string in quotes?
     }
 };

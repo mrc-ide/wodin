@@ -8,7 +8,8 @@ export enum AppStateMutation {
     SetOpenVisualisationTab = "SetOpenVisualisationTab",
     ClearQueuedStateUpload = "ClearQueuedStateUpload",
     SetQueuedStateUpload = "SetQueuedStateUpload",
-    SetStateUploadInProgress = "SetStateUploadInProgress"
+    SetStateUploadInProgress = "SetStateUploadInProgress",
+    SetSessionLabel = "SetSessionLabel"
 }
 
 export const StateUploadMutations = [
@@ -41,5 +42,9 @@ export const appStateMutations: MutationTree<AppState> = {
 
     [AppStateMutation.SetStateUploadInProgress](state: AppState, payload: boolean) {
         state.stateUploadInProgress = payload;
+    },
+
+    [AppStateMutation.SetSessionLabel](state: AppState, payload: null | string) {
+        state.sessionLabel = payload;
     }
 };
