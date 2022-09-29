@@ -10,7 +10,6 @@ import { AppStateMutation } from "./mutations";
 import { serialiseState } from "../../serialise";
 import { FitState } from "../fit/state";
 import { SessionsAction } from "../sessions/actions";
-import {SessionsMutation} from "../sessions/mutations";
 
 export enum AppStateAction {
     Initialise = "Initialise",

@@ -10,7 +10,10 @@
         {{ sessionMenuHeader }}
       </a>
       <ul v-if="initialised" class="dropdown-menu" aria-labelledby="navbarDropdown">
-        <li class="dropdown-item clickable" @click="toggleEditSessionLabel(true)">Edit Label</li>
+        <li class="dropdown-item clickable" @click="toggleEditSessionLabel(true)">
+          <vue-feather class="grey inline-icon" type="edit-2" size="1.3rem"></vue-feather>
+          Edit Label
+        </li>
         <hr/>
         <li><router-link id="all-sessions-link" class="dropdown-item" to="/sessions">All Sessions</router-link></li>
       </ul>
@@ -26,6 +29,7 @@
 
 <script lang="ts">
 import {defineComponent, computed, ref} from "vue";
+import VueFeather from "vue-feather";
 import { RouterLink } from "vue-router";
 import { useStore } from "vuex";
 import EditSessionLabel from "./sessions/EditSessionLabel.vue";
@@ -39,7 +43,8 @@ export default defineComponent({
     },
     components: {
         RouterLink,
-        EditSessionLabel
+        EditSessionLabel,
+        VueFeather
     },
     setup() {
         const store = useStore();
