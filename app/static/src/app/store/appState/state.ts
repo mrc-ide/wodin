@@ -18,6 +18,7 @@ export enum VisualisationTab {
 
 export interface AppState {
     sessionId: string,
+    sessionLabel: null | string,
     config: null | AppConfig,
     appName: null | string,
     appType: AppType

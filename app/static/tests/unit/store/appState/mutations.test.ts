@@ -41,4 +41,10 @@ describe("AppState mutations", () => {
         appStateMutations.SetStateUploadInProgress(state, true);
         expect(state.stateUploadInProgress).toBe(true);
     });
+
+    it("sets session label", () => {
+        const state = mockBasicState();
+        appStateMutations.SetSessionLabel(state, "new session label");
+        expect(state.sessionLabel).toBe("new session label");
+    });
 });

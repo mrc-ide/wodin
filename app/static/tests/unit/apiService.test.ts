@@ -271,7 +271,7 @@ describe("ApiService", () => {
         expect(response).toStrictEqual({ data: "TEST", errors: null, status: "success" });
     });
 
-    it("post sets Content-Type header", async () => {
+    it("post sets default Content-Type header", async () => {
         mockAxios.onPost(TEST_ROUTE, TEST_BODY)
             .reply(200, mockSuccess("TEST"));
         const commit = jest.fn();
@@ -280,6 +280,17 @@ describe("ApiService", () => {
             .post(TEST_ROUTE, TEST_BODY);
 
         expect(mockAxios.history.post[0].headers!["Content-Type"]).toBe("application/json");
+    });
+
+    it("post sets requested Content-Type header", async () => {
+        mockAxios.onPost(TEST_ROUTE, TEST_BODY)
+            .reply(200, mockSuccess("TEST"));
+        const commit = jest.fn();
+        await api({ commit, rootState } as any)
+            .withSuccess("TEST_TYPE")
+            .post(TEST_ROUTE, TEST_BODY, "text/plain");
+
+        expect(mockAxios.history.post[0].headers!["Content-Type"]).toBe("text/plain");
     });
 
     it("deep freezes the response object if requested", async () => {

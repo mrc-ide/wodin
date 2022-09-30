@@ -7,10 +7,12 @@
 }
 
 .inline-icon {
-  vertical-align: bottom;
+  vertical-align: text-bottom;
 }
 
 $brand: #479fb6;
+$light-grey: #eee;
+$grey: #ccc;
 
 .bg-brand {
   background-color: $brand;
@@ -18,6 +20,10 @@ $brand: #479fb6;
 
 .brand {
   color: $brand;
+}
+
+.grey {
+  color: $grey;
 }
 
 .wodin-link {
@@ -37,7 +43,7 @@ $brand: #479fb6;
 .plot-placeholder {
   width: 100%;
   height: 450px;
-  background-color: #eee;
+  background-color: $light-grey;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -46,4 +52,8 @@ $brand: #479fb6;
 
 .alert-danger {
   background-color: #fff;
+}
+
+.clickable {
+  cursor: pointer;
 }
