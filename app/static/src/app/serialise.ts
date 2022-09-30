@@ -7,23 +7,30 @@ import { SensitivityState } from "./store/sensitivity/state";
 import { FitDataState } from "./store/fitData/state";
 import { ModelFitState } from "./store/modelFit/state";
 import { OdinFitResult, OdinRunResult } from "./types/wrapperTypes";
+import {
+    SerialisedAppState, SerialisedModelState,
+    SerialisedRunState,
+    SerialisedSensitivityState,
+    SerialisedSolutionResult
+} from "./types/serialisationTypes";
 
-function serialiseCode(code: CodeState) {
+function serialiseCode(code: CodeState) : CodeState {
     return {
         currentCode: code.currentCode
     };
 }
 
-function serialiseModel(model: ModelState) {
+function serialiseModel(model: ModelState) : SerialisedModelState {
     return {
         compileRequired: model.compileRequired,
         odinModelResponse: model.odinModelResponse,
         hasOdin: !!model.odin,
-        odinModelCodeError: model.odinModelCodeError
+        odinModelCodeError: model.odinModelCodeError,
+        paletteModel: model.paletteModel
     };
 }
 
-function serialiseSolutionResult(result: OdinRunResult | OdinFitResult | null) {
+function serialiseSolutionResult(result: OdinRunResult | OdinFitResult | null): SerialisedSolutionResult | null {
     return result ? {
         inputs: result.inputs,
         hasResult: !!result.solution,
@@ -31,7 +38,7 @@ function serialiseSolutionResult(result: OdinRunResult | OdinFitResult | null) {
     } : null;
 }
 
-function serialiseRun(run: RunState) {
+function serialiseRun(run: RunState): SerialisedRunState {
     return {
         runRequired: run.runRequired,
         parameterValues: run.parameterValues,
@@ -40,7 +47,7 @@ function serialiseRun(run: RunState) {
     };
 }
 
-function serialiseSensitivity(sensitivity: SensitivityState) {
+function serialiseSensitivity(sensitivity: SensitivityState): SerialisedSensitivityState {
     return {
         paramSettings: sensitivity.paramSettings,
         sensitivityUpdateRequired: sensitivity.sensitivityUpdateRequired,
@@ -53,7 +60,7 @@ function serialiseSensitivity(sensitivity: SensitivityState) {
     };
 }
 
-function serialiseFitData(fitData: FitDataState) {
+function serialiseFitData(fitData: FitDataState) : FitDataState {
     return {
         data: fitData.data,
         columns: fitData.columns,
@@ -77,13 +84,13 @@ function serialiseModelFit(modelFit: ModelFitState) {
 }
 
 export const serialiseState = (state: AppState) => {
-    const result = {
+    const result: SerialisedAppState = {
         openVisualisationTab: state.openVisualisationTab,
         code: serialiseCode(state.code),
         model: serialiseModel(state.model),
         run: serialiseRun(state.run),
         sensitivity: serialiseSensitivity(state.sensitivity)
-    } as any; // TODO: generate type from schema
+    };
 
     if (state.appType === AppType.Fit) {
         const fitState = state as FitState;
@@ -92,4 +99,11 @@ export const serialiseState = (state: AppState) => {
     }
 
     return JSON.stringify(result);
+};
+
+export const deserialiseState = (targetState: AppState, serialised: SerialisedAppState) => {
+    Object.assign(targetState, {
+        ...targetState,
+        ...serialised
+    });
 };

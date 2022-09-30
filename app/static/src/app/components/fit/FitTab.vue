@@ -69,7 +69,8 @@ export default {
             // makes it look like some additional action needs
             // taking. The plot already tells the user that the fit
             // needs running, so don't add a message.
-            // We do want to show message when rehydrated - will not have a solution in that case.
+            // (We do want to show message when rehydrated - will not have a solution in that case,
+            // but will have a result and no error).
             if (!store.state.modelFit.result || store.state.modelFit.error) {
                 return "";
             }

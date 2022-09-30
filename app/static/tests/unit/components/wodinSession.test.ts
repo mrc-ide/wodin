@@ -3,13 +3,11 @@ import { RouterView } from "vue-router";
 import Vuex from "vuex";
 import WodinSession from "../../../src/app/components/WodinSession.vue";
 import { AppStateAction } from "../../../src/app/store/appState/actions";
-import { mockBasicState, mockModelState } from "../../mocks";
-import { ModelAction } from "../../../src/app/store/model/actions";
+import { mockBasicState } from "../../mocks";
 import { BasicState } from "../../../src/app/store/basic/state";
 
 describe("WodinSession", () => {
     const mockInitialise = jest.fn();
-    const mockFetchOdinRunner = jest.fn();
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -20,15 +18,6 @@ describe("WodinSession", () => {
             state: mockBasicState({ appName }),
             actions: {
                 [AppStateAction.Initialise]: mockInitialise
-            },
-            modules: {
-                model: {
-                    namespaced: true,
-                    state: mockModelState(),
-                    actions: {
-                        [ModelAction.FetchOdinRunner]: mockFetchOdinRunner
-                    }
-                }
             }
         });
 
@@ -50,9 +39,8 @@ describe("WodinSession", () => {
         expect(wrapper.findComponent(RouterView).exists()).toBe(true);
     });
 
-    it("dispatches actions on mount", () => {
+    it("dispatches Initialise action on mount", () => {
         getWrapper();
-        expect(mockFetchOdinRunner).toHaveBeenCalledTimes(1);
         expect(mockInitialise).toHaveBeenCalledTimes(1);
         expect(mockInitialise.mock.calls[0][1]).toStrictEqual({ appName: "testApp", loadSessionId: "session1" });
     });
