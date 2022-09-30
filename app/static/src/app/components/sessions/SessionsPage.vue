@@ -20,7 +20,8 @@
             {{session.label || "--no label--"}}
           </div>
           <div class="col-2 text-center session-col-value session-edit-label">
-            <vue-feather class="inline-icon brand clickable" type="edit-2" @click="editSessionLabel(session.id, session.label)"></vue-feather>
+            <vue-feather class="inline-icon brand clickable"
+                         type="edit-2" @click="editSessionLabel(session.id, session.label)"></vue-feather>
           </div>
           <div class="col-2 text-center session-col-value session-load">
             <router-link v-if="isCurrentSession(session.id)" to="/">
@@ -52,7 +53,9 @@
 
 <script lang="ts">
 import { utc } from "moment";
-import {onMounted, defineComponent, computed, ref} from "vue";
+import {
+    onMounted, defineComponent, computed, ref
+} from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import { RouterLink } from "vue-router";
@@ -84,14 +87,15 @@ export default defineComponent({
 
         const sessionUrl = (sessionId: string) => `/apps/${appName.value}?sessionId=${sessionId}`;
         const isCurrentSession = (sessionId: string) => sessionId === currentSessionId.value;
-        const editSessionLabel = (sessionId: string, sessionLabel: string) => {
-          selectedSessionId.value = sessionId;
-          selectedSessionLabel.value = sessionLabel;
-          toggleEditSessionLabelOpen(true);
-        };
 
         const toggleEditSessionLabelOpen = (open: boolean) => {
-          editSessionLabelOpen.value = open;
+            editSessionLabelOpen.value = open;
+        };
+
+        const editSessionLabel = (sessionId: string, sessionLabel: string) => {
+            selectedSessionId.value = sessionId;
+            selectedSessionLabel.value = sessionLabel;
+            toggleEditSessionLabelOpen(true);
         };
 
         onMounted(() => {

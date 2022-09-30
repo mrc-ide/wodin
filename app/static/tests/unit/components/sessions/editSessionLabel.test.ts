@@ -1,8 +1,8 @@
 import { shallowMount } from "@vue/test-utils";
-import EditSessionLabel from "../../../../src/app/components/sessions/EditSessionLabel.vue";
 import Vuex from "vuex";
-import {mockBasicState} from "../../../mocks";
-import {BasicState} from "../../../../src/app/store/basic/state";
+import EditSessionLabel from "../../../../src/app/components/sessions/EditSessionLabel.vue";
+import { mockBasicState } from "../../../mocks";
+import { BasicState } from "../../../../src/app/store/basic/state";
 import mock = jest.mock;
 
 describe("EditSessionLabel", () => {
@@ -33,7 +33,7 @@ describe("EditSessionLabel", () => {
 
         // we need to set props to trigger the watch
         if (open) {
-            await result.setProps({open: true});
+            await result.setProps({ open: true });
         }
 
         return result;
@@ -49,7 +49,8 @@ describe("EditSessionLabel", () => {
         expect(wrapper.find(".modal").classes()).toContain("show");
         expect(wrapper.find(".modal-content .modal-header h5").text()).toBe("Edit Session Label");
         expect(wrapper.find(".modal-body #edit-session-label label").text()).toBe("Label");
-        expect((wrapper.find(".modal-body #edit-session-label input").element as HTMLInputElement).value).toBe("testSessionLabel");
+        expect((wrapper.find(".modal-body #edit-session-label input").element as HTMLInputElement).value)
+            .toBe("testSessionLabel");
         expect(wrapper.find(".modal-footer #ok-session-label").text()).toBe("OK");
         expect(wrapper.find(".modal-footer #cancel-session-label").text()).toBe("Cancel");
     });
@@ -71,6 +72,6 @@ describe("EditSessionLabel", () => {
         await wrapper.find("#edit-session-label input").setValue("newSessionLabel");
         await wrapper.find("#ok-session-label").trigger("click");
         expect(mockSaveSessionLabel).toHaveBeenCalledTimes(1);
-        expect(mockSaveSessionLabel.mock.calls[0][1]).toStrictEqual({id: "testSessionId", label:"newSessionLabel"});
+        expect(mockSaveSessionLabel.mock.calls[0][1]).toStrictEqual({ id: "testSessionId", label: "newSessionLabel" });
     });
 });

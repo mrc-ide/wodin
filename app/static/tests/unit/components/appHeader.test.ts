@@ -1,15 +1,16 @@
 import { shallowMount } from "@vue/test-utils";
 import { RouterLink } from "vue-router";
 import Vuex from "vuex";
+import VueFeather from "vue-feather";
+import { nextTick } from "vue";
 import AppHeader from "../../../src/app/components/AppHeader.vue";
 import EditSessionLabel from "../../../src/app/components/sessions/EditSessionLabel.vue";
 import { BasicState } from "../../../src/app/store/basic/state";
 import { mockBasicState } from "../../mocks";
-import VueFeather from "vue-feather";
-import {nextTick} from "vue";
 
 describe("AppHeader", () => {
-    const getWrapper = (appName: string | null = "test", sessionLabel: string | null = null, sessionId = "testSessionId") => {
+    const getWrapper = (appName: string | null = "test", sessionLabel: string | null = null,
+        sessionId = "testSessionId") => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({ appName, sessionLabel, sessionId })
         });
@@ -55,7 +56,7 @@ describe("AppHeader", () => {
         const sessionsDropDown = wrapper.find(".dropdown");
         expect(sessionsDropDown.find("a#sessions-menu").text()).toBe("Session: testSessionLabel");
 
-        //should also put the label on the edit dlg
+        // should also put the label on the edit dlg
         const editDlg = wrapper.findComponent(EditSessionLabel);
         expect(editDlg.props("sessionLabel")).toBe("testSessionLabel");
     });

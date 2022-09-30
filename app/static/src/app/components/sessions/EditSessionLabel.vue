@@ -36,8 +36,7 @@ import {
     computed, defineComponent, ref, watch
 } from "vue";
 import { useStore } from "vuex";
-import { AppStateAction } from "../../store/appState/actions";
-import {SessionsAction} from "../../store/sessions/actions";
+import { SessionsAction } from "../../store/sessions/actions";
 
 export default defineComponent({
     name: "EditSessionLabel",
@@ -73,7 +72,7 @@ export default defineComponent({
             emit("close");
         };
         const updateSessionLabel = () => {
-            const payload = {id: props.sessionId, label: sessionLabelInternal.value};
+            const payload = { id: props.sessionId, label: sessionLabelInternal.value };
             store.dispatch(`sessions/${SessionsAction.SaveSessionLabel}`, payload);
             close();
         };

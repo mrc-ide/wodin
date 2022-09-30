@@ -87,7 +87,7 @@ test.describe("Sessions tests", () => {
         await expect(await page.innerText(".session-label")).toBe("--no label--");
 
         // Set the current session label from the nav menu and check it updates on menu title and in the sessions list
-        await page.click("#sessions-menu")
+        await page.click("#sessions-menu");
         await page.click("#edit-current-session-label");
         await enterSessionLabel(page, "header-edit-session-label", "current session label");
         await expect(await page.innerText(":nth-match(.session-label, 1)")).toBe("current session label");

@@ -149,7 +149,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
 
     async post<T>(url: string, body: any, contentType = "application/json"): Promise<void | ResponseWithType<T>> {
         this._verifyHandlers(url);
-        const headers = { "Content-Type": contentType};
+        const headers = { "Content-Type": contentType };
         return this._handleAxiosResponse(axios.post(url, body, { headers }));
     }
 }

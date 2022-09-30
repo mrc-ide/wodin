@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, computed, ref} from "vue";
+import { defineComponent, computed, ref } from "vue";
 import VueFeather from "vue-feather";
 import { RouterLink } from "vue-router";
 import { useStore } from "vuex";
@@ -53,23 +53,23 @@ export default defineComponent({
         const editSessionLabelOpen = ref(false);
 
         const toggleEditSessionLabel = (edit: boolean) => {
-          editSessionLabelOpen.value = edit;
+            editSessionLabelOpen.value = edit;
         };
 
         const sessionId = computed(() => store.state.sessionId);
         const sessionLabel = computed(() => store.state.sessionLabel);
 
         const sessionMenuHeader = computed(() => {
-          return sessionLabel.value ? `Session: ${sessionLabel.value}` : "Sessions";
+            return sessionLabel.value ? `Session: ${sessionLabel.value}` : "Sessions";
         });
 
         return {
-          initialised,
-          toggleEditSessionLabel,
-          editSessionLabelOpen,
-          sessionId,
-          sessionLabel,
-          sessionMenuHeader
+            initialised,
+            toggleEditSessionLabel,
+            editSessionLabelOpen,
+            sessionId,
+            sessionLabel,
+            sessionMenuHeader
         };
     }
 });

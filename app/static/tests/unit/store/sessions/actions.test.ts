@@ -5,7 +5,7 @@ import {
 import { SessionsMutation } from "../../../../src/app/store/sessions/mutations";
 import { localStorageManager } from "../../../../src/app/localStorageManager";
 import { ErrorsMutation } from "../../../../src/app/store/errors/mutations";
-import {AppStateMutation} from "../../../../src/app/store/appState/mutations";
+import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
 import { ModelAction } from "../../../../src/app/store/model/actions";
 import { RunAction } from "../../../../src/app/store/run/actions";
 import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
@@ -192,13 +192,13 @@ describe("SessionsActions", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
 
-        const payload = {id: "testSessionId", label: "newLabel"};
-        await (actions[SessionsAction.SaveSessionLabel] as any)({commit, dispatch, rootState}, payload);
+        const payload = { id: "testSessionId", label: "newLabel" };
+        await (actions[SessionsAction.SaveSessionLabel] as any)({ commit, dispatch, rootState }, payload);
 
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetSessionLabel);
         expect(commit.mock.calls[0][1]).toBe("newLabel");
-        expect(commit.mock.calls[0][2]).toStrictEqual({root: true});
+        expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
 
         expect(mockAxios.history.post[0].url).toBe(url);
         expect(mockAxios.history.post[0].data).toBe("newLabel");
@@ -219,16 +219,16 @@ describe("SessionsActions", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
 
-        const payload = {id: "testSessionId", label: "newLabel"};
-        await (actions[SessionsAction.SaveSessionLabel] as any)({commit, dispatch, rootState}, payload);
+        const payload = { id: "testSessionId", label: "newLabel" };
+        await (actions[SessionsAction.SaveSessionLabel] as any)({ commit, dispatch, rootState }, payload);
 
         expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetSessionLabel);
         expect(commit.mock.calls[0][1]).toBe("newLabel");
-        expect(commit.mock.calls[0][2]).toStrictEqual({root: true})
+        expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
         expect(commit.mock.calls[1][0]).toBe(`errors/${ErrorsMutation.AddError}`);
         expect(commit.mock.calls[1][1].detail).toBe("TEST ERROR");
-        expect(commit.mock.calls[1][2]).toStrictEqual({root: true});
+        expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
     });
 
     it("save session label does not update root state when saving non-current session's label", async () => {
@@ -243,8 +243,8 @@ describe("SessionsActions", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
 
-        const payload = {id: "testSessionId", label: "newLabel"};
-        await (actions[SessionsAction.SaveSessionLabel] as any)({commit, dispatch, rootState}, payload);
+        const payload = { id: "testSessionId", label: "newLabel" };
+        await (actions[SessionsAction.SaveSessionLabel] as any)({ commit, dispatch, rootState }, payload);
 
         expect(commit).not.toHaveBeenCalled();
 
