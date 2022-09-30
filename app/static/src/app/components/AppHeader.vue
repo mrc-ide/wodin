@@ -10,7 +10,7 @@
         {{ sessionMenuHeader }}
       </a>
       <ul v-if="initialised" class="dropdown-menu" aria-labelledby="navbarDropdown">
-        <li class="dropdown-item clickable" @click="toggleEditSessionLabel(true)">
+        <li id="edit-current-session-label" class="dropdown-item clickable" @click="toggleEditSessionLabel(true)">
           <vue-feather class="grey inline-icon" type="edit-2" size="1.3rem"></vue-feather>
           Edit Label
         </li>
@@ -20,7 +20,8 @@
     </span>
     <span class="navbar-version navbar-text">WODIN v{{ wodinVersion }}</span>
   </nav>
-  <edit-session-label :open="editSessionLabelOpen"
+  <edit-session-label id="header-edit-session-label"
+                      :open="editSessionLabelOpen"
                       :session-id="sessionId"
                       :session-label="sessionLabel"
                       @close="toggleEditSessionLabel(false)"

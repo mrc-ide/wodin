@@ -19,7 +19,7 @@
           <div class="col-2 session-col-value session-label" :class="session.label ? '' : 'text-muted'">
             {{session.label || "--no label--"}}
           </div>
-          <div class="col-2 text-center session-col-value session-load">
+          <div class="col-2 text-center session-col-value session-edit-label">
             <vue-feather class="inline-icon brand clickable" type="edit-2" @click="editSessionLabel(session.id, session.label)"></vue-feather>
           </div>
           <div class="col-2 text-center session-col-value session-load">
@@ -41,7 +41,8 @@
     <div id="loading-sessions" v-else>
       {{ messages.loading }}
     </div>
-    <edit-session-label :open="editSessionLabelOpen"
+    <edit-session-label id="page-edit-session-label"
+                        :open="editSessionLabelOpen"
                         :session-id="selectedSessionId"
                         :session-label="selectedSessionLabel"
                         @close="toggleEditSessionLabelOpen(false)"
