@@ -33,7 +33,7 @@ describe("AppState actions", () => {
         mockAxios.reset();
     });
 
-    it("Initialise fetches config and commits result", async () => {
+    it("Initialise fetches config and commits result, and fetches odin runner", async () => {
         const config = {
             basicProp: "testValue",
             defaultCode: [],
@@ -66,8 +66,8 @@ describe("AppState actions", () => {
         expect(commit.mock.calls[3][0]).toBe(`run/${RunMutation.SetEndTime}`);
         expect(commit.mock.calls[3][1]).toStrictEqual(101);
 
-        // no code model fetch as defaultCode is empty
-        expect(dispatch).not.toBeCalled();
+        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
     });
 
     it("does not commit endtime if not given in fetched config", async () => {
@@ -92,7 +92,7 @@ describe("AppState actions", () => {
         expect(commit.mock.calls[2][0]).toBe(`code/${CodeMutation.SetCurrentCode}`);
     });
 
-    it("Initialise fetches config and commits default code if any, if no loadSessionId", async () => {
+    it("Initialise fetches config, commits any default and fetches runner, if no loadSessionId", async () => {
         const config = {
             basicProp: "testValue",
             defaultCode: ["line1", "line2"],
@@ -120,7 +120,9 @@ describe("AppState actions", () => {
         expect(commit.mock.calls[3][0]).toBe(`run/${RunMutation.SetEndTime}`);
         expect(commit.mock.calls[3][1]).toStrictEqual(101);
 
-        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.DefaultModel}`);
+        expect(dispatch).toHaveBeenCalledTimes(2);
+        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
+        expect(dispatch.mock.calls[1][0]).toBe(`model/${ModelAction.DefaultModel}`);
     });
 
     it("Initialise fetches config and commits error", async () => {

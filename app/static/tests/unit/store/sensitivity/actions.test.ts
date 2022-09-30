@@ -172,4 +172,45 @@ describe("Sensitivity actions", () => {
 
         expect(dispatch).toHaveBeenCalledWith("run/RunModel", null, { root: true });
     });
+
+    it("run sensitivity on rehydrate uses parameters from result", () => {
+        const mockResultBatchPars = {};
+        const rootState = {
+            model: mockModelState,
+            run: mockRunState
+        };
+        const state = {
+            result: {
+                inputs: {
+                    pars: mockResultBatchPars
+                }
+            }
+        };
+
+        const commit = jest.fn();
+        const dispatch = jest.fn();
+
+        (actions[SensitivityAction.RunSensitivityOnRehydrate] as any)({
+            rootState, getters, commit, dispatch, state
+        });
+
+        expect(commit).toHaveBeenCalledTimes(2);
+        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetResult);
+        expect(commit.mock.calls[0][1]).toStrictEqual({
+            inputs: { endTime: 99, pars: mockResultBatchPars },
+            batch: mockBatch,
+            error: null
+        });
+        expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetUpdateRequired);
+        expect(commit.mock.calls[1][1]).toStrictEqual({
+            endTimeChanged: false,
+            modelChanged: false,
+            parameterValueChanged: false,
+            sensitivityOptionsChanged: false
+        });
+
+        expect(mockRunner.batchRun).toHaveBeenCalledWith(rootState.model.odin, mockResultBatchPars, 0, 99, {});
+
+        expect(dispatch).not.toHaveBeenCalled();
+    });
 });

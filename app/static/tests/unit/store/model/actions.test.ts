@@ -6,7 +6,7 @@ import { actions, ModelAction } from "../../../../src/app/store/model/actions";
 import { ModelMutation, mutations } from "../../../../src/app/store/model/mutations";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { AppType } from "../../../../src/app/store/appState/state";
-import { RunAction, actions as runActions } from "../../../../src/app/store/run/actions";
+import { actions as runActions } from "../../../../src/app/store/run/actions";
 import { FitDataAction } from "../../../../src/app/store/fitData/actions";
 import { ModelFitAction } from "../../../../src/app/store/modelFit/actions";
 import { RunMutation, mutations as runMutations } from "../../../../src/app/store/run/mutations";
@@ -248,6 +248,21 @@ describe("Model actions", () => {
         const commit = jest.fn();
         (actions[ModelAction.CompileModel] as any)({ commit, state, rootState });
         expect(commit.mock.calls.length).toBe(0);
+    });
+
+    it("compile model on rehydrate only compiles the model", () => {
+        const state = {
+            odinModelResponse: {
+                model: "1+2"
+            }
+        };
+        const commit = jest.fn();
+        const dispatch = jest.fn();
+        (actions[ModelAction.CompileModelOnRehydrate] as any)({ commit, state, rootState });
+        expect(commit.mock.calls.length).toBe(1);
+        expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
+        expect(commit.mock.calls[0][1]).toBe(3);
+        expect(dispatch).not.toHaveBeenCalled();
     });
 
     // This one needs some work as we don't kick off the run after

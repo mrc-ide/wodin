@@ -151,4 +151,51 @@ describe("Run actions", () => {
             }
         });
     });
+
+    it("run model on rehydrate uses parameters and end time from result inputs", () => {
+        const mockOdin = {} as any;
+
+        const parameterValues = { p1: 1, p2: 2 };
+        const runner = mockRunner();
+        const modelState = mockModelState({
+            odinRunner: runner,
+            odin: mockOdin,
+            compileRequired: false
+        });
+        const rootState = {
+            model: modelState
+        } as any;
+        const state = mockRunState({
+            runRequired: {
+                modelChanged: true,
+                parameterValueChanged: true,
+                endTimeChanged: true
+            },
+            parameterValues: { p1: 10, p2: 20 },
+            endTime: 199,
+            result: {
+                inputs: {
+                    parameterValues,
+                    endTime: 99
+                }
+            } as any
+        });
+        const commit = jest.fn();
+
+        (actions[RunAction.RunModelOnRehydrate] as any)({ commit, state, rootState });
+
+        const run = runner.wodinRun;
+        expect(run.mock.calls[0][0]).toBe(mockOdin);
+        expect(run.mock.calls[0][1]).toStrictEqual(parameterValues);
+        expect(run.mock.calls[0][2]).toBe(0); // start
+        expect(run.mock.calls[0][3]).toBe(99); // end time from result
+
+        expect(commit.mock.calls.length).toBe(1);
+        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResult);
+        expect(commit.mock.calls[0][1]).toEqual({
+            inputs: { parameterValues, endTime: 99 },
+            solution: "test solution",
+            error: null
+        });
+    });
 });

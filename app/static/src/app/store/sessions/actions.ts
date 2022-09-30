@@ -5,7 +5,11 @@ import { localStorageManager } from "../../localStorageManager";
 import { api } from "../../apiService";
 import { SessionsMutation } from "./mutations";
 import { ErrorsMutation } from "../errors/mutations";
-import { CodeAction } from "../code/actions";
+import { RunAction } from "../run/actions";
+import { ModelAction } from "../model/actions";
+import { SerialisedAppState } from "../../types/serialisationTypes";
+import { deserialiseState } from "../../serialise";
+import { SensitivityAction } from "../sensitivity/actions";
 
 export enum SessionsAction {
     GetSessions = "GetSessions",
@@ -27,7 +31,6 @@ export const actions: ActionTree<SessionsState, AppState> = {
     },
 
     async [SessionsAction.Rehydrate](context, sessionId: string) {
-        // TODO: complete rehydrate of entire state, just setting code for now
         const { rootState, dispatch } = context;
         const { appName } = rootState;
         const url = `/apps/${appName}/sessions/${sessionId}`;
@@ -37,8 +40,23 @@ export const actions: ActionTree<SessionsState, AppState> = {
             .get(url);
 
         if (response) {
-            const sessionData = response.data as Partial<AppState>;
-            await dispatch(`code/${CodeAction.UpdateCode}`, sessionData.code!.currentCode, { root: true });
+            const sessionData = response.data as SerialisedAppState;
+
+            deserialiseState(rootState, sessionData);
+
+            const rootOption = { root: true };
+            await dispatch(`model/${ModelAction.FetchOdinRunner}`, null, rootOption);
+            // Don't auto-run if compile was required i.e. model was out of date when session was last saved
+            if (sessionData.model.hasOdin && !sessionData.model.compileRequired) {
+                // compile the model to evaluate odin, which is not persisted
+                await dispatch(`model/${ModelAction.CompileModelOnRehydrate}`, null, rootOption);
+                if (sessionData.run.result?.hasResult) {
+                    dispatch(`run/${RunAction.RunModelOnRehydrate}`, null, rootOption);
+                }
+                if (sessionData.sensitivity.result?.hasResult) {
+                    dispatch(`sensitivity/${SensitivityAction.RunSensitivityOnRehydrate}`, null, rootOption);
+                }
+            }
         }
     }
 };

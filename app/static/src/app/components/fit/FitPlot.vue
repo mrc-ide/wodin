@@ -32,11 +32,28 @@ export default defineComponent({
 
         const placeholderMessage = userMessages.modelFit.notFittedYet;
 
-        const solution = computed(() => store.state.modelFit.result?.solution);
+        // If we're displaying a reloaded session with fit, we should be able to plot the previous fit plot without
+        // re-running fit. Determine if this is the case, by checking if we have a fit result but no fit solution
+        // (which is not persisted)
+        const plotRehydratedFit = computed(() => {
+            const { modelFit } = store.state;
+            const result = modelFit.result && !modelFit.result.solution && !modelFit.result.error;
+            return result;
+        });
 
-        const endTime = computed(() => store.getters[`fitData/${FitDataGetter.dataEnd}`]);
+        const solution = computed(() => {
+            return plotRehydratedFit.value ? store.state.run.result?.solution : store.state.modelFit.result?.solution;
+        });
 
-        const link = computed(() => store.getters[`fitData/${FitDataGetter.link}`]);
+        const endTime = computed(() => {
+            return plotRehydratedFit.value ? store.state.modelFit.result.inputs.endTime
+                : store.getters[`fitData/${FitDataGetter.dataEnd}`];
+        });
+
+        const link = computed(() => {
+            return plotRehydratedFit.value ? store.state.modelFit.result.inputs.link
+                : store.getters[`fitData/${FitDataGetter.link}`];
+        });
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
             const { data } = store.state.fitData;
