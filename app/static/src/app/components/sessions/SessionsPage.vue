@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="row">
+      <errors-alert></errors-alert>
       <h2>Sessions</h2>
     </div>
     <template v-if="sessionsMetadata">
@@ -48,10 +49,12 @@ import VueFeather from "vue-feather";
 import { RouterLink } from "vue-router";
 import { SessionsAction } from "../../store/sessions/actions";
 import userMessages from "../../userMessages";
+import ErrorsAlert from "../ErrorsAlert.vue";
 
 export default defineComponent({
     name: "SessionsPage",
     components: {
+        ErrorsAlert,
         VueFeather,
         RouterLink
     },
