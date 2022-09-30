@@ -123,6 +123,7 @@ export const mockSensitivityState = (state: Partial<SensitivityState> = {}): Sen
 export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
     return {
         sessionId: "123",
+        sessionLabel: null,
         appType: AppType.Basic,
         openVisualisationTab: VisualisationTab.Run,
         appName: "",
@@ -163,6 +164,7 @@ export const mockModelFitState = (state: Partial<ModelFitState> = {}): ModelFitS
 export const mockFitState = (state: Partial<FitState> = {}): FitState => {
     return {
         sessionId: "123",
+        sessionLabel: null,
         appType: AppType.Fit,
         openVisualisationTab: VisualisationTab.Run,
         appName: "",
@@ -185,6 +187,7 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
 export const mockStochasticState = (state: Partial<StochasticState> = {}): StochasticState => {
     return {
         sessionId: "123",
+        sessionLabel: null,
         appType: AppType.Stochastic,
         openVisualisationTab: VisualisationTab.Run,
         appName: "",
