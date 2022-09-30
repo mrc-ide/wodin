@@ -153,6 +153,7 @@ describe("serialise", () => {
 
     const basicState: BasicState = {
         sessionId: "1234",
+        sessionLabel: null,
         config: null,
         appName: "test app",
         appType: AppType.Basic,
@@ -167,6 +168,7 @@ describe("serialise", () => {
 
     const fitState: FitState = {
         sessionId: "5678",
+        sessionLabel: null,
         config: null,
         appName: "test fit app",
         appType: AppType.Fit,
