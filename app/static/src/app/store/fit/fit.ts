@@ -19,6 +19,7 @@ import { sessions } from "../sessions/sessions";
 const defaultState: () => any = () => {
     return {
         sessionId: newSessionId(),
+        sessionLabel: null,
         appType: AppType.Fit,
         openVisualisationTab: VisualisationTab.Run,
         appName: null,

@@ -5,6 +5,7 @@ import { localStorageManager } from "../../localStorageManager";
 import { api } from "../../apiService";
 import { SessionsMutation } from "./mutations";
 import { ErrorsMutation } from "../errors/mutations";
+import { AppStateMutation } from "../appState/mutations";
 import { RunAction } from "../run/actions";
 import { ModelAction } from "../model/actions";
 import { SerialisedAppState } from "../../types/serialisationTypes";
@@ -13,7 +14,13 @@ import { SensitivityAction } from "../sensitivity/actions";
 
 export enum SessionsAction {
     GetSessions = "GetSessions",
-    Rehydrate = "Rehydrate"
+    Rehydrate = "Rehydrate",
+    SaveSessionLabel = "SaveSessionLabel"
+}
+
+interface SaveSessionLabelPayload {
+    id: string,
+    label: string
 }
 
 export const actions: ActionTree<SessionsState, AppState> = {
@@ -58,5 +65,23 @@ export const actions: ActionTree<SessionsState, AppState> = {
                 }
             }
         }
+    },
+
+    async [SessionsAction.SaveSessionLabel](context, payload: SaveSessionLabelPayload) {
+        const { commit, dispatch, rootState } = context;
+        const { appName } = rootState;
+        const { label, id } = payload;
+        const currentSessionId = rootState.sessionId;
+        if (id === currentSessionId) {
+            commit(AppStateMutation.SetSessionLabel, label, { root: true });
+        }
+        const url = `/apps/${appName}/sessions/${id}/label`;
+        await api(context)
+            .ignoreSuccess()
+            .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
+            .post(url, label || "", "text/plain");
+
+        // refresh sessions metadata so sessions page updates
+        await dispatch(SessionsAction.GetSessions);
     }
 };
