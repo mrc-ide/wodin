@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import VueFeather from "vue-feather";
 import { RouterLink } from "vue-router";
 import SessionsPage from "../../../../src/app/components/sessions/SessionsPage.vue";
+import ErrorsAlert from "../../../../src/app/components/ErrorsAlert.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState } from "../../../mocks";
 import { SessionsAction } from "../../../../src/app/store/sessions/actions";
@@ -62,6 +63,7 @@ describe("SessionsPage", () => {
         expect(session2Cells.at(1)!.text()).toBe("--no label--");
         expect(session2Cells.at(2)!.find("a").attributes("href")).toBe("/apps/testApp?sessionId=def");
         expect(session2Cells.at(2)!.find("a").findComponent(VueFeather).props("type")).toBe("upload");
+        expect(wrapper.findComponent(ErrorsAlert).exists()).toBe(true);
     });
 
     it("shows loading message when session metadata is null in store", () => {

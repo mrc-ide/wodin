@@ -37,7 +37,8 @@ describe("ErrorsAlert", () => {
     it("renders as expected with one error", () => {
         const wrapper = getWrapper([{ error: "TEST_CODE", detail: "Test Error Message" }]);
         const alert = wrapper.find(".alert");
-        expect(alert.classes()).toStrictEqual(["alert", "alert-danger", "alert-dismissible", "fade", "show"]);
+        expect(alert.classes())
+            .toStrictEqual(["alert", "alert-danger", "text-danger", "alert-dismissible", "fade", "show"]);
         expect(alert.attributes("role")).toBe("alert");
         expect(alert.find("strong").text()).toBe("An error occurred:");
         const listItems = alert.findAll("ul li");
@@ -45,9 +46,9 @@ describe("ErrorsAlert", () => {
         expect(listItems.at(0)?.text()).toBe("Test Error Message");
 
         const closeButton = alert.find("button");
-        expect(closeButton.classes()).toStrictEqual(["close"]);
+        expect(closeButton.classes()).toStrictEqual(["btn-close", "float-end"]);
         expect(closeButton.attributes("aria-label")).toBe("Close");
-        expect(closeButton.text()).toBe("×");
+        expect(closeButton.text()).toBe("");
     });
 
     it("renders as expected with multiple errors", () => {
