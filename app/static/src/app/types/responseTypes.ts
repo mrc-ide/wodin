@@ -173,5 +173,6 @@ export interface OdinRunner {
 export interface SessionMetadata {
     id: string,
     time: string,
-    label: string | null
+    label: string | null,
+    friendlyId: string | null,
 }

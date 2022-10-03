@@ -10,7 +10,8 @@
           <div class="col-3 session-col-header">Saved</div>
           <div class="col-2 session-col-header">Label</div>
           <div class="col-2 text-center session-col-header">Edit Label</div>
-          <div class="col-2 text-center session-col-header">Load</div>
+          <div class="col-1 text-center session-col-header">Load</div>
+          <div class="col-4 text-center session-col-header">Share</div>
         </div>
         <div class="row py-2" v-for="session in sessionsMetadata" :key="session.id">
           <div class="col-3 session-col-value session-time">
@@ -24,13 +25,23 @@
             <vue-feather class="inline-icon brand clickable"
                          type="edit-2" @click="editSessionLabel(session.id, session.label)"></vue-feather>
           </div>
-          <div class="col-2 text-center session-col-value session-load">
+          <div class="col-1 text-center session-col-value session-load">
             <router-link v-if="isCurrentSession(session.id)" to="/">
               <vue-feather class="inline-icon brand" type="home"></vue-feather>
             </router-link>
             <a v-else :href="sessionUrl(session.id)">
               <vue-feather class="inline-icon brand" type="upload"></vue-feather>
             </a>
+          </div>
+          <div class="col-4 text-center session-col-value session-share brand">
+            <span class="session-copy-link clickable">
+              <vue-feather class="inline-icon" type="copy"></vue-feather>
+              Copy link
+            </span>
+            <span class="session-copy-code clickable ms-2">
+              <vue-feather class="inline-icon" type="copy"></vue-feather>
+              Copy code
+            </span>
           </div>
         </div>
       </template>
