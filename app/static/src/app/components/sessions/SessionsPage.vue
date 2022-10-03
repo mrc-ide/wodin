@@ -38,7 +38,7 @@
               <vue-feather class="inline-icon" type="copy"></vue-feather>
               Copy link
             </span>
-            <span class="session-copy-code clickable ms-2">
+            <span class="session-copy-code clickable ms-2" @click="copyCode(session)">
               <vue-feather class="inline-icon" type="copy"></vue-feather>
               Copy code
             </span>
@@ -66,7 +66,7 @@
 <script lang="ts">
 import { utc } from "moment";
 import {
-    onMounted, defineComponent, computed, ref
+    onMounted, defineComponent, computed, ref, nextTick
 } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
@@ -113,15 +113,30 @@ export default defineComponent({
             toggleEditSessionLabelOpen(true);
         };
 
-        const copyLink = async (session: SessionMetadata) => {
-            if (!session.friendlyId) {
-                await store.dispatch(`sessions/${SessionsAction.GenerateFriendlyId}`, session.id);
+        const ensureFriendlyId = async (session: SessionMetadata) => {
+            if (session.friendlyId) {
+                return session.friendlyId;
             }
-
-            // TODO: copy the link
+            await store.dispatch(`sessions/${SessionsAction.GenerateFriendlyId}`, session.id);
+            await nextTick();
+            return sessionsMetadata.value.find((m: SessionMetadata) => m.id === session.id)?.friendlyId;
         };
 
-        // TODO: copy code
+        const copyText = (text: string) => {
+          navigator.clipboard.writeText(text);
+          console.log("copied: " + text)
+        };
+
+        const copyLink = async (session: SessionMetadata) => {
+            const friendlyId = await ensureFriendlyId(session);
+            // TODO: copy the link
+            copyText(`link: ${friendlyId}`);
+        };
+
+        const copyCode = async (session: SessionMetadata) => {
+            const friendlyId = await ensureFriendlyId(session);
+            copyText(friendlyId);
+        };
 
         onMounted(() => {
             store.dispatch(`sessions/${SessionsAction.GetSessions}`);
@@ -140,6 +155,7 @@ export default defineComponent({
             editSessionLabel,
             toggleEditSessionLabelOpen,
             copyLink,
+            copyCode,
             messages
         };
     }

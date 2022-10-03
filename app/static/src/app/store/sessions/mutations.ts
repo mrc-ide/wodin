@@ -23,7 +23,6 @@ export const mutations: MutationTree<SessionsState> = {
     },
 
     [SessionsMutation.SetSessionFriendlyId](state: SessionsState, payload: SetSessionFriendlyIdPayload) {
-        console.log(`Setting friendly id for ${payload.sessionId} to ${payload.friendlyId}`)
         const sessionMetadata = state.sessionsMetadata?.find((m: SessionMetadata) => m.id === payload.sessionId);
         if (sessionMetadata) {
             sessionMetadata.friendlyId = payload.friendlyId;

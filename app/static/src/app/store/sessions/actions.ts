@@ -93,7 +93,7 @@ export const actions: ActionTree<SessionsState, AppState> = {
         const response = await api(context)
             .ignoreSuccess()
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
-            .get(`/apps/${appName}/sessions/${sessionId}/friendly`)
+            .post(`/apps/${appName}/sessions/${sessionId}/friendly`, null);
 
         if (response) {
             commit(SessionsMutation.SetSessionFriendlyId, {sessionId, friendlyId: response.data});
