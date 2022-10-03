@@ -34,7 +34,7 @@
             </a>
           </div>
           <div class="col-4 text-center session-col-value session-share brand">
-            <span class="session-copy-link clickable">
+            <span class="session-copy-link clickable" @click="copyLink(session)">
               <vue-feather class="inline-icon" type="copy"></vue-feather>
               Copy link
             </span>
@@ -75,6 +75,7 @@ import { SessionsAction } from "../../store/sessions/actions";
 import userMessages from "../../userMessages";
 import ErrorsAlert from "../ErrorsAlert.vue";
 import EditSessionLabel from "./EditSessionLabel.vue";
+import { SessionMetadata } from "../../types/responseTypes";
 
 export default defineComponent({
     name: "SessionsPage",
@@ -112,6 +113,16 @@ export default defineComponent({
             toggleEditSessionLabelOpen(true);
         };
 
+        const copyLink = async (session: SessionMetadata) => {
+            if (!session.friendlyId) {
+                await store.dispatch(`sessions/${SessionsAction.GenerateFriendlyId}`, session.id);
+            }
+
+            // TODO: copy the link
+        };
+
+        // TODO: copy code
+
         onMounted(() => {
             store.dispatch(`sessions/${SessionsAction.GetSessions}`);
         });
@@ -128,6 +139,7 @@ export default defineComponent({
             selectedSessionLabel,
             editSessionLabel,
             toggleEditSessionLabelOpen,
+            copyLink,
             messages
         };
     }
