@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import VueFeather from "vue-feather";
 import { RouterLink } from "vue-router";
 import SessionsPage from "../../../../src/app/components/sessions/SessionsPage.vue";
+import ErrorsAlert from "../../../../src/app/components/ErrorsAlert.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState } from "../../../mocks";
 import { SessionsAction } from "../../../../src/app/store/sessions/actions";
@@ -74,6 +75,8 @@ describe("SessionsPage", () => {
         expect(editDlg.props("open")).toBe(false);
         expect(editDlg.props("sessionId")).toBe(null);
         expect(editDlg.props("sessionLabel")).toBe(null);
+
+        expect(wrapper.findComponent(ErrorsAlert).exists()).toBe(true);
     });
 
     it("shows loading message when session metadata is null in store", () => {

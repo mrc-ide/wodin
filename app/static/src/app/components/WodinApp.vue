@@ -6,6 +6,7 @@
                   <loading-spinner size="lg"></loading-spinner>
                   <h2 id="loading-message">Loading application...</h2>
                 </div>
+                <errors-alert></errors-alert>
                 <wodin-panels v-if="!loading" >
                     <template v-slot:left>
                       <slot name="left"></slot>
@@ -14,7 +15,6 @@
                       <slot name="right"></slot>
                     </template>
                 </wodin-panels>
-                <errors-alert></errors-alert>
             </div>
         </div>
     </div>
