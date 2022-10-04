@@ -23,7 +23,8 @@
           </div>
           <div class="col-2 text-center session-col-value session-edit-label">
             <vue-feather class="inline-icon brand clickable"
-                         type="edit-2" @click="editSessionLabel(session.id, session.label)"></vue-feather>
+                         type="edit-2"
+                         @click="editSessionLabel(session.id, session.label)"></vue-feather>
           </div>
           <div class="col-1 text-center session-col-value session-load">
             <router-link v-if="isCurrentSession(session.id)" to="/">
@@ -33,15 +34,21 @@
               <vue-feather class="inline-icon brand" type="upload"></vue-feather>
             </a>
           </div>
-          <div class="col-4 text-center session-col-value session-share brand">
-            <span class="session-copy-link clickable" @click="copyLink(session)">
-              <vue-feather class="inline-icon" type="copy"></vue-feather>
-              Copy link
-            </span>
-            <span class="session-copy-code clickable ms-2" @click="copyCode(session)">
-              <vue-feather class="inline-icon" type="copy"></vue-feather>
-              Copy code
-            </span>
+          <div class="col-4 session-col-value session-share brand">
+              <div style="margin-left: auto; margin-right: auto; width: 14rem">
+                <span class="session-copy-link clickable" @click="copyLink(session)" @mouseleave="clearLastCopied">
+                  <vue-feather class="inline-icon" type="copy"></vue-feather>
+                  Copy link
+                </span>
+                <span class="session-copy-code clickable ms-2" @click="copyCode(session)" @mouseleave="clearLastCopied">
+                  <vue-feather class="inline-icon" type="copy"></vue-feather>
+                  Copy code
+                </span>
+                <br/>
+                <div class="small text-muted text-nowrap text-start" style="height:0.8rem; float:left;">
+                  {{copyTooltip(session)}}
+                </div>
+              </div>
           </div>
         </div>
       </template>
@@ -97,6 +104,9 @@ export default defineComponent({
         const selectedSessionId = ref<string | null>(null);
         const selectedSessionLabel = ref<string | null>(null);
 
+        const lastCopySessionId = ref<string | null>(null);
+        const lastCopyMsg = ref<string | null>(null);
+
         const formatDateTime = (isoUTCString: string) => {
             return utc(isoUTCString).local().format("DD/MM/YYYY HH:mm:ss");
         };
@@ -115,28 +125,45 @@ export default defineComponent({
         };
 
         const ensureFriendlyId = async (session: SessionMetadata) => {
+            lastCopySessionId.value = session.id;
             if (session.friendlyId) {
                 return session.friendlyId;
             }
+            lastCopyMsg.value = "Fetching code...";
             await store.dispatch(`sessions/${SessionsAction.GenerateFriendlyId}`, session.id);
             await nextTick();
-            return sessionsMetadata.value.find((m: SessionMetadata) => m.id === session.id)?.friendlyId;
+            const friendlyId = sessionsMetadata.value.find((m: SessionMetadata) => m.id === session.id)?.friendlyId;
+            if (!friendlyId) {
+                lastCopyMsg.value = "Error fetching code";
+            }
+            return friendlyId;
         };
 
         const copyText = (text: string) => {
             navigator.clipboard.writeText(text);
-            console.log(`copied: ${text}`);
+            lastCopyMsg.value = `Copied: ${text}`;
         };
 
         const copyLink = async (session: SessionMetadata) => {
             const friendlyId = await ensureFriendlyId(session);
-            const link = `${baseUrl.value}/apps/${appName.value}/?share=${friendlyId}`;
-            copyText(link);
+            if (friendlyId) {
+                const link = `${baseUrl.value}/apps/${appName.value}/?share=${friendlyId}`;
+                copyText(link);
+            }
         };
 
         const copyCode = async (session: SessionMetadata) => {
             const friendlyId = await ensureFriendlyId(session);
-            copyText(friendlyId);
+            if (friendlyId) {
+                copyText(friendlyId);
+            }
+        };
+
+        const copyTooltip = (session: SessionMetadata) => (session.id === lastCopySessionId.value ? lastCopyMsg.value : null);
+
+        const clearLastCopied = () => {
+            lastCopySessionId.value = null;
+            lastCopyMsg.value = null;
         };
 
         onMounted(() => {
@@ -153,10 +180,14 @@ export default defineComponent({
             editSessionLabelOpen,
             selectedSessionId,
             selectedSessionLabel,
+            lastCopySessionId,
+            lastCopyMsg,
             editSessionLabel,
             toggleEditSessionLabelOpen,
             copyLink,
             copyCode,
+            copyTooltip,
+            clearLastCopied,
             messages
         };
     }
