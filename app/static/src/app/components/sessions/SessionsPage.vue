@@ -45,7 +45,7 @@
                   Copy code
                 </span>
                 <br/>
-                <div class="small text-muted text-nowrap float-start" style="height:0.8rem;">
+                <div class="session-copy-confirm small text-muted text-nowrap float-start" style="height:0.8rem;">
                   {{getCopyMsg(session)}}
                 </div>
               </div>
