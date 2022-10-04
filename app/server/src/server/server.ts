@@ -24,7 +24,7 @@ const { configPath } = require("./args");
 // Global config
 const configReader = new ConfigReader(configPath);
 const wodinConfig = configReader.readConfigFile("wodin.config.json") as WodinConfig;
-const { port, appsPath, odinAPI } = wodinConfig;
+const { port, appsPath, baseUrl, odinAPI } = wodinConfig;
 const defaultCodeReader = new DefaultCodeReader(`${configPath}/defaultCode`);
 
 const redis = redisConnection(
@@ -34,7 +34,7 @@ const redis = redisConnection(
 
 // Make app locals available to controllers
 Object.assign(app.locals, {
-    appsPath, configPath, configReader, defaultCodeReader, odinAPI, redis, wodinConfig, wodinVersion
+    appsPath, baseUrl, configPath, configReader, defaultCodeReader, odinAPI, redis, wodinConfig, wodinVersion
 });
 
 // Static content

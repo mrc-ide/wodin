@@ -89,6 +89,7 @@ export default defineComponent({
         const store = useStore();
 
         const sessionsMetadata = computed(() => store.state.sessions.sessionsMetadata);
+        const baseUrl = computed(() => store.state.config.baseUrl);
         const appName = computed(() => store.state.appName);
         const currentSessionId = computed(() => store.state.sessionId);
 
@@ -123,14 +124,14 @@ export default defineComponent({
         };
 
         const copyText = (text: string) => {
-          navigator.clipboard.writeText(text);
-          console.log("copied: " + text)
+            navigator.clipboard.writeText(text);
+            console.log(`copied: ${text}`);
         };
 
         const copyLink = async (session: SessionMetadata) => {
             const friendlyId = await ensureFriendlyId(session);
-            // TODO: copy the link
-            copyText(`link: ${friendlyId}`);
+            const link = `${baseUrl.value}/apps/${appName.value}/?share=${friendlyId}`;
+            copyText(link);
         };
 
         const copyCode = async (session: SessionMetadata) => {
