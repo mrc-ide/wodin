@@ -3,8 +3,7 @@ import { actions } from "./actions";
 import { mutations } from "./mutations";
 
 export const defaultState: SessionsState = {
-    sessionsMetadata: null,
-    fetchingFriendlyId: false
+    sessionsMetadata: null
 };
 
 export const sessions = {

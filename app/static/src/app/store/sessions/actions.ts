@@ -89,7 +89,6 @@ export const actions: ActionTree<SessionsState, AppState> = {
     async [SessionsAction.GenerateFriendlyId](context, sessionId: string) {
         const { commit, rootState } = context;
         const { appName } = rootState;
-        commit(SessionsMutation.SetFetchingFriendlyId, true);
         const response = await api(context)
             .ignoreSuccess()
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
@@ -98,6 +97,5 @@ export const actions: ActionTree<SessionsState, AppState> = {
         if (response) {
             commit(SessionsMutation.SetSessionFriendlyId, {sessionId, friendlyId: response.data});
         }
-        commit(SessionsMutation.SetFetchingFriendlyId, true);
     }
 };

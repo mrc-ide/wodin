@@ -35,7 +35,7 @@
             </a>
           </div>
           <div class="col-4 session-col-value session-share brand">
-              <div style="margin-left: auto; margin-right: auto; width: 14rem">
+              <div class="mx-auto" style="width: 14rem">
                 <span class="session-copy-link clickable" @click="copyLink(session)" @mouseleave="clearLastCopied">
                   <vue-feather class="inline-icon" type="copy"></vue-feather>
                   Copy link
@@ -45,8 +45,8 @@
                   Copy code
                 </span>
                 <br/>
-                <div class="small text-muted text-nowrap text-start" style="height:0.8rem; float:left;">
-                  {{copyTooltip(session)}}
+                <div class="small text-muted text-nowrap float-start" style="height:0.8rem;">
+                  {{getCopyMsg(session)}}
                 </div>
               </div>
           </div>
@@ -105,7 +105,7 @@ export default defineComponent({
         const selectedSessionLabel = ref<string | null>(null);
 
         const lastCopySessionId = ref<string | null>(null);
-        const lastCopyMsg = ref<string | null>(null);
+        const lastCopyMsg = ref<string | null>(null); // Feedback message to show under last copy control clicked
 
         const formatDateTime = (isoUTCString: string) => {
             return utc(isoUTCString).local().format("DD/MM/YYYY HH:mm:ss");
@@ -159,7 +159,7 @@ export default defineComponent({
             }
         };
 
-        const copyTooltip = (session: SessionMetadata) => (session.id === lastCopySessionId.value ? lastCopyMsg.value : null);
+        const getCopyMsg = (session: SessionMetadata) => (session.id === lastCopySessionId.value ? lastCopyMsg.value : null);
 
         const clearLastCopied = () => {
             lastCopySessionId.value = null;
@@ -186,7 +186,7 @@ export default defineComponent({
             toggleEditSessionLabelOpen,
             copyLink,
             copyCode,
-            copyTooltip,
+            getCopyMsg,
             clearLastCopied,
             messages
         };
