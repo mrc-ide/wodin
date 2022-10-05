@@ -254,4 +254,35 @@ describe("SessionsActions", () => {
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch.mock.calls[0][0]).toBe(SessionsAction.GetSessions);
     });
+
+    it("GenerateFriendlyId posts to endpoint and commits id", async () => {
+        const url = "apps/testApp/sessions/testSessionId/friendly";
+        mockAxios.onPost(url)
+            .reply(200, mockSuccess("good-dog"));
+        const rootState = mockBasicState({
+            appName: "testApp"
+        });
+        const commit = jest.fn();
+
+        await (actions[SessionsAction.GenerateFriendlyId] as any)({commit, rootState}, "testSessionId");
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(SessionsMutation.SetSessionFriendlyId);
+        expect(commit.mock.calls[0][1]).toStrictEqual({sessionId: "testSessionId", friendlyId: "good-dog"});
+    });
+
+    it("GenerateFriendId commits error response", async () => {
+        const url = "apps/testApp/sessions/testSessionId/friendly";
+        mockAxios.onPost(url)
+            .reply(500, mockFailure("Test Error"));
+        const rootState = mockBasicState({
+            appName: "testApp"
+        });
+        const commit = jest.fn();
+
+        await (actions[SessionsAction.GenerateFriendlyId] as any)({commit, rootState}, "testSessionId");
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(`errors/${ErrorsMutation.AddError}`);
+        expect(commit.mock.calls[0][1].detail).toBe("Test Error");
+        expect(commit.mock.calls[0][2]).toStrictEqual({root: true});
+    });
 });
