@@ -35,7 +35,7 @@
             </a>
           </div>
           <div class="col-4 session-col-value session-share brand">
-              <div class="mx-auto" style="width: 14rem">
+              <div class="mx-auto" style="width: 16rem">
                 <span class="session-copy-link clickable" @click="copyLink(session)" @mouseleave="clearLastCopied">
                   <vue-feather class="inline-icon" type="copy"></vue-feather>
                   Copy link
@@ -140,7 +140,7 @@ export default defineComponent({
         };
 
         const copyText = (text: string) => {
-            navigator.clipboard.writeText(text);
+            window.navigator.clipboard.writeText(text);
             lastCopyMsg.value = `Copied: ${text}`;
         };
 

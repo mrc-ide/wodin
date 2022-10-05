@@ -13,6 +13,13 @@ import EditSessionLabel from "../../../../src/app/components/sessions/EditSessio
 describe("SessionsPage", () => {
     const mockGetSessions = jest.fn();
     const mockGenerateFriendlyId = jest.fn();
+    const mockClipboardWriteText = jest.fn();
+
+    Object.assign(window.navigator, {
+        clipboard: {
+            writeText: mockClipboardWriteText
+        }
+    });
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -164,8 +171,58 @@ describe("SessionsPage", () => {
         const session1Cells = rows.at(2)!.findAll("div.session-col-value");
         await session1Cells.at(4)!.find(".session-copy-link").trigger("click");
 
+        const expectedLink = "http://localhost:3000/apps/testApp/?share=bad-cat";
+
+        expect(mockClipboardWriteText).toHaveBeenCalledTimes(1);
+        expect(mockClipboardWriteText.mock.calls[0][0]).toBe(expectedLink);
+
         expect(session1Cells.at(4)!.find(".session-copy-confirm").text())
-            .toBe("http://localhost:3000/apps/testApp/?share=bad-cat");
-        // TODO: test copy to navigator (spyOn)
+            .toBe(`Copied: ${expectedLink}`);
     });
+
+    it("copy code copies friendly id to clipboard and updates confirmation", async () => {
+        const wrapper = getWrapper(sessionsMetadata);
+        const rows = wrapper.findAll(".container .row");
+        const session1Cells = rows.at(2)!.findAll("div.session-col-value");
+        await session1Cells.at(4)!.find(".session-copy-code").trigger("click");
+
+        expect(mockClipboardWriteText).toHaveBeenCalledTimes(1);
+        expect(mockClipboardWriteText.mock.calls[0][0]).toBe("bad-cat");
+
+        expect(session1Cells.at(4)!.find(".session-copy-confirm").text())
+            .toBe(`Copied: bad-cat`);
+    });
+
+    it("mouseleave event from copy control clears confirm text", async () => {
+        const wrapper = getWrapper(sessionsMetadata);
+        const rows = wrapper.findAll(".container .row");
+        const session1Cells = rows.at(2)!.findAll("div.session-col-value");
+        await session1Cells.at(4)!.find(".session-copy-code").trigger("click");
+        expect(session1Cells.at(4)!.find(".session-copy-confirm").text()).toBe(`Copied: bad-cat`);
+
+        await session1Cells.at(4)!.find(".session-copy-code").trigger("mouseleave");
+        expect(session1Cells.at(4)!.find(".session-copy-confirm").text()).toBe("");
+    });
+
+    it("copy confirmation indicates if friendly id is being fetched, and could not be generated", (done) => {
+        const runAsync = async () => {
+            // the mock generate action won't actually mutate the state, so friendly id will still be null after it's done,
+            // and the component will assume the id could not be fetched
+            const wrapper = getWrapper(sessionsMetadata);
+            const rows = wrapper.findAll(".container .row");
+            const session2Cells = rows.at(3)!.findAll("div.session-col-value");
+            await session2Cells.at(4)!.find(".session-copy-code").trigger("click");
+            // message will update to 'Fetching code...' while it calls the action
+            const confirm = session2Cells.at(4)!.find(".session-copy-confirm");
+            expect(confirm.text()).toBe("Fetching code...");
+
+            // when action is completed, id has not been successfully updated
+            setTimeout(() => {
+                expect(confirm.text()).toBe("Error fetching code");
+                done();
+            });
+        };
+        runAsync();
+    });
+
 });
