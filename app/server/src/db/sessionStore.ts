@@ -72,6 +72,11 @@ export class SessionStore {
         return this._redis.hget(this.sessionKey("data"), id);
     }
 
+    async getSessionIdFromFriendlyId(friendlyId: string) {
+        const keyFriendlyToMachine = this.sessionKey("machine");
+        return this._redis.hget(keyFriendlyToMachine, friendlyId);
+    }
+
     async generateFriendlyId(id: string, maxRetries: number = 10) : Promise<string> {
         // Try several times to generate a friendly id but fall back
         // on the machine readable id (which should be globally

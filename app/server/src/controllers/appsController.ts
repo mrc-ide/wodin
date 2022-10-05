@@ -9,7 +9,14 @@ export class AppsController {
             configReader, appsPath, wodinConfig, wodinVersion
         } = req.app.locals as AppLocals;
         const { appName } = req.params;
-        const { sessionId } = req.query;
+        // client can pass either sessionId or share (frienldy id) parameter to identify session to reload
+        let { sessionId, share } = req.query;
+
+        if (share) {
+            // TODO: common way to get store
+           sessionId = sessionStore.getSessionId(share);
+        }
+
         const config = configReader.readConfigFile(appsPath, `${appName}.config.json`) as any;
         if (config) {
             const view = `${config.appType}-app`;
