@@ -90,7 +90,8 @@ describe("SessionsPage", () => {
         expect(session1Cells.at(4)!.find("span.session-copy-code").text()).toBe("Copy code");
         expect(session1Cells.at(4)!.find("span.session-copy-code").findComponent(VueFeather).props("type"))
             .toBe("copy");
-        expect(session1Cells.at(4)!.find("span.session-copy-confirm").text()).toBe("");
+        expect(session1Cells.at(4)!.find(".session-copy-confirm").text()).toBe("");
+
         const session2Cells = rows.at(3)!.findAll("div.session-col-value");
         expect(session1Cells.length).toBe(5);
         expect(session2Cells.at(0)!.text()).toBe("13/01/2022 10:26:36");
@@ -100,7 +101,7 @@ describe("SessionsPage", () => {
         expect(session2Cells.at(3)!.find("a").findComponent(VueFeather).props("type")).toBe("upload");
         expect(session2Cells.at(4)!.find("span.session-copy-link").text()).toBe("Copy link");
         expect(session2Cells.at(4)!.find("span.session-copy-code").text()).toBe("Copy code");
-        expect(session2Cells.at(4)!.find("span.session-copy-confirm").text()).toBe("");
+        expect(session2Cells.at(4)!.find(".session-copy-confirm").text()).toBe("");
 
         const editDlg = wrapper.findComponent(EditSessionLabel);
         expect(editDlg.props("open")).toBe(false);
@@ -135,12 +136,12 @@ describe("SessionsPage", () => {
     it("shows edit label dialog when click icon", async () => {
         const wrapper = getWrapper(sessionsMetadata);
         const rows = wrapper.findAll(".container .row");
-        const session2Cells = rows.at(3)!.findAll("div.session-col-value");
-        await session2Cells.at(2)!.findComponent(VueFeather).trigger("click");
+        const session1Cells = rows.at(2)!.findAll("div.session-col-value");
+        await session1Cells.at(2)!.findComponent(VueFeather).trigger("click");
         const editDlg = wrapper.findComponent(EditSessionLabel);
         expect(editDlg.props("open")).toBe(true);
-        expect(editDlg.props("sessionId")).toBe("def");
-        expect(editDlg.props("sessionLabel")).toBe("session2");
+        expect(editDlg.props("sessionId")).toBe("abc");
+        expect(editDlg.props("sessionLabel")).toBe("session1");
     });
 
     it("copy link dispatches GenerateFriendlyId only if session has no friendly id", async () => {
