@@ -24,7 +24,9 @@ const { configPath } = require("./args");
 // Global config
 const configReader = new ConfigReader(configPath);
 const wodinConfig = configReader.readConfigFile("wodin.config.json") as WodinConfig;
-const { port, appsPath, baseUrl, odinAPI } = wodinConfig;
+const {
+    port, appsPath, baseUrl, odinAPI
+} = wodinConfig;
 const defaultCodeReader = new DefaultCodeReader(`${configPath}/defaultCode`);
 
 const redis = redisConnection(

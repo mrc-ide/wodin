@@ -159,7 +159,9 @@ export default defineComponent({
             }
         };
 
-        const getCopyMsg = (session: SessionMetadata) => (session.id === lastCopySessionId.value ? lastCopyMsg.value : null);
+        const getCopyMsg = (session: SessionMetadata) => {
+            return session.id === lastCopySessionId.value ? lastCopyMsg.value : null;
+        };
 
         const clearLastCopied = () => {
             lastCopySessionId.value = null;

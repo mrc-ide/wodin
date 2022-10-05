@@ -264,10 +264,10 @@ describe("SessionsActions", () => {
         });
         const commit = jest.fn();
 
-        await (actions[SessionsAction.GenerateFriendlyId] as any)({commit, rootState}, "testSessionId");
+        await (actions[SessionsAction.GenerateFriendlyId] as any)({ commit, rootState }, "testSessionId");
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(SessionsMutation.SetSessionFriendlyId);
-        expect(commit.mock.calls[0][1]).toStrictEqual({sessionId: "testSessionId", friendlyId: "good-dog"});
+        expect(commit.mock.calls[0][1]).toStrictEqual({ sessionId: "testSessionId", friendlyId: "good-dog" });
     });
 
     it("GenerateFriendId commits error response", async () => {
@@ -279,10 +279,10 @@ describe("SessionsActions", () => {
         });
         const commit = jest.fn();
 
-        await (actions[SessionsAction.GenerateFriendlyId] as any)({commit, rootState}, "testSessionId");
+        await (actions[SessionsAction.GenerateFriendlyId] as any)({ commit, rootState }, "testSessionId");
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(`errors/${ErrorsMutation.AddError}`);
         expect(commit.mock.calls[0][1].detail).toBe("Test Error");
-        expect(commit.mock.calls[0][2]).toStrictEqual({root: true});
+        expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
     });
 });

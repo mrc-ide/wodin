@@ -58,8 +58,12 @@ describe("SessionsPage", () => {
     };
 
     const sessionsMetadata = [
-        { id: "abc", time: "2022-01-13T09:26:36.396Z", label: "session1", friendlyId: "bad-cat" },
-        { id: "def", time: "2022-01-13T10:26:36.396Z", label: null, friendlyId: null }
+        {
+            id: "abc", time: "2022-01-13T09:26:36.396Z", label: "session1", friendlyId: "bad-cat"
+        },
+        {
+            id: "def", time: "2022-01-13T10:26:36.396Z", label: null, friendlyId: null
+        }
     ];
 
     it("renders as expected", () => {
@@ -81,9 +85,11 @@ describe("SessionsPage", () => {
         const routerLink = session1Cells.at(3)!.findComponent(RouterLink);
         expect(routerLink.props("to")).toBe("/");
         expect(session1Cells.at(4)!.find("span.session-copy-link").text()).toBe("Copy link");
-        expect(session1Cells.at(4)!.find("span.session-copy-link").findComponent(VueFeather).props("type")).toBe("copy");
+        expect(session1Cells.at(4)!.find("span.session-copy-link").findComponent(VueFeather).props("type"))
+            .toBe("copy");
         expect(session1Cells.at(4)!.find("span.session-copy-code").text()).toBe("Copy code");
-        expect(session1Cells.at(4)!.find("span.session-copy-code").findComponent(VueFeather).props("type")).toBe("copy");
+        expect(session1Cells.at(4)!.find("span.session-copy-code").findComponent(VueFeather).props("type"))
+            .toBe("copy");
         expect(session1Cells.at(4)!.find("span.session-copy-confirm").text()).toBe("");
         const session2Cells = rows.at(3)!.findAll("div.session-col-value");
         expect(session1Cells.length).toBe(5);
@@ -190,7 +196,7 @@ describe("SessionsPage", () => {
         expect(mockClipboardWriteText.mock.calls[0][0]).toBe("bad-cat");
 
         expect(session1Cells.at(4)!.find(".session-copy-confirm").text())
-            .toBe(`Copied: bad-cat`);
+            .toBe("Copied: bad-cat");
     });
 
     it("mouseleave event from copy control clears confirm text", async () => {
@@ -198,7 +204,7 @@ describe("SessionsPage", () => {
         const rows = wrapper.findAll(".container .row");
         const session1Cells = rows.at(2)!.findAll("div.session-col-value");
         await session1Cells.at(4)!.find(".session-copy-code").trigger("click");
-        expect(session1Cells.at(4)!.find(".session-copy-confirm").text()).toBe(`Copied: bad-cat`);
+        expect(session1Cells.at(4)!.find(".session-copy-confirm").text()).toBe("Copied: bad-cat");
 
         await session1Cells.at(4)!.find(".session-copy-code").trigger("mouseleave");
         expect(session1Cells.at(4)!.find(".session-copy-confirm").text()).toBe("");
@@ -206,7 +212,7 @@ describe("SessionsPage", () => {
 
     it("copy confirmation indicates if friendly id is being fetched, and could not be generated", (done) => {
         const runAsync = async () => {
-            // the mock generate action won't actually mutate the state, so friendly id will still be null after it's done,
+            // the mock generate action won't mutate the state, so friendly id will still be null after it's done,
             // and the component will assume the id could not be fetched
             const wrapper = getWrapper(sessionsMetadata);
             const rows = wrapper.findAll(".container .row");
@@ -224,5 +230,4 @@ describe("SessionsPage", () => {
         };
         runAsync();
     });
-
 });

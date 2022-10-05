@@ -24,7 +24,9 @@ export class ConfigController {
 
     static getConfig = (req: Request, res: Response) => {
         const { appName } = req.params;
-        const { configReader, appsPath, defaultCodeReader, baseUrl } = req.app.locals as AppLocals;
+        const {
+            configReader, appsPath, defaultCodeReader, baseUrl
+        } = req.app.locals as AppLocals;
 
         const config = this._readAppConfigFile(appName, appsPath, baseUrl, configReader, defaultCodeReader);
         if (config) {

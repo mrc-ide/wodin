@@ -95,7 +95,7 @@ export const actions: ActionTree<SessionsState, AppState> = {
             .post(`/apps/${appName}/sessions/${sessionId}/friendly`, null);
 
         if (response) {
-            commit(SessionsMutation.SetSessionFriendlyId, {sessionId, friendlyId: response.data});
+            commit(SessionsMutation.SetSessionFriendlyId, { sessionId, friendlyId: response.data });
         }
     }
 };

@@ -56,7 +56,9 @@ export class SessionStore {
             const labels = values[1];
             const friendlies = values[2];
             const allResults = ids.map((id: string, idx: number) => {
-                return { id, time: times[idx], label: labels[idx], friendlyId: friendlies[idx] };
+                return {
+                    id, time: times[idx], label: labels[idx], friendlyId: friendlies[idx]
+                };
             });
             return allResults.filter((session) => session.time !== null) as SessionMetadata[];
         });

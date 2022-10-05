@@ -23,4 +23,4 @@ export const mutations: MutationTree<SessionsState> = {
             sessionMetadata.friendlyId = payload.friendlyId;
         }
     }
- };
+};
