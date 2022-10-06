@@ -1,20 +1,18 @@
-import { SessionStore } from "../../src/db/sessionStore";
-import Mock = jest.Mock;
+const mockSessionStore = {
+    saveSession: jest.fn(),
+    getSessionsMetadata: jest.fn(),
+    saveSessionLabel: jest.fn(),
+    getSession: jest.fn(),
+    generateFriendlyId: jest.fn()
+};
+const mockGetSessionStore = jest.fn().mockReturnValue(mockSessionStore);
+jest.mock("../../src/db/sessionStore", () => { return {getSessionStore: mockGetSessionStore}; });
+
 import { serialiseSession, SessionsController } from "../../src/controllers/sessionsController";
 
-jest.mock("../../src/db/sessionStore");
-
 describe("SessionsController", () => {
-    const mockSessionStore = SessionStore as Mock;
+
     const req = {
-        app: {
-            locals: {
-                redis: {},
-                wodinConfig: {
-                    savePrefix: "testPrefix"
-                }
-            }
-        },
         params: {
             appName: "testApp",
             id: "1234"
@@ -34,14 +32,11 @@ describe("SessionsController", () => {
 
     it("can save session", async () => {
         await SessionsController.postSession(req, res);
-        expect(mockSessionStore).toHaveBeenCalledTimes(1); // expect store constructor
-        expect(mockSessionStore.mock.calls[0][0]).toBe(req.app.locals.redis);
-        expect(mockSessionStore.mock.calls[0][1]).toBe("testPrefix");
-        expect(mockSessionStore.mock.calls[0][2]).toBe("testApp");
-        const storeInstance = mockSessionStore.mock.instances[0];
-        expect(storeInstance.saveSession).toHaveBeenCalledTimes(1);
-        expect(storeInstance.saveSession.mock.calls[0][0]).toBe("1234");
-        expect(storeInstance.saveSession.mock.calls[0][1]).toBe("testBody");
+        expect(mockGetSessionStore).toHaveBeenCalledTimes(1);
+        expect(mockGetSessionStore.mock.calls[0][0]).toBe(req);
+        expect(mockSessionStore.saveSession).toHaveBeenCalledTimes(1);
+        expect(mockSessionStore.saveSession.mock.calls[0][0]).toBe("1234");
+        expect(mockSessionStore.saveSession.mock.calls[0][1]).toBe("testBody");
         expect(res.end).toHaveBeenCalledTimes(1);
     });
 
@@ -53,13 +48,10 @@ describe("SessionsController", () => {
             }
         };
         await SessionsController.getSessionsMetadata(metadataReq, res);
-        expect(mockSessionStore).toHaveBeenCalledTimes(1); // expect store constructor
-        expect(mockSessionStore.mock.calls[0][0]).toBe(req.app.locals.redis);
-        expect(mockSessionStore.mock.calls[0][1]).toBe("testPrefix");
-        expect(mockSessionStore.mock.calls[0][2]).toBe("testApp");
-        const storeInstance = mockSessionStore.mock.instances[0];
-        expect(storeInstance.getSessionsMetadata).toHaveBeenCalledTimes(1);
-        expect(storeInstance.getSessionsMetadata.mock.calls[0][0]).toStrictEqual(["1234", "5678"]);
+        expect(mockGetSessionStore).toHaveBeenCalledTimes(1);
+        expect(mockGetSessionStore.mock.calls[0][0]).toBe(metadataReq);
+        expect(mockSessionStore.getSessionsMetadata).toHaveBeenCalledTimes(1);
+        expect(mockSessionStore.getSessionsMetadata.mock.calls[0][0]).toStrictEqual(["1234", "5678"]);
 
         expect(res.header).toHaveBeenCalledWith("Content-Type", "application/json");
         expect(res.end).toHaveBeenCalledTimes(1);
@@ -67,7 +59,7 @@ describe("SessionsController", () => {
 
     it("can get empty session metadata with missing ids parameter", async () => {
         await SessionsController.getSessionsMetadata(req, res);
-        expect(mockSessionStore).not.toHaveBeenCalled();
+        expect(mockGetSessionStore).not.toHaveBeenCalled();
         expect(res.header).toHaveBeenCalledWith("Content-Type", "application/json");
         expect(res.end).toHaveBeenCalledTimes(1);
     });
@@ -90,14 +82,11 @@ describe("SessionsController", () => {
         } as any;
 
         SessionsController.postSessionLabel(labelReq, res);
-        expect(mockSessionStore).toHaveBeenCalledTimes(1); // expect store constructor
-        expect(mockSessionStore.mock.calls[0][0]).toBe(labelReq.app.locals.redis);
-        expect(mockSessionStore.mock.calls[0][1]).toBe("testPrefix");
-        expect(mockSessionStore.mock.calls[0][2]).toBe("testApp");
-        const storeInstance = mockSessionStore.mock.instances[0];
-        expect(storeInstance.saveSessionLabel).toHaveBeenCalledTimes(1);
-        expect(storeInstance.saveSessionLabel.mock.calls[0][0]).toBe("1234");
-        expect(storeInstance.saveSessionLabel.mock.calls[0][1]).toBe("some label");
+        expect(mockGetSessionStore).toHaveBeenCalledTimes(1);
+        expect(mockGetSessionStore.mock.calls[0][0]).toBe(labelReq);
+        expect(mockSessionStore.saveSessionLabel).toHaveBeenCalledTimes(1);
+        expect(mockSessionStore.saveSessionLabel.mock.calls[0][0]).toBe("1234");
+        expect(mockSessionStore.saveSessionLabel.mock.calls[0][1]).toBe("some label");
     });
 
     it("can fetch session", () => {
@@ -116,13 +105,10 @@ describe("SessionsController", () => {
             }
         } as any;
         SessionsController.getSession(sessionReq, res);
-        expect(mockSessionStore).toHaveBeenCalledTimes(1); // expect store constructor
-        expect(mockSessionStore.mock.calls[0][0]).toBe(sessionReq.app.locals.redis);
-        expect(mockSessionStore.mock.calls[0][1]).toBe("testPrefix");
-        expect(mockSessionStore.mock.calls[0][2]).toBe("testApp");
-        const storeInstance = mockSessionStore.mock.instances[0];
-        expect(storeInstance.getSession).toHaveBeenCalledTimes(1);
-        expect(storeInstance.getSession.mock.calls[0][0]).toBe("1234");
+        expect(mockGetSessionStore).toHaveBeenCalledTimes(1);
+        expect(mockGetSessionStore.mock.calls[0][0]).toBe(sessionReq);
+        expect(mockSessionStore.getSession).toHaveBeenCalledTimes(1);
+        expect(mockSessionStore.getSession.mock.calls[0][0]).toBe("1234");
     });
 
     it("can generate friendly ids", () => {
@@ -141,13 +127,10 @@ describe("SessionsController", () => {
             }
         } as any;
         SessionsController.generateFriendlyId(sessionReq, res);
-        expect(mockSessionStore).toHaveBeenCalledTimes(1); // expect store constructor
-        expect(mockSessionStore.mock.calls[0][0]).toBe(sessionReq.app.locals.redis);
-        expect(mockSessionStore.mock.calls[0][1]).toBe("testPrefix");
-        expect(mockSessionStore.mock.calls[0][2]).toBe("testApp");
-        const storeInstance = mockSessionStore.mock.instances[0];
-        expect(storeInstance.generateFriendlyId).toHaveBeenCalledTimes(1);
-        expect(storeInstance.generateFriendlyId.mock.calls[0][0]).toBe("1234");
+        expect(mockGetSessionStore).toHaveBeenCalledTimes(1);
+        expect(mockGetSessionStore.mock.calls[0][0]).toBe(sessionReq);
+        expect(mockSessionStore.generateFriendlyId).toHaveBeenCalledTimes(1);
+        expect(mockSessionStore.generateFriendlyId.mock.calls[0][0]).toBe("1234");
     });
 });
 

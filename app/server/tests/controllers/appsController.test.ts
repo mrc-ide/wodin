@@ -1,9 +1,15 @@
+const mockSessionStore = {
+    getSessionIdFromFriendlyId: jest.fn().mockReturnValue("123456")
+};
+const mockGetSessionStore = jest.fn().mockReturnValue(mockSessionStore);
+jest.mock("../../src/db/sessionStore", () => { return {getSessionStore: mockGetSessionStore}; });
+
 import { AppsController } from "../../src/controllers/appsController";
 import { ErrorType } from "../../src/errors/errorType";
-import { WodinWebError } from "../../src/errors/wodinWebError";
+import { WodinWebError } from "../../src/errors/wodinWebError";;
 
 describe("appsController", () => {
-    const getMockRequest = (appConfig: any, sessionId: string | undefined) => {
+    const getMockRequest = (appConfig: any, sessionId: string | undefined, share: string | undefined) => {
         const mockConfigReader = {
             readConfigFile: jest.fn().mockReturnValue(appConfig)
         };
@@ -12,7 +18,9 @@ describe("appsController", () => {
                 locals: {
                     appsPath: "testapps",
                     configReader: mockConfigReader,
-                    wodinConfig: { courseTitle: "Test Course Title" },
+                    wodinConfig: {
+                        courseTitle: "Test Course Title"
+                    },
                     wodinVersion: "1.2.3"
                 }
             },
@@ -20,7 +28,8 @@ describe("appsController", () => {
                 appName: "test"
             },
             query: {
-                sessionId
+                sessionId,
+                share
             }
         } as any;
     };
@@ -38,7 +47,7 @@ describe("appsController", () => {
 
     it("renders view with app config", () => {
         const appConfig = { title: "testTitle", appType: "testType" };
-        const request = getMockRequest(appConfig, "1234");
+        const request = getMockRequest(appConfig, "1234", undefined);
         AppsController.getApp(request, mockResponse);
 
         expect(mockRender).toBeCalledTimes(1);
@@ -54,7 +63,7 @@ describe("appsController", () => {
     });
 
     it("sets loadSessionId to be empty when not in query string", () => {
-        const request = getMockRequest({ title: "testTitle", appType: "testType" }, undefined);
+        const request = getMockRequest({ title: "testTitle", appType: "testType" }, undefined, undefined);
         AppsController.getApp(request, mockResponse);
 
         expect(mockRender.mock.calls[0][1]).toStrictEqual({
@@ -66,8 +75,26 @@ describe("appsController", () => {
         });
     });
 
+    it("gets session id from share parameter when provided", async () => {
+        const request = getMockRequest({title: "testTitle", appType: "testType"}, undefined, "tiny-mouse");
+        await AppsController.getApp(request, mockResponse);
+
+        expect(mockGetSessionStore).toHaveBeenCalledTimes(1);
+        expect(mockGetSessionStore.mock.calls[0][0]).toBe(request);
+        expect(mockSessionStore.getSessionIdFromFriendlyId).toHaveBeenCalledTimes(1);
+        expect(mockSessionStore.getSessionIdFromFriendlyId.mock.calls[0][0]).toBe("tiny-mouse");
+        expect(mockRender).toHaveBeenCalledTimes(1);
+        expect(mockRender.mock.calls[0][1]).toStrictEqual({
+            appName: "test",
+            appTitle: "testTitle",
+            courseTitle: "Test Course Title",
+            wodinVersion: "1.2.3",
+            loadSessionId: "123456"
+        });
+    });
+
     it("throws expected error when no config", () => {
-        const request = getMockRequest(null, "12345");
+        const request = getMockRequest(null, "12345", undefined);
         const expectedErr = new WodinWebError(
             "App not found: test",
             404,
