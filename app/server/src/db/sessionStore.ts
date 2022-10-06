@@ -1,6 +1,7 @@
 import Redis from "ioredis";
 import { generateId } from "zoo-ids";
-import { SessionMetadata } from "../types";
+import {AppLocals, SessionMetadata} from "../types";
+import {Request} from "express";
 
 export const cleanFriendlyId = (id: string): string => {
     let ret = id.toLowerCase();
@@ -116,3 +117,9 @@ export class SessionStore {
         return id;
     }
 }
+
+export const getSessionStore = (req: Request) => {
+    const { redis, wodinConfig } = req.app.locals as AppLocals;
+    const { appName } = req.params;
+    return new SessionStore(redis, wodinConfig.savePrefix, appName);
+};

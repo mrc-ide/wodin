@@ -2,19 +2,21 @@ import { Request, Response } from "express";
 import { AppLocals } from "../types";
 import { ErrorType } from "../errors/errorType";
 import { WodinWebError } from "../errors/wodinWebError";
+import {getSessionStore} from "../db/sessionStore";
 
 export class AppsController {
-    static getApp = (req: Request, res: Response) => {
+    static getApp = async (req: Request, res: Response) => {
         const {
             configReader, appsPath, wodinConfig, wodinVersion
         } = req.app.locals as AppLocals;
         const { appName } = req.params;
-        // client can pass either sessionId or share (frienldy id) parameter to identify session to reload
-        let { sessionId, share } = req.query;
+        // client can pass either sessionId or share (friendly id) parameter to identify session to reload
+        let sessionId = req.query.sessionId as string | undefined | null;
+        const { share } = req.query;
 
         if (share) {
-            // TODO: common way to get store
-           sessionId = sessionStore.getSessionId(share);
+            const store = getSessionStore(req);
+            sessionId = await store.getSessionIdFromFriendlyId(share as string);
         }
 
         const config = configReader.readConfigFile(appsPath, `${appName}.config.json`) as any;
