@@ -1,3 +1,5 @@
+import { serialiseSession, SessionsController } from "../../src/controllers/sessionsController";
+
 const mockSessionStore = {
     saveSession: jest.fn(),
     getSessionsMetadata: jest.fn(),
@@ -6,12 +8,9 @@ const mockSessionStore = {
     generateFriendlyId: jest.fn()
 };
 const mockGetSessionStore = jest.fn().mockReturnValue(mockSessionStore);
-jest.mock("../../src/db/sessionStore", () => { return {getSessionStore: mockGetSessionStore}; });
-
-import { serialiseSession, SessionsController } from "../../src/controllers/sessionsController";
+jest.mock("../../src/db/sessionStore", () => { return { getSessionStore: mockGetSessionStore }; });
 
 describe("SessionsController", () => {
-
     const req = {
         params: {
             appName: "testApp",

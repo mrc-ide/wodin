@@ -1,5 +1,6 @@
-import {friendlyAdjectiveAnimal, cleanFriendlyId, SessionStore, getSessionStore} from "../../src/db/sessionStore";
-import mock = jest.mock;
+import {
+    friendlyAdjectiveAnimal, cleanFriendlyId, SessionStore, getSessionStore
+} from "../../src/db/sessionStore";
 
 // Mock Date.now to return hardcoded date
 Date.now = jest.spyOn(Date, "now").mockImplementation(() => new Date(2022, 0, 24, 17).getTime()) as any;
@@ -214,5 +215,5 @@ describe("getSessionStore", () => {
         const store = getSessionStore(mockRequest) as any;
         expect(store._redis).toBe(mockRequest.app.locals.redis);
         expect(store._sessionPrefix).toBe("testPrefix:TestApp:sessions:");
-    })
+    });
 });

@@ -1,12 +1,12 @@
+import { AppsController } from "../../src/controllers/appsController";
+import { ErrorType } from "../../src/errors/errorType";
+import { WodinWebError } from "../../src/errors/wodinWebError";
+
 const mockSessionStore = {
     getSessionIdFromFriendlyId: jest.fn().mockReturnValue("123456")
 };
 const mockGetSessionStore = jest.fn().mockReturnValue(mockSessionStore);
-jest.mock("../../src/db/sessionStore", () => { return {getSessionStore: mockGetSessionStore}; });
-
-import { AppsController } from "../../src/controllers/appsController";
-import { ErrorType } from "../../src/errors/errorType";
-import { WodinWebError } from "../../src/errors/wodinWebError";;
+jest.mock("../../src/db/sessionStore", () => { return { getSessionStore: mockGetSessionStore }; });
 
 describe("appsController", () => {
     const getMockRequest = (appConfig: any, sessionId: string | undefined, share: string | undefined) => {
@@ -76,7 +76,7 @@ describe("appsController", () => {
     });
 
     it("gets session id from share parameter when provided", async () => {
-        const request = getMockRequest({title: "testTitle", appType: "testType"}, undefined, "tiny-mouse");
+        const request = getMockRequest({ title: "testTitle", appType: "testType" }, undefined, "tiny-mouse");
         await AppsController.getApp(request, mockResponse);
 
         expect(mockGetSessionStore).toHaveBeenCalledTimes(1);

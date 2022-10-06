@@ -1,7 +1,7 @@
 import Redis from "ioredis";
 import { generateId } from "zoo-ids";
-import {AppLocals, SessionMetadata} from "../types";
-import {Request} from "express";
+import { Request } from "express";
+import { AppLocals, SessionMetadata } from "../types";
 
 export const cleanFriendlyId = (id: string): string => {
     let ret = id.toLowerCase();

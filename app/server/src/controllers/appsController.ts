@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { AppLocals } from "../types";
 import { ErrorType } from "../errors/errorType";
 import { WodinWebError } from "../errors/wodinWebError";
-import {getSessionStore} from "../db/sessionStore";
+import { getSessionStore } from "../db/sessionStore";
 
 export class AppsController {
     static getApp = async (req: Request, res: Response) => {
