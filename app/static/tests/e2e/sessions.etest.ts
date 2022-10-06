@@ -87,16 +87,16 @@ test.describe("Sessions tests", () => {
         await expect(await page.innerText(".session-label")).toBe("--no label--");
 
         // Can copy code and link for a session
-        await page.click(":nth-match(.session-copy-code, 1)");
-        await expect(await page.innerText(":nth-match(.session-copy-confirm, 1)"))
+        await page.click(":nth-match(.session-copy-code, 2)");
+        await expect(await page.innerText(":nth-match(.session-copy-confirm, 2)"))
             .toContain("Copied: ");
         const copiedCodeText = await page.evaluate("navigator.clipboard.readText()");
         expect(copiedCodeText).toContain("-");
 
-        await page.click(":nth-match(.session-copy-link, 1)");
-        await expect(await page.innerText(":nth-match(.session-copy-confirm, 1)"))
+        await page.click(":nth-match(.session-copy-link, 2)");
+        await expect(await page.innerText(":nth-match(.session-copy-confirm, 2)"))
             .toContain("Copied: http://localhost:3000/apps/day2/?share=");
-        const copiedLinkText = await page.evaluate("navigator.clipboard.readText()");
+        const copiedLinkText = await page.evaluate("navigator.clipboard.readText()") as string;
         expect(copiedLinkText).toContain("http://localhost:3000/apps/day2/?share=");
 
         // Set the current session label from the nav menu and check it updates on menu title and in the sessions list
@@ -175,6 +175,10 @@ test.describe("Sessions tests", () => {
         await expectWodinPlotDataSummary(centralSummary, "S", 1000, 0, 31, 154.64, 369, "lines", "#2e5cb8", null);
         const sensitivityDataSummary = await page.locator(":nth-match(.wodin-plot-data-summary-series, 56)");
         await expectWodinPlotDataSummary(sensitivityDataSummary, "Cases", 32, 0, 31, 0, 13, "markers", null, "#cccc00");
+
+        // Expect to be able to navigate to the share link we copied earlier - check it has some rehydrated data
+        await page.goto(copiedLinkText);
+        await expect(await page.innerText("#data-upload-success")).toBe(" Uploaded 32 rows and 2 columns");
 
         await browser.close();
     });
