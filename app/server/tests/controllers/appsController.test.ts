@@ -1,12 +1,15 @@
-import { AppsController } from "../../src/controllers/appsController";
 import { ErrorType } from "../../src/errors/errorType";
 import { WodinWebError } from "../../src/errors/wodinWebError";
 
+// Need to mock getSessionStore before importing the controller
 const mockSessionStore = {
     getSessionIdFromFriendlyId: jest.fn().mockReturnValue("123456")
 };
 const mockGetSessionStore = jest.fn().mockReturnValue(mockSessionStore);
 jest.mock("../../src/db/sessionStore", () => { return { getSessionStore: mockGetSessionStore }; });
+
+/* eslint-disable import/first */
+import { AppsController } from "../../src/controllers/appsController";
 
 describe("appsController", () => {
     const getMockRequest = (appConfig: any, sessionId: string | undefined, share: string | undefined) => {
@@ -93,7 +96,7 @@ describe("appsController", () => {
         });
     });
 
-    it("throws expected error when no config", () => {
+    it("throws expected error when no config", async () => {
         const request = getMockRequest(null, "12345", undefined);
         const expectedErr = new WodinWebError(
             "App not found: test",
@@ -102,7 +105,7 @@ describe("appsController", () => {
             "app-not-found",
             { appName: "test" }
         );
-        expect(() => { AppsController.getApp(request, mockResponse); }).toThrow(expectedErr);
+        await expect(AppsController.getApp(request, mockResponse)).rejects.toThrow(expectedErr);
         expect(mockRender).not.toHaveBeenCalled();
     });
 });
