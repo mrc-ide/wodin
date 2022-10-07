@@ -43,6 +43,7 @@ export const mockFailure = (errorMessage: string): ResponseFailure => {
 };
 
 const mockAppConfig = {
+    baseUrl: "http://localhost:3000",
     readOnlyCode: false,
     defaultCode: []
 };

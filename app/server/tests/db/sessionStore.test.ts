@@ -46,12 +46,14 @@ describe("Sessionstore", () => {
             {
                 id: "1234",
                 time: "1234 value for Test Course:testApp:sessions:time",
-                label: "1234 value for Test Course:testApp:sessions:label"
+                label: "1234 value for Test Course:testApp:sessions:label",
+                friendlyId: "1234 value for Test Course:testApp:sessions:friendly"
             },
             {
                 id: "5678",
                 time: "5678 value for Test Course:testApp:sessions:time",
-                label: "5678 value for Test Course:testApp:sessions:label"
+                label: "5678 value for Test Course:testApp:sessions:label",
+                friendlyId: "5678 value for Test Course:testApp:sessions:friendly"
             }
         ]);
     });

@@ -15,7 +15,8 @@ import { SensitivityAction } from "../sensitivity/actions";
 export enum SessionsAction {
     GetSessions = "GetSessions",
     Rehydrate = "Rehydrate",
-    SaveSessionLabel = "SaveSessionLabel"
+    SaveSessionLabel = "SaveSessionLabel",
+    GenerateFriendlyId = "GenerateFriendlyId"
 }
 
 interface SaveSessionLabelPayload {
@@ -83,5 +84,18 @@ export const actions: ActionTree<SessionsState, AppState> = {
 
         // refresh sessions metadata so sessions page updates
         await dispatch(SessionsAction.GetSessions);
+    },
+
+    async [SessionsAction.GenerateFriendlyId](context, sessionId: string) {
+        const { commit, rootState } = context;
+        const { appName } = rootState;
+        const response = await api(context)
+            .ignoreSuccess()
+            .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
+            .post(`/apps/${appName}/sessions/${sessionId}/friendly`, null);
+
+        if (response) {
+            commit(SessionsMutation.SetSessionFriendlyId, { sessionId, friendlyId: response.data });
+        }
     }
 };
