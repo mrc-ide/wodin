@@ -1,7 +1,7 @@
 // Mock the import of plotly so we can mock Plotly methods
 import Vuex, { Store } from "vuex";
 import { shallowMount, VueWrapper } from "@vue/test-utils";
-import * as plotly from "plotly.js";
+import * as plotly from "plotly.js-basic-dist-min";
 import { nextTick } from "vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState } from "../../../mocks";
@@ -13,7 +13,7 @@ import {
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
 
-jest.mock("plotly.js", () => ({
+jest.mock("plotly.js-basic-dist-min", () => ({
     newPlot: jest.fn(),
     Plots: {
         resize: jest.fn()

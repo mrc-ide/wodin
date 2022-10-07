@@ -1,5 +1,5 @@
 // Mock the import of plotly so we can mock Plotly methods
-jest.mock("plotly.js", () => ({
+jest.mock("plotly.js-basic-dist-min", () => ({
     newPlot: jest.fn(),
     react: jest.fn(),
     Plots: {
@@ -10,7 +10,7 @@ jest.mock("plotly.js", () => ({
 /* eslint-disable import/first */
 import { shallowMount, VueWrapper } from "@vue/test-utils";
 import { nextTick } from "vue";
-import * as plotly from "plotly.js";
+import * as plotly from "plotly.js-basic-dist-min";
 import WodinOdePlot from "../../../src/app/components/WodinOdePlot.vue";
 
 describe("WodinOdePlot", () => {
