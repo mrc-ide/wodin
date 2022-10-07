@@ -76,7 +76,7 @@ describe("SessionsPage", () => {
         expect(columnHeaders.at(1)!.text()).toBe("Label");
         expect(columnHeaders.at(2)!.text()).toBe("Edit Label");
         expect(columnHeaders.at(3)!.text()).toBe("Load");
-        expect(columnHeaders.at(4)!.text()).toBe("Share");
+        expect(columnHeaders.at(4)!.text()).toBe("Shareable Link");
         const session1Cells = rows.at(2)!.findAll("div.session-col-value");
         expect(session1Cells.length).toBe(5);
         expect(session1Cells.at(0)!.text()).toBe("13/01/2022 09:26:36 (current session)");

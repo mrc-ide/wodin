@@ -11,7 +11,7 @@
           <div class="col-2 session-col-header">Label</div>
           <div class="col-2 text-center session-col-header">Edit Label</div>
           <div class="col-1 text-center session-col-header">Load</div>
-          <div class="col-4 text-center session-col-header">Share</div>
+          <div class="col-4 text-center session-col-header">Shareable Link</div>
         </div>
         <div class="row py-2" v-for="session in sessionsMetadata" :key="session.id">
           <div class="col-3 session-col-value session-time">

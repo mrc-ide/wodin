@@ -83,6 +83,7 @@ test.describe("Sessions tests", () => {
         await expect(await page.innerText(":nth-match(.session-col-header, 2)")).toBe("Label");
         await expect(await page.innerText(":nth-match(.session-col-header, 3)")).toBe("Edit Label");
         await expect(await page.innerText(":nth-match(.session-col-header, 4)")).toBe("Load");
+        await expect(await page.innerText(":nth-match(.session-col-header, 5)")).toBe("Shareable Link");
 
         await expect(await page.innerText(".session-label")).toBe("--no label--");
 
