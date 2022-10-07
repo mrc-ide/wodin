@@ -10,7 +10,7 @@ jest.mock("vue-router", () => ({
 
 import { createWebHistory, createRouter } from "vue-router";
 import Mock = jest.Mock;
-import { getRouter } from "../../src/app/router";
+import { initialiseRouter } from "../../src/app/router";
 import WodinSession from "../../src/app/components/WodinSession.vue";
 import SessionsPage from "../../src/app/components/sessions/SessionsPage.vue";
 
@@ -26,7 +26,7 @@ describe("router", () => {
     });
 
     it("can getRouter", () => {
-        const router = getRouter(WodinSession, "day1");
+        const router = initialiseRouter(WodinSession, "day1");
         expect(router).toBe(mockRouter);
         expect(mockCreateWebHistory).toHaveBeenCalledTimes(1);
         expect(mockCreateWebHistory).toHaveBeenCalledWith("/apps/day1");
