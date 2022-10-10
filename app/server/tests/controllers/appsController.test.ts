@@ -45,7 +45,7 @@ describe("appsController", () => {
         expect(mockRender.mock.calls[0][0]).toBe("testType-app");
         expect(mockRender.mock.calls[0][1]).toStrictEqual({
             appName: "test",
-            title: "Test Course Title - testTitle",
+            title: "testTitle - Test Course Title",
             appTitle: "testTitle",
             courseTitle: "Test Course Title",
             wodinVersion: "1.2.3",
@@ -60,7 +60,7 @@ describe("appsController", () => {
 
         expect(mockRender.mock.calls[0][1]).toStrictEqual({
             appName: "test",
-            title: "Test Course Title - testTitle",
+            title: "testTitle - Test Course Title",
             appTitle: "testTitle",
             courseTitle: "Test Course Title",
             wodinVersion: "1.2.3",
