@@ -1,5 +1,5 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via FitPlot
-jest.mock("plotly.js", () => {});
+jest.mock("plotly.js-basic-dist-min", () => {});
 
 /* eslint-disable import/first */
 import { mount } from "@vue/test-utils";

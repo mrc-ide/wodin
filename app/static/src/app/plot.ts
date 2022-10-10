@@ -1,4 +1,4 @@
-import { PlotData } from "plotly.js";
+import { PlotData } from "plotly.js-basic-dist-min";
 import { paletteData, Palette } from "./palette";
 import type { AllFitData, FitData, FitDataLink } from "./store/fitData/state";
 import { OdinSeriesSet } from "./types/responseTypes";

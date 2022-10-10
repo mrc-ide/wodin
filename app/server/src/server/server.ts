@@ -12,9 +12,12 @@ import { version as wodinVersion } from "../version";
 
 const express = require("express");
 const path = require("path");
+const compression = require("compression");
 
 const app = express();
 initialiseLogging(app);
+
+app.use(compression({ level: 9 })); // Use best compression
 
 const rootDir = path.resolve(path.join(__dirname, "../.."));
 
