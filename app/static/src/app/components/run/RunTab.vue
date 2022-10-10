@@ -6,17 +6,24 @@
         <action-required-message :message="updateMsg"></action-required-message>
         <run-plot :fade-plot="!!updateMsg" :model-fit="false"></run-plot>
         <error-info :error="error"></error-info>
+        <div>
+          <button class="btn btn-primary" id="download-btn" :disabled="!canDownloadOutput" @click="toggleShowDownloadOutput(true)">
+            Download
+          </button>
+        </div>
+        <DownloadOutput :open="showDownloadOutput" @close="toggleShowDownloadOutput(false)"></DownloadOutput>
   </div>
 </template>
 
 <script lang="ts">
 import { useStore } from "vuex";
-import { computed, defineComponent } from "vue";
+import {computed, defineComponent, ref} from "vue";
 import RunPlot from "./RunPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { RunAction } from "../../store/run/actions";
 import userMessages from "../../userMessages";
 import ErrorInfo from "../ErrorInfo.vue";
+import DownloadOutput from "../DownloadOutput.vue";
 import { runRequiredExplanation } from "./support";
 import { anyTrue } from "../../utils";
 
@@ -25,10 +32,13 @@ export default defineComponent({
     components: {
         RunPlot,
         ErrorInfo,
-        ActionRequiredMessage
+        ActionRequiredMessage,
+        DownloadOutput
     },
     setup() {
         const store = useStore();
+
+        const showDownloadOutput = ref(false);
 
         const error = computed(() => store.state.run.result?.error);
 
@@ -48,11 +58,18 @@ export default defineComponent({
             return "";
         });
 
+        const canDownloadOutput = computed(() => true); // TODO: only if we have successfully run the model
+        const toggleShowDownloadOutput = (show: boolean) => { showDownloadOutput.value = show; };
+
+
         return {
             canRunModel,
             updateMsg,
             runModel,
-            error
+            error,
+            showDownloadOutput,
+            canDownloadOutput,
+            toggleShowDownloadOutput
         };
     }
 });

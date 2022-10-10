@@ -5,10 +5,12 @@ import { AppState } from "../appState/state";
 import userMessages from "../../userMessages";
 import type { OdinRunResult } from "../../types/wrapperTypes";
 import { OdinUserType } from "../../types/responseTypes";
+import {WodinExcelDownload} from "../../wodinExcelDownload";
 
 export enum RunAction {
     RunModel = "RunModel",
-    RunModelOnRehydrate = "RunModelOnRehydrate"
+    RunModelOnRehydrate = "RunModelOnRehydrate",
+    DownloadOutput = "DownloadOutput"
 }
 
 const runModel = (parameterValues: OdinUserType | null, endTime: number,
@@ -37,6 +39,11 @@ const runModel = (parameterValues: OdinUserType | null, endTime: number,
     }
 };
 
+export interface DownloadOutputPayload {
+    fileName: string,
+    points: number
+}
+
 export const actions: ActionTree<RunState, AppState> = {
     RunModel(context) {
         const { state } = context;
@@ -48,5 +55,11 @@ export const actions: ActionTree<RunState, AppState> = {
         const { state } = context;
         const { parameterValues, endTime } = state.result!.inputs;
         runModel(parameterValues, endTime, context);
+    },
+
+    DownloadOutput(context, payload: DownloadOutputPayload) {
+        console.log("downloading output with " + JSON.stringify(payload))
+        new WodinExcelDownload(payload.fileName, payload.points)
+            .downloadModelOutput(context.rootState);
     }
 };
