@@ -16,6 +16,7 @@ export class AppsController {
             // TODO: validate config against schema for app type
             const viewOptions = {
                 appName,
+                title: `${config.title} - ${wodinConfig.courseTitle}`,
                 appTitle: config.title,
                 courseTitle: wodinConfig.courseTitle,
                 wodinVersion,
