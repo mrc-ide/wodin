@@ -5,7 +5,7 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Download Model Output</h5>
+            <h5 class="modal-title">Download Model</h5>
           </div>
           <div class="modal-body">
             <div class="row">
@@ -59,7 +59,7 @@ export default defineComponent({
         const store = useStore();
 
         const fileName = ref("model.xlsx");
-        const points = ref(100);
+        const points = ref(501);
 
         const style = computed(() => {
           return { display: props.open ? "block" : "none" };
