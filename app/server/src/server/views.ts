@@ -7,8 +7,6 @@ export const registerViews = (app: Application, rootDir: string) => {
     app.set("view engine", "hbs");
     app.set("views", path.join(rootDir, "views"));
 
-    hbs.registerPartial("share-not-found", "Share code not found: {{shareNotFound}}");
-
     hbs.registerHelper("json", (context: any) => {
         return JSON.stringify(context);
     });

@@ -2,8 +2,9 @@ import { ErrorType } from "../../src/errors/errorType";
 import { WodinWebError } from "../../src/errors/wodinWebError";
 
 // Need to mock getSessionStore before importing the controller
+let sessionIdFromFriendlyId: string | null;
 const mockSessionStore = {
-    getSessionIdFromFriendlyId: jest.fn().mockReturnValue("123456")
+    getSessionIdFromFriendlyId: jest.fn().mockImplementation(() => { return sessionIdFromFriendlyId; })
 };
 const mockGetSessionStore = jest.fn().mockReturnValue(mockSessionStore);
 jest.mock("../../src/db/sessionStore", () => { return { getSessionStore: mockGetSessionStore }; });
@@ -44,6 +45,10 @@ describe("appsController", () => {
         status: mockStatus
     } as any;
 
+    beforeEach(() => {
+        sessionIdFromFriendlyId = "123456";
+    });
+
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -60,7 +65,8 @@ describe("appsController", () => {
             appTitle: "testTitle",
             courseTitle: "Test Course Title",
             wodinVersion: "1.2.3",
-            loadSessionId: "1234"
+            loadSessionId: "1234",
+            shareNotFound: null
         });
         expect(mockStatus).not.toBeCalled();
     });
@@ -74,7 +80,8 @@ describe("appsController", () => {
             appTitle: "testTitle",
             courseTitle: "Test Course Title",
             wodinVersion: "1.2.3",
-            loadSessionId: ""
+            loadSessionId: "",
+            shareNotFound: null
         });
     });
 
@@ -92,7 +99,25 @@ describe("appsController", () => {
             appTitle: "testTitle",
             courseTitle: "Test Course Title",
             wodinVersion: "1.2.3",
-            loadSessionId: "123456"
+            loadSessionId: "123456",
+            shareNotFound: null
+        });
+    });
+
+    it("sets shareNotFound value when share parameter does not exist in db", async () => {
+        sessionIdFromFriendlyId = null;
+        const request = getMockRequest({ title: "testTitle", appType: "testType" }, undefined, "tiny-mouse");
+        await AppsController.getApp(request, mockResponse);
+
+        expect(mockGetSessionStore).toHaveBeenCalledTimes(1);
+        expect(mockRender).toHaveBeenCalledTimes(1);
+        expect(mockRender.mock.calls[0][1]).toStrictEqual({
+            appName: "test",
+            appTitle: "testTitle",
+            courseTitle: "Test Course Title",
+            wodinVersion: "1.2.3",
+            loadSessionId: "",
+            shareNotFound: "tiny-mouse"
         });
     });
 

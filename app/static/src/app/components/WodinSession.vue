@@ -7,7 +7,7 @@ import { computed, defineComponent, onMounted } from "vue";
 import { RouterView } from "vue-router";
 import { useStore } from "vuex";
 import { AppStateAction } from "../store/appState/actions";
-import {ErrorsMutation} from "../store/errors/mutations";
+import { ErrorsMutation } from "../store/errors/mutations";
 
 export default defineComponent({
     name: "WodinSession",
@@ -24,7 +24,8 @@ export default defineComponent({
         const initialised = computed(() => !!store.state.appName);
         onMounted(() => {
             if (props.shareNotFound) {
-                store.commit(`errors/${ErrorsMutation.AddError}`, {detail: `Share id not found: ${props.shareNotFound}`});
+                store.commit(`errors/${ErrorsMutation.AddError}`,
+                    { detail: `Share id not found: ${props.shareNotFound}` });
             }
 
             const { appName, loadSessionId } = props;
