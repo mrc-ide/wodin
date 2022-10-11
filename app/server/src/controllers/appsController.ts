@@ -14,9 +14,14 @@ export class AppsController {
         let sessionId = req.query.sessionId as string | undefined | null;
         const { share } = req.query;
 
+        let shareNotFound = null;
         if (share) {
             const store = getSessionStore(req);
             sessionId = await store.getSessionIdFromFriendlyId(share as string);
+
+            if (!sessionId) {
+                shareNotFound = share;
+            }
         }
 
         const config = configReader.readConfigFile(appsPath, `${appName}.config.json`) as any;
@@ -28,7 +33,8 @@ export class AppsController {
                 appTitle: config.title,
                 courseTitle: wodinConfig.courseTitle,
                 wodinVersion,
-                loadSessionId: sessionId || ""
+                loadSessionId: sessionId || "",
+                shareNotFound
             };
             res.render(view, viewOptions);
         } else {
