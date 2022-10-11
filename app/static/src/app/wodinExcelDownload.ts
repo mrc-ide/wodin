@@ -60,6 +60,7 @@ export class WodinExcelDownload {
                 });
 
                 // TODO: include data values, and possibly use common method for both data sheets
+                // TODO: move button to top of tab? Enable button only if !runRequired? Or just if any plot..
 
                 const worksheet = XLSX.utils.aoa_to_sheet(outputData);
                 XLSX.utils.book_append_sheet(workbook, worksheet, "Modelled with Data");
