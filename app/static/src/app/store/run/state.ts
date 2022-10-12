@@ -16,4 +16,5 @@ export interface RunState {
     endTime: number;
     // The result of running the model, along with its inputs
     result: OdinRunResult | null;
+    userDownloadFileName: string;
 }

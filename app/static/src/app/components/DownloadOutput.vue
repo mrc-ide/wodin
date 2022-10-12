@@ -9,18 +9,18 @@
           </div>
           <div class="modal-body">
             <div class="row">
-              <div class="col-6">
-                <label class="col-form-label">File</label>
+              <div class="col-4">
+                <label class="col-form-label">File name</label>
               </div>
-              <div class="col-6">
-                <input type="text" class="form-control" v-model="fileName">
+              <div class="col-8">
+                <input type="text" class="form-control" :value="fileName" @change="updateUserFileName">
               </div>
             </div>
             <div class="row mt-2">
-              <div class="col-6">
+              <div class="col-4">
                 <label class="col-form-label">Modelled points</label>
               </div>
-              <div class="col-6">
+              <div class="col-8">
                 <input type="number" class="form-control" v-model="points">
               </div>
             </div>
@@ -42,10 +42,12 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, ref
+    computed, defineComponent, ref, watch
 } from "vue";
 import { useStore } from "vuex";
-import {RunAction} from "../store/run/actions";
+import { utc } from "moment";
+import { RunAction } from "../store/run/actions";
+import { RunMutation } from "../store/run/mutations";
 
 export default defineComponent({
     name: "DownloadOutput",
@@ -58,20 +60,45 @@ export default defineComponent({
     setup(props, { emit }) {
         const store = useStore();
 
-        const fileName = ref("model.xlsx");
+        const fileName = ref("");
         const points = ref(501);
 
+        const appName = computed(() => store.state.appName);
+        const userFileName = computed(() => store.state.run.userDownloadFileName);
+
         const style = computed(() => {
-          return { display: props.open ? "block" : "none" };
+            return { display: props.open ? "block" : "none" };
         });
 
         const canDownload = computed(() => false);
 
+        const generateDefaultFileName = () => {
+            const timestamp = utc().local().format("YMMDD-HHmmss");
+            return `${appName.value}-run-${timestamp}.xlsx`;
+        };
+
+        const updateUserFileName = (event: InputEvent) => {
+            const newValue = (event.target as HTMLInputElement).value;
+            fileName.value = newValue;
+            store.commit(`run/${RunMutation.SetUserDownloadFileName}`, newValue);
+        };
+
         const close = () => { emit("close"); };
         const downloadOutput = () => {
-          store.dispatch(`run/${RunAction.DownloadOutput}`, {fileName: fileName.value, points: points.value});
-          close();
+            // User can erase the filename in the text box so the userDownloadFileName is reset, but in this case,
+            // generate a new default
+            if (!fileName.value) {
+                fileName.value = generateDefaultFileName();
+            }
+            store.dispatch(`run/${RunAction.DownloadOutput}`, { fileName: fileName.value, points: points.value });
+            close();
         };
+
+        watch(() => props.open, (newOpen) => {
+            if (newOpen) {
+                fileName.value = userFileName.value || generateDefaultFileName();
+            }
+        });
 
         return {
             fileName,
@@ -79,7 +106,8 @@ export default defineComponent({
             style,
             canDownload,
             close,
-            downloadOutput
+            downloadOutput,
+            updateUserFileName
         };
     }
 });
