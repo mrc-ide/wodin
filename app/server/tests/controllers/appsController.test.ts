@@ -66,7 +66,7 @@ describe("appsController", () => {
             courseTitle: "Test Course Title",
             wodinVersion: "1.2.3",
             loadSessionId: "1234",
-            shareNotFound: null
+            shareNotFound: ""
         });
         expect(mockStatus).not.toBeCalled();
     });
@@ -81,7 +81,7 @@ describe("appsController", () => {
             courseTitle: "Test Course Title",
             wodinVersion: "1.2.3",
             loadSessionId: "",
-            shareNotFound: null
+            shareNotFound: ""
         });
     });
 
@@ -100,7 +100,7 @@ describe("appsController", () => {
             courseTitle: "Test Course Title",
             wodinVersion: "1.2.3",
             loadSessionId: "123456",
-            shareNotFound: null
+            shareNotFound: ""
         });
     });
 

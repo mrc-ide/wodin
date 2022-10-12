@@ -15,7 +15,7 @@ describe("WodinSession", () => {
         jest.clearAllMocks();
     });
 
-    const getWrapper = (appName: string | null = "test", shareNotFound: string | null = null) => {
+    const getWrapper = (appName: string | null = "test", shareNotFound = "") => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({ appName }),
             actions: {

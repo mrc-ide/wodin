@@ -34,7 +34,7 @@ export class AppsController {
                 courseTitle: wodinConfig.courseTitle,
                 wodinVersion,
                 loadSessionId: sessionId || "",
-                shareNotFound
+                shareNotFound: shareNotFound || ""
             };
             res.render(view, viewOptions);
         } else {
