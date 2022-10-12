@@ -12,7 +12,7 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
-import { PlotData } from "plotly.js";
+import { PlotData } from "plotly.js-basic-dist-min";
 import { format } from "d3-format";
 import { FitDataGetter } from "../../store/fitData/getters";
 import WodinOdePlot from "../WodinOdePlot.vue";

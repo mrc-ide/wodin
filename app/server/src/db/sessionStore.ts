@@ -49,12 +49,16 @@ export class SessionStore {
     async getSessionsMetadata(ids: string[]) {
         return Promise.all([
             this._redis.hmget(this.sessionKey("time"), ...ids),
-            this._redis.hmget(this.sessionKey("label"), ...ids)
+            this._redis.hmget(this.sessionKey("label"), ...ids),
+            this._redis.hmget(this.sessionKey("friendly"), ...ids)
         ]).then((values) => {
             const times = values[0];
             const labels = values[1];
+            const friendlies = values[2];
             const allResults = ids.map((id: string, idx: number) => {
-                return { id, time: times[idx], label: labels[idx] };
+                return {
+                    id, time: times[idx], label: labels[idx], friendlyId: friendlies[idx]
+                };
             });
             return allResults.filter((session) => session.time !== null) as SessionMetadata[];
         });

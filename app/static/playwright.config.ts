@@ -5,7 +5,10 @@ const config: PlaywrightTestConfig = {
     use: {
         baseURL: "http://localhost:3000",
         screenshot: "only-on-failure",
-        actionTimeout: 0
+        actionTimeout: 0,
+        contextOptions: {
+            permissions: ["clipboard-read", "clipboard-write"]
+        }
     },
     timeout: 60000,
     workers: 1

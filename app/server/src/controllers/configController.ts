@@ -10,21 +10,25 @@ export class ConfigController {
     private static _readAppConfigFile = (
         appName: string,
         appsPath: string,
+        baseUrl: string,
         configReader: ConfigReader,
         defaultCodeReader: DefaultCodeReader
     ) => {
         const result = configReader.readConfigFile(appsPath, `${appName}.config.json`) as AppConfig;
         if (result) {
             result.defaultCode = defaultCodeReader.readDefaultCode(appName);
+            result.baseUrl = baseUrl;
         }
         return result;
     };
 
     static getConfig = (req: Request, res: Response) => {
         const { appName } = req.params;
-        const { configReader, appsPath, defaultCodeReader } = req.app.locals as AppLocals;
+        const {
+            configReader, appsPath, defaultCodeReader, baseUrl
+        } = req.app.locals as AppLocals;
 
-        const config = this._readAppConfigFile(appName, appsPath, configReader, defaultCodeReader);
+        const config = this._readAppConfigFile(appName, appsPath, baseUrl, configReader, defaultCodeReader);
         if (config) {
             jsonResponseSuccess(config, res);
         } else {

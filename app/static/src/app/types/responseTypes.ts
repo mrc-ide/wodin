@@ -18,6 +18,7 @@ export interface ResponseSuccess {
 }
 
 export interface AppConfig {
+    baseUrl: string,
     defaultCode: string[],
     readOnlyCode: boolean,
     stateUploadIntervalMillis?: number | null
@@ -173,5 +174,6 @@ export interface OdinRunner {
 export interface SessionMetadata {
     id: string,
     time: string,
-    label: string | null
+    label: string | null,
+    friendlyId: string | null,
 }

@@ -14,7 +14,7 @@ import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 
-jest.mock("plotly.js", () => {});
+jest.mock("plotly.js-basic-dist-min", () => {});
 
 describe("SensitivityTab", () => {
     const mockRunSensitivity = jest.fn();

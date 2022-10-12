@@ -15,7 +15,8 @@ describe("configController", () => {
                 locals: {
                     configReader,
                     defaultCodeReader,
-                    appsPath: "app"
+                    appsPath: "app",
+                    baseUrl: "http://localhost:3000"
                 }
             }
         } as any;
@@ -54,7 +55,11 @@ describe("configController", () => {
         expect(mockReadDefaultCode.mock.calls[0][0]).toBe("TestApp");
 
         expect(spyJsonResponseSuccess.mock.calls.length).toBe(1);
-        expect(spyJsonResponseSuccess.mock.calls[0][0]).toStrictEqual({ ...basicConfig, defaultCode });
+        expect(spyJsonResponseSuccess.mock.calls[0][0]).toStrictEqual({
+            ...basicConfig,
+            baseUrl: "http://localhost:3000",
+            defaultCode
+        });
         expect(spyJsonResponseSuccess.mock.calls[0][1]).toBe(res);
     });
 

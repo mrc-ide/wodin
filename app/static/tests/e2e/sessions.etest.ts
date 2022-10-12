@@ -83,8 +83,22 @@ test.describe("Sessions tests", () => {
         await expect(await page.innerText(":nth-match(.session-col-header, 2)")).toBe("Label");
         await expect(await page.innerText(":nth-match(.session-col-header, 3)")).toBe("Edit Label");
         await expect(await page.innerText(":nth-match(.session-col-header, 4)")).toBe("Load");
+        await expect(await page.innerText(":nth-match(.session-col-header, 4)")).toBe("Shareable Link");
 
         await expect(await page.innerText(".session-label")).toBe("--no label--");
+
+        // Can copy code and link for a session
+        await page.click(":nth-match(.session-copy-code, 1)");
+        await expect(await page.innerText(":nth-match(.session-copy-confirm, 1)"))
+            .toContain("Copied: ");
+        const copiedCodeText = await page.evaluate("navigator.clipboard.readText()");
+        expect(copiedCodeText).toContain("-");
+
+        await page.click(":nth-match(.session-copy-link, 1)");
+        await expect(await page.innerText(":nth-match(.session-copy-confirm, 1)"))
+            .toContain("Copied: http://localhost:3000/apps/day2/?share=");
+        const copiedLinkText = await page.evaluate("navigator.clipboard.readText()");
+        expect(copiedLinkText).toContain("http://localhost:3000/apps/day2/?share=");
 
         // Set the current session label from the nav menu and check it updates on menu title and in the sessions list
         await page.click("#sessions-menu");

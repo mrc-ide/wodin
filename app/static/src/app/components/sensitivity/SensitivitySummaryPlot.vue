@@ -14,7 +14,7 @@
 import {
     computed, defineComponent, onMounted, onUnmounted, ref, watch
 } from "vue";
-import { newPlot, Plots } from "plotly.js";
+import { newPlot, Plots } from "plotly.js-basic-dist-min";
 import { useStore } from "vuex";
 import {
     fadePlotStyle, margin, config, odinToPlotly
