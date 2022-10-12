@@ -86,7 +86,7 @@ export default defineComponent({
         const close = () => { emit("close"); };
         const downloadOutput = () => {
             // User can erase the filename in the text box so the userDownloadFileName is reset, but in this case,
-            // generate a new default
+            // generate a new default to actually save to
             if (!fileName.value) {
                 fileName.value = generateDefaultFileName();
             }

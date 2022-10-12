@@ -58,7 +58,8 @@ export default defineComponent({
             return "";
         });
 
-        const canDownloadOutput = computed(() => true); // TODO: only if we have successfully run the model
+        // only allow download if update not required, and if we have a model solution
+        const canDownloadOutput = computed(() => !updateMsg.value && store.state.run.result?.solution);
         const toggleShowDownloadOutput = (show: boolean) => { showDownloadOutput.value = show; };
 
 
