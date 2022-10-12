@@ -29,7 +29,7 @@ import {
 import { EventEmitter } from "events";
 import {
     newPlot, react, PlotRelayoutEvent, Plots
-} from "plotly.js";
+} from "plotly.js-basic-dist-min";
 import {
     WodinPlotData, fadePlotStyle, margin, config
 } from "../plot";

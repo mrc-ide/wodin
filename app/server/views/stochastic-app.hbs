@@ -12,8 +12,10 @@
                 :course-title="'{{courseTitle}}'"
                 :wodin-version="'{{wodinVersion}}'">
              </app-header>
-            <wodin-session :app-name="'{{appName}}'" :load-session-id="'{{loadSessionId}}'"></wodin-session>
+            <wodin-session :app-name="'{{appName}}'"
+                           :load-session-id="'{{loadSessionId}}'"
+                           :share-not-found="'{{shareNotFound}}'"></wodin-session>
         </div>
-        <script src="/js/stochasticApp.umd.js"></script>
+        <script src="/js/stochasticApp.umd.min.js"></script>
     </body>
 </html>
