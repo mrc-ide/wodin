@@ -5,11 +5,15 @@ import {AppCtx, Dict} from "./types/utilTypes";
 import {OdinSeriesSet} from "./types/responseTypes";
 import {FitDataGetter} from "./store/fitData/getters";
 import {FitData} from "./store/fitData/state";
+import {Commit} from "vuex";
+import {ErrorsMutation} from "./store/errors/mutations";
 
 export class WodinExcelDownload {
     private readonly _state: AppState;
 
     private readonly _rootGetters: any;
+
+    private readonly _commit: Commit;
 
     private readonly _fileName: string;
 
@@ -18,6 +22,7 @@ export class WodinExcelDownload {
     constructor(context: AppCtx, fileName: string, points: number) {
         this._state = context.rootState;
         this._rootGetters = context.rootGetters;
+        this._commit = context.commit;
         this._fileName = fileName;
         this._points = points;
     }
@@ -77,10 +82,15 @@ export class WodinExcelDownload {
     }
 
     downloadModelOutput = () => {
-        const workbook = XLSX.utils.book_new();
-        this._addModelledValues(workbook);
-        this._addModelledWithDataValues(workbook);
-        this._addParameters(workbook);
-        XLSX.writeFile(workbook, this._fileName);
+        try {
+            const workbook = XLSX.utils.book_new();
+            this._addModelledValues(workbook);
+            this._addModelledWithDataValues(workbook);
+            this._addParameters(workbook);
+            XLSX.writeFile(workbook, this._fileName);
+        } catch (e) {
+            this._commit(`errors/${ErrorsMutation.AddError}`,
+                {detail: `Error downloading data to ${this._fileName}: ${e}`}, {root: true});
+        }
     };
 }
