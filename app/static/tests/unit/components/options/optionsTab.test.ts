@@ -12,6 +12,7 @@ import SensitivityOptions from "../../../../src/app/components/options/Sensitivi
 import OptimisationOptions from "../../../../src/app/components/options/OptimisationOptions.vue";
 import { mockModelState, mockRunState } from "../../../mocks";
 import { RunMutation } from "../../../../src/app/store/run/mutations";
+import {nextTick} from "vue";
 
 describe("OptionsTab", () => {
     const getWrapper = (store: Store<any>) => {
@@ -63,7 +64,7 @@ describe("OptionsTab", () => {
     });
 
     it("can reset model parameters", async () => {
-        const mockSetParameterValuesMutation = jest.fn();
+        const mockUpdateParameterValuesMutation = jest.fn();
         const store = new Vuex.Store<BasicState>({
             state: {
                 appType: AppType.Basic,
@@ -74,7 +75,7 @@ describe("OptionsTab", () => {
                     namespaced: true,
                     state: mockRunState({ parameterValues: { param1: 21, param2: 23 } }),
                     mutations: {
-                        [RunMutation.SetParameterValues]: mockSetParameterValuesMutation
+                        [RunMutation.UpdateParameterValues]: mockUpdateParameterValuesMutation
                     }
                 },
                 model: {
@@ -101,7 +102,7 @@ describe("OptionsTab", () => {
         const input = parameters.findAll(".parameter-input").at(0)?.element as HTMLInputElement;
         expect(input.value).toBe("21");
         await wrapper.find("#reset-params-btn").trigger("click");
-        expect(mockSetParameterValuesMutation.mock.calls[0][1]).toEqual({ param1: 200, param2: 100 });
+        expect(mockUpdateParameterValuesMutation.mock.calls[0][1]).toEqual({ param1: 200, param2: 100 });
     });
 
     it("renders as expected for Fit app", () => {

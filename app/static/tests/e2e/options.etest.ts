@@ -169,14 +169,7 @@ test.describe("Options Tab tests", () => {
         await expect(await page.innerText(".collapse-title")).toContain("Model Parameters");
 
         // Default model parameter values
-        await expect(await page.innerText(":nth-match(#model-params label, 1)")).toBe("beta");
         await expect(await page.inputValue(":nth-match(#model-params input, 1)")).toBe("4");
-        await expect(await page.innerText(":nth-match(#model-params label, 2)")).toBe("I0");
-        await expect(await page.inputValue(":nth-match(#model-params input, 2)")).toBe("1");
-        await expect(await page.innerText(":nth-match(#model-params label, 3)")).toBe("N");
-        await expect(await page.inputValue(":nth-match(#model-params input, 3)")).toBe("1,000,000");
-        await expect(await page.innerText(":nth-match(#model-params label, 4)")).toBe("sigma");
-        await expect(await page.inputValue(":nth-match(#model-params input, 4)")).toBe("2");
 
         // Change default values
         await page.fill(":nth-match(#model-params input, 1)", "10000");

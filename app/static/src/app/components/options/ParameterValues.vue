@@ -1,5 +1,11 @@
 <template>
   <div class="container">
+      <div class="my-2">
+          <button class="btn btn-primary btn-sm"
+                  id="reset-params-btn"
+                  @click="reset">Reset
+          </button>
+      </div>
     <div v-for="(paramName, index) in paramNames" class="row my-2" :key="paramKeys[index]">
       <div class="col-5">
         <label class="col-form-label">{{paramName}}</label>
@@ -35,6 +41,7 @@ import { AppType, VisualisationTab } from "../../store/appState/state";
 import { ModelFitMutation } from "../../store/modelFit/mutations";
 import userMessages from "../../userMessages";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
+import {OdinParameter, OdinUserType} from "../../types/responseTypes";
 
 export default defineComponent({
     name: "ParameterValues",
@@ -86,6 +93,16 @@ export default defineComponent({
             return (!fitTabIsOpen.value || paramsToVary.value.length) ? "" : userMessages.modelFit.selectParamToVary;
         });
 
+        const odinParameters = computed(() => store.state.model.odinModelResponse.metadata.parameters);
+
+        const reset = () => {
+            const defaultParams: OdinUserType = {};
+            odinParameters.value.forEach((param: OdinParameter) => {
+                defaultParams[param.name] = param.default || 0;
+            });
+            store.commit(`run/${RunMutation.UpdateParameterValues}`, defaultParams);
+        };
+
         watch(odinSolution, () => {
             // force inputs to update when model is run to show actual values
             paramKeys.value = timestampParamNames();
@@ -100,7 +117,8 @@ export default defineComponent({
             paramVaryFlags,
             selectParamToVaryMsg,
             updateValue,
-            checkBoxChange
+            checkBoxChange,
+            reset
         };
     }
 });
