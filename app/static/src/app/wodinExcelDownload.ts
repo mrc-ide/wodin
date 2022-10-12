@@ -4,6 +4,7 @@ import { FitState } from "./store/fit/state";
 import {AppCtx, Dict} from "./types/utilTypes";
 import {OdinSeriesSet} from "./types/responseTypes";
 import {FitDataGetter} from "./store/fitData/getters";
+import {FitData} from "./store/fitData/state";
 
 export class WodinExcelDownload {
     private readonly _state: AppState;
@@ -21,6 +22,21 @@ export class WodinExcelDownload {
         this._points = points;
     }
 
+    // Shared method to generate both Modelled and Modelled with Data - provide empty nonTimeColumns param to omit data
+    // for Modelled only
+    private _generateModelledOutput(solutionOutput: OdinSeriesSet, nonTimeColumns: string[], fitData: FitData | null) {
+        const outputData = [];
+        outputData.push(["t", ...solutionOutput.names, ...nonTimeColumns]); // headers
+        solutionOutput.x.forEach((x: number, xIdx: number) => {
+            outputData.push([
+                x,
+                ...solutionOutput.names.map((name: string, nameIdx: number) => solutionOutput.y[nameIdx][xIdx]),
+                ...nonTimeColumns.map((column: string) => (fitData as FitData)[xIdx][column])
+            ]);
+        });
+        return XLSX.utils.aoa_to_sheet(outputData);
+    }
+
     private _addModelledValues(workbook: XLSX.WorkBook) {
         const solution = this._state.run.result?.solution;
         if (solution) {
@@ -29,16 +45,7 @@ export class WodinExcelDownload {
                 mode: "grid", tStart: 0, tEnd: end, nPoints: this._points
             });
 
-            const outputData = [];
-            outputData.push(["t", ...solutionOutput.names]); // headers
-            solutionOutput.x.forEach((x: number, xIdx: number) => {
-                outputData.push([
-                    x,
-                    ...solutionOutput.names.map((name: string, nameIdx: number) => solutionOutput.y[nameIdx][xIdx])
-                ]);
-            });
-
-            const worksheet = XLSX.utils.aoa_to_sheet(outputData);
+            const worksheet = this._generateModelledOutput(solutionOutput, [], null);
             XLSX.utils.book_append_sheet(workbook, worksheet, "Modelled");
         }
     }
@@ -54,19 +61,7 @@ export class WodinExcelDownload {
                 const times = fitData.map((row: Dict<number>) => row[timeVariable]);
                 const solutionOutput = solution({ mode: "given", times });
 
-                const outputData = [];
-                outputData.push(["t", ...solutionOutput.names, ...nonTimeColumns]); // headers
-                solutionOutput.x.forEach((x: number, xIdx: number) => {
-                    outputData.push([
-                        x,
-                        ...solutionOutput.names.map((name: string, nameIdx: number) => solutionOutput.y[nameIdx][xIdx]),
-                        ...nonTimeColumns.map((column: string) => fitData[xIdx][column])
-                    ]);
-                });
-
-                // TODO: ossibly use common method for both data sheets
-
-                const worksheet = XLSX.utils.aoa_to_sheet(outputData);
+                const worksheet = this._generateModelledOutput(solutionOutput, nonTimeColumns, fitData);
                 XLSX.utils.book_append_sheet(workbook, worksheet, "Modelled with Data");
             }
         }
