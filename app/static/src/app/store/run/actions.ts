@@ -58,8 +58,7 @@ export const actions: ActionTree<RunState, AppState> = {
     },
 
     DownloadOutput(context, payload: DownloadOutputPayload) {
-        const { rootState } = context;
-        new WodinExcelDownload(rootState, payload.fileName, payload.points)
+        new WodinExcelDownload(context, payload.fileName, payload.points)
             .downloadModelOutput();
     }
 };

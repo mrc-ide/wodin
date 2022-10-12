@@ -1,18 +1,22 @@
 import * as XLSX from "xlsx";
 import { AppState, AppType } from "./store/appState/state";
 import { FitState } from "./store/fit/state";
-import {Dict} from "./types/utilTypes";
+import {AppCtx, Dict} from "./types/utilTypes";
 import {OdinSeriesSet} from "./types/responseTypes";
+import {FitDataGetter} from "./store/fitData/getters";
 
 export class WodinExcelDownload {
     private readonly _state: AppState;
+
+    private readonly _rootGetters: any;
 
     private readonly _fileName: string;
 
     private readonly _points: number;
 
-    constructor(state: AppState, fileName: string, points: number) {
-        this._state = state;
+    constructor(context: AppCtx, fileName: string, points: number) {
+        this._state = context.rootState;
+        this._rootGetters = context.rootGetters;
         this._fileName = fileName;
         this._points = points;
     }
@@ -34,7 +38,6 @@ export class WodinExcelDownload {
                 ]);
             });
 
-
             const worksheet = XLSX.utils.aoa_to_sheet(outputData);
             XLSX.utils.book_append_sheet(workbook, worksheet, "Modelled");
         }
@@ -46,21 +49,22 @@ export class WodinExcelDownload {
             const fitState = this._state as FitState;
             const fitData = fitState.fitData.data;
             const {timeVariable} = fitState.fitData;
+            const nonTimeColumns = this._rootGetters[`fitData/${FitDataGetter.nonTimeColumns}`];
             if (fitData && timeVariable) {
                 const times = fitData.map((row: Dict<number>) => row[timeVariable]);
                 const solutionOutput = solution({ mode: "given", times });
 
                 const outputData = [];
-                outputData.push(["t", ...solutionOutput.names]); // headers
+                outputData.push(["t", ...solutionOutput.names, ...nonTimeColumns]); // headers
                 solutionOutput.x.forEach((x: number, xIdx: number) => {
                     outputData.push([
                         x,
-                        ...solutionOutput.names.map((name: string, nameIdx: number) => solutionOutput.y[nameIdx][xIdx])
+                        ...solutionOutput.names.map((name: string, nameIdx: number) => solutionOutput.y[nameIdx][xIdx]),
+                        ...nonTimeColumns.map((column: string) => fitData[xIdx][column])
                     ]);
                 });
 
-                // TODO: include data values, and possibly use common method for both data sheets
-                // TODO: move button to top of tab? Enable button only if !runRequired? Or just if any plot..
+                // TODO: ossibly use common method for both data sheets
 
                 const worksheet = XLSX.utils.aoa_to_sheet(outputData);
                 XLSX.utils.book_append_sheet(workbook, worksheet, "Modelled with Data");
