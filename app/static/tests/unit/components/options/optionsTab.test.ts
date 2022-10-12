@@ -12,7 +12,6 @@ import SensitivityOptions from "../../../../src/app/components/options/Sensitivi
 import OptimisationOptions from "../../../../src/app/components/options/OptimisationOptions.vue";
 import { mockModelState, mockRunState } from "../../../mocks";
 import { RunMutation } from "../../../../src/app/store/run/mutations";
-import {nextTick} from "vue";
 
 describe("OptionsTab", () => {
     const getWrapper = (store: Store<any>) => {

@@ -41,7 +41,7 @@ import { AppType, VisualisationTab } from "../../store/appState/state";
 import { ModelFitMutation } from "../../store/modelFit/mutations";
 import userMessages from "../../userMessages";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
-import {OdinParameter, OdinUserType} from "../../types/responseTypes";
+import { OdinParameter, OdinUserType } from "../../types/responseTypes";
 
 export default defineComponent({
     name: "ParameterValues",
