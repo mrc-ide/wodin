@@ -5,7 +5,7 @@ import FitApp from "./components/fit/FitApp.vue";
 import WodinSession from "./components/WodinSession.vue";
 import AppHeader from "./components/AppHeader.vue";
 import { FitState } from "./store/fit/state";
-import { getRouter } from "./router";
+import { initialiseRouter } from "./router";
 
 export const store = new Vuex.Store<FitState>(storeOptions);
 
@@ -13,5 +13,5 @@ const app = createApp({ components: { WodinSession, AppHeader } });
 app.use(store);
 app.mount("#app");
 
-const router = getRouter(FitApp, store.state.appName!);
+const router = initialiseRouter(FitApp, store.state.appName!);
 app.use(router);
