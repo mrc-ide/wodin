@@ -98,9 +98,15 @@ export default defineComponent({
         const reset = () => {
             const defaultParams: OdinUserType = {};
             odinParameters.value.forEach((param: OdinParameter) => {
-                defaultParams[param.name] = param.default || 0;
+                const defaultValue = param.default || 0;
+                if (paramValues.value[param.name] !== defaultValue) {
+                    defaultParams[param.name] = defaultValue;
+                }
             });
-            store.commit(`run/${RunMutation.UpdateParameterValues}`, defaultParams);
+
+            if (Object.keys(defaultParams).length) {
+                store.commit(`run/${RunMutation.UpdateParameterValues}`, defaultParams);
+            }
         };
 
         watch(odinSolution, () => {
