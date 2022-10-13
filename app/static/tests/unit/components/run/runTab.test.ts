@@ -86,22 +86,22 @@ describe("RunTab", () => {
     });
 
     it("disables run and download buttons when compile is required", () => {
-        const modelState = {compileRequired: true};
-        const runState = {result: { solution: {} } as any};
+        const modelState = { compileRequired: true };
+        const runState = { result: { solution: {} } as any };
         const wrapper = getWrapper(modelState, runState);
         expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(true);
         expect((wrapper.find("button#download-btn").element as HTMLButtonElement).disabled).toBe(true);
     });
 
     it("enables download button when model has a solution", () => {
-        const wrapper = getWrapper({}, {result: { solution: {} } as any});
+        const wrapper = getWrapper({}, { result: { solution: {} } as any });
         expect((wrapper.find("button#download-btn").element as HTMLButtonElement).disabled).toBe(false);
     });
 
     it("disables download button when run is required ", () => {
         const runState = {
             result: { solution: {} } as any,
-            runRequired: {modelChanged: true} as any
+            runRequired: { modelChanged: true } as any
         };
         const wrapper = getWrapper({}, runState);
         expect((wrapper.find("button#download-btn").element as HTMLButtonElement).disabled).toBe(true);
@@ -149,7 +149,7 @@ describe("RunTab", () => {
     });
 
     it("opens download dialog on click download button, and closes when dialog emits close event", async () => {
-        const wrapper = getWrapper({}, {result: {solution: {}} as any});
+        const wrapper = getWrapper({}, { result: { solution: {} } as any });
         await wrapper.find("button#download-btn").trigger("click");
         const download = wrapper.findComponent(DownloadOutput);
         expect(download.props().open).toBe(true);

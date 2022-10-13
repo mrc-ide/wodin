@@ -1,12 +1,12 @@
 import * as XLSX from "xlsx";
+import { Commit } from "vuex";
 import { AppState, AppType } from "./store/appState/state";
 import { FitState } from "./store/fit/state";
-import {AppCtx, Dict} from "./types/utilTypes";
-import {OdinSeriesSet} from "./types/responseTypes";
-import {FitDataGetter} from "./store/fitData/getters";
-import {FitData} from "./store/fitData/state";
-import {Commit} from "vuex";
-import {ErrorsMutation} from "./store/errors/mutations";
+import { AppCtx, Dict } from "./types/utilTypes";
+import { OdinSeriesSet } from "./types/responseTypes";
+import { FitDataGetter } from "./store/fitData/getters";
+import { FitData } from "./store/fitData/state";
+import { ErrorsMutation } from "./store/errors/mutations";
 
 export class WodinExcelDownload {
     private readonly _state: AppState;
@@ -29,7 +29,8 @@ export class WodinExcelDownload {
 
     // Shared method to generate both Modelled and Modelled with Data - provide empty nonTimeColumns param to omit data
     // for Modelled only
-    private _generateModelledOutput(solutionOutput: OdinSeriesSet, nonTimeColumns: string[], fitData: FitData | null) {
+    private static _generateModelledOutput(solutionOutput: OdinSeriesSet, nonTimeColumns: string[],
+        fitData: FitData | null) {
         const outputData = [];
         outputData.push(["t", ...solutionOutput.names, ...nonTimeColumns]); // headers
         solutionOutput.x.forEach((x: number, xIdx: number) => {
@@ -50,7 +51,7 @@ export class WodinExcelDownload {
                 mode: "grid", tStart: 0, tEnd: end, nPoints: this._points
             });
 
-            const worksheet = this._generateModelledOutput(solutionOutput, [], null);
+            const worksheet = WodinExcelDownload._generateModelledOutput(solutionOutput, [], null);
             XLSX.utils.book_append_sheet(workbook, worksheet, "Modelled");
         }
     }
@@ -60,13 +61,13 @@ export class WodinExcelDownload {
         if (solution && this._state.appType === AppType.Fit) {
             const fitState = this._state as FitState;
             const fitData = fitState.fitData.data;
-            const {timeVariable} = fitState.fitData;
+            const { timeVariable } = fitState.fitData;
             const nonTimeColumns = this._rootGetters[`fitData/${FitDataGetter.nonTimeColumns}`];
             if (fitData && timeVariable) {
                 const times = fitData.map((row: Dict<number>) => row[timeVariable]);
                 const solutionOutput = solution({ mode: "given", times });
 
-                const worksheet = this._generateModelledOutput(solutionOutput, nonTimeColumns, fitData);
+                const worksheet = WodinExcelDownload._generateModelledOutput(solutionOutput, nonTimeColumns, fitData);
                 XLSX.utils.book_append_sheet(workbook, worksheet, "Modelled with Data");
             }
         }
@@ -75,7 +76,9 @@ export class WodinExcelDownload {
     private _addParameters(workbook: XLSX.WorkBook) {
         const paramVals = this._state.run.parameterValues;
         if (paramVals) {
-            const paramData = Object.keys(paramVals).map((name: string) => { return { name, value: paramVals[name] }; });
+            const paramData = Object.keys(paramVals).map((name: string) => {
+                return { name, value: paramVals[name] };
+            });
             const worksheet = XLSX.utils.json_to_sheet(paramData);
             XLSX.utils.book_append_sheet(workbook, worksheet, "Parameters");
         }
@@ -90,7 +93,7 @@ export class WodinExcelDownload {
             XLSX.writeFile(workbook, this._fileName);
         } catch (e) {
             this._commit(`errors/${ErrorsMutation.AddError}`,
-                {detail: `Error downloading data to ${this._fileName}: ${e}`}, {root: true});
+                { detail: `Error downloading data to ${this._fileName}: ${e}` }, { root: true });
         }
     };
 }

@@ -12,13 +12,14 @@ jest.mock("xlsx", () => ({
         aoa_to_sheet: (data: any) => mockAoaToSheet(data),
         json_to_sheet: (data: any) => mockJsonToSheet(data),
         book_new: () => mockBookNew(),
-        book_append_sheet: (workbook: any, worksheet: any, name: string) =>
-            mockBookAppendSheet(workbook, worksheet, name)
+        book_append_sheet: (wb: any, ws: any, name: string) => mockBookAppendSheet(wb, ws, name)
     }
 }));
 
 /* eslint-disable import/first */
-import { mockBasicState, mockRunState } from "../mocks";
+import {
+    mockBasicState, mockFitDataState, mockFitState, mockRunState
+} from "../mocks";
 import { WodinExcelDownload } from "../../src/app/wodinExcelDownload";
 
 const mockSolution = jest.fn().mockImplementation((options) => {
@@ -37,6 +38,29 @@ describe("WodinExcelDownload", () => {
         endTime: 10,
         parameterValues: { v1: 1.1, v2: 2.2 }
     });
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    const expectedModelledSheet = {
+        name: "Modelled",
+        type: "aoa",
+        data: [
+            ["t", "A", "B"],
+            [0, 1, 0],
+            [10, 11, 100]
+        ]
+    };
+
+    const expectedParametersSheet = {
+        name: "Parameters",
+        type: "json",
+        data: [
+            { name: "v1", value: 1.1 },
+            { name: "v2", value: 2.2 }
+        ]
+    };
 
     it("downloads expected workbook for Basic app", () => {
         const rootState = mockBasicState({
@@ -60,23 +84,62 @@ describe("WodinExcelDownload", () => {
         expect(mockWriteFile).toHaveBeenCalledTimes(1);
         expect(mockWriteFile.mock.calls[0][0]).toStrictEqual({
             sheets: [
+                expectedModelledSheet,
+                expectedParametersSheet
+            ]
+        });
+        expect(mockWriteFile.mock.calls[0][1]).toBe("myFile.xlsx");
+    });
+
+    it("downloads expected workbook for Fit app", () => {
+        const rootState = mockFitState({
+            run: runState,
+            fitData: mockFitDataState({
+                data: [
+                    { time: 0, cases: 1, deaths: 2 },
+                    { time: 2, cases: 3, deaths: 4 }
+                ],
+                timeVariable: "time"
+            })
+        });
+
+        const rootGetters = {
+            "fitData/nonTimeColumns": ["cases", "deaths"]
+        };
+
+        const commit = jest.fn();
+
+        const sut = new WodinExcelDownload({ rootState, commit, rootGetters } as any, "myFile.xlsx", 101);
+        sut.downloadModelOutput();
+
+        expect(commit).not.toHaveBeenCalled();
+        expect(mockBookNew).toHaveBeenCalledTimes(1);
+        expect(mockSolution).toHaveBeenCalledTimes(2);
+        expect(mockSolution.mock.calls[0][0]).toStrictEqual({
+            mode: "grid",
+            tStart: 0,
+            tEnd: 10,
+            nPoints: 101
+        });
+        expect(mockSolution.mock.calls[1][0]).toStrictEqual({
+            mode: "given",
+            times: [0, 2]
+        });
+
+        expect(mockWriteFile).toHaveBeenCalledTimes(1);
+        expect(mockWriteFile.mock.calls[0][0]).toStrictEqual({
+            sheets: [
+                expectedModelledSheet,
                 {
-                    name: "Modelled",
+                    name: "Modelled with Data",
                     type: "aoa",
                     data: [
-                        ["t", "A", "B"],
-                        [0, 1, 0],
-                        [10, 11, 100]
+                        ["t", "A", "B", "cases", "deaths"],
+                        [0, 1, 0, 1, 2],
+                        [2, 3, 20, 3, 4]
                     ]
                 },
-                {
-                    name: "Parameters",
-                    type: "json",
-                    data: [
-                        { name: "v1", value: 1.1 },
-                        { name: "v2", value: 2.2 }
-                    ]
-                }
+                expectedParametersSheet
             ]
         });
         expect(mockWriteFile.mock.calls[0][1]).toBe("myFile.xlsx");

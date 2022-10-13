@@ -5,7 +5,7 @@ import { AppState } from "../appState/state";
 import userMessages from "../../userMessages";
 import type { OdinRunResult } from "../../types/wrapperTypes";
 import { OdinUserType } from "../../types/responseTypes";
-import {WodinExcelDownload} from "../../wodinExcelDownload";
+import { WodinExcelDownload } from "../../wodinExcelDownload";
 
 export enum RunAction {
     RunModel = "RunModel",

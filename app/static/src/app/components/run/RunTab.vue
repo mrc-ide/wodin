@@ -7,7 +7,9 @@
         <run-plot :fade-plot="!!updateMsg" :model-fit="false"></run-plot>
         <error-info :error="error"></error-info>
         <div>
-          <button class="btn btn-primary" id="download-btn" :disabled="!canDownloadOutput" @click="toggleShowDownloadOutput(true)">
+          <button class="btn btn-primary" id="download-btn"
+                  :disabled="!canDownloadOutput"
+                  @click="toggleShowDownloadOutput(true)">
             Download
           </button>
         </div>
@@ -17,7 +19,7 @@
 
 <script lang="ts">
 import { useStore } from "vuex";
-import {computed, defineComponent, ref} from "vue";
+import { computed, defineComponent, ref } from "vue";
 import RunPlot from "./RunPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { RunAction } from "../../store/run/actions";
