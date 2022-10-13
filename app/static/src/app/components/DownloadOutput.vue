@@ -5,10 +5,10 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Download Model</h5>
+            <h5 class="modal-title">Download Run</h5>
           </div>
           <div class="modal-body">
-            <div class="row">
+            <div class="row" id="download-file-name">
               <div class="col-4">
                 <label class="col-form-label">File name</label>
               </div>
@@ -16,7 +16,7 @@
                 <input type="text" class="form-control" :value="fileName" @change="updateUserFileName">
               </div>
             </div>
-            <div class="row mt-2">
+            <div class="row mt-2" id="download-points">
               <div class="col-4">
                 <label class="col-form-label">Modelled points</label>
               </div>
@@ -28,10 +28,10 @@
           <div class="modal-footer">
             <button class="btn btn-primary"
                     :disabled="canDownload"
-                    id="ok-settings"
+                    id="ok-download"
                     @click="downloadOutput">OK</button>
             <button class="btn btn-outline"
-                    id="cancel-settings"
+                    id="cancel-download"
                     @click="close">Cancel</button>
           </div>
         </div>
