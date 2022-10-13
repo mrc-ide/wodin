@@ -10,7 +10,7 @@ jest.mock("../../../../src/app/wodinExcelDownload");
 
 describe("Run actions", () => {
     const mockDownloadModelOutput = jest.fn();
-    const mockWodinExcelDownload = WodinExcelDownload as Mock;
+    const mockWodinExcelDownload = WodinExcelDownload as any as Mock;
     mockWodinExcelDownload.mockImplementation(() => ({ downloadModelOutput: mockDownloadModelOutput }));
 
     it("runs model and updates required action", () => {
