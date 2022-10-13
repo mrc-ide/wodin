@@ -62,7 +62,6 @@ export default defineComponent({
         const canDownloadOutput = computed(() => !updateMsg.value && store.state.run.result?.solution);
         const toggleShowDownloadOutput = (show: boolean) => { showDownloadOutput.value = show; };
 
-
         return {
             canRunModel,
             updateMsg,
