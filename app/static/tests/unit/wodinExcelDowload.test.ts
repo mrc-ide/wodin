@@ -1,3 +1,5 @@
+import {ErrorsMutation} from "../../src/app/store/errors/mutations";
+
 const mockAoaToSheet = jest.fn().mockImplementation((data) => ({ data, type: "aoa" }));
 const mockJsonToSheet = jest.fn().mockImplementation((data) => ({ data, type: "json" }));
 const mockBookNew = jest.fn().mockImplementation(() => ({ sheets: [] } as any));
@@ -143,5 +145,28 @@ describe("WodinExcelDownload", () => {
             ]
         });
         expect(mockWriteFile.mock.calls[0][1]).toBe("myFile.xlsx");
+    });
+
+    it("commits any error thrown during download", () => {
+        const errorRunState = {
+            ...runState,
+            result: {
+                solution: jest.fn().mockImplementation(() => { throw "test error"; } )
+            } as any,
+        };
+        const rootState = mockBasicState({
+            run: errorRunState
+        });
+        const commit = jest.fn();
+
+        const sut = new WodinExcelDownload({ rootState, commit } as any, "myFile.xlsx", 101);
+        sut.downloadModelOutput();
+
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(`errors/${ErrorsMutation.AddError}`);
+        expect(commit.mock.calls[0][1]).toStrictEqual({
+            detail: "Error downloading to myFile.xlsx: test error"
+        });
+        expect(commit.mock.calls[0][2]).toStrictEqual({root: true});
     });
 });

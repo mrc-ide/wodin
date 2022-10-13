@@ -93,7 +93,7 @@ export class WodinExcelDownload {
             XLSX.writeFile(workbook, this._fileName);
         } catch (e) {
             this._commit(`errors/${ErrorsMutation.AddError}`,
-                { detail: `Error downloading data to ${this._fileName}: ${e}` }, { root: true });
+                { detail: `Error downloading to ${this._fileName}: ${e}` }, { root: true });
         }
     };
 }
