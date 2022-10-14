@@ -10,6 +10,8 @@ import { FitState } from "../../../../src/app/store/fit/state";
 import { AppType, VisualisationTab } from "../../../../src/app/store/appState/state";
 import SensitivityOptions from "../../../../src/app/components/options/SensitivityOptions.vue";
 import OptimisationOptions from "../../../../src/app/components/options/OptimisationOptions.vue";
+import { mockModelState, mockRunState } from "../../../mocks";
+import { RunMutation } from "../../../../src/app/store/run/mutations";
 
 describe("OptionsTab", () => {
     const getWrapper = (store: Store<any>) => {
@@ -56,6 +58,50 @@ describe("OptionsTab", () => {
         expect(collapses.at(1)!.props("title")).toBe("Run Options");
         expect(collapses.at(1)!.props("collapseId")).toBe("run-options");
         expect(collapses.at(1)!.findComponent(RunOptions).exists()).toBe(true);
+        expect(wrapper.find("#reset-params-btn").exists()).toBe(true);
+        expect(wrapper.find("#reset-params-btn").text()).toBe("Reset");
+    });
+
+    it("can reset model parameters", async () => {
+        const mockUpdateParameterValuesMutation = jest.fn();
+        const store = new Vuex.Store<BasicState>({
+            state: {
+                appType: AppType.Basic,
+                openVisualisationTab: VisualisationTab.Run
+            } as any,
+            modules: {
+                run: {
+                    namespaced: true,
+                    state: mockRunState({ parameterValues: { param1: 21, param2: 23 } }),
+                    mutations: {
+                        [RunMutation.UpdateParameterValues]: mockUpdateParameterValuesMutation
+                    }
+                },
+                model: {
+                    namespaced: true,
+                    state: mockModelState({
+                        odinModelResponse: {
+                            valid: true,
+                            metadata: {
+                                parameters: [
+                                    { name: "param1", default: 200 },
+                                    { name: "param2", default: 100 }
+                                ]
+                            } as any
+                        }
+                    })
+                }
+            }
+        });
+        const wrapper = await getWrapper(store);
+
+        expect(wrapper.find("#reset-params-btn").exists()).toBe(true);
+        const parameters = wrapper.findComponent(ParameterValues);
+        expect(parameters.findAll(".row").length).toBe(2);
+        const input = parameters.findAll(".parameter-input").at(0)?.element as HTMLInputElement;
+        expect(input.value).toBe("21");
+        await wrapper.find("#reset-params-btn").trigger("click");
+        expect(mockUpdateParameterValuesMutation.mock.calls[0][1]).toEqual({ param1: 200, param2: 100 });
     });
 
     it("renders as expected for Fit app", () => {
@@ -93,6 +139,8 @@ describe("OptionsTab", () => {
         expect(collapses.at(3)!.props("title")).toBe("Optimisation");
         expect(collapses.at(3)!.props("collapseId")).toBe("optimisation");
         expect(collapses.at(3)!.findComponent(OptimisationOptions).exists()).toBe(true);
+        expect(wrapper.find("#reset-params-btn").exists()).toBe(true);
+        expect(wrapper.find("#reset-params-btn").text()).toBe("Reset");
     });
 
     it("renders as expected when sensitivity tab is not open", () => {
@@ -110,5 +158,7 @@ describe("OptionsTab", () => {
         });
         const wrapper = getWrapper(store);
         expect(wrapper.findComponent(SensitivityOptions).exists()).toBe(true);
+        expect(wrapper.find("#reset-params-btn").exists()).toBe(true);
+        expect(wrapper.find("#reset-params-btn").text()).toBe("Reset");
     });
 });

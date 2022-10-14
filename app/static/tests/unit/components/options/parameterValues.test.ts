@@ -10,14 +10,18 @@ import { AppType, VisualisationTab } from "../../../../src/app/store/appState/st
 import Mock = jest.Mock;
 import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import { ModelState } from "../../../../src/app/store/model/state";
 
 describe("ParameterValues", () => {
-    const getStore = (fitTabIsOpen = false,
+    const getStore = (
+        fitTabIsOpen = false,
         mockUpdateParameterValues: Mock<any, any> | null = null,
         mockSetSensitivityUpdateRequired = jest.fn(),
         mockSetFitUpdateRequired = jest.fn(),
         paramsToVary: string[] = [],
-        mockSetParamsToVary = jest.fn()) => {
+        mockSetParamsToVary = jest.fn(),
+        modelState: Partial<ModelState> = {}
+    ) => {
         // Use mock or real mutations
         const storeMutations = mockUpdateParameterValues
             ? { UpdateParameterValues: mockUpdateParameterValues } : runMutations;
@@ -30,7 +34,7 @@ describe("ParameterValues", () => {
             modules: {
                 model: {
                     namespaced: true,
-                    state: mockModelState()
+                    state: mockModelState(modelState)
                 },
                 run: {
                     namespaced: true,
@@ -110,6 +114,64 @@ describe("ParameterValues", () => {
         expect(wrapper.find("#select-param-msg").text()).toBe(
             "Please select at least one parameter to vary during model fit."
         );
+    });
+
+    it("resets parameters", async () => {
+        const modelState = {
+            odinModelResponse: {
+                metadata: {
+                    parameters: [
+                        { name: "param1", default: 1 },
+                        { name: "param2", default: 5.5 }
+                    ]
+                }
+            } as any
+        };
+        const mockUpdateParameterValues = jest.fn();
+        const wrapper = getWrapper(getStore(
+            false,
+            mockUpdateParameterValues,
+            jest.fn(),
+            jest.fn(),
+            [],
+            jest.fn(),
+            modelState
+        ));
+        const input2 = wrapper.findAllComponents(NumericInput).at(1)!;
+        await input2.vm.$emit("update", 3.3);
+        expect(input2.props("value")).toBe(2.2);
+        expect(mockUpdateParameterValues).toHaveBeenCalledTimes(1);
+        expect(mockUpdateParameterValues.mock.calls[0][1]).toStrictEqual({ param2: 3.3 });
+        const reset = wrapper.find("#reset-params-btn");
+        await reset.trigger("click");
+        expect(mockUpdateParameterValues).toHaveBeenCalledTimes(2);
+        expect(mockUpdateParameterValues.mock.calls[1][1]).toStrictEqual({ param2: 5.5 });
+    });
+
+    it("does not resets parameters to default values if no changes", async () => {
+        const modelState = {
+            odinModelResponse: {
+                metadata: {
+                    parameters: [
+                        { name: "param1", default: 1 },
+                        { name: "param2", default: 2.2 }
+                    ]
+                }
+            } as any
+        };
+        const mockUpdateParameterValues = jest.fn();
+        const wrapper = getWrapper(getStore(
+            false,
+            mockUpdateParameterValues,
+            jest.fn(),
+            jest.fn(),
+            [],
+            jest.fn(),
+            modelState
+        ));
+        const reset = wrapper.find("#reset-params-btn");
+        await reset.trigger("click");
+        expect(mockUpdateParameterValues).toHaveBeenCalledTimes(0);
     });
 
     it("commits parameter value change", async () => {
