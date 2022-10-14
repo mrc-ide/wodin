@@ -6,6 +6,7 @@ import { freezer } from "./utils";
 import { WodinError, ResponseSuccess, ResponseFailure } from "./types/responseTypes";
 import { AppCtx } from "./types/utilTypes";
 import { ErrorsMutation } from "./store/errors/mutations";
+import {AppState} from "./store/appState/state";
 
 export interface ResponseWithType<T> extends ResponseSuccess {
     data: T
@@ -40,8 +41,11 @@ type OnSuccess = (success: ResponseSuccess) => void;
 export class APIService<S extends string, E extends string> implements API<S, E> {
     private readonly _commit: Commit;
 
+    private readonly _baseUrl: string;
+
     constructor(context: AppCtx) {
         this._commit = context.commit;
+        this._baseUrl = (context.rootState as AppState).config!.baseUrl;
     }
 
     private _ignoreErrors = false;
@@ -142,15 +146,22 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         }
     }
 
+    private _fullUrl(url: string) {
+        const separator = this._baseUrl.endsWith("/") ? "" : "/";
+        return `${this._baseUrl}${separator}${url}`;
+    }
+
     async get<T>(url: string): Promise<void | ResponseWithType<T>> {
         this._verifyHandlers(url);
-        return this._handleAxiosResponse(axios.get(url));
+        const fullUrl = this._fullUrl(url);
+        return this._handleAxiosResponse(axios.get(fullUrl));
     }
 
     async post<T>(url: string, body: any, contentType = "application/json"): Promise<void | ResponseWithType<T>> {
         this._verifyHandlers(url);
         const headers = { "Content-Type": contentType };
-        return this._handleAxiosResponse(axios.post(url, body, { headers }));
+        const fullUrl = this._fullUrl(url);
+        return this._handleAxiosResponse(axios.post(fullUrl, body, { headers }));
     }
 }
 
