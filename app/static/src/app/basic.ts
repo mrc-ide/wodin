@@ -13,5 +13,5 @@ const app = createApp({ components: { WodinSession, AppHeader } });
 app.use(store);
 app.mount("#app");
 
-const router = getRouter(BasicApp, store.state.appName!);
+const router = getRouter(BasicApp, store.state.appName!, store.state.baseUrl!);
 app.use(router);

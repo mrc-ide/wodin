@@ -40,8 +40,7 @@ export const appStateActions: ActionTree<AppState, AppState> = {
     async [AppStateAction.Initialise](context, payload: InitialisePayload) {
         const { commit, state, dispatch } = context;
         const { appName, baseUrl, loadSessionId } = payload;
-        commit(AppStateMutation.SetAppName, appName);
-        commit(AppStateMutation.SetBaseUrl, baseUrl);
+        commit(AppStateMutation.SetApp, {appName, baseUrl});
         const response = await api(context)
             .freezeResponse()
             .withSuccess(AppStateMutation.SetConfig)

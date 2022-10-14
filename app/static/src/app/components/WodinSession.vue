@@ -22,14 +22,15 @@ export default defineComponent({
     },
     setup(props) {
         const store = useStore();
-        const initialised = computed(() => !!store.state.appName);
+        const initialised = computed(() => !!(store.state.appName && store.state.baseUrl));
         onMounted(() => {
             if (props.shareNotFound) {
                 store.commit(`errors/${ErrorsMutation.AddError}`,
                     { detail: `Share id not found: ${props.shareNotFound}` });
             }
 
-            const { appName, loadSessionId } = props;
+            const { appName, baseUrl, loadSessionId } = props;
+            console.log("dispatching initialise with base url: " + baseUrl)
             store.dispatch(AppStateAction.Initialise, { appName, baseUrl, loadSessionId });
         });
 
