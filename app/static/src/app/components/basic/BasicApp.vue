@@ -46,7 +46,6 @@ export default defineComponent({
         WodinTabs
     },
     setup() {
-        console.log("rendering basic")
         const store = useStore();
         const rightTabNames = [VisualisationTab.Run, VisualisationTab.Sensitivity];
         const rightTabSelected = (tab: string) => { store.commit(AppStateMutation.SetOpenVisualisationTab, tab); };

@@ -30,7 +30,6 @@ export default defineComponent({
             }
 
             const { appName, baseUrl, loadSessionId } = props;
-            console.log("dispatching initialise with base url: " + baseUrl)
             store.dispatch(AppStateAction.Initialise, { appName, baseUrl, loadSessionId });
         });
 
