@@ -32,14 +32,16 @@ const getStateUploadInterval = (state: AppState) => state.config?.stateUploadInt
 
 interface InitialisePayload {
     appName: string,
+    baseUrl: string,
     loadSessionId: string
 }
 
 export const appStateActions: ActionTree<AppState, AppState> = {
     async [AppStateAction.Initialise](context, payload: InitialisePayload) {
         const { commit, state, dispatch } = context;
-        const { appName, loadSessionId } = payload;
+        const { appName, baseUrl, loadSessionId } = payload;
         commit(AppStateMutation.SetAppName, appName);
+        commit(AppStateMutation.SetBaseUrl, baseUrl);
         const response = await api(context)
             .freezeResponse()
             .withSuccess(AppStateMutation.SetConfig)

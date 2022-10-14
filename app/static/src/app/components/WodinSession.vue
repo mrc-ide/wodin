@@ -13,6 +13,7 @@ export default defineComponent({
     name: "WodinSession",
     props: {
         appName: String,
+        baseUrl: String,
         loadSessionId: String,
         shareNotFound: String
     },
@@ -29,7 +30,7 @@ export default defineComponent({
             }
 
             const { appName, loadSessionId } = props;
-            store.dispatch(AppStateAction.Initialise, { appName, loadSessionId });
+            store.dispatch(AppStateAction.Initialise, { appName, baseUrl, loadSessionId });
         });
 
         return { initialised };

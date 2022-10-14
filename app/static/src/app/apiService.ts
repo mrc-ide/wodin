@@ -45,7 +45,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
 
     constructor(context: AppCtx) {
         this._commit = context.commit;
-        this._baseUrl = (context.rootState as AppState).config!.baseUrl;
+        this._baseUrl = (context.rootState as AppState).baseUrl!;
     }
 
     private _ignoreErrors = false;
@@ -147,8 +147,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
     }
 
     private _fullUrl(url: string) {
-        const separator = this._baseUrl.endsWith("/") ? "" : "/";
-        return `${this._baseUrl}${separator}${url}`;
+        return `${this._baseUrl}${url}`;
     }
 
     async get<T>(url: string): Promise<void | ResponseWithType<T>> {

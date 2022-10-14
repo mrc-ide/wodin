@@ -96,7 +96,7 @@ export default defineComponent({
         const store = useStore();
 
         const sessionsMetadata = computed(() => store.state.sessions.sessionsMetadata);
-        const baseUrl = computed(() => store.state.config.baseUrl);
+        const baseUrl = computed(() => store.state.baseUrl);
         const appName = computed(() => store.state.appName);
         const currentSessionId = computed(() => store.state.sessionId);
 
@@ -111,7 +111,7 @@ export default defineComponent({
             return utc(isoUTCString).local().format("DD/MM/YYYY HH:mm:ss");
         };
 
-        const sessionUrl = (sessionId: string) => `/apps/${appName.value}?sessionId=${sessionId}`;
+        const sessionUrl = (sessionId: string) => `${baseUrl.value}/apps/${appName.value}?sessionId=${sessionId}`;
         const isCurrentSession = (sessionId: string) => sessionId === currentSessionId.value;
 
         const toggleEditSessionLabelOpen = (open: boolean) => {
