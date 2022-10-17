@@ -11,10 +11,11 @@ import { BasicState } from "../../../../src/app/store/basic/state";
 import { ModelAction } from "../../../../src/app/store/model/actions";
 import { serialiseState } from "../../../../src/app/serialise";
 import { SessionsAction } from "../../../../src/app/store/sessions/actions";
+import { localStorageManager } from "../../../../src/app/localStorageManager";
 
 describe("AppState actions", () => {
     const getStore = () => {
-        const state = mockBasicState({ config: null });
+        const state = mockBasicState({ config: null, sessionId: "1234" });
         return new Vuex.Store<BasicState>({
             state,
             mutations: appStateMutations,
@@ -48,6 +49,8 @@ describe("AppState actions", () => {
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
 
+        const spyOnAddSessionId = jest.spyOn(localStorageManager, "addSessionId");
+
         const payload = { appName: "test-app", loadSessionId: "" };
         await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, payload);
         expect(commit.mock.calls.length).toBe(4);
@@ -68,6 +71,10 @@ describe("AppState actions", () => {
 
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
+
+        expect(spyOnAddSessionId).toHaveBeenCalledTimes(1);
+        expect(spyOnAddSessionId.mock.calls[0][0]).toBe("test-app");
+        expect(spyOnAddSessionId.mock.calls[0][1]).toBe("1234");
     });
 
     it("does not commit endtime if not given in fetched config", async () => {

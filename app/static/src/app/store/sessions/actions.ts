@@ -29,7 +29,7 @@ export const actions: ActionTree<SessionsState, AppState> = {
         const { rootState } = context;
         const { appName } = rootState;
 
-        const sessionIds = localStorageManager.getSessionIds();
+        const sessionIds = localStorageManager.getSessionIds(appName!);
         const sessionIdsQs = sessionIds.join(",");
         const url = `/apps/${appName}/sessions/metadata?sessionIds=${sessionIdsQs}`;
         await api(context)

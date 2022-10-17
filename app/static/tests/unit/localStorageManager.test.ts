@@ -9,17 +9,17 @@ describe("localStorageManager", () => {
     });
 
     it("can get session ids", () => {
-        const sessionIds = localStorageManager.getSessionIds();
+        const sessionIds = localStorageManager.getSessionIds("day1");
         expect(sessionIds).toStrictEqual(["session1", "session2"]);
         expect(spyOnGetItem).toHaveBeenCalledTimes(1);
-        expect(spyOnGetItem.mock.calls[0][0]).toBe("sessionIds");
+        expect(spyOnGetItem.mock.calls[0][0]).toBe("day1_sessionIds");
     });
 
     it("can add session id", () => {
-        localStorageManager.addSessionId("session3");
+        localStorageManager.addSessionId("day1", "session3");
         expect(spyOnGetItem).toHaveBeenCalledTimes(1);
         expect(spyOnSetItem).toHaveBeenCalledTimes(1);
-        expect(spyOnSetItem.mock.calls[0][0]).toBe("sessionIds");
+        expect(spyOnSetItem.mock.calls[0][0]).toBe("day1_sessionIds");
         expect(spyOnSetItem.mock.calls[0][1]).toBe(JSON.stringify(["session3", "session1", "session2"]));
     });
 });

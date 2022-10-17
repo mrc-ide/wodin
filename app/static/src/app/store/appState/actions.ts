@@ -10,6 +10,7 @@ import { AppStateMutation } from "./mutations";
 import { serialiseState } from "../../serialise";
 import { FitState } from "../fit/state";
 import { SessionsAction } from "../sessions/actions";
+import { localStorageManager } from "../../localStorageManager";
 
 export enum AppStateAction {
     Initialise = "Initialise",
@@ -40,6 +41,9 @@ export const appStateActions: ActionTree<AppState, AppState> = {
         const { commit, state, dispatch } = context;
         const { appName, loadSessionId } = payload;
         commit(AppStateMutation.SetAppName, appName);
+
+        localStorageManager.addSessionId(appName, state.sessionId);
+
         const response = await api(context)
             .freezeResponse()
             .withSuccess(AppStateMutation.SetConfig)
