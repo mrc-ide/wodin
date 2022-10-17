@@ -19,12 +19,15 @@ export class WodinExcelDownload {
 
     private readonly _points: number;
 
+    private readonly _workbook: XLSX.WorkBook;
+
     constructor(context: AppCtx, fileName: string, points: number) {
         this._state = context.rootState;
         this._rootGetters = context.rootGetters;
         this._commit = context.commit;
         this._fileName = fileName;
         this._points = points;
+        this._workbook = XLSX.utils.book_new();
     }
 
     // Shared method to generate both Modelled and Modelled with Data - provide empty nonTimeColumns param to omit data
@@ -43,7 +46,7 @@ export class WodinExcelDownload {
         return XLSX.utils.aoa_to_sheet(outputData);
     }
 
-    private _addModelledValues(workbook: XLSX.WorkBook) {
+    private _addModelledValues() {
         const solution = this._state.run.result?.solution;
         if (solution) {
             const end = this._state.run.endTime;
@@ -52,11 +55,11 @@ export class WodinExcelDownload {
             });
 
             const worksheet = WodinExcelDownload._generateModelledOutput(solutionOutput, [], null);
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Modelled");
+            XLSX.utils.book_append_sheet(this._workbook, worksheet, "Modelled");
         }
     }
 
-    private _addModelledWithDataValues(workbook: XLSX.WorkBook) {
+    private _addModelledWithDataValues() {
         const solution = this._state.run.result?.solution;
         if (solution && this._state.appType === AppType.Fit) {
             const fitState = this._state as FitState;
@@ -68,29 +71,28 @@ export class WodinExcelDownload {
                 const solutionOutput = solution({ mode: "given", times });
 
                 const worksheet = WodinExcelDownload._generateModelledOutput(solutionOutput, nonTimeColumns, fitData);
-                XLSX.utils.book_append_sheet(workbook, worksheet, "Modelled with Data");
+                XLSX.utils.book_append_sheet(this._workbook, worksheet, "Modelled with Data");
             }
         }
     }
 
-    private _addParameters(workbook: XLSX.WorkBook) {
+    private _addParameters() {
         const paramVals = this._state.run.parameterValues;
         if (paramVals) {
             const paramData = Object.keys(paramVals).map((name: string) => {
                 return { name, value: paramVals[name] };
             });
             const worksheet = XLSX.utils.json_to_sheet(paramData);
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Parameters");
+            XLSX.utils.book_append_sheet(this._workbook, worksheet, "Parameters");
         }
     }
 
     downloadModelOutput = () => {
         try {
-            const workbook = XLSX.utils.book_new();
-            this._addModelledValues(workbook);
-            this._addModelledWithDataValues(workbook);
-            this._addParameters(workbook);
-            XLSX.writeFile(workbook, this._fileName);
+            this._addModelledValues();
+            this._addModelledWithDataValues();
+            this._addParameters();
+            XLSX.writeFile(this._workbook, this._fileName);
         } catch (e) {
             this._commit(`errors/${ErrorsMutation.AddError}`,
                 { detail: `Error downloading to ${this._fileName}: ${e}` }, { root: true });
