@@ -1,4 +1,6 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via RunPlot
+import VueFeather from "vue-feather";
+
 jest.mock("plotly.js-basic-dist-min", () => {});
 
 /* eslint-disable import/first */
@@ -70,8 +72,10 @@ describe("RunTab", () => {
         expect(wrapper.findComponent(RunPlot).props("fadePlot")).toBe(false);
 
         // Download button disabled because there is no model solution
-        expect(wrapper.find("button#download-btn").text()).toBe("Download");
-        expect((wrapper.find("button#download-btn").element as HTMLButtonElement).disabled).toBe(true);
+        const downloadBtn = wrapper.find("button#download-btn");
+        expect(downloadBtn.text()).toBe("Download");
+        expect((downloadBtn.element as HTMLButtonElement).disabled).toBe(true);
+        expect(downloadBtn.findComponent(VueFeather).props("type")).toBe("download");
         expect(wrapper.findComponent(DownloadOutput).props().open).toBe(false);
     });
 

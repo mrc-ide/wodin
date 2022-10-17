@@ -10,6 +10,7 @@
           <button class="btn btn-primary" id="download-btn"
                   :disabled="!canDownloadOutput"
                   @click="toggleShowDownloadOutput(true)">
+            <vue-feather class="inline-icon" type="download"></vue-feather>
             Download
           </button>
         </div>
@@ -20,6 +21,7 @@
 <script lang="ts">
 import { useStore } from "vuex";
 import { computed, defineComponent, ref } from "vue";
+import VueFeather from "vue-feather";
 import RunPlot from "./RunPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { RunAction } from "../../store/run/actions";
@@ -35,7 +37,8 @@ export default defineComponent({
         RunPlot,
         ErrorInfo,
         ActionRequiredMessage,
-        DownloadOutput
+        DownloadOutput,
+        VueFeather
     },
     setup() {
         const store = useStore();
