@@ -13,8 +13,12 @@ jest.mock("../../src/db/sessionStore", () => { return { getSessionStore: mockGet
 import { AppsController } from "../../src/controllers/appsController";
 
 describe("appsController", () => {
-    const getMockRequest = (appConfig: any, sessionId: string | undefined, share: string | undefined,
-                            wodinConfig = {}) => {
+    const getMockRequest = (
+        appConfig: any,
+        sessionId: string | undefined,
+        share: string | undefined,
+        wodinConfig = {}
+    ) => {
         const mockConfigReader = {
             readConfigFile: jest.fn().mockReturnValue(appConfig)
         };
@@ -146,7 +150,7 @@ describe("appsController", () => {
     });
 
     it("removes trailing slash from baseUrl", async () => {
-        const wodinConfig = {baseUrl: "http://localhost:3000/instance/"};
+        const wodinConfig = { baseUrl: "http://localhost:3000/instance/" };
         const request = getMockRequest({ title: "testTitle", appType: "testType" }, "1234", undefined, wodinConfig);
         await AppsController.getApp(request, mockResponse);
         expect(mockRender.mock.calls[0][1].baseUrl).toBe("http://localhost:3000/instance");
