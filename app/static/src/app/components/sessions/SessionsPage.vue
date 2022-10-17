@@ -111,7 +111,9 @@ export default defineComponent({
             return utc(isoUTCString).local().format("DD/MM/YYYY HH:mm:ss");
         };
 
-        const sessionUrl = (sessionId: string) => `${baseUrl.value}/apps/${appName.value}?sessionId=${sessionId}`;
+        const appUrl = computed(() => `${baseUrl.value}/apps/${appName.value}/`);
+
+        const sessionUrl = (sessionId: string) => `${appUrl.value}?sessionId=${sessionId}`;
         const isCurrentSession = (sessionId: string) => sessionId === currentSessionId.value;
 
         const toggleEditSessionLabelOpen = (open: boolean) => {
@@ -147,7 +149,7 @@ export default defineComponent({
         const copyLink = async (session: SessionMetadata) => {
             const friendlyId = await ensureFriendlyId(session);
             if (friendlyId) {
-                const link = `${baseUrl.value}/apps/${appName.value}/?share=${friendlyId}`;
+                const link = `${appUrl.value}?share=${friendlyId}`;
                 copyText(link);
             }
         };

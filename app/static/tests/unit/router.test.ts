@@ -26,7 +26,7 @@ describe("router", () => {
     });
 
     it("can getRouter", () => {
-        const router = getRouter(WodinSession, "day1");
+        const router = getRouter(WodinSession, "day1", "http://localhost:3000");
         expect(router).toBe(mockRouter);
         expect(mockCreateWebHistory).toHaveBeenCalledTimes(1);
         expect(mockCreateWebHistory).toHaveBeenCalledWith("/apps/day1");
@@ -45,5 +45,12 @@ describe("router", () => {
         };
         expect(mockCreateRouter).toHaveBeenCalledTimes(1);
         expect(mockCreateRouter).toHaveBeenCalledWith(expectedRouterOptions);
+    });
+
+    it("include baseUrl path in routeBase", () => {
+        const router = getRouter(WodinSession, "day1", "http://localhost:3000/test");
+        expect(router).toBe(mockRouter);
+        expect(mockCreateWebHistory).toHaveBeenCalledTimes(1);
+        expect(mockCreateWebHistory).toHaveBeenCalledWith("/test/apps/day1");
     });
 });

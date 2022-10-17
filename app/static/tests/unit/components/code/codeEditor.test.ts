@@ -30,7 +30,6 @@ describe("CodeEditor", () => {
                 config: {
                     defaultCode,
                     readOnlyCode,
-                    baseUrl: "",
                     basicProp: ""
                 }
             }),

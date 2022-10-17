@@ -3,10 +3,11 @@ import { VisualisationTab } from "../../../../src/app/store/appState/state";
 import { mockBasicState } from "../../../mocks";
 
 describe("AppState mutations", () => {
-    it("Sets appName", () => {
-        const state = { appType: "test", appName: null } as any;
-        appStateMutations.SetAppName(state, "Test Name");
+    it("Sets app", () => {
+        const state = { appType: "test", appName: null, baseUrl: null } as any;
+        appStateMutations.SetApp(state, {appName: "Test Name", baseUrl: "http://localhost:3000"});
         expect(state.appName).toBe("Test Name");
+        expect(state.baseUrl).toBe("http://localhost:3000");
     });
 
     it("sets config", () => {

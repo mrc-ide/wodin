@@ -153,6 +153,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
     async get<T>(url: string): Promise<void | ResponseWithType<T>> {
         this._verifyHandlers(url);
         const fullUrl = this._fullUrl(url);
+
         return this._handleAxiosResponse(axios.get(fullUrl));
     }
 
