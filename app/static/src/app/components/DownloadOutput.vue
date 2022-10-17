@@ -27,15 +27,20 @@
                 <input type="number" class="form-control" v-model="points">
               </div>
             </div>
+            <div class="row mt-2 small text-danger">
+              <div id="download-invalid" class="col-12" style="min-height: 1.5rem;">
+                {{ canDownload ? "" : cannotDownloadMessage }}
+              </div>
+            </div>
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary"
-                    :disabled="canDownload"
+                    :disabled="!canDownload"
                     id="ok-download"
                     @click="downloadOutput">OK</button>
             <button class="btn btn-outline"
                     id="cancel-download"
-                    @click="close">Cancel</button>
+                    @click="closeModal">Cancel</button>
           </div>
         </div>
       </div>
@@ -51,6 +56,7 @@ import { useStore } from "vuex";
 import { utc } from "moment";
 import { RunAction } from "../store/run/actions";
 import { RunMutation } from "../store/run/mutations";
+import userMessages from "../userMessages";
 
 export default defineComponent({
     name: "DownloadOutput",
@@ -63,6 +69,8 @@ export default defineComponent({
     setup(props, { emit }) {
         const store = useStore();
 
+        const cannotDownloadMessage = userMessages.download.invalidPoints;
+
         const fileName = ref("");
         const points = ref(501);
 
@@ -73,7 +81,8 @@ export default defineComponent({
             return { display: props.open ? "block" : "none" };
         });
 
-        const canDownload = computed(() => false);
+        // Do not allow number of excel rows outside these bounds
+        const canDownload = computed(() => points.value > 0 && points.value <= 500001);
 
         const generateDefaultFileName = () => {
             const timestamp = utc().local().format("YMMDD-HHmmss");
@@ -86,7 +95,7 @@ export default defineComponent({
             store.commit(`run/${RunMutation.SetUserDownloadFileName}`, newValue);
         };
 
-        const close = () => { emit("close"); };
+        const closeModal = () => { emit("close"); };
         const downloadOutput = () => {
             // User can erase the filename in the text box so the userDownloadFileName is reset, but in this case,
             // generate a new default to actually save to
@@ -95,7 +104,7 @@ export default defineComponent({
             }
             const fileNameWithSuffix = `${fileName.value}.xlsx`;
             store.dispatch(`run/${RunAction.DownloadOutput}`, { fileName: fileNameWithSuffix, points: points.value });
-            close();
+            closeModal();
         };
 
         watch(() => props.open, (newOpen) => {
@@ -109,7 +118,8 @@ export default defineComponent({
             points,
             style,
             canDownload,
-            close,
+            cannotDownloadMessage,
+            closeModal,
             downloadOutput,
             updateUserFileName
         };

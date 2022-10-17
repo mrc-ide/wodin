@@ -67,14 +67,17 @@ describe("DownloadOutput", () => {
         expect((wrapper.find(".modal").element as HTMLElement).style.display).toBe("block");
         expect(wrapper.find("h5.modal-title").text()).toBe("Download Run");
         const rows = wrapper.findAll(".modal-body .row");
-        expect(rows.length).toBe(2);
+        expect(rows.length).toBe(3);
         expect(rows.at(0)!.find("label").text()).toBe("File name");
         expect((rows.at(0)!.find("input").element as HTMLInputElement).value).toBe("myFile.xlsx");
 
         expect(rows.at(1)!.find("label").text()).toBe("Modelled points");
         expect((rows.at(1)!.find("input").element as HTMLInputElement).value).toBe("501");
 
+        expect(wrapper.find("#download-invalid").text()).toBe("");
+
         expect(wrapper.find(".modal-footer button#ok-download").text()).toBe("OK");
+        expect((wrapper.find(".modal-footer button#ok-download").element as HTMLButtonElement).disabled).toBe(false);
         expect(wrapper.find(".modal-footer button#cancel-download").text()).toBe("Cancel");
     });
 
@@ -120,4 +123,19 @@ describe("DownloadOutput", () => {
         expect(payload.fileName).toMatch(generatedFilenameWithSuffixRegex);
         expect(payload.points).toBe(501);
     });
+
+    it("does not allow download if modelled points is less than 1", async () => {
+        const wrapper = getWrapper();
+        await wrapper.find("#download-points input").setValue("0");
+        expect((wrapper.find(".modal-footer button#ok-download").element as HTMLButtonElement).disabled).toBe(true);
+        expect(wrapper.find("#download-invalid").text()).toBe("Modelled points must be between 1 and 500,001");
+    });
+
+    it("does not allow download if modelled points is greater than 500001", async () => {
+        const wrapper = getWrapper();
+        await wrapper.find("#download-points input").setValue("500002");
+        expect((wrapper.find(".modal-footer button#ok-download").element as HTMLButtonElement).disabled).toBe(true);
+        expect(wrapper.find("#download-invalid").text()).toBe("Modelled points must be between 1 and 500,001");
+    });
+
 });
