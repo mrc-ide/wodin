@@ -177,3 +177,11 @@ export interface SessionMetadata {
     label: string | null,
     friendlyId: string | null,
 }
+
+export interface Versions {
+    odin: string,
+    "odin.api": string
+    dfoptim: string,
+    dopri: string,
+    odinjs: string
+}

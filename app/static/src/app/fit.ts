@@ -3,7 +3,7 @@ import Vuex from "vuex";
 import { storeOptions } from "./store/fit/fit";
 import FitApp from "./components/fit/FitApp.vue";
 import WodinSession from "./components/WodinSession.vue";
-import AppHeader from "./components/AppHeader.vue";
+import AppHeader from "./components/header/AppHeader.vue";
 import { FitState } from "./store/fit/state";
 import { initialiseRouter } from "./router";
 

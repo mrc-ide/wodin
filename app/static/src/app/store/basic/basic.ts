@@ -12,6 +12,7 @@ import { AppType, VisualisationTab } from "../appState/state";
 import { newSessionId } from "../../utils";
 import { localStorageManager } from "../../localStorageManager";
 import { sessions } from "../sessions/sessions";
+import {versions} from "../versions/versions";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
@@ -37,7 +38,8 @@ export const storeOptions: StoreOptions<BasicState> = {
         run,
         code,
         sensitivity,
-        sessions
+        sessions,
+        versions
     },
     plugins: [
         logMutations,

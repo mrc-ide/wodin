@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-dark bg-brand mb-2 px-2">
     <span>
-      <a class="navbar-brand pl-2" href="/">{{ courseTitle }}</a>
+      <a class="navbar-brand pl-2" href="/app/static">{{ courseTitle }}</a>
       <span class="nav-item navbar-app">{{ appTitle }}</span>
     </span>
     <span class="nav-item dropdown">
@@ -18,6 +18,7 @@
         <li><router-link id="all-sessions-link" class="dropdown-item" to="/sessions">All Sessions</router-link></li>
       </ul>
     </span>
+      <version-menu></version-menu>
     <span class="navbar-version navbar-text">WODIN v{{ wodinVersion }}</span>
   </nav>
   <edit-session-label id="header-edit-session-label"
@@ -33,7 +34,8 @@ import { defineComponent, computed, ref } from "vue";
 import VueFeather from "vue-feather";
 import { RouterLink } from "vue-router";
 import { useStore } from "vuex";
-import EditSessionLabel from "./sessions/EditSessionLabel.vue";
+import EditSessionLabel from "../sessions/EditSessionLabel.vue";
+import VersionMenu from "./VersionMenu.vue";
 
 export default defineComponent({
     name: "AppHeader",
@@ -45,7 +47,8 @@ export default defineComponent({
     components: {
         RouterLink,
         EditSessionLabel,
-        VueFeather
+        VueFeather,
+        VersionMenu
     },
     setup() {
         const store = useStore();
