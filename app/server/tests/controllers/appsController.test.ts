@@ -113,8 +113,7 @@ describe("appsController", () => {
             title: "testTitle - Test Course Title",
             wodinVersion: "1.2.3",
             loadSessionId: "123456",
-            shareNotFound: "",
-            title: "testTitle - Test Course Title"
+            shareNotFound: ""
         });
     });
 
@@ -133,8 +132,7 @@ describe("appsController", () => {
             title: "testTitle - Test Course Title",
             wodinVersion: "1.2.3",
             loadSessionId: "",
-            shareNotFound: "tiny-mouse",
-            title: "testTitle - Test Course Title"
+            shareNotFound: "tiny-mouse"
         });
     });
 
