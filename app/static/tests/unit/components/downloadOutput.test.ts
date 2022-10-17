@@ -137,5 +137,4 @@ describe("DownloadOutput", () => {
         expect((wrapper.find(".modal-footer button#ok-download").element as HTMLButtonElement).disabled).toBe(true);
         expect(wrapper.find("#download-invalid").text()).toBe("Modelled points must be between 1 and 500,001");
     });
-
 });
