@@ -6,7 +6,7 @@ import { freezer } from "../../src/app/utils";
 import Mock = jest.Mock;
 
 const BASE_URL = "http://localhost:3000";
-const rootState = mockBasicState({baseUrl: BASE_URL});
+const rootState = mockBasicState({ baseUrl: BASE_URL });
 
 describe("ApiService", () => {
     const TEST_ROUTE = "/test";

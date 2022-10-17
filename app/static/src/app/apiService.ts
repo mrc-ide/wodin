@@ -6,7 +6,7 @@ import { freezer } from "./utils";
 import { WodinError, ResponseSuccess, ResponseFailure } from "./types/responseTypes";
 import { AppCtx } from "./types/utilTypes";
 import { ErrorsMutation } from "./store/errors/mutations";
-import {AppState} from "./store/appState/state";
+import { AppState } from "./store/appState/state";
 
 export interface ResponseWithType<T> extends ResponseSuccess {
     data: T

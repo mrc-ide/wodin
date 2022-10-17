@@ -51,11 +51,13 @@ describe("AppState actions", () => {
         const rootState = state;
 
         const payload = { appName: "test-app", loadSessionId: "", baseUrl };
-        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch, rootState }, payload);
+        await (appStateActions[AppStateAction.Initialise] as any)({
+            commit, state, dispatch, rootState
+        }, payload);
         expect(commit.mock.calls.length).toBe(4);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
-        expect(commit.mock.calls[0][1]).toStrictEqual({appName: "test-app", baseUrl});
+        expect(commit.mock.calls[0][1]).toStrictEqual({ appName: "test-app", baseUrl });
 
         expect(commit.mock.calls[1][0]).toBe(AppStateMutation.SetConfig);
         const committedConfig = commit.mock.calls[1][1];
@@ -87,7 +89,9 @@ describe("AppState actions", () => {
         const { state } = store;
         const rootState = state;
         const payload = { appName: "test-app", loadSessionId: "", baseUrl };
-        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch, rootState }, payload);
+        await (appStateActions[AppStateAction.Initialise] as any)({
+            commit, state, dispatch, rootState
+        }, payload);
         expect(commit.mock.calls.length).toBe(3);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
@@ -112,7 +116,9 @@ describe("AppState actions", () => {
         const rootState = state;
 
         const payload = { appName: "test-app", loadSessionId: "", baseUrl };
-        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch, rootState }, payload);
+        await (appStateActions[AppStateAction.Initialise] as any)({
+            commit, state, dispatch, rootState
+        }, payload);
         expect(commit.mock.calls.length).toBe(4);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
@@ -140,11 +146,13 @@ describe("AppState actions", () => {
         const rootState = state;
 
         const payload = { appName: "test-app", loadSessionId: "", baseUrl };
-        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch, rootState }, payload);
+        await (appStateActions[AppStateAction.Initialise] as any)({
+            commit, state, dispatch, rootState
+        }, payload);
         expect(commit.mock.calls.length).toBe(2);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
-        expect(commit.mock.calls[0][1]).toStrictEqual({appName: "test-app", baseUrl});
+        expect(commit.mock.calls[0][1]).toStrictEqual({ appName: "test-app", baseUrl });
 
         expect(commit.mock.calls[1][0]).toBe(`errors/${ErrorsMutation.AddError}`);
         expect((commit.mock.calls[1][1] as any).detail).toBe("Test Error Msg");
@@ -168,7 +176,9 @@ describe("AppState actions", () => {
         const rootState = state;
 
         const payload = { appName: "test-app", loadSessionId: "1234", baseUrl };
-        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, rootState, dispatch }, payload);
+        await (appStateActions[AppStateAction.Initialise] as any)({
+            commit, state, rootState, dispatch
+        }, payload);
 
         expect(commit.mock.calls.length).toBe(2);
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);

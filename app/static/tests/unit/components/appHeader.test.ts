@@ -12,7 +12,9 @@ describe("AppHeader", () => {
     const getWrapper = (appName: string | null = "test", sessionLabel: string | null = null,
         sessionId = "testSessionId") => {
         const store = new Vuex.Store<BasicState>({
-            state: mockBasicState({ appName, sessionLabel, sessionId, baseUrl: "http://localhost:3000" })
+            state: mockBasicState({
+                appName, sessionLabel, sessionId, baseUrl: "http://localhost:3000"
+            })
         });
 
         const options = {
