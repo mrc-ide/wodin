@@ -3,7 +3,7 @@
     <div v-if="open" class="modal-backdrop fade show"></div>
     <div class="modal" :class="{show: open}" :style="style">
       <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content px-2">
           <div class="modal-header">
             <h5 class="modal-title">Download Run</h5>
           </div>
@@ -12,15 +12,18 @@
               <div class="col-4">
                 <label class="col-form-label">File name</label>
               </div>
-              <div class="col-8">
+              <div class="col-7 pe-0">
                 <input type="text" class="form-control" :value="fileName" @change="updateUserFileName">
+              </div>
+              <div class="col-1 ps-0">
+                <label class="col-form-label">.xlsx</label>
               </div>
             </div>
             <div class="row mt-2" id="download-points">
               <div class="col-4">
                 <label class="col-form-label">Modelled points</label>
               </div>
-              <div class="col-8">
+              <div class="col-7 pe-0">
                 <input type="number" class="form-control" v-model="points">
               </div>
             </div>
@@ -74,7 +77,7 @@ export default defineComponent({
 
         const generateDefaultFileName = () => {
             const timestamp = utc().local().format("YMMDD-HHmmss");
-            return `${appName.value}-run-${timestamp}.xlsx`;
+            return `${appName.value}-run-${timestamp}`;
         };
 
         const updateUserFileName = (event: InputEvent) => {
@@ -90,7 +93,8 @@ export default defineComponent({
             if (!fileName.value) {
                 fileName.value = generateDefaultFileName();
             }
-            store.dispatch(`run/${RunAction.DownloadOutput}`, { fileName: fileName.value, points: points.value });
+            const fileNameWithSuffix = `${fileName.value}.xlsx`;
+            store.dispatch(`run/${RunAction.DownloadOutput}`, { fileName: fileNameWithSuffix, points: points.value });
             close();
         };
 

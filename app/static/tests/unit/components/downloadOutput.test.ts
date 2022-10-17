@@ -7,7 +7,9 @@ import { RunMutation } from "../../../src/app/store/run/mutations";
 import { RunAction } from "../../../src/app/store/run/actions";
 
 // eslint-disable-next-line max-len
-const generatedFilenameRegex = /^test-run-([0-9]{4})?(1[0-2]|0[1-9])?(3[01]|0[1-9]|[12][0-9])-(2[0-3]|[0-1][0-9])?([0-5][0-9])?([0-5][0-9])?.xlsx$/;
+const generatedFilenameRegex = /^test-run-([0-9]{4})?(1[0-2]|0[1-9])?(3[01]|0[1-9]|[12][0-9])-(2[0-3]|[0-1][0-9])?([0-5][0-9])?([0-5][0-9])?$/;
+// eslint-disable-next-line max-len
+const generatedFilenameWithSuffixRegex = /^test-run-([0-9]{4})?(1[0-2]|0[1-9])?(3[01]|0[1-9]|[12][0-9])-(2[0-3]|[0-1][0-9])?([0-5][0-9])?([0-5][0-9])?.xlsx$/;
 
 describe("DownloadOutput", () => {
     const mockSetUserOownloadFileName = jest.fn();
@@ -99,7 +101,7 @@ describe("DownloadOutput", () => {
 
     it("dispatches download and emits close event on click OK", async () => {
         const wrapper = getWrapper();
-        await wrapper.find("#download-file-name input").setValue("myFile.xlsx");
+        await wrapper.find("#download-file-name input").setValue("myFile");
         await wrapper.find("#download-points input").setValue("1001");
         await wrapper.find("#ok-download").trigger("click");
         expect(mockDownloadOutput).toHaveBeenCalledTimes(1);
@@ -115,7 +117,7 @@ describe("DownloadOutput", () => {
         await wrapper.find("#download-file-name input").setValue("");
         await wrapper.find("#ok-download").trigger("click");
         const payload = mockDownloadOutput.mock.calls[0][1];
-        expect(payload.fileName).toMatch(generatedFilenameRegex);
+        expect(payload.fileName).toMatch(generatedFilenameWithSuffixRegex);
         expect(payload.points).toBe(501);
     });
 });
