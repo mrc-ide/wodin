@@ -1,10 +1,12 @@
 import Vuex, { Store } from "vuex";
 import { nextTick } from "vue";
-import { mount, shallowMount, VueWrapper } from "@vue/test-utils";
+import { mount, shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import ParameterValues from "../../../../src/app/components/options/ParameterValues.vue";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
-import { mockModelFitState, mockModelState, mockRunState } from "../../../mocks";
+import {
+    mockBasicState, mockModelFitState, mockModelState, mockRunState
+} from "../../../mocks";
 import { RunMutation, mutations as runMutations } from "../../../../src/app/store/run/mutations";
 import { AppType, VisualisationTab } from "../../../../src/app/store/appState/state";
 import Mock = jest.Mock;
@@ -146,6 +148,23 @@ describe("ParameterValues", () => {
         await reset.trigger("click");
         expect(mockUpdateParameterValues).toHaveBeenCalledTimes(2);
         expect(mockUpdateParameterValues.mock.calls[1][1]).toStrictEqual({ param2: 5.5 });
+    });
+
+    it("does not show resets button when there are no parameters", async () => {
+        const store = new Vuex.Store<BasicState>({
+            state: mockBasicState,
+            modules: {
+                run: {
+                    namespaced: true,
+                    state: mockRunState({
+                        parameterValues: {}
+                    })
+                }
+            }
+        });
+        const wrapper = getWrapper(store);
+        const reset = wrapper.find("#reset-params-btn");
+        expect(reset.exists()).toBe(false);
     });
 
     it("does not resets parameters to default values if no changes", async () => {
