@@ -58,7 +58,12 @@ export const actions: ActionTree<RunState, AppState> = {
     },
 
     DownloadOutput(context, payload: DownloadOutputPayload) {
-        new WodinExcelDownload(context, payload.fileName, payload.points)
-            .downloadModelOutput();
+        const { commit } = context;
+        commit(RunMutation.SetDownloading, true);
+        setTimeout(() => {
+            new WodinExcelDownload(context, payload.fileName, payload.points)
+                .downloadModelOutput();
+            commit(RunMutation.SetDownloading, false);
+        }, 0);
     }
 };

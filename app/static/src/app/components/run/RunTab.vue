@@ -8,11 +8,15 @@
         <error-info :error="error"></error-info>
         <div>
           <button class="btn btn-primary" id="download-btn"
-                  :disabled="!canDownloadOutput"
+                  :disabled="downloading || !canDownloadOutput"
                   @click="toggleShowDownloadOutput(true)">
             <vue-feather class="inline-icon" type="download"></vue-feather>
             Download
           </button>
+          <div v-if="downloading">
+            <LoadingSpinner size="xs"></LoadingSpinner>
+            Downloading...
+          </div>
         </div>
         <DownloadOutput :open="showDownloadOutput" @close="toggleShowDownloadOutput(false)"></DownloadOutput>
   </div>
@@ -30,10 +34,12 @@ import ErrorInfo from "../ErrorInfo.vue";
 import DownloadOutput from "../DownloadOutput.vue";
 import { runRequiredExplanation } from "./support";
 import { anyTrue } from "../../utils";
+import LoadingSpinner from "../LoadingSpinner.vue";
 
 export default defineComponent({
     name: "RunTab",
     components: {
+        LoadingSpinner,
         RunPlot,
         ErrorInfo,
         ActionRequiredMessage,
@@ -46,6 +52,7 @@ export default defineComponent({
         const showDownloadOutput = ref(false);
 
         const error = computed(() => store.state.run.result?.error);
+        const downloading = computed(() => store.state.run.downloading);
 
         // Enable run button if model has initialised and compile is not required
         const canRunModel = computed(() => !!store.state.model.odinRunner && !!store.state.model.odin
@@ -72,6 +79,7 @@ export default defineComponent({
             updateMsg,
             runModel,
             error,
+            downloading,
             showDownloadOutput,
             canDownloadOutput,
             toggleShowDownloadOutput

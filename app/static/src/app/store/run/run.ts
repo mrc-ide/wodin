@@ -11,7 +11,8 @@ export const defaultState: RunState = {
     parameterValues: null,
     endTime: 100,
     result: null,
-    userDownloadFileName: ""
+    userDownloadFileName: "",
+    downloading: false
 };
 
 export const run = {

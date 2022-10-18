@@ -96,14 +96,15 @@ export default defineComponent({
         };
 
         const closeModal = () => { emit("close"); };
-        const downloadOutput = () => {
+        const downloadOutput = async () => {
             // User can erase the filename in the text box so the userDownloadFileName is reset, but in this case,
             // generate a new default to actually save to
             if (!fileName.value) {
                 fileName.value = generateDefaultFileName();
             }
             const fileNameWithSuffix = `${fileName.value}.xlsx`;
-            store.dispatch(`run/${RunAction.DownloadOutput}`, { fileName: fileNameWithSuffix, points: points.value });
+            const payload = { fileName: fileNameWithSuffix, points: points.value };
+            await store.dispatch(`run/${RunAction.DownloadOutput}`, payload);
             closeModal();
         };
 
