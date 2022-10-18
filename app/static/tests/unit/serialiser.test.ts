@@ -14,7 +14,7 @@ import {
     mockModelFitState,
     mockModelState,
     mockRunState,
-    mockSensitivityState
+    mockSensitivityState, mockVersionsState
 } from "../mocks";
 
 describe("serialise", () => {
@@ -163,7 +163,8 @@ describe("serialise", () => {
         code: codeState,
         model: modelState,
         run: runState,
-        sensitivity: sensitivityState
+        sensitivity: sensitivityState,
+        versions: { versions: null }
     };
 
     const fitState: FitState = {
@@ -180,7 +181,8 @@ describe("serialise", () => {
         run: runState,
         sensitivity: sensitivityState,
         fitData: fitDataState,
-        modelFit: modelFitState
+        modelFit: modelFitState,
+        versions: { versions: null }
     };
 
     const expectedCode = { currentCode: ["some code"] };
@@ -354,7 +356,8 @@ describe("serialise", () => {
             run: mockRunState(),
             sensitivity: mockSensitivityState(),
             fitData: mockFitDataState(),
-            modelFit: mockModelFitState()
+            modelFit: mockModelFitState(),
+            versions: mockVersionsState()
         } as any;
 
         const target = {
@@ -367,7 +370,8 @@ describe("serialise", () => {
             run: {},
             sensitivity: {},
             fitData: {},
-            modelFit: {}
+            modelFit: {},
+            versions: null
         } as any;
 
         deserialiseState(target, serialised);
@@ -381,7 +385,8 @@ describe("serialise", () => {
             run: mockRunState(),
             sensitivity: mockSensitivityState(),
             fitData: mockFitDataState(),
-            modelFit: mockModelFitState()
+            modelFit: mockModelFitState(),
+            versions: mockVersionsState()
         });
     });
 });
