@@ -1,9 +1,10 @@
 <template>
     <div class="navbar-text">
-        <drop-down>
+        <drop-down :text="`WODIN v${wodinVersion}`">
             <template v-slot:items>
                 <li v-for="(version, name, index) in versions" :key="index">
-                    <span class="dropdown-item" style="cursor: default;">{{ name }} : v{{ version }}</span>
+                    <span class="dropdown-item" style="cursor: default;">
+                        {{ name }} : v{{ version }}</span>
                 </li>
             </template>
         </drop-down>
@@ -20,6 +21,9 @@ export default defineComponent({
     name: "VersionMenu",
     components: {
         DropDown
+    },
+    props: {
+        wodinVersion: String
     },
     setup() {
         const store = useStore();

@@ -18,8 +18,7 @@
         <li><router-link id="all-sessions-link" class="dropdown-item" to="/sessions">All Sessions</router-link></li>
       </ul>
     </span>
-      <version-menu></version-menu>
-    <span class="navbar-version navbar-text">WODIN v{{ wodinVersion }}</span>
+      <version-menu :wodin-version="wodinVersion"></version-menu>
   </nav>
   <edit-session-label id="header-edit-session-label"
                       :open="editSessionLabelOpen"
