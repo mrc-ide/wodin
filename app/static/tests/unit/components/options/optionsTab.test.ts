@@ -44,7 +44,7 @@ describe("OptionsTab", () => {
                 appType: AppType.Basic,
                 openVisualisationTab: VisualisationTab.Run,
                 run: {
-                    parameterValues: null
+                    parameterValues: { param1: 1, param2: 2.2 }
                 }
             } as any
         });
@@ -110,7 +110,7 @@ describe("OptionsTab", () => {
                 appType: AppType.Fit,
                 openVisualisationTab: VisualisationTab.Fit,
                 run: {
-                    parameterValues: {}
+                    parameterValues: { param1: 1, param2: 2.2 }
                 },
                 model: {
                 },
@@ -153,7 +153,10 @@ describe("OptionsTab", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 ...fitAppState,
-                openVisualisationTab: VisualisationTab.Sensitivity
+                openVisualisationTab: VisualisationTab.Sensitivity,
+                run: {
+                    parameterValues: { param1: 1, param2: 2.2 }
+                }
             }
         });
         const wrapper = getWrapper(store);
