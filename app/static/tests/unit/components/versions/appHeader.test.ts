@@ -3,10 +3,11 @@ import { RouterLink } from "vue-router";
 import Vuex from "vuex";
 import VueFeather from "vue-feather";
 import { nextTick } from "vue";
-import AppHeader from "../../../src/app/components/header/AppHeader.vue";
-import EditSessionLabel from "../../../src/app/components/sessions/EditSessionLabel.vue";
-import { BasicState } from "../../../src/app/store/basic/state";
-import { mockBasicState } from "../../mocks";
+import AppHeader from "../../../../src/app/components/header/AppHeader.vue";
+import EditSessionLabel from "../../../../src/app/components/sessions/EditSessionLabel.vue";
+import { BasicState } from "../../../../src/app/store/basic/state";
+import { mockBasicState } from "../../../mocks";
+import VersionMenu from "../../../../src/app/components/header/VersionMenu.vue";
 
 describe("AppHeader", () => {
     const getWrapper = (appName: string | null = "test", sessionLabel: string | null = null,
@@ -34,7 +35,6 @@ describe("AppHeader", () => {
         expect(wrapper.find("a.navbar-brand").text()).toBe("Test Course Title");
         expect(wrapper.find("a.navbar-brand").attributes("href")).toBe("/");
         expect(wrapper.find(".navbar-app").text()).toBe("Test App Title");
-        expect(wrapper.find(".navbar-version").text()).toBe("WODIN v1.2.3");
 
         const sessionsDropDown = wrapper.find(".dropdown");
         expect(sessionsDropDown.find("a#sessions-menu").text()).toBe("Sessions");
@@ -49,6 +49,13 @@ describe("AppHeader", () => {
         expect(editDlg.props("open")).toBe(false);
         expect(editDlg.props("sessionId")).toBe("testSessionId");
         expect(editDlg.props("sessionLabel")).toBe(null);
+    });
+
+    it("renders version menu as expected", () => {
+        const wrapper = getWrapper();
+
+        const versionMenu = wrapper.findComponent(VersionMenu);
+        expect(versionMenu.props("wodinVersion")).toBe("1.2.3");
     });
 
     it("renders expected Sessions menu header when current session has label", () => {
