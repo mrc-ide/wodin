@@ -82,7 +82,7 @@ export default defineComponent({
         });
 
         // Do not allow number of excel rows outside these bounds
-        const canDownload = computed(() => points.value > 0 && points.value <= 500001);
+        const canDownload = computed(() => points.value > 0 && points.value <= 50001);
 
         const generateDefaultFileName = () => {
             const timestamp = utc().local().format("YMMDD-HHmmss");

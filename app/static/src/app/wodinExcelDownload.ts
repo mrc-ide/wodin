@@ -7,7 +7,6 @@ import { OdinSeriesSet } from "./types/responseTypes";
 import { FitDataGetter } from "./store/fitData/getters";
 import { FitData } from "./store/fitData/state";
 import { ErrorsMutation } from "./store/errors/mutations";
-import {RunMutation} from "./store/run/mutations";
 
 export class WodinExcelDownload {
     private readonly _state: AppState;

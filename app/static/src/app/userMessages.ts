@@ -6,7 +6,7 @@ export default {
         isNotValid: "Code is not valid"
     },
     download: {
-        invalidPoints: "Modelled points must be between 1 and 500,001"
+        invalidPoints: "Modelled points must be between 1 and 50,001"
     },
     errors: {
         wodinRunError: "An error occurred while running the model",

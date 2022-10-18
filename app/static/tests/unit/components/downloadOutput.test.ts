@@ -128,13 +128,13 @@ describe("DownloadOutput", () => {
         const wrapper = getWrapper();
         await wrapper.find("#download-points input").setValue("0");
         expect((wrapper.find(".modal-footer button#ok-download").element as HTMLButtonElement).disabled).toBe(true);
-        expect(wrapper.find("#download-invalid").text()).toBe("Modelled points must be between 1 and 500,001");
+        expect(wrapper.find("#download-invalid").text()).toBe("Modelled points must be between 1 and 50,001");
     });
 
     it("does not allow download if modelled points is greater than 500001", async () => {
         const wrapper = getWrapper();
-        await wrapper.find("#download-points input").setValue("500002");
+        await wrapper.find("#download-points input").setValue("50002");
         expect((wrapper.find(".modal-footer button#ok-download").element as HTMLButtonElement).disabled).toBe(true);
-        expect(wrapper.find("#download-invalid").text()).toBe("Modelled points must be between 1 and 500,001");
+        expect(wrapper.find("#download-invalid").text()).toBe("Modelled points must be between 1 and 50,001");
     });
 });

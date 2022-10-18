@@ -13,7 +13,7 @@
             <vue-feather class="inline-icon" type="download"></vue-feather>
             Download
           </button>
-          <div v-if="downloading">
+          <div v-if="downloading" id="downloading">
             <LoadingSpinner size="xs"></LoadingSpinner>
             Downloading...
           </div>

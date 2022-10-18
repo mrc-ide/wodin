@@ -207,15 +207,25 @@ describe("Run actions", () => {
         });
     });
 
-    it("downloads output", () => {
-        const context = {};
+    it("downloads output", (done) => {
+        const commit = jest.fn();
+        const context = { commit };
         const payload = { fileName: "myFile.xlsx", points: 101 };
         (actions[RunAction.DownloadOutput] as any)(context, payload);
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetDownloading);
+        expect(commit.mock.calls[0][1]).toBe(true);
+        setTimeout(() => {
+            expect(mockWodinExcelDownload).toHaveBeenCalledTimes(1); // expect WodinExcelDownload constructor
+            expect(mockWodinExcelDownload.mock.calls[0][0]).toBe(context);
+            expect(mockWodinExcelDownload.mock.calls[0][1]).toBe("myFile.xlsx");
+            expect(mockWodinExcelDownload.mock.calls[0][2]).toBe(101);
+            expect(mockDownloadModelOutput).toHaveBeenCalledTimes(1);
 
-        expect(mockWodinExcelDownload).toHaveBeenCalledTimes(1); // expect WodinExcelDownload constructor
-        expect(mockWodinExcelDownload.mock.calls[0][0]).toBe(context);
-        expect(mockWodinExcelDownload.mock.calls[0][1]).toBe("myFile.xlsx");
-        expect(mockWodinExcelDownload.mock.calls[0][2]).toBe(101);
-        expect(mockDownloadModelOutput).toHaveBeenCalledTimes(1);
+            expect(commit).toHaveBeenCalledTimes(2);
+            expect(commit.mock.calls[1][0]).toBe(RunMutation.SetDownloading);
+            expect(commit.mock.calls[1][1]).toBe(false);
+            done();
+        }, 20);
     });
 });

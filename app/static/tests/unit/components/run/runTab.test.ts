@@ -15,6 +15,7 @@ import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
 import DownloadOutput from "../../../../src/app/components/DownloadOutput.vue";
+import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 
 describe("RunTab", () => {
     const defaultModelState = {
@@ -77,6 +78,8 @@ describe("RunTab", () => {
         expect((downloadBtn.element as HTMLButtonElement).disabled).toBe(true);
         expect(downloadBtn.findComponent(VueFeather).props("type")).toBe("download");
         expect(wrapper.findComponent(DownloadOutput).props().open).toBe(false);
+
+        expect(wrapper.find("#downloading").exists()).toBe(false);
     });
 
     it("disables run button when state has no odinRunner", () => {
@@ -109,6 +112,17 @@ describe("RunTab", () => {
         };
         const wrapper = getWrapper({}, runState);
         expect((wrapper.find("button#download-btn").element as HTMLButtonElement).disabled).toBe(true);
+    });
+
+    it("disables download button and show message when downloading", () => {
+        const runState = {
+            result: { solution: {} } as any,
+            downloading: true
+        };
+        const wrapper = getWrapper({}, runState);
+        expect((wrapper.find("button#download-btn").element as HTMLButtonElement).disabled).toBe(true);
+        expect(wrapper.find("#downloading").text()).toBe("Downloading...");
+        expect(wrapper.find("#downloading").findComponent(LoadingSpinner).exists()).toBe(true);
     });
 
     it("fades plot and shows message when compile required", () => {

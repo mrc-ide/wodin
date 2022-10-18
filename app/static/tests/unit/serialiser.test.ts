@@ -69,7 +69,8 @@ describe("serialise", () => {
             solution: jest.fn(),
             error: { error: "run error", detail: "run error detail" }
         },
-        userDownloadFileName: ""
+        userDownloadFileName: "",
+        downloading: false
     };
 
     const sensitivityBatchPars = {

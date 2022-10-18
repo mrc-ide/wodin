@@ -135,4 +135,10 @@ describe("Run mutations", () => {
         mutations.SetUserDownloadFileName(state, "myFile.xlsx");
         expect(state.userDownloadFileName).toBe("myFile.xlsx");
     });
+
+    it("sets downloading", () => {
+        const state = mockRunState();
+        mutations.SetDownloading(state, true);
+        expect(state.downloading).toBe(true);
+    });
 });
