@@ -14,7 +14,7 @@ describe("versions actions", () => {
             .reply(200, mockSuccess(versions));
 
         const commit = jest.fn();
-        await (actions[VersionsAction.GetVersions] as any)({ commit });
+        await (actions[VersionsAction.GetVersions] as any)({ commit, rootState: { baseUrl: "" } });
         expect(mockAxios.history.get[0].url).toBe("/odin/versions");
         expect(commit.mock.calls.length).toBe(1);
         expect(commit.mock.calls[0][0]).toBe("SetVersions");
