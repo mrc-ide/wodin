@@ -1,7 +1,9 @@
-import {PlaywrightTestConfig} from '@playwright/test';
+import type { PlaywrightTestConfig } from "@playwright/test";
 
 const config: PlaywrightTestConfig = {
-    testMatch: '*.etest.ts',
+    testMatch: "*.etest.ts",
+    fullyParallel: true,
+    workers: process.env.CI ? 2 : 4,
     use: {
         baseURL: "http://localhost:3000",
         screenshot: "only-on-failure",
@@ -10,8 +12,7 @@ const config: PlaywrightTestConfig = {
             permissions: ["clipboard-read", "clipboard-write"]
         }
     },
-    timeout: 60000,
-    workers: 1
+    timeout: 30000
 };
 
 export default config;
