@@ -5,6 +5,9 @@ export default {
         isValid: "Code is valid",
         isNotValid: "Code is not valid"
     },
+    download: {
+        invalidPoints: "Modelled points must be between 1 and 50,001"
+    },
     errors: {
         wodinRunError: "An error occurred while running the model",
         wodinSensitivityError: "An error occurred while running sensitivity"
