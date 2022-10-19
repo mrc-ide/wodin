@@ -3,8 +3,7 @@
         <drop-down :text="`WODIN v${wodinVersion}`">
             <template v-slot:items>
                 <li v-for="(version, name, index) in versions" :key="index">
-                    <span class="dropdown-item" style="cursor: default;">
-                        {{ name }} : v{{ version }}</span>
+                    <span class="dropdown-item">{{ name }} : v{{ version }}</span>
                 </li>
             </template>
         </drop-down>
@@ -35,3 +34,17 @@ export default defineComponent({
     }
 });
 </script>
+<style scoped lang="scss">
+.dropdown-item {
+    cursor: default;
+
+    &:hover {
+        background-color: transparent;
+    }
+
+    &:active {
+        background-color: transparent;
+        color: #212529;
+    }
+}
+</style>
