@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-      <div class="my-2">
+      <div v-if="paramNames.length" class="my-2">
           <button class="btn btn-primary btn-sm"
                   id="reset-params-btn"
                   @click="reset">Reset
