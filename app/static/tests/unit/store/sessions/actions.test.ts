@@ -9,6 +9,7 @@ import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
 import { ModelAction } from "../../../../src/app/store/model/actions";
 import { RunAction } from "../../../../src/app/store/run/actions";
 import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
+import {AppStateGetter} from "../../../../src/app/store/appState/getters";
 
 describe("SessionsActions", () => {
     const getSessionIdsSpy = jest.spyOn(localStorageManager, "getSessionIds")
@@ -40,6 +41,10 @@ describe("SessionsActions", () => {
                 }
             }
         };
+    };
+
+    const rootGetters = {
+        [AppStateGetter.baseUrlPath]: "testInstance"
     };
 
     it("Rehydrate fetches session data and reruns model and sensitivity if have result", async () => {
@@ -158,13 +163,15 @@ describe("SessionsActions", () => {
 
         const rootState = mockBasicState({ appName: "test-app" });
         const commit = jest.fn();
-        await (actions[SessionsAction.GetSessions] as any)({ commit, rootState });
+        await (actions[SessionsAction.GetSessions] as any)({ commit, rootState, rootGetters });
 
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(SessionsMutation.SetSessionsMetadata);
         expect(commit.mock.calls[0][1]).toStrictEqual(metadata);
 
         expect(getSessionIdsSpy).toHaveBeenCalledTimes(1);
+        expect(getSessionIdsSpy.mock.calls[0][0]).toBe("test-app");
+        expect(getSessionIdsSpy.mock.calls[0][1]).toBe("testInstance");
     });
 
     it("GetSessions commits error", async () => {
@@ -173,7 +180,7 @@ describe("SessionsActions", () => {
 
         const rootState = mockBasicState({ appName: "test-app" });
         const commit = jest.fn();
-        await (actions[SessionsAction.GetSessions] as any)({ commit, rootState });
+        await (actions[SessionsAction.GetSessions] as any)({ commit, rootState, rootGetters });
 
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(`errors/${ErrorsMutation.AddError}`);

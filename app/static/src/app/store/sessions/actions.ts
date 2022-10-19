@@ -11,6 +11,7 @@ import { ModelAction } from "../model/actions";
 import { SerialisedAppState } from "../../types/serialisationTypes";
 import { deserialiseState } from "../../serialise";
 import { SensitivityAction } from "../sensitivity/actions";
+import {AppStateGetter} from "../appState/getters";
 
 export enum SessionsAction {
     GetSessions = "GetSessions",
@@ -26,10 +27,10 @@ interface SaveSessionLabelPayload {
 
 export const actions: ActionTree<SessionsState, AppState> = {
     async [SessionsAction.GetSessions](context) {
-        const { rootState } = context;
+        const { rootState, rootGetters } = context;
         const { appName } = rootState;
 
-        const sessionIds = localStorageManager.getSessionIds(appName!);
+        const sessionIds = localStorageManager.getSessionIds(appName!, rootGetters[AppStateGetter.baseUrlPath]);
         const sessionIdsQs = sessionIds.join(",");
         const url = `/apps/${appName}/sessions/metadata?sessionIds=${sessionIdsQs}`;
         await api(context)

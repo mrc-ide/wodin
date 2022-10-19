@@ -11,6 +11,7 @@ import { AppType, VisualisationTab } from "../appState/state";
 import { newSessionId } from "../../utils";
 import { logMutations, persistState } from "../plugins";
 import { sessions } from "../sessions/sessions";
+import { getters } from "../appState/getters";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
@@ -31,6 +32,7 @@ export const storeOptions: StoreOptions<StochasticState> = {
     state: defaultState(),
     actions,
     mutations,
+    getters,
     modules: {
         errors,
         code,

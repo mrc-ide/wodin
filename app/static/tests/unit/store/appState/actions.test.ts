@@ -12,6 +12,7 @@ import { ModelAction } from "../../../../src/app/store/model/actions";
 import { serialiseState } from "../../../../src/app/serialise";
 import { SessionsAction } from "../../../../src/app/store/sessions/actions";
 import { localStorageManager } from "../../../../src/app/localStorageManager";
+import {AppStateGetter} from "../../../../src/app/store/appState/getters";
 
 describe("AppState actions", () => {
     const baseUrl = "http://localhost:3000";
@@ -28,6 +29,10 @@ describe("AppState actions", () => {
                 }
             }
         });
+    };
+
+    const getters = {
+        [AppStateGetter.baseUrlPath]: "testInstance"
     };
 
     afterEach(() => {
@@ -54,7 +59,7 @@ describe("AppState actions", () => {
         const spyOnAddSessionId = jest.spyOn(localStorageManager, "addSessionId");
         const payload = { appName: "test-app", loadSessionId: "", baseUrl };
         await (appStateActions[AppStateAction.Initialise] as any)({
-            commit, state, dispatch, rootState
+            commit, state, dispatch, rootState, getters
         }, payload);
         expect(commit.mock.calls.length).toBe(4);
 
@@ -77,7 +82,8 @@ describe("AppState actions", () => {
 
         expect(spyOnAddSessionId).toHaveBeenCalledTimes(1);
         expect(spyOnAddSessionId.mock.calls[0][0]).toBe("test-app");
-        expect(spyOnAddSessionId.mock.calls[0][1]).toBe("1234");
+        expect(spyOnAddSessionId.mock.calls[0][1]).toBe("testInstance");
+        expect(spyOnAddSessionId.mock.calls[0][2]).toBe("1234");
     });
 
     it("does not commit endtime if not given in fetched config", async () => {
@@ -96,7 +102,7 @@ describe("AppState actions", () => {
         const rootState = state;
         const payload = { appName: "test-app", loadSessionId: "", baseUrl };
         await (appStateActions[AppStateAction.Initialise] as any)({
-            commit, state, dispatch, rootState
+            commit, state, dispatch, rootState, getters
         }, payload);
         expect(commit.mock.calls.length).toBe(3);
 
@@ -123,7 +129,7 @@ describe("AppState actions", () => {
 
         const payload = { appName: "test-app", loadSessionId: "", baseUrl };
         await (appStateActions[AppStateAction.Initialise] as any)({
-            commit, state, dispatch, rootState
+            commit, state, dispatch, rootState, getters
         }, payload);
         expect(commit.mock.calls.length).toBe(4);
 
@@ -153,7 +159,7 @@ describe("AppState actions", () => {
 
         const payload = { appName: "test-app", loadSessionId: "", baseUrl };
         await (appStateActions[AppStateAction.Initialise] as any)({
-            commit, state, dispatch, rootState
+            commit, state, dispatch, rootState, getters
         }, payload);
         expect(commit.mock.calls.length).toBe(2);
 
@@ -183,7 +189,7 @@ describe("AppState actions", () => {
 
         const payload = { appName: "test-app", loadSessionId: "1234", baseUrl };
         await (appStateActions[AppStateAction.Initialise] as any)({
-            commit, state, rootState, dispatch
+            commit, state, rootState, dispatch, getters
         }, payload);
 
         expect(commit.mock.calls.length).toBe(2);
