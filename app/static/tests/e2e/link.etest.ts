@@ -1,6 +1,7 @@
 import { expect, test, Page } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
 import { uploadCSVData } from "./utils";
+import { newValidCode } from "./code.etest";
 
 export const newVariableCode = `# variables
 deriv(S) <-  - beta * S * J / N
