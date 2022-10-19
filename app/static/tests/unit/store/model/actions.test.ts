@@ -20,6 +20,7 @@ describe("Model actions", () => {
 
     const rootState = {
         appType: AppType.Basic,
+        baseUrl: "",
         code: {
             currentCode: ["line1", "line2"]
         },
@@ -44,7 +45,7 @@ describe("Model actions", () => {
             .reply(200, mockSuccess(mockRunnerScript));
 
         const commit = jest.fn();
-        await (actions[ModelAction.FetchOdinRunner] as any)({ commit });
+        await (actions[ModelAction.FetchOdinRunner] as any)({ commit, rootState });
 
         expect(commit.mock.calls.length).toBe(1);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinRunner);
@@ -56,7 +57,7 @@ describe("Model actions", () => {
             .reply(500, mockFailure("server error"));
 
         const commit = jest.fn();
-        await (actions[ModelAction.FetchOdinRunner] as any)({ commit });
+        await (actions[ModelAction.FetchOdinRunner] as any)({ commit, rootState });
 
         expect(commit.mock.calls[0][0]).toBe("errors/AddError");
         expect(commit.mock.calls[0][1].detail).toBe("server error");

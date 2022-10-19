@@ -6,31 +6,53 @@
         <action-required-message :message="updateMsg"></action-required-message>
         <run-plot :fade-plot="!!updateMsg" :model-fit="false"></run-plot>
         <error-info :error="error"></error-info>
+        <div>
+          <button class="btn btn-primary" id="download-btn"
+                  :disabled="downloading || !canDownloadOutput"
+                  @click="toggleShowDownloadOutput(true)">
+            <vue-feather class="inline-icon" type="download"></vue-feather>
+            Download
+          </button>
+          <div v-if="downloading" id="downloading">
+            <LoadingSpinner size="xs"></LoadingSpinner>
+            Downloading...
+          </div>
+        </div>
+        <DownloadOutput :open="showDownloadOutput" @close="toggleShowDownloadOutput(false)"></DownloadOutput>
   </div>
 </template>
 
 <script lang="ts">
 import { useStore } from "vuex";
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, ref } from "vue";
+import VueFeather from "vue-feather";
 import RunPlot from "./RunPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { RunAction } from "../../store/run/actions";
 import userMessages from "../../userMessages";
 import ErrorInfo from "../ErrorInfo.vue";
+import DownloadOutput from "../DownloadOutput.vue";
 import { runRequiredExplanation } from "./support";
 import { anyTrue } from "../../utils";
+import LoadingSpinner from "../LoadingSpinner.vue";
 
 export default defineComponent({
     name: "RunTab",
     components: {
+        LoadingSpinner,
         RunPlot,
         ErrorInfo,
-        ActionRequiredMessage
+        ActionRequiredMessage,
+        DownloadOutput,
+        VueFeather
     },
     setup() {
         const store = useStore();
 
+        const showDownloadOutput = ref(false);
+
         const error = computed(() => store.state.run.result?.error);
+        const downloading = computed(() => store.state.run.downloading);
 
         // Enable run button if model has initialised and compile is not required
         const canRunModel = computed(() => !!store.state.model.odinRunner && !!store.state.model.odin
@@ -48,11 +70,19 @@ export default defineComponent({
             return "";
         });
 
+        // only allow download if update not required, and if we have a model solution
+        const canDownloadOutput = computed(() => !updateMsg.value && store.state.run.result?.solution);
+        const toggleShowDownloadOutput = (show: boolean) => { showDownloadOutput.value = show; };
+
         return {
             canRunModel,
             updateMsg,
             runModel,
-            error
+            error,
+            downloading,
+            showDownloadOutput,
+            canDownloadOutput,
+            toggleShowDownloadOutput
         };
     }
 });

@@ -30,7 +30,6 @@ describe("CodeEditor", () => {
                 config: {
                     defaultCode,
                     readOnlyCode,
-                    baseUrl: "",
                     basicProp: ""
                 }
             }),
@@ -67,7 +66,8 @@ describe("CodeEditor", () => {
                 value: "line1\nline2",
                 language: "r",
                 minimap: { enabled: false },
-                readOnly: false
+                readOnly: false,
+                automaticLayout: true
             });
 
             done();

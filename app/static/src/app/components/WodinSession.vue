@@ -13,6 +13,7 @@ export default defineComponent({
     name: "WodinSession",
     props: {
         appName: String,
+        baseUrl: String,
         loadSessionId: String,
         shareNotFound: String
     },
@@ -21,15 +22,15 @@ export default defineComponent({
     },
     setup(props) {
         const store = useStore();
-        const initialised = computed(() => !!store.state.appName);
+        const initialised = computed(() => !!(store.state.appName && store.state.baseUrl));
         onMounted(() => {
             if (props.shareNotFound) {
                 store.commit(`errors/${ErrorsMutation.AddError}`,
                     { detail: `Share id not found: ${props.shareNotFound}` });
             }
 
-            const { appName, loadSessionId } = props;
-            store.dispatch(AppStateAction.Initialise, { appName, loadSessionId });
+            const { appName, baseUrl, loadSessionId } = props;
+            store.dispatch(AppStateAction.Initialise, { appName, baseUrl, loadSessionId });
         });
 
         return { initialised };

@@ -68,7 +68,9 @@ describe("serialise", () => {
             },
             solution: jest.fn(),
             error: { error: "run error", detail: "run error detail" }
-        }
+        },
+        userDownloadFileName: "",
+        downloading: false
     };
 
     const sensitivityBatchPars = {
@@ -156,6 +158,7 @@ describe("serialise", () => {
         sessionLabel: null,
         config: null,
         appName: "test app",
+        baseUrl: null,
         appType: AppType.Basic,
         openVisualisationTab: VisualisationTab.Sensitivity,
         queuedStateUploadIntervalId: -1,
@@ -171,6 +174,7 @@ describe("serialise", () => {
         sessionLabel: null,
         config: null,
         appName: "test fit app",
+        baseUrl: null,
         appType: AppType.Fit,
         openVisualisationTab: VisualisationTab.Fit,
         queuedStateUploadIntervalId: -1,

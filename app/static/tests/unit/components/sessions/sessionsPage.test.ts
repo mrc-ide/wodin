@@ -30,9 +30,7 @@ describe("SessionsPage", () => {
             state: mockBasicState({
                 appName: "testApp",
                 sessionId: "abc",
-                config: {
-                    baseUrl: "http://localhost:3000"
-                } as any
+                baseUrl: "http://localhost:3000"
             }),
             modules: {
                 sessions: {
@@ -97,7 +95,8 @@ describe("SessionsPage", () => {
         expect(session2Cells.at(0)!.text()).toBe("13/01/2022 10:26:36");
         expect(session2Cells.at(1)!.text()).toBe("--no label--");
         expect(session2Cells.at(2)!.findComponent(VueFeather).props("type")).toBe("edit-2");
-        expect(session2Cells.at(3)!.find("a").attributes("href")).toBe("/apps/testApp?sessionId=def");
+        expect(session2Cells.at(3)!.find("a").attributes("href"))
+            .toBe("http://localhost:3000/apps/testApp/?sessionId=def");
         expect(session2Cells.at(3)!.find("a").findComponent(VueFeather).props("type")).toBe("upload");
         expect(session2Cells.at(4)!.find("span.session-copy-link").text()).toBe("Copy link");
         expect(session2Cells.at(4)!.find("span.session-copy-code").text()).toBe("Copy code");

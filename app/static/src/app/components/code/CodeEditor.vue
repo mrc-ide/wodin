@@ -55,7 +55,8 @@ export default defineComponent({
                     value: currentCode.value.join("\n"),
                     language: "r",
                     minimap: { enabled: false },
-                    readOnly: readOnly.value
+                    readOnly: readOnly.value,
+                    automaticLayout: true
                 });
 
                 editorInstance.onDidChangeModelContent(() => {

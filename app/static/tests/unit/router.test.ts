@@ -48,7 +48,7 @@ describe("router", () => {
     });
 
     it("can initialise router", () => {
-        const router = initialiseRouter(WodinSession, "day1");
+        const router = initialiseRouter(WodinSession, "day1", "http://localhost:3000");
         expect(router).toBe(mockRouter);
         expect(mockCreateWebHistory).toHaveBeenCalledTimes(1);
         expect(mockCreateWebHistory).toHaveBeenCalledWith("/apps/day1");
@@ -73,12 +73,19 @@ describe("router", () => {
 
     it("initialiseRouter removes session id from current url", () => {
         window.location.href = "http://localhost:3000/apps/day1/?sessionId=9876";
-        const router = initialiseRouter(WodinSession, "day1");
+        const router = initialiseRouter(WodinSession, "day1", "http://localhost:3000");
         expect(router).toBe(mockRouter);
 
         expect(mockPushState).toHaveBeenCalledTimes(1);
         expect(mockPushState.mock.calls[0][0]).toBe(null);
         expect(mockPushState.mock.calls[0][1]).toBe("");
         expect(mockPushState.mock.calls[0][2]).toBe("http://localhost:3000/apps/day1/");
+    });
+
+    it("include baseUrl path in routeBase", () => {
+        const router = initialiseRouter(WodinSession, "day1", "http://localhost:3000/test");
+        expect(router).toBe(mockRouter);
+        expect(mockCreateWebHistory).toHaveBeenCalledTimes(1);
+        expect(mockCreateWebHistory).toHaveBeenCalledWith("/test/apps/day1");
     });
 });
