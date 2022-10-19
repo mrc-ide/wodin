@@ -10,7 +10,9 @@ export const defaultState: RunState = {
     },
     parameterValues: null,
     endTime: 100,
-    result: null
+    result: null,
+    userDownloadFileName: "",
+    downloading: false
 };
 
 export const run = {

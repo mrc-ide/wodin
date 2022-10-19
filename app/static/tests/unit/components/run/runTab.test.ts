@@ -1,4 +1,6 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via RunPlot
+import VueFeather from "vue-feather";
+
 jest.mock("plotly.js-basic-dist-min", () => {});
 
 /* eslint-disable import/first */
@@ -12,6 +14,8 @@ import RunTab from "../../../../src/app/components/run/RunTab.vue";
 import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
+import DownloadOutput from "../../../../src/app/components/DownloadOutput.vue";
+import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 
 describe("RunTab", () => {
     const defaultModelState = {
@@ -63,27 +67,62 @@ describe("RunTab", () => {
 
     it("renders as expected when can run model", () => {
         const wrapper = getWrapper();
-        expect(wrapper.find("button").text()).toBe("Run model");
-        expect(wrapper.find("button").element.disabled).toBe(false);
+        expect(wrapper.find("button#run-btn").text()).toBe("Run model");
+        expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         expect(wrapper.findComponent(RunPlot).props("fadePlot")).toBe(false);
+
+        // Download button disabled because there is no model solution
+        const downloadBtn = wrapper.find("button#download-btn");
+        expect(downloadBtn.text()).toBe("Download");
+        expect((downloadBtn.element as HTMLButtonElement).disabled).toBe(true);
+        expect(downloadBtn.findComponent(VueFeather).props("type")).toBe("download");
+        expect(wrapper.findComponent(DownloadOutput).props().open).toBe(false);
+
+        expect(wrapper.find("#downloading").exists()).toBe(false);
     });
 
     it("disables run button when state has no odinRunner", () => {
         const wrapper = getWrapper({ odinRunner: null });
-        expect(wrapper.find("button").element.disabled).toBe(true);
+        expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(true);
     });
 
     it("disables run button when state has no odin model", () => {
         const wrapper = getWrapper({ odin: null });
-        expect(wrapper.find("button").element.disabled).toBe(true);
+        expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(true);
     });
 
-    it("disabled run button when compile is required", () => {
-        const wrapper = getWrapper({
-            compileRequired: true
-        });
-        expect(wrapper.find("button").element.disabled).toBe(true);
+    it("disables run and download buttons when compile is required", () => {
+        const modelState = { compileRequired: true };
+        const runState = { result: { solution: {} } as any };
+        const wrapper = getWrapper(modelState, runState);
+        expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(true);
+        expect((wrapper.find("button#download-btn").element as HTMLButtonElement).disabled).toBe(true);
+    });
+
+    it("enables download button when model has a solution", () => {
+        const wrapper = getWrapper({}, { result: { solution: {} } as any });
+        expect((wrapper.find("button#download-btn").element as HTMLButtonElement).disabled).toBe(false);
+    });
+
+    it("disables download button when run is required ", () => {
+        const runState = {
+            result: { solution: {} } as any,
+            runRequired: { modelChanged: true } as any
+        };
+        const wrapper = getWrapper({}, runState);
+        expect((wrapper.find("button#download-btn").element as HTMLButtonElement).disabled).toBe(true);
+    });
+
+    it("disables download button and show message when downloading", () => {
+        const runState = {
+            result: { solution: {} } as any,
+            downloading: true
+        };
+        const wrapper = getWrapper({}, runState);
+        expect((wrapper.find("button#download-btn").element as HTMLButtonElement).disabled).toBe(true);
+        expect(wrapper.find("#downloading").text()).toBe("Downloading...");
+        expect(wrapper.find("#downloading").findComponent(LoadingSpinner).exists()).toBe(true);
     });
 
     it("fades plot and shows message when compile required", () => {
@@ -111,7 +150,7 @@ describe("RunTab", () => {
 
     it("invokes run model action when run button is clicked", () => {
         const wrapper = getWrapper();
-        wrapper.find("button").trigger("click");
+        wrapper.find("button#run-btn").trigger("click");
         expect(mockRunModel).toHaveBeenCalled();
     });
 
@@ -125,5 +164,14 @@ describe("RunTab", () => {
         const wrapper = getWrapper({}, { result });
         expect(wrapper.findComponent(ErrorInfo).exists()).toBe(true);
         expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(odinRunnerError);
+    });
+
+    it("opens download dialog on click download button, and closes when dialog emits close event", async () => {
+        const wrapper = getWrapper({}, { result: { solution: {} } as any });
+        await wrapper.find("button#download-btn").trigger("click");
+        const download = wrapper.findComponent(DownloadOutput);
+        expect(download.props().open).toBe(true);
+        await download.vm.$emit("close");
+        expect(download.props().open).toBe(false);
     });
 });
