@@ -130,6 +130,7 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
         appType: AppType.Basic,
         openVisualisationTab: VisualisationTab.Run,
         appName: "",
+        baseUrl: "",
         queuedStateUploadIntervalId: -1,
         stateUploadInProgress: false,
         config: {
@@ -171,6 +172,7 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
         appType: AppType.Fit,
         openVisualisationTab: VisualisationTab.Run,
         appName: "",
+        baseUrl: "",
         queuedStateUploadIntervalId: -1,
         stateUploadInProgress: false,
         config: {
@@ -194,6 +196,7 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
         appType: AppType.Stochastic,
         openVisualisationTab: VisualisationTab.Run,
         appName: "",
+        baseUrl: "",
         queuedStateUploadIntervalId: -1,
         stateUploadInProgress: false,
         config: {

@@ -12,7 +12,7 @@
           <div class="col-2 text-center session-col-header">Edit Label</div>
           <div class="col-1 text-center session-col-header">Load</div>
           <div class="col-4 text-center session-col-header">Shareable Link</div>
-        </div>
+        </div>-
         <div class="row py-2" v-for="session in sessionsMetadata" :key="session.id">
           <div class="col-3 session-col-value session-time">
             {{formatDateTime(session.time)}}
@@ -96,7 +96,7 @@ export default defineComponent({
         const store = useStore();
 
         const sessionsMetadata = computed(() => store.state.sessions.sessionsMetadata);
-        const baseUrl = computed(() => store.state.config.baseUrl);
+        const baseUrl = computed(() => store.state.baseUrl);
         const appName = computed(() => store.state.appName);
         const currentSessionId = computed(() => store.state.sessionId);
 
@@ -111,7 +111,9 @@ export default defineComponent({
             return utc(isoUTCString).local().format("DD/MM/YYYY HH:mm:ss");
         };
 
-        const sessionUrl = (sessionId: string) => `/apps/${appName.value}?sessionId=${sessionId}`;
+        const appUrl = computed(() => `${baseUrl.value}/apps/${appName.value}/`);
+
+        const sessionUrl = (sessionId: string) => `${appUrl.value}?sessionId=${sessionId}`;
         const isCurrentSession = (sessionId: string) => sessionId === currentSessionId.value;
 
         const toggleEditSessionLabelOpen = (open: boolean) => {
@@ -147,7 +149,7 @@ export default defineComponent({
         const copyLink = async (session: SessionMetadata) => {
             const friendlyId = await ensureFriendlyId(session);
             if (friendlyId) {
-                const link = `${baseUrl.value}/apps/${appName.value}/?share=${friendlyId}`;
+                const link = `${appUrl.value}?share=${friendlyId}`;
                 copyText(link);
             }
         };

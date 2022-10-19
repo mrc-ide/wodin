@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <title>{{title}}</title>
-        <link rel="stylesheet" href="/css/basicApp.css"
+        <link rel="stylesheet" href="{{baseUrl}}/css/basicApp.css"
     </head>
     <body>
         <div id="app">
@@ -13,9 +13,10 @@
                 :wodin-version="'{{wodinVersion}}'">
              </app-header>
              <wodin-session :app-name="'{{appName}}'"
+                            :base-url="'{{baseUrl}}'"
                             :load-session-id="'{{loadSessionId}}'"
                             :share-not-found="'{{shareNotFound}}'"></wodin-session>
         </div>
-        <script src="/js/basicApp.umd.min.js"></script>
+        <script src="{{baseUrl}}/js/basicApp.umd.min.js"></script>
     </body>
 </html>

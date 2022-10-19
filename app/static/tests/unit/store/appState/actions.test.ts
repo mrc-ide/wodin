@@ -13,6 +13,7 @@ import { serialiseState } from "../../../../src/app/serialise";
 import { SessionsAction } from "../../../../src/app/store/sessions/actions";
 
 describe("AppState actions", () => {
+    const baseUrl = "http://localhost:3000";
     const getStore = () => {
         const state = mockBasicState({ config: null });
         return new Vuex.Store<BasicState>({
@@ -40,20 +41,23 @@ describe("AppState actions", () => {
             endTime: 101,
             readOnlyCode: false
         };
-        mockAxios.onGet("/config/test-app")
+        mockAxios.onGet(`${baseUrl}/config/test-app`)
             .reply(200, mockSuccess(config));
 
         const store = getStore();
         const commit = jest.spyOn(store, "commit");
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
+        const rootState = state;
 
-        const payload = { appName: "test-app", loadSessionId: "" };
-        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, payload);
+        const payload = { appName: "test-app", loadSessionId: "", baseUrl };
+        await (appStateActions[AppStateAction.Initialise] as any)({
+            commit, state, dispatch, rootState
+        }, payload);
         expect(commit.mock.calls.length).toBe(4);
 
-        expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
-        expect(commit.mock.calls[0][1]).toBe("test-app");
+        expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
+        expect(commit.mock.calls[0][1]).toStrictEqual({ appName: "test-app", baseUrl });
 
         expect(commit.mock.calls[1][0]).toBe(AppStateMutation.SetConfig);
         const committedConfig = commit.mock.calls[1][1];
@@ -76,18 +80,21 @@ describe("AppState actions", () => {
             defaultCode: [],
             readOnlyCode: false
         };
-        mockAxios.onGet("/config/test-app")
+        mockAxios.onGet(`${baseUrl}/config/test-app`)
             .reply(200, mockSuccess(config));
 
         const store = getStore();
         const commit = jest.spyOn(store, "commit");
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
-        const payload = { appName: "test-app", loadSessionId: "" };
-        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, payload);
+        const rootState = state;
+        const payload = { appName: "test-app", loadSessionId: "", baseUrl };
+        await (appStateActions[AppStateAction.Initialise] as any)({
+            commit, state, dispatch, rootState
+        }, payload);
         expect(commit.mock.calls.length).toBe(3);
 
-        expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
+        expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
         expect(commit.mock.calls[1][0]).toBe(AppStateMutation.SetConfig);
         expect(commit.mock.calls[2][0]).toBe(`code/${CodeMutation.SetCurrentCode}`);
     });
@@ -99,19 +106,22 @@ describe("AppState actions", () => {
             endTime: 101,
             readOnlyCode: true
         };
-        mockAxios.onGet("/config/test-app")
+        mockAxios.onGet(`${baseUrl}/config/test-app`)
             .reply(200, mockSuccess(config));
 
         const store = getStore();
         const commit = jest.spyOn(store, "commit");
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
+        const rootState = state;
 
-        const payload = { appName: "test-app", loadSessionId: "" };
-        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, payload);
+        const payload = { appName: "test-app", loadSessionId: "", baseUrl };
+        await (appStateActions[AppStateAction.Initialise] as any)({
+            commit, state, dispatch, rootState
+        }, payload);
         expect(commit.mock.calls.length).toBe(4);
 
-        expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
+        expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
         expect(commit.mock.calls[1][0]).toBe(AppStateMutation.SetConfig);
 
         expect(commit.mock.calls[2][0]).toBe(`code/${CodeMutation.SetCurrentCode}`);
@@ -126,20 +136,23 @@ describe("AppState actions", () => {
     });
 
     it("Initialise fetches config and commits error", async () => {
-        mockAxios.onGet("/config/test-app")
+        mockAxios.onGet(`${baseUrl}/config/test-app`)
             .reply(500, mockFailure("Test Error Msg"));
 
         const store = getStore();
         const commit = jest.spyOn(store, "commit");
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
+        const rootState = state;
 
-        const payload = { appName: "test-app", loadSessionId: "" };
-        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, payload);
+        const payload = { appName: "test-app", loadSessionId: "", baseUrl };
+        await (appStateActions[AppStateAction.Initialise] as any)({
+            commit, state, dispatch, rootState
+        }, payload);
         expect(commit.mock.calls.length).toBe(2);
 
-        expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
-        expect(commit.mock.calls[0][1]).toBe("test-app");
+        expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
+        expect(commit.mock.calls[0][1]).toStrictEqual({ appName: "test-app", baseUrl });
 
         expect(commit.mock.calls[1][0]).toBe(`errors/${ErrorsMutation.AddError}`);
         expect((commit.mock.calls[1][1] as any).detail).toBe("Test Error Msg");
@@ -153,19 +166,22 @@ describe("AppState actions", () => {
             defaultCode: ["line1", "line2"],
             readOnlyCode: true
         };
-        mockAxios.onGet("/config/test-app")
+        mockAxios.onGet(`${baseUrl}/config/test-app`)
             .reply(200, mockSuccess(config));
 
         const store = getStore();
         const commit = jest.spyOn(store, "commit");
         const dispatch = jest.spyOn(store, "dispatch");
         const { state } = store;
+        const rootState = state;
 
-        const payload = { appName: "test-app", loadSessionId: "1234" };
-        await (appStateActions[AppStateAction.Initialise] as any)({ commit, state, dispatch }, payload);
+        const payload = { appName: "test-app", loadSessionId: "1234", baseUrl };
+        await (appStateActions[AppStateAction.Initialise] as any)({
+            commit, state, rootState, dispatch
+        }, payload);
 
         expect(commit.mock.calls.length).toBe(2);
-        expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetAppName);
+        expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
         expect(commit.mock.calls[1][0]).toBe(AppStateMutation.SetConfig);
 
         expect(dispatch.mock.calls.length).toBe(1);
@@ -188,12 +204,13 @@ describe("AppState actions", () => {
     it("QueueStateUpload sets new state upload pending", (done) => {
         jest.useFakeTimers();
         const mockSetInterval = jest.spyOn(window, "setInterval");
-        const state = mockFitState({ sessionId: "1234", appName: "testApp" });
+        const state = mockFitState({ sessionId: "1234", appName: "testApp", baseUrl });
+        const rootState = state;
         const commit = jest.fn();
-        mockAxios.onPost("/apps/testApp/sessions/1234")
+        mockAxios.onPost(`${baseUrl}/apps/testApp/sessions/1234`)
             .reply(200, "");
 
-        (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
+        (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state, rootState });
         expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.ClearQueuedStateUpload);
         expect(commit.mock.calls[1][0]).toBe(AppStateMutation.SetQueuedStateUpload);
@@ -291,12 +308,13 @@ describe("AppState actions", () => {
 
     it("QueueStatusUpload callback commits api error", (done) => {
         jest.useFakeTimers();
-        const state = mockFitState({ sessionId: "1234", appName: "testApp" });
+        const state = mockFitState({ sessionId: "1234", appName: "testApp", baseUrl });
+        const rootState = state;
         const commit = jest.fn();
-        mockAxios.onPost("/apps/testApp/sessions/1234")
+        mockAxios.onPost(`${baseUrl}/apps/testApp/sessions/1234`)
             .reply(500, mockFailure("upload failure"));
 
-        (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
+        (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state, rootState });
         jest.advanceTimersByTime(2000);
 
         expect(commit).toHaveBeenCalledTimes(4);

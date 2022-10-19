@@ -49,7 +49,7 @@ describe("SessionsActions", () => {
 
         const commit = jest.fn();
         const dispatch = jest.fn();
-        const rootState = { appName: "testApp" } as any;
+        const rootState = { appName: "testApp", baseUrl: "" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);
@@ -75,7 +75,7 @@ describe("SessionsActions", () => {
 
         const commit = jest.fn();
         const dispatch = jest.fn();
-        const rootState = { appName: "testApp" } as any;
+        const rootState = { appName: "testApp", baseUrl: "" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);
@@ -92,7 +92,7 @@ describe("SessionsActions", () => {
 
         const commit = jest.fn();
         const dispatch = jest.fn();
-        const rootState = { appName: "testApp" } as any;
+        const rootState = { appName: "testApp", baseUrl: "" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);
@@ -109,7 +109,7 @@ describe("SessionsActions", () => {
 
         const commit = jest.fn();
         const dispatch = jest.fn();
-        const rootState = { appName: "testApp" } as any;
+        const rootState = { appName: "testApp", baseUrl: "" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);
@@ -132,7 +132,7 @@ describe("SessionsActions", () => {
 
         const commit = jest.fn();
         const dispatch = jest.fn();
-        const rootState = { appName: "testApp" } as any;
+        const rootState = { appName: "testApp", baseUrl: "" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);

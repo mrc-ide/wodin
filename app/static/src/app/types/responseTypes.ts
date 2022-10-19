@@ -18,7 +18,6 @@ export interface ResponseSuccess {
 }
 
 export interface AppConfig {
-    baseUrl: string,
     defaultCode: string[],
     readOnlyCode: boolean,
     stateUploadIntervalMillis?: number | null

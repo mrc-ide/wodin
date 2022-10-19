@@ -3,7 +3,7 @@ import { AppState, VisualisationTab } from "./state";
 import { AppConfig } from "../../types/responseTypes";
 
 export enum AppStateMutation {
-    SetAppName = "SetAppName",
+    SetApp = "SetApp",
     SetConfig = "SetConfig",
     SetOpenVisualisationTab = "SetOpenVisualisationTab",
     ClearQueuedStateUpload = "ClearQueuedStateUpload",
@@ -18,9 +18,15 @@ export const StateUploadMutations = [
     AppStateMutation.SetStateUploadInProgress
 ] as string[];
 
+export interface SetAppPayload {
+    appName: string
+    baseUrl: string
+}
+
 export const appStateMutations: MutationTree<AppState> = {
-    [AppStateMutation.SetAppName](state: AppState, payload: string) {
-        state.appName = payload;
+    [AppStateMutation.SetApp](state: AppState, payload: SetAppPayload) {
+        state.appName = payload.appName;
+        state.baseUrl = payload.baseUrl;
     },
 
     [AppStateMutation.SetConfig](state: AppState, payload: AppConfig) {

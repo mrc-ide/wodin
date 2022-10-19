@@ -12,7 +12,9 @@ describe("AppHeader", () => {
     const getWrapper = (appName: string | null = "test", sessionLabel: string | null = null,
         sessionId = "testSessionId") => {
         const store = new Vuex.Store<BasicState>({
-            state: mockBasicState({ appName, sessionLabel, sessionId })
+            state: mockBasicState({
+                appName, sessionLabel, sessionId, baseUrl: "http://localhost:3000"
+            })
         });
 
         const options = {
@@ -32,7 +34,7 @@ describe("AppHeader", () => {
     it("renders as expected", () => {
         const wrapper = getWrapper();
         expect(wrapper.find("a.navbar-brand").text()).toBe("Test Course Title");
-        expect(wrapper.find("a.navbar-brand").attributes("href")).toBe("/");
+        expect(wrapper.find("a.navbar-brand").attributes("href")).toBe("http://localhost:3000");
         expect(wrapper.find(".navbar-app").text()).toBe("Test App Title");
         expect(wrapper.find(".navbar-version").text()).toBe("WODIN v1.2.3");
 
