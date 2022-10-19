@@ -9,7 +9,7 @@ import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
 import { ModelAction } from "../../../../src/app/store/model/actions";
 import { RunAction } from "../../../../src/app/store/run/actions";
 import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
-import {AppStateGetter} from "../../../../src/app/store/appState/getters";
+import { AppStateGetter } from "../../../../src/app/store/appState/getters";
 
 describe("SessionsActions", () => {
     const getSessionIdsSpy = jest.spyOn(localStorageManager, "getSessionIds")

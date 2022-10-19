@@ -1,7 +1,7 @@
 class LocalStorageManager {
     static _sessionIdsKey = (appName: string, basePath: string) => {
         const prefix = basePath ? `${basePath}_` : "";
-        return `${prefix}${appName}_sessionIds`
+        return `${prefix}${appName}_sessionIds`;
     };
 
     getSessionIds = (appName: string, basePath: string): string[] => {

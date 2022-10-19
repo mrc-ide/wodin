@@ -11,7 +11,7 @@ import { ModelAction } from "../model/actions";
 import { SerialisedAppState } from "../../types/serialisationTypes";
 import { deserialiseState } from "../../serialise";
 import { SensitivityAction } from "../sensitivity/actions";
-import {AppStateGetter} from "../appState/getters";
+import { AppStateGetter } from "../appState/getters";
 
 export enum SessionsAction {
     GetSessions = "GetSessions",

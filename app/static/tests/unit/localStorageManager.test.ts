@@ -16,7 +16,7 @@ describe("localStorageManager", () => {
     });
 
     it("can add session id", () => {
-        localStorageManager.addSessionId("day1", "session3", "");
+        localStorageManager.addSessionId("day1", "", "session3");
         expect(spyOnGetItem).toHaveBeenCalledTimes(1);
         expect(spyOnSetItem).toHaveBeenCalledTimes(1);
         expect(spyOnSetItem.mock.calls[0][0]).toBe("day1_sessionIds");

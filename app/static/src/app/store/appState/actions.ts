@@ -11,7 +11,7 @@ import { serialiseState } from "../../serialise";
 import { FitState } from "../fit/state";
 import { SessionsAction } from "../sessions/actions";
 import { localStorageManager } from "../../localStorageManager";
-import {AppStateGetter} from "./getters";
+import { AppStateGetter } from "./getters";
 
 export enum AppStateAction {
     Initialise = "Initialise",
@@ -40,7 +40,9 @@ interface InitialisePayload {
 
 export const appStateActions: ActionTree<AppState, AppState> = {
     async [AppStateAction.Initialise](context, payload: InitialisePayload) {
-        const { commit, state, dispatch, getters } = context;
+        const {
+            commit, state, dispatch, getters
+        } = context;
         const { appName, baseUrl, loadSessionId } = payload;
         commit(AppStateMutation.SetApp, { appName, baseUrl });
         localStorageManager.addSessionId(appName, getters[AppStateGetter.baseUrlPath], state.sessionId);

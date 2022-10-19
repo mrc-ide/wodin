@@ -1,9 +1,9 @@
-import {AppStateGetter, getters} from "../../../../src/app/store/appState/getters";
-import {mockBasicState} from "../../../mocks";
+import { AppStateGetter, getters } from "../../../../src/app/store/appState/getters";
+import { mockBasicState } from "../../../mocks";
 
 describe("AppState getters", () => {
     const expectBaseUrlPathForBaseUrl = (baseUrl: string, expectedBasePath: string) => {
-        const state = mockBasicState({baseUrl});
+        const state = mockBasicState({ baseUrl });
         expect((getters.baseUrlPath as any)(state)).toBe(expectedBasePath);
     };
 

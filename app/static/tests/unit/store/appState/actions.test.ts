@@ -12,7 +12,7 @@ import { ModelAction } from "../../../../src/app/store/model/actions";
 import { serialiseState } from "../../../../src/app/serialise";
 import { SessionsAction } from "../../../../src/app/store/sessions/actions";
 import { localStorageManager } from "../../../../src/app/localStorageManager";
-import {AppStateGetter} from "../../../../src/app/store/appState/getters";
+import { AppStateGetter } from "../../../../src/app/store/appState/getters";
 
 describe("AppState actions", () => {
     const baseUrl = "http://localhost:3000";
