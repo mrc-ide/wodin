@@ -263,7 +263,7 @@ test.describe("Wodin App model fit tests", () => {
         await expect(await page.innerText("#fit-cancelled-msg")).toBe("Model fit was cancelled before converging");
     });
 
-    test.only("can mark sensitivity as out of date after fit", async ({ page }) => {
+    test("can mark sensitivity as out of date after fit", async ({ page }) => {
         await startModelFit(page);
         await page.click(".wodin-right .wodin-content div.mt-4 button#cancel-fit-btn");
         // Open sensitivity tab
