@@ -3,7 +3,7 @@ import type { PlaywrightTestConfig } from "@playwright/test";
 const config: PlaywrightTestConfig = {
     testMatch: "*.etest.ts",
     fullyParallel: true,
-    workers: process.env.CI ? 2 : 4,
+    workers: process.env.CI ? 2 : undefined,
     use: {
         baseURL: "http://localhost:3000",
         screenshot: "only-on-failure",
@@ -12,7 +12,8 @@ const config: PlaywrightTestConfig = {
             permissions: ["clipboard-read", "clipboard-write"]
         }
     },
-    timeout: 30000
+    retries: 1,
+    timeout: 60000
 };
 
 export default config;
