@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { AppLocals, SessionMetadata } from "../types";
-import { SessionStore } from "../db/sessionStore";
+import { SessionMetadata } from "../types";
+import { getSessionStore } from "../db/sessionStore";
 import { ErrorType } from "../errors/errorType";
 import { jsonResponseError, jsonResponseSuccess, jsonStringResponseSuccess } from "../jsonResponse";
 
@@ -17,15 +17,9 @@ export const serialiseSession = (session: string | null, res: Response) => {
 };
 
 export class SessionsController {
-    private static getStore = (req: Request) => {
-        const { redis, wodinConfig } = req.app.locals as AppLocals;
-        const { appName } = req.params;
-        return new SessionStore(redis, wodinConfig.savePrefix, appName);
-    };
-
     static postSession = async (req: Request, res: Response) => {
         const { id } = req.params;
-        const store = SessionsController.getStore(req);
+        const store = getSessionStore(req);
         await store.saveSession(id, req.body as string);
         res.end();
     };
@@ -35,7 +29,7 @@ export class SessionsController {
         let metadata: SessionMetadata[] = [];
         if (sessionIdsString) {
             const sessionIds = sessionIdsString.split(",");
-            const store = SessionsController.getStore(req);
+            const store = getSessionStore(req);
             metadata = await store.getSessionsMetadata(sessionIds);
         }
         jsonResponseSuccess(metadata, res);
@@ -43,21 +37,21 @@ export class SessionsController {
 
     static postSessionLabel = async (req: Request, res: Response) => {
         const { id } = req.params;
-        const store = SessionsController.getStore(req);
+        const store = getSessionStore(req);
         await store.saveSessionLabel(id, req.body as string);
         res.end();
     };
 
     static getSession = async (req: Request, res: Response) => {
         const { id } = req.params;
-        const store = SessionsController.getStore(req);
+        const store = getSessionStore(req);
         const session = await store.getSession(id);
         serialiseSession(session, res);
     };
 
     static generateFriendlyId = async (req: Request, res: Response) => {
         const { id } = req.params;
-        const store = SessionsController.getStore(req);
+        const store = getSessionStore(req);
         const friendly = await store.generateFriendlyId(id);
         jsonResponseSuccess(friendly, res);
     };

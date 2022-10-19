@@ -25,24 +25,30 @@ test.describe("Index tests", () => {
         await page.goto("/");
         await page.click("a[href='apps/day1']");
 
+        await expect(await page.title()).toBe("Day 1 - Basic Model - WODIN Example");
         await expect(await page.innerText("nav .navbar-app")).toBe("Day 1 - Basic Model");
         await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Code");
+        await expect(await page.locator(".alert-danger")).not.toBeVisible();
     });
 
     test("day2 link goes to Fit app", async ({ page }) => {
         await page.goto("/");
         await page.click("a[href='apps/day2']");
 
+        await expect(await page.title()).toBe("Day 2 - Model Fit - WODIN Example");
         await expect(await page.innerText("nav .navbar-app")).toBe("Day 2 - Model Fit");
         await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Data");
+        await expect(await page.locator(".alert-danger")).not.toBeVisible();
     });
 
     test("day3 link goes to Stochastic app", async ({ page }) => {
         await page.goto("/");
         await page.click("a[href='apps/day3']");
 
+        await expect(await page.title()).toBe("Day 3 - Stochastic Model - WODIN Example");
         await expect(await page.innerText("nav .navbar-app")).toBe("Day 3 - Stochastic Model");
         await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Code");
+        await expect(await page.locator(".alert-danger")).not.toBeVisible();
     });
 
     const testDownloadFile = async (href: string, localFileName: string, expectedContent: string, page: Page) => {

@@ -164,4 +164,23 @@ test.describe("Options Tab tests", () => {
         await page.click(":nth-match(#model-params input, 2)");
         await expect(await page.inputValue(":nth-match(#model-params input, 1)")).toBe("4");
     });
+
+    test("can reset model parameters to default values", async ({ page }) => {
+        await expect(await page.innerText(".collapse-title")).toContain("Model Parameters");
+
+        // Default model parameter values
+        await expect(await page.inputValue(":nth-match(#model-params input, 1)")).toBe("4");
+
+        // Change default values
+        await page.fill(":nth-match(#model-params input, 1)", "10000");
+
+        // Verify changes have been made
+        await expect(await page.inputValue(":nth-match(#model-params input, 1)")).toBe("10000");
+
+        // Reset parameters to default value
+        await page.click("#reset-params-btn");
+
+        // Verify parameters have been reset to default value
+        await expect(await page.inputValue(":nth-match(#model-params input, 1)")).toBe("4");
+    });
 });

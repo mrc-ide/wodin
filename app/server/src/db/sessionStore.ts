@@ -1,6 +1,7 @@
 import Redis from "ioredis";
 import { generateId } from "zoo-ids";
-import { SessionMetadata } from "../types";
+import { Request } from "express";
+import { AppLocals, SessionMetadata } from "../types";
 
 export const cleanFriendlyId = (id: string): string => {
     let ret = id.toLowerCase();
@@ -72,6 +73,11 @@ export class SessionStore {
         return this._redis.hget(this.sessionKey("data"), id);
     }
 
+    async getSessionIdFromFriendlyId(friendlyId: string) {
+        const keyFriendlyToMachine = this.sessionKey("machine");
+        return this._redis.hget(keyFriendlyToMachine, friendlyId);
+    }
+
     async generateFriendlyId(id: string, maxRetries: number = 10) : Promise<string> {
         // Try several times to generate a friendly id but fall back
         // on the machine readable id (which should be globally
@@ -111,3 +117,9 @@ export class SessionStore {
         return id;
     }
 }
+
+export const getSessionStore = (req: Request) => {
+    const { redis, wodinConfig } = req.app.locals as AppLocals;
+    const { appName } = req.params;
+    return new SessionStore(redis, wodinConfig.savePrefix, appName);
+};

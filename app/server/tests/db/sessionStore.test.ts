@@ -1,9 +1,11 @@
-import { friendlyAdjectiveAnimal, cleanFriendlyId, SessionStore } from "../../src/db/sessionStore";
+import {
+    friendlyAdjectiveAnimal, cleanFriendlyId, SessionStore, getSessionStore
+} from "../../src/db/sessionStore";
 
 // Mock Date.now to return hardcoded date
 Date.now = jest.spyOn(Date, "now").mockImplementation(() => new Date(2022, 0, 24, 17).getTime()) as any;
 
-describe("Sessionstore", () => {
+describe("SessionStore", () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
@@ -163,6 +165,16 @@ describe("Sessionstore", () => {
         expect(mockRedis2.hset).not.toHaveBeenCalled();
         expect(mockRedis2.hsetnx).not.toHaveBeenCalled();
     });
+
+    it("can get session id from friendly id", async () => {
+        const sut = new SessionStore(mockRedis, "Test Course", "testApp");
+        await sut.getSessionIdFromFriendlyId("large-spider");
+
+        expect(mockRedis.hget).toHaveBeenCalledTimes(1);
+        expect(mockRedis.hget.mock.calls[0].length).toBe(2);
+        expect(mockRedis.hget.mock.calls[0][0]).toBe("Test Course:testApp:sessions:machine");
+        expect(mockRedis.hget.mock.calls[0][1]).toBe("large-spider");
+    });
 });
 
 describe("generate friendly id", () => {
@@ -182,5 +194,26 @@ describe("generate friendly id", () => {
         for (let i = 0; i < n; i += 1) {
             expect(friendlyAdjectiveAnimal()).toMatch(/^[a-z]+-[a-z]+$/);
         }
+    });
+});
+
+describe("getSessionStore", () => {
+    it("gets session store using request", () => {
+        const mockRequest = {
+            app: {
+                locals: {
+                    redis: {},
+                    wodinConfig: {
+                        savePrefix: "testPrefix"
+                    }
+                }
+            },
+            params: {
+                appName: "TestApp"
+            }
+        } as any;
+        const store = getSessionStore(mockRequest) as any;
+        expect(store._redis).toBe(mockRequest.app.locals.redis);
+        expect(store._sessionPrefix).toBe("testPrefix:TestApp:sessions:");
     });
 });
