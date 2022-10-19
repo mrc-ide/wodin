@@ -26,7 +26,7 @@ export class AppsController {
 
         const config = configReader.readConfigFile(appsPath, `${appName}.config.json`) as any;
         if (config) {
-const baseUrl = wodinConfig.baseUrl.replace(/\/$/, "");
+            const baseUrl = wodinConfig.baseUrl.replace(/\/$/, "");
             const view = `${config.appType}-app`;
             // TODO: validate config against schema for app type
             const viewOptions = {
