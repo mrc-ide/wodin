@@ -12,9 +12,9 @@ import { modelFit } from "../modelFit/modelFit";
 import { AppType, VisualisationTab } from "../appState/state";
 import { logMutations, persistState } from "../plugins";
 import { newSessionId } from "../../utils";
-import { localStorageManager } from "../../localStorageManager";
 import { sessions } from "../sessions/sessions";
 import { versions } from "../versions/versions";
+import { getters } from "../appState/getters";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
@@ -35,6 +35,7 @@ export const storeOptions: StoreOptions<FitState> = {
     state: defaultState(),
     actions,
     mutations,
+    getters,
     modules: {
         errors,
         code,
@@ -51,5 +52,3 @@ export const storeOptions: StoreOptions<FitState> = {
         persistState
     ]
 };
-
-localStorageManager.addSessionId((storeOptions.state as FitState).sessionId);
