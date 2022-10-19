@@ -13,7 +13,12 @@ jest.mock("../../src/db/sessionStore", () => { return { getSessionStore: mockGet
 import { AppsController } from "../../src/controllers/appsController";
 
 describe("appsController", () => {
-    const getMockRequest = (appConfig: any, sessionId: string | undefined, share: string | undefined) => {
+    const getMockRequest = (
+        appConfig: any,
+        sessionId: string | undefined,
+        share: string | undefined,
+        wodinConfig = {}
+    ) => {
         const mockConfigReader = {
             readConfigFile: jest.fn().mockReturnValue(appConfig)
         };
@@ -23,7 +28,9 @@ describe("appsController", () => {
                     appsPath: "testapps",
                     configReader: mockConfigReader,
                     wodinConfig: {
-                        courseTitle: "Test Course Title"
+                        baseUrl: "http://localhost:3000",
+                        courseTitle: "Test Course Title",
+                        ...wodinConfig
                     },
                     wodinVersion: "1.2.3"
                 }
@@ -62,6 +69,7 @@ describe("appsController", () => {
         expect(mockRender.mock.calls[0][0]).toBe("testType-app");
         expect(mockRender.mock.calls[0][1]).toStrictEqual({
             appName: "test",
+            baseUrl: "http://localhost:3000",
             title: "testTitle - Test Course Title",
             appTitle: "testTitle",
             courseTitle: "Test Course Title",
@@ -78,6 +86,7 @@ describe("appsController", () => {
 
         expect(mockRender.mock.calls[0][1]).toStrictEqual({
             appName: "test",
+            baseUrl: "http://localhost:3000",
             title: "testTitle - Test Course Title",
             appTitle: "testTitle",
             courseTitle: "Test Course Title",
@@ -98,12 +107,13 @@ describe("appsController", () => {
         expect(mockRender).toHaveBeenCalledTimes(1);
         expect(mockRender.mock.calls[0][1]).toStrictEqual({
             appName: "test",
+            baseUrl: "http://localhost:3000",
             appTitle: "testTitle",
             courseTitle: "Test Course Title",
+            title: "testTitle - Test Course Title",
             wodinVersion: "1.2.3",
             loadSessionId: "123456",
-            shareNotFound: "",
-            title: "testTitle - Test Course Title"
+            shareNotFound: ""
         });
     });
 
@@ -116,12 +126,13 @@ describe("appsController", () => {
         expect(mockRender).toHaveBeenCalledTimes(1);
         expect(mockRender.mock.calls[0][1]).toStrictEqual({
             appName: "test",
+            baseUrl: "http://localhost:3000",
             appTitle: "testTitle",
             courseTitle: "Test Course Title",
+            title: "testTitle - Test Course Title",
             wodinVersion: "1.2.3",
             loadSessionId: "",
-            shareNotFound: "tiny-mouse",
-            title: "testTitle - Test Course Title"
+            shareNotFound: "tiny-mouse"
         });
     });
 
@@ -136,5 +147,12 @@ describe("appsController", () => {
         );
         await expect(AppsController.getApp(request, mockResponse)).rejects.toThrow(expectedErr);
         expect(mockRender).not.toHaveBeenCalled();
+    });
+
+    it("removes trailing slash from baseUrl", async () => {
+        const wodinConfig = { baseUrl: "http://localhost:3000/instance/" };
+        const request = getMockRequest({ title: "testTitle", appType: "testType" }, "1234", undefined, wodinConfig);
+        await AppsController.getApp(request, mockResponse);
+        expect(mockRender.mock.calls[0][1].baseUrl).toBe("http://localhost:3000/instance");
     });
 });

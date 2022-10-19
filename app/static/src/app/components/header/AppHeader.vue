@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-dark bg-brand mb-2 px-2">
     <span>
-      <a class="navbar-brand pl-2" href="/">{{ courseTitle }}</a>
+      <a class="navbar-brand pl-2" :href="baseUrl">{{ courseTitle }}</a>
       <span class="nav-item navbar-app">{{ appTitle }}</span>
     </span>
     <span class="nav-item dropdown">
@@ -18,7 +18,7 @@
         <li><router-link id="all-sessions-link" class="dropdown-item" to="/sessions">All Sessions</router-link></li>
       </ul>
     </span>
-      <version-menu :wodin-version="wodinVersion"></version-menu>
+    <version-menu :wodin-version="wodinVersion"></version-menu>
   </nav>
   <edit-session-label id="header-edit-session-label"
                       :open="editSessionLabelOpen"
@@ -51,7 +51,8 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
-        const initialised = computed(() => !!store.state.appName);
+        const baseUrl = computed(() => store.state.baseUrl);
+        const initialised = computed(() => !!(store.state.appName && baseUrl.value));
         const editSessionLabelOpen = ref(false);
 
         const toggleEditSessionLabel = (edit: boolean) => {
@@ -66,6 +67,7 @@ export default defineComponent({
         });
 
         return {
+            baseUrl,
             initialised,
             toggleEditSessionLabel,
             editSessionLabelOpen,

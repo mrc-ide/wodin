@@ -15,9 +15,9 @@ describe("WodinSession", () => {
         jest.clearAllMocks();
     });
 
-    const getWrapper = (appName: string | null = "test", shareNotFound = "") => {
+    const getWrapper = (appName: string | null = "test", shareNotFound = "", baseUrl = "http://localhost:3000") => {
         const store = new Vuex.Store<BasicState>({
-            state: mockBasicState({ appName }),
+            state: mockBasicState({ appName, baseUrl }),
             actions: {
                 [AppStateAction.Initialise]: mockInitialise
             },
@@ -37,6 +37,7 @@ describe("WodinSession", () => {
             },
             props: {
                 appName: "testApp",
+                baseUrl: "http://localhost:3000",
                 loadSessionId: "session1",
                 shareNotFound
             }
@@ -54,11 +55,20 @@ describe("WodinSession", () => {
     it("dispatches Initialise action on mount", () => {
         getWrapper();
         expect(mockInitialise).toHaveBeenCalledTimes(1);
-        expect(mockInitialise.mock.calls[0][1]).toStrictEqual({ appName: "testApp", loadSessionId: "session1" });
+        expect(mockInitialise.mock.calls[0][1]).toStrictEqual({
+            appName: "testApp",
+            loadSessionId: "session1",
+            baseUrl: "http://localhost:3000"
+        });
     });
 
     it("does not render RouterView when appName is not initialised", () => {
         const wrapper = getWrapper(null);
+        expect(wrapper.findComponent(RouterView).exists()).toBe(false);
+    });
+
+    it("does not render RouterView when baseUrl is not initialised", () => {
+        const wrapper = getWrapper("test", "", "");
         expect(wrapper.findComponent(RouterView).exists()).toBe(false);
     });
 

@@ -18,6 +18,8 @@ jobs:
         run: npm run serve --prefix=app/server &
       - name: Test back end
         run: npm test --prefix=app/server
+      - name: Test back end integration
+        run: npm run integration-test --prefix=app/server
       - name: Test front end
         run: npm run test:unit --prefix=app/static
       - name: Lint back end

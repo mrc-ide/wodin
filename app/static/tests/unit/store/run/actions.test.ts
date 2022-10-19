@@ -1,10 +1,18 @@
-import { actions, RunAction } from "../../../../src/app/store/run/actions";
+import Mock = jest.Mock;
 import { RunMutation } from "../../../../src/app/store/run/mutations";
 import {
     mockModelState, mockRunState, mockRunner
 } from "../../../mocks";
+import { WodinExcelDownload } from "../../../../src/app/wodinExcelDownload";
+import { actions, RunAction } from "../../../../src/app/store/run/actions";
+
+jest.mock("../../../../src/app/wodinExcelDownload");
 
 describe("Run actions", () => {
+    const mockDownloadModelOutput = jest.fn();
+    const mockWodinExcelDownload = WodinExcelDownload as any as Mock;
+    mockWodinExcelDownload.mockImplementation(() => ({ downloadModelOutput: mockDownloadModelOutput }));
+
     it("runs model and updates required action", () => {
         const mockOdin = {} as any;
 
@@ -197,5 +205,27 @@ describe("Run actions", () => {
             solution: "test solution",
             error: null
         });
+    });
+
+    it("downloads output", (done) => {
+        const commit = jest.fn();
+        const context = { commit };
+        const payload = { fileName: "myFile.xlsx", points: 101 };
+        (actions[RunAction.DownloadOutput] as any)(context, payload);
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetDownloading);
+        expect(commit.mock.calls[0][1]).toBe(true);
+        setTimeout(() => {
+            expect(mockWodinExcelDownload).toHaveBeenCalledTimes(1); // expect WodinExcelDownload constructor
+            expect(mockWodinExcelDownload.mock.calls[0][0]).toBe(context);
+            expect(mockWodinExcelDownload.mock.calls[0][1]).toBe("myFile.xlsx");
+            expect(mockWodinExcelDownload.mock.calls[0][2]).toBe(101);
+            expect(mockDownloadModelOutput).toHaveBeenCalledTimes(1);
+
+            expect(commit).toHaveBeenCalledTimes(2);
+            expect(commit.mock.calls[1][0]).toBe(RunMutation.SetDownloading);
+            expect(commit.mock.calls[1][1]).toBe(false);
+            done();
+        }, 20);
     });
 });

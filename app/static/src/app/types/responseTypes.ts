@@ -18,7 +18,6 @@ export interface ResponseSuccess {
 }
 
 export interface AppConfig {
-    baseUrl: string,
     defaultCode: string[],
     readOnlyCode: boolean,
     stateUploadIntervalMillis?: number | null
@@ -178,10 +177,4 @@ export interface SessionMetadata {
     friendlyId: string | null,
 }
 
-export interface Versions {
-    odin: string,
-    "odin.api": string
-    dfoptim: string,
-    dopri: string,
-    odinjs: string
-}
+export type Versions = Dict<string>;
