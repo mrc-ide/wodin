@@ -7,7 +7,7 @@ test.describe("Wodin App tabs tests", () => {
 
     test("renders header", async ({ page }) => {
         expect(await page.innerText("nav a.navbar-brand")).toBe("WODIN Example");
-        expect(await page.getAttribute("nav a.navbar-brand", "href")).toBe("/");
+        expect(await page.getAttribute("nav a.navbar-brand", "href")).toBe("http://localhost:3000");
         expect(await page.innerText("nav .navbar-app")).toBe("Day 1 - Basic Model");
         expect(await page.innerText("nav .navbar-version")).toMatch(/^WODIN v[0-9].[0-9].[0-9]$/);
     });
