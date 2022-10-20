@@ -147,7 +147,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
     }
 
     private _fullUrl(url: string) {
-        return this._baseUrl ? `${this._baseUrl}${url}` : url;
+        return `${this._baseUrl}${url}`;
     }
 
     async get<T>(url: string): Promise<void | ResponseWithType<T>> {

@@ -37,7 +37,7 @@ To run an instance of WODIN with custom configuration, install the package and u
 
 The path provided in the `config` argument should be an absolute path to a root config folder containing the following: 
 
-## wodin.config.json
+### wodin.config.json
 
 Contains the following settings for the WODIN instance:
 - `port`: the port number at which WODIN should be served
@@ -75,7 +75,7 @@ Sample data and other supporting files can be provided in any folder structure u
 
 See the `/config` folder for example configuration, used in development. 
 
-# Development
+## Development
 
 This codebase has been tested with Node version 16.16.0.
 If you have recently changed node version, you may see Node Sass binding errors - running `npm rebuild node-sass --prefix=app/static`
@@ -109,11 +109,11 @@ Run tests from `app/server` using `npm test`. Run [eslint](https://eslint.org/) 
 
 From `app/server` using `npm run integration-test`
 
-## Browser tests
+### Browser tests
 
 Browser tests use [Playwright](https://playwright.dev/). Run browser tests, while the app is running, using `npm run e2e-test` from `app/static`.
 
-## Publishing
+### Publishing
 
 To publish to npm:
 - build both front end and and back end
