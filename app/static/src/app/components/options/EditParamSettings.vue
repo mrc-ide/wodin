@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="edit-param">
     <div v-if="open" class="modal-backdrop fade show"></div>
     <div class="modal" :class="{show: open}" :style="style">
       <div class="modal-dialog modal-dialog-centered">

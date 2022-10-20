@@ -22,10 +22,11 @@ test.describe("Sensitivity tests", () => {
         // Edit settings
         await expect(await page.isVisible(".modal")).toBe(false);
         await page.click("#sensitivity-options .btn-primary");
-        await expect(await page.isVisible(".modal")).toBe(true);
-        await expect(await page.innerText(".modal-title")).toBe("Vary Parameter");
+        await expect(await page.locator("#edit-param .modal")).toBeVisible();
+        await expect(await page.innerText("#edit-param .modal-title")).toBe("Vary Parameter");
         await expect(await page.locator("#invalid-msg").count()).toBe(0);
-        await expect(await page.innerText(".modal .alert-success")).toBe(" 3.600, 3.689, 3.778, ..., 4.400");
+        await expect(await page.innerText("#edit-param .modal .alert-success"))
+            .toBe(" 3.600, 3.689, 3.778, ..., 4.400");
 
         const paramSelect = await page.locator("#edit-param-to-vary select");
         await paramSelect.selectOption("sigma");
