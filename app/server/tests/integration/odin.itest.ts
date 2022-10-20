@@ -6,12 +6,9 @@ describe("odin endpoints", () => {
 
         expect(response.status).toBe(200);
 
-        Object.keys(response.body.data).forEach((key) => {
-            expect(key).not.toBeNull();
-        });
-
-        Object.values(response.body.data).forEach((value) => {
+        Object.entries(response.body.data).forEach((key, value) => {
             expect(value).not.toBeNull();
+            expect(key).not.toBeNull();
         });
     });
 });
