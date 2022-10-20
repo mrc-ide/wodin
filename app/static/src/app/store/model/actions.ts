@@ -1,20 +1,18 @@
-import { ActionContext, ActionTree } from "vuex";
-import { ModelState } from "./state";
-import { api } from "../../apiService";
-import { ModelMutation } from "./mutations";
-import { AppState, AppType } from "../appState/state";
-import {
-    Odin, OdinModelResponse, OdinParameter, OdinUserType
-} from "../../types/responseTypes";
-import { evaluateScript } from "../../utils";
-import { FitDataAction } from "../fitData/actions";
-import { ModelFitAction } from "../modelFit/actions";
-import { RunAction } from "../run/actions";
-import { paletteModel } from "../../palette";
-import { RunMutation } from "../run/mutations";
-import { ModelFitMutation } from "../modelFit/mutations";
-import { ErrorsMutation } from "../errors/mutations";
-import { SensitivityMutation } from "../sensitivity/mutations";
+import {ActionContext, ActionTree} from "vuex";
+import {ModelState} from "./state";
+import {api} from "../../apiService";
+import {ModelMutation} from "./mutations";
+import {AppState, AppType} from "../appState/state";
+import {Odin, OdinModelResponse, OdinParameter, OdinUserType} from "../../types/responseTypes";
+import {evaluateScript} from "../../utils";
+import {FitDataAction} from "../fitData/actions";
+import {ModelFitAction} from "../modelFit/actions";
+import {RunAction} from "../run/actions";
+import {paletteModel} from "../../palette";
+import {RunMutation} from "../run/mutations";
+import {ModelFitMutation} from "../modelFit/mutations";
+import {ErrorsMutation} from "../errors/mutations";
+import {SensitivityMutation} from "../sensitivity/mutations";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
@@ -27,11 +25,13 @@ export enum ModelAction {
 const fetchOdin = async (context: ActionContext<ModelState, AppState>) => {
     const { rootState, commit } = context;
     const model = rootState.code.currentCode;
+    const timeType = rootState.appType === AppType.Stochastic ? "discrete" : "continuous";
+    const requirements = { timeType };
 
     await api(context)
         .withSuccess(ModelMutation.SetOdinResponse)
         .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
-        .post<OdinModelResponse>("/odin/model", { model })
+        .post<OdinModelResponse>("/odin/model", { model, requirements })
         .then(() => {
             commit(ModelMutation.SetCompileRequired, true);
         });
