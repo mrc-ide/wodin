@@ -1,5 +1,5 @@
 <template>
-    <div class="navbar-text">
+    <div class="navbar-text navbar-version">
         <drop-down :text="`WODIN v${wodinVersion}`">
             <template v-slot:items>
                 <li v-for="(version, name, index) in versions" :key="index">
