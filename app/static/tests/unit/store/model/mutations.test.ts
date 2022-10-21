@@ -10,6 +10,14 @@ describe("Model mutations", () => {
         expect((state.odinRunnerOde as any)()).toBe("runner");
     });
 
+    it("evaluates and sets discrete runner", () => {
+        const mockRunner = "() => 'runner'";
+        const state = mockModelState();
+
+        mutations.SetOdinRunnerDiscrete(state, mockRunner);
+        expect((state.odinRunnerDiscrete as any)()).toBe("runner");
+    });
+
     it("sets  odin response", () => {
         const mockOdinModelResponse = {
             valid: true,

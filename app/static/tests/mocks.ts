@@ -52,6 +52,7 @@ const mockAppConfig = {
 export const mockModelState = (state: Partial<ModelState> = {}): ModelState => {
     return {
         odinRunnerOde: null,
+        odinRunnerDiscrete: null,
         odin: null,
         odinModelResponse: null,
         compileRequired: false,

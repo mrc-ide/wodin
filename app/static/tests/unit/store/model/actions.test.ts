@@ -63,6 +63,30 @@ describe("Model actions", () => {
         expect(commit.mock.calls[0][1].detail).toBe("server error");
     });
 
+    it("fetches discrete-time runner", async () => {
+        const mockRunnerScript = "() => \"runner\"";
+        mockAxios.onGet("/odin/runner/discrete")
+            .reply(200, mockSuccess(mockRunnerScript));
+
+        const commit = jest.fn();
+        await (actions[ModelAction.FetchOdinRunnerDiscrete] as any)({ commit, rootState });
+
+        expect(commit.mock.calls.length).toBe(1);
+        expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinRunnerDiscrete);
+        expect(commit.mock.calls[0][1]).toBe(mockRunnerScript);
+    });
+
+    it("commits error from fetch discrete runner", async () => {
+        mockAxios.onGet("/odin/runner/discrete")
+            .reply(500, mockFailure("server error"));
+
+        const commit = jest.fn();
+        await (actions[ModelAction.FetchOdinRunnerDiscrete] as any)({ commit, rootState });
+
+        expect(commit.mock.calls[0][0]).toBe("errors/AddError");
+        expect(commit.mock.calls[0][1].detail).toBe("server error");
+    });
+
     it("fetches odin model", async () => {
         const testModel = { model: "test" };
         mockAxios.onPost("/odin/model")

@@ -170,6 +170,32 @@ export interface OdinRunnerOde {
                control: OdeControl) => Batch;
 }
 
+export enum DiscreteSeriesMode {
+    Individual = "Individual",
+    Mean = "Mean",
+    Deterministic = "Deterministic"
+}
+
+export interface DiscreteSeriesValues {
+    mode: DiscreteSeriesMode;
+    name: string;
+    y: number[];
+}
+
+export interface DiscreteSeriesSet {
+    x: number[];
+    values: DiscreteSeriesValues[];
+}
+
+export interface OdinRunnerDiscrete {
+    wodinRunDiscrete: (odin: Odin, // this is vague enough to work at present
+                       pars: OdinUserType, // this will always be ok
+                       timeStart: number,
+                       timeEnd: number,
+                       dt: number,
+                       nParticles: number) => DiscreteSeriesSet;
+}
+
 export interface SessionMetadata {
     id: string,
     time: string,
