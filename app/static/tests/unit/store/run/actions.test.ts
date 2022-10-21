@@ -5,6 +5,7 @@ import {
 } from "../../../mocks";
 import { WodinExcelDownload } from "../../../../src/app/wodinExcelDownload";
 import { actions, RunAction } from "../../../../src/app/store/run/actions";
+import {AppType} from "../../../../src/app/store/appState/state";
 
 jest.mock("../../../../src/app/wodinExcelDownload");
 
@@ -24,6 +25,7 @@ describe("Run actions", () => {
             compileRequired: false
         });
         const rootState = {
+            appType: AppType.Basic,
             model: modelState
         } as any;
         const state = mockRunState({
@@ -52,6 +54,25 @@ describe("Run actions", () => {
             solution: "test solution",
             error: null
         });
+    });
+
+    it("run does nothing if app is stochastic", () => {
+        const runner = mockRunner();
+        const modelState = mockModelState({
+            odinRunner: runner,
+            odin: {} as any
+        });
+        const rootState = {
+            appType: AppType.Stochastic,
+            model: modelState
+        } as any;
+        const commit = jest.fn();
+        const state = mockRunState();
+
+        (actions[RunAction.RunModel] as any)({ commit, state, rootState });
+
+        expect(runner.wodinRun).not.toHaveBeenCalled();
+        expect(commit).not.toHaveBeenCalled();
     });
 
     it("run model does not update required action if required action was not run", () => {
