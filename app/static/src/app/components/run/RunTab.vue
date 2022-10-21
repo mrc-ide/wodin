@@ -3,7 +3,6 @@
         <div>
             <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
         </div>
-
         <div v-if="isStochastic" id="stochastic-run-placeholder" class="mt-2">Stochastic run coming soon</div>
         <template v-else>
           <action-required-message :message="updateMsg"></action-required-message>
