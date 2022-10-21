@@ -30,10 +30,18 @@ import { VisualisationTab } from "../../store/appState/state";
 import { AppStateMutation } from "../../store/appState/mutations";
 import WodinTabs from "../WodinTabs.vue";
 import WodinApp from "../WodinApp.vue";
+import CodeTab from "../code/CodeTab.vue";
+import RunTab from "../run/RunTab.vue";
+import OptionsTab from "../options/OptionsTab.vue";
+import SensitivityTab from "../sensitivity/SensitivityTab.vue";
 
 export default defineComponent({
     name: "StochasticApp",
     components: {
+        CodeTab,
+        RunTab,
+        OptionsTab,
+        SensitivityTab,
         WodinApp,
         WodinTabs
     },
