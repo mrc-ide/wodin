@@ -50,7 +50,7 @@ test.describe("Index tests", () => {
         await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Code");
         await expect(await page.locator(".alert-danger")).not.toBeVisible();
 
-        await page.waitForResponse((response) => response.url().includes("/odin"));
+        await page.waitForResponse((response) => response.url().includes("/odin/model"));
         await expect(await page.innerText("#code-status")).toBe(" Code is valid");
     });
 

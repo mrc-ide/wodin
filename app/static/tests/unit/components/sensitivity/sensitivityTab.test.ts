@@ -13,6 +13,8 @@ import { SensitivityPlotType, SensitivityState } from "../../../../src/app/store
 import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
+import {StochasticState} from "../../../../src/app/store/stochastic/state";
+import {AppType} from "../../../../src/app/store/appState/state";
 
 jest.mock("plotly.js-basic-dist-min", () => {});
 
@@ -84,8 +86,9 @@ describe("SensitivityTab", () => {
     });
 
     it("disables button and renders placeholder when app is stochastic", () => {
-        const store = new Vuex.Store<BasicState>({
+        const store = new Vuex.Store<StochasticState>({
             state: {
+                appType: AppType.Stochastic,
                 model: {
                     odinRunner: {},
                     odin: {}
@@ -94,7 +97,11 @@ describe("SensitivityTab", () => {
             modules: {
                 sensitivity: {
                     namespaced: true,
-                    state: {},
+                    state: {
+                        plotSettings: {
+                            plotType: SensitivityPlotType.TraceOverTime
+                        }
+                    },
                     getters: {
                         [SensitivityGetter.batchPars]: () => {}
                     },
