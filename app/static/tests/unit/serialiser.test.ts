@@ -31,6 +31,9 @@ describe("serialise", () => {
             batchParsDisplace: jest.fn(),
             batchRun: jest.fn()
         },
+        odinRunnerDiscrete: {
+            wodinRunDiscrete: jest.fn()
+        },
         odinModelResponse: {
             valid: true,
             metadata: {
