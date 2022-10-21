@@ -18,7 +18,7 @@
         <li><router-link id="all-sessions-link" class="dropdown-item" to="/sessions">All Sessions</router-link></li>
       </ul>
     </span>
-    <span class="navbar-version navbar-text">WODIN v{{ wodinVersion }}</span>
+    <version-menu v-if="initialised" :wodin-version="wodinVersion"></version-menu>
   </nav>
   <edit-session-label id="header-edit-session-label"
                       :open="editSessionLabelOpen"
@@ -33,7 +33,8 @@ import { defineComponent, computed, ref } from "vue";
 import VueFeather from "vue-feather";
 import { RouterLink } from "vue-router";
 import { useStore } from "vuex";
-import EditSessionLabel from "./sessions/EditSessionLabel.vue";
+import EditSessionLabel from "../sessions/EditSessionLabel.vue";
+import VersionMenu from "./VersionMenu.vue";
 
 export default defineComponent({
     name: "AppHeader",
@@ -45,7 +46,8 @@ export default defineComponent({
     components: {
         RouterLink,
         EditSessionLabel,
-        VueFeather
+        VueFeather,
+        VersionMenu
     },
     setup() {
         const store = useStore();
