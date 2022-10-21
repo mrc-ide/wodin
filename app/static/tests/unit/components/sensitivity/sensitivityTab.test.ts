@@ -80,6 +80,40 @@ describe("SensitivityTab", () => {
         expect(wrapper.findComponent(ErrorInfo).props("error")).toBe(null);
 
         expect(wrapper.findComponent(SensitivitySummaryPlot).exists()).toBe(false);
+        expect(wrapper.find("#stochastic-sens-placeholder").exists()).toBe(false);
+    });
+
+    it("disables button and renders placeholder when app is stochastic", () => {
+        const store = new Vuex.Store<BasicState>({
+            state: {
+                model: {
+                    odinRunner: {},
+                    odin: {}
+                }
+            } as any,
+            modules: {
+                sensitivity: {
+                    namespaced: true,
+                    state: {},
+                    getters: {
+                        [SensitivityGetter.batchPars]: () => {}
+                    },
+                    actions: {
+                        [SensitivityAction.RunSensitivity]: mockRunSensitivity
+                    }
+                }
+            }
+        });
+        const wrapper = shallowMount(SensitivityTab, {
+            global: {
+                plugins: [store]
+            }
+        });
+        expect(wrapper.find("button").element.disabled).toBe(true);
+        expect(wrapper.find("#stochastic-sens-placeholder").text()).toBe("Stochastic sensitivity coming soon");
+        expect(wrapper.findComponent(ActionRequiredMessage).exists()).toBe(false);
+        expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
+        expect(wrapper.findComponent(SensitivitySummaryPlot).exists()).toBe(false);
     });
 
     it("renders as expected when Value at Time", () => {
