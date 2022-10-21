@@ -13,8 +13,8 @@ import { SensitivityPlotType, SensitivityState } from "../../../../src/app/store
 import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
-import {StochasticState} from "../../../../src/app/store/stochastic/state";
-import {AppType} from "../../../../src/app/store/appState/state";
+import { StochasticState } from "../../../../src/app/store/stochastic/state";
+import { AppType } from "../../../../src/app/store/appState/state";
 
 jest.mock("plotly.js-basic-dist-min", () => {});
 
