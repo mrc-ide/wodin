@@ -4,7 +4,7 @@ import { getters, ModelFitGetter } from "../../../../src/app/store/modelFit/gett
 describe("ModelFit getters", () => {
     const model = {
         odin: {},
-        odinRunner: {}
+        odinRunnerOde: {}
     };
 
     const fitData = {

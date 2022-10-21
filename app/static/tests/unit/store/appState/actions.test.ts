@@ -78,7 +78,7 @@ describe("AppState actions", () => {
         expect(commit.mock.calls[3][1]).toStrictEqual(101);
 
         expect(dispatch).toHaveBeenCalledTimes(1);
-        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
+        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunnerOde}`);
 
         expect(spyOnAddSessionId).toHaveBeenCalledTimes(1);
         expect(spyOnAddSessionId.mock.calls[0][0]).toBe("test-app");
@@ -143,7 +143,7 @@ describe("AppState actions", () => {
         expect(commit.mock.calls[3][1]).toStrictEqual(101);
 
         expect(dispatch).toHaveBeenCalledTimes(2);
-        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
+        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunnerOde}`);
         expect(dispatch.mock.calls[1][0]).toBe(`model/${ModelAction.DefaultModel}`);
     });
 

@@ -51,7 +51,7 @@ describe("EditParamSettings", () => {
                 model: {
                     namespaced: true,
                     state: mockModelState({
-                        odinRunner: mockRunner
+                        odinRunnerOde: mockRunner
                     })
                 },
                 run: {

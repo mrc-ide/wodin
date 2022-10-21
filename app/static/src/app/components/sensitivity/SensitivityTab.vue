@@ -38,7 +38,7 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const canRunSensitivity = computed(() => {
-            return !!store.state.model.odinRunner && !!store.state.model.odin
+            return !!store.state.model.odinRunnerOde && !!store.state.model.odin
             && !store.state.model.compileRequired
             && !!store.getters[`sensitivity/${SensitivityGetter.batchPars}`];
         });
