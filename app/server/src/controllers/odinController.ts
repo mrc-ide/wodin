@@ -7,6 +7,11 @@ export class OdinController {
             .get("/support/runner-ode");
     };
 
+    static getRunnerDiscrete = async (req: Request, res: Response, next: Function) => {
+        await api(req, res, next)
+            .get("/support/runner-discrete");
+    };
+
     static postModel = async (req: Request, res: Response, next: Function) => {
         await api(req, res, next)
             .post("/compile", req.body);

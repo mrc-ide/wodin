@@ -30,6 +30,14 @@ describe("odinController", () => {
         expect(mockAPIGet.mock.calls[0][0]).toBe("/support/runner-ode");
     });
 
+    it("getRunnerDiscrete gets from api service", async () => {
+        await OdinController.getRunnerDiscrete(mockRequest, mockResponse, mockNext);
+        expect(apiSpy.mock.calls[0][0]).toBe(mockRequest);
+        expect(apiSpy.mock.calls[0][1]).toBe(mockResponse);
+        expect(apiSpy.mock.calls[0][2]).toBe(mockNext);
+        expect(mockAPIGet.mock.calls[0][0]).toBe("/support/runner-discrete");
+    });
+
     it("postModel posts to api service", async () => {
         await OdinController.postModel(mockRequest, mockResponse, mockNext);
         expect(apiSpy.mock.calls[0][0]).toBe(mockRequest);
