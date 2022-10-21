@@ -55,7 +55,7 @@ export default defineComponent({
         const downloading = computed(() => store.state.run.downloading);
 
         // Enable run button if model has initialised and compile is not required
-        const canRunModel = computed(() => !!store.state.model.odinRunner && !!store.state.model.odin
+        const canRunModel = computed(() => !!store.state.model.odinRunnerOde && !!store.state.model.odin
             && !store.state.model.compileRequired);
 
         const runModel = () => store.dispatch(`run/${RunAction.RunModel}`);

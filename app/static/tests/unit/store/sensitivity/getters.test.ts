@@ -5,7 +5,7 @@ import { SensitivityScaleType, SensitivityVariationType } from "../../../../src/
 describe("Sensitivity getters", () => {
     it("generates batchPars", () => {
         const parameterValues = { A: 2 };
-        const odinRunner = {
+        const odinRunnerOde = {
             batchParsDisplace: mockBatchParsDisplace
         };
         const state = mockSensitivityState({
@@ -21,14 +21,14 @@ describe("Sensitivity getters", () => {
         });
         const rootState = {
             model: {
-                odinRunner
+                odinRunnerOde
             },
             run: {
                 parameterValues
             }
         } as any;
 
-        const mockSpy = jest.spyOn(odinRunner, "batchParsDisplace");
+        const mockSpy = jest.spyOn(odinRunnerOde, "batchParsDisplace");
 
         const result = getters[SensitivityGetter.batchPars](state, getters, rootState, {} as any);
         expect(result.values).toStrictEqual([1, 2, 3]);

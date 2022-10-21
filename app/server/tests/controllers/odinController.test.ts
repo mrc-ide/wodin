@@ -22,8 +22,8 @@ describe("odinController", () => {
         clearAllMocks();
     });
 
-    it("getRunner gets from api service", async () => {
-        await OdinController.getRunner(mockRequest, mockResponse, mockNext);
+    it("getRunnerOde gets from api service", async () => {
+        await OdinController.getRunnerOde(mockRequest, mockResponse, mockNext);
         expect(apiSpy.mock.calls[0][0]).toBe(mockRequest);
         expect(apiSpy.mock.calls[0][1]).toBe(mockResponse);
         expect(apiSpy.mock.calls[0][2]).toBe(mockNext);

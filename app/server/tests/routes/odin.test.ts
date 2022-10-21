@@ -25,8 +25,8 @@ describe("odin routes", () => {
         await import("../../src/routes/odin");
 
         expect(mockRouter.get).toBeCalledTimes(2);
-        expect(mockRouter.get.mock.calls[0][0]).toBe("/runner");
-        expect(mockRouter.get.mock.calls[0][1]).toBe(OdinController.getRunner);
+        expect(mockRouter.get.mock.calls[0][0]).toBe("/runner/ode");
+        expect(mockRouter.get.mock.calls[0][1]).toBe(OdinController.getRunnerOde);
         expect(mockRouter.get.mock.calls[1][0]).toBe("/versions");
         expect(mockRouter.get.mock.calls[1][1]).toBe(OdinController.getVersions);
         expect(mockRouter.post).toBeCalledTimes(1);

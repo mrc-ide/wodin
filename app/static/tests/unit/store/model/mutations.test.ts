@@ -6,8 +6,8 @@ describe("Model mutations", () => {
         const mockRunner = "() => 'runner'";
         const state = mockModelState();
 
-        mutations.SetOdinRunner(state, mockRunner);
-        expect((state.odinRunner as any)()).toBe("runner");
+        mutations.SetOdinRunnerOde(state, mockRunner);
+        expect((state.odinRunnerOde as any)()).toBe("runner");
     });
 
     it("sets  odin response", () => {

@@ -17,7 +17,7 @@ import { ErrorsMutation } from "../errors/mutations";
 import { SensitivityMutation } from "../sensitivity/mutations";
 
 export enum ModelAction {
-    FetchOdinRunner = "FetchOdinRunner",
+    FetchOdinRunnerOde = "FetchOdinRunnerOde",
     FetchOdin = "FetchOdin",
     CompileModel = "CompileModel",
     CompileModelOnRehydrate = "CompileModelOnRehydrate",
@@ -91,11 +91,11 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
 };
 
 export const actions: ActionTree<ModelState, AppState> = {
-    async FetchOdinRunner(context) {
+    async FetchOdinRunnerOde(context) {
         await api(context)
-            .withSuccess(ModelMutation.SetOdinRunner)
+            .withSuccess(ModelMutation.SetOdinRunnerOde)
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
-            .get<string>("/odin/runner");
+            .get<string>("/odin/runner/ode");
     },
 
     async FetchOdin(context) {

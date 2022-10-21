@@ -1,11 +1,12 @@
 import {
-    Odin, OdinModelResponse, OdinRunner, WodinError
+    Odin, OdinModelResponse, OdinRunnerOde, WodinError
 } from "../../types/responseTypes";
 import type { Palette } from "../../palette";
 
 export interface ModelState {
     compileRequired: boolean
-    odinRunner: null | OdinRunner
+    /** This is the runner for a continuous time model */
+    odinRunnerOde: null | OdinRunnerOde
     odinModelResponse: null | OdinModelResponse // This contains all validation messages etc
     odin: null | Odin // When we 'compile' we evaluate the response's 'model' string into a working model
     // contains a palette mapping variable name to colour

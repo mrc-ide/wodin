@@ -295,7 +295,7 @@ describe("generateBatchPars", () => {
 
     const rootState = {
         model: {
-            odinRunner: {
+            odinRunnerOde: {
                 batchParsRange: mockBatchParsRange,
                 batchParsDisplace: mockBatchParsDisplace
             }
@@ -305,8 +305,8 @@ describe("generateBatchPars", () => {
         }
     } as any;
 
-    const spyBatchParsRange = jest.spyOn(rootState.model.odinRunner, "batchParsRange");
-    const spyBatchParsDisplace = jest.spyOn(rootState.model.odinRunner, "batchParsDisplace");
+    const spyBatchParsRange = jest.spyOn(rootState.model.odinRunnerOde, "batchParsRange");
+    const spyBatchParsDisplace = jest.spyOn(rootState.model.odinRunnerOde, "batchParsDisplace");
 
     afterEach(() => {
         jest.clearAllMocks();
@@ -367,7 +367,7 @@ describe("generateBatchPars", () => {
     it("returns error if no runner in state", () => {
         const noRunnerState = {
             model: {
-                odinRunner: null
+                odinRunnerOde: null
             },
             run: {
                 parameterValues
@@ -381,7 +381,7 @@ describe("generateBatchPars", () => {
     it("returns error if no param values in state", () => {
         const noParamsState = {
             model: {
-                odinRunner: rootState.model.odinRunner
+                odinRunnerOde: rootState.model.odinRunnerOde
             },
             run: {
                 parameterValues: null

@@ -7,7 +7,7 @@ const mockRunner = {
 };
 const mockModelState = {
     odin: {},
-    odinRunner: mockRunner
+    odinRunnerOde: mockRunner
 };
 const mockRunState = {
     endTime: 99
@@ -62,7 +62,7 @@ describe("Sensitivity actions", () => {
         };
         const modelState = {
             odin: {},
-            odinRunner: errorRunner
+            odinRunnerOde: errorRunner
         };
 
         const rootState = {
@@ -94,11 +94,11 @@ describe("Sensitivity actions", () => {
         expect(dispatch).not.toHaveBeenCalled();
     });
 
-    it("RunSensitivity does nothing if no odinRunner", () => {
+    it("RunSensitivity does nothing if no odinRunnerOde", () => {
         const rootState = {
             model: {
                 ...mockModelState,
-                odinRunner: null
+                odinRunnerOde: null
             },
             run: mockRunState
         };

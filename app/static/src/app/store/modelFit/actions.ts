@@ -23,7 +23,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
         if (allTrue(getters[ModelFitGetter.fitRequirements])) {
             commit(ModelFitMutation.SetFitting, true);
 
-            const { odin, odinRunner } = rootState.model;
+            const { odin, odinRunnerOde } = rootState.model;
 
             const link = rootGetters[`fitData/${FitDataGetter.link}`];
             const endTime = rootGetters[`fitData/${FitDataGetter.dataEnd}`];
@@ -39,7 +39,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
                 vary
             };
 
-            const simplex = odinRunner!.wodinFit(odin!, data, pars, linkedVariable, {}, {});
+            const simplex = odinRunnerOde!.wodinFit(odin!, data, pars, linkedVariable, {}, {});
 
             const inputs = {
                 data,

@@ -137,7 +137,7 @@ export interface Batch {
     valueAtTime: (time: number) => OdinSeriesSet
 }
 
-export interface OdinRunner {
+export interface OdinRunnerOde {
     wodinRun: (odin: Odin,
                pars: OdinUserType,
                tStart: number,

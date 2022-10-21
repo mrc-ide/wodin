@@ -19,7 +19,7 @@ import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 
 describe("RunTab", () => {
     const defaultModelState = {
-        odinRunner: {} as any,
+        odinRunnerOde: {} as any,
         odin: {} as any,
         compileRequired: false
     };
@@ -82,8 +82,8 @@ describe("RunTab", () => {
         expect(wrapper.find("#downloading").exists()).toBe(false);
     });
 
-    it("disables run button when state has no odinRunner", () => {
-        const wrapper = getWrapper({ odinRunner: null });
+    it("disables run button when state has no odinRunnerOde", () => {
+        const wrapper = getWrapper({ odinRunnerOde: null });
         expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(true);
     });
 
