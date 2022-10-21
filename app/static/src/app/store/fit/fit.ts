@@ -13,6 +13,7 @@ import { AppType, VisualisationTab } from "../appState/state";
 import { logMutations, persistState } from "../plugins";
 import { newSessionId } from "../../utils";
 import { sessions } from "../sessions/sessions";
+import { versions } from "../versions/versions";
 import { getters } from "../appState/getters";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -43,7 +44,8 @@ export const storeOptions: StoreOptions<FitState> = {
         fitData,
         modelFit,
         sensitivity,
-        sessions
+        sessions,
+        versions
     },
     plugins: [
         logMutations,

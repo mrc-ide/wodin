@@ -3,6 +3,7 @@ import { ModelState } from "../model/state";
 import { RunState } from "../run/state";
 import { AppConfig } from "../../types/responseTypes";
 import { SensitivityState } from "../sensitivity/state";
+import { VersionsState } from "../versions/state";
 
 export enum AppType {
     Basic = "basic",
@@ -29,5 +30,6 @@ export interface AppState {
     code: CodeState
     model: ModelState
     run: RunState
-    sensitivity: SensitivityState
+    sensitivity: SensitivityState,
+    versions: VersionsState
 }

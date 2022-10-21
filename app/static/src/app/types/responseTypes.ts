@@ -176,3 +176,5 @@ export interface SessionMetadata {
     label: string | null,
     friendlyId: string | null,
 }
+
+export type Versions = Dict<string>;

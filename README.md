@@ -81,7 +81,7 @@ This codebase has been tested with Node version 16.16.0.
 If you have recently changed node version, you may see Node Sass binding errors - running `npm rebuild node-sass --prefix=app/static`
 should fix this issue. 
 
-### Front end 
+## Frontend 
 
 Front-end source can be found under `app/static/src`. The front end can be built by running `npm run build` from
 `app/static`. This builds output to be picked up by the back end at `app/server/public`.
@@ -90,9 +90,10 @@ There are entry point scripts for each of the three app types (`basic.ts`, `fit.
 built separately. You can build an individual app type using e.g. `npm run build-basic`. Each entry script invokes a store
 and top-level component for the given app type. 
 
+### Unit Tests
 Run unit tests from `app/static` using `npm run test:unit`. Run [eslint](https://eslint.org/) with `npm run lint` or `npm run lint:fix`.
 
-### Back end
+## Backend
 
 The back end handles requests for apps by reading the corresponding config files and rendering an html [Handlebars](https://handlebarsjs.com/) template
 `views/app.hbs` to use the appropriate js file, and also to provide configuration values to the relevant store via
@@ -100,7 +101,13 @@ the `appConfig` object.
 
 The back-end server can be built using `npm run build` and run using `npm run serve`, both from `app/server`.
 
+### Unit Tests
 Run tests from `app/server` using `npm test`. Run [eslint](https://eslint.org/) with `npm run lint` or `npm run lint:fix`.
+
+
+### Integration Tests
+
+From `app/server` using `npm run integration-test`
 
 ### Browser tests
 

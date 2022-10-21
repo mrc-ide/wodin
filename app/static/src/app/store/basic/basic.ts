@@ -11,6 +11,7 @@ import { logMutations, persistState } from "../plugins";
 import { AppType, VisualisationTab } from "../appState/state";
 import { newSessionId } from "../../utils";
 import { sessions } from "../sessions/sessions";
+import { versions } from "../versions/versions";
 import { getters } from "../appState/getters";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -39,7 +40,8 @@ export const storeOptions: StoreOptions<BasicState> = {
         run,
         code,
         sensitivity,
-        sessions
+        sessions,
+        versions
     },
     plugins: [
         logMutations,
