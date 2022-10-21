@@ -348,7 +348,12 @@ describe("Model actions", () => {
 
         // fetch
         const postData = JSON.parse(mockAxios.history.post[0].data);
-        expect(postData).toStrictEqual({ model: ["default code"] });
+        expect(postData).toStrictEqual({
+            model: ["default code"],
+            requirements: {
+                timeType: "continuous"
+            }
+        });
 
         expect(commit.mock.calls[0][0]).toBe(`model/${ModelMutation.SetOdinResponse}`);
         expect(commit.mock.calls[0][1]).toStrictEqual(testModel);
