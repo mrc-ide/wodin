@@ -3,22 +3,26 @@
         <div>
             <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
         </div>
-        <action-required-message :message="updateMsg"></action-required-message>
-        <run-plot :fade-plot="!!updateMsg" :model-fit="false"></run-plot>
-        <error-info :error="error"></error-info>
-        <div>
-          <button class="btn btn-primary" id="download-btn"
-                  :disabled="downloading || !canDownloadOutput"
-                  @click="toggleShowDownloadOutput(true)">
-            <vue-feather class="inline-icon" type="download"></vue-feather>
-            Download
-          </button>
-          <div v-if="downloading" id="downloading">
-            <LoadingSpinner size="xs"></LoadingSpinner>
-            Downloading...
+
+        <div v-if="isStochastic" id="stochastic-run-placeholder" class="mt-2">Stochastic run coming soon</div>
+        <template v-else>
+          <action-required-message :message="updateMsg"></action-required-message>
+          <run-plot :fade-plot="!!updateMsg" :model-fit="false"></run-plot>
+          <error-info :error="error"></error-info>
+          <div>
+            <button class="btn btn-primary" id="download-btn"
+                    :disabled="downloading || !canDownloadOutput"
+                    @click="toggleShowDownloadOutput(true)">
+              <vue-feather class="inline-icon" type="download"></vue-feather>
+              Download
+            </button>
+            <div v-if="downloading" id="downloading">
+              <LoadingSpinner size="xs"></LoadingSpinner>
+              Downloading...
+            </div>
           </div>
-        </div>
-        <DownloadOutput :open="showDownloadOutput" @close="toggleShowDownloadOutput(false)"></DownloadOutput>
+          <DownloadOutput :open="showDownloadOutput" @close="toggleShowDownloadOutput(false)"></DownloadOutput>
+        </template>
   </div>
 </template>
 
@@ -35,6 +39,7 @@ import DownloadOutput from "../DownloadOutput.vue";
 import { runRequiredExplanation } from "./support";
 import { anyTrue } from "../../utils";
 import LoadingSpinner from "../LoadingSpinner.vue";
+import {AppType} from "../../store/appState/state";
 
 export default defineComponent({
     name: "RunTab",
@@ -53,10 +58,12 @@ export default defineComponent({
 
         const error = computed(() => store.state.run.result?.error);
         const downloading = computed(() => store.state.run.downloading);
+        const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
 
         // Enable run button if model has initialised and compile is not required
+        // TODO: Enable for Stochastic when stochastic run is implemented
         const canRunModel = computed(() => !!store.state.model.odinRunner && !!store.state.model.odin
-            && !store.state.model.compileRequired);
+            && !store.state.model.compileRequired && !isStochastic.value);
 
         const runModel = () => store.dispatch(`run/${RunAction.RunModel}`);
         const updateMsg = computed(() => {
@@ -76,6 +83,7 @@ export default defineComponent({
 
         return {
             canRunModel,
+            isStochastic,
             updateMsg,
             runModel,
             error,

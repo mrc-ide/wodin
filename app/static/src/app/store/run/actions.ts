@@ -1,7 +1,7 @@
 import { ActionContext, ActionTree } from "vuex";
 import { RunState } from "./state";
 import { RunMutation } from "./mutations";
-import { AppState } from "../appState/state";
+import {AppState, AppType} from "../appState/state";
 import userMessages from "../../userMessages";
 import type { OdinRunResult } from "../../types/wrapperTypes";
 import { OdinUserType } from "../../types/responseTypes";
@@ -16,6 +16,11 @@ export enum RunAction {
 const runModel = (parameterValues: OdinUserType | null, endTime: number,
     context: ActionContext<RunState, AppState>) => {
     const { rootState, commit } = context;
+
+    // TODO: re-enable when stochastic run is implemented
+    if (rootState.appType === AppType.Stochastic) {
+        return;
+    }
 
     if (rootState.model.odinRunner && rootState.model.odin && parameterValues) {
         const startTime = 0;
