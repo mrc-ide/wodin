@@ -38,7 +38,7 @@ import DownloadOutput from "../DownloadOutput.vue";
 import { runRequiredExplanation } from "./support";
 import { anyTrue } from "../../utils";
 import LoadingSpinner from "../LoadingSpinner.vue";
-import {AppType} from "../../store/appState/state";
+import { AppType } from "../../store/appState/state";
 
 export default defineComponent({
     name: "RunTab",

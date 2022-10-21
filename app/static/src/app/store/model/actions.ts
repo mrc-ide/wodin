@@ -1,18 +1,20 @@
-import {ActionContext, ActionTree} from "vuex";
-import {ModelState} from "./state";
-import {api} from "../../apiService";
-import {ModelMutation} from "./mutations";
-import {AppState, AppType} from "../appState/state";
-import {Odin, OdinModelResponse, OdinParameter, OdinUserType} from "../../types/responseTypes";
-import {evaluateScript} from "../../utils";
-import {FitDataAction} from "../fitData/actions";
-import {ModelFitAction} from "../modelFit/actions";
-import {RunAction} from "../run/actions";
-import {paletteModel} from "../../palette";
-import {RunMutation} from "../run/mutations";
-import {ModelFitMutation} from "../modelFit/mutations";
-import {ErrorsMutation} from "../errors/mutations";
-import {SensitivityMutation} from "../sensitivity/mutations";
+import { ActionContext, ActionTree } from "vuex";
+import { ModelState } from "./state";
+import { api } from "../../apiService";
+import { ModelMutation } from "./mutations";
+import { AppState, AppType } from "../appState/state";
+import {
+    Odin, OdinModelResponse, OdinParameter, OdinUserType
+} from "../../types/responseTypes";
+import { evaluateScript } from "../../utils";
+import { FitDataAction } from "../fitData/actions";
+import { ModelFitAction } from "../modelFit/actions";
+import { RunAction } from "../run/actions";
+import { paletteModel } from "../../palette";
+import { RunMutation } from "../run/mutations";
+import { ModelFitMutation } from "../modelFit/mutations";
+import { ErrorsMutation } from "../errors/mutations";
+import { SensitivityMutation } from "../sensitivity/mutations";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",

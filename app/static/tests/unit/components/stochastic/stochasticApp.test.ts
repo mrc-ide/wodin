@@ -11,8 +11,8 @@ import RunTab from "../../../../src/app/components/run/RunTab.vue";
 import SensitivityTab from "../../../../src/app/components/sensitivity/SensitivityTab.vue";
 import { ModelAction } from "../../../../src/app/store/model/actions";
 import { AppStateAction } from "../../../../src/app/store/appState/actions";
-import {AppStateMutation} from "../../../../src/app/store/appState/mutations";
-import {VisualisationTab} from "../../../../src/app/store/appState/state";
+import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
+import { VisualisationTab } from "../../../../src/app/store/appState/state";
 
 const mockSetOpenVisualisationTab = jest.fn();
 

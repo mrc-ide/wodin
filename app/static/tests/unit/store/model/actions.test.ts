@@ -91,7 +91,7 @@ describe("Model actions", () => {
         mockAxios.onPost("/odin/model")
             .reply(200, mockSuccess(testModel));
 
-        const stochasticRootState = {...rootState, appType: AppType.Stochastic};
+        const stochasticRootState = { ...rootState, appType: AppType.Stochastic };
         const commit = jest.fn();
         await (actions[ModelAction.FetchOdin] as any)({ commit, rootState: stochasticRootState });
 

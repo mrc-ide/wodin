@@ -1,7 +1,7 @@
 import { ActionContext, ActionTree } from "vuex";
 import { RunState } from "./state";
 import { RunMutation } from "./mutations";
-import {AppState, AppType} from "../appState/state";
+import { AppState, AppType } from "../appState/state";
 import userMessages from "../../userMessages";
 import type { OdinRunResult } from "../../types/wrapperTypes";
 import { OdinUserType } from "../../types/responseTypes";

@@ -5,7 +5,7 @@ import {
 } from "../../../mocks";
 import { WodinExcelDownload } from "../../../../src/app/wodinExcelDownload";
 import { actions, RunAction } from "../../../../src/app/store/run/actions";
-import {AppType} from "../../../../src/app/store/appState/state";
+import { AppType } from "../../../../src/app/store/appState/state";
 
 jest.mock("../../../../src/app/wodinExcelDownload");
 

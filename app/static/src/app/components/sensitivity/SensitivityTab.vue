@@ -29,7 +29,7 @@ import SensitivitySummaryPlot from "./SensitivitySummaryPlot.vue";
 import ErrorInfo from "../ErrorInfo.vue";
 import { sensitivityUpdateRequiredExplanation } from "./support";
 import { anyTrue } from "../../utils";
-import {AppType} from "../../store/appState/state";
+import { AppType } from "../../store/appState/state";
 
 export default defineComponent({
     name: "SensitivityTab",
