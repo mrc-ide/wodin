@@ -80,7 +80,14 @@ export class APIService<S extends string, E extends string> implements API<S, E>
 
     withError = (type: E, root = false) => {
         this._onError = (failure: ResponseFailure) => {
-            this._commit(type, APIService.getFirstErrorFromFailure(failure), { root });
+            try {
+                this._commit(type, APIService.getFirstErrorFromFailure(failure), {root});
+            } catch (e) {
+                this._commitError({
+                    error: "COMMIT_EXCEPTION",
+                    detail: `Exception committing error response to ${type}: ${e}`
+                });
+            }
         };
         return this;
     };
@@ -98,7 +105,14 @@ export class APIService<S extends string, E extends string> implements API<S, E>
     withSuccess = (type: S, root = false) => {
         this._onSuccess = (data: any) => {
             const finalData = this._freezeResponse ? freezer.deepFreeze(data) : data;
-            this._commit(type, finalData, { root });
+            try {
+                this._commit(type, finalData, {root});
+            } catch (e) {
+                this._commitError({
+                    error: "COMMIT_EXCEPTION",
+                    detail: `Exception committing success response to ${type}: ${e}`
+                });
+            }
         };
         return this;
     };
