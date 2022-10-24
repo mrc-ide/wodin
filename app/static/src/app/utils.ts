@@ -41,7 +41,7 @@ export interface ProcessFitDataResult {
 
 export function getCodeErrorFromResponse(errorResponse: OdinModelResponseError): WodinError {
     const line = errorResponse.line?.join();
-    const lineWord = errorResponse.line?.length > 1 ? "lines" : "line";
+    const lineWord = (errorResponse.line && errorResponse.line.length > 1) ? "lines" : "line";
     const detail = line ? `Error on ${lineWord} ${line}: ${errorResponse.message}` : errorResponse.message;
     const error = "Code error";
     return { error, detail };

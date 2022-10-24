@@ -81,7 +81,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
     withError = (type: E, root = false) => {
         this._onError = (failure: ResponseFailure) => {
             try {
-                this._commit(type, APIService.getFirstErrorFromFailure(failure), {root});
+                this._commit(type, APIService.getFirstErrorFromFailure(failure), { root });
             } catch (e) {
                 this._commitError({
                     error: "COMMIT_EXCEPTION",
@@ -106,7 +106,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         this._onSuccess = (data: any) => {
             const finalData = this._freezeResponse ? freezer.deepFreeze(data) : data;
             try {
-                this._commit(type, finalData, {root});
+                this._commit(type, finalData, { root });
             } catch (e) {
                 this._commitError({
                     error: "COMMIT_EXCEPTION",
@@ -139,7 +139,8 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         const failure = e.response && e.response.data;
 
         if (!isAPIResponseFailure(failure)) {
-            this._commitError(APIService.createError(`Could not parse API response with status ${e.response?.status}. Please contact support.`));
+            this._commitError(APIService.createError(
+                `Could not parse API response with status ${e.response?.status}. Please contact support.`));
         } else if (this._onError) {
             this._onError(failure);
         } else {
