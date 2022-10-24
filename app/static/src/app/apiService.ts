@@ -140,7 +140,8 @@ export class APIService<S extends string, E extends string> implements API<S, E>
 
         if (!isAPIResponseFailure(failure)) {
             this._commitError(APIService.createError(
-                `Could not parse API response with status ${e.response?.status}. Please contact support.`));
+                `Could not parse API response with status ${e.response?.status}. Please contact support.`
+            ));
         } else if (this._onError) {
             this._onError(failure);
         } else {
