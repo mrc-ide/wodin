@@ -54,7 +54,7 @@ export const actions: ActionTree<SessionsState, AppState> = {
             deserialiseState(rootState, sessionData);
 
             const rootOption = { root: true };
-            await dispatch(`model/${ModelAction.FetchOdinRunnerOde}`, null, rootOption);
+            await dispatch(`model/${ModelAction.FetchOdinRunner}`, null, rootOption);
             // Don't auto-run if compile was required i.e. model was out of date when session was last saved
             if (sessionData.model.hasOdin && !sessionData.model.compileRequired) {
                 // compile the model to evaluate odin, which is not persisted

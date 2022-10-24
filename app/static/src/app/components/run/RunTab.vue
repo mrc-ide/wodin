@@ -3,7 +3,9 @@
         <div>
             <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
         </div>
-        <div v-if="isStochastic" id="stochastic-run-placeholder" class="mt-2">Stochastic run coming soon</div>
+        <div v-if="isStochastic" id="stochastic-run-placeholder" class="mt-2">
+          {{ stochasticResultSummary }}
+        </div>
         <template v-else>
           <action-required-message :message="updateMsg"></action-required-message>
           <run-plot :fade-plot="!!updateMsg" :model-fit="false"></run-plot>
@@ -55,14 +57,13 @@ export default defineComponent({
 
         const showDownloadOutput = ref(false);
 
-        const error = computed(() => store.state.run.result?.error);
+        const error = computed(() => store.state.run.resultOde?.error);
         const downloading = computed(() => store.state.run.downloading);
         const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
 
         // Enable run button if model has initialised and compile is not required
-        // TODO: Enable for Stochastic when stochastic run is implemented
         const canRunModel = computed(() => !!store.state.model.odinRunnerOde && !!store.state.model.odin
-            && !store.state.model.compileRequired && !isStochastic.value);
+            && !store.state.model.compileRequired);
 
         const runModel = () => store.dispatch(`run/${RunAction.RunModel}`);
         const updateMsg = computed(() => {
@@ -77,8 +78,18 @@ export default defineComponent({
         });
 
         // only allow download if update not required, and if we have a model solution
-        const canDownloadOutput = computed(() => !updateMsg.value && store.state.run.result?.solution);
+        const canDownloadOutput = computed(() => !updateMsg.value && store.state.run.resultOde?.solution);
         const toggleShowDownloadOutput = (show: boolean) => { showDownloadOutput.value = show; };
+
+        // TODO: This is just a temporary summary message to indicate that the stochastic model has successfully run -
+        // it will be replaced by full stochastic run plot in the next ticket
+        const stochasticResultSummary = computed(() => {
+            if (isStochastic.value) {
+                const seriesSet = store.state.run.resultDiscrete?.seriesSet;
+                return seriesSet ? `Stochastic series count: ${seriesSet.length}` : "Stochastic model has not run";
+            }
+            return "";
+        });
 
         return {
             canRunModel,
@@ -89,7 +100,8 @@ export default defineComponent({
             downloading,
             showDownloadOutput,
             canDownloadOutput,
-            toggleShowDownloadOutput
+            toggleShowDownloadOutput,
+            stochasticResultSummary
         };
     }
 });

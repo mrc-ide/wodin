@@ -412,7 +412,7 @@ describe("Model actions", () => {
         expect(run.mock.calls[0][2]).toBe(0); // start
         expect(run.mock.calls[0][3]).toBe(99); // end
 
-        expect(commit.mock.calls[9][0]).toBe(`run/${RunMutation.SetResult}`);
+        expect(commit.mock.calls[9][0]).toBe(`run/${RunMutation.SetResultOde}`);
         expect(commit.mock.calls[9][1]).toEqual({
             error: null,
             inputs: { endTime: 99, parameterValues: { p1: 1 } },

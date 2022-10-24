@@ -131,7 +131,7 @@ describe("RunTab", () => {
     });
 
     it("enables download button when model has a solution", () => {
-        const wrapper = getWrapper({}, { result: { solution: {} } as any });
+        const wrapper = getWrapper({}, { resultOde: { solution: {} } as any });
         expect((wrapper.find("button#download-btn").element as HTMLButtonElement).disabled).toBe(false);
     });
 
@@ -191,13 +191,13 @@ describe("RunTab", () => {
             error: odinRunnerError,
             solution: null
         };
-        const wrapper = getWrapper({}, { result });
+        const wrapper = getWrapper({}, { resultOde: result });
         expect(wrapper.findComponent(ErrorInfo).exists()).toBe(true);
         expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(odinRunnerError);
     });
 
     it("opens download dialog on click download button, and closes when dialog emits close event", async () => {
-        const wrapper = getWrapper({}, { result: { solution: {} } as any });
+        const wrapper = getWrapper({}, { resultOde: { solution: {} } as any });
         await wrapper.find("button#download-btn").trigger("click");
         const download = wrapper.findComponent(DownloadOutput);
         expect(download.props().open).toBe(true);

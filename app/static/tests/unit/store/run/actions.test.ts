@@ -48,7 +48,7 @@ describe("Run actions", () => {
         expect(run.mock.calls[0][3]).toBe(99); // end time from state
 
         expect(commit.mock.calls.length).toBe(1);
-        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResult);
+        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultOde);
         expect(commit.mock.calls[0][1]).toEqual({
             inputs: { parameterValues, endTime: 99 },
             solution: "test solution",
@@ -95,7 +95,7 @@ describe("Run actions", () => {
 
         (actions[RunAction.RunModel] as any)({ commit, state, rootState });
         expect(commit.mock.calls.length).toBe(1);
-        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResult);
+        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultOde);
     });
 
     it("run model does nothing if odin runner is not set", () => {
@@ -170,7 +170,7 @@ describe("Run actions", () => {
 
         expect(runner.wodinRun.mock.calls[0][0]).toBe(mockOdin);
         expect(commit.mock.calls.length).toBe(1);
-        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResult);
+        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultOde);
         expect(commit.mock.calls[0][1]).toStrictEqual({
             inputs: { parameterValues, endTime: 99 },
             solution: null,
@@ -202,7 +202,7 @@ describe("Run actions", () => {
             },
             parameterValues: { p1: 10, p2: 20 },
             endTime: 199,
-            result: {
+            resultOde: {
                 inputs: {
                     parameterValues,
                     endTime: 99
@@ -220,7 +220,7 @@ describe("Run actions", () => {
         expect(run.mock.calls[0][3]).toBe(99); // end time from result
 
         expect(commit.mock.calls.length).toBe(1);
-        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResult);
+        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultOde);
         expect(commit.mock.calls[0][1]).toEqual({
             inputs: { parameterValues, endTime: 99 },
             solution: "test solution",

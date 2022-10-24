@@ -23,7 +23,7 @@ describe("Run mutations", () => {
         };
 
         mutations.SetResult(state, result);
-        expect(state.result).toBe(result);
+        expect(state.resultOde).toBe(result);
         expect(state.runRequired).toStrictEqual({
             endTimeChanged: false,
             modelChanged: false,
@@ -86,7 +86,7 @@ describe("Run mutations", () => {
         const state = mockRunState({
             endTime: 100,
             runRequired: noRunRequired,
-            result: {
+            resultOde: {
                 inputs: {
                     endTime: 100
                 }
@@ -127,7 +127,7 @@ describe("Run mutations", () => {
         };
 
         mutations.SetResult(state, result);
-        expect(state.result).toBe(result);
+        expect(state.resultOde).toBe(result);
     });
 
     it("sets userDownloadFileName", () => {

@@ -59,6 +59,7 @@ export interface OdinModelResponse{
     valid: boolean,
     metadata?: {
         variables: string[],
+        dt: number | null,
         parameters: OdinParameter[],
         messages: string[]
     },
