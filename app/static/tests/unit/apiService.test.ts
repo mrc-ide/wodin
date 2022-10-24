@@ -392,7 +392,7 @@ describe("ApiService", () => {
         expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
     }
 
-    it("commits parse error if API response is empty", async () => {
+    it("commits parse error if API response is null", async () => {
         mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`)
             .reply(500);
 
