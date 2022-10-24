@@ -20,7 +20,7 @@ describe("Run actions", () => {
         const parameterValues = { p1: 1, p2: 2 };
         const runner = mockRunner();
         const modelState = mockModelState({
-            odinRunner: runner,
+            odinRunnerOde: runner,
             odin: mockOdin,
             compileRequired: false
         });
@@ -78,7 +78,7 @@ describe("Run actions", () => {
     it("run model does not update required action if required action was not run", () => {
         const mockOdin = {} as any;
         const modelState = mockModelState({
-            odinRunner: mockRunner(),
+            odinRunnerOde: mockRunner(),
             odin: mockOdin,
             compileRequired: true
         });
@@ -102,7 +102,7 @@ describe("Run actions", () => {
         const mockOdin = {} as any;
 
         const modelState = mockModelState({
-            odinRunner: null,
+            odinRunnerOde: null,
             odin: mockOdin
         });
         const rootState = {
@@ -119,7 +119,7 @@ describe("Run actions", () => {
     it("run model does nothing if odin is not set", () => {
         const runner = mockRunner();
         const modelState = mockModelState({
-            odinRunner: runner,
+            odinRunnerOde: runner,
             odin: null
         });
         const rootState = {
@@ -148,7 +148,7 @@ describe("Run actions", () => {
         const parameterValues = { p1: 1, p2: 2 };
         const runner = mockRunnerWithThrownException();
         const modelState = mockModelState({
-            odinRunner: runner,
+            odinRunnerOde: runner,
             odin: mockOdin,
             compileRequired: false
         });
@@ -187,7 +187,7 @@ describe("Run actions", () => {
         const parameterValues = { p1: 1, p2: 2 };
         const runner = mockRunner();
         const modelState = mockModelState({
-            odinRunner: runner,
+            odinRunnerOde: runner,
             odin: mockOdin,
             compileRequired: false
         });

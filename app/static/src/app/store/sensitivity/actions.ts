@@ -17,16 +17,16 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
     const {
         rootState, commit, dispatch
     } = context;
-    const { odinRunner, odin } = rootState.model;
+    const { odinRunnerOde, odin } = rootState.model;
 
-    if (odinRunner && odin && batchPars) {
+    if (odinRunnerOde && odin && batchPars) {
         const payload : OdinSensitivityResult = {
             inputs: { endTime, pars: batchPars },
             batch: null,
             error: null
         };
         try {
-            const batch = odinRunner.batchRun(odin, batchPars, 0, endTime, {});
+            const batch = odinRunnerOde.batchRun(odin, batchPars, 0, endTime, {});
             payload.batch = batch;
         } catch (e: unknown) {
             payload.error = {

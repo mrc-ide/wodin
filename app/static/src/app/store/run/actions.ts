@@ -22,7 +22,7 @@ const runModel = (parameterValues: OdinUserType | null, endTime: number,
         return;
     }
 
-    if (rootState.model.odinRunner && rootState.model.odin && parameterValues) {
+    if (rootState.model.odinRunnerOde && rootState.model.odin && parameterValues) {
         const startTime = 0;
         const payload : OdinRunResult = {
             inputs: { endTime, parameterValues },
@@ -31,7 +31,7 @@ const runModel = (parameterValues: OdinUserType | null, endTime: number,
         };
 
         try {
-            const solution = rootState.model.odinRunner.wodinRun(rootState.model.odin, parameterValues,
+            const solution = rootState.model.odinRunnerOde.wodinRun(rootState.model.odin, parameterValues,
                 startTime, endTime, {});
             payload.solution = solution;
         } catch (e) {

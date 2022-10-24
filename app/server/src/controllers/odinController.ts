@@ -2,9 +2,14 @@ import { Request, Response } from "express";
 import { api } from "../apiService";
 
 export class OdinController {
-    static getRunner = async (req: Request, res: Response, next: Function) => {
+    static getRunnerOde = async (req: Request, res: Response, next: Function) => {
         await api(req, res, next)
             .get("/support/runner-ode");
+    };
+
+    static getRunnerDiscrete = async (req: Request, res: Response, next: Function) => {
+        await api(req, res, next)
+            .get("/support/runner-discrete");
     };
 
     static postModel = async (req: Request, res: Response, next: Function) => {

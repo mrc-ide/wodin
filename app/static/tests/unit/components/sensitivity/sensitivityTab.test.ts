@@ -26,7 +26,7 @@ describe("SensitivityTab", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 model: {
-                    odinRunner: {},
+                    odinRunnerOde: {},
                     odin: {},
                     ...modelState
                 }
@@ -158,8 +158,8 @@ describe("SensitivityTab", () => {
         expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(testError);
     });
 
-    it("disables run button when no odinRunner", () => {
-        const wrapper = getWrapper({ odinRunner: null });
+    it("disables run button when no odinRunnerOde", () => {
+        const wrapper = getWrapper({ odinRunnerOde: null });
         expect(wrapper.find("button").element.disabled).toBe(true);
     });
 

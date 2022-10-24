@@ -61,8 +61,9 @@ export default defineComponent({
 
         // Enable run button if model has initialised and compile is not required
         // TODO: Enable for Stochastic when stochastic run is implemented
-        const canRunModel = computed(() => !!store.state.model.odinRunner && !!store.state.model.odin
+        const canRunModel = computed(() => !!store.state.model.odinRunnerOde && !!store.state.model.odin
             && !store.state.model.compileRequired && !isStochastic.value);
+
 
         const runModel = () => store.dispatch(`run/${RunAction.RunModel}`);
         const updateMsg = computed(() => {

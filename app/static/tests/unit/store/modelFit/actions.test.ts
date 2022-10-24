@@ -18,7 +18,7 @@ describe("ModelFit actions", () => {
     const parameterValues = { p1: 1.1, p2: 2.2 };
     const modelState = mockModelState({
         odin: mockOdin,
-        odinRunner: mockOdinRunner
+        odinRunnerOde: mockOdinRunner
     });
     const runState = mockRunState({ parameterValues });
 

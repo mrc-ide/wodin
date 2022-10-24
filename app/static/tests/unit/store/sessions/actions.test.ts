@@ -59,7 +59,7 @@ describe("SessionsActions", () => {
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);
         expect(dispatch).toHaveBeenCalledTimes(4);
-        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
+        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunnerOde}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);
         expect(dispatch.mock.calls[0][2]).toStrictEqual({ root: true });
         expect(dispatch.mock.calls[1][0]).toBe(`model/${ModelAction.CompileModelOnRehydrate}`);
@@ -85,7 +85,7 @@ describe("SessionsActions", () => {
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);
         expect(dispatch).toHaveBeenCalledTimes(1);
-        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
+        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunnerOde}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);
         expect(dispatch.mock.calls[0][2]).toStrictEqual({ root: true });
     });
@@ -102,7 +102,7 @@ describe("SessionsActions", () => {
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);
         expect(dispatch).toHaveBeenCalledTimes(1);
-        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
+        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunnerOde}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);
         expect(dispatch.mock.calls[0][2]).toStrictEqual({ root: true });
     });
@@ -119,7 +119,7 @@ describe("SessionsActions", () => {
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);
         expect(dispatch).toHaveBeenCalledTimes(3);
-        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
+        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunnerOde}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);
         expect(dispatch.mock.calls[0][2]).toStrictEqual({ root: true });
         expect(dispatch.mock.calls[1][0]).toBe(`model/${ModelAction.CompileModelOnRehydrate}`);
@@ -142,7 +142,7 @@ describe("SessionsActions", () => {
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);
         expect(dispatch).toHaveBeenCalledTimes(3);
-        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
+        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunnerOde}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);
         expect(dispatch.mock.calls[0][2]).toStrictEqual({ root: true });
         expect(dispatch.mock.calls[1][0]).toBe(`model/${ModelAction.CompileModelOnRehydrate}`);
