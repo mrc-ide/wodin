@@ -28,11 +28,13 @@ export enum ModelAction {
 const fetchOdin = async (context: ActionContext<ModelState, AppState>) => {
     const { rootState, commit } = context;
     const model = rootState.code.currentCode;
+    const timeType = rootState.appType === AppType.Stochastic ? "discrete" : "continuous";
+    const requirements = { timeType };
 
     await api(context)
         .withSuccess(ModelMutation.SetOdinResponse)
         .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
-        .post<OdinModelResponse>("/odin/model", { model })
+        .post<OdinModelResponse>("/odin/model", { model, requirements })
         .then(() => {
             commit(ModelMutation.SetCompileRequired, true);
         });

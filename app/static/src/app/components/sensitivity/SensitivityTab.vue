@@ -6,9 +6,12 @@
               :disabled="!canRunSensitivity"
               @click="runSensitivity">Run sensitivity</button>
     </div>
-    <action-required-message :message="updateMsg"></action-required-message>
-    <sensitivity-traces-plot v-if="tracesPlot" :fade-plot="!!updateMsg"></sensitivity-traces-plot>
-    <sensitivity-summary-plot v-else :fade-plot="!!updateMsg"></sensitivity-summary-plot>
+    <div v-if="isStochastic" id="stochastic-sens-placeholder" class="mt-2">Stochastic sensitivity coming soon</div>
+    <template v-else>
+      <action-required-message :message="updateMsg"></action-required-message>
+      <sensitivity-traces-plot v-if="tracesPlot" :fade-plot="!!updateMsg"></sensitivity-traces-plot>
+      <sensitivity-summary-plot v-else :fade-plot="!!updateMsg"></sensitivity-summary-plot>
+    </template>
     <error-info :error="error"></error-info>
   </div>
 </template>
@@ -26,6 +29,7 @@ import SensitivitySummaryPlot from "./SensitivitySummaryPlot.vue";
 import ErrorInfo from "../ErrorInfo.vue";
 import { sensitivityUpdateRequiredExplanation } from "./support";
 import { anyTrue } from "../../utils";
+import { AppType } from "../../store/appState/state";
 
 export default defineComponent({
     name: "SensitivityTab",
@@ -37,10 +41,14 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
+
+        const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
+        // TODO: Enable for Stochastic when stochastic sensitivity is implemented
         const canRunSensitivity = computed(() => {
             return !!store.state.model.odinRunnerOde && !!store.state.model.odin
             && !store.state.model.compileRequired
-            && !!store.getters[`sensitivity/${SensitivityGetter.batchPars}`];
+            && !!store.getters[`sensitivity/${SensitivityGetter.batchPars}`]
+            && !isStochastic.value;
         });
 
         const runSensitivity = () => {
@@ -68,6 +76,7 @@ export default defineComponent({
 
         return {
             canRunSensitivity,
+            isStochastic,
             runSensitivity,
             updateMsg,
             tracesPlot,

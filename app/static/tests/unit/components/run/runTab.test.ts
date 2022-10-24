@@ -7,7 +7,9 @@ jest.mock("plotly.js-basic-dist-min", () => {});
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import { mockBasicState, mockModelState, mockRunState } from "../../../mocks";
+import {
+    mockBasicState, mockModelState, mockRunState, mockStochasticState
+} from "../../../mocks";
 import { ModelState } from "../../../../src/app/store/model/state";
 import { RunState } from "../../../../src/app/store/run/state";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
@@ -16,6 +18,7 @@ import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
 import DownloadOutput from "../../../../src/app/components/DownloadOutput.vue";
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
+import { StochasticState } from "../../../../src/app/store/stochastic/state";
 
 describe("RunTab", () => {
     const defaultModelState = {
@@ -80,6 +83,33 @@ describe("RunTab", () => {
         expect(wrapper.findComponent(DownloadOutput).props().open).toBe(false);
 
         expect(wrapper.find("#downloading").exists()).toBe(false);
+        expect(wrapper.find("#stochastic-run-placeholder").exists()).toBe(false);
+    });
+
+    it("shows placeholder and disables run button when app is stochastic", () => {
+        const store = new Vuex.Store<StochasticState>({
+            state: mockStochasticState(),
+            modules: {
+                model: {
+                    namespaced: true,
+                    state: mockModelState()
+                },
+                run: {
+                    namespaced: true,
+                    state: mockRunState()
+                }
+            }
+        });
+        const wrapper = shallowMount(RunTab, {
+            global: {
+                plugins: [store]
+            }
+        });
+
+        expect(wrapper.find("#stochastic-run-placeholder").text()).toBe("Stochastic run coming soon");
+        expect(wrapper.findComponent(ActionRequiredMessage).exists()).toBe(false);
+        expect(wrapper.findComponent(RunPlot).exists()).toBe(false);
+        expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(true);
     });
 
     it("disables run button when state has no odinRunnerOde", () => {

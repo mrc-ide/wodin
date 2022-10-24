@@ -96,13 +96,38 @@ describe("Model actions", () => {
         await (actions[ModelAction.FetchOdin] as any)({ commit, rootState });
 
         const postData = JSON.parse(mockAxios.history.post[0].data);
-        expect(postData).toStrictEqual({ model: rootState.code.currentCode });
+        expect(postData).toStrictEqual({
+            model: rootState.code.currentCode,
+            requirements: {
+                timeType: "continuous"
+            }
+        });
 
         expect(commit.mock.calls.length).toBe(2);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinResponse);
         expect(commit.mock.calls[0][1]).toStrictEqual(testModel);
         expect(commit.mock.calls[1][0]).toBe(ModelMutation.SetCompileRequired);
         expect(commit.mock.calls[1][1]).toBe(true);
+    });
+
+    it("fetches odin model for stochastic", async () => {
+        const testModel = { model: "test" };
+        mockAxios.onPost("/odin/model")
+            .reply(200, mockSuccess(testModel));
+
+        const stochasticRootState = { ...rootState, appType: AppType.Stochastic };
+        const commit = jest.fn();
+        await (actions[ModelAction.FetchOdin] as any)({ commit, rootState: stochasticRootState });
+
+        const postData = JSON.parse(mockAxios.history.post[0].data);
+        expect(postData).toStrictEqual({
+            model: rootState.code.currentCode,
+            requirements: {
+                timeType: "discrete"
+            }
+        });
+
+        expect(commit.mock.calls.length).toBe(2);
     });
 
     it("commits error from fetch odin model", async () => {
@@ -347,7 +372,12 @@ describe("Model actions", () => {
 
         // fetch
         const postData = JSON.parse(mockAxios.history.post[0].data);
-        expect(postData).toStrictEqual({ model: ["default code"] });
+        expect(postData).toStrictEqual({
+            model: ["default code"],
+            requirements: {
+                timeType: "continuous"
+            }
+        });
 
         expect(commit.mock.calls[0][0]).toBe(`model/${ModelMutation.SetOdinResponse}`);
         expect(commit.mock.calls[0][1]).toStrictEqual(testModel);

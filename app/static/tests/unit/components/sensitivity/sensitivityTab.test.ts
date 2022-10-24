@@ -13,6 +13,8 @@ import { SensitivityPlotType, SensitivityState } from "../../../../src/app/store
 import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
+import { StochasticState } from "../../../../src/app/store/stochastic/state";
+import { AppType } from "../../../../src/app/store/appState/state";
 
 jest.mock("plotly.js-basic-dist-min", () => {});
 
@@ -79,6 +81,45 @@ describe("SensitivityTab", () => {
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(false);
         expect(wrapper.findComponent(ErrorInfo).props("error")).toBe(null);
 
+        expect(wrapper.findComponent(SensitivitySummaryPlot).exists()).toBe(false);
+        expect(wrapper.find("#stochastic-sens-placeholder").exists()).toBe(false);
+    });
+
+    it("disables button and renders placeholder when app is stochastic", () => {
+        const store = new Vuex.Store<StochasticState>({
+            state: {
+                appType: AppType.Stochastic,
+                model: {
+                    odinRunner: {},
+                    odin: {}
+                }
+            } as any,
+            modules: {
+                sensitivity: {
+                    namespaced: true,
+                    state: {
+                        plotSettings: {
+                            plotType: SensitivityPlotType.TraceOverTime
+                        }
+                    },
+                    getters: {
+                        [SensitivityGetter.batchPars]: () => {}
+                    },
+                    actions: {
+                        [SensitivityAction.RunSensitivity]: mockRunSensitivity
+                    }
+                }
+            }
+        });
+        const wrapper = shallowMount(SensitivityTab, {
+            global: {
+                plugins: [store]
+            }
+        });
+        expect(wrapper.find("button").element.disabled).toBe(true);
+        expect(wrapper.find("#stochastic-sens-placeholder").text()).toBe("Stochastic sensitivity coming soon");
+        expect(wrapper.findComponent(ActionRequiredMessage).exists()).toBe(false);
+        expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
         expect(wrapper.findComponent(SensitivitySummaryPlot).exists()).toBe(false);
     });
 
