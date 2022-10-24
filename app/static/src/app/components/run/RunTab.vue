@@ -64,7 +64,6 @@ export default defineComponent({
         const canRunModel = computed(() => !!store.state.model.odinRunnerOde && !!store.state.model.odin
             && !store.state.model.compileRequired && !isStochastic.value);
 
-
         const runModel = () => store.dispatch(`run/${RunAction.RunModel}`);
         const updateMsg = computed(() => {
             if (store.state.model.compileRequired) {
