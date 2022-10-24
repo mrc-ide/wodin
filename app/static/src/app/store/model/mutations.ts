@@ -3,13 +3,15 @@ import { ModelState } from "./state";
 import {
     Odin,
     OdinModelResponse,
-    OdinRunner
+    OdinRunnerDiscrete,
+    OdinRunnerOde
 } from "../../types/responseTypes";
 import { evaluateScript, getCodeErrorFromResponse } from "../../utils";
 import { Palette } from "../../palette";
 
 export enum ModelMutation {
-    SetOdinRunner = "SetOdinRunner",
+    SetOdinRunnerOde = "SetOdinRunnerOde",
+    SetOdinRunnerDiscrete = "SetOdinRunnerDiscrete",
     SetOdinResponse = "SetOdinResponse",
     SetOdin = "SetOdin",
     SetCompileRequired = "SetCompileRequired",
@@ -17,8 +19,12 @@ export enum ModelMutation {
 }
 
 export const mutations: MutationTree<ModelState> = {
-    [ModelMutation.SetOdinRunner](state: ModelState, payload: string) {
-        state.odinRunner = evaluateScript<OdinRunner>(payload);
+    [ModelMutation.SetOdinRunnerOde](state: ModelState, payload: string) {
+        state.odinRunnerOde = evaluateScript<OdinRunnerOde>(payload);
+    },
+
+    [ModelMutation.SetOdinRunnerDiscrete](state: ModelState, payload: string) {
+        state.odinRunnerDiscrete = evaluateScript<OdinRunnerDiscrete>(payload);
     },
 
     [ModelMutation.SetOdinResponse](state: ModelState, payload: OdinModelResponse) {

@@ -24,12 +24,15 @@ describe("serialise", () => {
 
     const modelState = {
         compileRequired: true,
-        odinRunner: {
+        odinRunnerOde: {
             wodinRun: jest.fn(),
             wodinFit: jest.fn(),
             batchParsRange: jest.fn(),
             batchParsDisplace: jest.fn(),
             batchRun: jest.fn()
+        },
+        odinRunnerDiscrete: {
+            wodinRunDiscrete: jest.fn()
         },
         odinModelResponse: {
             valid: true,

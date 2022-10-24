@@ -45,7 +45,7 @@ export default defineComponent({
         const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
         // TODO: Enable for Stochastic when stochastic sensitivity is implemented
         const canRunSensitivity = computed(() => {
-            return !!store.state.model.odinRunner && !!store.state.model.odin
+            return !!store.state.model.odinRunnerOde && !!store.state.model.odin
             && !store.state.model.compileRequired
             && !!store.getters[`sensitivity/${SensitivityGetter.batchPars}`]
             && !isStochastic.value;

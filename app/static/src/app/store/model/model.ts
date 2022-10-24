@@ -4,7 +4,8 @@ import { mutations } from "./mutations";
 
 export const defaultState: ModelState = {
     compileRequired: false,
-    odinRunner: null,
+    odinRunnerOde: null,
+    odinRunnerDiscrete: null,
     odinModelResponse: null,
     odin: null,
     paletteModel: null,
