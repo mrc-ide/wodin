@@ -59,8 +59,8 @@ describe("Run actions", () => {
     it("run does nothing if app is stochastic", () => {
         const runner = mockRunner();
         const modelState = mockModelState({
-            odinRunner: runner,
-            odin: {} as any
+            odin: runner,
+            odinRunnerOde: {} as any
         });
         const rootState = {
             appType: AppType.Stochastic,
