@@ -9,7 +9,6 @@ export enum ErrorsMutation {
 
 export const mutations: MutationTree<ErrorsState> = {
     [ErrorsMutation.AddError](state: ErrorsState, payload: WodinError) {
-        console.log("Added Error: " + JSON.stringify(payload))
         state.errors.push(payload);
     },
 
