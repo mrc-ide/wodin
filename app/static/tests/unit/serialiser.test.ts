@@ -49,7 +49,7 @@ describe("serialise", () => {
                 messages: ["a test message"]
             },
             model: "a test model",
-            error: { line: ["test error line 1"], message: "test model error" }
+            error: { line: [1], message: "test model error" }
         },
         odin: jest.fn(),
         paletteModel: { S: "#f00", I: "#0f0", R: "#00f" },
