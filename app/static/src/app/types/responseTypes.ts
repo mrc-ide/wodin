@@ -51,7 +51,7 @@ export interface OdinParameter {
 }
 
 export interface OdinModelResponseError {
-    line: string[] | null,
+    line: number[],
     message: string
 }
 
