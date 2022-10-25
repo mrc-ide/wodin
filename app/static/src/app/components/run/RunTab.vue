@@ -3,11 +3,12 @@
         <div>
             <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
         </div>
+        <action-required-message :message="updateMsg"></action-required-message>
         <div v-if="isStochastic" id="stochastic-run-placeholder" class="mt-2">
           {{ stochasticResultSummary }}
+          <error-info :error="error"></error-info>
         </div>
         <template v-else>
-          <action-required-message :message="updateMsg"></action-required-message>
           <run-plot :fade-plot="!!updateMsg" :model-fit="false"></run-plot>
           <error-info :error="error"></error-info>
           <div>
@@ -57,10 +58,11 @@ export default defineComponent({
         const store = useStore();
 
         const showDownloadOutput = ref(false);
-
-        const error = computed(() => store.state.run.resultOde?.error);
-        const downloading = computed(() => store.state.run.downloading);
         const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
+
+        const error = computed(() => (isStochastic.value ? store.state.run.resultDiscrete?.error : store.state.run.resultOde?.error));
+        const downloading = computed(() => store.state.run.downloading);
+
         const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
 
         // Enable run button if model has initialised and compile is not required
