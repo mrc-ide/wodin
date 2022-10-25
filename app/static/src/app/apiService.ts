@@ -80,7 +80,14 @@ export class APIService<S extends string, E extends string> implements API<S, E>
 
     withError = (type: E, root = false) => {
         this._onError = (failure: ResponseFailure) => {
-            this._commit(type, APIService.getFirstErrorFromFailure(failure), { root });
+            try {
+                this._commit(type, APIService.getFirstErrorFromFailure(failure), { root });
+            } catch (e) {
+                this._commitError({
+                    error: "COMMIT_EXCEPTION",
+                    detail: `Exception committing error response to ${type}: ${e}`
+                });
+            }
         };
         return this;
     };
@@ -98,7 +105,14 @@ export class APIService<S extends string, E extends string> implements API<S, E>
     withSuccess = (type: S, root = false) => {
         this._onSuccess = (data: any) => {
             const finalData = this._freezeResponse ? freezer.deepFreeze(data) : data;
-            this._commit(type, finalData, { root });
+            try {
+                this._commit(type, finalData, { root });
+            } catch (e) {
+                this._commitError({
+                    error: "COMMIT_EXCEPTION",
+                    detail: `Exception committing success response to ${type}: ${e}`
+                });
+            }
         };
         return this;
     };
@@ -125,7 +139,9 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         const failure = e.response && e.response.data;
 
         if (!isAPIResponseFailure(failure)) {
-            this._commitError(APIService.createError("Could not parse API response. Please contact support."));
+            this._commitError(APIService.createError(
+                `Could not parse API response with status ${e.response?.status}. Please contact support.`
+            ));
         } else if (this._onError) {
             this._onError(failure);
         } else {
@@ -134,7 +150,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
     };
 
     private _commitError = (error: WodinError) => {
-        this._commit({ type: `errors/${ErrorsMutation.AddError}`, payload: error }, { root: true });
+        this._commit(`errors/${ErrorsMutation.AddError}`, error, { root: true });
     };
 
     private _verifyHandlers(url: string) {
