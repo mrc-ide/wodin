@@ -263,9 +263,21 @@ describe("processFitData", () => {
         });
     });
 
+    it("can get code error with null line array from model response", () => {
+        const error = {
+            line: null,
+            message: "a test message"
+        } as any;
+        const transformedError = getCodeErrorFromResponse(error);
+
+        expect(transformedError).toStrictEqual({
+            error: "Code error", detail: error.message
+        });
+    });
+
     it("can get code error with a single line number from model response", () => {
         const error = {
-            line: ["1"],
+            line: [1],
             message: "a test message"
         };
         const transformedError = getCodeErrorFromResponse(error);
@@ -278,7 +290,7 @@ describe("processFitData", () => {
 
     it("can get code error with multiple line numbers from model response", () => {
         const error = {
-            line: ["1", "2"],
+            line: [1, 2],
             message: "a test message"
         };
         const transformedError = getCodeErrorFromResponse(error);

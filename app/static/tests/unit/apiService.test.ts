@@ -31,23 +31,19 @@ describe("ApiService", () => {
 
     const expectCommitsErrorMessage = (commit: Mock, errorMessage: string) => {
         expect(commit.mock.calls.length).toBe(1);
-        expect(commit.mock.calls[0][0]).toStrictEqual({
-            type: "errors/AddError",
-            payload: mockError(errorMessage)
-        });
-        expect(commit.mock.calls[0][1]).toStrictEqual({ root: true });
+        expect(commit.mock.calls[0][0]).toBe("errors/AddError");
+        expect(commit.mock.calls[0][1]).toStrictEqual(mockError(errorMessage));
+        expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
     };
 
     const expectCommitsDefaultErrorMessage = (commit: Mock) => {
         expect(commit.mock.calls.length).toBe(1);
-        expect(commit.mock.calls[0][0]).toStrictEqual({
-            type: "errors/AddError",
-            payload: {
-                error: "MALFORMED_RESPONSE",
-                detail: "API response failed but did not contain any error information. Please contact support."
-            }
+        expect(commit.mock.calls[0][0]).toBe("errors/AddError");
+        expect(commit.mock.calls[0][1]).toStrictEqual({
+            error: "MALFORMED_RESPONSE",
+            detail: "API response failed but did not contain any error information. Please contact support."
         });
-        expect(commit.mock.calls[0][1]).toStrictEqual({ root: true });
+        expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
     };
 
     it("console logs error on get", async () => {
@@ -248,6 +244,56 @@ describe("ApiService", () => {
         expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
     });
 
+    it("handles exception thrown on commit success response by adding expected error", async () => {
+        mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`)
+            .reply(200, mockSuccess("TEST SUCCESS"));
+
+        const commit = jest.fn().mockImplementation((type: string) => {
+            if (type === "TEST_TYPE") {
+                throw new Error("Test Success Mutation Exception");
+            }
+        });
+        await api({ commit, rootState } as any)
+            .withSuccess("TEST_TYPE", true)
+            .get(TEST_ROUTE);
+
+        expect(commit.mock.calls.length).toBe(2);
+
+        expect(commit.mock.calls[0][0]).toBe("TEST_TYPE");
+        expect(commit.mock.calls[0][1]).toBe("TEST SUCCESS");
+        expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
+
+        expect(commit.mock.calls[1][0]).toBe("errors/AddError");
+        expect(commit.mock.calls[1][1].detail)
+            .toBe("Exception committing success response to TEST_TYPE: Error: Test Success Mutation Exception");
+        expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
+    });
+
+    it("handles exception thrown on commit error response by adding expected error", async () => {
+        mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`)
+            .reply(500, mockFailure("TEST FAILURE"));
+
+        const commit = jest.fn().mockImplementation((type: string) => {
+            if (type === "TEST_TYPE") {
+                throw new Error("Test Error Mutation Exception");
+            }
+        });
+        await api({ commit, rootState } as any)
+            .withError("TEST_TYPE", true)
+            .get(TEST_ROUTE);
+
+        expect(commit.mock.calls.length).toBe(2);
+
+        expect(commit.mock.calls[0][0]).toBe("TEST_TYPE");
+        expect(commit.mock.calls[0][1].detail).toBe("TEST FAILURE");
+        expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
+
+        expect(commit.mock.calls[1][0]).toBe("errors/AddError");
+        expect(commit.mock.calls[1][1].detail)
+            .toBe("Exception committing error response to TEST_TYPE: Error: Test Error Mutation Exception");
+        expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
+    });
+
     it("get returns the response object", async () => {
         mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`)
             .reply(200, mockSuccess("TEST"));
@@ -335,17 +381,15 @@ describe("ApiService", () => {
     async function expectCouldNotParseAPIResponseError() {
         const commit = jest.fn();
         await api({ commit, rootState } as any)
-            .get("/baseline/");
+            .get(TEST_ROUTE);
 
         expect(commit.mock.calls.length).toBe(1);
-        expect(commit.mock.calls[0][0]).toStrictEqual({
-            type: "errors/AddError",
-            payload: {
-                error: "MALFORMED_RESPONSE",
-                detail: "Could not parse API response. Please contact support."
-            }
+        expect(commit.mock.calls[0][0]).toBe("errors/AddError");
+        expect(commit.mock.calls[0][1]).toStrictEqual({
+            error: "MALFORMED_RESPONSE",
+            detail: "Could not parse API response with status 500. Please contact support."
         });
-        expect(commit.mock.calls[0][1]).toStrictEqual({ root: true });
+        expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
     }
 
     it("commits parse error if API response is null", async () => {
