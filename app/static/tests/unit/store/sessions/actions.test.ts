@@ -21,7 +21,7 @@ describe("SessionsActions", () => {
     });
 
     const getSessionData = (hasOdin: boolean, compileRequired: boolean,
-        runHasResult: boolean, sensitivityHasResult: boolean) => {
+        runHasResultOde: boolean, runHasResultDiscrete: boolean, sensitivityHasResult: boolean) => {
         return {
             code: {
                 currentCode: ["some saved code"]
@@ -31,8 +31,11 @@ describe("SessionsActions", () => {
                 compileRequired
             },
             run: {
-                result: {
-                    hasResult: runHasResult
+                resultOde: {
+                    hasResult: runHasResultOde
+                },
+                resultDiscrete: {
+                    hasResult: runHasResultOde
                 }
             },
             sensitivity: {
@@ -47,8 +50,8 @@ describe("SessionsActions", () => {
         [AppStateGetter.baseUrlPath]: "testInstance"
     };
 
-    it("Rehydrate fetches session data and reruns model and sensitivity if have result", async () => {
-        const mockSessionData = getSessionData(true, false, true, true);
+    const testRehydrate = async (stochastic: boolean) => {
+        const mockSessionData = getSessionData(true, false, !stochastic, stochastic, true);
         mockAxios.onGet("/apps/testApp/sessions/1234")
             .reply(200, mockSuccess(mockSessionData));
 
@@ -59,7 +62,7 @@ describe("SessionsActions", () => {
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);
         expect(dispatch).toHaveBeenCalledTimes(4);
-        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunnerOde}`);
+        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);
         expect(dispatch.mock.calls[0][2]).toStrictEqual({ root: true });
         expect(dispatch.mock.calls[1][0]).toBe(`model/${ModelAction.CompileModelOnRehydrate}`);
@@ -71,10 +74,18 @@ describe("SessionsActions", () => {
         expect(dispatch.mock.calls[3][0]).toBe(`sensitivity/${SensitivityAction.RunSensitivityOnRehydrate}`);
         expect(dispatch.mock.calls[3][1]).toBe(null);
         expect(dispatch.mock.calls[3][2]).toStrictEqual({ root: true });
+    };
+
+    it("Rehydrate fetches session data and reruns model and sensitivity if have result, for non-stochastic", async () => {
+        testRehydrate(false);
+    });
+
+    it("Rehydrate fetches session data and reruns model and sensitivity if have result, for stochastic", async () => {
+        testRehydrate(true);
     });
 
     it("Rehydrate does not compile or run if no odin model", async () => {
-        const mockSessionData = getSessionData(false, false, true, true);
+        const mockSessionData = getSessionData(false, false, true, false, true);
         mockAxios.onGet("/apps/testApp/sessions/1234")
             .reply(200, mockSuccess(mockSessionData));
 
@@ -85,13 +96,13 @@ describe("SessionsActions", () => {
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);
         expect(dispatch).toHaveBeenCalledTimes(1);
-        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunnerOde}`);
+        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);
         expect(dispatch.mock.calls[0][2]).toStrictEqual({ root: true });
     });
 
     it("Rehydrate does not compile or run if compile required is true", async () => {
-        const mockSessionData = getSessionData(true, true, true, true);
+        const mockSessionData = getSessionData(true, true, true, false,true);
         mockAxios.onGet("/apps/testApp/sessions/1234")
             .reply(200, mockSuccess(mockSessionData));
 
@@ -102,13 +113,13 @@ describe("SessionsActions", () => {
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);
         expect(dispatch).toHaveBeenCalledTimes(1);
-        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunnerOde}`);
+        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);
         expect(dispatch.mock.calls[0][2]).toStrictEqual({ root: true });
     });
 
     it("Rehydrate does not run model if run has no result", async () => {
-        const mockSessionData = getSessionData(true, false, false, true);
+        const mockSessionData = getSessionData(true, false, false, false,  true);
         mockAxios.onGet("/apps/testApp/sessions/1234")
             .reply(200, mockSuccess(mockSessionData));
 
@@ -119,7 +130,7 @@ describe("SessionsActions", () => {
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);
         expect(dispatch).toHaveBeenCalledTimes(3);
-        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunnerOde}`);
+        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);
         expect(dispatch.mock.calls[0][2]).toStrictEqual({ root: true });
         expect(dispatch.mock.calls[1][0]).toBe(`model/${ModelAction.CompileModelOnRehydrate}`);
@@ -131,7 +142,7 @@ describe("SessionsActions", () => {
     });
 
     it("Rehydrate does not run sensitivity if sensitivity has no result", async () => {
-        const mockSessionData = getSessionData(true, false, true, false);
+        const mockSessionData = getSessionData(true, false, true, false,  false);
         mockAxios.onGet("/apps/testApp/sessions/1234")
             .reply(200, mockSuccess(mockSessionData));
 
@@ -142,7 +153,7 @@ describe("SessionsActions", () => {
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);
         expect(dispatch).toHaveBeenCalledTimes(3);
-        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunnerOde}`);
+        expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);
         expect(dispatch.mock.calls[0][2]).toStrictEqual({ root: true });
         expect(dispatch.mock.calls[1][0]).toBe(`model/${ModelAction.CompileModelOnRehydrate}`);

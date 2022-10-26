@@ -7,7 +7,8 @@ describe("Run mutations", () => {
         modelChanged: false,
         parameterValueChanged: false
     };
-    it("sets odin solution", () => {
+
+    it("sets result ode", () => {
         const mockSolution = () => [{ x: 1, y: 2 }];
         const state = mockRunState({
             runRequired: {
@@ -22,8 +23,32 @@ describe("Run mutations", () => {
             solution: mockSolution
         };
 
-        mutations.SetResult(state, result);
+        mutations.SetResultOde(state, result);
         expect(state.resultOde).toBe(result);
+        expect(state.runRequired).toStrictEqual({
+            endTimeChanged: false,
+            modelChanged: false,
+            parameterValueChanged: false
+        });
+    });
+
+    it("sets result discrete", () => {
+        const mockSeriesSet = {values: []} as any;
+        const state = mockRunState({
+            runRequired: {
+                endTimeChanged: false,
+                modelChanged: true,
+                parameterValueChanged: true
+            }
+        });
+        const result = {
+            inputs: { endTime: 99, parameterValues: { a: 1 } },
+            error: null,
+            seriesSet: mockSeriesSet
+        };
+
+        mutations.SetResultDiscrete(state, result);
+        expect(state.resultDiscrete).toBe(result);
         expect(state.runRequired).toStrictEqual({
             endTimeChanged: false,
             modelChanged: false,

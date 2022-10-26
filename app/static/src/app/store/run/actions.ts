@@ -89,7 +89,6 @@ export const actions: ActionTree<RunState, AppState> = {
 
     RunModelOnRehydrate(context) {
         const { state, rootState } = context;
-        // TODO: Put an isStochastic getter on appStater!
         const inputs = rootState.appType === AppType.Stochastic ? state.resultDiscrete!.inputs : state.resultOde!.inputs;
         const { parameterValues, endTime } = inputs;
         runModel(parameterValues, endTime, context);

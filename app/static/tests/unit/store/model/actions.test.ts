@@ -1,6 +1,6 @@
 import Vuex from "vuex";
 import {
-    mockAxios, mockBasicState, mockCodeState, mockFailure, mockModelState, mockRunState, mockRunner, mockSuccess
+    mockAxios, mockBasicState, mockCodeState, mockFailure, mockModelState, mockRunState, mockRunnerOde, mockSuccess
 } from "../../../mocks";
 import { actions, ModelAction } from "../../../../src/app/store/model/actions";
 import { ModelMutation, mutations } from "../../../../src/app/store/model/mutations";
@@ -333,7 +333,7 @@ describe("Model actions", () => {
     // compile, and that causes the mocks to be very confused.
     it("DefaultModel fetches, compiles and runs default model synchronously", async () => {
         // Use real store so can trace the flow of updates through the state
-        const runner = mockRunner();
+        const runner = mockRunnerOde();
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
