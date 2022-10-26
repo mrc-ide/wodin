@@ -35,7 +35,7 @@ describe("SessionsActions", () => {
                     hasResult: runHasResultOde
                 },
                 resultDiscrete: {
-                    hasResult: runHasResultOde
+                    hasResult: runHasResultDiscrete
                 }
             },
             sensitivity: {
@@ -119,7 +119,7 @@ describe("SessionsActions", () => {
     });
 
     it("Rehydrate does not run model if run has no result", async () => {
-        const mockSessionData = getSessionData(true, false, false, false,  true);
+        const mockSessionData = getSessionData(true, false, false, false, true);
         mockAxios.onGet("/apps/testApp/sessions/1234")
             .reply(200, mockSuccess(mockSessionData));
 

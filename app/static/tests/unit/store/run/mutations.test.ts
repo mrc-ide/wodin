@@ -143,18 +143,6 @@ describe("Run mutations", () => {
         });
     });
 
-    it("sets odinRunnerResponseError", () => {
-        const state = mockRunState();
-        const result = {
-            inputs: { endTime: 99, parameterValues: { a: 1 } },
-            error: { error: "model error", detail: "with details" },
-            solution: null
-        };
-
-        mutations.SetResult(state, result);
-        expect(state.resultOde).toBe(result);
-    });
-
     it("sets userDownloadFileName", () => {
         const state = mockRunState();
         mutations.SetUserDownloadFileName(state, "myFile.xlsx");

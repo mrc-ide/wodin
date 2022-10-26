@@ -39,7 +39,7 @@ describe("RunPlot", () => {
                 },
                 run: {
                     endTime: 99,
-                    result: mockResult
+                    resultOde: mockResult
                 }
             } as any
         });
@@ -164,7 +164,7 @@ describe("RunPlot", () => {
                 },
                 run: {
                     endTime: 99,
-                    result: mockResult
+                    resultOde: mockResult
                 }
             } as any,
             modules: {

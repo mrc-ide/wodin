@@ -150,7 +150,7 @@ describe("WodinExcelDownload", () => {
     it("commits any error thrown during download", () => {
         const errorRunState = {
             ...runState,
-            result: {
+            resultOde: {
                 solution: jest.fn().mockImplementation(() => { throw new Error("test error"); })
             } as any
         };
