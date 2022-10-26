@@ -92,7 +92,7 @@ describe("RunOptions", () => {
     });
 
     it("can render and update number of replicates", async () => {
-        const wrapper = getWrapper(0, { appType: `${AppType.Stochastic }`});
+        const wrapper = getWrapper(0, { appType: `${AppType.Stochastic}` });
         const noOfReplicates = wrapper.find("#number-of-replicates");
         noOfReplicates.findComponent(NumericInput).vm.$emit("update", 20);
         expect(mockNumberOfReplicates.mock.calls[0][1]).toBe(20);

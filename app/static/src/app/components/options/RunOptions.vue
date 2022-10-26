@@ -1,5 +1,5 @@
 <template>
-    <div id="run-options" class="container">
+    <div class="container">
         <div id="end-time" class="row my-2">
             <div class="col-5">
                 <label class="col-form-label">End time</label>
