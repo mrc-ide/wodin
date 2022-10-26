@@ -22,7 +22,8 @@ describe("ParameterValues", () => {
         mockSetFitUpdateRequired = jest.fn(),
         paramsToVary: string[] = [],
         mockSetParamsToVary = jest.fn(),
-        modelState: Partial<ModelState> = {}
+        modelState: Partial<ModelState> = {},
+        appType: AppType = AppType.Fit
     ) => {
         // Use mock or real mutations
         const storeMutations = mockUpdateParameterValues
@@ -30,7 +31,7 @@ describe("ParameterValues", () => {
 
         const store = new Vuex.Store<BasicState>({
             state: {
-                appType: AppType.Fit,
+                appType,
                 openVisualisationTab: fitTabIsOpen ? VisualisationTab.Fit : VisualisationTab.Run
             } as any,
             modules: {
@@ -207,6 +208,20 @@ describe("ParameterValues", () => {
         expect(mockSetSensitivityUpdateRequired.mock.calls[0][1]).toStrictEqual({ parameterValueChanged: true });
         expect(mockSetFitUpdateRequired).toHaveBeenCalledTimes(1);
         expect(mockSetFitUpdateRequired.mock.calls[0][1]).toStrictEqual({ parameterValueChanged: true });
+    });
+
+    it("value change does not SetFitUpdateRequired if not Fit app", async () => {
+        const mockUpdateParameterValues = jest.fn();
+        const mockSetSensitivityUpdateRequired = jest.fn();
+        const mockSetFitUpdateRequired = jest.fn();
+        const store = getStore(false, mockUpdateParameterValues,mockSetSensitivityUpdateRequired,
+            mockSetFitUpdateRequired, [], jest.fn(), {}, AppType.Basic);
+        const wrapper = getWrapper(store);
+        const input2 = wrapper.findAllComponents(NumericInput).at(1)!;
+        await input2.vm.$emit("update", 3.3);
+        expect(mockUpdateParameterValues).toHaveBeenCalledTimes(1);
+        expect(mockSetSensitivityUpdateRequired).toHaveBeenCalledTimes(1);
+        expect(mockSetFitUpdateRequired).not.toHaveBeenCalled();
     });
 
     it("refreshes cleared input when odinSolution changes", async () => {

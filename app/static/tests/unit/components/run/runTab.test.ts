@@ -19,6 +19,9 @@ import ActionRequiredMessage from "../../../../src/app/components/ActionRequired
 import DownloadOutput from "../../../../src/app/components/DownloadOutput.vue";
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import { StochasticState } from "../../../../src/app/store/stochastic/state";
+import {OdinRunnerDiscrete} from "../../../../src/app/types/responseTypes";
+import {OdinRunResultDiscrete} from "../../../../src/app/types/wrapperTypes";
+import {ModelGetter} from "../../../../src/app/store/model/getters";
 
 describe("RunTab", () => {
     const defaultModelState = {
@@ -42,7 +45,7 @@ describe("RunTab", () => {
     const mockRunModel = jest.fn();
 
     const getWrapper = (modelState: Partial<ModelState> = defaultModelState,
-        runState: Partial<RunState> = defaultRunState) => {
+        runState: Partial<RunState> = defaultRunState, hasRunner = true) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
@@ -50,7 +53,10 @@ describe("RunTab", () => {
                     namespaced: true,
                     state: mockModelState(modelState),
                     actions: {
-                    }
+                    },
+                    getters: {
+                        [ModelGetter.hasRunner]: () => hasRunner
+                    } as any
                 },
                 run: {
                     namespaced: true,
@@ -58,6 +64,36 @@ describe("RunTab", () => {
                     actions: {
                         RunModel: mockRunModel
                     }
+                }
+            }
+        });
+        return shallowMount(RunTab, {
+            global: {
+                plugins: [store]
+            }
+        });
+    };
+
+    const getStochasticWrapper = (runner: Partial<OdinRunnerDiscrete> | null = {},
+                                  resultDiscrete: Partial<OdinRunResultDiscrete> | null = null) => {
+        const store = new Vuex.Store<StochasticState>({
+            state: mockStochasticState(),
+            modules: {
+                model: {
+                    namespaced: true,
+                    state: mockModelState({
+                        odin: {} as any,
+                        odinRunnerDiscrete: runner as any
+                    }),
+                    getters: {
+                        [ModelGetter.hasRunner]: () => true
+                    } as any
+                },
+                run: {
+                    namespaced: true,
+                    state: mockRunState({
+                        resultDiscrete: resultDiscrete as any
+                    })
                 }
             }
         });
@@ -86,34 +122,31 @@ describe("RunTab", () => {
         expect(wrapper.find("#stochastic-run-placeholder").exists()).toBe(false);
     });
 
-    it("shows placeholder and disables run button when app is stochastic", () => {
-        const store = new Vuex.Store<StochasticState>({
-            state: mockStochasticState(),
-            modules: {
-                model: {
-                    namespaced: true,
-                    state: mockModelState()
-                },
-                run: {
-                    namespaced: true,
-                    state: mockRunState()
-                }
-            }
-        });
-        const wrapper = shallowMount(RunTab, {
-            global: {
-                plugins: [store]
-            }
-        });
-
-        expect(wrapper.find("#stochastic-run-placeholder").text()).toBe("Stochastic run coming soon");
-        expect(wrapper.findComponent(ActionRequiredMessage).exists()).toBe(false);
+    it("shows placeholder when app is stochastic and has not yet run", () => {
+        const wrapper = getStochasticWrapper();
+        expect(wrapper.find("#stochastic-run-placeholder").text()).toBe("Stochastic model has not run");
+        expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         expect(wrapper.findComponent(RunPlot).exists()).toBe(false);
-        expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(true);
+        expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(false);
     });
 
-    it("disables run button when state has no odinRunnerOde", () => {
-        const wrapper = getWrapper({ odinRunnerOde: null });
+    it("shows placeholder when app is stochastic and has run", () => {
+        const wrapper = getStochasticWrapper({}, {
+            seriesSet: {
+                values: [
+                    {name: "series 1"},
+                    {name: "series 2"}
+                ]
+            } as any
+        });
+        expect(wrapper.find("#stochastic-run-placeholder").text()).toBe("Stochastic series count: 2");
+        expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
+        expect(wrapper.findComponent(RunPlot).exists()).toBe(false);
+        expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(false);
+    });
+
+    it("disables run button when state has no runner", () => {
+        const wrapper = getWrapper({ odinRunnerOde: null }, defaultRunState, false);
         expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(true);
     });
 
@@ -124,7 +157,7 @@ describe("RunTab", () => {
 
     it("disables run and download buttons when compile is required", () => {
         const modelState = { compileRequired: true };
-        const runState = { result: { solution: {} } as any };
+        const runState = { resultOde: { solution: {} } as any };
         const wrapper = getWrapper(modelState, runState);
         expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(true);
         expect((wrapper.find("button#download-btn").element as HTMLButtonElement).disabled).toBe(true);

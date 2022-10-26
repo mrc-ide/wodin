@@ -72,6 +72,7 @@ export const mockRunState = (state: Partial<RunState> = {}): RunState => {
         parameterValues: null,
         endTime: 100,
         resultOde: null,
+        resultDiscrete: null,
         userDownloadFileName: "",
         downloading: false,
         ...state
