@@ -4,10 +4,19 @@ import { BasicState } from "../../../../src/app/store/basic/state";
 import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
 import RunOptions from "../../../../src/app/components/options/RunOptions.vue";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
+import { AppType } from "../../../../src/app/store/appState/state";
 
 describe("RunOptions", () => {
-    const getWrapper = (mockRunSetEndTime = jest.fn(), mockSetSensitivityUpdateRequired = jest.fn(),
-        mockDataEnd: number | null = 0, mockSensitivitySetEndTime = jest.fn()) => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    const mockSensitivitySetEndTime = jest.fn();
+    const mockRunSetEndTime = jest.fn();
+    const mockSetSensitivityUpdateRequired = jest.fn();
+    const mockNumberOfReplicates = jest.fn();
+
+    const getWrapper = (mockDataEnd: number | null = 0, states = {}) => {
         const modules = {
             run: {
                 namespaced: true,
@@ -15,7 +24,8 @@ describe("RunOptions", () => {
                     endTime: 99
                 },
                 mutations: {
-                    SetEndTime: mockRunSetEndTime
+                    SetEndTime: mockRunSetEndTime,
+                    SetNumberOfReplicates: mockNumberOfReplicates
                 }
             },
             sensitivity: {
@@ -35,7 +45,9 @@ describe("RunOptions", () => {
             };
         }
         const store = new Vuex.Store<BasicState>({
-            state: {} as any,
+            state: {
+                ...states
+            } as any,
             modules
         });
         return shallowMount(RunOptions, {
@@ -54,7 +66,7 @@ describe("RunOptions", () => {
     });
 
     it("renders as expected when data present", () => {
-        const wrapper = getWrapper(jest.fn(), jest.fn(), 10);
+        const wrapper = getWrapper(10);
         const labels = wrapper.findAll("label");
         expect(labels.length).toBe(2);
         expect(labels[0].text()).toBe("End time");
@@ -62,7 +74,7 @@ describe("RunOptions", () => {
     });
 
     it("renders as expected when no fitData module present", () => {
-        const wrapper = getWrapper(jest.fn(), jest.fn(), null);
+        const wrapper = getWrapper(null);
         expect(wrapper.find("label").text()).toBe("End time");
         const input = wrapper.findComponent(NumericInput);
         expect(input.props("value")).toBe(99);
@@ -70,14 +82,27 @@ describe("RunOptions", () => {
     });
 
     it("commits end time change", () => {
-        const mockRunSetEndTime = jest.fn();
-        const mockSensitivitySetEndTime = jest.fn();
-        const wrapper = getWrapper(mockRunSetEndTime, jest.fn(), 0, mockSensitivitySetEndTime);
-        const input = wrapper.findComponent(NumericInput);
-        input.vm.$emit("update", 101);
+        const wrapper = getWrapper(0);
+        const endTime = wrapper.find("#end-time");
+        endTime.findComponent(NumericInput).vm.$emit("update", 101);
         expect(mockRunSetEndTime).toHaveBeenCalledTimes(1);
         expect(mockRunSetEndTime.mock.calls[0][1]).toBe(101);
         expect(mockSensitivitySetEndTime).toHaveBeenCalledTimes(1);
         expect(mockSensitivitySetEndTime.mock.calls[0][1]).toBe(101);
+    });
+
+    it("can render and update number of replicates", async () => {
+        const wrapper = getWrapper(0, { appType: `${AppType.Stochastic }`});
+        const noOfReplicates = wrapper.find("#number-of-replicates");
+        noOfReplicates.findComponent(NumericInput).vm.$emit("update", 20);
+        expect(mockNumberOfReplicates.mock.calls[0][1]).toBe(20);
+        expect(noOfReplicates.text()).toBe("Number of replicates");
+    });
+
+    it("does not render number of replicates when app is not stochastic", () => {
+        const wrapper = getWrapper(0, { appType: `${AppType.Basic}` });
+        const labels = wrapper.findAll("label");
+        expect(labels.length).toBe(1);
+        expect(labels[0].text()).toBe("End time");
     });
 });

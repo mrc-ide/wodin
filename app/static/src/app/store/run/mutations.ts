@@ -10,7 +10,8 @@ export enum RunMutation {
     UpdateParameterValues = "UpdateParameterValues",
     SetEndTime = "SetEndTime",
     SetUserDownloadFileName = "SetUserDownloadFileName",
-    SetDownloading = "SetDownloading"
+    SetDownloading = "SetDownloading",
+    SetNumberOfReplicates = "SetNumberOfReplicates"
 }
 
 export const mutations: MutationTree<RunState> = {
@@ -61,5 +62,9 @@ export const mutations: MutationTree<RunState> = {
 
     [RunMutation.SetDownloading](state: RunState, payload: boolean) {
         state.downloading = payload;
+    },
+
+    [RunMutation.SetNumberOfReplicates](state: RunState, payload: number) {
+        state.numberOfReplicates = payload;
     }
 };

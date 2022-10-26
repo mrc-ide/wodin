@@ -1,5 +1,5 @@
 import { mutations } from "../../../../src/app/store/run/mutations";
-import { mockError, mockRunState } from "../../../mocks";
+import { mockRunState } from "../../../mocks";
 
 describe("Run mutations", () => {
     const noRunRequired = {
@@ -140,5 +140,11 @@ describe("Run mutations", () => {
         const state = mockRunState();
         mutations.SetDownloading(state, true);
         expect(state.downloading).toBe(true);
+    });
+
+    it("sets number of replicates", () => {
+        const state = mockRunState();
+        mutations.SetNumberOfReplicates(state, 12);
+        expect(state.numberOfReplicates).toBe(12);
     });
 });

@@ -1,19 +1,30 @@
 <template>
-  <div class="container">
-    <div class="row my-2">
-      <div class="col-5">
-        <label class="col-form-label">End time</label>
-      </div>
-      <div class="col-6">
-        <numeric-input
-                       v-if="endTimeData === 0"
-                       :value="endTime"
-                       :allow-negative="false"
-                       @update="updateEndTime"></numeric-input>
-        <label v-else class="col-form-label">{{ endTimeData }} (from data)</label>
-      </div>
+    <div id="run-options" class="container">
+        <div id="end-time" class="row my-2">
+            <div class="col-5">
+                <label class="col-form-label">End time</label>
+            </div>
+            <div class="col-6">
+                <numeric-input
+                    v-if="endTimeData === 0"
+                    :value="endTime"
+                    :allow-negative="false"
+                    @update="updateEndTime"></numeric-input>
+                <label v-else class="col-form-label">{{ endTimeData }} (from data)</label>
+            </div>
+        </div>
+        <div v-if="isStochasticApp" id="number-of-replicates" class="row my-2">
+            <div class="col-5">
+                <label class="col-form-label">Number of replicates</label>
+            </div>
+            <div class="col-6">
+                <numeric-input
+                    :value="numberOfReplicates"
+                    :allow-negative="false"
+                    @update="updateNumberOfReplicates"></numeric-input>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script lang="ts">
@@ -23,6 +34,7 @@ import { RunMutation } from "../../store/run/mutations";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { FitDataGetter } from "../../store/fitData/getters";
 import NumericInput from "./NumericInput.vue";
+import { AppType } from "../../store/appState/state";
 
 export default defineComponent({
     name: "RunOptions",
@@ -44,10 +56,20 @@ export default defineComponent({
             store.commit(`sensitivity/${SensitivityMutation.SetEndTime}`, newValue);
         };
 
+        const numberOfReplicates = computed(() => store.state.run.numberOfReplicates);
+        const isStochasticApp = computed(() => store.state.appType === AppType.Stochastic);
+
+        const updateNumberOfReplicates = (newValue: number) => {
+            store.commit(`run/${RunMutation.SetNumberOfReplicates}`, newValue);
+        };
+
         return {
             endTime,
             endTimeData,
-            updateEndTime
+            updateEndTime,
+            isStochasticApp,
+            numberOfReplicates,
+            updateNumberOfReplicates
         };
     }
 });
