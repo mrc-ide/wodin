@@ -1,8 +1,8 @@
-import { PlotData } from "plotly.js-basic-dist-min";
-import { paletteData, Palette } from "./palette";
-import type { AllFitData, FitData, FitDataLink } from "./store/fitData/state";
-import { OdinSeriesSet } from "./types/responseTypes";
-import { Dict } from "./types/utilTypes";
+import {PlotData} from "plotly.js-basic-dist-min";
+import {Palette, paletteData} from "./palette";
+import type {AllFitData, FitData, FitDataLink} from "./store/fitData/state";
+import {DiscreteSeriesMode, DiscreteSeriesSet, DiscreteSeriesValues, OdinSeriesSet} from "./types/responseTypes";
+import {Dict} from "./types/utilTypes";
 
 export type WodinPlotData = Partial<PlotData>[];
 
@@ -64,6 +64,23 @@ export function odinToPlotly(s: OdinSeriesSet, palette: Palette, options: Partia
             y: s.y[i],
             legendgroup: plotlyOptions.includeLegendGroup ? s.names[i] : undefined,
             showlegend: plotlyOptions.showLegend
+        })
+    );
+}
+
+export function discreteSeriesSetToPlotly(s: DiscreteSeriesSet, palette: Palette): WodinPlotData {
+    return s.values.map(
+        (values: DiscreteSeriesValues) => ({
+            mode: "lines",
+            line: {
+                color: palette[values.name],
+                width: values.mode === DiscreteSeriesMode.Individual ? 1 : undefined
+            },
+            name: values.name,
+            x: s.x,
+            y: values.y,
+            legendgroup: values.name,
+            showlegend: true
         })
     );
 }
