@@ -78,8 +78,8 @@ describe("serialise", () => {
                 parameterValues: { alpha: 3.3 },
                 endTime: 5
             },
-            seriesSet: {values: "test series set"} as any,
-            error: {error: "run discrete error", detail: "run discrete error"}
+            seriesSet: { values: "test series set" } as any,
+            error: { error: "run discrete error", detail: "run discrete error" }
         },
         userDownloadFileName: "",
         downloading: false
@@ -337,7 +337,7 @@ describe("serialise", () => {
             run: {
                 ...expectedRun,
                 resultOde: { ...expectedRun.resultOde, hasResult: false },
-                resultDiscrete: {...expectedRun.resultDiscrete, hasResult: false}
+                resultDiscrete: { ...expectedRun.resultDiscrete, hasResult: false }
             },
             sensitivity: {
                 ...expectedSensitivity,

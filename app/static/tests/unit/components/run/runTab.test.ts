@@ -19,9 +19,9 @@ import ActionRequiredMessage from "../../../../src/app/components/ActionRequired
 import DownloadOutput from "../../../../src/app/components/DownloadOutput.vue";
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import { StochasticState } from "../../../../src/app/store/stochastic/state";
-import {OdinRunnerDiscrete} from "../../../../src/app/types/responseTypes";
-import {OdinRunResultDiscrete} from "../../../../src/app/types/wrapperTypes";
-import {ModelGetter} from "../../../../src/app/store/model/getters";
+import { OdinRunnerDiscrete } from "../../../../src/app/types/responseTypes";
+import { OdinRunResultDiscrete } from "../../../../src/app/types/wrapperTypes";
+import { ModelGetter } from "../../../../src/app/store/model/getters";
 
 describe("RunTab", () => {
     const defaultModelState = {
@@ -75,7 +75,7 @@ describe("RunTab", () => {
     };
 
     const getStochasticWrapper = (runner: Partial<OdinRunnerDiscrete> | null = {},
-                                  resultDiscrete: Partial<OdinRunResultDiscrete> | null = null) => {
+        resultDiscrete: Partial<OdinRunResultDiscrete> | null = null) => {
         const store = new Vuex.Store<StochasticState>({
             state: mockStochasticState(),
             modules: {
@@ -134,8 +134,8 @@ describe("RunTab", () => {
         const wrapper = getStochasticWrapper({}, {
             seriesSet: {
                 values: [
-                    {name: "series 1"},
-                    {name: "series 2"}
+                    { name: "series 1" },
+                    { name: "series 2" }
                 ]
             } as any
         });

@@ -33,7 +33,7 @@ describe("Run mutations", () => {
     });
 
     it("sets result discrete", () => {
-        const mockSeriesSet = {values: []} as any;
+        const mockSeriesSet = { values: [] } as any;
         const state = mockRunState({
             runRequired: {
                 endTimeChanged: false,

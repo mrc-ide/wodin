@@ -76,11 +76,11 @@ describe("SessionsActions", () => {
         expect(dispatch.mock.calls[3][2]).toStrictEqual({ root: true });
     };
 
-    it("Rehydrate fetches session data and reruns model and sensitivity if have result, for non-stochastic", async () => {
+    it("Rehydrates as expected for non-stochastic", async () => {
         testRehydrate(false);
     });
 
-    it("Rehydrate fetches session data and reruns model and sensitivity if have result, for stochastic", async () => {
+    it("Rehydrates as expected for stochastic", async () => {
         testRehydrate(true);
     });
 
@@ -102,7 +102,7 @@ describe("SessionsActions", () => {
     });
 
     it("Rehydrate does not compile or run if compile required is true", async () => {
-        const mockSessionData = getSessionData(true, true, true, false,true);
+        const mockSessionData = getSessionData(true, true, true, false, true);
         mockAxios.onGet("/apps/testApp/sessions/1234")
             .reply(200, mockSuccess(mockSessionData));
 
@@ -142,7 +142,7 @@ describe("SessionsActions", () => {
     });
 
     it("Rehydrate does not run sensitivity if sensitivity has no result", async () => {
-        const mockSessionData = getSessionData(true, false, true, false,  false);
+        const mockSessionData = getSessionData(true, false, true, false, false);
         mockAxios.onGet("/apps/testApp/sessions/1234")
             .reply(200, mockSuccess(mockSessionData));
 

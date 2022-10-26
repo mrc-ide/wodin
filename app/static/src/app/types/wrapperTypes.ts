@@ -18,7 +18,6 @@ export interface OdinRunResultOde {
     error: WodinError | null;
 }
 
-
 export interface OdinRunResultDiscrete {
     inputs: OdinRunInputs;
     seriesSet: DiscreteSeriesSet | null;

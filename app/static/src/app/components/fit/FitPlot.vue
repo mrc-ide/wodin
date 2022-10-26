@@ -42,7 +42,8 @@ export default defineComponent({
         });
 
         const solution = computed(() => {
-            return plotRehydratedFit.value ? store.state.run.resultOde?.solution : store.state.modelFit.result?.solution;
+            return plotRehydratedFit.value ? store.state.run.resultOde?.solution
+                : store.state.modelFit.result?.solution;
         });
 
         const endTime = computed(() => {

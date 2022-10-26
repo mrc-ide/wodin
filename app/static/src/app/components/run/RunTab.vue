@@ -42,7 +42,7 @@ import { runRequiredExplanation } from "./support";
 import { anyTrue } from "../../utils";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import { AppType } from "../../store/appState/state";
-import {ModelGetter} from "../../store/model/getters";
+import { ModelGetter } from "../../store/model/getters";
 
 export default defineComponent({
     name: "RunTab",
@@ -60,7 +60,10 @@ export default defineComponent({
         const showDownloadOutput = ref(false);
         const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
 
-        const error = computed(() => (isStochastic.value ? store.state.run.resultDiscrete?.error : store.state.run.resultOde?.error));
+        const error = computed(() => {
+            return isStochastic.value ? store.state.run.resultDiscrete?.error : store.state.run.resultOde?.error;
+        });
+
         const downloading = computed(() => store.state.run.downloading);
 
         const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
@@ -91,7 +94,8 @@ export default defineComponent({
         const stochasticResultSummary = computed(() => {
             if (isStochastic.value) {
                 const seriesSet = store.state.run.resultDiscrete?.seriesSet;
-                return seriesSet ? `Stochastic series count: ${seriesSet.values.length}` : "Stochastic model has not run";
+                return seriesSet ? `Stochastic series count: ${seriesSet.values.length}`
+                    : "Stochastic model has not run";
             }
             return "";
         });

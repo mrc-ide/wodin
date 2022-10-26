@@ -1,5 +1,5 @@
-import {ModelGetter, getters} from "../../../../src/app/store/model/getters";
-import {mockBasicState, mockModelState, mockStochasticState} from "../../../mocks";
+import { ModelGetter, getters } from "../../../../src/app/store/model/getters";
+import { mockBasicState, mockModelState, mockStochasticState } from "../../../mocks";
 
 describe("ModelGetters", () => {
     it("returns false if no discrete runner when app is stochastic", () => {

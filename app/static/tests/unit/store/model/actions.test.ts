@@ -53,7 +53,7 @@ describe("Model actions", () => {
     });
 
     it("fetches odin runner discrete", async () => {
-        const stochasticRootState = {...rootState, appType: AppType.Stochastic};
+        const stochasticRootState = { ...rootState, appType: AppType.Stochastic };
         const mockRunnerScript = "() => \"runner\"";
         mockAxios.onGet("/odin/runner/discrete")
             .reply(200, mockSuccess(mockRunnerScript));

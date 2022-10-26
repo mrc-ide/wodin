@@ -1,9 +1,11 @@
 import Mock = jest.Mock;
-import {RunMutation} from "../../../../src/app/store/run/mutations";
-import {mockModelState, mockRunnerDiscrete, mockRunnerOde, mockRunState} from "../../../mocks";
-import {WodinExcelDownload} from "../../../../src/app/wodinExcelDownload";
-import {actions, RunAction} from "../../../../src/app/store/run/actions";
-import {AppType} from "../../../../src/app/store/appState/state";
+import { RunMutation } from "../../../../src/app/store/run/mutations";
+import {
+    mockModelState, mockRunnerDiscrete, mockRunnerOde, mockRunState
+} from "../../../mocks";
+import { WodinExcelDownload } from "../../../../src/app/wodinExcelDownload";
+import { actions, RunAction } from "../../../../src/app/store/run/actions";
+import { AppType } from "../../../../src/app/store/appState/state";
 
 jest.mock("../../../../src/app/wodinExcelDownload");
 
@@ -221,9 +223,9 @@ describe("Run actions", () => {
             compileRequired: false
         });
         if (stochastic) {
-          modelState.odinModelResponse = {
-              metadata: { dt: 0.1 }
-          } as any;
+            modelState.odinModelResponse = {
+                metadata: { dt: 0.1 }
+            } as any;
         }
 
         const appType = stochastic ? AppType.Stochastic : AppType.Basic;
@@ -267,14 +269,14 @@ describe("Run actions", () => {
         if (stochastic) {
             expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultDiscrete);
             expect(commit.mock.calls[0][1]).toEqual({
-                inputs: {parameterValues, endTime: 99},
+                inputs: { parameterValues, endTime: 99 },
                 seriesSet: "test discrete result",
                 error: null
             });
         } else {
             expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultOde);
             expect(commit.mock.calls[0][1]).toEqual({
-                inputs: {parameterValues, endTime: 99},
+                inputs: { parameterValues, endTime: 99 },
                 solution: "test solution",
                 error: null
             });

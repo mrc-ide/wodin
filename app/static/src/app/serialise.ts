@@ -6,7 +6,7 @@ import { RunState } from "./store/run/state";
 import { SensitivityState } from "./store/sensitivity/state";
 import { FitDataState } from "./store/fitData/state";
 import { ModelFitState } from "./store/modelFit/state";
-import {OdinFitResult, OdinRunResultDiscrete, OdinRunResultOde} from "./types/wrapperTypes";
+import { OdinFitResult, OdinRunResultDiscrete, OdinRunResultOde } from "./types/wrapperTypes";
 import {
     SerialisedAppState, SerialisedModelState,
     SerialisedRunState,

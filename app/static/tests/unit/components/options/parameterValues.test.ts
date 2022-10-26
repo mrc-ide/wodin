@@ -214,7 +214,7 @@ describe("ParameterValues", () => {
         const mockUpdateParameterValues = jest.fn();
         const mockSetSensitivityUpdateRequired = jest.fn();
         const mockSetFitUpdateRequired = jest.fn();
-        const store = getStore(false, mockUpdateParameterValues,mockSetSensitivityUpdateRequired,
+        const store = getStore(false, mockUpdateParameterValues, mockSetSensitivityUpdateRequired,
             mockSetFitUpdateRequired, [], jest.fn(), {}, AppType.Basic);
         const wrapper = getWrapper(store);
         const input2 = wrapper.findAllComponents(NumericInput).at(1)!;
