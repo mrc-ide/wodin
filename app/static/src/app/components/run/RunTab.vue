@@ -20,7 +20,7 @@
           </div>
         </div>
         <DownloadOutput :open="showDownloadOutput" @close="toggleShowDownloadOutput(false)"></DownloadOutput>
-
+    </div>
 </template>
 
 <script lang="ts">
@@ -86,17 +86,6 @@ export default defineComponent({
         const canDownloadOutput = computed(() => !updateMsg.value && store.state.run.resultOde?.solution);
         const toggleShowDownloadOutput = (show: boolean) => { showDownloadOutput.value = show; };
 
-        // TODO: This is just a temporary summary message to indicate that the stochastic model has successfully run -
-        // it will be replaced by full stochastic run plot in the next ticket
-        const stochasticResultSummary = computed(() => {
-            if (isStochastic.value) {
-                const seriesSet = store.state.run.resultDiscrete?.seriesSet;
-                return seriesSet ? `Stochastic series count: ${seriesSet.values.length}`
-                    : "Stochastic model has not run";
-            }
-            return "";
-        });
-
         return {
             canRunModel,
             isStochastic,
@@ -106,8 +95,7 @@ export default defineComponent({
             downloading,
             showDownloadOutput,
             canDownloadOutput,
-            toggleShowDownloadOutput,
-            stochasticResultSummary
+            toggleShowDownloadOutput
         };
     }
 });
