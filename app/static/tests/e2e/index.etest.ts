@@ -48,7 +48,9 @@ test.describe("Index tests", () => {
         await expect(await page.title()).toBe("Day 3 - Stochastic Model - WODIN Example");
         await expect(await page.innerText("nav .navbar-app")).toBe("Day 3 - Stochastic Model");
         await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Code");
-        await expect(await page.locator(".alert-danger")).not.toBeVisible();
+        // TODO: remove this, diagnostic check for CI failure
+        await expect(await page.innerText(".alert-danger")).toBe("test case");
+        //await expect(await page.locator(".alert-danger")).not.toBeVisible();
 
         await page.waitForResponse((response) => response.url().includes("/odin/model"));
         await expect(await page.innerText("#code-status")).toBe(" Code is valid");
