@@ -34,7 +34,7 @@ describe("StochasticApp", () => {
                 model: {
                     namespaced: true,
                     actions: {
-                        [ModelAction.FetchOdinRunnerOde]: jest.fn()
+                        [ModelAction.FetchOdinRunner]: jest.fn()
                     }
                 }
             }
