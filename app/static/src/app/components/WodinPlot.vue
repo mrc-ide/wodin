@@ -35,7 +35,7 @@ import {
 } from "../plot";
 
 export default defineComponent({
-    name: "WodinOdePlot",
+    name: "WodinPlot",
     props: {
         fadePlot: Boolean,
         placeholderMessage: String,

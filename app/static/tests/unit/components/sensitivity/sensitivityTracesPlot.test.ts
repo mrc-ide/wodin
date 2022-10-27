@@ -4,7 +4,7 @@ jest.mock("plotly.js-basic-dist-min", () => {});
 /* eslint-disable import/first */
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
-import WodinOdePlot from "../../../../src/app/components/WodinOdePlot.vue";
+import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/SensitivityTracesPlot.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
@@ -190,7 +190,7 @@ describe("SensitivityTracesPlot", () => {
 
     it("renders as expected when there are sensitivity solutions", () => {
         const wrapper = getWrapper();
-        const wodinPlot = wrapper.findComponent(WodinOdePlot);
+        const wodinPlot = wrapper.findComponent(WodinPlot);
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Sensitivity has not been run.");
         expect(wodinPlot.props("endTime")).toBe(1);
@@ -208,7 +208,7 @@ describe("SensitivityTracesPlot", () => {
 
     it("renders as expected when there are sensitivity solutions and data", () => {
         const wrapper = getWrapper(true, false, true);
-        const wodinPlot = wrapper.findComponent(WodinOdePlot);
+        const wodinPlot = wrapper.findComponent(WodinPlot);
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Sensitivity has not been run.");
         expect(wodinPlot.props("endTime")).toBe(1);
@@ -226,7 +226,7 @@ describe("SensitivityTracesPlot", () => {
 
     it("renders as expected when there are no sensitivity solutions", () => {
         const wrapper = getWrapper(false);
-        const wodinPlot = wrapper.findComponent(WodinOdePlot);
+        const wodinPlot = wrapper.findComponent(WodinPlot);
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Sensitivity has not been run.");
         expect(wodinPlot.props("endTime")).toBe(1);
@@ -239,6 +239,6 @@ describe("SensitivityTracesPlot", () => {
 
     it("fades plot when fadePlot prop is true", () => {
         const wrapper = getWrapper(true, false);
-        expect(wrapper.findComponent(WodinOdePlot).props("fadePlot")).toBe(false);
+        expect(wrapper.findComponent(WodinPlot).props("fadePlot")).toBe(false);
     });
 });

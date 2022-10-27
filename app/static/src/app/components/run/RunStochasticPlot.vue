@@ -1,5 +1,5 @@
 <template>
-  <wodin-ode-plot
+  <wodin-plot
       :fade-plot="fadePlot"
       :placeholder-message="placeholderMessage"
       :end-time="endTime"
@@ -7,7 +7,7 @@
       :redraw-watches="[seriesSet]"
       :recalculate-on-relayout="false">
     <slot></slot>
-  </wodin-ode-plot>
+  </wodin-plot>
 </template>
 
 <script lang="ts">
@@ -15,7 +15,7 @@ import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import userMessages from "../../userMessages";
 import { WodinPlotData, discreteSeriesSetToPlotly} from "../../plot";
-import WodinOdePlot from "../WodinOdePlot.vue";
+import WodinPlot from "../WodinPlot.vue";
 
 export default defineComponent({
   name: "RunStochasticPlot",
@@ -23,7 +23,7 @@ export default defineComponent({
     fadePlot: Boolean
   },
   components: {
-    WodinOdePlot
+    WodinPlot
   },
   setup() {
     const store = useStore();
