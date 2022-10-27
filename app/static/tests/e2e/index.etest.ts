@@ -52,7 +52,7 @@ test.describe("Index tests", () => {
 
         await page.waitForResponse((response) => response.url().includes("/odin/model"));
         await expect(await page.innerText("#code-status")).toBe(" Code is valid");
-        await expect(await page.innerText("#stochastic-run-placeholder")).toBe("Stochastic series count: 14");
+        expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(14);
     });
 
     const testDownloadFile = async (href: string, localFileName: string, expectedContent: string, page: Page) => {
