@@ -13,7 +13,7 @@ export const defaultState: RunState = {
     result: null,
     userDownloadFileName: "",
     downloading: false,
-    numberOfReplicates: 0
+    numberOfReplicates: 5
 };
 
 export const run = {

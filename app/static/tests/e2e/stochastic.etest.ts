@@ -13,6 +13,6 @@ test.describe("stochastic app", () => {
 
         await expect(await page.locator("#run-options label").count()).toBe(2);
         await expect(await page.innerText(":nth-match(#run-options label, 2)")).toBe("Number of replicates");
-        await expect(await page.inputValue(":nth-match(#run-options input, 2)")).toBe("0");
+        await expect(await page.inputValue(":nth-match(#run-options input, 2)")).toBe("5");
     });
 });
