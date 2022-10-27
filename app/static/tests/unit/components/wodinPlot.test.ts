@@ -120,6 +120,18 @@ describe("WodinPlot", () => {
         expect(mockOn.mock.calls[0][1]).toBe(relayout);
     });
 
+    it("does not set up relayout event handler when recalculateOnRelayout is false", async () => {
+        const wrapper = getWrapper({recalculateOnRelayout: false});
+        const mockOn = mockPlotElementOn(wrapper);
+
+        wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+        expect(mockPlotDataFn).toHaveBeenCalledTimes(1);
+        expect(mockPlotlyNewPlot).toHaveBeenCalledTimes(1);
+
+        expect(mockOn).not.toHaveBeenCalled();
+    });
+
     it("renders hidden data summary elements", async () => {
         const wrapper = getWrapper();
         mockPlotElementOn(wrapper);
