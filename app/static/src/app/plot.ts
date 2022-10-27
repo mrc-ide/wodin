@@ -80,7 +80,7 @@ export function discreteSeriesSetToPlotly(s: DiscreteSeriesSet, palette: Palette
             x: s.x,
             y: values.y,
             legendgroup: values.name,
-            showlegend: true
+            showlegend: values.mode !== DiscreteSeriesMode.Individual
         })
     );
 }
