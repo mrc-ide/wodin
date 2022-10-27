@@ -1,8 +1,10 @@
-import {PlotData} from "plotly.js-basic-dist-min";
-import {Palette, paletteData} from "./palette";
-import type {AllFitData, FitData, FitDataLink} from "./store/fitData/state";
-import {DiscreteSeriesMode, DiscreteSeriesSet, DiscreteSeriesValues, OdinSeriesSet} from "./types/responseTypes";
-import {Dict} from "./types/utilTypes";
+import { PlotData } from "plotly.js-basic-dist-min";
+import { Palette, paletteData } from "./palette";
+import type { AllFitData, FitData, FitDataLink } from "./store/fitData/state";
+import {
+    DiscreteSeriesMode, DiscreteSeriesSet, DiscreteSeriesValues, OdinSeriesSet
+} from "./types/responseTypes";
+import { Dict } from "./types/utilTypes";
 
 export type WodinPlotData = Partial<PlotData>[];
 

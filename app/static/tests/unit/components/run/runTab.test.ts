@@ -124,7 +124,6 @@ describe("RunTab", () => {
         expect(wrapper.findComponent(RunStochasticPlot).exists()).toBe(false);
     });
 
-
     it("renders as expected when app is stochastic", () => {
         const wrapper = getStochasticWrapper({}, {
             seriesSet: {} as any

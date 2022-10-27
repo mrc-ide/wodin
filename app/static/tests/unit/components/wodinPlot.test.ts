@@ -121,7 +121,7 @@ describe("WodinPlot", () => {
     });
 
     it("does not set up relayout event handler when recalculateOnRelayout is false", async () => {
-        const wrapper = getWrapper({recalculateOnRelayout: false});
+        const wrapper = getWrapper({ recalculateOnRelayout: false });
         const mockOn = mockPlotElementOn(wrapper);
 
         wrapper.setProps({ redrawWatches: [{} as any] });

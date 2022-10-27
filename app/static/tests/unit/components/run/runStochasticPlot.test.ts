@@ -6,7 +6,7 @@ import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
 import RunStochasticPlot from "../../../../src/app/components/run/RunStochasticPlot.vue";
 import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
-import {StochasticState} from "../../../../src/app/store/stochastic/state";
+import { StochasticState } from "../../../../src/app/store/stochastic/state";
 import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
 
 describe("RunPlot", () => {
@@ -15,8 +15,8 @@ describe("RunPlot", () => {
         seriesSet: {
             x: [0, 1],
             values: [
-                {mode: "Individual", name: "S", y: [10, 20]},
-                {mode: "Mean", name: "I", y: [5, 10]}
+                { mode: "Individual", name: "S", y: [10, 20] },
+                { mode: "Mean", name: "I", y: [5, 10] }
             ]
         },
         error: null

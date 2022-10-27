@@ -14,42 +14,41 @@
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import userMessages from "../../userMessages";
-import { WodinPlotData, discreteSeriesSetToPlotly} from "../../plot";
+import { WodinPlotData, discreteSeriesSetToPlotly } from "../../plot";
 import WodinPlot from "../WodinPlot.vue";
 
 export default defineComponent({
-  name: "RunStochasticPlot",
-  props: {
-    fadePlot: Boolean
-  },
-  components: {
-    WodinPlot
-  },
-  setup() {
-    const store = useStore();
+    name: "RunStochasticPlot",
+    props: {
+        fadePlot: Boolean
+    },
+    components: {
+        WodinPlot
+    },
+    setup() {
+        const store = useStore();
 
-    const placeholderMessage = userMessages.run.notRunYet;
+        const placeholderMessage = userMessages.run.notRunYet;
 
-    const seriesSet = computed(() => (store.state.run.resultDiscrete?.seriesSet));
+        const seriesSet = computed(() => (store.state.run.resultDiscrete?.seriesSet));
 
-    const endTime = computed(() => store.state.run.endTime);
+        const endTime = computed(() => store.state.run.endTime);
 
-    const palette = computed(() => store.state.model.paletteModel);
+        const palette = computed(() => store.state.model.paletteModel);
 
-    const allPlotData = (): WodinPlotData => {
-      if (seriesSet.value) {
-        return discreteSeriesSetToPlotly(seriesSet.value, palette.value);
-      } else {
-        return [];
-      }
-    };
+        const allPlotData = (): WodinPlotData => {
+            if (seriesSet.value) {
+                return discreteSeriesSetToPlotly(seriesSet.value, palette.value);
+            }
+            return [];
+        };
 
-    return {
-      placeholderMessage,
-      endTime,
-      seriesSet,
-      allPlotData
-    };
-  }
+        return {
+            placeholderMessage,
+            endTime,
+            seriesSet,
+            allPlotData
+        };
+    }
 });
 </script>
