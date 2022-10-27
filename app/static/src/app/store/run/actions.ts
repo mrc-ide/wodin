@@ -48,7 +48,7 @@ const runDiscreteModel = (parameterValues: OdinUserType, startTime: number, endT
         try {
             const dt = rootState.model.odinModelResponse!.metadata!.dt || 0.1;
             const seriesSet = rootState.model.odinRunnerDiscrete.wodinRunDiscrete(rootState.model.odin!,
-                parameterValues, startTime, endTime, dt, 5); // TODO; get number of replicates from state
+                parameterValues, startTime, endTime, dt, 5); // TODO: get number of replicates from state
             payload.seriesSet = seriesSet;
         } catch (e) {
             payload.error = {

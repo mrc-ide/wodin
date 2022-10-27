@@ -69,19 +69,34 @@ export function odinToPlotly(s: OdinSeriesSet, palette: Palette, options: Partia
 }
 
 export function discreteSeriesSetToPlotly(s: DiscreteSeriesSet, palette: Palette): WodinPlotData {
+    const individualLegends: string[] = [];
     return s.values.map(
-        (values: DiscreteSeriesValues) => ({
-            mode: "lines",
-            line: {
-                color: palette[values.name],
-                width: values.mode === DiscreteSeriesMode.Individual ? 1 : undefined
-            },
-            name: values.name,
-            x: s.x,
-            y: values.y,
-            legendgroup: values.name,
-            showlegend: values.mode !== DiscreteSeriesMode.Individual
-        })
+        (values: DiscreteSeriesValues) => {
+            const isIndividual = values.mode === DiscreteSeriesMode.Individual;
+            // show legend if not individual or if individual legend is not yet being shown
+            let showlegend = true;
+            if (isIndividual) {
+                if (individualLegends.includes(values.name)) {
+                    showlegend = false;
+                } else {
+                    individualLegends.push(values.name);
+                }
+            }
+            const name = values.mode === DiscreteSeriesMode.Mean ? `${values.name} (mean)` : values.name;
+            return {
+                mode: "lines",
+                line: {
+                    color: palette[values.name],
+                    width: isIndividual ? 0.5 : undefined,
+                    opacity: isIndividual ? 0.5 : undefined
+                },
+                name,
+                x: s.x,
+                y: values.y,
+                legendgroup: name,
+                showlegend
+            };
+        }
     );
 }
 

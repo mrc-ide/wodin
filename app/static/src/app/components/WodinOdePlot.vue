@@ -111,6 +111,7 @@ export default defineComponent({
                     const layout = {
                         margin
                     };
+
                     newPlot(el as HTMLElement, baseData.value, layout, config);
                     if (props.recalculateOnRelayout) {
                         (el as EventEmitter).on("plotly_relayout", relayout);
