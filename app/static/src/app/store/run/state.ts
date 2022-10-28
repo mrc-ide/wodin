@@ -20,4 +20,5 @@ export interface RunState {
     resultDiscrete: OdinRunResultDiscrete | null;
     userDownloadFileName: string;
     downloading: boolean;
+    numberOfReplicates: number;
 }

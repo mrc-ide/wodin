@@ -82,7 +82,8 @@ describe("serialise", () => {
             error: { error: "run discrete error", detail: "run discrete error" }
         },
         userDownloadFileName: "",
-        downloading: false
+        downloading: false,
+        numberOfReplicates: 5
     };
 
     const sensitivityBatchPars = {
@@ -217,15 +218,14 @@ describe("serialise", () => {
         },
         parameterValues: runState.parameterValues,
         endTime: 20,
+        numberOfReplicates: 5,
         resultOde: {
             inputs: runState.resultOde.inputs,
             hasResult: true,
             error: runState.resultOde.error
         },
         resultDiscrete: {
-            inputs: runState.resultDiscrete.inputs,
-            hasResult: true,
-            error: runState.resultDiscrete.error
+            inputs: runState.resultDiscrete.inputs
         }
     };
     const expectedSensitivity = {
