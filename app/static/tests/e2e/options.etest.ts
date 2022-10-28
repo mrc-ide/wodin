@@ -28,6 +28,7 @@ test.describe("Options Tab tests", () => {
         await expect(await page.getAttribute(":nth-match(.collapse-title i, 2)", "data-name")).toBe("chevron-up");
         await expect(await page.locator("#run-options")).not.toBeHidden();
 
+        await expect(await page.locator("#run-options label").count()).toBe(1);
         await expect(await page.innerText(":nth-match(#run-options label, 1)")).toBe("End time");
         await expect(await page.inputValue(":nth-match(#run-options input, 1)")).toBe("100");
     });
