@@ -3,7 +3,7 @@ import { RunState } from "./state";
 import { RunMutation } from "./mutations";
 import { AppState, AppType } from "../appState/state";
 import userMessages from "../../userMessages";
-import type { OdinRunResultDiscrete, OdinRunResultOde } from "../../types/wrapperTypes";
+import type {OdinRunDiscreteInputs, OdinRunResultDiscrete, OdinRunResultOde} from "../../types/wrapperTypes";
 import { OdinUserType } from "../../types/responseTypes";
 import { WodinExcelDownload } from "../../wodinExcelDownload";
 
@@ -36,11 +36,11 @@ const runOdeModel = (parameterValues: OdinUserType, startTime: number, endTime: 
     }
 };
 
-const runDiscreteModel = (parameterValues: OdinUserType, startTime: number, endTime: number, rootState: AppState,
-    commit: Commit) => {
+const runDiscreteModel = (parameterValues: OdinUserType, startTime: number, endTime: number, numberOfReplicates: number,
+                          rootState: AppState, commit: Commit) => {
     if (rootState.model.odinRunnerDiscrete) {
         const payload : OdinRunResultDiscrete = {
-            inputs: { endTime, parameterValues },
+            inputs: { endTime, parameterValues, numberOfReplicates },
             seriesSet: null,
             error: null
         };
@@ -48,7 +48,7 @@ const runDiscreteModel = (parameterValues: OdinUserType, startTime: number, endT
         try {
             const dt = rootState.model.odinModelResponse!.metadata!.dt || 0.1;
             const seriesSet = rootState.model.odinRunnerDiscrete.wodinRunDiscrete(rootState.model.odin!,
-                parameterValues, startTime, endTime, dt, 5); // TODO; get number of replicates from state
+                parameterValues, startTime, endTime, dt, numberOfReplicates);
             payload.seriesSet = seriesSet;
         } catch (e) {
             payload.error = {
@@ -60,7 +60,7 @@ const runDiscreteModel = (parameterValues: OdinUserType, startTime: number, endT
     }
 };
 
-const runModel = (parameterValues: OdinUserType | null, endTime: number,
+const runModel = (parameterValues: OdinUserType | null, endTime: number, numberOfReplicates: number | null,
     context: ActionContext<RunState, AppState>) => {
     const { rootState, commit } = context;
     const startTime = 0;
@@ -68,7 +68,7 @@ const runModel = (parameterValues: OdinUserType | null, endTime: number,
 
     if (rootState.model.odin && parameterValues) {
         if (isStochastic) {
-            runDiscreteModel(parameterValues, startTime, endTime, rootState, commit);
+            runDiscreteModel(parameterValues, startTime, endTime, numberOfReplicates!, rootState, commit);
         } else {
             runOdeModel(parameterValues, startTime, endTime, rootState, commit);
         }
@@ -83,16 +83,21 @@ export interface DownloadOutputPayload {
 export const actions: ActionTree<RunState, AppState> = {
     RunModel(context) {
         const { state } = context;
-        const { parameterValues, endTime } = state;
-        runModel(parameterValues, endTime, context);
+        const { parameterValues, endTime, numberOfReplicates } = state;
+        runModel(parameterValues, endTime, numberOfReplicates, context);
     },
 
     RunModelOnRehydrate(context) {
         const { state, rootState } = context;
         const { appType } = rootState;
-        const inputs = appType === AppType.Stochastic ? state.resultDiscrete!.inputs : state.resultOde!.inputs;
+        const isStochastic = appType === AppType.Stochastic;
+        const inputs = isStochastic ? state.resultDiscrete!.inputs : state.resultOde!.inputs;
         const { parameterValues, endTime } = inputs;
-        runModel(parameterValues, endTime, context);
+        let numberOfReplicates = null;
+        if (isStochastic) {
+            numberOfReplicates = (inputs as OdinRunDiscreteInputs).numberOfReplicates;
+        }
+        runModel(parameterValues, endTime, numberOfReplicates, context);
     },
 
     DownloadOutput(context, payload: DownloadOutputPayload) {
