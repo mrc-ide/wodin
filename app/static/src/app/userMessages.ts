@@ -35,6 +35,7 @@ export default {
             modelChanged: "model code has been recompiled",
             parameterValueChanged: "parameters have been changed",
             endTimeChanged: "end time has changed",
+            numberOfReplicatesChanged: "number of replicated has changed",
             unknown: "unknown reasons, contact the administrator, as this is unexpected",
             suffix: "Run model to update"
         }
