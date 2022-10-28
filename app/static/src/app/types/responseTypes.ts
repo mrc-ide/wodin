@@ -21,7 +21,11 @@ export interface AppConfig {
     defaultCode: string[],
     readOnlyCode: boolean,
     stateUploadIntervalMillis?: number | null
-    endTime?: number
+    endTime?: number,
+    help?: {
+        markdown: string,
+        tabTitle: string
+    }
 }
 
 export interface BasicConfig extends AppConfig {
