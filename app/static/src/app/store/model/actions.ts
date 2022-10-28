@@ -18,7 +18,6 @@ import { SensitivityMutation } from "../sensitivity/mutations";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
-    FetchOdinRunnerDiscrete = "FetchOdinRunnerDiscrete",
     FetchOdin = "FetchOdin",
     CompileModel = "CompileModel",
     CompileModelOnRehydrate = "CompileModelOnRehydrate",
@@ -103,13 +102,6 @@ export const actions: ActionTree<ModelState, AppState> = {
             .withSuccess(mutation)
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
             .get<string>(`/odin/runner/${runnerType}`);
-    },
-
-    async FetchOdinRunnerDiscrete(context) {
-        await api(context)
-            .withSuccess(ModelMutation.SetOdinRunnerDiscrete)
-            .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
-            .get<string>("/odin/runner/discrete");
     },
 
     async FetchOdin(context) {
