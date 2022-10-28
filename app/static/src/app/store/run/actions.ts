@@ -3,7 +3,7 @@ import { RunState } from "./state";
 import { RunMutation } from "./mutations";
 import { AppState, AppType } from "../appState/state";
 import userMessages from "../../userMessages";
-import type {OdinRunDiscreteInputs, OdinRunResultDiscrete, OdinRunResultOde} from "../../types/wrapperTypes";
+import type { OdinRunDiscreteInputs, OdinRunResultDiscrete, OdinRunResultOde } from "../../types/wrapperTypes";
 import { OdinUserType } from "../../types/responseTypes";
 import { WodinExcelDownload } from "../../wodinExcelDownload";
 
@@ -37,7 +37,7 @@ const runOdeModel = (parameterValues: OdinUserType, startTime: number, endTime: 
 };
 
 const runDiscreteModel = (parameterValues: OdinUserType, startTime: number, endTime: number, numberOfReplicates: number,
-                          rootState: AppState, commit: Commit) => {
+    rootState: AppState, commit: Commit) => {
     if (rootState.model.odinRunnerDiscrete) {
         const payload : OdinRunResultDiscrete = {
             inputs: { endTime, parameterValues, numberOfReplicates },

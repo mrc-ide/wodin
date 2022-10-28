@@ -67,7 +67,8 @@ export const mockRunState = (state: Partial<RunState> = {}): RunState => {
         runRequired: {
             endTimeChanged: false,
             modelChanged: false,
-            parameterValueChanged: false
+            parameterValueChanged: false,
+            numberOfReplicatesChanged: false
         },
         parameterValues: null,
         endTime: 100,
