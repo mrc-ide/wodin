@@ -79,7 +79,7 @@ describe("serialise", () => {
                 endTime: 5
             },
             seriesSet: { values: "test series set" } as any,
-            error: { error: "run discrete error", detail: "run discrete error" }
+            error: { error: "run discrete error", detail: "run discrete error detail" }
         },
         userDownloadFileName: "",
         downloading: false,
@@ -225,7 +225,9 @@ describe("serialise", () => {
             error: runState.resultOde.error
         },
         resultDiscrete: {
-            inputs: runState.resultDiscrete.inputs
+            inputs: runState.resultDiscrete.inputs,
+            hasResult: true,
+            error: runState.resultDiscrete.error
         }
     };
     const expectedSensitivity = {
