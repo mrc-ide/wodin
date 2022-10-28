@@ -61,7 +61,8 @@ describe("serialise", () => {
         runRequired: {
             modelChanged: false,
             parameterValueChanged: false,
-            endTimeChanged: false
+            endTimeChanged: false,
+            numberOfReplicatesChanged: false
         },
         parameterValues: { alpha: 1, beta: 1.1 },
         endTime: 20,
@@ -76,7 +77,8 @@ describe("serialise", () => {
         resultDiscrete: {
             inputs: {
                 parameterValues: { alpha: 3.3 },
-                endTime: 5
+                endTime: 5,
+                numberOfReplicates: 6
             },
             seriesSet: { values: "test series set" } as any,
             error: { error: "run discrete error", detail: "run discrete error detail" }
