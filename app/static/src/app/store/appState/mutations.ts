@@ -24,13 +24,13 @@ export interface SetAppPayload {
 }
 
 // TODO: remove hardcoded help markdown
-const exampleHelp =
-    ```
+const exampleHelp: string = `
 ## Example 3: Stochastic SIS model
 
 In the next example we consider a model of infection transmission within a closed popluation (no births or deaths): the susceptible-infected-susceptible (SIS) model.
 
     In this model we consider two types of event:
+    // eslint-disable-next-line max-len
     Infection events, which occur in each time step with probability $((\beta  I dt)/N\)$ per susceptible individual, and
 Recovery events, which occur in each time step with a probability $(\nu  dt\)$ per infected individual.
 
@@ -48,7 +48,7 @@ The analytical solution to this ODE can be shown to be:
         $$I^*= N \left(1-\frac{1}{R_0} \right)$$
 
     since \(R_0\) is defined as \(\beta ⁄\nu \). At this point, we say that the disease is endemic in the population.
-```;
+`;
 
 export const appStateMutations: MutationTree<AppState> = {
     [AppStateMutation.SetApp](state: AppState, payload: SetAppPayload) {
@@ -57,10 +57,10 @@ export const appStateMutations: MutationTree<AppState> = {
     },
 
     [AppStateMutation.SetConfig](state: AppState, payload: AppConfig) {
-        state.config = payload;
+        state.config = {...payload};
         state.config.help = {
             markdown: exampleHelp,
-            tabTitle: "Explanation"
+            tabName: "Explanation"
         };
     },
 

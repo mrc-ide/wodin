@@ -24,7 +24,7 @@ export interface AppConfig {
     endTime?: number,
     help?: {
         markdown: string,
-        tabTitle: string
+        tabName: string
     }
 }
 
