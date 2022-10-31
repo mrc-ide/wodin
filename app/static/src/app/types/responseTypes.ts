@@ -194,13 +194,15 @@ export interface DiscreteSeriesSet {
     values: DiscreteSeriesValues[];
 }
 
+export type FilteredDiscreteSolution = (times: Times) => DiscreteSeriesSet;
+
 export interface OdinRunnerDiscrete {
     wodinRunDiscrete: (odin: Odin, // this is vague enough to work at present
                        pars: OdinUserType, // this will always be ok
                        timeStart: number,
                        timeEnd: number,
                        dt: number,
-                       nParticles: number) => DiscreteSeriesSet;
+                       nParticles: number) => FilteredDiscreteSolution;
 }
 
 export interface SessionMetadata {

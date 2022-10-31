@@ -41,7 +41,7 @@ function serialiseSolutionResult(result: OdinRunResultOde | OdinFitResult | null
 function serialiseDiscreteResult(result: OdinRunResultDiscrete | null): SerialisedRunResult | null {
     return result ? {
         inputs: result.inputs,
-        hasResult: !!result.seriesSet,
+        hasResult: !!result.solution,
         error: result.error
     } : null;
 }

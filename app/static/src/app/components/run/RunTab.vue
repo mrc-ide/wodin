@@ -93,8 +93,9 @@ export default defineComponent({
         // it will be replaced by full stochastic run plot in the next ticket
         const stochasticResultSummary = computed(() => {
             if (isStochastic.value) {
-                const seriesSet = store.state.run.resultDiscrete?.seriesSet;
-                return seriesSet ? `Stochastic series count: ${seriesSet.values.length}`
+                const solution = store.state.run.resultDiscrete?.solution;
+                const times = {mode: "grid", times: [0]};
+                return solution ? `Stochastic series count: ${solution(times).values.length}`
                     : "Stochastic model has not run";
             }
             return "";
