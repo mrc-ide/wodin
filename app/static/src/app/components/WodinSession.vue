@@ -14,7 +14,7 @@ export default defineComponent({
     props: {
         appName: String,
         baseUrl: String,
-        appPath: String,
+        appsPath: String,
         loadSessionId: String,
         shareNotFound: String
     },
@@ -33,14 +33,14 @@ export default defineComponent({
                 appName,
                 baseUrl,
                 loadSessionId,
-                appPath
+                appsPath
             } = props;
             store.dispatch(AppStateAction.Initialise,
                 {
                     appName,
                     baseUrl,
                     loadSessionId,
-                    appPath
+                    appsPath
                 });
         });
 

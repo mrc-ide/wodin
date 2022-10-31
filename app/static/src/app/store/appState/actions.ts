@@ -21,13 +21,13 @@ export enum AppStateAction {
 
 async function immediateUploadState(context: ActionContext<AppState, AppState>) {
     const { commit, state } = context;
-    const { appName, appPath, sessionId } = state;
+    const { appName, appsPath, sessionId } = state;
 
     commit(AppStateMutation.SetStateUploadInProgress, true);
     await api<AppStateMutation, ErrorsMutation>(context)
         .ignoreSuccess()
         .withError(ErrorsMutation.AddError)
-        .post(`/${appPath}/${appName}/sessions/${sessionId}`, serialiseState(state));
+        .post(`/${appsPath}/${appName}/sessions/${sessionId}`, serialiseState(state));
     commit(AppStateMutation.SetStateUploadInProgress, false);
 }
 
@@ -42,9 +42,9 @@ export const appStateActions: ActionTree<AppState, AppState> = {
             appName,
             baseUrl,
             loadSessionId,
-            appPath
+            appsPath
         } = payload;
-        commit(AppStateMutation.SetApp, { appName, baseUrl, appPath });
+        commit(AppStateMutation.SetApp, { appName, baseUrl, appsPath });
         localStorageManager.addSessionId(appName, getters[AppStateGetter.baseUrlPath], state.sessionId);
 
         const response = await api(context)

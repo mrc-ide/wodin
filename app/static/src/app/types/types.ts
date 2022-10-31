@@ -1,7 +1,7 @@
 export interface SetAppPayload {
     appName: string
     baseUrl: string
-    appPath: string
+    appsPath: string
 }
 
 export interface InitialisePayload extends SetAppPayload{
