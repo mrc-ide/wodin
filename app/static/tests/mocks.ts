@@ -75,6 +75,7 @@ export const mockRunState = (state: Partial<RunState> = {}): RunState => {
         resultDiscrete: null,
         userDownloadFileName: "",
         downloading: false,
+        numberOfReplicates: 5,
         ...state
     };
 };

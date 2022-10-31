@@ -79,10 +79,11 @@ describe("serialise", () => {
                 endTime: 5
             },
             seriesSet: { values: "test series set" } as any,
-            error: { error: "run discrete error", detail: "run discrete error" }
+            error: { error: "run discrete error", detail: "run discrete error detail" }
         },
         userDownloadFileName: "",
-        downloading: false
+        downloading: false,
+        numberOfReplicates: 5
     };
 
     const sensitivityBatchPars = {
@@ -217,6 +218,7 @@ describe("serialise", () => {
         },
         parameterValues: runState.parameterValues,
         endTime: 20,
+        numberOfReplicates: 5,
         resultOde: {
             inputs: runState.resultOde.inputs,
             hasResult: true,

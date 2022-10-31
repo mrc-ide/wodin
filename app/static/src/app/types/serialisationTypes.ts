@@ -30,6 +30,7 @@ export interface SerialisedRunState {
     runRequired: RunUpdateRequiredReasons,
     parameterValues: OdinUserType | null,
     endTime: number,
+    numberOfReplicates: number,
     resultOde: SerialisedRunResult | null,
     resultDiscrete: SerialisedRunResult | null
 }

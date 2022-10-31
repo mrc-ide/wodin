@@ -51,6 +51,7 @@ function serialiseRun(run: RunState): SerialisedRunState {
         runRequired: run.runRequired,
         parameterValues: run.parameterValues,
         endTime: run.endTime,
+        numberOfReplicates: run.numberOfReplicates,
         resultOde: serialiseSolutionResult(run.resultOde),
         resultDiscrete: serialiseDiscreteResult(run.resultDiscrete)
     };
