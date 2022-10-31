@@ -100,7 +100,7 @@ describe("Run actions", () => {
         expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultDiscrete);
         expect(commit.mock.calls[0][1]).toEqual({
             inputs: { parameterValues, endTime: 99, numberOfReplicates: 10 },
-            seriesSet: "test discrete result",
+            solution: "test discrete result",
             error: null
         });
     });
@@ -208,7 +208,7 @@ describe("Run actions", () => {
             detail: mockError.message,
             error: "An error occurred while running the model"
         };
-        const expectedResult = stochastic ? { inputs, error, seriesSet: null } : { inputs, error, solution: null };
+        const expectedResult = stochastic ? { inputs, error, solution: null } : { inputs, error, solution: null };
         expect(commit.mock.calls[0][1]).toStrictEqual(expectedResult);
     };
 
@@ -283,7 +283,7 @@ describe("Run actions", () => {
             expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultDiscrete);
             expect(commit.mock.calls[0][1]).toEqual({
                 inputs: { parameterValues, endTime: 99, numberOfReplicates: 6 },
-                seriesSet: "test discrete result",
+                solution: "test discrete result",
                 error: null
             });
         } else {

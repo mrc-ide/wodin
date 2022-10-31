@@ -35,11 +35,12 @@ export class WodinExcelDownload {
     private static _generateModelledOutput(solutionOutput: OdinSeriesSet, nonTimeColumns: string[],
         fitData: FitData | null) {
         const outputData = [];
-        outputData.push(["t", ...solutionOutput.names, ...nonTimeColumns]); // headers
+        const names = solutionOutput.values.map((el) => el.name);
+        outputData.push(["t", ...names, ...nonTimeColumns]); // headers
         solutionOutput.x.forEach((x: number, xIdx: number) => {
             outputData.push([
                 x,
-                ...solutionOutput.names.map((name: string, nameIdx: number) => solutionOutput.y[nameIdx][xIdx]),
+                ...solutionOutput.values.map((el) => el.y[xIdx]),
                 ...nonTimeColumns.map((column: string) => (fitData as FitData)[xIdx][column])
             ]);
         });

@@ -26,12 +26,11 @@ import { WodinExcelDownload } from "../../src/app/wodinExcelDownload";
 
 const mockSolution = jest.fn().mockImplementation((options) => {
     const x = options.mode === "grid" ? [options.tStart, options.tEnd] : options.times;
-    const names = ["A", "B"];
-    const y = [
-        x.map((xVal: number) => 1 + xVal),
-        x.map((xVal: number) => 10 * xVal)
+    const values = [
+        { name: "A", y: x.map((xVal: number) => 1 + xVal) },
+        { name: "B", y: x.map((xVal: number) => 10 * xVal) }
     ];
-    return { x, names, y };
+    return { x, values };
 });
 
 describe("WodinExcelDownload", () => {
