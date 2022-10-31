@@ -15,3 +15,4 @@ app.mount("#app");
 
 const router = initialiseRouter(BasicApp, store.state.appName!, store.state.baseUrl!);
 app.use(router);
+

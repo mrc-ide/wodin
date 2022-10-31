@@ -13,11 +13,12 @@ export default defineComponent({
         markdown: String
     },
     setup(props) {
-        const rendered = computed(() => {
+       const rendered = computed(() => {
+            const mj = MarkdownItMathjax();
+            const md = new MarkdownIt().use(mj);
             if (!props.markdown) {
                 return "";
             }
-            const md = new MarkdownIt().use(MarkdownItMathjax);
             return md.render(props.markdown);
         });
 
