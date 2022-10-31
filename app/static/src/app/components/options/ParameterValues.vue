@@ -51,8 +51,10 @@ export default defineComponent({
     setup() {
         const store = useStore();
 
+        const isFit = computed(() => store.state.appType === AppType.Fit);
+
         const paramsToVary = computed<string[]>(() => {
-            return store.state.appType === AppType.Fit ? store.state.modelFit.paramsToVary : [];
+            return isFit.value ? store.state.modelFit.paramsToVary : [];
         });
 
         const paramValues = computed(() => store.state.run.parameterValues);
@@ -71,11 +73,13 @@ export default defineComponent({
         const timestampParamNames = () => paramNames.value.map((name: string) => name + Date.now());
 
         const paramKeys = ref(timestampParamNames());
-        const odinSolution = computed(() => store.state.run.result?.solution);
+        const odinSolution = computed(() => store.state.run.resultOde?.solution);
 
         const updateValue = (newValue: number, paramName: string) => {
             store.commit(`run/${RunMutation.UpdateParameterValues}`, { [paramName]: newValue });
-            store.commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { parameterValueChanged: true });
+            if (isFit.value) {
+                store.commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { parameterValueChanged: true });
+            }
             store.commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, { parameterValueChanged: true });
         };
 

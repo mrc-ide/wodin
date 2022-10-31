@@ -148,7 +148,7 @@ describe("SensitivityTracesPlot", () => {
                     paletteModel: mockPalette
                 },
                 run: {
-                    result: {
+                    resultOde: {
                         solution: mockCentralSln
                     },
                     endTime: 1

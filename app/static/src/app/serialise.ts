@@ -6,12 +6,12 @@ import { RunState } from "./store/run/state";
 import { SensitivityState } from "./store/sensitivity/state";
 import { FitDataState } from "./store/fitData/state";
 import { ModelFitState } from "./store/modelFit/state";
-import { OdinFitResult, OdinRunResult } from "./types/wrapperTypes";
+import { OdinFitResult, OdinRunResultDiscrete, OdinRunResultOde } from "./types/wrapperTypes";
 import {
     SerialisedAppState, SerialisedModelState,
     SerialisedRunState,
     SerialisedSensitivityState,
-    SerialisedSolutionResult
+    SerialisedRunResult
 } from "./types/serialisationTypes";
 
 function serialiseCode(code: CodeState) : CodeState {
@@ -30,10 +30,18 @@ function serialiseModel(model: ModelState) : SerialisedModelState {
     };
 }
 
-function serialiseSolutionResult(result: OdinRunResult | OdinFitResult | null): SerialisedSolutionResult | null {
+function serialiseSolutionResult(result: OdinRunResultOde | OdinFitResult | null): SerialisedRunResult | null {
     return result ? {
         inputs: result.inputs,
         hasResult: !!result.solution,
+        error: result.error
+    } : null;
+}
+
+function serialiseDiscreteResult(result: OdinRunResultDiscrete | null): SerialisedRunResult | null {
+    return result ? {
+        inputs: result.inputs,
+        hasResult: !!result.seriesSet,
         error: result.error
     } : null;
 }
@@ -44,7 +52,8 @@ function serialiseRun(run: RunState): SerialisedRunState {
         parameterValues: run.parameterValues,
         endTime: run.endTime,
         numberOfReplicates: run.numberOfReplicates,
-        result: serialiseSolutionResult(run.result)
+        resultOde: serialiseSolutionResult(run.resultOde),
+        resultDiscrete: serialiseDiscreteResult(run.resultDiscrete)
     };
 }
 

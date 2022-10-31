@@ -71,7 +71,8 @@ export const mockRunState = (state: Partial<RunState> = {}): RunState => {
         },
         parameterValues: null,
         endTime: 100,
-        result: null,
+        resultOde: null,
+        resultDiscrete: null,
         userDownloadFileName: "",
         downloading: false,
         numberOfReplicates: 5,
@@ -257,8 +258,14 @@ export const mockBatchParsDisplace = (base: OdinUserType, name: string, count: n
     return mockBatchParsRange(base, name, count, logarithmic, min, max);
 };
 
-export const mockRunner = () => {
+export const mockRunnerOde = () => {
     return {
         wodinRun: jest.fn((odin, pars, start, end) => "test solution" as any)
+    } as any;
+};
+
+export const mockRunnerDiscrete = () => {
+    return {
+        wodinRunDiscrete: jest.fn(() => "test discrete result" as any)
     } as any;
 };

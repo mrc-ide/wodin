@@ -47,7 +47,7 @@ export class WodinExcelDownload {
     }
 
     private _addModelledValues() {
-        const solution = this._state.run.result?.solution;
+        const solution = this._state.run.resultOde?.solution;
         if (solution) {
             const end = this._state.run.endTime;
             const solutionOutput = solution({
@@ -60,7 +60,7 @@ export class WodinExcelDownload {
     }
 
     private _addModelledWithDataValues() {
-        const solution = this._state.run.result?.solution;
+        const solution = this._state.run.resultOde?.solution;
         if (solution && this._state.appType === AppType.Fit) {
             const fitState = this._state as FitState;
             const fitData = fitState.fitData.data;

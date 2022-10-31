@@ -36,7 +36,7 @@ describe("FitApp", () => {
                     namespaced: true,
                     state: mockModelState(),
                     actions: {
-                        [ModelAction.FetchOdinRunnerOde]: jest.fn()
+                        [ModelAction.FetchOdinRunner]: jest.fn()
                     }
                 },
                 fitData: {

@@ -114,7 +114,7 @@ describe("FitPlot", () => {
                 run: {
                     namespaced: true,
                     state: {
-                        result: {
+                        resultOde: {
                             solution: mockRunSolution
                         }
                     }

@@ -36,7 +36,7 @@ const mockSolution = jest.fn().mockImplementation((options) => {
 
 describe("WodinExcelDownload", () => {
     const runState = mockRunState({
-        result: { solution: mockSolution } as any,
+        resultOde: { solution: mockSolution } as any,
         endTime: 10,
         parameterValues: { v1: 1.1, v2: 2.2 }
     });
@@ -150,7 +150,7 @@ describe("WodinExcelDownload", () => {
     it("commits any error thrown during download", () => {
         const errorRunState = {
             ...runState,
-            result: {
+            resultOde: {
                 solution: jest.fn().mockImplementation(() => { throw new Error("test error"); })
             } as any
         };

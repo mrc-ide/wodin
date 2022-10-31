@@ -3,9 +3,12 @@
         <div>
             <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
         </div>
-        <div v-if="isStochastic" id="stochastic-run-placeholder" class="mt-2">Stochastic run coming soon</div>
+        <action-required-message :message="updateMsg"></action-required-message>
+        <div v-if="isStochastic" id="stochastic-run-placeholder" class="mt-2">
+          {{ stochasticResultSummary }}
+          <error-info :error="error"></error-info>
+        </div>
         <template v-else>
-          <action-required-message :message="updateMsg"></action-required-message>
           <run-plot :fade-plot="!!updateMsg" :model-fit="false"></run-plot>
           <error-info :error="error"></error-info>
           <div>
@@ -39,6 +42,7 @@ import { runRequiredExplanation } from "./support";
 import { anyTrue } from "../../utils";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import { AppType } from "../../store/appState/state";
+import { ModelGetter } from "../../store/model/getters";
 
 export default defineComponent({
     name: "RunTab",
@@ -54,15 +58,20 @@ export default defineComponent({
         const store = useStore();
 
         const showDownloadOutput = ref(false);
-
-        const error = computed(() => store.state.run.result?.error);
-        const downloading = computed(() => store.state.run.downloading);
         const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
 
+        const error = computed(() => {
+            return isStochastic.value ? store.state.run.resultDiscrete?.error : store.state.run.resultOde?.error;
+        });
+
+        const downloading = computed(() => store.state.run.downloading);
+
+        const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
+
         // Enable run button if model has initialised and compile is not required
-        // TODO: Enable for Stochastic when stochastic run is implemented
-        const canRunModel = computed(() => !!store.state.model.odinRunnerOde && !!store.state.model.odin
-            && !store.state.model.compileRequired && !isStochastic.value);
+        const canRunModel = computed(() => {
+            return hasRunner.value && !!store.state.model.odin && !store.state.model.compileRequired;
+        });
 
         const runModel = () => store.dispatch(`run/${RunAction.RunModel}`);
         const updateMsg = computed(() => {
@@ -77,8 +86,19 @@ export default defineComponent({
         });
 
         // only allow download if update not required, and if we have a model solution
-        const canDownloadOutput = computed(() => !updateMsg.value && store.state.run.result?.solution);
+        const canDownloadOutput = computed(() => !updateMsg.value && store.state.run.resultOde?.solution);
         const toggleShowDownloadOutput = (show: boolean) => { showDownloadOutput.value = show; };
+
+        // TODO: This is just a temporary summary message to indicate that the stochastic model has successfully run -
+        // it will be replaced by full stochastic run plot in the next ticket
+        const stochasticResultSummary = computed(() => {
+            if (isStochastic.value) {
+                const seriesSet = store.state.run.resultDiscrete?.seriesSet;
+                return seriesSet ? `Stochastic series count: ${seriesSet.values.length}`
+                    : "Stochastic model has not run";
+            }
+            return "";
+        });
 
         return {
             canRunModel,
@@ -89,7 +109,8 @@ export default defineComponent({
             downloading,
             showDownloadOutput,
             canDownloadOutput,
-            toggleShowDownloadOutput
+            toggleShowDownloadOutput,
+            stochasticResultSummary
         };
     }
 });

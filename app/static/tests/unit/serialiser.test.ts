@@ -37,6 +37,7 @@ describe("serialise", () => {
         odinModelResponse: {
             valid: true,
             metadata: {
+                dt: 0.1,
                 variables: ["S", "I", "R"],
                 parameters: [
                     {
@@ -64,13 +65,21 @@ describe("serialise", () => {
         },
         parameterValues: { alpha: 1, beta: 1.1 },
         endTime: 20,
-        result: {
+        resultOde: {
             inputs: {
                 parameterValues: { alpha: 0, beta: 2.2 },
                 endTime: 10
             },
             solution: jest.fn(),
             error: { error: "run error", detail: "run error detail" }
+        },
+        resultDiscrete: {
+            inputs: {
+                parameterValues: { alpha: 3.3 },
+                endTime: 5
+            },
+            seriesSet: { values: "test series set" } as any,
+            error: { error: "run discrete error", detail: "run discrete error detail" }
         },
         userDownloadFileName: "",
         downloading: false,
@@ -210,10 +219,15 @@ describe("serialise", () => {
         parameterValues: runState.parameterValues,
         endTime: 20,
         numberOfReplicates: 5,
-        result: {
-            inputs: runState.result.inputs,
+        resultOde: {
+            inputs: runState.resultOde.inputs,
             hasResult: true,
-            error: runState.result.error
+            error: runState.resultOde.error
+        },
+        resultDiscrete: {
+            inputs: runState.resultDiscrete.inputs,
+            hasResult: true,
+            error: runState.resultDiscrete.error
         }
     };
     const expectedSensitivity = {
@@ -287,14 +301,18 @@ describe("serialise", () => {
         expect(JSON.parse(serialised)).toStrictEqual(expected);
     });
 
-    it("serialises as expected when no solutions", () => {
+    it("serialises as expected when no solutions or series set", () => {
         const state = {
             ...fitState,
             run: {
                 ...runState,
-                result: {
-                    ...runState.result,
+                resultOde: {
+                    ...runState.resultOde,
                     solution: null
+                },
+                resultDiscrete: {
+                    ...runState.resultDiscrete,
+                    seriesSet: null
                 }
             },
             sensitivity: {
@@ -320,7 +338,8 @@ describe("serialise", () => {
             model: expectedModel,
             run: {
                 ...expectedRun,
-                result: { ...expectedRun.result, hasResult: false }
+                resultOde: { ...expectedRun.resultOde, hasResult: false },
+                resultDiscrete: { ...expectedRun.resultDiscrete, hasResult: false }
             },
             sensitivity: {
                 ...expectedSensitivity,
@@ -339,7 +358,7 @@ describe("serialise", () => {
         const state = {
             ...fitState,
             model: { ...modelState, odin: null },
-            run: { ...runState, result: null },
+            run: { ...runState, resultOde: null, resultDiscrete: null },
             sensitivity: { ...sensitivityState, result: null },
             modelFit: { ...modelFitState, result: null }
         };
@@ -349,7 +368,7 @@ describe("serialise", () => {
             openVisualisationTab: VisualisationTab.Fit,
             code: expectedCode,
             model: { ...expectedModel, hasOdin: false },
-            run: { ...expectedRun, result: null },
+            run: { ...expectedRun, resultOde: null, resultDiscrete: null },
             sensitivity: { ...expectedSensitivity, result: null },
             fitData: expectedFitData,
             modelFit: { ...expectedModelFit, result: null }
