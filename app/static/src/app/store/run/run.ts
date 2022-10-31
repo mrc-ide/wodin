@@ -6,7 +6,8 @@ export const defaultState: RunState = {
     runRequired: {
         modelChanged: false,
         parameterValueChanged: false,
-        endTimeChanged: false
+        endTimeChanged: false,
+        numberOfReplicatesChanged: false
     },
     parameterValues: null,
     endTime: 100,

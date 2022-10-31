@@ -14,6 +14,13 @@ describe("Run actions", () => {
     const mockWodinExcelDownload = WodinExcelDownload as any as Mock;
     mockWodinExcelDownload.mockImplementation(() => ({ downloadModelOutput: mockDownloadModelOutput }));
 
+    const runRequiredAll = {
+        modelChanged: true,
+        parameterValueChanged: true,
+        endTimeChanged: true,
+        numberOfReplicatesChanged: true
+    };
+
     it("runs model for ode app", () => {
         const mockOdin = {} as any;
 
@@ -29,11 +36,7 @@ describe("Run actions", () => {
             model: modelState
         } as any;
         const state = mockRunState({
-            runRequired: {
-                modelChanged: true,
-                parameterValueChanged: true,
-                endTimeChanged: true
-            },
+            runRequired: runRequiredAll,
             parameterValues,
             endTime: 99
         });
@@ -76,13 +79,10 @@ describe("Run actions", () => {
             model: modelState
         } as any;
         const state = mockRunState({
-            runRequired: {
-                modelChanged: true,
-                parameterValueChanged: true,
-                endTimeChanged: true
-            },
+            runRequired: runRequiredAll,
             parameterValues,
-            endTime: 99
+            endTime: 99,
+            numberOfReplicates: 10
         });
         const commit = jest.fn();
 
@@ -94,12 +94,12 @@ describe("Run actions", () => {
         expect(run.mock.calls[0][2]).toBe(0); // start
         expect(run.mock.calls[0][3]).toBe(99); // end time from state
         expect(run.mock.calls[0][4]).toBe(0.1);// dt
-        expect(run.mock.calls[0][5]).toBe(5);// number of replicates
+        expect(run.mock.calls[0][5]).toBe(10);// number of replicates
 
         expect(commit.mock.calls.length).toBe(1);
         expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultDiscrete);
         expect(commit.mock.calls[0][1]).toEqual({
-            inputs: { parameterValues, endTime: 99 },
+            inputs: { parameterValues, endTime: 99, numberOfReplicates: 10 },
             solution: "test discrete result",
             error: null
         });
@@ -114,11 +114,7 @@ describe("Run actions", () => {
         });
         const rootState = { model: modelState } as any;
         const state = mockRunState({
-            runRequired: {
-                modelChanged: false,
-                parameterValueChanged: false,
-                endTimeChanged: false
-            },
+            runRequired: runRequiredAll,
             parameterValues: {}
         });
         const commit = jest.fn();
@@ -192,11 +188,7 @@ describe("Run actions", () => {
             model: modelState
         } as any;
         const state = mockRunState({
-            runRequired: {
-                modelChanged: true,
-                parameterValueChanged: true,
-                endTimeChanged: true
-            },
+            runRequired: runRequiredAll,
             parameterValues,
             endTime: 99
         });
@@ -208,14 +200,15 @@ describe("Run actions", () => {
         expect(commit.mock.calls.length).toBe(1);
         const expectedMutation = stochastic ? RunMutation.SetResultDiscrete : RunMutation.SetResultOde;
         expect(commit.mock.calls[0][0]).toBe(expectedMutation);
-        const resultShared = {
-            inputs: { parameterValues, endTime: 99 },
-            error: {
-                detail: mockError.message,
-                error: "An error occurred while running the model"
-            }
+        const inputs = { parameterValues, endTime: 99 } as any;
+        if (stochastic) {
+            inputs.numberOfReplicates = 5;
+        }
+        const error = {
+            detail: mockError.message,
+            error: "An error occurred while running the model"
         };
-        const expectedResult = stochastic ? { ...resultShared, solution: null } : { ...resultShared, solution: null };
+        const expectedResult = stochastic ? { inputs, error, solution: null } : { inputs, error, solution: null };
         expect(commit.mock.calls[0][1]).toStrictEqual(expectedResult);
     };
 
@@ -255,12 +248,16 @@ describe("Run actions", () => {
                 endTime: 99
             }
         } as any;
+        if (stochastic) {
+            result.inputs.numberOfReplicates = 6;
+        }
 
         const state = mockRunState({
             runRequired: {
                 modelChanged: true,
                 parameterValueChanged: true,
-                endTimeChanged: true
+                endTimeChanged: true,
+                numberOfReplicatesChanged: true
             },
             parameterValues: { p1: 10, p2: 20 },
             endTime: 199,
@@ -278,14 +275,14 @@ describe("Run actions", () => {
         expect(run.mock.calls[0][3]).toBe(99); // end time from result
         if (stochastic) {
             expect(run.mock.calls[0][4]).toBe(0.1); // dt
-            expect(run.mock.calls[0][5]).toBe(5);
+            expect(run.mock.calls[0][5]).toBe(6); // Number of replicates
         }
 
         expect(commit.mock.calls.length).toBe(1);
         if (stochastic) {
             expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultDiscrete);
             expect(commit.mock.calls[0][1]).toEqual({
-                inputs: { parameterValues, endTime: 99 },
+                inputs: { parameterValues, endTime: 99, numberOfReplicates: 6 },
                 solution: "test discrete result",
                 error: null
             });

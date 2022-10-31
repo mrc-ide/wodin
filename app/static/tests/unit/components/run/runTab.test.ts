@@ -34,7 +34,8 @@ describe("RunTab", () => {
         runRequired: {
             modelChanged: false,
             parameterValueChanged: false,
-            endTimeChanged: false
+            endTimeChanged: false,
+            numberOfReplicatesChanged: false
         }
     };
 
@@ -203,7 +204,8 @@ describe("RunTab", () => {
         const runRequired = {
             modelChanged: true,
             parameterValueChanged: false,
-            endTimeChanged: false
+            endTimeChanged: false,
+            numberOfReplicatesChanged: false
         };
         const wrapper = getWrapper({ compileRequired: false }, { runRequired });
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(

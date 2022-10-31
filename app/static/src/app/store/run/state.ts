@@ -5,6 +5,7 @@ export interface RunUpdateRequiredReasons {
     modelChanged: boolean;
     parameterValueChanged: boolean;
     endTimeChanged: boolean;
+    numberOfReplicatesChanged: boolean;
 }
 
 export interface RunState {
