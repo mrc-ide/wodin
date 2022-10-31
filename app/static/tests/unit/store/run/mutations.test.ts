@@ -5,7 +5,8 @@ describe("Run mutations", () => {
     const noRunRequired = {
         endTimeChanged: false,
         modelChanged: false,
-        parameterValueChanged: false
+        parameterValueChanged: false,
+        numberOfReplicatesChanged: false
     };
 
     it("sets result ode", () => {
@@ -14,7 +15,8 @@ describe("Run mutations", () => {
             runRequired: {
                 endTimeChanged: false,
                 modelChanged: true,
-                parameterValueChanged: true
+                parameterValueChanged: true,
+                numberOfReplicatesChanged: false
             }
         });
         const result = {
@@ -28,7 +30,8 @@ describe("Run mutations", () => {
         expect(state.runRequired).toStrictEqual({
             endTimeChanged: false,
             modelChanged: false,
-            parameterValueChanged: false
+            parameterValueChanged: false,
+            numberOfReplicatesChanged: false
         });
     });
 
@@ -38,7 +41,8 @@ describe("Run mutations", () => {
             runRequired: {
                 endTimeChanged: false,
                 modelChanged: true,
-                parameterValueChanged: true
+                parameterValueChanged: true,
+                numberOfReplicatesChanged: false
             }
         });
         const result = {
@@ -52,7 +56,8 @@ describe("Run mutations", () => {
         expect(state.runRequired).toStrictEqual({
             endTimeChanged: false,
             modelChanged: false,
-            parameterValueChanged: false
+            parameterValueChanged: false,
+            numberOfReplicatesChanged: false
         });
     });
 
@@ -62,13 +67,15 @@ describe("Run mutations", () => {
         expect(state.runRequired).toStrictEqual({
             endTimeChanged: false,
             modelChanged: true,
-            parameterValueChanged: false
+            parameterValueChanged: false,
+            numberOfReplicatesChanged: false
         });
         mutations.SetRunRequired(state, { modelChanged: false });
         expect(state.runRequired).toStrictEqual({
             endTimeChanged: false,
             modelChanged: false,
-            parameterValueChanged: false
+            parameterValueChanged: false,
+            numberOfReplicatesChanged: false
         });
     });
 
@@ -89,7 +96,8 @@ describe("Run mutations", () => {
         expect(state.runRequired).toStrictEqual({
             endTimeChanged: false,
             modelChanged: false,
-            parameterValueChanged: true
+            parameterValueChanged: true,
+            numberOfReplicatesChanged: false
         });
     });
 
@@ -103,7 +111,8 @@ describe("Run mutations", () => {
         expect(state.runRequired).toStrictEqual({
             endTimeChanged: true,
             modelChanged: false,
-            parameterValueChanged: false
+            parameterValueChanged: false,
+            numberOfReplicatesChanged: false
         });
     });
 
@@ -123,7 +132,8 @@ describe("Run mutations", () => {
         expect(state.runRequired).toStrictEqual({
             endTimeChanged: false,
             modelChanged: false,
-            parameterValueChanged: false
+            parameterValueChanged: false,
+            numberOfReplicatesChanged: false
         });
         // increasing, even right up to the original limit, is fine
         mutations.SetEndTime(state, 100);
@@ -131,7 +141,8 @@ describe("Run mutations", () => {
         expect(state.runRequired).toStrictEqual({
             endTimeChanged: false,
             modelChanged: false,
-            parameterValueChanged: false
+            parameterValueChanged: false,
+            numberOfReplicatesChanged: false
         });
         // but any additional time requires a rerun
         mutations.SetEndTime(state, 101);
@@ -139,7 +150,8 @@ describe("Run mutations", () => {
         expect(state.runRequired).toStrictEqual({
             endTimeChanged: true,
             modelChanged: false,
-            parameterValueChanged: false
+            parameterValueChanged: false,
+            numberOfReplicatesChanged: false
         });
     });
 
@@ -159,5 +171,6 @@ describe("Run mutations", () => {
         const state = mockRunState();
         mutations.SetNumberOfReplicates(state, 12);
         expect(state.numberOfReplicates).toBe(12);
+        expect(state.runRequired.numberOfReplicatesChanged).toBe(true);
     });
 });
