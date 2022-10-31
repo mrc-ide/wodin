@@ -12,6 +12,7 @@ import { FitState } from "../fit/state";
 import { SessionsAction } from "../sessions/actions";
 import { localStorageManager } from "../../localStorageManager";
 import { AppStateGetter } from "./getters";
+import { InitialisePayload } from "../../types/types";
 
 export enum AppStateAction {
     Initialise = "Initialise",
@@ -20,31 +21,30 @@ export enum AppStateAction {
 
 async function immediateUploadState(context: ActionContext<AppState, AppState>) {
     const { commit, state } = context;
-    const { appName, sessionId } = state;
+    const { appName, appPath, sessionId } = state;
 
     commit(AppStateMutation.SetStateUploadInProgress, true);
     await api<AppStateMutation, ErrorsMutation>(context)
         .ignoreSuccess()
         .withError(ErrorsMutation.AddError)
-        .post(`/apps/${appName}/sessions/${sessionId}`, serialiseState(state));
+        .post(`/${appPath}/${appName}/sessions/${sessionId}`, serialiseState(state));
     commit(AppStateMutation.SetStateUploadInProgress, false);
 }
 
 const getStateUploadInterval = (state: AppState) => state.config?.stateUploadIntervalMillis || 2000;
-
-interface InitialisePayload {
-    appName: string,
-    baseUrl: string,
-    loadSessionId: string
-}
 
 export const appStateActions: ActionTree<AppState, AppState> = {
     async [AppStateAction.Initialise](context, payload: InitialisePayload) {
         const {
             commit, state, dispatch, getters
         } = context;
-        const { appName, baseUrl, loadSessionId } = payload;
-        commit(AppStateMutation.SetApp, { appName, baseUrl });
+        const {
+            appName,
+            baseUrl,
+            loadSessionId,
+            appPath
+        } = payload;
+        commit(AppStateMutation.SetApp, { appName, baseUrl, appPath });
         localStorageManager.addSessionId(appName, getters[AppStateGetter.baseUrlPath], state.sessionId);
 
         const response = await api(context)
