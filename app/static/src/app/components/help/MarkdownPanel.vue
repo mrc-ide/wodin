@@ -5,6 +5,7 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import * as MarkdownIt from "markdown-it";
+import * as MarkdownItMathjax from "markdown-it-mathjax";
 
 export default defineComponent({
     name: "MarkdownPanel",
@@ -16,7 +17,7 @@ export default defineComponent({
             if (!props.markdown) {
                 return "";
             }
-            const md = new MarkdownIt();
+            const md = new MarkdownIt().use(MarkdownItMathjax);
             return md.render(props.markdown);
         });
 
