@@ -94,7 +94,7 @@ export default defineComponent({
         const stochasticResultSummary = computed(() => {
             if (isStochastic.value) {
                 const solution = store.state.run.resultDiscrete?.solution;
-                const times = {mode: "grid", times: [0]};
+                const times = { mode: "grid", times: [0] };
                 return solution ? `Stochastic series count: ${solution(times).values.length}`
                     : "Stochastic model has not run";
             }

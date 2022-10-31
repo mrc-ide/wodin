@@ -21,7 +21,7 @@ export const config = {
 
 export function filterSeriesSet(s: OdinSeriesSet, name: string): OdinSeriesSet {
     const idx = s.values.findIndex((el) => el.name === name);
-    const y = s.values[idx].y;
+    const { y } = s.values[idx];
     return {
         x: s.x,
         values: [{ name, y }]
