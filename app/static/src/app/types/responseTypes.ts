@@ -68,10 +68,14 @@ export interface OdinModelResponse{
 }
 
 // This is Odin's SeriesSet
+export interface OdinSeriesSetValues {
+    name: string;
+    y: number[];
+}
+
 export type OdinSeriesSet = {
-    names: string[];
     x: number[];
-    y: number[][];
+    values: OdinSeriesSetValues[];
 }
 
 export interface TimeGrid {
@@ -86,8 +90,10 @@ export interface TimeGiven {
     times: number[];
 }
 
+export type Times = TimeGrid | TimeGiven;
+
 // This is Odin's InterpolatedSolution
-export type OdinSolution = (times: TimeGrid | TimeGiven) => OdinSeriesSet;
+export type OdinSolution = (times: Times) => OdinSeriesSet;
 
 export interface OdinFitData {
     time: number[],
