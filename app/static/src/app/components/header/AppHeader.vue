@@ -52,7 +52,7 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const baseUrl = computed(() => store.state.baseUrl);
-        const initialised = computed(() => !!(store.state.appName && baseUrl.value));
+        const initialised = computed(() => !!(store.state.appName && baseUrl.value && store.state.appsPath));
         const editSessionLabelOpen = ref(false);
 
         const toggleEditSessionLabel = (edit: boolean) => {

@@ -32,6 +32,7 @@ export class AppsController {
             const viewOptions = {
                 appName,
                 baseUrl,
+                appsPath,
                 title: `${config.title} - ${wodinConfig.courseTitle}`,
                 appTitle: config.title,
                 courseTitle: wodinConfig.courseTitle,

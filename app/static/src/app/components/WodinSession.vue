@@ -23,7 +23,7 @@ export default defineComponent({
     },
     setup(props) {
         const store = useStore();
-        const initialised = computed(() => !!(store.state.appName && store.state.baseUrl));
+        const initialised = computed(() => !!(store.state.appName && store.state.baseUrl && store.state.appsPath));
         onMounted(() => {
             if (props.shareNotFound) {
                 store.commit(`errors/${ErrorsMutation.AddError}`,
