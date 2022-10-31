@@ -216,7 +216,8 @@ describe("serialise", () => {
         runRequired: {
             modelChanged: false,
             parameterValueChanged: false,
-            endTimeChanged: false
+            endTimeChanged: false,
+            numberOfReplicatesChanged: false
         },
         parameterValues: runState.parameterValues,
         endTime: 20,
