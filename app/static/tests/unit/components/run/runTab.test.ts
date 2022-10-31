@@ -19,7 +19,7 @@ import ActionRequiredMessage from "../../../../src/app/components/ActionRequired
 import DownloadOutput from "../../../../src/app/components/DownloadOutput.vue";
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import { StochasticState } from "../../../../src/app/store/stochastic/state";
-import { OdinRunnerDiscrete } from "../../../../src/app/types/responseTypes";
+import { DiscreteSeriesSet, OdinRunnerDiscrete } from "../../../../src/app/types/responseTypes";
 import { OdinRunResultDiscrete } from "../../../../src/app/types/wrapperTypes";
 import { ModelGetter } from "../../../../src/app/store/model/getters";
 
@@ -131,13 +131,14 @@ describe("RunTab", () => {
     });
 
     it("shows placeholder when app is stochastic and has run", () => {
+        const series = {
+            values: [
+                { name: "series 1" },
+                { name: "series 2" }
+            ]
+        } as DiscreteSeriesSet;
         const wrapper = getStochasticWrapper({}, {
-            seriesSet: {
-                values: [
-                    { name: "series 1" },
-                    { name: "series 2" }
-                ]
-            } as any
+            solution: (time: any) => series
         });
         expect(wrapper.find("#stochastic-run-placeholder").text()).toBe("Stochastic series count: 2");
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
