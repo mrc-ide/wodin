@@ -67,7 +67,7 @@ export interface OdinModelResponse{
     error?: OdinModelResponseError
 }
 
-// This is Odin's SeriesSet
+// This is Odin's SeriesSetValues and SeriesSet
 export interface OdinSeriesSetValues {
     name: string;
     y: number[];
