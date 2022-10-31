@@ -18,7 +18,8 @@ export enum RunMutation {
 const runRequiredNone = {
     modelChanged: false,
     parameterValueChanged: false,
-    endTimeChanged: false
+    endTimeChanged: false,
+    numberOfReplicatesChanged: false
 };
 
 export const mutations: MutationTree<RunState> = {
@@ -73,6 +74,12 @@ export const mutations: MutationTree<RunState> = {
     },
 
     [RunMutation.SetNumberOfReplicates](state: RunState, payload: number) {
-        state.numberOfReplicates = payload;
+        if (payload !== state.numberOfReplicates) {
+            state.numberOfReplicates = payload;
+            state.runRequired = {
+                ...state.runRequired,
+                numberOfReplicatesChanged: true
+            };
+        }
     }
 };

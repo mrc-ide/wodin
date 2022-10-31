@@ -12,6 +12,10 @@ export interface OdinRunInputs {
     endTime: number;
 }
 
+export interface OdinRunDiscreteInputs extends OdinRunInputs {
+    numberOfReplicates: number
+}
+
 export interface OdinRunResultOde {
     inputs: OdinRunInputs;
     solution: OdinSolution | null;
@@ -19,7 +23,7 @@ export interface OdinRunResultOde {
 }
 
 export interface OdinRunResultDiscrete {
-    inputs: OdinRunInputs;
+    inputs: OdinRunDiscreteInputs;
     seriesSet: DiscreteSeriesSet | null;
     error: WodinError | null;
 }
