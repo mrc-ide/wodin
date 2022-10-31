@@ -30,7 +30,8 @@ describe("SessionsPage", () => {
             state: mockBasicState({
                 appName: "testApp",
                 sessionId: "abc",
-                baseUrl: "http://localhost:3000"
+                baseUrl: "http://localhost:3000",
+                appsPath: "apps"
             }),
             modules: {
                 sessions: {

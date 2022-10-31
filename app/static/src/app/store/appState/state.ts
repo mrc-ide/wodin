@@ -24,7 +24,6 @@ export interface AppState {
     appName: null | string,
     baseUrl: null | string,
     appsPath: null | string,
-    test: string
     appType: AppType
     openVisualisationTab: VisualisationTab
     queuedStateUploadIntervalId: number
