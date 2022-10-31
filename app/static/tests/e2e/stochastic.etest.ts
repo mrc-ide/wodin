@@ -32,6 +32,7 @@ test.describe("stochastic app", () => {
         await page.click("#run-btn");
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("");
 
-        await expect(await page.innerText("#stochastic-run-placeholder")).toBe("Stochastic series count: 16");
+        // number of series should have increased by 2
+        expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(16);
     });
 });
