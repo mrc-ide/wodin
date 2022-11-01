@@ -136,7 +136,7 @@ describe("ModelFit actions", () => {
             expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
             expect(commit.mock.calls[1][1]).toBe(result.data.pars);
             expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
-            expect(commit.mock.calls[2][0]).toBe(`run/${RunMutation.SetResult}`);
+            expect(commit.mock.calls[2][0]).toBe(`run/${RunMutation.SetResultOde}`);
             expect(commit.mock.calls[2][1]).toStrictEqual({
                 inputs: { endTime: 99, parameterValues: {} },
                 solution: "solution",
@@ -176,7 +176,7 @@ describe("ModelFit actions", () => {
             expect(commit).toHaveBeenCalledTimes(5);
             expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetResult);
             expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
-            expect(commit.mock.calls[2][0]).toBe(`run/${RunMutation.SetResult}`);
+            expect(commit.mock.calls[2][0]).toBe(`run/${RunMutation.SetResultOde}`);
             expect(commit.mock.calls[3][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
             expect(commit.mock.calls[4][0]).toBe(ModelFitMutation.SetFitting);
             expect(commit.mock.calls[4][1]).toBe(false);

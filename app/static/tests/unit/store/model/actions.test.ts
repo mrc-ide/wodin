@@ -1,6 +1,6 @@
 import Vuex from "vuex";
 import {
-    mockAxios, mockBasicState, mockCodeState, mockFailure, mockModelState, mockRunState, mockRunner, mockSuccess
+    mockAxios, mockBasicState, mockCodeState, mockFailure, mockModelState, mockRunState, mockRunnerOde, mockSuccess
 } from "../../../mocks";
 import { actions, ModelAction } from "../../../../src/app/store/model/actions";
 import { ModelMutation, mutations } from "../../../../src/app/store/model/mutations";
@@ -39,16 +39,30 @@ describe("Model actions", () => {
         }
     };
 
-    it("fetches odin runner", async () => {
+    it("fetches odin runner ode", async () => {
         const mockRunnerScript = "() => \"runner\"";
         mockAxios.onGet("/odin/runner/ode")
             .reply(200, mockSuccess(mockRunnerScript));
 
         const commit = jest.fn();
-        await (actions[ModelAction.FetchOdinRunnerOde] as any)({ commit, rootState });
+        await (actions[ModelAction.FetchOdinRunner] as any)({ commit, rootState });
 
         expect(commit.mock.calls.length).toBe(1);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinRunnerOde);
+        expect(commit.mock.calls[0][1]).toBe(mockRunnerScript);
+    });
+
+    it("fetches odin runner discrete", async () => {
+        const stochasticRootState = { ...rootState, appType: AppType.Stochastic };
+        const mockRunnerScript = "() => \"runner\"";
+        mockAxios.onGet("/odin/runner/discrete")
+            .reply(200, mockSuccess(mockRunnerScript));
+
+        const commit = jest.fn();
+        await (actions[ModelAction.FetchOdinRunner] as any)({ commit, rootState: stochasticRootState });
+
+        expect(commit.mock.calls.length).toBe(1);
+        expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinRunnerDiscrete);
         expect(commit.mock.calls[0][1]).toBe(mockRunnerScript);
     });
 
@@ -57,31 +71,7 @@ describe("Model actions", () => {
             .reply(500, mockFailure("server error"));
 
         const commit = jest.fn();
-        await (actions[ModelAction.FetchOdinRunnerOde] as any)({ commit, rootState });
-
-        expect(commit.mock.calls[0][0]).toBe("errors/AddError");
-        expect(commit.mock.calls[0][1].detail).toBe("server error");
-    });
-
-    it("fetches discrete-time runner", async () => {
-        const mockRunnerScript = "() => \"runner\"";
-        mockAxios.onGet("/odin/runner/discrete")
-            .reply(200, mockSuccess(mockRunnerScript));
-
-        const commit = jest.fn();
-        await (actions[ModelAction.FetchOdinRunnerDiscrete] as any)({ commit, rootState });
-
-        expect(commit.mock.calls.length).toBe(1);
-        expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinRunnerDiscrete);
-        expect(commit.mock.calls[0][1]).toBe(mockRunnerScript);
-    });
-
-    it("commits error from fetch discrete runner", async () => {
-        mockAxios.onGet("/odin/runner/discrete")
-            .reply(500, mockFailure("server error"));
-
-        const commit = jest.fn();
-        await (actions[ModelAction.FetchOdinRunnerDiscrete] as any)({ commit, rootState });
+        await (actions[ModelAction.FetchOdinRunner] as any)({ commit, rootState });
 
         expect(commit.mock.calls[0][0]).toBe("errors/AddError");
         expect(commit.mock.calls[0][1].detail).toBe("server error");
@@ -319,7 +309,7 @@ describe("Model actions", () => {
     // compile, and that causes the mocks to be very confused.
     it("DefaultModel fetches, compiles and runs default model synchronously", async () => {
         // Use real store so can trace the flow of updates through the state
-        const runner = mockRunner();
+        const runner = mockRunnerOde();
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
@@ -412,7 +402,7 @@ describe("Model actions", () => {
         expect(run.mock.calls[0][2]).toBe(0); // start
         expect(run.mock.calls[0][3]).toBe(99); // end
 
-        expect(commit.mock.calls[9][0]).toBe(`run/${RunMutation.SetResult}`);
+        expect(commit.mock.calls[9][0]).toBe(`run/${RunMutation.SetResultOde}`);
         expect(commit.mock.calls[9][1]).toEqual({
             error: null,
             inputs: { endTime: 99, parameterValues: { p1: 1 } },

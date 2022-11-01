@@ -26,17 +26,16 @@ import { WodinExcelDownload } from "../../src/app/wodinExcelDownload";
 
 const mockSolution = jest.fn().mockImplementation((options) => {
     const x = options.mode === "grid" ? [options.tStart, options.tEnd] : options.times;
-    const names = ["A", "B"];
-    const y = [
-        x.map((xVal: number) => 1 + xVal),
-        x.map((xVal: number) => 10 * xVal)
+    const values = [
+        { name: "A", y: x.map((xVal: number) => 1 + xVal) },
+        { name: "B", y: x.map((xVal: number) => 10 * xVal) }
     ];
-    return { x, names, y };
+    return { x, values };
 });
 
 describe("WodinExcelDownload", () => {
     const runState = mockRunState({
-        result: { solution: mockSolution } as any,
+        resultOde: { solution: mockSolution } as any,
         endTime: 10,
         parameterValues: { v1: 1.1, v2: 2.2 }
     });
@@ -150,7 +149,7 @@ describe("WodinExcelDownload", () => {
     it("commits any error thrown during download", () => {
         const errorRunState = {
             ...runState,
-            result: {
+            resultOde: {
                 solution: jest.fn().mockImplementation(() => { throw new Error("test error"); })
             } as any
         };
