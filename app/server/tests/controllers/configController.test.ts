@@ -1,12 +1,12 @@
 import { ConfigController } from "../../src/controllers/configController";
 import * as jsonResponse from "../../src/jsonResponse";
 import { ConfigReader } from "../../src/configReader";
-import { DefaultCodeReader } from "../../src/defaultCodeReader";
+import { AppFileReader } from "../../src/defaultCodeReader";
 import { ErrorType } from "../../src/errors/errorType";
 import { WodinError } from "../../src/errors/wodinError";
 
 describe("configController", () => {
-    const getRequest = (configReader: ConfigReader, defaultCodeReader: DefaultCodeReader) => {
+    const getRequest = (configReader: ConfigReader, defaultCodeReader: AppFileReader) => {
         return {
             params: {
                 appName: "TestApp"
