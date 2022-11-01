@@ -4,8 +4,7 @@
       :placeholder-message="placeholderMessage"
       :end-time="endTime"
       :plot-data="allPlotData"
-      :redraw-watches="[seriesSet]"
-      :recalculate-on-relayout="false">
+      :redrawWatches="solution ? [solution] : []">
     <slot></slot>
   </wodin-plot>
 </template>
@@ -30,24 +29,27 @@ export default defineComponent({
 
         const placeholderMessage = userMessages.run.notRunYet;
 
-        const seriesSet = computed(() => (store.state.run.resultDiscrete?.seriesSet));
+        const solution = computed(() => (store.state.run.resultDiscrete?.solution));
 
         const endTime = computed(() => store.state.run.endTime);
 
         const palette = computed(() => store.state.model.paletteModel);
 
-        const allPlotData = (): WodinPlotData => {
-            if (seriesSet.value) {
-                return discreteSeriesSetToPlotly(seriesSet.value, palette.value);
+        const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
+            const result = solution.value && solution.value({
+                mode: "grid", tStart: start, tEnd: end, nPoints: points
+            });
+            if (!result) {
+                return [];
             }
-            return [];
+            return discreteSeriesSetToPlotly(result, palette.value);
         };
 
         return {
             placeholderMessage,
             endTime,
-            seriesSet,
-            allPlotData
+            allPlotData,
+            solution
         };
     }
 });

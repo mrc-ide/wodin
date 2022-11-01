@@ -10,15 +10,16 @@ import { StochasticState } from "../../../../src/app/store/stochastic/state";
 import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
 
 describe("RunPlot", () => {
+    const mockSolution = jest.fn().mockReturnValue({
+        x: [0, 1],
+        values: [
+            { mode: "Individual", name: "S", y: [10, 20] },
+            { mode: "Mean", name: "I", y: [5, 10] }
+        ]
+    });
     const mockResult = {
         inputs: {},
-        seriesSet: {
-            x: [0, 1],
-            values: [
-                { mode: "Individual", name: "S", y: [10, 20] },
-                { mode: "Mean", name: "I", y: [5, 10] }
-            ]
-        },
+        solution: mockSolution,
         error: null
     };
 
@@ -56,8 +57,8 @@ describe("RunPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockResult.seriesSet]);
-        expect(wodinPlot.props("recalculateOnRelayout")).toBe(false);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution]);
+        expect(wodinPlot.props("recalculateOnRelayout")).toBe(true);
 
         // Generates expected plot data from model
         const plotData = wodinPlot.props("plotData");
