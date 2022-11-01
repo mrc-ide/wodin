@@ -12,9 +12,11 @@ describe("odinToPlotly", () => {
     };
 
     const series = {
-        names: ["a", "b"],
         x: [0, 1],
-        y: [[30, 40], [50, 60]]
+        values: [
+            { name: "a", y: [30, 40] },
+            { name: "b", y: [50, 60] }
+        ]
     };
 
     it("uses default options", () => {

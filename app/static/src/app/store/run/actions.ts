@@ -41,15 +41,15 @@ const runDiscreteModel = (parameterValues: OdinUserType, startTime: number, endT
     if (rootState.model.odinRunnerDiscrete) {
         const payload : OdinRunResultDiscrete = {
             inputs: { endTime, parameterValues, numberOfReplicates },
-            seriesSet: null,
+            solution: null,
             error: null
         };
 
         try {
             const dt = rootState.model.odinModelResponse!.metadata!.dt || 0.1;
-            const seriesSet = rootState.model.odinRunnerDiscrete.wodinRunDiscrete(rootState.model.odin!,
+            const solution = rootState.model.odinRunnerDiscrete.wodinRunDiscrete(rootState.model.odin!,
                 parameterValues, startTime, endTime, dt, numberOfReplicates);
-            payload.seriesSet = seriesSet;
+            payload.solution = solution;
         } catch (e) {
             payload.error = {
                 error: userMessages.errors.wodinRunError,

@@ -80,7 +80,7 @@ describe("serialise", () => {
                 endTime: 5,
                 numberOfReplicates: 6
             },
-            seriesSet: { values: "test series set" } as any,
+            solution: jest.fn(),
             error: { error: "run discrete error", detail: "run discrete error detail" }
         },
         userDownloadFileName: "",
@@ -315,7 +315,7 @@ describe("serialise", () => {
                 },
                 resultDiscrete: {
                     ...runState.resultDiscrete,
-                    seriesSet: null
+                    solution: null
                 }
             },
             sensitivity: {

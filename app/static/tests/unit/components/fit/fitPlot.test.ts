@@ -12,20 +12,18 @@ import { OdinFitResult } from "../../../../src/app/types/wrapperTypes";
 
 describe("FitPlot", () => {
     const mockSolution = jest.fn().mockReturnValue({
-        names: ["y", "z"],
         x: [0, 0.5, 1],
-        y: [
-            [5, 6, 7],
-            [1, 2, 3]
+        values: [
+            { name: "y", y: [5, 6, 7] },
+            { name: "z", y: [1, 2, 3] }
         ]
     });
 
     const mockRunSolution = jest.fn().mockReturnValue({
-        names: ["y", "z"],
         x: [0, 0.5, 1],
-        y: [
-            [50, 60, 70],
-            [10, 20, 30]
+        values: [
+            { name: "y", y: [50, 60, 70] },
+            { name: "z", y: [10, 20, 30] }
         ]
     });
 

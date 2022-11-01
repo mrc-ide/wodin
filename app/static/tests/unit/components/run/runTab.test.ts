@@ -20,7 +20,7 @@ import ActionRequiredMessage from "../../../../src/app/components/ActionRequired
 import DownloadOutput from "../../../../src/app/components/DownloadOutput.vue";
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import { StochasticState } from "../../../../src/app/store/stochastic/state";
-import { OdinRunnerDiscrete } from "../../../../src/app/types/responseTypes";
+import { DiscreteSeriesSet, OdinRunnerDiscrete } from "../../../../src/app/types/responseTypes";
 import { OdinRunResultDiscrete } from "../../../../src/app/types/wrapperTypes";
 import { ModelGetter } from "../../../../src/app/store/model/getters";
 
@@ -129,7 +129,6 @@ describe("RunTab", () => {
         const wrapper = getStochasticWrapper({}, {
             seriesSet: {} as any
         });
-
         expect(wrapper.findComponent(RunStochasticPlot).props("fadePlot")).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         expect(wrapper.findComponent(RunPlot).exists()).toBe(false);

@@ -22,11 +22,11 @@ export const config = {
 };
 
 export function filterSeriesSet(s: OdinSeriesSet, name: string): OdinSeriesSet {
-    const idx = s.names.indexOf(name);
+    const idx = s.values.findIndex((el) => el.name === name);
+    const { y } = s.values[idx];
     return {
-        names: [s.names[idx]],
         x: s.x,
-        y: [s.y[idx]]
+        values: [{ name, y }]
     };
 }
 
@@ -54,17 +54,17 @@ export function odinToPlotly(s: OdinSeriesSet, palette: Palette, options: Partia
         ...options
     };
 
-    return s.y.map(
-        (el: number[], i: number): Partial<PlotData> => ({
+    return s.values.map(
+        (el): Partial<PlotData> => ({
             mode: "lines",
             line: {
-                color: palette[s.names[i]],
+                color: palette[el.name],
                 width: plotlyOptions.lineWidth
             },
-            name: s.names[i],
+            name: el.name,
             x: s.x,
-            y: s.y[i],
-            legendgroup: plotlyOptions.includeLegendGroup ? s.names[i] : undefined,
+            y: el.y,
+            legendgroup: plotlyOptions.includeLegendGroup ? el.name : undefined,
             showlegend: plotlyOptions.showLegend
         })
     );

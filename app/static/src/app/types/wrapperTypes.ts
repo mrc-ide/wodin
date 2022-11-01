@@ -1,6 +1,7 @@
 import {
     Batch,
-    BatchPars, DiscreteSeriesSet,
+    BatchPars,
+    FilteredDiscreteSolution,
     OdinSolution,
     OdinUserType,
     WodinError
@@ -24,7 +25,7 @@ export interface OdinRunResultOde {
 
 export interface OdinRunResultDiscrete {
     inputs: OdinRunDiscreteInputs;
-    seriesSet: DiscreteSeriesSet | null;
+    solution: FilteredDiscreteSolution | null;
     error: WodinError | null;
 }
 

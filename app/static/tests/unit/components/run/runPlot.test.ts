@@ -13,7 +13,10 @@ describe("RunPlot", () => {
     const mockSolution = jest.fn().mockReturnValue({
         names: ["S", "I"],
         x: [0, 1],
-        y: [[3, 4], [5, 6]]
+        values: [
+            { name: "S", y: [3, 4] },
+            { name: "I", y: [5, 6] }
+        ]
     });
     const mockResult = {
         inputs: {},
