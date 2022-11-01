@@ -30,7 +30,7 @@ const exampleHelp: string = `
 In the next example we consider a model of infection transmission within a closed popluation (no births or deaths): the susceptible-infected-susceptible (SIS) model.
 
 In this model we consider two types of event:
-    Infection events, which occur in each time step with probability $((\\beta  I dt)/N\\)$ per susceptible individual, and
+    Infection events, which occur in each time step with probability $((\\beta  I dt)/N)$ per susceptible individual, and
     Recovery events, which occur in each time step with a probability $(\\nu  dt\\)$ per infected individual.
 
 The ODE representation of the model is:
@@ -46,7 +46,9 @@ where $I_0$ is the initial number of infected individuals and $I^*=N(1-\\nu / \\
 
 $$I^*= N \\left(1-\\frac{1}{R_0} \\right)$$
 
-since \\(R_0\\) is defined as \\(\\beta ⁄\\nu \\). At this point, we say that the disease is endemic in the population.
+since $R_0$ is defined as $(\\beta ⁄\\nu)$. At this point, we say that the disease is endemic in the population.
+
+Here is an example image: ![example image](/example_img.png)
 `;
 
 export const appStateMutations: MutationTree<AppState> = {

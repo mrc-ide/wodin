@@ -6,11 +6,13 @@ export const defaultState: RunState = {
     runRequired: {
         modelChanged: false,
         parameterValueChanged: false,
-        endTimeChanged: false
+        endTimeChanged: false,
+        numberOfReplicatesChanged: false
     },
     parameterValues: null,
     endTime: 100,
-    result: null,
+    resultOde: null,
+    resultDiscrete: null,
     userDownloadFileName: "",
     downloading: false,
     numberOfReplicates: 5

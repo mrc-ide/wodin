@@ -1,11 +1,12 @@
 import { MutationTree } from "vuex";
 import { RunState, RunUpdateRequiredReasons } from "./state";
 import { OdinUserType } from "../../types/responseTypes";
-import { OdinRunResult } from "../../types/wrapperTypes";
+import { OdinRunResultDiscrete, OdinRunResultOde } from "../../types/wrapperTypes";
 
 export enum RunMutation {
     SetRunRequired = "SetRunRequired",
-    SetResult = "SetResult",
+    SetResultOde = "SetResultOde",
+    SetResultDiscrete = "SetResultDiscrete",
     SetParameterValues = "SetParameterValues",
     UpdateParameterValues = "UpdateParameterValues",
     SetEndTime = "SetEndTime",
@@ -14,14 +15,22 @@ export enum RunMutation {
     SetNumberOfReplicates = "SetNumberOfReplicates"
 }
 
+const runRequiredNone = {
+    modelChanged: false,
+    parameterValueChanged: false,
+    endTimeChanged: false,
+    numberOfReplicatesChanged: false
+};
+
 export const mutations: MutationTree<RunState> = {
-    [RunMutation.SetResult](state: RunState, payload: OdinRunResult) {
-        state.result = payload;
-        state.runRequired = {
-            modelChanged: false,
-            parameterValueChanged: false,
-            endTimeChanged: false
-        };
+    [RunMutation.SetResultOde](state: RunState, payload: OdinRunResultOde) {
+        state.resultOde = payload;
+        state.runRequired = runRequiredNone;
+    },
+
+    [RunMutation.SetResultDiscrete](state: RunState, payload: OdinRunResultDiscrete) {
+        state.resultDiscrete = payload;
+        state.runRequired = runRequiredNone;
     },
 
     [RunMutation.SetRunRequired](state: RunState, payload: Partial<RunUpdateRequiredReasons>) {
@@ -49,7 +58,7 @@ export const mutations: MutationTree<RunState> = {
 
     [RunMutation.SetEndTime](state: RunState, payload: number) {
         state.endTime = payload;
-        const prevEndTime = state.result?.inputs?.endTime ? state.result.inputs.endTime : -1;
+        const prevEndTime = state.resultOde?.inputs?.endTime ? state.resultOde.inputs.endTime : -1;
         state.runRequired = {
             ...state.runRequired,
             endTimeChanged: payload > prevEndTime
@@ -65,6 +74,12 @@ export const mutations: MutationTree<RunState> = {
     },
 
     [RunMutation.SetNumberOfReplicates](state: RunState, payload: number) {
-        state.numberOfReplicates = payload;
+        if (payload !== state.numberOfReplicates) {
+            state.numberOfReplicates = payload;
+            state.runRequired = {
+                ...state.runRequired,
+                numberOfReplicatesChanged: true
+            };
+        }
     }
 };

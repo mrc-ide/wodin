@@ -34,9 +34,11 @@ describe("SensitivitySummaryPlot", () => {
     const mockSetPlotTime = jest.fn();
 
     const mockData = {
-        names: ["S", "I"],
         x: [1, 1.1],
-        y: [[10, 10.1], [20, 19.9]]
+        values: [
+            { name: "S", y: [10, 10.1] },
+            { name: "I", y: [20, 19.9] }
+        ]
     };
 
     const mockValueAtTime = jest.fn().mockReturnValue(mockData);

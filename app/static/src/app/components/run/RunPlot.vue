@@ -30,7 +30,7 @@ export default defineComponent({
 
         const placeholderMessage = userMessages.run.notRunYet;
 
-        const solution = computed(() => (store.state.run.result?.solution));
+        const solution = computed(() => (store.state.run.resultOde?.solution));
 
         const endTime = computed(() => store.state.run.endTime);
 

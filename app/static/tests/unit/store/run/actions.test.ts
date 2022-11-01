@@ -1,7 +1,7 @@
 import Mock = jest.Mock;
 import { RunMutation } from "../../../../src/app/store/run/mutations";
 import {
-    mockModelState, mockRunState, mockRunner
+    mockModelState, mockRunnerDiscrete, mockRunnerOde, mockRunState
 } from "../../../mocks";
 import { WodinExcelDownload } from "../../../../src/app/wodinExcelDownload";
 import { actions, RunAction } from "../../../../src/app/store/run/actions";
@@ -14,11 +14,18 @@ describe("Run actions", () => {
     const mockWodinExcelDownload = WodinExcelDownload as any as Mock;
     mockWodinExcelDownload.mockImplementation(() => ({ downloadModelOutput: mockDownloadModelOutput }));
 
-    it("runs model and updates required action", () => {
+    const runRequiredAll = {
+        modelChanged: true,
+        parameterValueChanged: true,
+        endTimeChanged: true,
+        numberOfReplicatesChanged: true
+    };
+
+    it("runs model for ode app", () => {
         const mockOdin = {} as any;
 
         const parameterValues = { p1: 1, p2: 2 };
-        const runner = mockRunner();
+        const runner = mockRunnerOde();
         const modelState = mockModelState({
             odinRunnerOde: runner,
             odin: mockOdin,
@@ -29,11 +36,7 @@ describe("Run actions", () => {
             model: modelState
         } as any;
         const state = mockRunState({
-            runRequired: {
-                modelChanged: true,
-                parameterValueChanged: true,
-                endTimeChanged: true
-            },
+            runRequired: runRequiredAll,
             parameterValues,
             endTime: 99
         });
@@ -48,7 +51,7 @@ describe("Run actions", () => {
         expect(run.mock.calls[0][3]).toBe(99); // end time from state
 
         expect(commit.mock.calls.length).toBe(1);
-        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResult);
+        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultOde);
         expect(commit.mock.calls[0][1]).toEqual({
             inputs: { parameterValues, endTime: 99 },
             solution: "test solution",
@@ -56,46 +59,69 @@ describe("Run actions", () => {
         });
     });
 
-    it("run does nothing if app is stochastic", () => {
-        const runner = mockRunner();
+    it("runs model for stochastic app", () => {
+        const mockOdin = {} as any;
+
+        const parameterValues = { p1: 1, p2: 2 };
+        const runner = mockRunnerDiscrete();
         const modelState = mockModelState({
-            odin: runner,
-            odinRunnerOde: {} as any
+            odinRunnerDiscrete: runner,
+            odin: mockOdin,
+            odinModelResponse: {
+                metadata: {
+                    dt: 0.1
+                }
+            } as any,
+            compileRequired: false
         });
         const rootState = {
             appType: AppType.Stochastic,
             model: modelState
         } as any;
+        const state = mockRunState({
+            runRequired: runRequiredAll,
+            parameterValues,
+            endTime: 99,
+            numberOfReplicates: 10
+        });
         const commit = jest.fn();
-        const state = mockRunState();
 
         (actions[RunAction.RunModel] as any)({ commit, state, rootState });
 
-        expect(runner.wodinRun).not.toHaveBeenCalled();
-        expect(commit).not.toHaveBeenCalled();
+        const run = runner.wodinRunDiscrete;
+        expect(run.mock.calls[0][0]).toBe(mockOdin);
+        expect(run.mock.calls[0][1]).toStrictEqual(parameterValues);
+        expect(run.mock.calls[0][2]).toBe(0); // start
+        expect(run.mock.calls[0][3]).toBe(99); // end time from state
+        expect(run.mock.calls[0][4]).toBe(0.1);// dt
+        expect(run.mock.calls[0][5]).toBe(10);// number of replicates
+
+        expect(commit.mock.calls.length).toBe(1);
+        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultDiscrete);
+        expect(commit.mock.calls[0][1]).toEqual({
+            inputs: { parameterValues, endTime: 99, numberOfReplicates: 10 },
+            solution: "test discrete result",
+            error: null
+        });
     });
 
     it("run model does not update required action if required action was not run", () => {
         const mockOdin = {} as any;
         const modelState = mockModelState({
-            odinRunnerOde: mockRunner(),
+            odinRunnerOde: mockRunnerOde(),
             odin: mockOdin,
             compileRequired: true
         });
         const rootState = { model: modelState } as any;
         const state = mockRunState({
-            runRequired: {
-                modelChanged: false,
-                parameterValueChanged: false,
-                endTimeChanged: false
-            },
+            runRequired: runRequiredAll,
             parameterValues: {}
         });
         const commit = jest.fn();
 
         (actions[RunAction.RunModel] as any)({ commit, state, rootState });
         expect(commit.mock.calls.length).toBe(1);
-        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResult);
+        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultOde);
     });
 
     it("run model does nothing if odin runner is not set", () => {
@@ -117,7 +143,7 @@ describe("Run actions", () => {
     });
 
     it("run model does nothing if odin is not set", () => {
-        const runner = mockRunner();
+        const runner = mockRunnerOde();
         const modelState = mockModelState({
             odinRunnerOde: runner,
             odin: null
@@ -134,33 +160,35 @@ describe("Run actions", () => {
         expect(runner.wodinRun).not.toHaveBeenCalled();
     });
 
-    it("runs model throws exception when error in code run model", () => {
+    const testCommitsErrorOnRunModel = (stochastic: boolean) => {
         const mockError = new Error("test");
         const mockOdin = {} as any;
-        const mockRunnerWithThrownException = () => {
-            return {
-                wodinRun: jest.fn().mockImplementation(() => {
-                    throw mockError;
-                })
-            } as any;
-        };
+        const mockRunMethod = jest.fn().mockImplementation(() => {
+            throw mockError;
+        });
+        const runner = {
+            wodinRun: stochastic ? undefined : mockRunMethod,
+            wodinRunDiscrete: stochastic ? mockRunMethod : undefined
+        } as any;
 
         const parameterValues = { p1: 1, p2: 2 };
-        const runner = mockRunnerWithThrownException();
         const modelState = mockModelState({
-            odinRunnerOde: runner,
+            odinRunnerOde: stochastic ? null : runner,
+            odinRunnerDiscrete: stochastic ? runner : null,
             odin: mockOdin,
+            odinModelResponse: {
+                metadata: {
+                    dt: 0.1
+                }
+            } as any,
             compileRequired: false
         });
         const rootState = {
+            appType: stochastic ? AppType.Stochastic : AppType.Fit,
             model: modelState
         } as any;
         const state = mockRunState({
-            runRequired: {
-                modelChanged: true,
-                parameterValueChanged: true,
-                endTimeChanged: true
-            },
+            runRequired: runRequiredAll,
             parameterValues,
             endTime: 99
         });
@@ -168,64 +196,112 @@ describe("Run actions", () => {
 
         (actions[RunAction.RunModel] as any)({ commit, state, rootState });
 
-        expect(runner.wodinRun.mock.calls[0][0]).toBe(mockOdin);
+        expect(mockRunMethod.mock.calls[0][0]).toBe(mockOdin);
         expect(commit.mock.calls.length).toBe(1);
-        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResult);
-        expect(commit.mock.calls[0][1]).toStrictEqual({
-            inputs: { parameterValues, endTime: 99 },
-            solution: null,
-            error: {
-                detail: mockError.message,
-                error: "An error occurred while running the model"
-            }
-        });
+        const expectedMutation = stochastic ? RunMutation.SetResultDiscrete : RunMutation.SetResultOde;
+        expect(commit.mock.calls[0][0]).toBe(expectedMutation);
+        const inputs = { parameterValues, endTime: 99 } as any;
+        if (stochastic) {
+            inputs.numberOfReplicates = 5;
+        }
+        const error = {
+            detail: mockError.message,
+            error: "An error occurred while running the model"
+        };
+        const expectedResult = stochastic ? { inputs, error, solution: null } : { inputs, error, solution: null };
+        expect(commit.mock.calls[0][1]).toStrictEqual(expectedResult);
+    };
+
+    it("run model commits error in payload when error in code run model, for non-stochastic", () => {
+        testCommitsErrorOnRunModel(false);
     });
 
-    it("run model on rehydrate uses parameters and end time from result inputs", () => {
+    it("run model commits error in payload when error in code run model, for stochastic", () => {
+        testCommitsErrorOnRunModel(true);
+    });
+
+    const testRunModelOnRehydrate = (stochastic: boolean) => {
         const mockOdin = {} as any;
 
         const parameterValues = { p1: 1, p2: 2 };
-        const runner = mockRunner();
+        const runner = stochastic ? mockRunnerDiscrete() : mockRunnerOde();
         const modelState = mockModelState({
-            odinRunnerOde: runner,
+            odinRunnerOde: stochastic ? null : runner,
+            odinRunnerDiscrete: stochastic ? runner : null,
             odin: mockOdin,
             compileRequired: false
         });
+        if (stochastic) {
+            modelState.odinModelResponse = {
+                metadata: { dt: 0.1 }
+            } as any;
+        }
+
+        const appType = stochastic ? AppType.Stochastic : AppType.Basic;
         const rootState = {
+            appType,
             model: modelState
         } as any;
+        const result = {
+            inputs: {
+                parameterValues,
+                endTime: 99
+            }
+        } as any;
+        if (stochastic) {
+            result.inputs.numberOfReplicates = 6;
+        }
+
         const state = mockRunState({
             runRequired: {
                 modelChanged: true,
                 parameterValueChanged: true,
-                endTimeChanged: true
+                endTimeChanged: true,
+                numberOfReplicatesChanged: true
             },
             parameterValues: { p1: 10, p2: 20 },
             endTime: 199,
-            result: {
-                inputs: {
-                    parameterValues,
-                    endTime: 99
-                }
-            } as any
+            resultOde: stochastic ? null : result,
+            resultDiscrete: stochastic ? result : null
         });
         const commit = jest.fn();
 
         (actions[RunAction.RunModelOnRehydrate] as any)({ commit, state, rootState });
 
-        const run = runner.wodinRun;
+        const run = stochastic ? runner.wodinRunDiscrete : runner.wodinRun;
         expect(run.mock.calls[0][0]).toBe(mockOdin);
         expect(run.mock.calls[0][1]).toStrictEqual(parameterValues);
         expect(run.mock.calls[0][2]).toBe(0); // start
         expect(run.mock.calls[0][3]).toBe(99); // end time from result
+        if (stochastic) {
+            expect(run.mock.calls[0][4]).toBe(0.1); // dt
+            expect(run.mock.calls[0][5]).toBe(6); // Number of replicates
+        }
 
         expect(commit.mock.calls.length).toBe(1);
-        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResult);
-        expect(commit.mock.calls[0][1]).toEqual({
-            inputs: { parameterValues, endTime: 99 },
-            solution: "test solution",
-            error: null
-        });
+        if (stochastic) {
+            expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultDiscrete);
+            expect(commit.mock.calls[0][1]).toEqual({
+                inputs: { parameterValues, endTime: 99, numberOfReplicates: 6 },
+                solution: "test discrete result",
+                error: null
+            });
+        } else {
+            expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultOde);
+            expect(commit.mock.calls[0][1]).toEqual({
+                inputs: { parameterValues, endTime: 99 },
+                solution: "test solution",
+                error: null
+            });
+        }
+    };
+
+    it("run model on rehydrate for non-stochastic", () => {
+        testRunModelOnRehydrate(false);
+    });
+
+    it("run model on rehydrate for stochastic", () => {
+        testRunModelOnRehydrate(true);
     });
 
     it("downloads output", (done) => {

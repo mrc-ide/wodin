@@ -1,6 +1,7 @@
 import {
     Batch,
     BatchPars,
+    FilteredDiscreteSolution,
     OdinSolution,
     OdinUserType,
     WodinError
@@ -12,9 +13,19 @@ export interface OdinRunInputs {
     endTime: number;
 }
 
-export interface OdinRunResult {
+export interface OdinRunDiscreteInputs extends OdinRunInputs {
+    numberOfReplicates: number
+}
+
+export interface OdinRunResultOde {
     inputs: OdinRunInputs;
     solution: OdinSolution | null;
+    error: WodinError | null;
+}
+
+export interface OdinRunResultDiscrete {
+    inputs: OdinRunDiscreteInputs;
+    solution: FilteredDiscreteSolution | null;
     error: WodinError | null;
 }
 

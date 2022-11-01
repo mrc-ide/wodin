@@ -63,6 +63,7 @@ export interface OdinModelResponse{
     valid: boolean,
     metadata?: {
         variables: string[],
+        dt: number | null,
         parameters: OdinParameter[],
         messages: string[]
     },
@@ -70,11 +71,15 @@ export interface OdinModelResponse{
     error?: OdinModelResponseError
 }
 
-// This is Odin's SeriesSet
+// This is Odin's SeriesSetValues and SeriesSet
+export interface OdinSeriesSetValues {
+    name: string;
+    y: number[];
+}
+
 export type OdinSeriesSet = {
-    names: string[];
     x: number[];
-    y: number[][];
+    values: OdinSeriesSetValues[];
 }
 
 export interface TimeGrid {
@@ -89,8 +94,10 @@ export interface TimeGiven {
     times: number[];
 }
 
+export type Times = TimeGrid | TimeGiven;
+
 // This is Odin's InterpolatedSolution
-export type OdinSolution = (times: TimeGrid | TimeGiven) => OdinSeriesSet;
+export type OdinSolution = (times: Times) => OdinSeriesSet;
 
 export interface OdinFitData {
     time: number[],
@@ -191,13 +198,15 @@ export interface DiscreteSeriesSet {
     values: DiscreteSeriesValues[];
 }
 
+export type FilteredDiscreteSolution = (times: Times) => DiscreteSeriesSet;
+
 export interface OdinRunnerDiscrete {
     wodinRunDiscrete: (odin: Odin, // this is vague enough to work at present
                        pars: OdinUserType, // this will always be ok
                        timeStart: number,
                        timeEnd: number,
                        dt: number,
-                       nParticles: number) => DiscreteSeriesSet;
+                       nParticles: number) => FilteredDiscreteSolution;
 }
 
 export interface SessionMetadata {

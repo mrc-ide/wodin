@@ -45,6 +45,7 @@ Object.assign(app.locals, {
 // Static content
 app.use(express.static(path.join(rootDir, "public")));
 app.use("/files", express.static(path.join(configPath, "files")));
+app.use("/help", express.static(path.join(configPath, "help")));
 
 // Views
 registerViews(app, rootDir);

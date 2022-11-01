@@ -12,7 +12,7 @@ import { CodeState } from "../store/code/state";
 import { FitDataState } from "../store/fitData/state";
 import { Palette } from "../palette";
 
-export interface SerialisedSolutionResult {
+export interface SerialisedRunResult {
     inputs: OdinRunInputs | OdinFitInputs,
     hasResult: boolean
     error: WodinError | null
@@ -30,8 +30,9 @@ export interface SerialisedRunState {
     runRequired: RunUpdateRequiredReasons,
     parameterValues: OdinUserType | null,
     endTime: number,
-    numberOfReplicates: number
-    result: SerialisedSolutionResult | null
+    numberOfReplicates: number,
+    resultOde: SerialisedRunResult | null,
+    resultDiscrete: SerialisedRunResult | null
 }
 
 export interface SerialisedSensitivityState {
@@ -51,7 +52,7 @@ export interface SerialisedModelFitState {
     converged: boolean | null,
     sumOfSquares: number | null,
     paramsToVary: string[],
-    result: SerialisedSolutionResult | null
+    result: SerialisedRunResult | null
 }
 
 export interface SerialisedAppState {

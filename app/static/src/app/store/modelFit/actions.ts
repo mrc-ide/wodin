@@ -80,7 +80,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
             solution: result.data.solution,
             error: null
         };
-        commit(`run/${RunMutation.SetResult}`, runResult, { root: true });
+        commit(`run/${RunMutation.SetResultOde}`, runResult, { root: true });
         // For the sensitivity we need to let it know that we've
         // updated the parameters and so it is most likely that the
         // current set of sensitivity data is out of date (this is not
