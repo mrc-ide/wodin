@@ -127,7 +127,7 @@ describe("RunTab", () => {
 
     it("renders as expected when app is stochastic", () => {
         const wrapper = getStochasticWrapper({}, {
-            seriesSet: {} as any
+            solution: jest.fn()
         });
         expect(wrapper.findComponent(RunStochasticPlot).props("fadePlot")).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
