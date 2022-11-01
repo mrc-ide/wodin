@@ -62,6 +62,7 @@ export function odinToPlotly(s: OdinSeriesSet, palette: Palette, options: Partia
             name: el.name,
             x: s.x,
             y: el.y,
+            hoverlabel: { namelength: -1 },
             legendgroup: plotlyOptions.includeLegendGroup ? el.name : undefined,
             showlegend: plotlyOptions.showLegend
         })

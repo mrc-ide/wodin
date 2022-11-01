@@ -41,6 +41,7 @@ describe("FitPlot", () => {
                 color: "#0000ff",
                 width: 2
             },
+            hoverlabel: { namelength: -1 },
             legendgroup: undefined,
             showlegend: true
         },
@@ -66,6 +67,7 @@ describe("FitPlot", () => {
                 color: "#0000ff",
                 width: 2
             },
+            hoverlabel: { namelength: -1 },
             legendgroup: undefined,
             showlegend: true
         },

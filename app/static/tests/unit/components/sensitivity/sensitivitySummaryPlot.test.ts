@@ -117,6 +117,7 @@ describe("SensitivitySummaryPlot", () => {
                 name: "S",
                 x: [1, 1.1],
                 y: [10, 10.1],
+                hoverlabel: { namelength: -1 },
                 legendgroup: undefined,
                 showlegend: true
             },
@@ -129,6 +130,7 @@ describe("SensitivitySummaryPlot", () => {
                 name: "I",
                 x: [1, 1.1],
                 y: [20, 19.9],
+                hoverlabel: { namelength: -1 },
                 legendgroup: undefined,
                 showlegend: true
             }

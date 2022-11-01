@@ -29,6 +29,7 @@ describe("odinToPlotly", () => {
                 name: "a",
                 x: [0, 1],
                 y: [30, 40],
+                hoverlabel: { namelength: -1 },
                 legendgroup: undefined,
                 showlegend: true
             },
@@ -41,6 +42,7 @@ describe("odinToPlotly", () => {
                 name: "b",
                 x: [0, 1],
                 y: [50, 60],
+                hoverlabel: { namelength: -1 },
                 legendgroup: undefined,
                 showlegend: true
             }
@@ -64,6 +66,7 @@ describe("odinToPlotly", () => {
                 name: "a",
                 x: [0, 1],
                 y: [30, 40],
+                hoverlabel: { namelength: -1 },
                 legendgroup: "a",
                 showlegend: false
             },
@@ -76,6 +79,7 @@ describe("odinToPlotly", () => {
                 name: "b",
                 x: [0, 1],
                 y: [50, 60],
+                hoverlabel: { namelength: -1 },
                 legendgroup: "b",
                 showlegend: false
             }
