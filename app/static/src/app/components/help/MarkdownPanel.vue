@@ -23,7 +23,7 @@ export default defineComponent({
         const store = useStore();
 
         const appHelpUrl = computed(() => {
-          return `${store.state.baseUrl}/help/${store.state.appName}`;
+          return `${store.state.baseUrl}/help`;
         });
 
         const rendered = computed(() => {
