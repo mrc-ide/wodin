@@ -40,7 +40,16 @@ const redis = redisConnection(
 
 // Make app locals available to controllers
 Object.assign(app.locals, {
-    appsPath, baseUrl, configPath, configReader, defaultCodeReader, appHelpReader, odinAPI, redis, wodinConfig, wodinVersion
+    appsPath,
+    baseUrl,
+    configPath,
+    configReader,
+    defaultCodeReader,
+    appHelpReader,
+    odinAPI,
+    redis,
+    wodinConfig,
+    wodinVersion
 });
 
 // Static content

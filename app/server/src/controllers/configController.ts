@@ -36,7 +36,14 @@ export class ConfigController {
             configReader, appsPath, defaultCodeReader, appHelpReader, baseUrl
         } = req.app.locals as AppLocals;
 
-        const config = this._readAppConfigFile(appName, appsPath, baseUrl, configReader, defaultCodeReader, appHelpReader);
+        const config = this._readAppConfigFile(
+            appName,
+            appsPath,
+            baseUrl,
+            configReader,
+            defaultCodeReader,
+            appHelpReader
+        );
         if (config) {
             jsonResponseSuccess(config, res);
         } else {
