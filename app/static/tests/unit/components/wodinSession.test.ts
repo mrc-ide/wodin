@@ -16,9 +16,9 @@ describe("WodinSession", () => {
     });
 
     const getWrapper = (appName: string | null = "test",
-                        shareNotFound = "",
-                        baseUrl = "http://localhost:3000",
-                        appsPath = "apps") => {
+        shareNotFound = "",
+        baseUrl = "http://localhost:3000",
+        appsPath = "apps") => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({ appName, baseUrl, appsPath }),
             actions: {

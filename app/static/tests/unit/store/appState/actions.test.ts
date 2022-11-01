@@ -58,7 +58,9 @@ describe("AppState actions", () => {
         const rootState = state;
 
         const spyOnAddSessionId = jest.spyOn(localStorageManager, "addSessionId");
-        const payload = { appName: "test-app", loadSessionId: "", baseUrl, appsPath };
+        const payload = {
+            appName: "test-app", loadSessionId: "", baseUrl, appsPath
+        };
         await (appStateActions[AppStateAction.Initialise] as any)({
             commit, state, dispatch, rootState, getters
         }, payload);
@@ -158,7 +160,9 @@ describe("AppState actions", () => {
         const { state } = store;
         const rootState = state;
 
-        const payload = { appName: "test-app", loadSessionId: "", baseUrl, appsPath };
+        const payload = {
+            appName: "test-app", loadSessionId: "", baseUrl, appsPath
+        };
         await (appStateActions[AppStateAction.Initialise] as any)({
             commit, state, dispatch, rootState, getters
         }, payload);
@@ -217,7 +221,9 @@ describe("AppState actions", () => {
     it("QueueStateUpload sets new state upload pending", (done) => {
         jest.useFakeTimers();
         const mockSetInterval = jest.spyOn(window, "setInterval");
-        const state = mockFitState({ sessionId: "1234", appName: "testApp", baseUrl, appsPath });
+        const state = mockFitState({
+            sessionId: "1234", appName: "testApp", baseUrl, appsPath
+        });
         const rootState = state;
         const commit = jest.fn();
         mockAxios.onPost(`${baseUrl}/apps/testApp/sessions/1234`)
@@ -321,7 +327,9 @@ describe("AppState actions", () => {
 
     it("QueueStatusUpload callback commits api error", (done) => {
         jest.useFakeTimers();
-        const state = mockFitState({ sessionId: "1234", appName: "testApp", baseUrl, appsPath });
+        const state = mockFitState({
+            sessionId: "1234", appName: "testApp", baseUrl, appsPath
+        });
         const rootState = state;
         const commit = jest.fn();
         mockAxios.onPost(`${baseUrl}/apps/testApp/sessions/1234`)
