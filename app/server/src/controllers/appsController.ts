@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import {NextFunction, Request, Response} from "express";
 import { AppLocals } from "../types";
 import { ErrorType } from "../errors/errorType";
 import { WodinWebError } from "../errors/wodinWebError";
@@ -6,7 +6,7 @@ import { getSessionStore } from "../db/sessionStore";
 import asyncControllerHandler from "../errors/asyncControllerHandler";
 
 export class AppsController {
-    static getApp = async (req: Request, res: Response, next: Function) => {
+    static getApp = async (req: Request, res: Response, next: NextFunction) => {
         await asyncControllerHandler(next, async () => {
             const {
                 configReader, appsPath, wodinConfig, wodinVersion

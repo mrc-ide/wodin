@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import {NextFunction, Request, Response} from "express";
 import { SessionMetadata } from "../types";
 import { getSessionStore } from "../db/sessionStore";
 import { ErrorType } from "../errors/errorType";
@@ -18,7 +18,7 @@ export const serialiseSession = (session: string | null, res: Response) => {
 };
 
 export class SessionsController {
-    static postSession = async (req: Request, res: Response, next: Function) => {
+    static postSession = async (req: Request, res: Response, next: NextFunction) => {
         await asyncControllerHandler(next, async () => {
             const { id } = req.params;
             const store = getSessionStore(req);
@@ -27,7 +27,7 @@ export class SessionsController {
         });
     };
 
-    static getSessionsMetadata = async (req: Request, res: Response, next: Function) => {
+    static getSessionsMetadata = async (req: Request, res: Response, next: NextFunction) => {
         await asyncControllerHandler(next, async () => {
             const sessionIdsString = req.query.sessionIds as string;
             let metadata: SessionMetadata[] = [];
@@ -40,7 +40,7 @@ export class SessionsController {
         });
     };
 
-    static postSessionLabel = async (req: Request, res: Response, next: Function) => {
+    static postSessionLabel = async (req: Request, res: Response, next: NextFunction) => {
         await asyncControllerHandler(next, async () => {
             const { id } = req.params;
             const store = getSessionStore(req);
@@ -49,7 +49,7 @@ export class SessionsController {
         });
     };
 
-    static getSession = async (req: Request, res: Response, next: Function) => {
+    static getSession = async (req: Request, res: Response, next: NextFunction) => {
         await asyncControllerHandler(next, async () => {
             const { id } = req.params;
             const store = getSessionStore(req);
@@ -58,7 +58,7 @@ export class SessionsController {
         });
     };
 
-    static generateFriendlyId = async (req: Request, res: Response, next: Function) => {
+    static generateFriendlyId = async (req: Request, res: Response, next: NextFunction) => {
         await asyncControllerHandler(next, async () => {
             const { id } = req.params;
             const store = getSessionStore(req);
