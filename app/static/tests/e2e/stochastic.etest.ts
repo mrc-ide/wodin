@@ -33,6 +33,8 @@ test.describe("stochastic app", () => {
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("");
 
         // number of series should have increased by 2
-        expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(16);
+        const summary = ".wodin-plot-data-summary-series";
+        expect(await page.locator(summary).count()).toBe(16);
+        expect(page.getAttribute(`:nth-match(${summary}, 1)`, "name")).toBe("I_det");
     });
 });
