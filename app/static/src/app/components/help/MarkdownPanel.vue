@@ -26,8 +26,8 @@ export default defineComponent({
             return `${store.state.baseUrl}/help`;
         });
 
-        const mathjax = MarkdownItMathjax();
-        const markdownIt = new MarkdownIt().use(mathjax);
+        const mathjaxPlugin = MarkdownItMathjax();
+        const markdownIt = new MarkdownIt().use(mathjaxPlugin);
         // Adapt default rendering to fetch images from base help url
         markdownIt.renderer.rules.image = function (tokens, idx, options, env, slf) {
             const token = tokens[idx];
@@ -48,7 +48,10 @@ export default defineComponent({
         });
 
         onMounted(() => {
-            (window as unknown as MathJaxWindow).MathJax.typeset();
+            const mathjax = (window as unknown as MathJaxWindow).MathJax;
+            if (mathjax) {
+                mathjax.typeset();
+            }
         });
 
         return {
