@@ -11,7 +11,10 @@
       </wodin-tabs>
     </template>
     <template v-slot:right>
-      <wodin-tabs id="right-tabs" :tabNames="['Run', 'Sensitivity']" @tabSelected="rightTabSelected">
+      <wodin-tabs id="right-tabs" :tabNames="rightTabNames" @tabSelected="rightTabSelected">
+        <template v-if="helpTabName" v-slot:[helpTabName]>
+          <help-tab></help-tab>
+        </template>
         <template v-slot:Run>
           <run-tab></run-tab>
         </template>
@@ -34,11 +37,14 @@ import CodeTab from "../code/CodeTab.vue";
 import RunTab from "../run/RunTab.vue";
 import OptionsTab from "../options/OptionsTab.vue";
 import SensitivityTab from "../sensitivity/SensitivityTab.vue";
+import includeHelpTab from "../mixins/includeHelpTab";
+import HelpTab from "../help/HelpTab.vue";
 
 export default defineComponent({
     name: "StochasticApp",
     components: {
         CodeTab,
+        HelpTab,
         RunTab,
         OptionsTab,
         SensitivityTab,
@@ -47,10 +53,11 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
-        const rightTabNames = [VisualisationTab.Run, VisualisationTab.Sensitivity];
         const rightTabSelected = (tab: string) => { store.commit(AppStateMutation.SetOpenVisualisationTab, tab); };
+        const { helpTabName, rightTabNames } = includeHelpTab([VisualisationTab.Run, VisualisationTab.Sensitivity]);
 
         return {
+            helpTabName,
             rightTabNames,
             rightTabSelected
         };

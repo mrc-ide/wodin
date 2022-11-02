@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import { defineComponent } from "vue";
 import { useStore } from "vuex";
 import WodinApp from "../WodinApp.vue";
 import WodinTabs from "../WodinTabs.vue";
@@ -38,6 +38,7 @@ import SensitivityTab from "../sensitivity/SensitivityTab.vue";
 import { AppStateMutation } from "../../store/appState/mutations";
 import { VisualisationTab } from "../../store/appState/state";
 import HelpTab from "../help/HelpTab.vue";
+import includeHelpTab from "../mixins/includeHelpTab";
 
 export default defineComponent({
     name: "BasicApp",
@@ -53,27 +54,12 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const rightTabSelected = (tab: string) => { store.commit(AppStateMutation.SetOpenVisualisationTab, tab); };
-
-        // TODO: make helpTabName and rightTabNames reusable between all app types.. https://learnvue.co/tutorials/composition-api-reusability
-        const helpTabName = computed(() => {
-            if (store.state.config?.help?.markdown?.length) {
-                return store.state.config.help.tabName || "Explanation"; // default if markdown but no tab name
-            }
-            // do not show tab if no markdown
-            return null;
-        });
-        const rightTabNames = computed(() => {
-            const result = [VisualisationTab.Run, VisualisationTab.Sensitivity];
-            if (helpTabName.value) {
-                result.unshift(helpTabName.value);
-            }
-            return result;
-        });
+        const { helpTabName, rightTabNames } = includeHelpTab([VisualisationTab.Run, VisualisationTab.Sensitivity]);
 
         return {
-            rightTabNames,
             rightTabSelected,
-            helpTabName
+            helpTabName,
+            rightTabNames
         };
     }
 });
