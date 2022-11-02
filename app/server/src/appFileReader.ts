@@ -1,15 +1,18 @@
 import * as path from "path";
 import * as fs from "fs";
 
-export class DefaultCodeReader {
+export class AppFileReader {
     private readonly _codeDir: string;
 
-    constructor(codeDir: string) {
+    private readonly _suffix: string;
+
+    constructor(codeDir: string, suffix: string) {
         this._codeDir = codeDir;
+        this._suffix = suffix;
     }
 
-    readDefaultCode(appName: string): string[] {
-        const filename = path.join(this._codeDir, `${appName}.R`);
+    readFile(appName: string): string[] {
+        const filename = path.join(this._codeDir, `${appName}.${this._suffix}`);
         if (fs.existsSync(filename)) {
             const lines = fs.readFileSync(filename, { encoding: "utf-8" });
             return lines.split("\n");
