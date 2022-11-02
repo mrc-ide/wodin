@@ -57,7 +57,7 @@ describe("SessionsActions", () => {
 
         const commit = jest.fn();
         const dispatch = jest.fn();
-        const rootState = { appName: "testApp", baseUrl: "" } as any;
+        const rootState = { appName: "testApp", baseUrl: "", appsPath: "apps" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);
@@ -91,7 +91,7 @@ describe("SessionsActions", () => {
 
         const commit = jest.fn();
         const dispatch = jest.fn();
-        const rootState = { appName: "testApp", baseUrl: "" } as any;
+        const rootState = { appName: "testApp", baseUrl: "", appsPath: "apps" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);
@@ -108,7 +108,7 @@ describe("SessionsActions", () => {
 
         const commit = jest.fn();
         const dispatch = jest.fn();
-        const rootState = { appName: "testApp", baseUrl: "" } as any;
+        const rootState = { appName: "testApp", baseUrl: "", appsPath: "apps" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);
@@ -125,7 +125,7 @@ describe("SessionsActions", () => {
 
         const commit = jest.fn();
         const dispatch = jest.fn();
-        const rootState = { appName: "testApp", baseUrl: "" } as any;
+        const rootState = { appName: "testApp", baseUrl: "", appsPath: "apps" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);
@@ -148,7 +148,7 @@ describe("SessionsActions", () => {
 
         const commit = jest.fn();
         const dispatch = jest.fn();
-        const rootState = { appName: "testApp", baseUrl: "" } as any;
+        const rootState = { appName: "testApp", baseUrl: "", appsPath: "apps" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
         expect(commit).toHaveBeenCalledTimes(0);
@@ -172,7 +172,7 @@ describe("SessionsActions", () => {
         mockAxios.onGet("/apps/test-app/sessions/metadata?sessionIds=123,456")
             .reply(200, mockSuccess(metadata));
 
-        const rootState = mockBasicState({ appName: "test-app" });
+        const rootState = mockBasicState({ appName: "test-app", appsPath: "apps" });
         const commit = jest.fn();
         await (actions[SessionsAction.GetSessions] as any)({ commit, rootState, rootGetters });
 
@@ -189,7 +189,7 @@ describe("SessionsActions", () => {
         mockAxios.onGet("/apps/test-app/sessions/metadata?sessionIds=123,456")
             .reply(500, mockFailure("TEST ERROR"));
 
-        const rootState = mockBasicState({ appName: "test-app" });
+        const rootState = mockBasicState({ appName: "test-app", appsPath: "apps" });
         const commit = jest.fn();
         await (actions[SessionsAction.GetSessions] as any)({ commit, rootState, rootGetters });
 
@@ -205,6 +205,7 @@ describe("SessionsActions", () => {
 
         const rootState = mockBasicState({
             appName: "testApp",
+            appsPath: "apps",
             sessionId: "testSessionId"
         });
         const commit = jest.fn();
@@ -232,6 +233,7 @@ describe("SessionsActions", () => {
 
         const rootState = mockBasicState({
             appName: "testApp",
+            appsPath: "apps",
             sessionId: "testSessionId"
         });
         const commit = jest.fn();
@@ -256,6 +258,7 @@ describe("SessionsActions", () => {
 
         const rootState = mockBasicState({
             appName: "testApp",
+            appsPath: "apps",
             sessionId: "anotherSessionId"
         });
         const commit = jest.fn();
@@ -278,7 +281,8 @@ describe("SessionsActions", () => {
         mockAxios.onPost(url)
             .reply(200, mockSuccess("good-dog"));
         const rootState = mockBasicState({
-            appName: "testApp"
+            appName: "testApp",
+            appsPath: "apps"
         });
         const commit = jest.fn();
 
@@ -293,7 +297,8 @@ describe("SessionsActions", () => {
         mockAxios.onPost(url)
             .reply(500, mockFailure("Test Error"));
         const rootState = mockBasicState({
-            appName: "testApp"
+            appName: "testApp",
+            appsPath: "apps"
         });
         const commit = jest.fn();
 
