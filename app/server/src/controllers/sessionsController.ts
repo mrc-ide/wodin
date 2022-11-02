@@ -1,4 +1,4 @@
-import {NextFunction, Request, Response} from "express";
+import { NextFunction, Request, Response } from "express";
 import { SessionMetadata } from "../types";
 import { getSessionStore } from "../db/sessionStore";
 import { ErrorType } from "../errors/errorType";
