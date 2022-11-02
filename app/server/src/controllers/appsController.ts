@@ -11,10 +11,10 @@ export class AppsController {
             const {
                 configReader, appsPath, wodinConfig, wodinVersion
             } = req.app.locals as AppLocals;
-            const {appName} = req.params;
+            const { appName } = req.params;
             // client can pass either sessionId or share (friendly id) parameter to identify session to reload
             let sessionId = req.query.sessionId as string | undefined | null;
-            const {share} = req.query;
+            const { share } = req.query;
 
             let shareNotFound = null;
             if (share) {
@@ -48,7 +48,7 @@ export class AppsController {
                     404,
                     ErrorType.NOT_FOUND,
                     "app-not-found",
-                    {appName}
+                    { appName }
                 );
             }
         });
