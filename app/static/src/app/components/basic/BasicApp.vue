@@ -55,7 +55,13 @@ export default defineComponent({
         const rightTabSelected = (tab: string) => { store.commit(AppStateMutation.SetOpenVisualisationTab, tab); };
 
         // TODO: make helpTabName and rightTabNames reusable between all app types.. https://learnvue.co/tutorials/composition-api-reusability
-        const helpTabName = computed(() => store.state.config?.help?.tabName);
+        const helpTabName = computed(() => {
+            if (store.state.config?.help?.markdown?.length) {
+                return store.state.config.help.tabName || "Explanation"; // default if markdown but no tab name
+            }
+            // do not show tab if no markdown
+            return null;
+        });
         const rightTabNames = computed(() => {
             const result = [VisualisationTab.Run, VisualisationTab.Sensitivity];
             if (helpTabName.value) {

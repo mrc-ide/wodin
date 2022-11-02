@@ -6,7 +6,7 @@
 import { computed, defineComponent, onMounted } from "vue";
 import * as MarkdownIt from "markdown-it";
 import * as MarkdownItMathjax from "markdown-it-mathjax";
-import {useStore} from "vuex";
+import { useStore } from "vuex";
 
 interface MathJaxWindow {
   MathJax: {
@@ -17,33 +17,34 @@ interface MathJaxWindow {
 export default defineComponent({
     name: "MarkdownPanel",
     props: {
-        markdown: String
+        markdown: Array
     },
     setup(props) {
         const store = useStore();
 
         const appHelpUrl = computed(() => {
-          return `${store.state.baseUrl}/help`;
+            return `${store.state.baseUrl}/help`;
         });
 
-        const rendered = computed(() => {
-            // TODO: Move this out of this function
-            const mj = MarkdownItMathjax();
-            const md = new MarkdownIt().use(mj);
-            md.renderer.rules.image = function (tokens, idx, options, env, slf) {
-                const token = tokens[idx];
-                const attrIdx = token.attrIndex("src");
-                const src = token.attrs![attrIdx][1];
-                if (src.startsWith("/")) {
-                  token.attrs![attrIdx][1] = `${appHelpUrl.value}${src}`;
-                }
-                return slf.renderToken(tokens, idx, options);
-            };
+        const mathjax = MarkdownItMathjax();
+        const markdownIt = new MarkdownIt().use(mathjax);
+        // Adapt default rendering to fetch images from base help url
+        markdownIt.renderer.rules.image = function (tokens, idx, options, env, slf) {
+            const token = tokens[idx];
+            const attrIdx = token.attrIndex("src");
+            const src = token.attrs![attrIdx][1];
+            if (src.startsWith("/")) {
+              token.attrs![attrIdx][1] = `${appHelpUrl.value}${src}`;
+            }
+            return slf.renderToken(tokens, idx, options);
+        };
 
-            if (!props.markdown) {
+        const rendered = computed(() => {
+            if (!props.markdown?.length) {
                 return "";
             }
-            return md.render(props.markdown);
+            const joined = props.markdown.join("\n");
+            return markdownIt.render(joined);
         });
 
         onMounted(() => {

@@ -23,8 +23,8 @@ export interface AppConfig {
     stateUploadIntervalMillis?: number | null
     endTime?: number,
     help?: {
-        markdown: string,
-        tabName: string
+        markdown?: string[],
+        tabName?: string[]
     }
 }
 
