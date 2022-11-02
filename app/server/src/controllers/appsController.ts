@@ -37,7 +37,8 @@ export class AppsController {
                 courseTitle: wodinConfig.courseTitle,
                 wodinVersion,
                 loadSessionId: sessionId || "",
-                shareNotFound: shareNotFound || ""
+                shareNotFound: shareNotFound || "",
+                mathjaxSrc: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
             };
             res.render(view, viewOptions);
         } else {
