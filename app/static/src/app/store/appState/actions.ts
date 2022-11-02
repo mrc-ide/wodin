@@ -12,7 +12,7 @@ import { FitState } from "../fit/state";
 import { SessionsAction } from "../sessions/actions";
 import { localStorageManager } from "../../localStorageManager";
 import { AppStateGetter } from "./getters";
-import { InitialisePayload } from "../../types/types";
+import { InitialisePayload } from "../../types/payloadTypes";
 
 export enum AppStateAction {
     Initialise = "Initialise",

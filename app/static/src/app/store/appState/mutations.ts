@@ -1,7 +1,7 @@
 import { MutationTree } from "vuex";
 import { AppState, VisualisationTab } from "./state";
 import { AppConfig } from "../../types/responseTypes";
-import { SetAppPayload } from "../../types/types";
+import { SetAppPayload } from "../../types/payloadTypes";
 
 export enum AppStateMutation {
     SetApp = "SetApp",
