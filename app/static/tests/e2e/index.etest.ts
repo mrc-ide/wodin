@@ -75,4 +75,10 @@ test.describe("Index tests", () => {
     test("can download day 3 sample file", async ({ page }) => {
         await testDownloadFile("files/day3/sample1.csv", "sample3-1.csv", "3,3\n", page);
     });
+
+    test("browsing to non-existent app shows 404 page", async ({ page }) => {
+        await page.goto("/apps/day4");
+        await expect(await page.title()).toBe("Page Not Found");
+        await expect(await page.innerText(".container")).toContain("Application \"day4\" is not configured");
+    });
 });
