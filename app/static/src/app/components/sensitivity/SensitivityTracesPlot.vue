@@ -1,12 +1,12 @@
 <template>
-  <wodin-ode-plot
+  <wodin-plot
       :fade-plot="fadePlot"
       :placeholder-message="placeholderMessage"
       :end-time="endTime"
       :plot-data="allPlotData"
       :redrawWatches="solutions ? [...solutions, allFitData] : []">
     <slot></slot>
-  </wodin-ode-plot>
+  </wodin-plot>
 </template>
 
 <script lang="ts">
@@ -15,7 +15,7 @@ import { useStore } from "vuex";
 import { PlotData } from "plotly.js-basic-dist-min";
 import { format } from "d3-format";
 import { FitDataGetter } from "../../store/fitData/getters";
-import WodinOdePlot from "../WodinOdePlot.vue";
+import WodinPlot from "../WodinPlot.vue";
 import userMessages from "../../userMessages";
 import { allFitDataToPlotly, odinToPlotly, WodinPlotData } from "../../plot";
 import { OdinSolution } from "../../types/responseTypes";
@@ -26,7 +26,7 @@ export default defineComponent({
         fadePlot: Boolean
     },
     components: {
-        WodinOdePlot
+        WodinPlot
     },
     setup() {
         const store = useStore();

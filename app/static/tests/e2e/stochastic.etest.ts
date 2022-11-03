@@ -32,6 +32,24 @@ test.describe("stochastic app", () => {
         await page.click("#run-btn");
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("");
 
-        await expect(await page.innerText("#stochastic-run-placeholder")).toBe("Stochastic series count: 16");
+        // number of series should have increased by 2
+        const summary = ".wodin-plot-data-summary-series";
+        expect(await page.locator(summary).count()).toBe(16);
+        const expectSummaryValues = async (idx: number, name: string, color: string) => {
+            const locator = `:nth-match(${summary}, ${idx})`;
+            expect(await page.getAttribute(locator, "name")).toBe(name);
+            expect(await page.getAttribute(locator, "count")).toBe("1001");
+            expect(await page.getAttribute(locator, "x-min")).toBe("0");
+            expect(await page.getAttribute(locator, "x-max")).toBe("100");
+            expect(await page.getAttribute(locator, "mode")).toBe("lines");
+            expect(await page.getAttribute(locator, "line-color")).toBe(color);
+        };
+
+        await expectSummaryValues(1, "I_det", "#2e5cb8");
+        await expectSummaryValues(2, "I", "#6ab74d");
+        await expectSummaryValues(8, "I (mean)", "#6ab74d");
+        await expectSummaryValues(9, "S", "#ee9f33");
+        await expectSummaryValues(15, "S (mean)", "#ee9f33");
+        await expectSummaryValues(16, "extinct", "#cc0044");
     });
 });

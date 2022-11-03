@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import axios, { AxiosResponse } from "axios";
 import { AppLocals } from "./types";
 
@@ -11,7 +11,7 @@ export class APIService {
 
     private readonly _next: Function;
 
-    constructor(req: Request, res: Response, next: Function) {
+    constructor(req: Request, res: Response, next: NextFunction) {
         this._req = req;
         this._res = res;
         this._next = next;
@@ -64,4 +64,4 @@ export class APIService {
     };
 }
 
-export const api = (req: Request, res: Response, next: Function) => new APIService(req, res, next);
+export const api = (req: Request, res: Response, next: NextFunction) => new APIService(req, res, next);

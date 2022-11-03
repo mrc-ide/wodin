@@ -4,28 +4,23 @@
             <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
         </div>
         <action-required-message :message="updateMsg"></action-required-message>
-        <div v-if="isStochastic" id="stochastic-run-placeholder" class="mt-2">
-          {{ stochasticResultSummary }}
-          <error-info :error="error"></error-info>
-        </div>
-        <template v-else>
-          <run-plot :fade-plot="!!updateMsg" :model-fit="false"></run-plot>
-          <error-info :error="error"></error-info>
-          <div>
-            <button class="btn btn-primary" id="download-btn"
-                    :disabled="downloading || !canDownloadOutput"
-                    @click="toggleShowDownloadOutput(true)">
-              <vue-feather class="inline-icon" type="download"></vue-feather>
-              Download
-            </button>
-            <div v-if="downloading" id="downloading">
-              <LoadingSpinner size="xs"></LoadingSpinner>
-              Downloading...
-            </div>
+        <run-stochastic-plot v-if="isStochastic" :fade-plot="!!updateMsg"></run-stochastic-plot>
+        <run-plot v-else :fade-plot="!!updateMsg" :model-fit="false"></run-plot>
+        <error-info :error="error"></error-info>
+        <div>
+          <button class="btn btn-primary" id="download-btn"
+                  :disabled="downloading || !canDownloadOutput"
+                  @click="toggleShowDownloadOutput(true)">
+            <vue-feather class="inline-icon" type="download"></vue-feather>
+            Download
+          </button>
+          <div v-if="downloading" id="downloading">
+            <LoadingSpinner size="xs"></LoadingSpinner>
+            Downloading...
           </div>
-          <DownloadOutput :open="showDownloadOutput" @close="toggleShowDownloadOutput(false)"></DownloadOutput>
-        </template>
-  </div>
+        </div>
+        <DownloadOutput :open="showDownloadOutput" @close="toggleShowDownloadOutput(false)"></DownloadOutput>
+    </div>
 </template>
 
 <script lang="ts">
@@ -43,10 +38,12 @@ import { anyTrue } from "../../utils";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import { AppType } from "../../store/appState/state";
 import { ModelGetter } from "../../store/model/getters";
+import RunStochasticPlot from "./RunStochasticPlot.vue";
 
 export default defineComponent({
     name: "RunTab",
     components: {
+        RunStochasticPlot,
         LoadingSpinner,
         RunPlot,
         ErrorInfo,
@@ -89,23 +86,6 @@ export default defineComponent({
         const canDownloadOutput = computed(() => !updateMsg.value && store.state.run.resultOde?.solution);
         const toggleShowDownloadOutput = (show: boolean) => { showDownloadOutput.value = show; };
 
-        // TODO: This is just a temporary summary message to indicate that the stochastic model has successfully run -
-        // it will be replaced by full stochastic run plot in the next ticket
-        const stochasticResultSummary = computed(() => {
-            if (isStochastic.value) {
-                const solution = store.state.run.resultDiscrete?.solution;
-                const times = {
-                    mode: "grid",
-                    tStart: 0,
-                    tEnd: 10,
-                    nPoints: 11
-                };
-                return solution ? `Stochastic series count: ${solution(times).values.length}`
-                    : "Stochastic model has not run";
-            }
-            return "";
-        });
-
         return {
             canRunModel,
             isStochastic,
@@ -115,8 +95,7 @@ export default defineComponent({
             downloading,
             showDownloadOutput,
             canDownloadOutput,
-            toggleShowDownloadOutput,
-            stochasticResultSummary
+            toggleShowDownloadOutput
         };
     }
 });

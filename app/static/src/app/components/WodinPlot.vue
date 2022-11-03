@@ -35,7 +35,7 @@ import {
 } from "../plot";
 
 export default defineComponent({
-    name: "WodinOdePlot",
+    name: "WodinPlot",
     props: {
         fadePlot: Boolean,
         placeholderMessage: String,
@@ -52,6 +52,11 @@ export default defineComponent({
         redrawWatches: {
             type: Array as PropType<any[]>,
             required: true
+        },
+        recalculateOnRelayout: {
+            type: Boolean,
+            required: false,
+            default: true
         }
     },
     setup(props) {
@@ -106,8 +111,11 @@ export default defineComponent({
                     const layout = {
                         margin
                     };
+
                     newPlot(el as HTMLElement, baseData.value, layout, config);
-                    (el as EventEmitter).on("plotly_relayout", relayout);
+                    if (props.recalculateOnRelayout) {
+                        (el as EventEmitter).on("plotly_relayout", relayout);
+                    }
                     resizeObserver = new ResizeObserver(resize);
                     resizeObserver.observe(plot.value as HTMLElement);
                 }
