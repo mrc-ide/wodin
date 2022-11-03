@@ -26,6 +26,10 @@ export default defineComponent({
             return `${store.state.baseUrl}/help`;
         });
 
+        const isAbsoluteUrl = (s: string) => {
+            return /^(http:\/\/|https:\/\/)/.test(s);
+        };
+
         const mathjaxPlugin = MarkdownItMathjax();
         const markdownIt = new MarkdownIt().use(mathjaxPlugin);
         // Adapt default rendering to fetch images from base help url
@@ -33,8 +37,8 @@ export default defineComponent({
             const token = tokens[idx];
             const attrIdx = token.attrIndex("src");
             const src = token.attrs![attrIdx][1];
-            if (src.startsWith("/")) {
-              token.attrs![attrIdx][1] = `${appHelpUrl.value}${src}`;
+            if (!isAbsoluteUrl(src)) {
+              token.attrs![attrIdx][1] = `${appHelpUrl.value}/${src}`;
             }
             return slf.renderToken(tokens, idx, options);
         };
