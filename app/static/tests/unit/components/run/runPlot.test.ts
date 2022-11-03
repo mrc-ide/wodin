@@ -74,6 +74,7 @@ describe("RunPlot", () => {
                 name: "S",
                 x: [0, 1],
                 y: [3, 4],
+                hoverlabel: { namelength: -1 },
                 showlegend: true,
                 legendgroup: undefined
             },
@@ -86,6 +87,7 @@ describe("RunPlot", () => {
                 name: "I",
                 x: [0, 1],
                 y: [5, 6],
+                hoverlabel: { namelength: -1 },
                 showlegend: true,
                 legendgroup: undefined
             }
@@ -206,6 +208,7 @@ describe("RunPlot", () => {
                 name: "S",
                 x: [0, 1],
                 y: [3, 4],
+                hoverlabel: { namelength: -1 },
                 showlegend: true,
                 legendgroup: undefined
             },
@@ -218,6 +221,7 @@ describe("RunPlot", () => {
                 name: "I",
                 x: [0, 1],
                 y: [5, 6],
+                hoverlabel: { namelength: -1 },
                 showlegend: true,
                 legendgroup: undefined
             },
