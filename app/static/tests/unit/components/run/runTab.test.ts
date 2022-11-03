@@ -14,6 +14,7 @@ import { ModelState } from "../../../../src/app/store/model/state";
 import { RunState } from "../../../../src/app/store/run/state";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
 import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
+import RunStochasticPlot from "../../../../src/app/components/run/RunStochasticPlot.vue";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
 import DownloadOutput from "../../../../src/app/components/DownloadOutput.vue";
@@ -76,7 +77,7 @@ describe("RunTab", () => {
     };
 
     const getStochasticWrapper = (runner: Partial<OdinRunnerDiscrete> | null = {},
-        resultDiscrete: Partial<OdinRunResultDiscrete> | null = null) => {
+        resultDiscrete: Partial<OdinRunResultDiscrete> | null = null, compileRequired = false) => {
         const store = new Vuex.Store<StochasticState>({
             state: mockStochasticState(),
             modules: {
@@ -84,7 +85,8 @@ describe("RunTab", () => {
                     namespaced: true,
                     state: mockModelState({
                         odin: {} as any,
-                        odinRunnerDiscrete: runner as any
+                        odinRunnerDiscrete: runner as any,
+                        compileRequired
                     }),
                     getters: {
                         [ModelGetter.hasRunner]: () => true
@@ -120,28 +122,14 @@ describe("RunTab", () => {
         expect(wrapper.findComponent(DownloadOutput).props().open).toBe(false);
 
         expect(wrapper.find("#downloading").exists()).toBe(false);
-        expect(wrapper.find("#stochastic-run-placeholder").exists()).toBe(false);
+        expect(wrapper.findComponent(RunStochasticPlot).exists()).toBe(false);
     });
 
-    it("shows placeholder when app is stochastic and has not yet run", () => {
-        const wrapper = getStochasticWrapper();
-        expect(wrapper.find("#stochastic-run-placeholder").text()).toBe("Stochastic model has not run");
-        expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
-        expect(wrapper.findComponent(RunPlot).exists()).toBe(false);
-        expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(false);
-    });
-
-    it("shows placeholder when app is stochastic and has run", () => {
-        const series = {
-            values: [
-                { name: "series 1" },
-                { name: "series 2" }
-            ]
-        } as DiscreteSeriesSet;
+    it("renders as expected when app is stochastic", () => {
         const wrapper = getStochasticWrapper({}, {
-            solution: (time: any) => series
+            solution: jest.fn()
         });
-        expect(wrapper.find("#stochastic-run-placeholder").text()).toBe("Stochastic series count: 2");
+        expect(wrapper.findComponent(RunStochasticPlot).props("fadePlot")).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         expect(wrapper.findComponent(RunPlot).exists()).toBe(false);
         expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(false);
@@ -212,6 +200,11 @@ describe("RunTab", () => {
             "Plot is out of date: model code has been recompiled. Run model to update."
         );
         expect(wrapper.findComponent(RunPlot).props("fadePlot")).toBe(true);
+    });
+
+    it("fades plot when compile required when stochastic", () => {
+        const wrapper = getStochasticWrapper({}, {}, true);
+        expect(wrapper.findComponent(RunStochasticPlot).props("fadePlot")).toBe(true);
     });
 
     it("invokes run model action when run button is clicked", () => {

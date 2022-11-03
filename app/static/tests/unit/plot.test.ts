@@ -1,8 +1,9 @@
 import {
-    allFitDataToPlotly,
+    allFitDataToPlotly, discreteSeriesSetToPlotly,
     fitDataToPlotly,
     odinToPlotly
 } from "../../src/app/plot";
+import { DiscreteSeriesMode } from "../../src/app/types/responseTypes";
 
 describe("odinToPlotly", () => {
     const palette = {
@@ -209,5 +210,63 @@ describe("fitDataToPlotly", () => {
             x: [0, 1, 2, 3, 4],
             y: [1, 2, 3, 4, 5]
         }]);
+    });
+});
+
+describe("discreteSeriesSetToPlotly", () => {
+    const palette = {
+        A: "#ff0000",
+        B: "#0000ff"
+    };
+
+    it("creates expected series", () => {
+        const seriesSet = {
+            x: [0, 1, 2],
+            values: [
+                { name: "A", mode: DiscreteSeriesMode.Individual, y: [1, 2, 3] },
+                { name: "A", mode: DiscreteSeriesMode.Individual, y: [4, 5, 6] },
+                { name: "A", mode: DiscreteSeriesMode.Mean, y: [7, 8, 9] },
+                { name: "B", mode: DiscreteSeriesMode.Deterministic, y: [10, 11, 12] }
+            ]
+        };
+        const res = discreteSeriesSetToPlotly(seriesSet, palette);
+        expect(res).toStrictEqual([
+            {
+                mode: "lines",
+                line: { color: "#ff0000", width: 0.5, opacity: 0.5 },
+                name: "A",
+                x: [0, 1, 2],
+                y: [1, 2, 3],
+                legendgroup: "A",
+                showlegend: true
+            },
+            {
+                mode: "lines",
+                line: { color: "#ff0000", width: 0.5, opacity: 0.5 },
+                name: "A",
+                x: [0, 1, 2],
+                y: [4, 5, 6],
+                legendgroup: "A",
+                showlegend: false
+            },
+            {
+                mode: "lines",
+                line: { color: "#ff0000", width: undefined, opacity: undefined },
+                name: "A (mean)",
+                x: [0, 1, 2],
+                y: [7, 8, 9],
+                legendgroup: "A (mean)",
+                showlegend: true
+            },
+            {
+                mode: "lines",
+                line: { color: "#0000ff", width: undefined, opacity: undefined },
+                name: "B",
+                x: [0, 1, 2],
+                y: [10, 11, 12],
+                legendgroup: "B",
+                showlegend: true
+            }
+        ]);
     });
 });
