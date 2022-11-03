@@ -1,4 +1,5 @@
 <template>
+  help tab
   <markdown-panel :markdown="appHelp"></markdown-panel>
 </template>
 

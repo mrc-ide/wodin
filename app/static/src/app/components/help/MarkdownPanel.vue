@@ -1,12 +1,13 @@
 <template>
+  markdown panel
   <div class="markdown-panel" v-html="rendered"></div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, onMounted } from "vue";
-import * as MarkdownIt from "markdown-it";
 import MarkdownItMathjax from "markdown-it-mathjax";
 import { useStore } from "vuex";
+import MarkdownIt from "./MarkdownItImport";
 
 interface MathJaxWindow {
   MathJax: {
@@ -30,24 +31,24 @@ export default defineComponent({
             return /^(http:\/\/|https:\/\/)/.test(s);
         };
 
-        console.log("type: " + typeof MarkdownItMathjax)
-        console.log(JSON.stringify(MarkdownItMathjax));
-        console.log("type: " + typeof MarkdownIt);
-        console.log(JSON.stringify(MarkdownIt));
-        const mathjaxPlugin = MarkdownItMathjax();
-        const markdownIt = new MarkdownIt().use(mathjaxPlugin);
-        // Adapt default rendering to fetch images from base help url
-        markdownIt.renderer.rules.image = function (tokens, idx, options, env, slf) {
-            const token = tokens[idx];
-            const attrIdx = token.attrIndex("src");
-            const src = token.attrs![attrIdx][1];
-            if (!isAbsoluteUrl(src)) {
-              token.attrs![attrIdx][1] = `${appHelpUrl.value}/${src}`;
-            }
-            return slf.renderToken(tokens, idx, options);
-        };
-
         const rendered = computed(() => {
+            console.log(`type: ${typeof MarkdownItMathjax}`);
+            console.log(JSON.stringify(MarkdownItMathjax));
+            console.log(`type: ${typeof MarkdownIt}`);
+            console.log(JSON.stringify(MarkdownIt));
+            const mathjaxPlugin = MarkdownItMathjax();
+            const markdownIt = new MarkdownIt().use(mathjaxPlugin);
+            // Adapt default rendering to fetch images from base help url
+            markdownIt.renderer.rules.image = function (tokens: any, idx: any, options: any, env: any, slf: any) {
+                const token = tokens[idx];
+                const attrIdx = token.attrIndex("src");
+                const src = token.attrs![attrIdx][1];
+                if (!isAbsoluteUrl(src)) {
+                token.attrs![attrIdx][1] = `${appHelpUrl.value}/${src}`;
+                }
+                return slf.renderToken(tokens, idx, options);
+            };
+
             if (!props.markdown?.length) {
                 return "";
             }
