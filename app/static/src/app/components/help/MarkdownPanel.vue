@@ -1,11 +1,11 @@
 <template>
-  <div v-html="rendered"></div>
+  <div class="markdown-panel" v-html="rendered"></div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, onMounted } from "vue";
 import * as MarkdownIt from "markdown-it";
-import * as MarkdownItMathjax from "markdown-it-mathjax";
+import MarkdownItMathjax from "markdown-it-mathjax";
 import { useStore } from "vuex";
 
 interface MathJaxWindow {
@@ -30,6 +30,10 @@ export default defineComponent({
             return /^(http:\/\/|https:\/\/)/.test(s);
         };
 
+        console.log("type: " + typeof MarkdownItMathjax)
+        console.log(JSON.stringify(MarkdownItMathjax));
+        console.log("type: " + typeof MarkdownIt);
+        console.log(JSON.stringify(MarkdownIt));
         const mathjaxPlugin = MarkdownItMathjax();
         const markdownIt = new MarkdownIt().use(mathjaxPlugin);
         // Adapt default rendering to fetch images from base help url
