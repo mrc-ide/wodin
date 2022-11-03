@@ -124,6 +124,37 @@ describe("RunPlot", () => {
         expect(data).toStrictEqual([]);
     });
 
+    it("renders as expected when solution returns no data", () => {
+        const store = new Vuex.Store<StochasticState>({
+            state: {
+                model: {
+                    paletteModel
+                },
+                run: {
+                    endTime: 99,
+                    resultDiscrete: {
+                        inputs: {},
+                        solution: () => null,
+                        error: null
+                    }
+                }
+            } as any
+        });
+        const wrapper = shallowMount(RunStochasticPlot, {
+            props: {
+                fadePlot: false
+            },
+            global: {
+                plugins: [store]
+            }
+        });
+        const wodinPlot = wrapper.findComponent(WodinPlot);
+        // Generates expected empty plot data from solution
+        const plotData = wodinPlot.props("plotData");
+        const data = plotData();
+        expect(data).toStrictEqual([]);
+    });
+
     it("fades plot when fadePlot prop is true", () => {
         const store = new Vuex.Store<StochasticState>({
             state: {
