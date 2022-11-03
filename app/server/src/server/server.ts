@@ -4,7 +4,7 @@ import { ConfigReader } from "../configReader";
 import { WodinConfig } from "../types";
 import { registerViews } from "./views";
 import { registerRoutes } from "../routes";
-import { DefaultCodeReader } from "../defaultCodeReader";
+import { AppFileReader } from "../appFileReader";
 import { handleError } from "../errors/handleError";
 import { initialiseLogging } from "../logging";
 import { redisConnection } from "../redis";
@@ -30,7 +30,8 @@ const wodinConfig = configReader.readConfigFile("wodin.config.json") as WodinCon
 const {
     port, appsPath, baseUrl, odinAPI
 } = wodinConfig;
-const defaultCodeReader = new DefaultCodeReader(`${configPath}/defaultCode`);
+const defaultCodeReader = new AppFileReader(`${configPath}/defaultCode`, "R");
+const appHelpReader = new AppFileReader(`${configPath}/help`, "md");
 
 const redis = redisConnection(
     wodinConfig.redisURL,
@@ -39,7 +40,16 @@ const redis = redisConnection(
 
 // Make app locals available to controllers
 Object.assign(app.locals, {
-    appsPath, baseUrl, configPath, configReader, defaultCodeReader, odinAPI, redis, wodinConfig, wodinVersion
+    appsPath,
+    baseUrl,
+    configPath,
+    configReader,
+    defaultCodeReader,
+    appHelpReader,
+    odinAPI,
+    redis,
+    wodinConfig,
+    wodinVersion
 });
 
 // Static content
