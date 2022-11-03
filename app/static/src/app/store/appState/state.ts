@@ -23,6 +23,7 @@ export interface AppState {
     config: null | AppConfig,
     appName: null | string,
     baseUrl: null | string,
+    appsPath: null | string,
     appType: AppType
     openVisualisationTab: VisualisationTab
     queuedStateUploadIntervalId: number

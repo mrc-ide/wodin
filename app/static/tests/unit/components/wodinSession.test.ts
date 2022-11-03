@@ -15,9 +15,12 @@ describe("WodinSession", () => {
         jest.clearAllMocks();
     });
 
-    const getWrapper = (appName: string | null = "test", shareNotFound = "", baseUrl = "http://localhost:3000") => {
+    const getWrapper = (appName: string | null = "test",
+        shareNotFound = "",
+        baseUrl = "http://localhost:3000",
+        appsPath = "apps") => {
         const store = new Vuex.Store<BasicState>({
-            state: mockBasicState({ appName, baseUrl }),
+            state: mockBasicState({ appName, baseUrl, appsPath }),
             actions: {
                 [AppStateAction.Initialise]: mockInitialise
             },
@@ -38,6 +41,7 @@ describe("WodinSession", () => {
             props: {
                 appName: "testApp",
                 baseUrl: "http://localhost:3000",
+                appsPath: "apps",
                 loadSessionId: "session1",
                 shareNotFound
             }
@@ -58,6 +62,7 @@ describe("WodinSession", () => {
         expect(mockInitialise.mock.calls[0][1]).toStrictEqual({
             appName: "testApp",
             loadSessionId: "session1",
+            appsPath: "apps",
             baseUrl: "http://localhost:3000"
         });
     });

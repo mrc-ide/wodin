@@ -25,7 +25,6 @@ export class AppsController {
                     shareNotFound = share;
                 }
             }
-
             const config = configReader.readConfigFile(appsPath, `${appName}.config.json`) as any;
             if (config) {
                 const baseUrl = wodinConfig.baseUrl.replace(/\/$/, "");
@@ -34,6 +33,7 @@ export class AppsController {
                 const viewOptions = {
                     appName,
                     baseUrl,
+                    appsPath,
                     title: `${config.title} - ${wodinConfig.courseTitle}`,
                     appTitle: config.title,
                     courseTitle: wodinConfig.courseTitle,

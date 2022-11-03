@@ -28,11 +28,11 @@ interface SaveSessionLabelPayload {
 export const actions: ActionTree<SessionsState, AppState> = {
     async [SessionsAction.GetSessions](context) {
         const { rootState, rootGetters } = context;
-        const { appName } = rootState;
+        const { appName, appsPath } = rootState;
 
         const sessionIds = localStorageManager.getSessionIds(appName!, rootGetters[AppStateGetter.baseUrlPath]);
         const sessionIdsQs = sessionIds.join(",");
-        const url = `/apps/${appName}/sessions/metadata?sessionIds=${sessionIdsQs}`;
+        const url = `/${appsPath}/${appName}/sessions/metadata?sessionIds=${sessionIdsQs}`;
         await api(context)
             .withSuccess(SessionsMutation.SetSessionsMetadata)
             .withError(`errors/${ErrorsMutation.AddError}`, true)
@@ -41,8 +41,8 @@ export const actions: ActionTree<SessionsState, AppState> = {
 
     async [SessionsAction.Rehydrate](context, sessionId: string) {
         const { rootState, dispatch } = context;
-        const { appName } = rootState;
-        const url = `/apps/${appName}/sessions/${sessionId}`;
+        const { appName, appsPath } = rootState;
+        const url = `/${appsPath}/${appName}/sessions/${sessionId}`;
         const response = await api(context)
             .ignoreSuccess()
             .withError(`errors/${ErrorsMutation.AddError}`, true)
@@ -71,13 +71,13 @@ export const actions: ActionTree<SessionsState, AppState> = {
 
     async [SessionsAction.SaveSessionLabel](context, payload: SaveSessionLabelPayload) {
         const { commit, dispatch, rootState } = context;
-        const { appName } = rootState;
+        const { appName, appsPath } = rootState;
         const { label, id } = payload;
         const currentSessionId = rootState.sessionId;
         if (id === currentSessionId) {
             commit(AppStateMutation.SetSessionLabel, label, { root: true });
         }
-        const url = `/apps/${appName}/sessions/${id}/label`;
+        const url = `/${appsPath}/${appName}/sessions/${id}/label`;
         await api(context)
             .ignoreSuccess()
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
@@ -89,11 +89,11 @@ export const actions: ActionTree<SessionsState, AppState> = {
 
     async [SessionsAction.GenerateFriendlyId](context, sessionId: string) {
         const { commit, rootState } = context;
-        const { appName } = rootState;
+        const { appName, appsPath } = rootState;
         const response = await api(context)
             .ignoreSuccess()
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
-            .post(`/apps/${appName}/sessions/${sessionId}/friendly`, null);
+            .post(`/${appsPath}/${appName}/sessions/${sessionId}/friendly`, null);
 
         if (response) {
             commit(SessionsMutation.SetSessionFriendlyId, { sessionId, friendlyId: response.data });
