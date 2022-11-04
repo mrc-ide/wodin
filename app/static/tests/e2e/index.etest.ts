@@ -54,8 +54,6 @@ test.describe("Index tests", () => {
         await expect(await page.innerText("#code-status")).toBe(" Code is valid");
 
         await expect(await page.innerText(".markdown-panel h2")).toBe("Example Help for WODIN app");
-        await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
-        expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(14);
     });
 
     const testDownloadFile = async (href: string, localFileName: string, expectedContent: string, page: Page) => {
