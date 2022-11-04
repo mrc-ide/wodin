@@ -52,6 +52,8 @@ describe("appsController", () => {
         status: mockStatus
     } as any;
 
+    const mathjaxSrc = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
+
     beforeEach(() => {
         sessionIdFromFriendlyId = "123456";
     });
@@ -75,7 +77,8 @@ describe("appsController", () => {
             courseTitle: "Test Course Title",
             wodinVersion: "1.2.3",
             loadSessionId: "1234",
-            shareNotFound: ""
+            shareNotFound: "",
+            mathjaxSrc
         });
         expect(mockStatus).not.toBeCalled();
     });
@@ -92,7 +95,8 @@ describe("appsController", () => {
             courseTitle: "Test Course Title",
             wodinVersion: "1.2.3",
             loadSessionId: "",
-            shareNotFound: ""
+            shareNotFound: "",
+            mathjaxSrc
         });
     });
 
@@ -113,7 +117,8 @@ describe("appsController", () => {
             title: "testTitle - Test Course Title",
             wodinVersion: "1.2.3",
             loadSessionId: "123456",
-            shareNotFound: ""
+            shareNotFound: "",
+            mathjaxSrc
         });
     });
 
@@ -132,7 +137,8 @@ describe("appsController", () => {
             title: "testTitle - Test Course Title",
             wodinVersion: "1.2.3",
             loadSessionId: "",
-            shareNotFound: "tiny-mouse"
+            shareNotFound: "tiny-mouse",
+            mathjaxSrc
         });
     });
 
