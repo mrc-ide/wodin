@@ -6,7 +6,7 @@ import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { FitState } from "../../../../src/app/store/fit/state";
 import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
-import WodinOdePlot from "../../../../src/app/components/WodinOdePlot.vue";
+import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import FitPlot from "../../../../src/app/components/fit/FitPlot.vue";
 import { OdinFitResult } from "../../../../src/app/types/wrapperTypes";
 
@@ -41,6 +41,7 @@ describe("FitPlot", () => {
                 color: "#0000ff",
                 width: 2
             },
+            hoverlabel: { namelength: -1 },
             legendgroup: undefined,
             showlegend: true
         },
@@ -66,6 +67,7 @@ describe("FitPlot", () => {
                 color: "#0000ff",
                 width: 2
             },
+            hoverlabel: { namelength: -1 },
             legendgroup: undefined,
             showlegend: true
         },
@@ -133,7 +135,7 @@ describe("FitPlot", () => {
 
     it("renders as expected when modelFit has solution", () => {
         const wrapper = getWrapper({ solution: mockSolution } as any);
-        const wodinPlot = wrapper.findComponent(WodinOdePlot);
+        const wodinPlot = wrapper.findComponent(WodinPlot);
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been fitted.");
         expect(wodinPlot.props("endTime")).toBe(1);
@@ -161,7 +163,7 @@ describe("FitPlot", () => {
                 }
             }
         } as any);
-        const wodinPlot = wrapper.findComponent(WodinOdePlot);
+        const wodinPlot = wrapper.findComponent(WodinPlot);
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been fitted.");
         expect(wodinPlot.props("endTime")).toBe(10);
@@ -176,7 +178,7 @@ describe("FitPlot", () => {
 
     it("renders as expected whn modelFit has not run", () => {
         const wrapper = getWrapper(null, false);
-        const wodinPlot = wrapper.findComponent(WodinOdePlot);
+        const wodinPlot = wrapper.findComponent(WodinPlot);
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been fitted.");
         expect(wodinPlot.props("endTime")).toBe(1);
@@ -189,6 +191,6 @@ describe("FitPlot", () => {
 
     it("fades plot when fadePlot prop is true", () => {
         const wrapper = getWrapper({ solution: mockSolution } as any, false);
-        expect(wrapper.findComponent(WodinOdePlot).props("fadePlot")).toBe(false);
+        expect(wrapper.findComponent(WodinPlot).props("fadePlot")).toBe(false);
     });
 });

@@ -1,7 +1,9 @@
 import { PlotData } from "plotly.js-basic-dist-min";
-import { paletteData, Palette } from "./palette";
+import { Palette, paletteData } from "./palette";
 import type { AllFitData, FitData, FitDataLink } from "./store/fitData/state";
-import { OdinSeriesSet } from "./types/responseTypes";
+import {
+    DiscreteSeriesMode, DiscreteSeriesSet, DiscreteSeriesValues, OdinSeriesSet
+} from "./types/responseTypes";
 import { Dict } from "./types/utilTypes";
 
 export type WodinPlotData = Partial<PlotData>[];
@@ -62,9 +64,42 @@ export function odinToPlotly(s: OdinSeriesSet, palette: Palette, options: Partia
             name: el.name,
             x: s.x,
             y: el.y,
+            hoverlabel: { namelength: -1 },
             legendgroup: plotlyOptions.includeLegendGroup ? el.name : undefined,
             showlegend: plotlyOptions.showLegend
         })
+    );
+}
+
+export function discreteSeriesSetToPlotly(s: DiscreteSeriesSet, palette: Palette): WodinPlotData {
+    const individualLegends: string[] = [];
+    return s.values.map(
+        (values: DiscreteSeriesValues) => {
+            const isIndividual = values.mode === DiscreteSeriesMode.Individual;
+            // show legend if not individual or if individual legend is not yet being shown
+            let showlegend = true;
+            if (isIndividual) {
+                if (individualLegends.includes(values.name)) {
+                    showlegend = false;
+                } else {
+                    individualLegends.push(values.name);
+                }
+            }
+            const name = values.mode === DiscreteSeriesMode.Mean ? `${values.name} (mean)` : values.name;
+            return {
+                mode: "lines",
+                line: {
+                    color: palette[values.name],
+                    width: isIndividual ? 0.5 : undefined,
+                    opacity: isIndividual ? 0.5 : undefined
+                },
+                name,
+                x: s.x,
+                y: values.y,
+                legendgroup: name,
+                showlegend
+            };
+        }
     );
 }
 

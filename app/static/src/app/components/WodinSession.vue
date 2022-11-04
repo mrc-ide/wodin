@@ -14,6 +14,7 @@ export default defineComponent({
     props: {
         appName: String,
         baseUrl: String,
+        appsPath: String,
         loadSessionId: String,
         shareNotFound: String
     },
@@ -22,15 +23,25 @@ export default defineComponent({
     },
     setup(props) {
         const store = useStore();
-        const initialised = computed(() => !!(store.state.appName && store.state.baseUrl));
+        const initialised = computed(() => !!(store.state.appName && store.state.baseUrl && store.state.appsPath));
         onMounted(() => {
             if (props.shareNotFound) {
                 store.commit(`errors/${ErrorsMutation.AddError}`,
                     { detail: `Share id not found: ${props.shareNotFound}` });
             }
-
-            const { appName, baseUrl, loadSessionId } = props;
-            store.dispatch(AppStateAction.Initialise, { appName, baseUrl, loadSessionId });
+            const {
+                appName,
+                baseUrl,
+                loadSessionId,
+                appsPath
+            } = props;
+            store.dispatch(AppStateAction.Initialise,
+                {
+                    appName,
+                    baseUrl,
+                    loadSessionId,
+                    appsPath
+                });
         });
 
         return { initialised };

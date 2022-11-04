@@ -14,7 +14,7 @@ describe("AppHeader", () => {
         sessionId = "testSessionId") => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
-                appName, sessionLabel, sessionId, baseUrl: "http://localhost:3000"
+                appName, sessionLabel, sessionId, baseUrl: "http://localhost:3000", appsPath: "apps"
             })
         });
 

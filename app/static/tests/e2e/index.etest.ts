@@ -52,7 +52,10 @@ test.describe("Index tests", () => {
 
         await page.waitForResponse((response) => response.url().includes("/odin/model"));
         await expect(await page.innerText("#code-status")).toBe(" Code is valid");
+
         await expect(await page.innerText(".markdown-panel h2")).toBe("Example Help for WODIN app");
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
+        expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(14);
     });
 
     const testDownloadFile = async (href: string, localFileName: string, expectedContent: string, page: Page) => {
@@ -74,5 +77,11 @@ test.describe("Index tests", () => {
 
     test("can download day 3 sample file", async ({ page }) => {
         await testDownloadFile("files/day3/sample1.csv", "sample3-1.csv", "3,3\n", page);
+    });
+
+    test("browsing to non-existent app shows 404 page", async ({ page }) => {
+        await page.goto("/apps/day4");
+        await expect(await page.title()).toBe("Page Not Found");
+        await expect(await page.innerText(".container")).toContain("Application \"day4\" is not configured");
     });
 });

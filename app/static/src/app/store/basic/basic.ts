@@ -23,6 +23,7 @@ const defaultState: () => any = () => {
         openVisualisationTab: VisualisationTab.Run,
         appName: null,
         baseUrl: null,
+        appsPath: null,
         config: null,
         queuedStateUploadIntervalId: -1,
         stateUploadInProgress: false

@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteComponent } from "vue-router";
 import SessionsPage from "./components/sessions/SessionsPage.vue";
 
-export function initialiseRouter(appComponent: RouteComponent, appName: string, baseUrl: string) {
+export function initialiseRouter(appComponent: RouteComponent, appName: string, baseUrl: string, appsPath: string) {
     // Remove any sessionId parameter from url
     const url = window.location.href;
     if (url.includes("sessionId=")) {
@@ -15,7 +15,7 @@ export function initialiseRouter(appComponent: RouteComponent, appName: string, 
     if (basePath === "/") {
         basePath = "";
     }
-    const routeBase = `${basePath}/apps/${appName}`;
+    const routeBase = `${basePath}/${appsPath}/${appName}`;
 
     return createRouter({
         history: createWebHistory(routeBase),

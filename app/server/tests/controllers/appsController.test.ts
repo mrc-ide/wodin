@@ -65,12 +65,13 @@ describe("appsController", () => {
     it("renders view with app config", () => {
         const appConfig = { title: "testTitle", appType: "testType" };
         const request = getMockRequest(appConfig, "1234", undefined);
-        AppsController.getApp(request, mockResponse);
+        AppsController.getApp(request, mockResponse, jest.fn());
 
         expect(mockRender).toBeCalledTimes(1);
         expect(mockRender.mock.calls[0][0]).toBe("testType-app");
         expect(mockRender.mock.calls[0][1]).toStrictEqual({
             appName: "test",
+            appsPath: "testapps",
             baseUrl: "http://localhost:3000",
             title: "testTitle - Test Course Title",
             appTitle: "testTitle",
@@ -85,10 +86,11 @@ describe("appsController", () => {
 
     it("sets loadSessionId to be empty when not in query string", () => {
         const request = getMockRequest({ title: "testTitle", appType: "testType" }, undefined, undefined);
-        AppsController.getApp(request, mockResponse);
+        AppsController.getApp(request, mockResponse, jest.fn());
 
         expect(mockRender.mock.calls[0][1]).toStrictEqual({
             appName: "test",
+            appsPath: "testapps",
             baseUrl: "http://localhost:3000",
             title: "testTitle - Test Course Title",
             appTitle: "testTitle",
@@ -102,7 +104,7 @@ describe("appsController", () => {
 
     it("gets session id from share parameter when provided", async () => {
         const request = getMockRequest({ title: "testTitle", appType: "testType" }, undefined, "tiny-mouse");
-        await AppsController.getApp(request, mockResponse);
+        await AppsController.getApp(request, mockResponse, jest.fn());
 
         expect(mockGetSessionStore).toHaveBeenCalledTimes(1);
         expect(mockGetSessionStore.mock.calls[0][0]).toBe(request);
@@ -111,6 +113,7 @@ describe("appsController", () => {
         expect(mockRender).toHaveBeenCalledTimes(1);
         expect(mockRender.mock.calls[0][1]).toStrictEqual({
             appName: "test",
+            appsPath: "testapps",
             baseUrl: "http://localhost:3000",
             appTitle: "testTitle",
             courseTitle: "Test Course Title",
@@ -125,12 +128,13 @@ describe("appsController", () => {
     it("sets shareNotFound value when share parameter does not exist in db", async () => {
         sessionIdFromFriendlyId = null;
         const request = getMockRequest({ title: "testTitle", appType: "testType" }, undefined, "tiny-mouse");
-        await AppsController.getApp(request, mockResponse);
+        await AppsController.getApp(request, mockResponse, jest.fn());
 
         expect(mockGetSessionStore).toHaveBeenCalledTimes(1);
         expect(mockRender).toHaveBeenCalledTimes(1);
         expect(mockRender.mock.calls[0][1]).toStrictEqual({
             appName: "test",
+            appsPath: "testapps",
             baseUrl: "http://localhost:3000",
             appTitle: "testTitle",
             courseTitle: "Test Course Title",
@@ -142,7 +146,7 @@ describe("appsController", () => {
         });
     });
 
-    it("throws expected error when no config", async () => {
+    it("throws and handles expected error when no config", async () => {
         const request = getMockRequest(null, "12345", undefined);
         const expectedErr = new WodinWebError(
             "App not found: test",
@@ -151,14 +155,17 @@ describe("appsController", () => {
             "app-not-found",
             { appName: "test" }
         );
-        await expect(AppsController.getApp(request, mockResponse)).rejects.toThrow(expectedErr);
+        const next = jest.fn();
+        await AppsController.getApp(request, mockResponse, next);
+        expect(next).toHaveBeenCalledTimes(1);
+        expect(next.mock.calls[0][0]).toStrictEqual(expectedErr);
         expect(mockRender).not.toHaveBeenCalled();
     });
 
     it("removes trailing slash from baseUrl", async () => {
         const wodinConfig = { baseUrl: "http://localhost:3000/instance/" };
         const request = getMockRequest({ title: "testTitle", appType: "testType" }, "1234", undefined, wodinConfig);
-        await AppsController.getApp(request, mockResponse);
+        await AppsController.getApp(request, mockResponse, jest.fn());
         expect(mockRender.mock.calls[0][1].baseUrl).toBe("http://localhost:3000/instance");
     });
 });

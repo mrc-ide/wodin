@@ -4,7 +4,7 @@ jest.mock("plotly.js-basic-dist-min", () => {});
 /* eslint-disable import/first */
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
-import WodinOdePlot from "../../../../src/app/components/WodinOdePlot.vue";
+import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/SensitivityTracesPlot.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
@@ -48,6 +48,7 @@ const expectedPlotData = [
         name: "y (alpha=1.111)",
         x: [0, 0.5, 1],
         y: [5, 6, 7],
+        hoverlabel: { namelength: -1 },
         showlegend: false,
         legendgroup: "y"
     },
@@ -60,6 +61,7 @@ const expectedPlotData = [
         name: "z (alpha=1.111)",
         x: [0, 0.5, 1],
         y: [1, 2, 3],
+        hoverlabel: { namelength: -1 },
         showlegend: false,
         legendgroup: "z"
     },
@@ -73,6 +75,7 @@ const expectedPlotData = [
         name: "y (alpha=2.222)",
         x: [0, 0.5, 1],
         y: [50, 60, 70],
+        hoverlabel: { namelength: -1 },
         showlegend: false,
         legendgroup: "y"
     },
@@ -85,6 +88,7 @@ const expectedPlotData = [
         name: "z (alpha=2.222)",
         x: [0, 0.5, 1],
         y: [10, 20, 30],
+        hoverlabel: { namelength: -1 },
         showlegend: false,
         legendgroup: "z"
     },
@@ -98,6 +102,7 @@ const expectedPlotData = [
         name: "y",
         x: [0, 0.5, 1],
         y: [15, 16, 17],
+        hoverlabel: { namelength: -1 },
         showlegend: true,
         legendgroup: "y"
     },
@@ -110,6 +115,7 @@ const expectedPlotData = [
         name: "z",
         x: [0, 0.5, 1],
         y: [11, 12, 13],
+        hoverlabel: { namelength: -1 },
         showlegend: true,
         legendgroup: "z"
     }
@@ -187,7 +193,7 @@ describe("SensitivityTracesPlot", () => {
 
     it("renders as expected when there are sensitivity solutions", () => {
         const wrapper = getWrapper();
-        const wodinPlot = wrapper.findComponent(WodinOdePlot);
+        const wodinPlot = wrapper.findComponent(WodinPlot);
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Sensitivity has not been run.");
         expect(wodinPlot.props("endTime")).toBe(1);
@@ -205,7 +211,7 @@ describe("SensitivityTracesPlot", () => {
 
     it("renders as expected when there are sensitivity solutions and data", () => {
         const wrapper = getWrapper(true, false, true);
-        const wodinPlot = wrapper.findComponent(WodinOdePlot);
+        const wodinPlot = wrapper.findComponent(WodinPlot);
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Sensitivity has not been run.");
         expect(wodinPlot.props("endTime")).toBe(1);
@@ -223,7 +229,7 @@ describe("SensitivityTracesPlot", () => {
 
     it("renders as expected when there are no sensitivity solutions", () => {
         const wrapper = getWrapper(false);
-        const wodinPlot = wrapper.findComponent(WodinOdePlot);
+        const wodinPlot = wrapper.findComponent(WodinPlot);
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Sensitivity has not been run.");
         expect(wodinPlot.props("endTime")).toBe(1);
@@ -236,6 +242,6 @@ describe("SensitivityTracesPlot", () => {
 
     it("fades plot when fadePlot prop is true", () => {
         const wrapper = getWrapper(true, false);
-        expect(wrapper.findComponent(WodinOdePlot).props("fadePlot")).toBe(false);
+        expect(wrapper.findComponent(WodinPlot).props("fadePlot")).toBe(false);
     });
 });

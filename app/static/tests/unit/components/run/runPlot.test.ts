@@ -5,7 +5,7 @@ jest.mock("plotly.js-basic-dist-min", () => {});
 import { shallowMount, VueWrapper } from "@vue/test-utils";
 import Vuex from "vuex";
 import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
-import WodinOdePlot from "../../../../src/app/components/WodinOdePlot.vue";
+import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
 
@@ -54,7 +54,7 @@ describe("RunPlot", () => {
                 plugins: [store]
             }
         });
-        const wodinPlot = wrapper.findComponent(WodinOdePlot);
+        const wodinPlot = wrapper.findComponent(WodinPlot);
         const mockAllFitData = undefined;
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
@@ -74,6 +74,7 @@ describe("RunPlot", () => {
                 name: "S",
                 x: [0, 1],
                 y: [3, 4],
+                hoverlabel: { namelength: -1 },
                 showlegend: true,
                 legendgroup: undefined
             },
@@ -86,6 +87,7 @@ describe("RunPlot", () => {
                 name: "I",
                 x: [0, 1],
                 y: [5, 6],
+                hoverlabel: { namelength: -1 },
                 showlegend: true,
                 legendgroup: undefined
             }
@@ -116,7 +118,7 @@ describe("RunPlot", () => {
                 plugins: [store]
             }
         });
-        const wodinPlot = wrapper.findComponent(WodinOdePlot);
+        const wodinPlot = wrapper.findComponent(WodinPlot);
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
@@ -145,7 +147,7 @@ describe("RunPlot", () => {
                 plugins: [store]
             }
         });
-        const wodinPlot = wrapper.findComponent(WodinOdePlot);
+        const wodinPlot = wrapper.findComponent(WodinPlot);
         expect(wodinPlot.props("fadePlot")).toBe(true);
     });
 
@@ -187,7 +189,7 @@ describe("RunPlot", () => {
                 plugins: [store]
             }
         });
-        const wodinPlot = wrapper.findComponent(WodinOdePlot);
+        const wodinPlot = wrapper.findComponent(WodinPlot);
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
@@ -206,6 +208,7 @@ describe("RunPlot", () => {
                 name: "S",
                 x: [0, 1],
                 y: [3, 4],
+                hoverlabel: { namelength: -1 },
                 showlegend: true,
                 legendgroup: undefined
             },
@@ -218,6 +221,7 @@ describe("RunPlot", () => {
                 name: "I",
                 x: [0, 1],
                 y: [5, 6],
+                hoverlabel: { namelength: -1 },
                 showlegend: true,
                 legendgroup: undefined
             },
