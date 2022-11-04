@@ -16,24 +16,24 @@ jest.mock("markdown-it-mathjax", () => ({ __esModule: true, default: () => mockM
 jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
     // mock constructor - this cannot be an arrow function, see
     // https://stackoverflow.com/questions/47402005
-    return function(){
+    return function () {
         return {
             use: mockMarkdownItUse
         };
-    }
+    };
 });
 
 /* eslint-disable import/first */
 import { shallowMount } from "@vue/test-utils";
-import MarkdownPanel from "../../../../src/app/components/help/MarkdownPanel.vue";
-import {BasicState} from "../../../../src/app/store/basic/state";
-import {mockBasicState} from "../../../mocks";
 import Vuex from "vuex";
+import MarkdownPanel from "../../../../src/app/components/help/MarkdownPanel.vue";
+import { BasicState } from "../../../../src/app/store/basic/state";
+import { mockBasicState } from "../../../mocks";
 
 describe("MarkdownPanel", () => {
     const getWrapper = (markdown: string[]) => {
         const store = new Vuex.Store<BasicState>({
-            state: mockBasicState({baseUrl: "http://localhost:3000"})
+            state: mockBasicState({ baseUrl: "http://localhost:3000" })
         });
         return shallowMount(MarkdownPanel as any, {
             props: {

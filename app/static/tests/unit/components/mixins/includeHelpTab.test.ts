@@ -1,6 +1,6 @@
-import {BasicState} from "../../../../src/app/store/basic/state";
 import Vuex from "vuex";
-import {mockBasicState} from "../../../mocks";
+import { BasicState } from "../../../../src/app/store/basic/state";
+import { mockBasicState } from "../../../mocks";
 import includeHelpTab from "../../../../src/app/components/mixins/includeHelpTab";
 
 describe("includeHelpTab mixin", () => {

@@ -1,13 +1,11 @@
 // Mock the import of third party packages to prevent errors
-import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
-
 jest.mock("plotly.js-basic-dist-min", () => ({}));
 jest.mock("plotly.js-basic-dist-min", () => ({}));
 jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
-    return function(){
+    return function () {
         return {
             use: jest.fn().mockReturnValue({
-                renderer: {rules: {} },
+                renderer: { rules: {} },
                 render: jest.fn()
             })
         };
@@ -30,10 +28,11 @@ import { ModelAction } from "../../../../src/app/store/model/actions";
 import CodeTab from "../../../../src/app/components/code/CodeTab.vue";
 import DataTab from "../../../../src/app/components/data/DataTab.vue";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
+import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
 import { VisualisationTab } from "../../../../src/app/store/appState/state";
 import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
 import { ModelFitGetter } from "../../../../src/app/store/modelFit/getters";
-import {AppConfig} from "../../../../src/app/types/responseTypes";
+import { AppConfig } from "../../../../src/app/types/responseTypes";
 
 describe("FitApp", () => {
     const getWrapper = (mockSetOpenVisualisationTab = jest.fn(), config: Partial<AppConfig> = {}) => {

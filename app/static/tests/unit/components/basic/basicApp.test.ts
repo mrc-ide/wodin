@@ -1,10 +1,10 @@
 // Mock the import of third party packages to prevent errors
 jest.mock("plotly.js-basic-dist-min", () => ({}));
 jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
-    return function(){
+    return function () {
         return {
             use: jest.fn().mockReturnValue({
-                renderer: {rules: {} },
+                renderer: { rules: {} },
                 render: jest.fn()
             })
         };
@@ -12,9 +12,9 @@ jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
 });
 
 /* eslint-disable import/first */
-import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
 import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
+import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
 import BasicApp from "../../../../src/app/components/basic/BasicApp.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState, mockModelState, mockSensitivityState } from "../../../mocks";

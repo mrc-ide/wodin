@@ -1,11 +1,9 @@
 // Mock the import of third party packages to prevent errors
-import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
-
 jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
-    return function(){
+    return function () {
         return {
             use: jest.fn().mockReturnValue({
-                renderer: {rules: {} },
+                renderer: { rules: {} },
                 render: jest.fn()
             })
         };
@@ -24,6 +22,7 @@ import CodeTab from "../../../../src/app/components/code/CodeTab.vue";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
 import SensitivityTab from "../../../../src/app/components/sensitivity/SensitivityTab.vue";
+import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
 import { ModelAction } from "../../../../src/app/store/model/actions";
 import { AppStateAction } from "../../../../src/app/store/appState/actions";
 import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
@@ -35,7 +34,7 @@ const mockSetOpenVisualisationTab = jest.fn();
 describe("StochasticApp", () => {
     const getWrapper = (config: Partial<AppConfig> = {}) => {
         const store = new Vuex.Store<StochasticState>({
-            state: mockStochasticState({config: config as any}),
+            state: mockStochasticState({ config: config as any }),
             actions: {
                 [AppStateAction.Initialise]: jest.fn()
             },
@@ -45,7 +44,7 @@ describe("StochasticApp", () => {
             modules: {
                 errors: {
                     namespaced: true,
-                    state: {errors: []}
+                    state: { errors: [] }
                 },
                 model: {
                     namespaced: true,

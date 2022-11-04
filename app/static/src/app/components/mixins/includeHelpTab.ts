@@ -1,6 +1,6 @@
-import {Store} from "vuex";
-import {computed} from "vue";
-import {AppState} from "../../store/appState/state";
+import { Store } from "vuex";
+import { computed } from "vue";
+import { AppState } from "../../store/appState/state";
 
 export default (store: Store<AppState>, nonHelpTabNames: string[]) => {
     const helpTabName = computed(() => {

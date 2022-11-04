@@ -67,9 +67,8 @@ export default defineComponent({
         const rightTabSelected = (tab: string) => {
             store.commit(AppStateMutation.SetOpenVisualisationTab, tab);
         };
-        const { helpTabName, rightTabNames } = includeHelpTab(store, [
-            VisualisationTab.Run, VisualisationTab.Fit, VisualisationTab.Sensitivity
-        ]);
+        const { helpTabName, rightTabNames } = includeHelpTab(store,
+            [VisualisationTab.Run, VisualisationTab.Fit, VisualisationTab.Sensitivity]);
 
         return {
             helpTabName,

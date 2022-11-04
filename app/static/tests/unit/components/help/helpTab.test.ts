@@ -1,7 +1,7 @@
-import {BasicState} from "../../../../src/app/store/basic/state";
 import Vuex from "vuex";
-import {mockBasicState} from "../../../mocks";
-import {shallowMount} from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
+import { BasicState } from "../../../../src/app/store/basic/state";
+import { mockBasicState } from "../../../mocks";
 import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
 import MarkdownPanel from "../../../../src/app/components/help/MarkdownPanel.vue";
 

@@ -6,9 +6,9 @@
 import { computed, defineComponent, onMounted } from "vue";
 import MarkdownItMathjax from "markdown-it-mathjax";
 import { useStore } from "vuex";
-import MarkdownIt from "./MarkdownItImport";
 import * as Token from "markdown-it/lib/token";
 import * as Renderer from "markdown-it/lib/renderer";
+import MarkdownIt from "./MarkdownItImport";
 
 interface MathJaxWindow {
   MathJax: {
