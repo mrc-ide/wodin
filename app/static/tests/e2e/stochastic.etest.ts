@@ -6,7 +6,8 @@ test.describe("stochastic app", () => {
 
     test.beforeEach(async ({ page }) => {
         await page.goto("/apps/day3");
-        await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
+        await page.click(":nth-match(.wodin-left .nav-tabs a, 2)"); // Options
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 2)"); // Run
     });
 
     test("can display number of replicates", async ({ page }) => {
