@@ -102,4 +102,13 @@ describe("MarkdownPanel", () => {
             "<div class=\"markdown-panel\"></div>"
         );
     });
+
+    it("calls Mathjax.typeset when mounted", () => {
+        const mockTypeset = jest.fn();
+        (window as any).MathJax = {
+            typeset: mockTypeset
+        };
+        getWrapper([]);
+        expect(mockTypeset).toHaveBeenCalledTimes(1);
+    });
 });
