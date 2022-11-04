@@ -12,6 +12,7 @@ jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
     };
 });
 
+/* eslint-disable import/first */
 import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
 import StochasticApp from "../../../../src/app/components/stochastic/StochasticApp.vue";

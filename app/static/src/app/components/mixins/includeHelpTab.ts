@@ -1,9 +1,8 @@
-import {useStore} from "vuex";
+import {Store} from "vuex";
 import {computed} from "vue";
+import {AppState} from "../../store/appState/state";
 
-export default (nonHelpTabNames: string[]) => {
-    const store = useStore();
-
+export default (store: Store<AppState>, nonHelpTabNames: string[]) => {
     const helpTabName = computed(() => {
         if (store.state.config?.help?.markdown?.length) {
             return store.state.config.help.tabName || "Explanation"; // default if markdown but no tab name
