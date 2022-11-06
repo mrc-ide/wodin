@@ -50,6 +50,13 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
     }
 };
 
+// const runSensitivityStochastic = () => {
+//    const batch = odinRunnerDiscrete.batchRunDisccrete();
+//   //
+//   leave other sensitivity as it is
+//
+// }
+
 export const actions: ActionTree<SensitivityState, AppState> = {
     [SensitivityAction.RunSensitivity](context) {
         const { rootState, getters } = context;
