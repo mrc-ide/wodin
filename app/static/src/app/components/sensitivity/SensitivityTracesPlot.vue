@@ -4,8 +4,9 @@
       :placeholder-message="placeholderMessage"
       :end-time="endTime"
       :plot-data="allPlotData"
-      :redrawWatches="solutions ? [...solutions, allFitData] : []">
+      :redrawWatches="solutions ? [solutionsLength, ...solutions, allFitData] : []">
     <slot></slot>
+    <div>solutions: {{solutionsLength}}</div>
   </wodin-plot>
 </template>
 
@@ -34,6 +35,7 @@ export default defineComponent({
         const placeholderMessage = userMessages.sensitivity.notRunYet;
 
         const solutions = computed(() => (store.state.sensitivity.result?.batch?.solutions || []));
+        const solutionsLength = computed(() => store.state.sensitivity.result?.batch?.solutions?.length);
         const centralSolution = computed(() => (store.state.run.resultOde?.solution));
 
         const endTime = computed(() => store.state.run.endTime);
@@ -93,7 +95,8 @@ export default defineComponent({
             endTime,
             solutions,
             allPlotData,
-            allFitData
+            allFitData,
+            solutionsLength
         };
     }
 });

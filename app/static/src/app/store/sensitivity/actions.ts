@@ -49,6 +49,14 @@ const runSensitivityDiscrete = (runner: OdinRunnerDiscrete,
                                 replicates: number,
                                 dispatch: Dispatch,
                                 commit: Commit): Batch => {
+    console.log("running discrete")
+    console.log("pars: " + JSON.stringify(pars))
+    console.log("endTime: " + endTime)
+    console.log("dt: " + dt)
+    console.log("replicates: " + replicates)
+    const functions = Object.keys(runner);
+    console.log("functions: " + JSON.stringify(functions))
+    console.log("type: " + typeof runner.batchRunDiscrete)
     const batch = runner.batchRunDiscrete(odin, pars,0, endTime, dt, replicates);
     commit(SensitivityMutation.SetRunning, true);
     dispatch(SensitivityAction.ComputeNext, batch);
@@ -59,9 +67,9 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
     const {
         rootState, commit, dispatch
     } = context;
-    const { odinRunnerOde, odinRunnerDiscrete,  odin, odinModelResponse } = rootState.model;
+    const { odinRunnerOde, odinRunnerDiscrete, odin, odinModelResponse } = rootState.model;
     const { numberOfReplicates } = rootState.run;
-    const { dt } = odinModelResponse!.metadata!.dt;
+    const {dt} = odinModelResponse!.metadata!;
     const isStochastic = rootState.appType === AppType.Stochastic;
     const hasRunner = isStochastic ? !!odinRunnerDiscrete : !!odinRunnerOde;
 
@@ -72,9 +80,8 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
             error: null
         };
         try {
-            const batch = isStochastic ? runSensitivityOde(odinRunnerOde!, odin, batchPars, endTime, dispatch, rootState) :
-                runSensitivityDiscrete(odinRunnerDiscrete!, odin, batchPars, endTime, dt, numberOfReplicates, dispatch);
-                //odinRunnerOde.batchRun(odin, batchPars, 0, endTime, {});
+            const batch = isStochastic ? runSensitivityDiscrete(odinRunnerDiscrete!, odin, batchPars, endTime, dt!, numberOfReplicates, dispatch, commit) :
+                runSensitivityOde(odinRunnerOde!, odin, batchPars, endTime, dispatch, rootState);
             payload.batch = batch;
         } catch (e: unknown) {
             payload.error = {
@@ -112,13 +119,17 @@ export const actions: ActionTree<SensitivityState, AppState> = {
     },
 
     [SensitivityAction.ComputeNext](context, batch: Batch) {
-        const { commit, dispatch, rootState } = context;
+        const { commit, dispatch, rootState, state } = context;
         const isComplete = batch.compute();
+        console.log("solution count: " + batch.solutions.length);
+        commit(SensitivityMutation.SetResult, {...state.result, batch});
         if (isComplete) {
             commit(SensitivityMutation.SetRunning, false);
             runModelIfRequired(rootState, dispatch);
         } else {
-            dispatch(SensitivityAction.ComputeNext, batch);
+            setTimeout(() => {
+                dispatch(SensitivityAction.ComputeNext, batch);
+            });
         }
     }
 };
