@@ -1,8 +1,20 @@
-// Mock the import of plotly to prevent errors
+// Mock the import of third party packages to prevent errors
 jest.mock("plotly.js-basic-dist-min", () => ({}));
+jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
+    return function () {
+        return {
+            use: jest.fn().mockReturnValue({
+                renderer: { rules: {} },
+                render: jest.fn()
+            })
+        };
+    };
+});
+
 /* eslint-disable import/first */
 import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
+import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
 import BasicApp from "../../../../src/app/components/basic/BasicApp.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState, mockModelState, mockSensitivityState } from "../../../mocks";
@@ -11,13 +23,13 @@ import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
 import { ModelAction } from "../../../../src/app/store/model/actions";
 import { AppStateAction } from "../../../../src/app/store/appState/actions";
-import mock = jest.mock;
 import { VisualisationTab } from "../../../../src/app/store/appState/state";
 import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
+import { AppConfig } from "../../../../src/app/types/responseTypes";
 
 describe("BasicApp", () => {
-    const getWrapper = (mockSetOpenVisualisationTab = jest.fn()) => {
-        const state = mockBasicState({ config: {} as any });
+    const getWrapper = (mockSetOpenVisualisationTab = jest.fn(), config: Partial<AppConfig> = {}) => {
+        const state = mockBasicState({ config: config as any });
 
         const store = new Vuex.Store<BasicState>({
             state,
@@ -105,5 +117,24 @@ describe("BasicApp", () => {
         await rightTabs.findAll("li a").at(1)!.trigger("click"); // Click Sensitivity Tab
         expect(mockSetOpenTab).toHaveBeenCalledTimes(1);
         expect(mockSetOpenTab.mock.calls[0][1]).toBe(VisualisationTab.Sensitivity);
+    });
+
+    it("renders help tab", () => {
+        const helpConfig = {
+            help: {
+                markdown: ["test md"],
+                tabName: "Help"
+            }
+        };
+        const wrapper = getWrapper(jest.fn(), helpConfig);
+        const wodinPanels = wrapper.findComponent(WodinPanels);
+        const rightPanel = wodinPanels.find(".wodin-right");
+        const rightTabs = rightPanel.find("#right-tabs");
+        const rightTabLinks = rightTabs.findAll("ul li a");
+        expect(rightTabLinks.length).toBe(3);
+        expect(rightTabLinks.at(0)!.text()).toBe("Help");
+        expect(rightTabLinks.at(1)!.text()).toBe("Run");
+        expect(rightTabLinks.at(2)!.text()).toBe("Sensitivity");
+        expect(rightTabs.findComponent(HelpTab).exists()).toBe(true);
     });
 });
