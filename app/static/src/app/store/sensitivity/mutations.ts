@@ -17,6 +17,7 @@ export enum SensitivityMutation {
     SetPlotType = "SetPlotType",
     SetPlotExtreme = "SetPlotExtreme",
     SetPlotTime = "SetPlotTime",
+    SetRunning = "SetRunning"
 }
 
 export const mutations: MutationTree<SensitivityState> = {
@@ -66,5 +67,9 @@ export const mutations: MutationTree<SensitivityState> = {
 
     [SensitivityMutation.SetPlotTime](state: SensitivityState, payload: number) {
         state.plotSettings.time = payload;
+    },
+
+    [SensitivityMutation.SetRunning](state: SensitivityState, payload: boolean) {
+        state.running = payload;
     }
 };

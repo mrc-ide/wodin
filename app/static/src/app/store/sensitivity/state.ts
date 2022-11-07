@@ -51,4 +51,5 @@ export interface SensitivityState {
     sensitivityUpdateRequired: SensitivityUpdateRequiredReasons
     plotSettings: SensitivityPlotSettings,
     result: OdinSensitivityResult | null;
+    running: boolean;
 }

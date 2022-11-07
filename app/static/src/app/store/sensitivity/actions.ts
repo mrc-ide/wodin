@@ -1,32 +1,80 @@
-import { ActionContext, ActionTree } from "vuex";
-import { AppState } from "../appState/state";
-import { SensitivityState } from "./state";
-import { SensitivityGetter } from "./getters";
-import { SensitivityMutation } from "./mutations";
-import { RunAction } from "../run/actions";
+import {ActionContext, ActionTree, Commit, Dispatch} from "vuex";
+import {AppState, AppType} from "../appState/state";
+import {SensitivityState} from "./state";
+import {SensitivityGetter} from "./getters";
+import {SensitivityMutation} from "./mutations";
+import {RunAction} from "../run/actions";
 import userMessages from "../../userMessages";
-import { OdinSensitivityResult } from "../../types/wrapperTypes";
-import { BatchPars } from "../../types/responseTypes";
+import {OdinSensitivityResult} from "../../types/wrapperTypes";
+import {Batch, BatchPars, Odin, OdinRunnerDiscrete, OdinRunnerOde} from "../../types/responseTypes";
 
 export enum SensitivityAction {
     RunSensitivity = "RunSensitivity",
-    RunSensitivityOnRehydrate = "RunSensitivityOnRehydrate"
+    RunSensitivityOnRehydrate = "RunSensitivityOnRehydrate",
+    ComputeNext = "ComputeNext"
 }
+
+// runModelIfRequired
+const runModelIfRequired = (rootState: AppState, dispatch: Dispatch) => {
+    // Re-run model if required on sensitivity run so that plotted central traces are correct
+    if (rootState.run.runRequired) {
+        dispatch(`run/${RunAction.RunModel}`, null, { root: true });
+    }
+};
+
+//runSensitiivtyOde
+// - do the run
+// - call rerunModelIfRequired
+// - return batch to runSens to commit
+const runSensitivityOde = (runner: OdinRunnerOde,
+                           odin: Odin,
+                           pars: BatchPars,
+                           endTime: number,
+                           dispatch: Dispatch,
+                           rootState: AppState): Batch => {
+    const batch = runner.batchRun(odin, pars, 0, endTime, {});
+    runModelIfRequired(rootState, dispatch);
+    return batch;
+};
+
+// runSensitivityDiscrete
+// - call bathRunDiscrete to get batch
+// - dispatch CompputeNext
+// - return batch to runSens to commit
+const runSensitivityDiscrete = (runner: OdinRunnerDiscrete,
+                                odin: Odin,
+                                pars: BatchPars,
+                                endTime: number,
+                                dt: number,
+                                replicates: number,
+                                dispatch: Dispatch,
+                                commit: Commit): Batch => {
+    const batch = runner.batchRunDiscrete(odin, pars,0, endTime, dt, replicates);
+    commit(SensitivityMutation.SetRunning, true);
+    dispatch(SensitivityAction.ComputeNext, batch);
+    return batch;
+};
 
 const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionContext<SensitivityState, AppState>) => {
     const {
         rootState, commit, dispatch
     } = context;
-    const { odinRunnerOde, odin } = rootState.model;
+    const { odinRunnerOde, odinRunnerDiscrete,  odin, odinModelResponse } = rootState.model;
+    const { numberOfReplicates } = rootState.run;
+    const { dt } = odinModelResponse!.metadata!.dt;
+    const isStochastic = rootState.appType === AppType.Stochastic;
+    const hasRunner = isStochastic ? !!odinRunnerDiscrete : !!odinRunnerOde;
 
-    if (odinRunnerOde && odin && batchPars) {
+    if (hasRunner && odin && batchPars) {
         const payload : OdinSensitivityResult = {
             inputs: { endTime, pars: batchPars },
             batch: null,
             error: null
         };
         try {
-            const batch = odinRunnerOde.batchRun(odin, batchPars, 0, endTime, {});
+            const batch = isStochastic ? runSensitivityOde(odinRunnerOde!, odin, batchPars, endTime, dispatch, rootState) :
+                runSensitivityDiscrete(odinRunnerDiscrete!, odin, batchPars, endTime, dt, numberOfReplicates, dispatch);
+                //odinRunnerOde.batchRun(odin, batchPars, 0, endTime, {});
             payload.batch = batch;
         } catch (e: unknown) {
             payload.error = {
@@ -42,20 +90,9 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
                 endTimeChanged: false,
                 sensitivityOptionsChanged: false
             });
-            // Also re-run model if required so that plotted central traces are correct
-            if (rootState.run.runRequired) {
-                dispatch(`run/${RunAction.RunModel}`, null, { root: true });
-            }
         }
     }
 };
-
-// const runSensitivityStochastic = () => {
-//    const batch = odinRunnerDiscrete.batchRunDisccrete();
-//   //
-//   leave other sensitivity as it is
-//
-// }
 
 export const actions: ActionTree<SensitivityState, AppState> = {
     [SensitivityAction.RunSensitivity](context) {
@@ -72,5 +109,16 @@ export const actions: ActionTree<SensitivityState, AppState> = {
         const { pars } = state.result!.inputs;
 
         runSensitivity(pars, endTime, context);
+    },
+
+    [SensitivityAction.ComputeNext](context, batch: Batch) {
+        const { commit, dispatch, rootState } = context;
+        const isComplete = batch.compute();
+        if (isComplete) {
+            commit(SensitivityMutation.SetRunning, false);
+            runModelIfRequired(rootState, dispatch);
+        } else {
+            dispatch(SensitivityAction.ComputeNext, batch);
+        }
     }
 };
