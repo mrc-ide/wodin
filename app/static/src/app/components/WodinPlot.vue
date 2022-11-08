@@ -125,7 +125,6 @@ export default defineComponent({
         onMounted(drawPlot);
 
         watch(() => props.redrawWatches, () => {
-          console.log("redrawing sens...");
           drawPlot();
         });
 

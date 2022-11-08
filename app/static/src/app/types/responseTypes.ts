@@ -138,9 +138,15 @@ export interface BatchPars {
 
 export type OdeControl = Dict<unknown>;
 
+export interface BatchError {
+    value: number,
+    error: string
+}
+
 export interface Batch {
     pars: BatchPars,
     solutions: OdinSolution[],
+    errors: BatchError[],
     valueAtTime: (time: number) => OdinSeriesSet,
     compute: () => boolean
 }

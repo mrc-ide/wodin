@@ -9,7 +9,10 @@
     <action-required-message :message="updateMsg"></action-required-message>
     <sensitivity-traces-plot v-if="tracesPlot" :fade-plot="!!updateMsg"></sensitivity-traces-plot>
     <sensitivity-summary-plot v-else :fade-plot="!!updateMsg"></sensitivity-summary-plot>
-    <div v-if="running">Running sensitivity...</div>
+    <div v-if="running">
+      <loading-spinner class="inline-spinner" size="xs"></loading-spinner>
+      <span class="ms-2">{{ sensitivityProgressMsg }}</span>
+    </div>
     <error-info :error="error"></error-info>
   </div>
 </template>
@@ -28,11 +31,13 @@ import ErrorInfo from "../ErrorInfo.vue";
 import {sensitivityUpdateRequiredExplanation} from "./support";
 import {anyTrue} from "../../utils";
 import {AppType} from "../../store/appState/state";
+import LoadingSpinner from "../LoadingSpinner.vue";
 
 export default defineComponent({
     name: "SensitivityTab",
     components: {
         ErrorInfo,
+        LoadingSpinner,
         SensitivitySummaryPlot,
         ActionRequiredMessage,
         SensitivityTracesPlot
@@ -57,6 +62,13 @@ export default defineComponent({
             store.dispatch(`sensitivity/${SensitivityAction.RunSensitivity}`);
         };
 
+        const sensitivityProgressMsg = computed(() => {
+          const batch = store.state.sensitivity.result?.batch;
+          const finished = batch ? batch.solutions.length + batch.errors.length : 0;
+          const total = store.state.sensitivity.paramSettings.numberOfRuns;
+          return `Running sensitivity: finished ${finished} of ${total} runs`
+        });
+
         const sensitivityUpdateRequired = computed(() => store.state.sensitivity.sensitivityUpdateRequired);
         const updateMsg = computed(() => {
             if (store.state.sensitivity.result?.batch?.solutions.length) {
@@ -79,6 +91,7 @@ export default defineComponent({
         return {
             canRunSensitivity,
             running,
+            sensitivityProgressMsg,
             runSensitivity,
             updateMsg,
             tracesPlot,

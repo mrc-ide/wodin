@@ -121,7 +121,6 @@ export const actions: ActionTree<SensitivityState, AppState> = {
     [SensitivityAction.ComputeNext](context, batch: Batch) {
         const { commit, dispatch, rootState, state } = context;
         const isComplete = batch.compute();
-        console.log("solution count: " + batch.solutions.length);
         commit(SensitivityMutation.SetResult, {...state.result, batch});
         if (isComplete) {
             commit(SensitivityMutation.SetRunning, false);
@@ -129,7 +128,7 @@ export const actions: ActionTree<SensitivityState, AppState> = {
         } else {
             setTimeout(() => {
                 dispatch(SensitivityAction.ComputeNext, batch);
-            });
+            }, 0);
         }
     }
 };
