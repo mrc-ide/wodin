@@ -37,7 +37,6 @@ export default defineComponent({
         const placeholderMessage = userMessages.sensitivity.notRunYet;
 
         const solutions = computed(() => (store.state.sensitivity.result?.batch?.solutions || []));
-        const solutionsLength = computed(() => store.state.sensitivity.result?.batch?.solutions?.length);
         const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
         const centralSolution = computed(() => (isStochastic.value ? store.state.run.resultDiscrete?.solution : store.state.run.resultOde?.solution));
 
@@ -102,8 +101,7 @@ export default defineComponent({
             endTime,
             solutions,
             allPlotData,
-            allFitData,
-            solutionsLength
+            allFitData
         };
     }
 });

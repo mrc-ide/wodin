@@ -103,7 +103,7 @@ export default defineComponent({
         let resizeObserver: null | ResizeObserver = null;
 
         const drawPlot = () => {
-            if (props.redrawWatches?.length) {
+            if (props.redrawWatches.length) {
                 baseData.value = props.plotData(startTime, props.endTime, nPoints);
 
                 if (hasPlotData.value) {
@@ -124,9 +124,7 @@ export default defineComponent({
 
         onMounted(drawPlot);
 
-        watch(() => props.redrawWatches, () => {
-          drawPlot();
-        });
+        watch(() => props.redrawWatches, drawPlot);
 
         onUnmounted(() => {
             if (resizeObserver) {

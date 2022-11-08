@@ -9,7 +9,7 @@
     <action-required-message :message="updateMsg"></action-required-message>
     <sensitivity-traces-plot v-if="tracesPlot" :fade-plot="!!updateMsg"></sensitivity-traces-plot>
     <sensitivity-summary-plot v-else :fade-plot="!!updateMsg"></sensitivity-summary-plot>
-    <div v-if="running">
+    <div id="sensitivity-running" v-if="running">
       <loading-spinner class="inline-spinner" size="xs"></loading-spinner>
       <span class="ms-2">{{ sensitivityProgressMsg }}</span>
     </div>
@@ -18,21 +18,20 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent} from "vue";
-import {useStore} from "vuex";
+import { computed, defineComponent } from "vue";
+import { useStore } from "vuex";
 import SensitivityTracesPlot from "./SensitivityTracesPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
-import {SensitivityGetter} from "../../store/sensitivity/getters";
-import {SensitivityAction} from "../../store/sensitivity/actions";
+import { SensitivityGetter } from "../../store/sensitivity/getters";
+import { SensitivityAction } from "../../store/sensitivity/actions";
 import userMessages from "../../userMessages";
-import {SensitivityPlotType} from "../../store/sensitivity/state";
+import { SensitivityPlotType } from "../../store/sensitivity/state";
 import SensitivitySummaryPlot from "./SensitivitySummaryPlot.vue";
 import ErrorInfo from "../ErrorInfo.vue";
-import {sensitivityUpdateRequiredExplanation} from "./support";
-import {anyTrue} from "../../utils";
-import {AppType} from "../../store/appState/state";
+import { sensitivityUpdateRequiredExplanation } from "./support";
+import { anyTrue } from "../../utils";
 import LoadingSpinner from "../LoadingSpinner.vue";
-import {ModelGetter} from "../../store/model/getters";
+import { ModelGetter } from "../../store/model/getters";
 
 export default defineComponent({
     name: "SensitivityTab",
@@ -53,7 +52,7 @@ export default defineComponent({
         const canRunSensitivity = computed(() => {
             return hasRunner.value && !!store.state.model.odin
             && !store.state.model.compileRequired
-            && !!store.getters[`sensitivity/${SensitivityGetter.batchPars}`]
+            && !!store.getters[`sensitivity/${SensitivityGetter.batchPars}`];
         });
 
         const runSensitivity = () => {
@@ -61,10 +60,10 @@ export default defineComponent({
         };
 
         const sensitivityProgressMsg = computed(() => {
-          const batch = store.state.sensitivity.result?.batch;
-          const finished = batch ? batch.solutions.length + batch.errors.length : 0;
-          const total = store.state.sensitivity.paramSettings.numberOfRuns;
-          return `Running sensitivity: finished ${finished} of ${total} runs`
+            const batch = store.state.sensitivity.result?.batch;
+            const finished = batch ? batch.solutions.length + batch.errors.length : 0;
+            const total = store.state.sensitivity.paramSettings.numberOfRuns;
+            return `Running sensitivity: finished ${finished} of ${total} runs`;
         });
 
         const sensitivityUpdateRequired = computed(() => store.state.sensitivity.sensitivityUpdateRequired);
