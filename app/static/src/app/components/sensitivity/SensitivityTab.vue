@@ -32,6 +32,7 @@ import {sensitivityUpdateRequiredExplanation} from "./support";
 import {anyTrue} from "../../utils";
 import {AppType} from "../../store/appState/state";
 import LoadingSpinner from "../LoadingSpinner.vue";
+import {ModelGetter} from "../../store/model/getters";
 
 export default defineComponent({
     name: "SensitivityTab",
@@ -47,10 +48,7 @@ export default defineComponent({
 
         const running = computed(() => store.state.sensitivity.running);
 
-        // TODO: make this a getter, action also needs it
-        const hasRunner = computed(() => {
-          return (store.state.appType === AppType.Stochastic) ? !!store.state.model.odinRunnerDiscrete : !!store.state.model.odinRunnerOde;
-        });
+        const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
 
         const canRunSensitivity = computed(() => {
             return hasRunner.value && !!store.state.model.odin
