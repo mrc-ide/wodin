@@ -80,7 +80,7 @@ export default defineComponent({
                     const centralData = centralSolution.value(time);
                     if (centralData) {
                         if (isStochastic.value) {
-                          // Only show mean values as central for stochastic
+                          // Only show summary and deterministic values as central for stochastic
                           centralData.values = centralData.values.filter((v: DiscreteSeriesValues) => v.mode !== DiscreteSeriesMode.Individual);
                         }
                         const plotlyOptions = { includeLegendGroup: true };

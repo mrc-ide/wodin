@@ -39,7 +39,7 @@ describe("Model actions", () => {
         }
     };
 
-    it("fetches odin runner ode", async () => {
+    it("fetches odin runner ode when not stochastic", async () => {
         const mockRunnerScript = "() => \"runner\"";
         mockAxios.onGet("/odin/runner/ode")
             .reply(200, mockSuccess(mockRunnerScript));
@@ -52,18 +52,23 @@ describe("Model actions", () => {
         expect(commit.mock.calls[0][1]).toBe(mockRunnerScript);
     });
 
-    it("fetches odin runner discrete", async () => {
+    it("fetches odin runner ode and discrete when stochastic", async () => {
         const stochasticRootState = { ...rootState, appType: AppType.Stochastic };
-        const mockRunnerScript = "() => \"runner\"";
+        const mockRunnerOdeScript = "() => \"runnerOde\"";
+        const mockRunnerDiscreteScript = "() => \"runnerDiscrete\"";
+        mockAxios.onGet("/odin/runner/ode")
+            .reply(200, mockSuccess(mockRunnerOdeScript));
         mockAxios.onGet("/odin/runner/discrete")
-            .reply(200, mockSuccess(mockRunnerScript));
+            .reply(200, mockSuccess(mockRunnerDiscreteScript));
 
         const commit = jest.fn();
         await (actions[ModelAction.FetchOdinRunner] as any)({ commit, rootState: stochasticRootState });
 
-        expect(commit.mock.calls.length).toBe(1);
-        expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinRunnerDiscrete);
-        expect(commit.mock.calls[0][1]).toBe(mockRunnerScript);
+        expect(commit.mock.calls.length).toBe(2);
+        expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdinRunnerOde);
+        expect(commit.mock.calls[0][1]).toBe(mockRunnerOdeScript);
+        expect(commit.mock.calls[1][0]).toBe(ModelMutation.SetOdinRunnerDiscrete);
+        expect(commit.mock.calls[1][1]).toBe(mockRunnerDiscreteScript);
     });
 
     it("commits error from fetch odin runner", async () => {
