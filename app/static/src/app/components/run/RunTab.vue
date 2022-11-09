@@ -66,17 +66,11 @@ export default defineComponent({
         });
 
         const downloading = computed(() => store.state.run.downloading);
-
-        // const sumOfSquares = computed(() => ({
-        //    if (store.state.appType !== AppType.Fit) {
-        //      return null;
-        //    }
-        //    if (!store.getters[`${namespace}/${ModelFitGetter.fitRequirements}`].value) {
-        //      return null;
-        //    }
-        // });
-
-        // store.state.modelFit.sumOfSquares);
+        const sumOfSquares = computed(() => {
+            const ret = store.state.modelFit.sumOfSquares;
+            console.log(`mrc-3796: computed sum of squares: ${ret}`);
+            return ret;
+        });
 
         const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
 
@@ -90,7 +84,7 @@ export default defineComponent({
             if (store.state.model.compileRequired) {
                 return userMessages.run.compileRequired;
             }
-            // TOOD: eventually make runRequired to runUpdateRequired I think?
+            // TODO: eventually make runRequired to runUpdateRequired I think?
             if (anyTrue(store.state.run.runRequired)) {
                 return runRequiredExplanation(store.state.run.runRequired);
             }
@@ -108,6 +102,7 @@ export default defineComponent({
             runModel,
             error,
             downloading,
+            sumOfSquares,
             showDownloadOutput,
             canDownloadOutput,
             toggleShowDownloadOutput

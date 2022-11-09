@@ -118,7 +118,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
         // Don't do anything if we are fitting; we should also avoid
         // doing this in the case where we set the final result
         // really.
-        if (!state.fitting) {
+        if (state.fitting) {
             return;
         }
         const solution = rootState.run.resultOde?.solution;
@@ -132,10 +132,10 @@ export const actions: ActionTree<ModelFitState, FitState> = {
                 value: fitData.map((row) => row[link.data])
             };
             const sumOfSquares = odinRunnerOde!.wodinFitValue(solution, data, link.model);
-            console.log(`computed sum of squares: ${sumOfSquares}`);
+            console.log(`mrc-3796: computed sum of squares: ${sumOfSquares}`);
             commit(ModelFitMutation.SetSumOfSquares, sumOfSquares);
         } else {
-            console.log("can't compute sum of squares");
+            console.log("mrc-3796: can't compute sum of squares");
             commit(ModelFitMutation.SetSumOfSquares, null);
         }
     }
