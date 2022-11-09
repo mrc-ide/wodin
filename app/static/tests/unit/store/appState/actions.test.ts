@@ -1,6 +1,13 @@
 import Vuex from "vuex";
 import {
-    mockAxios, mockBasicState, mockCodeState, mockFailure, mockFitState, mockModelFitState, mockSuccess
+    mockAxios,
+    mockBasicState,
+    mockCodeState,
+    mockFailure,
+    mockFitState,
+    mockModelFitState,
+    mockSensitivityState,
+    mockSuccess
 } from "../../../mocks";
 import { AppStateAction, appStateActions } from "../../../../src/app/store/appState/actions";
 import { AppStateMutation, appStateMutations } from "../../../../src/app/store/appState/mutations";
@@ -210,7 +217,20 @@ describe("AppState actions", () => {
         jest.useFakeTimers();
         const mockSetInterval = jest.spyOn(window, "setInterval");
         const state = mockFitState({
-            modelFit: mockModelFitState({ fitting: true })
+            modelFit: mockModelFitState({ fitting: true }),
+            sensitivity: mockSensitivityState()
+        });
+        const commit = jest.fn();
+        await (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
+        expect(commit).not.toHaveBeenCalled();
+        expect(mockSetInterval).not.toHaveBeenCalled();
+    });
+
+    it("QueueStateUpload does not queue when running sensitivity", async () => {
+        jest.useFakeTimers();
+        const mockSetInterval = jest.spyOn(window, "setInterval");
+        const state = mockBasicState({
+            sensitivity: mockSensitivityState({ running: true })
         });
         const commit = jest.fn();
         await (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
@@ -317,6 +337,29 @@ describe("AppState actions", () => {
 
         // set fitting progress so interval callback will not do upload
         state.modelFit.fitting = true;
+
+        jest.advanceTimersByTime(2000);
+
+        // There should be no additional commits or axios calls
+        expect(commit).toHaveBeenCalledTimes(2);
+        expect(mockAxios.history.post.length).toBe(0);
+    });
+
+    it("QueueStateUpload callback does not upload pending if running sensitivity", async () => {
+        jest.useFakeTimers();
+        const mockSetInterval = jest.spyOn(window, "setInterval");
+        const state = mockFitState({ sessionId: "1234", appName: "testApp" });
+        const commit = jest.fn();
+        mockAxios.onPost("/apps/testApp/sessions/1234")
+            .reply(200);
+
+        await (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
+        expect(commit).toHaveBeenCalledTimes(2);
+        expect(mockSetInterval).toHaveBeenCalledTimes(1);
+        expect(mockAxios.history.post.length).toBe(0);
+
+        // set sensitivity running so interval callback will not do upload
+        state.sensitivity.running = true;
 
         jest.advanceTimersByTime(2000);
 

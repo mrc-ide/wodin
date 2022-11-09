@@ -129,7 +129,8 @@ export const mockSensitivityState = (state: Partial<SensitivityState> = {}): Sen
             modelChanged: false,
             parameterValueChanged: false,
             endTimeChanged: false,
-            sensitivityOptionsChanged: false
+            sensitivityOptionsChanged: false,
+            numberOfReplicatesChanged: false
         },
         result: null,
         ...state

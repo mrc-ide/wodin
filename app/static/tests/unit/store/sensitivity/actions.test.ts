@@ -248,7 +248,7 @@ describe("Sensitivity actions", () => {
         // should call run model if required
         expect(dispatch.mock.calls[0][0]).toBe(`run/${RunAction.RunModel}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);
-        expect(dispatch.mock.calls[0][2]).toStrictEqual({root: true});
+        expect(dispatch.mock.calls[0][2]).toStrictEqual({ root: true });
         expect(dispatch.mock.calls[1][0]).toBe(SensitivityAction.ComputeNext);
         expect(dispatch.mock.calls[1][1]).toBe(mockBatch);
     });
