@@ -23,7 +23,7 @@ import { StochasticState } from "../../../../src/app/store/stochastic/state";
 import { DiscreteSeriesSet, OdinRunnerDiscrete } from "../../../../src/app/types/responseTypes";
 import { OdinRunResultDiscrete } from "../../../../src/app/types/wrapperTypes";
 import { ModelGetter } from "../../../../src/app/store/model/getters";
-import {AppType} from "../../../../src/app/store/appState/state";
+import { AppType } from "../../../../src/app/store/appState/state";
 
 describe("RunTab", () => {
     const defaultModelState = {
