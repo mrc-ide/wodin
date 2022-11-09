@@ -85,7 +85,9 @@ export function discreteSeriesSetToPlotly(s: DiscreteSeriesSet, palette: Palette
                     individualLegends.push(values.name);
                 }
             }
-            const addDescription = values.description !== undefined && !isIndividual && values.description != "Deterministic";
+            const addDescription = values.description !== undefined
+                && !isIndividual
+                && values.description !== "Deterministic";
             const name = addDescription ? `${values.name} (${values.description!.toLowerCase()})` : values.name;
             return {
                 mode: "lines",
