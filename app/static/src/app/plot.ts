@@ -85,7 +85,11 @@ export function discreteSeriesSetToPlotly(s: DiscreteSeriesSet, palette: Palette
                     individualLegends.push(values.name);
                 }
             }
-            const name = isIndividual ? values.name : `${values.name} (${values.description.toLowerCase()})`;
+            // Practically, values.description will always be defined,
+            // but catching this via the test feels better than
+            // asserting it in the access on the else clause of the
+            // ternery
+            const name = isIndividual || values.description === undefined ? values.name : `${values.name} (${values.description.toLowerCase()})`;
             return {
                 mode: "lines",
                 line: {
