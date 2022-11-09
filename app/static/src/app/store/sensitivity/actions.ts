@@ -87,7 +87,8 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
                 modelChanged: false,
                 parameterValueChanged: false,
                 endTimeChanged: false,
-                sensitivityOptionsChanged: false
+                sensitivityOptionsChanged: false,
+                numberOfReplicatesChanged: false
             });
         }
     }

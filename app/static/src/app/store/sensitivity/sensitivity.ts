@@ -28,7 +28,8 @@ export const defaultState: SensitivityState = {
         modelChanged: false,
         parameterValueChanged: false,
         endTimeChanged: false,
-        sensitivityOptionsChanged: false
+        sensitivityOptionsChanged: false,
+        numberOfReplicatesChanged: false
     },
     result: null,
     running: false

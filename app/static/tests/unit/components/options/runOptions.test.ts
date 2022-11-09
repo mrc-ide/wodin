@@ -97,6 +97,10 @@ describe("RunOptions", () => {
         noOfReplicates.findComponent(NumericInput).vm.$emit("update", 20);
         expect(mockNumberOfReplicates.mock.calls[0][1]).toBe(20);
         expect(noOfReplicates.text()).toBe("Number of replicates");
+        expect(mockSetSensitivityUpdateRequired).toHaveBeenCalledTimes(1);
+        expect(mockSetSensitivityUpdateRequired.mock.calls[0][1]).toStrictEqual({
+            numberOfReplicatesChanged: true
+        });
     });
 
     it("does not render number of replicates when app is not stochastic", () => {
