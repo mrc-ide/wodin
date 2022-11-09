@@ -67,16 +67,16 @@ export default defineComponent({
 
         const downloading = computed(() => store.state.run.downloading);
 
-        const sumOfSquares = computed(() => ({
-           if (store.state.appType !== AppType.Fit) {
-             return null;
-           }
-           if (!store.getters[`${namespace}/${ModelFitGetter.fitRequirements}`].value) {
-             return null;
-           }
-        });
+        // const sumOfSquares = computed(() => ({
+        //    if (store.state.appType !== AppType.Fit) {
+        //      return null;
+        //    }
+        //    if (!store.getters[`${namespace}/${ModelFitGetter.fitRequirements}`].value) {
+        //      return null;
+        //    }
+        // });
 
-store.state.modelFit.sumOfSquares);
+        // store.state.modelFit.sumOfSquares);
 
         const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
 

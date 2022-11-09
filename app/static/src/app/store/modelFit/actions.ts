@@ -106,15 +106,15 @@ export const actions: ActionTree<ModelFitState, FitState> = {
         // Retain selected values if we can
         const newParamsToVary = state.paramsToVary.filter((param) => newParams.includes(param));
         commit(ModelFitMutation.SetParamsToVary, newParamsToVary);
-    }
+    },
 
     // We need to trigger this after a SetResultOde action, I think, iff we're not fitting.
     //
     // store/run/actions.ts, in runOdeModel
     //
     // Then also do the mutation when we set the out of date run result to clear it?
-    [ModelFitAction.UpdateSumOfSquares(context) {
-        const { rootState, state, commit } = context;
+    [ModelFitAction.UpdateSumOfSquares](context) {
+        const { rootState, state, commit, rootGetters } = context;
         // Don't do anything if we are fitting; we should also avoid
         // doing this in the case where we set the final result
         // really.
@@ -123,12 +123,13 @@ export const actions: ActionTree<ModelFitState, FitState> = {
         }
         const solution = rootState.run.resultOde?.solution;
         const link = rootGetters[`fitData/${FitDataGetter.link}`];
-        const data = rootState.fitData.data;
-        if (solution && link && data) {
-            const time = data.map((row) => row[link.time]);
+        const fitData = rootState.fitData.data;
+        const { odinRunnerOde } = rootState.model;
+        if (solution && link && fitData && odinRunnerOde) {
+            const time = fitData.map((row) => row[link.time]);
             const data = {
-                time: data.map((row) => row[link.time]),
-                value: data.map((row) => row[link.data])
+                time: fitData.map((row) => row[link.time]),
+                value: fitData.map((row) => row[link.data])
             };
             const sumOfSquares = odinRunnerOde!.wodinFitValue(solution, data, link.model);
             console.log(`computed sum of squares: ${sumOfSquares}`);

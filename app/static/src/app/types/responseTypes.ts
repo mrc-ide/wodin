@@ -170,6 +170,10 @@ export interface OdinRunnerOde {
                odeParams: OdeControl,
                simplexParams: Dict<unknown>) => Simplex;
 
+    wodinFitValue: (solution: OdinSolution,
+                    data: OdinFitData,
+                    modelledSeries: string) => number;
+
     batchParsRange: (base: OdinUserType,
                      name: string,
                      count: number,

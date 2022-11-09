@@ -6,6 +6,7 @@ import userMessages from "../../userMessages";
 import type { OdinRunDiscreteInputs, OdinRunResultDiscrete, OdinRunResultOde } from "../../types/wrapperTypes";
 import { OdinUserType } from "../../types/responseTypes";
 import { WodinExcelDownload } from "../../wodinExcelDownload";
+import { ModelFitAction } from "../modelFit/actions";
 
 export enum RunAction {
     RunModel = "RunModel",
