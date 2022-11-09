@@ -1,5 +1,17 @@
-// Mock the import of plotly to prevent errors
+// Mock the import of third party packages to prevent errors
 jest.mock("plotly.js-basic-dist-min", () => ({}));
+jest.mock("plotly.js-basic-dist-min", () => ({}));
+jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
+    return function () {
+        return {
+            use: jest.fn().mockReturnValue({
+                renderer: { rules: {} },
+                render: jest.fn()
+            })
+        };
+    };
+});
+
 /* eslint-disable import/first */
 import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
@@ -16,13 +28,15 @@ import { ModelAction } from "../../../../src/app/store/model/actions";
 import CodeTab from "../../../../src/app/components/code/CodeTab.vue";
 import DataTab from "../../../../src/app/components/data/DataTab.vue";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
+import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
 import { VisualisationTab } from "../../../../src/app/store/appState/state";
 import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
 import { ModelFitGetter } from "../../../../src/app/store/modelFit/getters";
+import { AppConfig } from "../../../../src/app/types/responseTypes";
 
 describe("FitApp", () => {
-    const getWrapper = (mockSetOpenVisualisationTab = jest.fn()) => {
-        const state = mockFitState({ config: {} as any });
+    const getWrapper = (mockSetOpenVisualisationTab = jest.fn(), config: Partial<AppConfig> = {}) => {
+        const state = mockFitState({ config: config as any });
         const store = new Vuex.Store<FitState>({
             state,
             mutations: {
@@ -143,5 +157,25 @@ describe("FitApp", () => {
         await rightTabs.findAll("li a").at(1)!.trigger("click"); // Click Fit tab
         expect(mockSetOpenTab).toHaveBeenCalledTimes(1);
         expect(mockSetOpenTab.mock.calls[0][1]).toBe(VisualisationTab.Fit);
+    });
+
+    it("renders help tab", () => {
+        const helpConfig = {
+            help: {
+                markdown: ["test md"],
+                tabName: "Help"
+            }
+        };
+        const wrapper = getWrapper(jest.fn(), helpConfig);
+        const wodinPanels = wrapper.findComponent(WodinPanels);
+        const rightPanel = wodinPanels.find(".wodin-right");
+        const rightTabs = rightPanel.find("#right-tabs");
+        const rightTabLinks = rightTabs.findAll("ul li a");
+        expect(rightTabLinks.length).toBe(4);
+        expect(rightTabLinks.at(0)!.text()).toBe("Help");
+        expect(rightTabLinks.at(1)!.text()).toBe("Run");
+        expect(rightTabLinks.at(2)!.text()).toBe("Fit");
+        expect(rightTabLinks.at(3)!.text()).toBe("Sensitivity");
+        expect(rightTabs.findComponent(HelpTab).exists()).toBe(true);
     });
 });

@@ -1,3 +1,16 @@
+// Mock the import of third party packages to prevent errors
+jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
+    return function () {
+        return {
+            use: jest.fn().mockReturnValue({
+                renderer: { rules: {} },
+                render: jest.fn()
+            })
+        };
+    };
+});
+
+/* eslint-disable import/first */
 import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
 import StochasticApp from "../../../../src/app/components/stochastic/StochasticApp.vue";
@@ -9,17 +22,19 @@ import CodeTab from "../../../../src/app/components/code/CodeTab.vue";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
 import SensitivityTab from "../../../../src/app/components/sensitivity/SensitivityTab.vue";
+import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
 import { ModelAction } from "../../../../src/app/store/model/actions";
 import { AppStateAction } from "../../../../src/app/store/appState/actions";
 import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
 import { VisualisationTab } from "../../../../src/app/store/appState/state";
+import { AppConfig } from "../../../../src/app/types/responseTypes";
 
 const mockSetOpenVisualisationTab = jest.fn();
 
 describe("StochasticApp", () => {
-    const getWrapper = () => {
+    const getWrapper = (config: Partial<AppConfig> = {}) => {
         const store = new Vuex.Store<StochasticState>({
-            state: mockStochasticState({ config: {} as any }),
+            state: mockStochasticState({ config: config as any }),
             actions: {
                 [AppStateAction.Initialise]: jest.fn()
             },
@@ -100,5 +115,24 @@ describe("StochasticApp", () => {
         await rightTabs.findAll("li a").at(1)!.trigger("click"); // Click Sensitivity Tab
         expect(mockSetOpenVisualisationTab).toHaveBeenCalledTimes(1);
         expect(mockSetOpenVisualisationTab.mock.calls[0][1]).toBe(VisualisationTab.Sensitivity);
+    });
+
+    it("renders help tab", () => {
+        const helpConfig = {
+            help: {
+                markdown: ["test md"],
+                tabName: "Help"
+            }
+        };
+        const wrapper = getWrapper(helpConfig);
+        const wodinPanels = wrapper.findComponent(WodinPanels);
+        const rightPanel = wodinPanels.find(".wodin-right");
+        const rightTabs = rightPanel.find("#right-tabs");
+        const rightTabLinks = rightTabs.findAll("ul li a");
+        expect(rightTabLinks.length).toBe(3);
+        expect(rightTabLinks.at(0)!.text()).toBe("Help");
+        expect(rightTabLinks.at(1)!.text()).toBe("Run");
+        expect(rightTabLinks.at(2)!.text()).toBe("Sensitivity");
+        expect(rightTabs.findComponent(HelpTab).exists()).toBe(true);
     });
 });

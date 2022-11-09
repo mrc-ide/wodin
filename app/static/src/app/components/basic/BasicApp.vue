@@ -11,7 +11,10 @@
       </wodin-tabs>
     </template>
     <template v-slot:right>
-      <wodin-tabs id="right-tabs" :tabNames="['Run', 'Sensitivity']" @tabSelected="rightTabSelected">
+      <wodin-tabs id="right-tabs" :tabNames="rightTabNames" @tabSelected="rightTabSelected">
+        <template v-if="helpTabName" v-slot:[helpTabName]>
+          <help-tab></help-tab>
+        </template>
         <template v-slot:Run>
           <run-tab></run-tab>
         </template>
@@ -34,10 +37,13 @@ import OptionsTab from "../options/OptionsTab.vue";
 import SensitivityTab from "../sensitivity/SensitivityTab.vue";
 import { AppStateMutation } from "../../store/appState/mutations";
 import { VisualisationTab } from "../../store/appState/state";
+import HelpTab from "../help/HelpTab.vue";
+import includeHelpTab from "../mixins/includeHelpTab";
 
 export default defineComponent({
     name: "BasicApp",
     components: {
+        HelpTab,
         CodeTab,
         RunTab,
         OptionsTab,
@@ -47,12 +53,14 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
-        const rightTabNames = [VisualisationTab.Run, VisualisationTab.Sensitivity];
         const rightTabSelected = (tab: string) => { store.commit(AppStateMutation.SetOpenVisualisationTab, tab); };
+        const { helpTabName, rightTabNames } = includeHelpTab(store,
+            [VisualisationTab.Run, VisualisationTab.Sensitivity]);
 
         return {
-            rightTabNames,
-            rightTabSelected
+            rightTabSelected,
+            helpTabName,
+            rightTabNames
         };
     }
 });
