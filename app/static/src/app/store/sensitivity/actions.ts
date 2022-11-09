@@ -29,11 +29,8 @@ const runModelIfRequired = (rootState: AppState, dispatch: Dispatch) => {
 const batchRunOde = (runner: OdinRunnerOde,
     odin: Odin,
     pars: BatchPars,
-    endTime: number,
-    dispatch: Dispatch,
-    rootState: AppState): Batch => {
+    endTime: number): Batch => {
     const batch = runner.batchRun(odin, pars, 0, endTime, {});
-    runModelIfRequired(rootState, dispatch);
     return batch;
 };
 
@@ -63,16 +60,20 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
     const isStochastic = rootState.appType === AppType.Stochastic;
     const hasRunner = rootGetters[`model/${ModelGetter.hasRunner}`];
 
+    console.log("replicates: " + replicates)
+    console.log("endTime: " + endTime)
+
     if (hasRunner && odin && batchPars) {
         const payload : OdinSensitivityResult = {
             inputs: { endTime, pars: batchPars },
             batch: null,
             error: null
         };
+        runModelIfRequired(rootState, dispatch);
         try {
             const batch = isStochastic
                 ? batchRunDiscrete(odinRunnerDiscrete!, odin, batchPars, endTime, dt!, replicates, dispatch, commit)
-                : batchRunOde(odinRunnerOde!, odin, batchPars, endTime, dispatch, rootState);
+                : batchRunOde(odinRunnerOde!, odin, batchPars, endTime);
             payload.batch = batch;
         } catch (e: unknown) {
             payload.error = {
@@ -111,13 +112,12 @@ export const actions: ActionTree<SensitivityState, AppState> = {
 
     [SensitivityAction.ComputeNext](context, batch: Batch) {
         const {
-            commit, dispatch, rootState, state
+            commit, dispatch, state
         } = context;
         const isComplete = batch.compute();
         commit(SensitivityMutation.SetResult, { ...state.result, batch });
         if (isComplete) {
             commit(SensitivityMutation.SetRunning, false);
-            runModelIfRequired(rootState, dispatch);
         } else {
             setTimeout(() => {
                 dispatch(SensitivityAction.ComputeNext, batch);

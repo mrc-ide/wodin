@@ -208,7 +208,10 @@ describe("Sensitivity actions", () => {
         const rootState = {
             appType: AppType.Stochastic,
             model: mockModelState,
-            run: mockRunState
+            run: {
+                ...mockRunState,
+                runRequired: true
+            }
         };
 
         const commit = jest.fn();
@@ -235,6 +238,41 @@ describe("Sensitivity actions", () => {
             parameterValueChanged: false,
             sensitivityOptionsChanged: false
         });
+
+        expect(mockRunnerDiscrete.batchRunDiscrete)
+            .toHaveBeenCalledWith(rootState.model.odin, mockBatchPars, 0, 99, 0.1, 5);
+
+        expect(dispatch).toHaveBeenCalledTimes(2);
+
+        // should call run model if required
+        expect(dispatch.mock.calls[0][0]).toBe(`run/${RunAction.RunModel}`);
+        expect(dispatch.mock.calls[0][1]).toBe(null);
+        expect(dispatch.mock.calls[0][2]).toStrictEqual({root: true});
+        expect(dispatch.mock.calls[1][0]).toBe(SensitivityAction.ComputeNext);
+        expect(dispatch.mock.calls[1][1]).toBe(mockBatch);
+    });
+
+    it("run sensitivity for stochastic does not run model if not required", () => {
+        const rootState = {
+            appType: AppType.Stochastic,
+            model: mockModelState,
+            run: {
+                ...mockRunState,
+                runRequired: false
+            }
+        };
+
+        const commit = jest.fn();
+        const dispatch = jest.fn();
+
+        (actions[SensitivityAction.RunSensitivity] as any)({
+            rootState, getters, commit, dispatch, rootGetters
+        });
+
+        expect(commit).toHaveBeenCalledTimes(3);
+        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetRunning);
+        expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetResult);
+        expect(commit.mock.calls[2][0]).toBe(SensitivityMutation.SetUpdateRequired);
 
         expect(mockRunnerDiscrete.batchRunDiscrete)
             .toHaveBeenCalledWith(rootState.model.odin, mockBatchPars, 0, 99, 0.1, 5);
@@ -316,7 +354,7 @@ describe("Sensitivity actions", () => {
         });
     });
 
-    it("ComputeNext runs model if required and commits running false, if batch is complete", (done) => {
+    it("ComputeNext commits running false, if batch is complete", (done) => {
         const commit = jest.fn();
         const dispatch = jest.fn();
         const state = {
@@ -341,39 +379,6 @@ describe("Sensitivity actions", () => {
         expect(commit.mock.calls[0][1]).toStrictEqual({ ...state.result, batch });
         expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetRunning);
         expect(commit.mock.calls[1][1]).toBe(false);
-        expect(dispatch).toHaveBeenCalledTimes(1);
-        expect(dispatch.mock.calls[0][0]).toBe(`run/${RunAction.RunModel}`);
-        expect(dispatch.mock.calls[0][1]).toBe(null);
-        expect(dispatch.mock.calls[0][2]).toStrictEqual({ root: true });
-        setTimeout(() => {
-            expect(dispatch).toHaveBeenCalledTimes(1);
-            done();
-        });
-    });
-
-    it("ComputeNext does not run model on batch complete if not required", (done) => {
-        const commit = jest.fn();
-        const dispatch = jest.fn();
-        const state = {
-            result: {
-                inputs: {},
-                batch: {}
-            }
-        };
-        const rootState = {
-            run: {
-                runRequired: false
-            }
-        };
-        const batch = {
-            compute: () => true
-        };
-        (actions[SensitivityAction.ComputeNext] as any)({
-            state, rootState, commit, dispatch
-        }, batch);
-        expect(commit).toHaveBeenCalledTimes(2);
-        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetResult);
-        expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetRunning);
         setTimeout(() => {
             expect(dispatch).toHaveBeenCalledTimes(0);
             done();
