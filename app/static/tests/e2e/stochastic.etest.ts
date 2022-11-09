@@ -58,7 +58,7 @@ test.describe("stochastic app", () => {
 
     test("can run stochastic sensitivity", async ({ page }) => {
         // Open Sensitivity tab
-        await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
 
         page.click("#run-sens-btn");
 
