@@ -3,7 +3,6 @@ import {
     fitDataToPlotly,
     odinToPlotly
 } from "../../src/app/plot";
-import { DiscreteSeriesMode } from "../../src/app/types/responseTypes";
 
 describe("odinToPlotly", () => {
     const palette = {
