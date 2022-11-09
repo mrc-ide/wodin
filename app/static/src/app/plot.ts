@@ -2,7 +2,7 @@ import { PlotData } from "plotly.js-basic-dist-min";
 import { Palette, paletteData } from "./palette";
 import type { AllFitData, FitData, FitDataLink } from "./store/fitData/state";
 import {
-    DiscreteSeriesMode, DiscreteSeriesSet, DiscreteSeriesValues, OdinSeriesSet
+    DiscreteSeriesSet, OdinSeriesSet, OdinSeriesSetValues
 } from "./types/responseTypes";
 import { Dict } from "./types/utilTypes";
 
@@ -74,8 +74,8 @@ export function odinToPlotly(s: OdinSeriesSet, palette: Palette, options: Partia
 export function discreteSeriesSetToPlotly(s: DiscreteSeriesSet, palette: Palette): WodinPlotData {
     const individualLegends: string[] = [];
     return s.values.map(
-        (values: DiscreteSeriesValues) => {
-            const isIndividual = values.mode === DiscreteSeriesMode.Individual;
+        (values: OdinSeriesSetValues) => {
+            const isIndividual = values.description === "Individual";
             // show legend if not individual or if individual legend is not yet being shown
             let showlegend = true;
             if (isIndividual) {
@@ -85,7 +85,7 @@ export function discreteSeriesSetToPlotly(s: DiscreteSeriesSet, palette: Palette
                     individualLegends.push(values.name);
                 }
             }
-            const name = values.mode === DiscreteSeriesMode.Mean ? `${values.name} (mean)` : values.name;
+            const name = isIndividual ? values.name : `${values.name} (${values.description.toLowerCase()})`;
             return {
                 mode: "lines",
                 line: {
