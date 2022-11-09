@@ -1,5 +1,6 @@
 import { mutations, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import { SensitivityPlotExtreme, SensitivityPlotType } from "../../../../src/app/store/sensitivity/state";
+import {mockSensitivityState} from "../../../mocks";
 
 describe("Sensitivity mutations", () => {
     const noUpdateRequired = {
@@ -134,5 +135,11 @@ describe("Sensitivity mutations", () => {
         // but any additional time requires a rerun
         mutations.SetEndTime(state, 101);
         expect(state.sensitivityUpdateRequired.endTimeChanged).toBe(true);
+    });
+
+    it("sets running", () => {
+        const state = mockSensitivityState();
+        mutations.SetRunning(state, true);
+        expect(state.running).toBe(true);
     });
 });
