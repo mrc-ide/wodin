@@ -1,16 +1,16 @@
-import {shallowMount} from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
-import {ModelState} from "../../../../src/app/store/model/state";
+import { ModelState } from "../../../../src/app/store/model/state";
 import SensitivityTab from "../../../../src/app/components/sensitivity/SensitivityTab.vue";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
-import {SensitivityGetter} from "../../../../src/app/store/sensitivity/getters";
+import { SensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
 import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/SensitivityTracesPlot.vue";
-import {SensitivityPlotType, SensitivityState} from "../../../../src/app/store/sensitivity/state";
-import {SensitivityAction} from "../../../../src/app/store/sensitivity/actions";
+import { SensitivityPlotType, SensitivityState } from "../../../../src/app/store/sensitivity/state";
+import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
-import {AppState, AppType} from "../../../../src/app/store/appState/state";
-import {ModelGetter} from "../../../../src/app/store/model/getters";
+import { AppState, AppType } from "../../../../src/app/store/appState/state";
+import { ModelGetter } from "../../../../src/app/store/model/getters";
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 
 jest.mock("plotly.js-basic-dist-min", () => {});
@@ -98,7 +98,8 @@ describe("SensitivityTab", () => {
     });
 
     it("renders as expected when Value at Time", () => {
-        const wrapper = getWrapper(AppType.Fit, {}, { plotSettings: { plotType: SensitivityPlotType.ValueAtTime } as any });
+        const sensitivityState = { plotSettings: { plotType: SensitivityPlotType.ValueAtTime } as any };
+        const wrapper = getWrapper(AppType.Fit, {}, sensitivityState);
         expect(wrapper.find("button").text()).toBe("Run sensitivity");
         expect(wrapper.find("button").element.disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
@@ -108,13 +109,15 @@ describe("SensitivityTab", () => {
     });
 
     it("renders as expected when Time at Extreme", () => {
-        const wrapper = getWrapper(AppType.Basic,{}, { plotSettings: { plotType: SensitivityPlotType.TimeAtExtreme } as any });
+        const sensitivityState = { plotSettings: { plotType: SensitivityPlotType.TimeAtExtreme } as any };
+        const wrapper = getWrapper(AppType.Basic, {}, sensitivityState);
         expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(false);
         expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
     });
 
     it("renders as expected when Value at Extreme", () => {
-        const wrapper = getWrapper(AppType.Basic, {}, { plotSettings: { plotType: SensitivityPlotType.ValueAtExtreme } as any });
+        const sensitivityState = { plotSettings: { plotType: SensitivityPlotType.ValueAtExtreme } as any };
+        const wrapper = getWrapper(AppType.Basic, {}, sensitivityState);
         expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(false);
         expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
     });
@@ -150,7 +153,7 @@ describe("SensitivityTab", () => {
     });
 
     it("disables run button when no batchPars", () => {
-        const wrapper = getWrapper(AppType.Basic,{}, {}, null);
+        const wrapper = getWrapper(AppType.Basic, {}, {}, null);
         expect(wrapper.find("button").element.disabled).toBe(true);
     });
 
@@ -160,7 +163,7 @@ describe("SensitivityTab", () => {
                 batch: { solutions: [{}], errors: [] }
             }
         } as any;
-        const wrapper = getWrapper(AppType.Basic,{ compileRequired: true }, sensitivityState);
+        const wrapper = getWrapper(AppType.Basic, { compileRequired: true }, sensitivityState);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
             .toBe("Model code has been updated. Compile code and Run Sensitivity to update.");
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);
@@ -176,7 +179,7 @@ describe("SensitivityTab", () => {
                 endTimeChanged: false
             }
         } as any;
-        const wrapper = getWrapper(AppType.Basic,{}, sensitivityState);
+        const wrapper = getWrapper(AppType.Basic, {}, sensitivityState);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
             .toBe("Plot is out of date: model code has been recompiled. Run sensitivity to update.");
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);
@@ -194,7 +197,7 @@ describe("SensitivityTab", () => {
                 endTimeChanged: false
             }
         } as any;
-        const wrapper = getWrapper(AppType.Basic,{}, sensitivityState);
+        const wrapper = getWrapper(AppType.Basic, {}, sensitivityState);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
             .toBe("Plot is out of date: parameters have been changed. Run sensitivity to update.");
         expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(true);

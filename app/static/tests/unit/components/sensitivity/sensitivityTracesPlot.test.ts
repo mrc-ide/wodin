@@ -1,11 +1,11 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via WodinPlot
-import {AppState, AppType} from "../../../../src/app/store/appState/state";
 /* eslint-disable import/first */
 import Vuex from "vuex";
-import {shallowMount} from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
+import { AppState, AppType } from "../../../../src/app/store/appState/state";
 import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/SensitivityTracesPlot.vue";
-import {FitDataGetter} from "../../../../src/app/store/fitData/getters";
+import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
 
 jest.mock("plotly.js-basic-dist-min", () => {});
 
@@ -37,7 +37,7 @@ const mockCentralStochasticSln = jest.fn().mockReturnValue({
     x: [0, 0.5, 1],
     values: [
         { name: "y", mode: "Mean", y: [22, 23, 24] },
-        { name: "y", mode: "Individual", y: [33, 34, 35]},
+        { name: "y", mode: "Individual", y: [33, 34, 35] },
         { name: "z", mode: "Deterministic", y: [44, 45, 46] }
     ]
 });
@@ -139,7 +139,7 @@ const expectedPlotData = [
 const expectedStochasticPlotData = [
     ...expectedSln1PlotData,
     ...expectedSln2PlotData,
-    //central stochastic
+    // central stochastic
     {
         mode: "lines",
         line: {
@@ -191,7 +191,8 @@ const expectedFitPlotData = {
 };
 
 describe("SensitivityTracesPlot", () => {
-    const getWrapper = (sensitivityHasSolutions = true, fadePlot = false, sensitivityHasData = false, stochastic = false) => {
+    const getWrapper = (sensitivityHasSolutions = true, fadePlot = false, sensitivityHasData = false,
+        stochastic = false) => {
         const store = new Vuex.Store<AppState>({
             state: {
                 appType: stochastic ? AppType.Stochastic : AppType.Basic,

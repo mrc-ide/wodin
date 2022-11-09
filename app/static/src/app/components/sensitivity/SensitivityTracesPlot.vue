@@ -38,7 +38,9 @@ export default defineComponent({
 
         const solutions = computed(() => (store.state.sensitivity.result?.batch?.solutions || []));
         const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
-        const centralSolution = computed(() => (isStochastic.value ? store.state.run.resultDiscrete?.solution : store.state.run.resultOde?.solution));
+        const centralSolution = computed(() => {
+            return isStochastic.value ? store.state.run.resultDiscrete?.solution : store.state.run.resultOde?.solution;
+        });
 
         const endTime = computed(() => store.state.run.endTime);
 
@@ -80,8 +82,9 @@ export default defineComponent({
                     const centralData = centralSolution.value(time);
                     if (centralData) {
                         if (isStochastic.value) {
-                          // Only show summary and deterministic values as central for stochastic
-                          centralData.values = centralData.values.filter((v: DiscreteSeriesValues) => v.mode !== DiscreteSeriesMode.Individual);
+                            // Only show summary and deterministic values as central for stochastic
+                            centralData.values = centralData.values
+                                .filter((v: DiscreteSeriesValues) => v.mode !== DiscreteSeriesMode.Individual);
                         }
                         const plotlyOptions = { includeLegendGroup: true };
                         result.push(...odinToPlotly(centralData, palette.value, plotlyOptions));

@@ -107,7 +107,7 @@ export const actions: ActionTree<ModelState, AppState> = {
             await api(context)
                 .withSuccess(ModelMutation.SetOdinRunnerDiscrete)
                 .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
-                .get<string>(`/odin/runner/discrete`);
+                .get<string>("/odin/runner/discrete");
         }
     },
 

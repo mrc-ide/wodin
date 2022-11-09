@@ -1,4 +1,4 @@
-import {expect, Page, test} from "@playwright/test";
+import { expect, Page, test } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
 
 test.describe("stochastic app", () => {
@@ -46,7 +46,6 @@ test.describe("stochastic app", () => {
         // number of series should have increased by 2
         const summary = ".wodin-plot-data-summary-series";
         expect(await page.locator(summary).count()).toBe(16);
-
 
         await expectSummaryValues(page, 1, "I_det", "#2e5cb8");
         await expectSummaryValues(page, 2, "I", "#6ab74d");
