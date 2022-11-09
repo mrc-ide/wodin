@@ -85,11 +85,8 @@ export function discreteSeriesSetToPlotly(s: DiscreteSeriesSet, palette: Palette
                     individualLegends.push(values.name);
                 }
             }
-            // Practically, values.description will always be defined,
-            // but catching this via the test feels better than
-            // asserting it in the access on the else clause of the
-            // ternery
-            const name = isIndividual || values.description === undefined ? values.name : `${values.name} (${values.description.toLowerCase()})`;
+            const addDescription = values.description !== undefined && !isIndividual && values.description != "Deterministic";
+            const name = addDescription ? `${values.name} (${values.description!.toLowerCase()})` : values.name;
             return {
                 mode: "lines",
                 line: {
