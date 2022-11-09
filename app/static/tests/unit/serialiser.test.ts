@@ -109,7 +109,8 @@ describe("serialise", () => {
             modelChanged: false,
             parameterValueChanged: false,
             endTimeChanged: false,
-            sensitivityOptionsChanged: false
+            sensitivityOptionsChanged: false,
+            numberOfReplicatesChanged: false
         },
         plotSettings: {
             plotType: SensitivityPlotType.ValueAtTime,
@@ -246,7 +247,8 @@ describe("serialise", () => {
             modelChanged: false,
             parameterValueChanged: false,
             endTimeChanged: false,
-            sensitivityOptionsChanged: false
+            sensitivityOptionsChanged: false,
+            numberOfReplicatesChanged: false
         },
         plotSettings: sensitivityState.plotSettings,
         result: {

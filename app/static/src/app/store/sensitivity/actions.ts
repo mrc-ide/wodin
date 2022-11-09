@@ -60,9 +60,6 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
     const isStochastic = rootState.appType === AppType.Stochastic;
     const hasRunner = rootGetters[`model/${ModelGetter.hasRunner}`];
 
-    console.log(`replicates: ${replicates}`);
-    console.log(`endTime: ${endTime}`);
-
     if (hasRunner && odin && batchPars) {
         const payload : OdinSensitivityResult = {
             inputs: { endTime, pars: batchPars },

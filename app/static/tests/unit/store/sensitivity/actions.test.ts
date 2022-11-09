@@ -237,7 +237,8 @@ describe("Sensitivity actions", () => {
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,
-            sensitivityOptionsChanged: false
+            sensitivityOptionsChanged: false,
+            numberOfReplicatesChanged: false
         });
 
         expect(mockRunnerDiscrete.batchRunDiscrete)
@@ -316,7 +317,8 @@ describe("Sensitivity actions", () => {
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,
-            sensitivityOptionsChanged: false
+            sensitivityOptionsChanged: false,
+            numberOfReplicatesChanged: false
         });
 
         expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(rootState.model.odin, mockResultBatchPars, 0, 99, {});
