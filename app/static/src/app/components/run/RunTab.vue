@@ -7,6 +7,9 @@
         <run-stochastic-plot v-if="isStochastic" :fade-plot="!!updateMsg"></run-stochastic-plot>
         <run-plot v-else :fade-plot="!!updateMsg" :model-fit="false"></run-plot>
         <error-info :error="error"></error-info>
+        <div v-if="sumOfSquares">
+          <span class="ms-2">Sum of squares: {{sumOfSquares}}</span>
+        </div>
         <div>
           <button v-if="!isStochastic"
                   class="btn btn-primary" id="download-btn"
@@ -63,6 +66,17 @@ export default defineComponent({
         });
 
         const downloading = computed(() => store.state.run.downloading);
+
+        const sumOfSquares = computed(() => ({
+           if (store.state.appType !== AppType.Fit) {
+             return null;
+           }
+           if (!store.getters[`${namespace}/${ModelFitGetter.fitRequirements}`].value) {
+             return null;
+           }
+        });
+
+store.state.modelFit.sumOfSquares);
 
         const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
 

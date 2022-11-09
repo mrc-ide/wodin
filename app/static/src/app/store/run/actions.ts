@@ -82,9 +82,11 @@ export interface DownloadOutputPayload {
 
 export const actions: ActionTree<RunState, AppState> = {
     RunModel(context) {
-        const { state } = context;
+        const { dispatch, state } = context;
         const { parameterValues, endTime, numberOfReplicates } = state;
         runModel(parameterValues, endTime, numberOfReplicates, context);
+        // Check here that the args are correct...
+        dispatch(`modelFit/${ModelFitAction.UpdateSumOfSquares}`, null, { root: true });
     },
 
     RunModelOnRehydrate(context) {
