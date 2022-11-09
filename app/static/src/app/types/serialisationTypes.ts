@@ -36,6 +36,7 @@ export interface SerialisedRunState {
 }
 
 export interface SerialisedSensitivityState {
+    running: boolean,
     paramSettings: SensitivityParameterSettings,
     sensitivityUpdateRequired: SensitivityUpdateRequiredReasons,
     plotSettings: SensitivityPlotSettings,
