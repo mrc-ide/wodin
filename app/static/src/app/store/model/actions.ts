@@ -94,14 +94,21 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
 
 export const actions: ActionTree<ModelState, AppState> = {
     async FetchOdinRunner(context) {
+        // TODO: For now, we fetch both ode and discrete runners when stochastic, as we still need the ode runner
+        // to generate batch parameters. We should tidy this up so that batch parameter are available separately.
         const { rootState } = context;
         const isStochastic = rootState.appType === AppType.Stochastic;
-        const runnerType = isStochastic ? "discrete" : "ode";
-        const mutation = isStochastic ? ModelMutation.SetOdinRunnerDiscrete : ModelMutation.SetOdinRunnerOde;
         await api(context)
-            .withSuccess(mutation)
+            .withSuccess(ModelMutation.SetOdinRunnerOde)
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
-            .get<string>(`/odin/runner/${runnerType}`);
+            .get<string>("/odin/runner/ode");
+
+        if (isStochastic) {
+            await api(context)
+                .withSuccess(ModelMutation.SetOdinRunnerDiscrete)
+                .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
+                .get<string>("/odin/runner/discrete");
+        }
     },
 
     async FetchOdin(context) {

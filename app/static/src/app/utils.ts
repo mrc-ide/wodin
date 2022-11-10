@@ -132,6 +132,7 @@ export function generateBatchPars(
 ): GenerateBatchParsResult {
     let batchPars = null;
     let errorDetail = null;
+    // TODO: NB For now we use ode runner to generate batch pars for all app types, but expect this to change
     const runner = rootState.model.odinRunnerOde;
     const paramValues = rootState.run.parameterValues;
     const {

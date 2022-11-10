@@ -61,6 +61,9 @@ export default defineComponent({
 
         const updateNumberOfReplicates = (newValue: number) => {
             store.commit(`run/${RunMutation.SetNumberOfReplicates}`, newValue);
+            store.commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, {
+                numberOfReplicatesChanged: true
+            });
         };
 
         return {

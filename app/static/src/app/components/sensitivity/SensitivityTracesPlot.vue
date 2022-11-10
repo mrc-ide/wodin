@@ -18,7 +18,10 @@ import { FitDataGetter } from "../../store/fitData/getters";
 import WodinPlot from "../WodinPlot.vue";
 import userMessages from "../../userMessages";
 import { allFitDataToPlotly, odinToPlotly, WodinPlotData } from "../../plot";
-import { OdinSolution } from "../../types/responseTypes";
+import {
+    DiscreteSeriesMode, DiscreteSeriesValues, OdinSolution
+} from "../../types/responseTypes";
+import { AppType } from "../../store/appState/state";
 
 export default defineComponent({
     name: "SensitivityTracesPlot",
@@ -34,7 +37,10 @@ export default defineComponent({
         const placeholderMessage = userMessages.sensitivity.notRunYet;
 
         const solutions = computed(() => (store.state.sensitivity.result?.batch?.solutions || []));
-        const centralSolution = computed(() => (store.state.run.resultOde?.solution));
+        const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
+        const centralSolution = computed(() => {
+            return isStochastic.value ? store.state.run.resultDiscrete?.solution : store.state.run.resultOde?.solution;
+        });
 
         const endTime = computed(() => store.state.run.endTime);
 
@@ -75,6 +81,11 @@ export default defineComponent({
                 if (centralSolution.value) {
                     const centralData = centralSolution.value(time);
                     if (centralData) {
+                        if (isStochastic.value) {
+                            // Only show summary and deterministic values as central for stochastic
+                            centralData.values = centralData.values
+                                .filter((v: DiscreteSeriesValues) => v.mode !== DiscreteSeriesMode.Individual);
+                        }
                         const plotlyOptions = { includeLegendGroup: true };
                         result.push(...odinToPlotly(centralData, palette.value, plotlyOptions));
                     }

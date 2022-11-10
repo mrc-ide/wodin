@@ -32,7 +32,8 @@ describe("serialise", () => {
             batchRun: jest.fn()
         },
         odinRunnerDiscrete: {
-            wodinRunDiscrete: jest.fn()
+            wodinRunDiscrete: jest.fn(),
+            batchRunDiscrete: jest.fn()
         },
         odinModelResponse: {
             valid: true,
@@ -94,6 +95,7 @@ describe("serialise", () => {
         values: [0.5, 0.75, 1, 1.25, 1.5]
     };
     const sensitivityState = {
+        running: true,
         paramSettings: {
             parameterToVary: "alpha",
             scaleType: SensitivityScaleType.Arithmetic,
@@ -107,7 +109,8 @@ describe("serialise", () => {
             modelChanged: false,
             parameterValueChanged: false,
             endTimeChanged: false,
-            sensitivityOptionsChanged: false
+            sensitivityOptionsChanged: false,
+            numberOfReplicatesChanged: false
         },
         plotSettings: {
             plotType: SensitivityPlotType.ValueAtTime,
@@ -122,7 +125,9 @@ describe("serialise", () => {
             batch: {
                 pars: sensitivityBatchPars,
                 solutions: [jest.fn(), jest.fn()],
-                valueAtTime: jest.fn()
+                errors: [],
+                valueAtTime: jest.fn(),
+                compute: jest.fn()
             },
             error: { error: "sensitivity error", detail: "sensitivity error detail" }
         }
@@ -236,12 +241,14 @@ describe("serialise", () => {
         }
     };
     const expectedSensitivity = {
+        running: false,
         paramSettings: sensitivityState.paramSettings,
         sensitivityUpdateRequired: {
             modelChanged: false,
             parameterValueChanged: false,
             endTimeChanged: false,
-            sensitivityOptionsChanged: false
+            sensitivityOptionsChanged: false,
+            numberOfReplicatesChanged: false
         },
         plotSettings: sensitivityState.plotSettings,
         result: {

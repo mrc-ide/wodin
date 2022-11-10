@@ -5,7 +5,8 @@ describe("construct actionable fit update messages from fit state changes", () =
         modelChanged: false,
         parameterValueChanged: false,
         endTimeChanged: false,
-        sensitivityOptionsChanged: false
+        sensitivityOptionsChanged: false,
+        numberOfReplicatesChanged: false
     };
 
     it("shows fallback when no reason can be found", () => {
@@ -19,7 +20,8 @@ describe("construct actionable fit update messages from fit state changes", () =
             modelChanged: true,
             parameterValueChanged: true,
             endTimeChanged: true,
-            sensitivityOptionsChanged: true
+            sensitivityOptionsChanged: true,
+            numberOfReplicatesChanged: true
         };
         expect(sensitivityUpdateRequiredExplanation(everything))
             .toBe("Plot is out of date: model code has been recompiled. "
@@ -37,5 +39,7 @@ describe("construct actionable fit update messages from fit state changes", () =
             .toBe(`${prefix}: end time has changed. ${suffix}`);
         expect(sensitivityUpdateRequiredExplanation({ ...base, sensitivityOptionsChanged: true }))
             .toBe(`${prefix}: sensitivity options have been changed. ${suffix}`);
+        expect(sensitivityUpdateRequiredExplanation({ ...base, numberOfReplicatesChanged: true }))
+            .toBe(`${prefix}: number of replicates has changed. ${suffix}`);
     });
 });

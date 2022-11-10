@@ -78,6 +78,7 @@ export default {
             parameterValueChanged: "parameters have been changed",
             sensitivityOptionsChanged: "sensitivity options have been changed",
             endTimeChanged: "end time has changed",
+            numberOfReplicatesChanged: "number of replicates has changed",
             unknown: "unknown reasons, contact the administrator, as this is unexpected",
             suffix: "Run sensitivity to update"
         }

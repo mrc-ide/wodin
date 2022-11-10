@@ -43,6 +43,7 @@ export interface SensitivityUpdateRequiredReasons {
     parameterValueChanged: boolean;
     endTimeChanged: boolean;
     sensitivityOptionsChanged: boolean;
+    numberOfReplicatesChanged: boolean;
 }
 
 export interface SensitivityState {
@@ -51,4 +52,5 @@ export interface SensitivityState {
     sensitivityUpdateRequired: SensitivityUpdateRequiredReasons
     plotSettings: SensitivityPlotSettings,
     result: OdinSensitivityResult | null;
+    running: boolean;
 }

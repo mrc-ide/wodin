@@ -142,10 +142,17 @@ export interface BatchPars {
 
 export type OdeControl = Dict<unknown>;
 
+export interface BatchError {
+    value: number,
+    error: string
+}
+
 export interface Batch {
     pars: BatchPars,
     solutions: OdinSolution[],
-    valueAtTime: (time: number) => OdinSeriesSet
+    errors: BatchError[],
+    valueAtTime: (time: number) => OdinSeriesSet,
+    compute: () => boolean
 }
 
 export interface OdinRunnerOde {
@@ -207,6 +214,12 @@ export interface OdinRunnerDiscrete {
                        timeEnd: number,
                        dt: number,
                        nParticles: number) => FilteredDiscreteSolution;
+    batchRunDiscrete: (odin: Odin,
+                     pars:BatchPars,
+                     timeStart: number,
+                     timeEnd: number,
+                     dt: number,
+                     nParticles: number) => Batch;
 }
 
 export interface SessionMetadata {

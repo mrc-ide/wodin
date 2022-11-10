@@ -1,13 +1,13 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via WodinPlot
-jest.mock("plotly.js-basic-dist-min", () => {});
-
 /* eslint-disable import/first */
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
+import { AppState, AppType } from "../../../../src/app/store/appState/state";
 import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/SensitivityTracesPlot.vue";
-import { BasicState } from "../../../../src/app/store/basic/state";
 import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
+
+jest.mock("plotly.js-basic-dist-min", () => {});
 
 const mockSln1 = jest.fn().mockReturnValue({
     x: [0, 0.5, 1],
@@ -33,12 +33,20 @@ const mockCentralSln = jest.fn().mockReturnValue({
     ]
 });
 
+const mockCentralStochasticSln = jest.fn().mockReturnValue({
+    x: [0, 0.5, 1],
+    values: [
+        { name: "y", mode: "Mean", y: [22, 23, 24] },
+        { name: "y", mode: "Individual", y: [33, 34, 35] },
+        { name: "z", mode: "Deterministic", y: [44, 45, 46] }
+    ]
+});
+
 const mockPalette = { y: "#0000ff", z: "#ff0000" };
 
 const mockSolutions = [mockSln1, mockSln2];
 
-const expectedPlotData = [
-    // sln1
+const expectedSln1PlotData = [
     {
         mode: "lines",
         line: {
@@ -64,8 +72,10 @@ const expectedPlotData = [
         hoverlabel: { namelength: -1 },
         showlegend: false,
         legendgroup: "z"
-    },
-    // sln2
+    }
+];
+
+const expectedSln2PlotData = [
     {
         mode: "lines",
         line: {
@@ -91,7 +101,12 @@ const expectedPlotData = [
         hoverlabel: { namelength: -1 },
         showlegend: false,
         legendgroup: "z"
-    },
+    }
+];
+
+const expectedPlotData = [
+    ...expectedSln1PlotData,
+    ...expectedSln2PlotData,
     // central
     {
         mode: "lines",
@@ -121,6 +136,38 @@ const expectedPlotData = [
     }
 ];
 
+const expectedStochasticPlotData = [
+    ...expectedSln1PlotData,
+    ...expectedSln2PlotData,
+    // central stochastic
+    {
+        mode: "lines",
+        line: {
+            color: "#0000ff",
+            width: 2
+        },
+        name: "y",
+        x: [0, 0.5, 1],
+        y: [22, 23, 24],
+        hoverlabel: { namelength: -1 },
+        showlegend: true,
+        legendgroup: "y"
+    },
+    {
+        mode: "lines",
+        line: {
+            color: "#ff0000",
+            width: 2
+        },
+        name: "z",
+        x: [0, 0.5, 1],
+        y: [44, 45, 46],
+        hoverlabel: { namelength: -1 },
+        showlegend: true,
+        legendgroup: "z"
+    }
+];
+
 const mockFitData = [
     { t: 0, v: 10 },
     { t: 1, v: 20 },
@@ -144,15 +191,20 @@ const expectedFitPlotData = {
 };
 
 describe("SensitivityTracesPlot", () => {
-    const getWrapper = (sensitivityHasSolutions = true, fadePlot = false, sensitivityHasData = false) => {
-        const store = new Vuex.Store<BasicState>({
+    const getWrapper = (sensitivityHasSolutions = true, fadePlot = false, sensitivityHasData = false,
+        stochastic = false) => {
+        const store = new Vuex.Store<AppState>({
             state: {
+                appType: stochastic ? AppType.Stochastic : AppType.Basic,
                 model: {
                     paletteModel: mockPalette
                 },
                 run: {
                     resultOde: {
                         solution: mockCentralSln
+                    },
+                    resultDiscrete: {
+                        solution: mockCentralStochasticSln
                     },
                     endTime: 1
                 },
@@ -225,6 +277,14 @@ describe("SensitivityTracesPlot", () => {
         expect(mockSln2).toBeCalledWith({
             mode: "grid", tStart: 0, tEnd: 1, nPoints: 100
         });
+    });
+
+    it("renders as expected when there are sensitivity solutions and data, for stochastic", () => {
+        const wrapper = getWrapper(true, false, true, true);
+        // Expect Individual values to be filtered out
+        const wodinPlot = wrapper.findComponent(WodinPlot);
+        const plotData = wodinPlot.props("plotData");
+        expect(plotData(0, 1, 100)).toStrictEqual([...expectedStochasticPlotData, expectedFitPlotData]);
     });
 
     it("renders as expected when there are no sensitivity solutions", () => {

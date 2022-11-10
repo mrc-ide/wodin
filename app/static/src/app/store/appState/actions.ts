@@ -74,17 +74,21 @@ export const appStateActions: ActionTree<AppState, AppState> = {
 
     async [AppStateAction.QueueStateUpload](context) {
         const { state, commit } = context;
-        const isFitting = () => { return (state.appType === AppType.Fit) && ((state as FitState).modelFit.fitting); };
+        const isBusy = () => {
+            const isFitting = (state.appType === AppType.Fit) && ((state as FitState).modelFit.fitting);
+            const isRunningSensitivity = state.sensitivity.running;
+            return isFitting || isRunningSensitivity;
+        };
 
-        // Do not queue uploads while fitting is true - we'll upload when fit finishes
-        if (!isFitting()) {
+        // Do not queue uploads while fitting is true, or while running sensitivity - we'll upload when finished
+        if (!isBusy()) {
             // remove any existing queued upload, as this request should supersede it
             commit(AppStateMutation.ClearQueuedStateUpload);
 
             const queuedId: number = window.setInterval(() => {
                 // wait for any ongoing uploads to finish before starting a new one
-                // and do not actually upload while fitting is true
-                if (!state.stateUploadInProgress && !isFitting()) {
+                // and do not actually upload while fitting or runningSensitivity is true
+                if (!state.stateUploadInProgress && !isBusy()) {
                     commit(AppStateMutation.ClearQueuedStateUpload);
                     immediateUploadState(context);
                 }

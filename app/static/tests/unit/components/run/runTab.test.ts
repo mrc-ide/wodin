@@ -23,6 +23,7 @@ import { StochasticState } from "../../../../src/app/store/stochastic/state";
 import { DiscreteSeriesSet, OdinRunnerDiscrete } from "../../../../src/app/types/responseTypes";
 import { OdinRunResultDiscrete } from "../../../../src/app/types/wrapperTypes";
 import { ModelGetter } from "../../../../src/app/store/model/getters";
+import { AppType } from "../../../../src/app/store/appState/state";
 
 describe("RunTab", () => {
     const defaultModelState = {
@@ -47,9 +48,9 @@ describe("RunTab", () => {
     const mockRunModel = jest.fn();
 
     const getWrapper = (modelState: Partial<ModelState> = defaultModelState,
-        runState: Partial<RunState> = defaultRunState, hasRunner = true) => {
+        runState: Partial<RunState> = defaultRunState, hasRunner = true, appType = AppType.Basic) => {
         const store = new Vuex.Store<BasicState>({
-            state: mockBasicState(),
+            state: mockBasicState({ appType }),
             modules: {
                 model: {
                     namespaced: true,
@@ -232,5 +233,10 @@ describe("RunTab", () => {
         expect(download.props().open).toBe(true);
         await download.vm.$emit("close");
         expect(download.props().open).toBe(false);
+    });
+
+    it("hides run button if app is stochastic", () => {
+        const wrapper = getWrapper({}, {}, true, AppType.Stochastic);
+        expect(wrapper.find("button#download-btn").exists()).toBe(false);
     });
 });

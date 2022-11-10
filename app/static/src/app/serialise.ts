@@ -59,6 +59,7 @@ function serialiseRun(run: RunState): SerialisedRunState {
 
 function serialiseSensitivity(sensitivity: SensitivityState): SerialisedSensitivityState {
     return {
+        running: false,
         paramSettings: sensitivity.paramSettings,
         sensitivityUpdateRequired: sensitivity.sensitivityUpdateRequired,
         plotSettings: sensitivity.plotSettings,
