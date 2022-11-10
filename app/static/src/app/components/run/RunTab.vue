@@ -8,12 +8,8 @@
         <run-plot v-else :fade-plot="!!updateMsg" :model-fit="false"></run-plot>
         <error-info :error="error"></error-info>
         <div>
-          <span>Sum of squares: {{sumOfSquares}}</span>
-        </div>
-        <div>
           <button v-if="!isStochastic"
                   class="btn btn-primary" id="download-btn"
-                  <button class="btn btn-primary" id="download-btn"
                   :disabled="downloading || !canDownloadOutput"
                   @click="toggleShowDownloadOutput(true)">
             <vue-feather class="inline-icon" type="download"></vue-feather>
