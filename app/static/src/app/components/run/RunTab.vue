@@ -7,8 +7,8 @@
         <run-stochastic-plot v-if="isStochastic" :fade-plot="!!updateMsg"></run-stochastic-plot>
         <run-plot v-else :fade-plot="!!updateMsg" :model-fit="false"></run-plot>
         <error-info :error="error"></error-info>
-        <div v-if="sumOfSquares">
-          <span class="ms-2">Sum of squares: {{sumOfSquares}}</span>
+        <div>
+          <span>Sum of squares: {{sumOfSquares}}</span>
         </div>
         <div>
           <button v-if="!isStochastic"
@@ -66,11 +66,7 @@ export default defineComponent({
         });
 
         const downloading = computed(() => store.state.run.downloading);
-        const sumOfSquares = computed(() => {
-            const ret = store.state.modelFit.sumOfSquares;
-            console.log(`mrc-3796: computed sum of squares: ${ret}`);
-            return ret;
-        });
+        const sumOfSquares = computed(() => store.state.modelFit.sumOfSquares);
 
         const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
 
