@@ -114,7 +114,12 @@ export const actions: ActionTree<ModelFitState, FitState> = {
     //
     // Then also do the mutation when we set the out of date run result to clear it?
     [ModelFitAction.UpdateSumOfSquares](context) {
-        const { rootState, state, commit, rootGetters } = context;
+        const {
+            rootState,
+            state,
+            commit,
+            rootGetters
+        } = context;
         // Don't do anything if we are fitting; as the fit itself will
         // set this element.
         if (state.fitting) {
@@ -125,7 +130,6 @@ export const actions: ActionTree<ModelFitState, FitState> = {
         const fitData = rootState.fitData.data;
         const { odinRunnerOde } = rootState.model;
         if (solution && link && fitData && odinRunnerOde) {
-            const time = fitData.map((row) => row[link.time]);
             const data = {
                 time: fitData.map((row) => row[link.time]),
                 value: fitData.map((row) => row[link.data])
