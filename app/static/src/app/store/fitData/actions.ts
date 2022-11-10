@@ -6,6 +6,7 @@ import { Dict } from "../../types/utilTypes";
 import { csvUpload } from "../../csvUpload";
 import { RunMutation } from "../run/mutations";
 import { ModelFitMutation } from "../modelFit/mutations";
+import { ModelFitAction } from "../modelFit/actions";
 import { SensitivityMutation } from "../sensitivity/mutations";
 
 export enum FitDataAction {
@@ -21,7 +22,7 @@ const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) =
     // may partially or fully invalidate any existing links. We retain any we can from previous selection.
     // Empty string means no link
     const {
-        commit, state, rootState, getters
+        commit, state, rootState, getters, dispatch
     } = context;
     const modelResponse = rootState.model.odinModelResponse;
     const modelVariables = modelResponse?.valid ? modelResponse.metadata!.variables : [];
@@ -35,17 +36,19 @@ const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) =
         }, {});
     }
     commit(FitDataMutation.SetLinkedVariables, newLinks);
+    dispatch(`modelFit/${ModelFitAction.UpdateSumOfSquares}`, null, { root: true });
 };
 
 // Runs after a change to the time variable, updating things that depend on it
 const respondUpdatedTimeVariable = (context: ActionContext<FitDataState, FitState>) => {
-    const { commit, state } = context;
+    const { commit, state, dispatch } = context;
     const { timeVariable, data } = state;
     if (timeVariable && data) {
         const endTime = data[data.length - 1][timeVariable]!;
         commit(`run/${RunMutation.SetEndTime}`, endTime, { root: true });
         commit(`sensitivity/${SensitivityMutation.SetEndTime}`, endTime, { root: true });
         commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { linkChanged: true }, { root: true });
+        dispatch(`modelFit/${ModelFitAction.UpdateSumOfSquares}`, null, { root: true });
     }
 };
 
@@ -75,16 +78,18 @@ export const actions: ActionTree<FitDataState, FitState> = {
     },
 
     [FitDataAction.UpdateLinkedVariable](context, payload: SetLinkedVariablePayload) {
-        const { commit, state } = context;
+        const { commit, dispatch, state } = context;
         commit(FitDataMutation.SetLinkedVariable, payload);
         if (payload.column === state.columnToFit) {
             commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { linkChanged: true }, { root: true });
+            dispatch(`modelFit/${ModelFitAction.UpdateSumOfSquares}`, null, { root: true });
         }
     },
 
     [FitDataAction.UpdateColumnToFit](context, payload: string) {
-        const { commit } = context;
+        const { commit, dispatch } = context;
         commit(FitDataMutation.SetColumnToFit, payload);
         commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { linkChanged: true }, { root: true });
+        dispatch(`modelFit/${ModelFitAction.UpdateSumOfSquares}`, null, { root: true });
     }
 };

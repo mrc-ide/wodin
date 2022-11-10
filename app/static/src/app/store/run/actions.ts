@@ -86,12 +86,11 @@ export const actions: ActionTree<RunState, AppState> = {
         const { dispatch, state } = context;
         const { parameterValues, endTime, numberOfReplicates } = state;
         runModel(parameterValues, endTime, numberOfReplicates, context);
-        // Check here that the args are correct...
         dispatch(`modelFit/${ModelFitAction.UpdateSumOfSquares}`, null, { root: true });
     },
 
     RunModelOnRehydrate(context) {
-        const { state, rootState } = context;
+        const { dispatch, state, rootState } = context;
         const { appType } = rootState;
         const isStochastic = appType === AppType.Stochastic;
         const inputs = isStochastic ? state.resultDiscrete!.inputs : state.resultOde!.inputs;
@@ -101,6 +100,7 @@ export const actions: ActionTree<RunState, AppState> = {
             numberOfReplicates = (inputs as OdinRunDiscreteInputs).numberOfReplicates;
         }
         runModel(parameterValues, endTime, numberOfReplicates, context);
+        dispatch(`modelFit/${ModelFitAction.UpdateSumOfSquares}`, null, { root: true });
     },
 
     DownloadOutput(context, payload: DownloadOutputPayload) {

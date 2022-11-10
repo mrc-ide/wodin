@@ -13,6 +13,7 @@
         <div>
           <button v-if="!isStochastic"
                   class="btn btn-primary" id="download-btn"
+                  <button class="btn btn-primary" id="download-btn"
                   :disabled="downloading || !canDownloadOutput"
                   @click="toggleShowDownloadOutput(true)">
             <vue-feather class="inline-icon" type="download"></vue-feather>
@@ -24,6 +25,9 @@
           </div>
         </div>
         <DownloadOutput :open="showDownloadOutput" @close="toggleShowDownloadOutput(false)"></DownloadOutput>
+        <div v-if="sumOfSquares">
+          <span>Sum of squares: {{sumOfSquares}}</span>
+        </div>
     </div>
 </template>
 
