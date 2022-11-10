@@ -18,9 +18,7 @@ import { FitDataGetter } from "../../store/fitData/getters";
 import WodinPlot from "../WodinPlot.vue";
 import userMessages from "../../userMessages";
 import { allFitDataToPlotly, odinToPlotly, WodinPlotData } from "../../plot";
-import {
-    DiscreteSeriesMode, DiscreteSeriesValues, OdinSolution
-} from "../../types/responseTypes";
+import { DiscreteSeriesValues, OdinSolution } from "../../types/responseTypes";
 import { AppType } from "../../store/appState/state";
 
 export default defineComponent({
@@ -84,7 +82,7 @@ export default defineComponent({
                         if (isStochastic.value) {
                             // Only show summary and deterministic values as central for stochastic
                             centralData.values = centralData.values
-                                .filter((v: DiscreteSeriesValues) => v.mode !== DiscreteSeriesMode.Individual);
+                                .filter((v: DiscreteSeriesValues) => v.description !== "Individual");
                         }
                         const plotlyOptions = { includeLegendGroup: true };
                         result.push(...odinToPlotly(centralData, palette.value, plotlyOptions));
