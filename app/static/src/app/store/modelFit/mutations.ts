@@ -40,7 +40,7 @@ export const mutations: MutationTree<ModelFitState> = {
     },
 
     [ModelFitMutation.SetSumOfSquares](state: ModelFitState, payload: number | null) {
-        state.sumOfSquares = null;
+        state.sumOfSquares = payload;
     },
 
     [ModelFitMutation.SetFitUpdateRequired](state: ModelFitState, payload: null | Partial<FitUpdateRequiredReasons>) {
