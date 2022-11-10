@@ -3,6 +3,8 @@
   "title": "Day 3 - Stochastic Model",
   "stochasticProp": "day3 stochastic value",
   "readOnlyCode": false,
+  "maxReplicatesDisplay": 50,
+  "maxReplicatesRun": 1000,
   "help": {
     "tabName": "Help"
   }
