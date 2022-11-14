@@ -66,7 +66,7 @@ export default defineComponent({
         });
 
         const downloading = computed(() => store.state.run.downloading);
-        const sumOfSquares = computed(() => store.state.modelFit.sumOfSquares);
+        const sumOfSquares = computed(() => store.state.modelFit?.sumOfSquares);
 
         const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
 
