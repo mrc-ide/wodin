@@ -113,7 +113,10 @@ describe("WodinPlot", () => {
 
         expect(mockPlotlyNewPlot.mock.calls[0][0]).toBe(wrapper.find("div.plot").element);
         expect(mockPlotlyNewPlot.mock.calls[0][1]).toStrictEqual(mockPlotData);
-        expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({ margin: { t: 25 } });
+        expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({
+            margin: { t: 25 },
+            xaxis: { title: "Time"}
+        });
 
         expect(mockOn.mock.calls[0][0]).toBe("plotly_relayout");
         const { relayout } = wrapper.vm as any;
@@ -171,7 +174,7 @@ describe("WodinPlot", () => {
     const expectedLayout = {
         margin: { t: 25 },
         uirevision: "true",
-        xaxis: { autorange: true },
+        xaxis: { autorange: true, title: "Time" },
         yaxis: { autorange: true }
     };
 
