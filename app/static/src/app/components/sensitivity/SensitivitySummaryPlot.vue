@@ -55,16 +55,13 @@ export default defineComponent({
         };
 
         const xAxisSettings = computed(() => {
-            if (batch.value) {
-                const { paramSettings } = store.state.sensitivity;
-                // https://plotly.com/javascript/reference/layout/xaxis/#layout-xaxis-type
-                const xtype: AxisType = paramSettings.scaleType === SensitivityScaleType.Logarithmic ? "log" : "linear";
-                return {
-                    title: paramSettings.parameterToVary,
-                    type: xtype
-                };
-            }
-            return {};
+            const { paramSettings } = store.state.sensitivity;
+            // https://plotly.com/javascript/reference/layout/xaxis/#layout-xaxis-type
+            const xtype: AxisType = paramSettings.scaleType === SensitivityScaleType.Logarithmic ? "log" : "linear";
+            return {
+                title: paramSettings.parameterToVary,
+                type: xtype
+            };
         });
 
         const plotData = computed(() => {
