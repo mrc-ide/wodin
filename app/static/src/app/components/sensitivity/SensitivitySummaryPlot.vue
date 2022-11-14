@@ -14,7 +14,7 @@
 import {
     computed, defineComponent, onMounted, onUnmounted, ref, watch
 } from "vue";
-import { newPlot, Plots } from "plotly.js-basic-dist-min";
+import { AxisType, newPlot, Plots } from "plotly.js-basic-dist-min";
 import { useStore } from "vuex";
 import {
     fadePlotStyle, margin, config, odinToPlotly
@@ -39,6 +39,11 @@ export default defineComponent({
         const batch = computed(() => store.state.sensitivity.result?.batch);
         const plotSettings = computed(() => store.state.sensitivity.plotSettings);
         const palette = computed(() => store.state.model.paletteModel);
+
+        const yAxisType = computed(() => {
+            return store.state.graphSettings.logScaleYAxis && plotSettings.value.plotType !== SensitivityPlotType.TimeAtExtreme
+                ? "log" : "-" as AxisType;
+        });
 
         const verifyValidEndTime = () => {
             // update plot settings' end time to be valid before we use it
@@ -83,7 +88,10 @@ export default defineComponent({
             if (hasPlotData.value) {
                 const el = plot.value as unknown;
                 const layout = {
-                    margin
+                    margin,
+                    yaxis: {
+                        type: yAxisType.value
+                    }
                 };
                 newPlot(el as HTMLElement, plotData.value, layout, config);
                 resizeObserver = new ResizeObserver(resize);
@@ -93,7 +101,7 @@ export default defineComponent({
 
         onMounted(drawPlot);
 
-        watch(plotData, drawPlot);
+        watch([plotData, yAxisType], drawPlot);
 
         onUnmounted(() => {
             if (resizeObserver) {

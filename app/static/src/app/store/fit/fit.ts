@@ -14,6 +14,7 @@ import { logMutations, persistState } from "../plugins";
 import { newSessionId } from "../../utils";
 import { sessions } from "../sessions/sessions";
 import { versions } from "../versions/versions";
+import { graphSettings } from "../graphSettings/graphSettings";
 import { getters } from "../appState/getters";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -46,7 +47,8 @@ export const storeOptions: StoreOptions<FitState> = {
         modelFit,
         sensitivity,
         sessions,
-        versions
+        versions,
+        graphSettings
     },
     plugins: [
         logMutations,

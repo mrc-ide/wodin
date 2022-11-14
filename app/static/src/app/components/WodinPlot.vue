@@ -26,9 +26,10 @@
 import {
     computed, defineComponent, ref, watch, onMounted, onUnmounted, PropType
 } from "vue";
+import { useStore } from "vuex";
 import { EventEmitter } from "events";
 import {
-    newPlot, react, PlotRelayoutEvent, Plots
+    newPlot, react, PlotRelayoutEvent, Plots, AxisType
 } from "plotly.js-basic-dist-min";
 import {
     WodinPlotData, fadePlotStyle, margin, config
@@ -60,6 +61,8 @@ export default defineComponent({
         }
     },
     setup(props) {
+        const store = useStore();
+
         const plotStyle = computed(() => (props.fadePlot ? fadePlotStyle : ""));
 
         const startTime = 0;
@@ -69,6 +72,8 @@ export default defineComponent({
         const nPoints = 1000; // TODO: appropriate value could be derived from width of element
 
         const hasPlotData = computed(() => !!(baseData.value?.length));
+
+        const yAxisType = computed(() => (store.state.graphSettings.logScaleYAxis ? "log" : "-" as AxisType));
 
         const relayout = async (event: PlotRelayoutEvent) => {
             let data;
@@ -87,7 +92,7 @@ export default defineComponent({
                 margin,
                 uirevision: "true",
                 xaxis: { autorange: true },
-                yaxis: { autorange: true }
+                yaxis: { autorange: true, type: yAxisType.value }
             };
 
             const el = plot.value as HTMLElement;
@@ -109,7 +114,10 @@ export default defineComponent({
                 if (hasPlotData.value) {
                     const el = plot.value as unknown;
                     const layout = {
-                        margin
+                        margin,
+                        yaxis: {
+                          type: yAxisType.value
+                        }
                     };
 
                     newPlot(el as HTMLElement, baseData.value, layout, config);
@@ -124,7 +132,7 @@ export default defineComponent({
 
         onMounted(drawPlot);
 
-        watch(() => props.redrawWatches, drawPlot);
+        watch([() => props.redrawWatches, yAxisType], drawPlot);
 
         onUnmounted(() => {
             if (resizeObserver) {

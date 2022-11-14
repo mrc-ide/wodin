@@ -12,6 +12,7 @@ import { AppType, VisualisationTab } from "../appState/state";
 import { newSessionId } from "../../utils";
 import { sessions } from "../sessions/sessions";
 import { versions } from "../versions/versions";
+import { graphSettings } from "../graphSettings/graphSettings";
 import { getters } from "../appState/getters";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -42,7 +43,8 @@ export const storeOptions: StoreOptions<BasicState> = {
         code,
         sensitivity,
         sessions,
-        versions
+        versions,
+        graphSettings
     },
     plugins: [
         logMutations,
