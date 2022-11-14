@@ -43,12 +43,6 @@ export default defineComponent({
             type: Number,
             required: true
         },
-        xAxisLabel: {
-            type: String,
-            // TODO: eventually make this required, but we'll need to
-            // get it working everywhere first.
-            required: false
-        },
         plotData: {
             type: Function as PropType<(start: number, end: number, points: number) => WodinPlotData>,
             required: true
@@ -92,7 +86,7 @@ export default defineComponent({
             const layout = {
                 margin,
                 uirevision: "true",
-                xaxis: { title: props.xAxisLabel, autorange: true },
+                xaxis: { title: "Time", autorange: true },
                 yaxis: { autorange: true }
             };
 
@@ -116,7 +110,7 @@ export default defineComponent({
                     const el = plot.value as unknown;
                     const layout = {
                         margin,
-                        xaxis: { title: props.xAxisLabel }
+                        xaxis: { title: "Time" }
                     };
 
                     newPlot(el as HTMLElement, baseData.value, layout, config);
