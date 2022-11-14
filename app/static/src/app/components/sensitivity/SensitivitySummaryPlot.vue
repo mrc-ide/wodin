@@ -14,12 +14,12 @@
 import {
     computed, defineComponent, onMounted, onUnmounted, ref, watch
 } from "vue";
-import { newPlot, Plots } from "plotly.js-basic-dist-min";
+import { AxisType, newPlot, Plots } from "plotly.js-basic-dist-min";
 import { useStore } from "vuex";
 import {
     fadePlotStyle, margin, config, odinToPlotly
 } from "../../plot";
-import { SensitivityPlotType } from "../../store/sensitivity/state";
+import { SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
 import userMessages from "../../userMessages";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { OdinSeriesSet } from "../../types/responseTypes";
@@ -38,6 +38,7 @@ export default defineComponent({
 
         const batch = computed(() => store.state.sensitivity.result?.batch);
         const plotSettings = computed(() => store.state.sensitivity.plotSettings);
+        const sensitivitySettings = computed(() => store.state.sensitivity.paramSettings);
         const palette = computed(() => store.state.model.paletteModel);
 
         const verifyValidEndTime = () => {
@@ -53,6 +54,19 @@ export default defineComponent({
                 store.commit(`${namespace}/${SensitivityMutation.SetPlotTime}`, endTime);
             }
         };
+
+        const xAxisSettings = computed(() => {
+            if (batch.value) {
+                const { paramSettings } = store.state.sensitivity;
+                // https://plotly.com/javascript/reference/layout/xaxis/#layout-xaxis-type
+                const xtype: AxisType = paramSettings.scaleType == SensitivityScaleType.Logarithmic ? "log" : "linear";
+                return {
+                    title: paramSettings.parameterToVary,
+                    "type": xtype
+                };
+            }
+            return {};
+        });
 
         const plotData = computed(() => {
             if (batch.value) {
@@ -83,7 +97,8 @@ export default defineComponent({
             if (hasPlotData.value) {
                 const el = plot.value as unknown;
                 const layout = {
-                    margin
+                    margin,
+                    xaxis: xAxisSettings.value
                 };
                 newPlot(el as HTMLElement, plotData.value, layout, config);
                 resizeObserver = new ResizeObserver(resize);
