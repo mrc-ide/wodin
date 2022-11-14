@@ -4,6 +4,7 @@
       :placeholder-message="placeholderMessage"
       :end-time="endTime"
       :plot-data="allPlotData"
+      x-axis-label="Time"
       :redrawWatches="solutions ? [...solutions, allFitData] : []">
     <slot></slot>
   </wodin-plot>
