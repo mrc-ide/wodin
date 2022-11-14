@@ -8,7 +8,8 @@ import { mockBasicState } from "../../../mocks";
 import {
     SensitivityPlotExtreme,
     SensitivityPlotSettings,
-    SensitivityPlotType
+    SensitivityPlotType,
+    SensitivityScaleType
 } from "../../../../src/app/store/sensitivity/state";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
@@ -56,6 +57,11 @@ describe("SensitivitySummaryPlot", () => {
         extreme: SensitivityPlotExtreme.Min
     };
 
+    const defaultParamSettings = {
+        parameterToVary: "beta",
+        scaleType: SensitivityScaleType.Arithmetic,
+    };
+
     const getWrapper = (hasData = true, plotSettings: SensitivityPlotSettings = defaultPlotSettings,
         fadePlot = false) => {
         store = new Vuex.Store<BasicState>({
@@ -82,7 +88,8 @@ describe("SensitivitySummaryPlot", () => {
                         result: {
                             batch: hasData ? mockBatch : null
                         },
-                        plotSettings: { ...plotSettings }
+                        plotSettings: { ...plotSettings },
+                        paramSettings: { ...defaultParamSettings }
                     },
                     mutations: {
                         [SensitivityMutation.SetPlotTime]: mockSetPlotTime
@@ -139,6 +146,10 @@ describe("SensitivitySummaryPlot", () => {
         expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({
             margin: {
                 t: 25
+            },
+            xaxis: {
+                title: "beta",
+                "type": "linear"
             }
         });
         expect(mockPlotlyNewPlot.mock.calls[0][3]).toStrictEqual({ responsive: true });
