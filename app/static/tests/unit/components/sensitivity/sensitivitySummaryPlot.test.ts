@@ -60,7 +60,7 @@ describe("SensitivitySummaryPlot", () => {
 
     const defaultParamSettings = {
         parameterToVary: "beta",
-        scaleType: SensitivityScaleType.Arithmetic,
+        scaleType: SensitivityScaleType.Arithmetic
     } as SensitivityParameterSettings;
 
     const getWrapper = (hasData = true, plotSettings: SensitivityPlotSettings = defaultPlotSettings,
@@ -149,7 +149,7 @@ describe("SensitivitySummaryPlot", () => {
             },
             xaxis: {
                 title: "beta",
-                "type": "linear"
+                type: "linear"
             },
             ...layout
         };
@@ -282,9 +282,9 @@ describe("SensitivitySummaryPlot", () => {
     it("draws x axis on log scale if parameters vary logarithmically", () => {
         const paramSettings = {
             parameterToVary: "beta",
-            scaleType: SensitivityScaleType.Logarithmic,
+            scaleType: SensitivityScaleType.Logarithmic
         } as SensitivityParameterSettings;
         const wrapper = getWrapper(true, defaultPlotSettings, false, paramSettings);
-        expectDataToHaveBeenPlotted(wrapper, { xaxis: { title: "beta", "type": "log" }});
+        expectDataToHaveBeenPlotted(wrapper, { xaxis: { title: "beta", type: "log" } });
     });
 });

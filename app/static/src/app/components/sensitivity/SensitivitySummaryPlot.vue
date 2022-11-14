@@ -38,7 +38,6 @@ export default defineComponent({
 
         const batch = computed(() => store.state.sensitivity.result?.batch);
         const plotSettings = computed(() => store.state.sensitivity.plotSettings);
-        const sensitivitySettings = computed(() => store.state.sensitivity.paramSettings);
         const palette = computed(() => store.state.model.paletteModel);
 
         const verifyValidEndTime = () => {
@@ -59,10 +58,10 @@ export default defineComponent({
             if (batch.value) {
                 const { paramSettings } = store.state.sensitivity;
                 // https://plotly.com/javascript/reference/layout/xaxis/#layout-xaxis-type
-                const xtype: AxisType = paramSettings.scaleType == SensitivityScaleType.Logarithmic ? "log" : "linear";
+                const xtype: AxisType = paramSettings.scaleType === SensitivityScaleType.Logarithmic ? "log" : "linear";
                 return {
                     title: paramSettings.parameterToVary,
-                    "type": xtype
+                    type: xtype
                 };
             }
             return {};

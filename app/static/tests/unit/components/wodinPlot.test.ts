@@ -115,7 +115,7 @@ describe("WodinPlot", () => {
         expect(mockPlotlyNewPlot.mock.calls[0][1]).toStrictEqual(mockPlotData);
         expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({
             margin: { t: 25 },
-            xaxis: { title: "Time"}
+            xaxis: { title: "Time" }
         });
 
         expect(mockOn.mock.calls[0][0]).toBe("plotly_relayout");
