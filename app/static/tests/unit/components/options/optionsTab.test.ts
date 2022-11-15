@@ -12,6 +12,7 @@ import SensitivityOptions from "../../../../src/app/components/options/Sensitivi
 import OptimisationOptions from "../../../../src/app/components/options/OptimisationOptions.vue";
 import { mockModelState, mockRunState } from "../../../mocks";
 import { RunMutation } from "../../../../src/app/store/run/mutations";
+import GraphSettings from "../../../../src/app/components/options/GraphSettings.vue";
 
 describe("OptionsTab", () => {
     const getWrapper = (store: Store<any>) => {
@@ -50,7 +51,7 @@ describe("OptionsTab", () => {
         });
         const wrapper = getWrapper(store);
         const collapses = wrapper.findAllComponents(VerticalCollapse);
-        expect(collapses.length).toBe(2);
+        expect(collapses.length).toBe(3);
         expect(collapses.at(0)!.props("title")).toBe("Model Parameters");
         expect(collapses.at(0)!.props("collapseId")).toBe("model-params");
         const paramValues = collapses.at(0)!.findComponent(ParameterValues);
@@ -58,6 +59,9 @@ describe("OptionsTab", () => {
         expect(collapses.at(1)!.props("title")).toBe("Run Options");
         expect(collapses.at(1)!.props("collapseId")).toBe("run-options");
         expect(collapses.at(1)!.findComponent(RunOptions).exists()).toBe(true);
+        expect(collapses.at(2)!.props("title")).toBe("Graph Settings");
+        expect(collapses.at(2)!.props("collapseId")).toBe("graph-settings");
+        expect(collapses.at(2)!.findComponent(GraphSettings).exists()).toBe(true);
         expect(wrapper.find("#reset-params-btn").exists()).toBe(true);
         expect(wrapper.find("#reset-params-btn").text()).toBe("Reset");
     });
