@@ -6,9 +6,11 @@ import { nextTick } from "vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState } from "../../../mocks";
 import {
+    SensitivityParameterSettings,
     SensitivityPlotExtreme,
     SensitivityPlotSettings,
-    SensitivityPlotType
+    SensitivityPlotType,
+    SensitivityScaleType
 } from "../../../../src/app/store/sensitivity/state";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
@@ -56,8 +58,13 @@ describe("SensitivitySummaryPlot", () => {
         extreme: SensitivityPlotExtreme.Min
     };
 
+    const defaultParamSettings = {
+        parameterToVary: "beta",
+        scaleType: SensitivityScaleType.Arithmetic
+    } as SensitivityParameterSettings;
+
     const getWrapper = (hasData = true, plotSettings: SensitivityPlotSettings = defaultPlotSettings,
-        fadePlot = false) => {
+        fadePlot = false, paramSettings: SensitivityParameterSettings = defaultParamSettings) => {
         store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
@@ -82,7 +89,8 @@ describe("SensitivitySummaryPlot", () => {
                         result: {
                             batch: hasData ? mockBatch : null
                         },
-                        plotSettings: { ...plotSettings }
+                        plotSettings: { ...plotSettings },
+                        paramSettings: { ...paramSettings }
                     },
                     mutations: {
                         [SensitivityMutation.SetPlotTime]: mockSetPlotTime
@@ -103,7 +111,7 @@ describe("SensitivitySummaryPlot", () => {
         jest.clearAllMocks();
     });
 
-    const expectDataToHaveBeenPlotted = (wrapper: VueWrapper<any>) => {
+    const expectDataToHaveBeenPlotted = (wrapper: VueWrapper<any>, layout: any = {}) => {
         expect(mockPlotlyNewPlot).toHaveBeenCalledTimes(1);
         const plotEl = wrapper.find(".plot").element;
         expect(mockPlotlyNewPlot.mock.calls[0][0]).toBe(plotEl);
@@ -135,12 +143,18 @@ describe("SensitivitySummaryPlot", () => {
                 showlegend: true
             }
         ];
-        expect(mockPlotlyNewPlot.mock.calls[0][1]).toStrictEqual(expectedPlotData);
-        expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({
+        const expectedLayout = {
             margin: {
                 t: 25
-            }
-        });
+            },
+            xaxis: {
+                title: "beta",
+                type: "linear"
+            },
+            ...layout
+        };
+        expect(mockPlotlyNewPlot.mock.calls[0][1]).toStrictEqual(expectedPlotData);
+        expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual(expectedLayout);
         expect(mockPlotlyNewPlot.mock.calls[0][3]).toStrictEqual({ responsive: true });
     };
 
@@ -263,5 +277,14 @@ describe("SensitivitySummaryPlot", () => {
         store!.state.sensitivity.plotSettings.time = 50;
         await nextTick();
         expect(mockPlotlyNewPlot).toHaveBeenCalledTimes(2);
+    });
+
+    it("draws x axis on log scale if parameters vary logarithmically", () => {
+        const paramSettings = {
+            parameterToVary: "beta",
+            scaleType: SensitivityScaleType.Logarithmic
+        } as SensitivityParameterSettings;
+        const wrapper = getWrapper(true, defaultPlotSettings, false, paramSettings);
+        expectDataToHaveBeenPlotted(wrapper, { xaxis: { title: "beta", type: "log" } });
     });
 });

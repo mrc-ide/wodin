@@ -86,7 +86,7 @@ export default defineComponent({
             const layout = {
                 margin,
                 uirevision: "true",
-                xaxis: { autorange: true },
+                xaxis: { title: "Time", autorange: true },
                 yaxis: { autorange: true }
             };
 
@@ -109,7 +109,8 @@ export default defineComponent({
                 if (hasPlotData.value) {
                     const el = plot.value as unknown;
                     const layout = {
-                        margin
+                        margin,
+                        xaxis: { title: "Time" }
                     };
 
                     newPlot(el as HTMLElement, baseData.value, layout, config);

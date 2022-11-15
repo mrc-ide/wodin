@@ -14,12 +14,12 @@
 import {
     computed, defineComponent, onMounted, onUnmounted, ref, watch
 } from "vue";
-import { newPlot, Plots } from "plotly.js-basic-dist-min";
+import { AxisType, newPlot, Plots } from "plotly.js-basic-dist-min";
 import { useStore } from "vuex";
 import {
     fadePlotStyle, margin, config, odinToPlotly
 } from "../../plot";
-import { SensitivityPlotType } from "../../store/sensitivity/state";
+import { SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
 import userMessages from "../../userMessages";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { OdinSeriesSet } from "../../types/responseTypes";
@@ -54,6 +54,16 @@ export default defineComponent({
             }
         };
 
+        const xAxisSettings = computed(() => {
+            const { paramSettings } = store.state.sensitivity;
+            // https://plotly.com/javascript/reference/layout/xaxis/#layout-xaxis-type
+            const xtype: AxisType = paramSettings.scaleType === SensitivityScaleType.Logarithmic ? "log" : "linear";
+            return {
+                title: paramSettings.parameterToVary,
+                type: xtype
+            };
+        });
+
         const plotData = computed(() => {
             if (batch.value) {
                 let data: null | OdinSeriesSet;
@@ -83,7 +93,8 @@ export default defineComponent({
             if (hasPlotData.value) {
                 const el = plot.value as unknown;
                 const layout = {
-                    margin
+                    margin,
+                    xaxis: xAxisSettings.value
                 };
                 newPlot(el as HTMLElement, plotData.value, layout, config);
                 resizeObserver = new ResizeObserver(resize);
