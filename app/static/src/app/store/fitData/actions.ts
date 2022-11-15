@@ -22,7 +22,7 @@ const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) =
     // may partially or fully invalidate any existing links. We retain any we can from previous selection.
     // Empty string means no link
     const {
-        commit, state, rootState, getters, dispatch
+        commit, state, rootState, getters
     } = context;
     const modelResponse = rootState.model.odinModelResponse;
     const modelVariables = modelResponse?.valid ? modelResponse.metadata!.variables : [];
@@ -36,7 +36,6 @@ const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) =
         }, {});
     }
     commit(FitDataMutation.SetLinkedVariables, newLinks);
-    dispatch(`modelFit/${ModelFitAction.UpdateSumOfSquares}`, null, { root: true });
 };
 
 // Runs after a change to the time variable, updating things that depend on it
@@ -74,7 +73,9 @@ export const actions: ActionTree<FitDataState, FitState> = {
     },
 
     [FitDataAction.UpdateLinkedVariables](context) {
+        const { dispatch } = context;
         updateLinkedVariables(context);
+        dispatch(`modelFit/${ModelFitAction.UpdateSumOfSquares}`, null, { root: true });
     },
 
     [FitDataAction.UpdateLinkedVariable](context, payload: SetLinkedVariablePayload) {

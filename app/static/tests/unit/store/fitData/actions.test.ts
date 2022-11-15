@@ -104,12 +104,9 @@ describe("Fit Data actions", () => {
             expect(commit.mock.calls[5][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
             expect(commit.mock.calls[5][1]).toStrictEqual({ dataChanged: true });
             expect(commit.mock.calls[5][2]).toStrictEqual({ root: true });
-            // TODO: track down why this goes twice, it seems we
-            // should not need this many but we might not be able to
-            // avoid it?
-            expect(dispatch).toHaveBeenCalledTimes(2);
+
+            expect(dispatch).toHaveBeenCalledTimes(1);
             expect(dispatch.mock.calls[0]).toEqual(updateSumOfSquaresArgs);
-            expect(dispatch.mock.calls[1]).toEqual(updateSumOfSquaresArgs);
             done();
         }, fileTimeout);
     });
@@ -321,9 +318,8 @@ describe("Fit Data actions", () => {
         expect(commit.mock.calls[4][1]).toStrictEqual({ linkChanged: true });
         expect(commit.mock.calls[4][2]).toStrictEqual({ root: true });
 
-        expect(dispatch).toHaveBeenCalledTimes(2);
+        expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch.mock.calls[0]).toEqual(updateSumOfSquaresArgs);
-        expect(dispatch.mock.calls[1]).toEqual(updateSumOfSquaresArgs);
     });
 
     it("UpdateLinkedVariable sets link and sets fitUpdate required if column is columnToFit", () => {
