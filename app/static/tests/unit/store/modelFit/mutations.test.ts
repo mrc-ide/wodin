@@ -76,4 +76,16 @@ describe("ModelFit mutations", () => {
         mutations.SetFitUpdateRequired(state, null);
         expect(state.fitUpdateRequired).toEqual(base);
     });
+
+    it("sets sumOfSquares", () => {
+        const state = mockModelFitState();
+        mutations.SetSumOfSquares(state, 42);
+        expect(state.sumOfSquares).toBe(42);
+    });
+
+    it("clears sumOfSquares", () => {
+        const state = mockModelFitState({ sumOfSquares: 42 });
+        mutations.SetSumOfSquares(state, null);
+        expect(state.sumOfSquares).toBe(null);
+    });
 });

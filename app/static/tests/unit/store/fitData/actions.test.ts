@@ -104,6 +104,9 @@ describe("Fit Data actions", () => {
             expect(commit.mock.calls[5][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
             expect(commit.mock.calls[5][1]).toStrictEqual({ dataChanged: true });
             expect(commit.mock.calls[5][2]).toStrictEqual({ root: true });
+            // TODO: track down why this goes twice, it seems we
+            // should not need this many but we might not be able to
+            // avoid it?
             expect(dispatch).toHaveBeenCalledTimes(2);
             expect(dispatch.mock.calls[0]).toEqual(updateSumOfSquaresArgs);
             expect(dispatch.mock.calls[1]).toEqual(updateSumOfSquaresArgs);
@@ -177,7 +180,6 @@ describe("Fit Data actions", () => {
             expect(dispatch).not.toHaveBeenCalled();
             done();
         }, fileTimeout);
-
     });
 
     it("Upload does nothing if file is not set", (done) => {

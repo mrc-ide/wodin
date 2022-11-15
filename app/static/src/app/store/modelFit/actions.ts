@@ -21,7 +21,7 @@ const prepareData = (fitData: FitData, nameTime: string, nameValue: string) => {
         time: fitData.map((row) => row[nameTime]),
         value: fitData.map((row) => row[nameValue])
     };
-}
+};
 
 export const actions: ActionTree<ModelFitState, FitState> = {
     [ModelFitAction.FitModel](context) {
@@ -132,10 +132,12 @@ export const actions: ActionTree<ModelFitState, FitState> = {
         if (state.fitting) {
             return;
         }
+
         const solution = rootState.run.resultOde?.solution;
         const link = rootGetters[`fitData/${FitDataGetter.link}`];
         const fitData = rootState.fitData.data;
         const { odinRunnerOde } = rootState.model;
+        console.log(`solution? ${!!solution}, link? ${!!link}, fitData? ${!!fitData}`);
         if (solution && link && fitData && odinRunnerOde) {
             const data = prepareData(fitData, link.time, link.data);
             const sumOfSquares = odinRunnerOde.wodinFitValue(solution, data, link.model);
