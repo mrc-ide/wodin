@@ -193,8 +193,11 @@ describe("Run actions", () => {
             endTime: 99
         });
         const commit = jest.fn();
+        const dispatch = jest.fn();
 
-        (actions[RunAction.RunModel] as any)({ commit, state, rootState });
+        (actions[RunAction.RunModel] as any)({
+            commit, dispatch, state, rootState
+        });
 
         expect(mockRunMethod.mock.calls[0][0]).toBe(mockOdin);
         expect(commit.mock.calls.length).toBe(1);
