@@ -3,7 +3,6 @@ import {
     fitDataToPlotly,
     odinToPlotly
 } from "../../src/app/plot";
-import { DiscreteSeriesMode } from "../../src/app/types/responseTypes";
 
 describe("odinToPlotly", () => {
     const palette = {
@@ -223,10 +222,10 @@ describe("discreteSeriesSetToPlotly", () => {
         const seriesSet = {
             x: [0, 1, 2],
             values: [
-                { name: "A", mode: DiscreteSeriesMode.Individual, y: [1, 2, 3] },
-                { name: "A", mode: DiscreteSeriesMode.Individual, y: [4, 5, 6] },
-                { name: "A", mode: DiscreteSeriesMode.Mean, y: [7, 8, 9] },
-                { name: "B", mode: DiscreteSeriesMode.Deterministic, y: [10, 11, 12] }
+                { name: "A", description: "Individual", y: [1, 2, 3] },
+                { name: "A", description: "Individual", y: [4, 5, 6] },
+                { name: "A", description: "Mean", y: [7, 8, 9] },
+                { name: "B", description: "Deterministic", y: [10, 11, 12] }
             ]
         };
         const res = discreteSeriesSetToPlotly(seriesSet, palette);
