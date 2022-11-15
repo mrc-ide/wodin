@@ -115,11 +115,6 @@ export const actions: ActionTree<ModelFitState, FitState> = {
         commit(ModelFitMutation.SetParamsToVary, newParamsToVary);
     },
 
-    // We need to trigger this after a SetResultOde action, I think, iff we're not fitting.
-    //
-    // store/run/actions.ts, in runOdeModel
-    //
-    // Then also do the mutation when we set the out of date run result to clear it?
     [ModelFitAction.UpdateSumOfSquares](context) {
         const {
             rootState,

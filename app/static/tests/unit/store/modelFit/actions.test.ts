@@ -229,6 +229,7 @@ describe("ModelFit actions", () => {
     });
 
     it("UpdateSumOfSquares computes sum of squares if possible", () => {
+        mockWodinFitValue.mockReturnValue(42);
         const commit = jest.fn();
         const testState = mockModelFitState({ fitting: false });
         const link = { time: "t", data: "v", model: "S" };
@@ -251,7 +252,7 @@ describe("ModelFit actions", () => {
         (actions[ModelFitAction.UpdateSumOfSquares] as any)(context);
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetSumOfSquares);
-        // expect(commit.mock.calls[0][1]).toBe(42); // error here for now
+        expect(commit.mock.calls[0][1]).toBe(42);
 
         expect(mockWodinFitValue).toHaveBeenCalledTimes(1);
         expect(mockWodinFitValue.mock.calls[0][0]).toBe("solution");
