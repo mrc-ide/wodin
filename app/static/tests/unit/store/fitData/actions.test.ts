@@ -3,6 +3,7 @@ import { FitDataMutation } from "../../../../src/app/store/fitData/mutations";
 import resetAllMocks = jest.resetAllMocks;
 import { mockFitDataState } from "../../../mocks";
 import { fileTimeout } from "../../../testUtils";
+import { ModelFitAction } from "../../../../src/app/store/modelFit/actions";
 import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
 import { RunMutation } from "../../../../src/app/store/run/mutations";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
@@ -24,6 +25,12 @@ describe("Fit Data actions", () => {
 
         return mockFileReader;
     };
+
+    const updateSumOfSquaresArgs = [
+        `modelFit/${ModelFitAction.UpdateSumOfSquares}`,
+        null,
+        { root: true }
+    ];
 
     afterEach(() => {
         resetAllMocks();
@@ -97,6 +104,9 @@ describe("Fit Data actions", () => {
             expect(commit.mock.calls[5][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
             expect(commit.mock.calls[5][1]).toStrictEqual({ dataChanged: true });
             expect(commit.mock.calls[5][2]).toStrictEqual({ root: true });
+            expect(dispatch).toHaveBeenCalledTimes(2);
+            expect(dispatch.mock.calls[0]).toEqual(updateSumOfSquaresArgs);
+            expect(dispatch.mock.calls[1]).toEqual(updateSumOfSquaresArgs);
             done();
         }, fileTimeout);
     });
@@ -116,6 +126,7 @@ describe("Fit Data actions", () => {
                 detail: "Invalid Record Length: columns length is 2, got 3 on line 2"
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
+            expect(dispatch).not.toHaveBeenCalled();
             done();
         }, fileTimeout);
     });
@@ -135,6 +146,8 @@ describe("Fit Data actions", () => {
                 detail: "File must contain at least 5 data rows."
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
+
+            expect(dispatch).not.toHaveBeenCalled();
             done();
         }, fileTimeout);
     });
@@ -160,8 +173,11 @@ describe("Fit Data actions", () => {
                 detail: "File cannot be read"
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
+
+            expect(dispatch).not.toHaveBeenCalled();
             done();
         }, fileTimeout);
+
     });
 
     it("Upload does nothing if file is not set", (done) => {
@@ -173,6 +189,7 @@ describe("Fit Data actions", () => {
         expect(mockFileReader.readAsText).not.toHaveBeenCalled();
         setTimeout(() => {
             expect(commit).not.toHaveBeenCalled();
+            expect(dispatch).not.toHaveBeenCalled();
             done();
         }, fileTimeout);
     });
@@ -211,6 +228,9 @@ describe("Fit Data actions", () => {
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetLinkedVariables);
         expect(commit.mock.calls[0][1]).toStrictEqual({ old1: null, old3: "C", new: null });
+
+        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(dispatch.mock.calls[0]).toEqual(updateSumOfSquaresArgs);
     });
 
     it("update linked variables without retaining existing links when model is not valid", () => {
@@ -235,6 +255,9 @@ describe("Fit Data actions", () => {
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetLinkedVariables);
         expect(commit.mock.calls[0][1]).toStrictEqual({ old1: null, old3: null, new: null });
+
+        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(dispatch.mock.calls[0]).toEqual(updateSumOfSquaresArgs);
     });
 
     it("Update time variable commits new time variable and updates linked variables", () => {
@@ -295,6 +318,10 @@ describe("Fit Data actions", () => {
         expect(commit.mock.calls[4][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
         expect(commit.mock.calls[4][1]).toStrictEqual({ linkChanged: true });
         expect(commit.mock.calls[4][2]).toStrictEqual({ root: true });
+
+        expect(dispatch).toHaveBeenCalledTimes(2);
+        expect(dispatch.mock.calls[0]).toEqual(updateSumOfSquaresArgs);
+        expect(dispatch.mock.calls[1]).toEqual(updateSumOfSquaresArgs);
     });
 
     it("UpdateLinkedVariable sets link and sets fitUpdate required if column is columnToFit", () => {
@@ -312,6 +339,9 @@ describe("Fit Data actions", () => {
         expect(commit.mock.calls[1][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
         expect(commit.mock.calls[1][1]).toStrictEqual({ linkChanged: true });
         expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
+
+        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(dispatch.mock.calls[0]).toEqual(updateSumOfSquaresArgs);
     });
 
     it("UpdateLinkedVariable does not set fitUpdate required if column is not columnToFit", () => {
@@ -326,6 +356,8 @@ describe("Fit Data actions", () => {
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetLinkedVariable);
         expect(commit.mock.calls[0][1]).toBe(payload);
+
+        expect(dispatch).not.toHaveBeenCalled();
     });
 
     it("updates column to fit", () => {
@@ -338,5 +370,8 @@ describe("Fit Data actions", () => {
         expect(commit.mock.calls[1][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
         expect(commit.mock.calls[1][1]).toStrictEqual({ linkChanged: true });
         expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
+
+        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(dispatch.mock.calls[0]).toEqual(updateSumOfSquaresArgs);
     });
 });
