@@ -64,7 +64,8 @@ describe("SensitivitySummaryPlot", () => {
     } as SensitivityParameterSettings;
 
     const getWrapper = (hasData = true, plotSettings: SensitivityPlotSettings = defaultPlotSettings,
-        fadePlot = false, paramSettings: SensitivityParameterSettings = defaultParamSettings) => {
+        fadePlot = false, paramSettings: SensitivityParameterSettings = defaultParamSettings,
+        logScaleYAxis = false) => {
         store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
@@ -94,6 +95,12 @@ describe("SensitivitySummaryPlot", () => {
                     },
                     mutations: {
                         [SensitivityMutation.SetPlotTime]: mockSetPlotTime
+                    }
+                },
+                graphSettings: {
+                    namespaced: true,
+                    state: {
+                        logScaleYAxis
                     }
                 }
             }
@@ -149,6 +156,9 @@ describe("SensitivitySummaryPlot", () => {
             },
             xaxis: {
                 title: "beta",
+                type: "linear"
+            },
+            yaxis: {
                 type: "linear"
             },
             ...layout
@@ -279,6 +289,13 @@ describe("SensitivitySummaryPlot", () => {
         expect(mockPlotlyNewPlot).toHaveBeenCalledTimes(2);
     });
 
+    it("redraws plot if graph setting changes", async () => {
+        const wrapper = getWrapper();
+        (store!.state as any).graphSettings.logScaleYAxis = true;
+        await nextTick();
+        expect(mockPlotlyNewPlot).toHaveBeenCalledTimes(2);
+    });
+
     it("draws x axis on log scale if parameters vary logarithmically", () => {
         const paramSettings = {
             parameterToVary: "beta",
@@ -286,5 +303,16 @@ describe("SensitivitySummaryPlot", () => {
         } as SensitivityParameterSettings;
         const wrapper = getWrapper(true, defaultPlotSettings, false, paramSettings);
         expectDataToHaveBeenPlotted(wrapper, { xaxis: { title: "beta", type: "log" } });
+    });
+
+    it("draws y axis on log scale if graph setting log scale is true and plot type is not time at extreme", () => {
+        const wrapper = getWrapper(true, defaultPlotSettings, false, defaultParamSettings, true);
+        expectDataToHaveBeenPlotted(wrapper, {yaxis: { type: "log" }});
+    });
+
+    it("draws y axis on lines scale if graph setting log scale is true but plot type is time at extreme", () => {
+        const plotSettings = {...defaultPlotSettings, plotType: SensitivityPlotType.TimeAtExtreme};
+        const wrapper = getWrapper(true, plotSettings, false, defaultParamSettings, true);
+        expectDataToHaveBeenPlotted(wrapper);
     });
 });
