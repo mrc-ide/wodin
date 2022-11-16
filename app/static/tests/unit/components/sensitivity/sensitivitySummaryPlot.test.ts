@@ -307,11 +307,11 @@ describe("SensitivitySummaryPlot", () => {
 
     it("draws y axis on log scale if graph setting log scale is true and plot type is not time at extreme", () => {
         const wrapper = getWrapper(true, defaultPlotSettings, false, defaultParamSettings, true);
-        expectDataToHaveBeenPlotted(wrapper, {yaxis: { type: "log" }});
+        expectDataToHaveBeenPlotted(wrapper, { yaxis: { type: "log" } });
     });
 
     it("draws y axis on lines scale if graph setting log scale is true but plot type is time at extreme", () => {
-        const plotSettings = {...defaultPlotSettings, plotType: SensitivityPlotType.TimeAtExtreme};
+        const plotSettings = { ...defaultPlotSettings, plotType: SensitivityPlotType.TimeAtExtreme };
         const wrapper = getWrapper(true, plotSettings, false, defaultParamSettings, true);
         expectDataToHaveBeenPlotted(wrapper);
     });

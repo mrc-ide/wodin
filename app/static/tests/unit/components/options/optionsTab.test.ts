@@ -154,7 +154,7 @@ describe("OptionsTab", () => {
         expect(collapses.at(2)!.findComponent(RunOptions).exists()).toBe(true);
         expect(collapses.at(3)!.props("title")).toBe("Optimisation");
         expect(collapses.at(3)!.props("collapseId")).toBe("optimisation");
-        expect(collapses.at(3)!.findComponent(OptimisationOptions).exists()).toBe(true)
+        expect(collapses.at(3)!.findComponent(OptimisationOptions).exists()).toBe(true);
         expect(collapses.at(4)!.props("title")).toBe("Graph Settings");
         expect(collapses.at(4)!.props("collapseId")).toBe("graph-settings");
         expect(collapses.at(4)!.findComponent(GraphSettings).exists()).toBe(true);

@@ -65,7 +65,8 @@ export default defineComponent({
         });
 
         const yAxisSettings = computed(() => {
-            const logScale = store.state.graphSettings.logScaleYAxis && plotSettings.value.plotType !== SensitivityPlotType.TimeAtExtreme;
+            const isNotTimePlot = plotSettings.value.plotType !== SensitivityPlotType.TimeAtExtreme;
+            const logScale = store.state.graphSettings.logScaleYAxis && isNotTimePlot;
             const type = logScale ? "log" : "linear" as AxisType;
             return { type };
         });

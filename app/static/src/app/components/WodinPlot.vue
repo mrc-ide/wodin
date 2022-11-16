@@ -116,7 +116,7 @@ export default defineComponent({
                     const layout = {
                         margin,
                         yaxis: {
-                          type: yAxisType.value
+                            type: yAxisType.value
                         },
                         xaxis: { title: "Time" }
                     };

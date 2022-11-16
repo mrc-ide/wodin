@@ -37,7 +37,7 @@ describe("Fit Tab", () => {
                     namespaced: true,
                     state: {
                         logScaleYAxis: false
-                    },
+                    }
                 },
                 modelFit: {
                     namespaced: true,

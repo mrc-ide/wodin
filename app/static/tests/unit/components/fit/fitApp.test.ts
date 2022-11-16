@@ -74,7 +74,7 @@ describe("FitApp", () => {
                         errors: []
                     }
                 },
-                graphSettings:{
+                graphSettings: {
                     namespaced: true,
                     state: {
                         logScaleYAxis: false

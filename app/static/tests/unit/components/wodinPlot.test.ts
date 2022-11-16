@@ -12,9 +12,9 @@ jest.mock("plotly.js-basic-dist-min", () => ({
 import { shallowMount, VueWrapper } from "@vue/test-utils";
 import { nextTick } from "vue";
 import * as plotly from "plotly.js-basic-dist-min";
-import WodinPlot from "../../../src/app/components/WodinPlot.vue";
-import {BasicState} from "../../../src/app/store/basic/state";
 import Vuex, { Store } from "vuex";
+import WodinPlot from "../../../src/app/components/WodinPlot.vue";
+import { BasicState } from "../../../src/app/store/basic/state";
 
 describe("WodinPlot", () => {
     const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");
