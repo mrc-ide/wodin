@@ -56,6 +56,12 @@ describe("BasicApp", () => {
                     state: {
                         errors: []
                     }
+                },
+                graphSettings: {
+                    namespaced: true,
+                    state: {
+                        logScaleYAxis: false
+                    }
                 }
             }
         });

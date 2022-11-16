@@ -36,6 +36,9 @@ describe("OptionsTab", () => {
         },
         sensitivity: {
             paramSettings: {}
+        },
+        graphSettings: {
+            logScaleYAxis: false
         }
     } as any;
 
@@ -46,6 +49,9 @@ describe("OptionsTab", () => {
                 openVisualisationTab: VisualisationTab.Run,
                 run: {
                     parameterValues: { param1: 1, param2: 2.2 }
+                },
+                graphSettings: {
+                    logScaleYAxis: false
                 }
             } as any
         });
@@ -71,7 +77,10 @@ describe("OptionsTab", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 appType: AppType.Basic,
-                openVisualisationTab: VisualisationTab.Run
+                openVisualisationTab: VisualisationTab.Run,
+                graphSettings: {
+                    logScaleYAxis: false
+                }
             } as any,
             modules: {
                 run: {
@@ -123,13 +132,16 @@ describe("OptionsTab", () => {
                 },
                 fitData: {
                     columnToFit: null
+                },
+                graphSettings: {
+                    logScaleYAxis: false
                 }
             } as any
         });
         const wrapper = getWrapper(store);
 
         const collapses = wrapper.findAllComponents(VerticalCollapse);
-        expect(collapses.length).toBe(4);
+        expect(collapses.length).toBe(5);
         expect(collapses.at(0)!.props("title")).toBe("Link");
         expect(collapses.at(0)!.props("collapseId")).toBe("link-data");
         expect(collapses.at(0)!.findComponent(LinkData).exists()).toBe(true);
@@ -142,7 +154,10 @@ describe("OptionsTab", () => {
         expect(collapses.at(2)!.findComponent(RunOptions).exists()).toBe(true);
         expect(collapses.at(3)!.props("title")).toBe("Optimisation");
         expect(collapses.at(3)!.props("collapseId")).toBe("optimisation");
-        expect(collapses.at(3)!.findComponent(OptimisationOptions).exists()).toBe(true);
+        expect(collapses.at(3)!.findComponent(OptimisationOptions).exists()).toBe(true)
+        expect(collapses.at(4)!.props("title")).toBe("Graph Settings");
+        expect(collapses.at(4)!.props("collapseId")).toBe("graph-settings");
+        expect(collapses.at(4)!.findComponent(GraphSettings).exists()).toBe(true);
         expect(wrapper.find("#reset-params-btn").exists()).toBe(true);
         expect(wrapper.find("#reset-params-btn").text()).toBe("Reset");
     });

@@ -33,6 +33,12 @@ describe("Fit Tab", () => {
                         compileRequired
                     }
                 },
+                graphSettings: {
+                    namespaced: true,
+                    state: {
+                        logScaleYAxis: false
+                    },
+                },
                 modelFit: {
                     namespaced: true,
                     state: {

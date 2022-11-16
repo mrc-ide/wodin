@@ -51,6 +51,12 @@ describe("StochasticApp", () => {
                     actions: {
                         [ModelAction.FetchOdinRunner]: jest.fn()
                     }
+                },
+                graphSettings: {
+                    namespaced: true,
+                    state: {
+                        logScaleYAxis: false
+                    }
                 }
             }
         });
