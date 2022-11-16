@@ -73,7 +73,7 @@ export default defineComponent({
 
         const hasPlotData = computed(() => !!(baseData.value?.length));
 
-        const yAxisType = computed(() => (store.state.graphSettings.logScaleYAxis ? "log" : "-" as AxisType));
+        const yAxisType = computed(() => (store.state.graphSettings.logScaleYAxis ? "log" : "linear" as AxisType));
 
         const relayout = async (event: PlotRelayoutEvent) => {
             let data;
@@ -91,7 +91,7 @@ export default defineComponent({
             const layout = {
                 margin,
                 uirevision: "true",
-                xaxis: { autorange: true },
+                xaxis: { title: "Time", autorange: true },
                 yaxis: { autorange: true, type: yAxisType.value }
             };
 
@@ -117,7 +117,8 @@ export default defineComponent({
                         margin,
                         yaxis: {
                           type: yAxisType.value
-                        }
+                        },
+                        xaxis: { title: "Time" }
                     };
 
                     newPlot(el as HTMLElement, baseData.value, layout, config);

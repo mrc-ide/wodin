@@ -73,6 +73,7 @@ export interface OdinModelResponse{
 
 // This is Odin's SeriesSetValues and SeriesSet
 export interface OdinSeriesSetValues {
+    description?: string;
     name: string;
     y: number[];
 }
@@ -188,14 +189,8 @@ export interface OdinRunnerOde {
                control: OdeControl) => Batch;
 }
 
-export enum DiscreteSeriesMode {
-    Individual = "Individual",
-    Mean = "Mean",
-    Deterministic = "Deterministic"
-}
-
 export interface DiscreteSeriesValues {
-    mode: DiscreteSeriesMode;
+    description?: string;
     name: string;
     y: number[];
 }

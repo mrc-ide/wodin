@@ -19,7 +19,7 @@ import { useStore } from "vuex";
 import {
     fadePlotStyle, margin, config, odinToPlotly
 } from "../../plot";
-import { SensitivityPlotType } from "../../store/sensitivity/state";
+import { SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
 import userMessages from "../../userMessages";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { OdinSeriesSet } from "../../types/responseTypes";
@@ -40,11 +40,6 @@ export default defineComponent({
         const plotSettings = computed(() => store.state.sensitivity.plotSettings);
         const palette = computed(() => store.state.model.paletteModel);
 
-        const yAxisType = computed(() => {
-            return store.state.graphSettings.logScaleYAxis && plotSettings.value.plotType !== SensitivityPlotType.TimeAtExtreme
-                ? "log" : "-" as AxisType;
-        });
-
         const verifyValidEndTime = () => {
             // update plot settings' end time to be valid before we use it
             let endTime = plotSettings.value.time;
@@ -58,6 +53,22 @@ export default defineComponent({
                 store.commit(`${namespace}/${SensitivityMutation.SetPlotTime}`, endTime);
             }
         };
+
+        const xAxisSettings = computed(() => {
+            const { paramSettings } = store.state.sensitivity;
+            // https://plotly.com/javascript/reference/layout/xaxis/#layout-xaxis-type
+            const xtype: AxisType = paramSettings.scaleType === SensitivityScaleType.Logarithmic ? "log" : "linear";
+            return {
+                title: paramSettings.parameterToVary,
+                type: xtype
+            };
+        });
+
+        const yAxisSettings = computed(() => {
+            const logScale = store.state.graphSettings.logScaleYAxis && plotSettings.value.plotType !== SensitivityPlotType.TimeAtExtreme;
+            const type = logScale ? "log" : "linear" as AxisType;
+            return { type };
+        });
 
         const plotData = computed(() => {
             if (batch.value) {
@@ -89,9 +100,8 @@ export default defineComponent({
                 const el = plot.value as unknown;
                 const layout = {
                     margin,
-                    yaxis: {
-                        type: yAxisType.value
-                    }
+                    yaxis: yAxisSettings.value,
+                    xaxis: xAxisSettings.value
                 };
                 newPlot(el as HTMLElement, plotData.value, layout, config);
                 resizeObserver = new ResizeObserver(resize);
@@ -101,7 +111,7 @@ export default defineComponent({
 
         onMounted(drawPlot);
 
-        watch([plotData, yAxisType], drawPlot);
+        watch([plotData, yAxisSettings], drawPlot);
 
         onUnmounted(() => {
             if (resizeObserver) {

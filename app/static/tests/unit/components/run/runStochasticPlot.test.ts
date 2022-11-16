@@ -13,8 +13,8 @@ describe("RunPlot", () => {
     const mockSolution = jest.fn().mockReturnValue({
         x: [0, 1],
         values: [
-            { mode: "Individual", name: "S", y: [10, 20] },
-            { mode: "Mean", name: "I", y: [5, 10] }
+            { description: "Individual", name: "S", y: [10, 20] },
+            { description: "Mean", name: "I", y: [5, 10] }
         ]
     });
     const mockResult = {

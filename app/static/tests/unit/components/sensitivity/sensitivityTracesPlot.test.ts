@@ -36,9 +36,9 @@ const mockCentralSln = jest.fn().mockReturnValue({
 const mockCentralStochasticSln = jest.fn().mockReturnValue({
     x: [0, 0.5, 1],
     values: [
-        { name: "y", mode: "Mean", y: [22, 23, 24] },
-        { name: "y", mode: "Individual", y: [33, 34, 35] },
-        { name: "z", mode: "Deterministic", y: [44, 45, 46] }
+        { name: "y", description: "Mean", y: [22, 23, 24] },
+        { name: "y", description: "Individual", y: [33, 34, 35] },
+        { name: "z", description: "Deterministic", y: [44, 45, 46] }
     ]
 });
 
