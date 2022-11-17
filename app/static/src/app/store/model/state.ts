@@ -14,5 +14,6 @@ export interface ModelState {
     // contains a palette mapping variable name to colour
     paletteModel: null | Palette,
     // TODO: rename to simply error
-    odinModelCodeError: WodinError | null
+    odinModelCodeError: WodinError | null,
+    selectedVariables: string[] | null
 }

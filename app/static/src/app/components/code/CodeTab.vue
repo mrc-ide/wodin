@@ -7,6 +7,7 @@
             {{ validMsg }}
         </div>
         <error-info :error="error"></error-info>
+        <selected-variables></selected-variables>
     </div>
 </template>
 
@@ -18,10 +19,12 @@ import CodeEditor from "./CodeEditor.vue";
 import { ModelAction } from "../../store/model/actions";
 import userMessages from "../../userMessages";
 import ErrorInfo from "../ErrorInfo.vue";
+import SelectedVariables from "./SelectedVariables.vue";
 
 export default defineComponent({
     name: "CodeTab",
     components: {
+      SelectedVariables,
         ErrorInfo,
         CodeEditor,
         VueFeather
