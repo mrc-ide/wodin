@@ -5,7 +5,11 @@
         </div>
         <action-required-message :message="updateMsg"></action-required-message>
         <run-stochastic-plot v-if="isStochastic" :fade-plot="!!updateMsg"></run-stochastic-plot>
-        <run-plot v-else :fade-plot="!!updateMsg" :model-fit="false"></run-plot>
+        <run-plot v-else :fade-plot="!!updateMsg" :model-fit="false">
+          <div v-if="sumOfSquares">
+            <span>Sum of squares: {{sumOfSquares}}</span>
+          </div>
+        </run-plot>
         <error-info :error="error"></error-info>
         <div>
           <button v-if="!isStochastic"
@@ -21,9 +25,6 @@
           </div>
         </div>
         <DownloadOutput :open="showDownloadOutput" @close="toggleShowDownloadOutput(false)"></DownloadOutput>
-        <div v-if="sumOfSquares">
-          <span>Sum of squares: {{sumOfSquares}}</span>
-        </div>
     </div>
 </template>
 
