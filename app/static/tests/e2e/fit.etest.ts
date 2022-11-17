@@ -282,7 +282,7 @@ test.describe("Wodin App model fit tests", () => {
     test.only("can display sum of squares on run tab", async ({ page }) => {
         await uploadCSVData(page, realisticFitData);
         await page.click(":nth-match(.wodin-right .nav-tabs a, 2)"); // change main to fit tab
-        await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");  // change left to options tab
+        await page.click(":nth-match(.wodin-left .nav-tabs a, 3)"); // change left to options tab
         const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
         const select1 = await linkContainer.locator(":nth-match(select, 1)");
         await select1.selectOption("onset");
