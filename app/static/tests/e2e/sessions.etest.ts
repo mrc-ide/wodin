@@ -113,7 +113,7 @@ test.describe("Sessions tests", () => {
         await expect(await page.innerText(":nth-match(.session-label, 2)")).toBe("previous session label");
 
         // NB this will load the second load link, i.e. the older session, not the current one
-        await page.click(":nth-match(.session-load a, 2)"); // 3rd because there are two of these on the current
+        await page.click(":nth-match(.session-load a, 3)"); // 3rd because there are two of these on the current
 
         // Check all session values have been rehydrated:
 
