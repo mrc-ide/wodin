@@ -15,7 +15,7 @@ import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
 import StochasticApp from "../../../../src/app/components/stochastic/StochasticApp.vue";
 import { StochasticState } from "../../../../src/app/store/stochastic/state";
-import { mockStochasticState } from "../../../mocks";
+import {mockGraphSettingsState, mockStochasticState} from "../../../mocks";
 import WodinApp from "../../../../src/app/components/WodinApp.vue";
 import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
 import CodeTab from "../../../../src/app/components/code/CodeTab.vue";
@@ -54,9 +54,7 @@ describe("StochasticApp", () => {
                 },
                 graphSettings: {
                     namespaced: true,
-                    state: {
-                        logScaleYAxis: false
-                    }
+                    state: mockGraphSettingsState()
                 }
             }
         });

@@ -19,7 +19,7 @@ import FitApp from "../../../../src/app/components/fit/FitApp.vue";
 import { FitState } from "../../../../src/app/store/fit/state";
 import { AppStateAction } from "../../../../src/app/store/appState/actions";
 import {
-    mockFitDataState, mockFitState, mockModelFitState, mockModelState, mockSensitivityState
+    mockFitDataState, mockFitState, mockGraphSettingsState, mockModelFitState, mockModelState, mockSensitivityState
 } from "../../../mocks";
 import WodinApp from "../../../../src/app/components/WodinApp.vue";
 import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
@@ -76,9 +76,7 @@ describe("FitApp", () => {
                 },
                 graphSettings: {
                     namespaced: true,
-                    state: {
-                        logScaleYAxis: false
-                    }
+                    state: mockGraphSettingsState()
                 }
             }
         });
