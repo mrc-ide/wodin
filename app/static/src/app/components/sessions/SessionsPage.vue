@@ -27,10 +27,10 @@
                          @click="editSessionLabel(session.id, session.label)"></vue-feather>
           </div>
           <div class="col-1 text-center session-col-value session-load">
-            <router-link v-if="isCurrentSession(session.id)" to="/">
+            <router-link v-if="isCurrentSession(session.id)" to="/" title="Return to session">
               <vue-feather class="inline-icon brand" type="home"></vue-feather>
             </router-link>
-            <a v-else :href="sessionUrl(session.id)">
+            <a :href="sessionUrl(session.id)" title="Load as new session">
               <vue-feather class="inline-icon brand" type="upload"></vue-feather>
             </a>
           </div>
