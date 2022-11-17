@@ -132,7 +132,6 @@ export const actions: ActionTree<ModelFitState, FitState> = {
         const link = rootGetters[`fitData/${FitDataGetter.link}`];
         const fitData = rootState.fitData.data;
         const { odinRunnerOde } = rootState.model;
-        console.log(`solution? ${!!solution}, link? ${!!link}, fitData? ${!!fitData}`);
         if (solution && link && fitData && odinRunnerOde) {
             const data = prepareData(fitData, link.time, link.data);
             const sumOfSquares = odinRunnerOde.wodinFitValue(solution, data, link.model);
