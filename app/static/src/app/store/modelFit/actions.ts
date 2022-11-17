@@ -6,13 +6,22 @@ import { RunMutation } from "../run/mutations";
 import { SensitivityMutation } from "../sensitivity/mutations";
 import { ModelFitGetter } from "./getters";
 import { FitDataGetter } from "../fitData/getters";
+import { FitData } from "../fitData/state";
 import { allTrue } from "../../utils";
 
 export enum ModelFitAction {
     FitModel = "FitModel",
     FitModelStep = "FitModelStep",
-    UpdateParamsToVary = "ParamsToVary"
+    UpdateParamsToVary = "ParamsToVary",
+    UpdateSumOfSquares = "UpdateSumOfSquares"
 }
+
+const prepareData = (fitData: FitData, nameTime: string, nameValue: string) => {
+    return {
+        time: fitData.map((row) => row[nameTime]),
+        value: fitData.map((row) => row[nameValue])
+    };
+};
 
 export const actions: ActionTree<ModelFitState, FitState> = {
     [ModelFitAction.FitModel](context) {
@@ -27,11 +36,10 @@ export const actions: ActionTree<ModelFitState, FitState> = {
 
             const link = rootGetters[`fitData/${FitDataGetter.link}`];
             const endTime = rootGetters[`fitData/${FitDataGetter.dataEnd}`];
-            const time = rootState.fitData.data!.map((row) => row[rootState.fitData.timeVariable!]);
+            const timeVariable = rootState.fitData.timeVariable!;
             const linkedColumn = rootState.fitData.columnToFit!;
             const linkedVariable = rootState.fitData.linkedVariables[linkedColumn]!;
-            const value = rootState.fitData.data!.map((row) => row[linkedColumn]);
-            const data = { time, value };
+            const data = prepareData(rootState.fitData.data!, timeVariable, linkedColumn);
             const vary = state.paramsToVary;
 
             const pars = {
@@ -105,5 +113,29 @@ export const actions: ActionTree<ModelFitState, FitState> = {
         // Retain selected values if we can
         const newParamsToVary = state.paramsToVary.filter((param) => newParams.includes(param));
         commit(ModelFitMutation.SetParamsToVary, newParamsToVary);
+    },
+
+    [ModelFitAction.UpdateSumOfSquares](context) {
+        const {
+            rootState,
+            state,
+            commit,
+            rootGetters
+        } = context;
+        // Don't do anything if we are fitting; as the fit itself will
+        // set this element.
+        if (state.fitting) {
+            return;
+        }
+
+        const solution = rootState.run.resultOde?.solution;
+        const link = rootGetters[`fitData/${FitDataGetter.link}`];
+        const fitData = rootState.fitData.data;
+        const { odinRunnerOde } = rootState.model;
+        if (solution && link && fitData && odinRunnerOde) {
+            const data = prepareData(fitData, link.time, link.data);
+            const sumOfSquares = odinRunnerOde.wodinFitValue(solution, data, link.model);
+            commit(ModelFitMutation.SetSumOfSquares, sumOfSquares);
+        }
     }
 };

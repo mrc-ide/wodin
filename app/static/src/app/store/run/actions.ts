@@ -6,6 +6,7 @@ import userMessages from "../../userMessages";
 import type { OdinRunDiscreteInputs, OdinRunResultDiscrete, OdinRunResultOde } from "../../types/wrapperTypes";
 import { OdinUserType } from "../../types/responseTypes";
 import { WodinExcelDownload } from "../../wodinExcelDownload";
+import { ModelFitAction } from "../modelFit/actions";
 
 export enum RunAction {
     RunModel = "RunModel",
@@ -82,15 +83,20 @@ export interface DownloadOutputPayload {
 
 export const actions: ActionTree<RunState, AppState> = {
     RunModel(context) {
-        const { state } = context;
+        const { dispatch, state, rootState } = context;
         const { parameterValues, endTime, numberOfReplicates } = state;
+        const isFit = rootState.appType === AppType.Fit;
         runModel(parameterValues, endTime, numberOfReplicates, context);
+        if (isFit) {
+            dispatch(`modelFit/${ModelFitAction.UpdateSumOfSquares}`, null, { root: true });
+        }
     },
 
     RunModelOnRehydrate(context) {
-        const { state, rootState } = context;
+        const { dispatch, state, rootState } = context;
         const { appType } = rootState;
         const isStochastic = appType === AppType.Stochastic;
+        const isFit = appType === AppType.Fit;
         const inputs = isStochastic ? state.resultDiscrete!.inputs : state.resultOde!.inputs;
         const { parameterValues, endTime } = inputs;
         let numberOfReplicates = null;
@@ -98,6 +104,9 @@ export const actions: ActionTree<RunState, AppState> = {
             numberOfReplicates = (inputs as OdinRunDiscreteInputs).numberOfReplicates;
         }
         runModel(parameterValues, endTime, numberOfReplicates, context);
+        if (isFit) {
+            dispatch(`modelFit/${ModelFitAction.UpdateSumOfSquares}`, null, { root: true });
+        }
     },
 
     DownloadOutput(context, payload: DownloadOutputPayload) {

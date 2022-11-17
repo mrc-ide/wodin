@@ -11,8 +11,10 @@ import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutat
 describe("ModelFit actions", () => {
     const mockSimplex = {} as any;
     const mockWodinFit = jest.fn().mockReturnValue(mockSimplex);
+    const mockWodinFitValue = jest.fn().mockReturnValue(42);
     const mockOdinRunner = {
-        wodinFit: mockWodinFit
+        wodinFit: mockWodinFit,
+        wodinFitValue: mockWodinFitValue
     } as any;
     const mockOdin = {} as any;
     const parameterValues = { p1: 1.1, p2: 2.2 };
@@ -213,5 +215,48 @@ describe("ModelFit actions", () => {
             expect(dispatch).not.toHaveBeenCalled();
             done();
         });
+    });
+
+    it("UpdateSumOfSquares does nothing if fitting", () => {
+        const commit = jest.fn();
+        const testState = mockModelFitState({ fitting: true });
+        const rootGetters = null;
+        const context = {
+            commit, state: testState, rootState, rootGetters: {}
+        };
+        (actions[ModelFitAction.UpdateSumOfSquares] as any)(context);
+        expect(commit).not.toHaveBeenCalled();
+    });
+
+    it("UpdateSumOfSquares computes sum of squares if possible", () => {
+        mockWodinFitValue.mockReturnValue(42);
+        const commit = jest.fn();
+        const testState = mockModelFitState({ fitting: false });
+        const link = { time: "t", data: "v", model: "S" };
+        const rootGetters = {
+            "fitData/link": link,
+            "fitData/dataEnd": 100
+        };
+
+        const runStateWithSolution = mockRunState({
+            parameterValues,
+            resultOde: {
+                solution: "solution"
+            } as any
+        });
+        const rootStateWithSolution = { ...rootState, run: runStateWithSolution };
+
+        const context = {
+            commit, state: testState, rootState: rootStateWithSolution, rootGetters
+        };
+        (actions[ModelFitAction.UpdateSumOfSquares] as any)(context);
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetSumOfSquares);
+        expect(commit.mock.calls[0][1]).toBe(42);
+
+        expect(mockWodinFitValue).toHaveBeenCalledTimes(1);
+        expect(mockWodinFitValue.mock.calls[0][0]).toBe("solution");
+        expect(mockWodinFitValue.mock.calls[0][1]).toStrictEqual({ time: [0, 1, 2], value: [10, 20, 30] });
+        expect(mockWodinFitValue.mock.calls[0][2]).toBe("S");
     });
 });

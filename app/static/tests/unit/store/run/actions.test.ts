@@ -6,6 +6,7 @@ import {
 import { WodinExcelDownload } from "../../../../src/app/wodinExcelDownload";
 import { actions, RunAction } from "../../../../src/app/store/run/actions";
 import { AppType } from "../../../../src/app/store/appState/state";
+import { ModelFitAction } from "../../../../src/app/store/modelFit/actions";
 
 jest.mock("../../../../src/app/wodinExcelDownload");
 
@@ -193,8 +194,11 @@ describe("Run actions", () => {
             endTime: 99
         });
         const commit = jest.fn();
+        const dispatch = jest.fn();
 
-        (actions[RunAction.RunModel] as any)({ commit, state, rootState });
+        (actions[RunAction.RunModel] as any)({
+            commit, dispatch, state, rootState
+        });
 
         expect(mockRunMethod.mock.calls[0][0]).toBe(mockOdin);
         expect(commit.mock.calls.length).toBe(1);
@@ -220,24 +224,26 @@ describe("Run actions", () => {
         testCommitsErrorOnRunModel(true);
     });
 
-    const testRunModelOnRehydrate = (stochastic: boolean) => {
+    const testRunModelOnRehydrate = (appType: AppType) => {
+        const isStochastic = appType === AppType.Stochastic;
+        const isFit = appType === AppType.Fit;
+
         const mockOdin = {} as any;
 
         const parameterValues = { p1: 1, p2: 2 };
-        const runner = stochastic ? mockRunnerDiscrete() : mockRunnerOde();
+        const runner = isStochastic ? mockRunnerDiscrete() : mockRunnerOde();
         const modelState = mockModelState({
-            odinRunnerOde: stochastic ? null : runner,
-            odinRunnerDiscrete: stochastic ? runner : null,
+            odinRunnerOde: isStochastic ? null : runner,
+            odinRunnerDiscrete: isStochastic ? runner : null,
             odin: mockOdin,
             compileRequired: false
         });
-        if (stochastic) {
+        if (isStochastic) {
             modelState.odinModelResponse = {
                 metadata: { dt: 0.1 }
             } as any;
         }
 
-        const appType = stochastic ? AppType.Stochastic : AppType.Basic;
         const rootState = {
             appType,
             model: modelState
@@ -248,7 +254,7 @@ describe("Run actions", () => {
                 endTime: 99
             }
         } as any;
-        if (stochastic) {
+        if (isStochastic) {
             result.inputs.numberOfReplicates = 6;
         }
 
@@ -261,25 +267,28 @@ describe("Run actions", () => {
             },
             parameterValues: { p1: 10, p2: 20 },
             endTime: 199,
-            resultOde: stochastic ? null : result,
-            resultDiscrete: stochastic ? result : null
+            resultOde: isStochastic ? null : result,
+            resultDiscrete: isStochastic ? result : null
         });
         const commit = jest.fn();
+        const dispatch = jest.fn();
 
-        (actions[RunAction.RunModelOnRehydrate] as any)({ commit, state, rootState });
+        (actions[RunAction.RunModelOnRehydrate] as any)({
+            commit, dispatch, state, rootState
+        });
 
-        const run = stochastic ? runner.wodinRunDiscrete : runner.wodinRun;
+        const run = isStochastic ? runner.wodinRunDiscrete : runner.wodinRun;
         expect(run.mock.calls[0][0]).toBe(mockOdin);
         expect(run.mock.calls[0][1]).toStrictEqual(parameterValues);
         expect(run.mock.calls[0][2]).toBe(0); // start
         expect(run.mock.calls[0][3]).toBe(99); // end time from result
-        if (stochastic) {
+        if (isStochastic) {
             expect(run.mock.calls[0][4]).toBe(0.1); // dt
             expect(run.mock.calls[0][5]).toBe(6); // Number of replicates
         }
 
         expect(commit.mock.calls.length).toBe(1);
-        if (stochastic) {
+        if (isStochastic) {
             expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultDiscrete);
             expect(commit.mock.calls[0][1]).toEqual({
                 inputs: { parameterValues, endTime: 99, numberOfReplicates: 6 },
@@ -294,14 +303,27 @@ describe("Run actions", () => {
                 error: null
             });
         }
+
+        if (isFit) {
+            expect(dispatch).toHaveBeenCalledTimes(1);
+            expect(dispatch.mock.calls[0][0]).toBe(`modelFit/${ModelFitAction.UpdateSumOfSquares}`);
+            expect(dispatch.mock.calls[0][1]).toBe(null);
+            expect(dispatch.mock.calls[0][2]).toStrictEqual({ root: true });
+        } else {
+            expect(dispatch).not.toHaveBeenCalled();
+        }
     };
 
     it("run model on rehydrate for non-stochastic", () => {
-        testRunModelOnRehydrate(false);
+        testRunModelOnRehydrate(AppType.Basic);
     });
 
     it("run model on rehydrate for stochastic", () => {
-        testRunModelOnRehydrate(true);
+        testRunModelOnRehydrate(AppType.Stochastic);
+    });
+
+    it("run model on rehydrate for fit", () => {
+        testRunModelOnRehydrate(AppType.Fit);
     });
 
     it("downloads output", (done) => {

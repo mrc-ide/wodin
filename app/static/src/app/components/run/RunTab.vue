@@ -5,7 +5,11 @@
         </div>
         <action-required-message :message="updateMsg"></action-required-message>
         <run-stochastic-plot v-if="isStochastic" :fade-plot="!!updateMsg"></run-stochastic-plot>
-        <run-plot v-else :fade-plot="!!updateMsg" :model-fit="false"></run-plot>
+        <run-plot v-else :fade-plot="!!updateMsg" :model-fit="false">
+          <div v-if="sumOfSquares">
+            <span>Sum of squares: {{sumOfSquares}}</span>
+          </div>
+        </run-plot>
         <error-info :error="error"></error-info>
         <div>
           <button v-if="!isStochastic"
@@ -63,6 +67,7 @@ export default defineComponent({
         });
 
         const downloading = computed(() => store.state.run.downloading);
+        const sumOfSquares = computed(() => store.state.modelFit?.sumOfSquares);
 
         const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
 
@@ -76,7 +81,7 @@ export default defineComponent({
             if (store.state.model.compileRequired) {
                 return userMessages.run.compileRequired;
             }
-            // TOOD: eventually make runRequired to runUpdateRequired I think?
+            // TODO: eventually make runRequired to runUpdateRequired I think?
             if (anyTrue(store.state.run.runRequired)) {
                 return runRequiredExplanation(store.state.run.runRequired);
             }
@@ -94,6 +99,7 @@ export default defineComponent({
             runModel,
             error,
             downloading,
+            sumOfSquares,
             showDownloadOutput,
             canDownloadOutput,
             toggleShowDownloadOutput

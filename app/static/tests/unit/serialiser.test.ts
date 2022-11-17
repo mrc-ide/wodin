@@ -27,6 +27,7 @@ describe("serialise", () => {
         odinRunnerOde: {
             wodinRun: jest.fn(),
             wodinFit: jest.fn(),
+            wodinFitValue: jest.fn(),
             batchParsRange: jest.fn(),
             batchParsDisplace: jest.fn(),
             batchRun: jest.fn()
