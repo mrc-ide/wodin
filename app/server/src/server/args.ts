@@ -1,14 +1,37 @@
-const yargs = require("yargs/yargs");
-const path = require("path");
-const { hideBin } = require("yargs/helpers");
+const doc = `
+Usage:
+  server [options] <path>
 
-const { argv } = yargs(hideBin(process.argv));
-const configPathGiven = argv.config;
-if (!configPathGiven) {
-    throw new Error("Please provide a 'config' argument specifying path to the config folder");
+Options:
+  --base-url=URL   Base url for app
+  --odin-api=URL   Url to find odin api
+  --redis-url=URL  Url to find Redis
+`;
+
+const { version } = require("./version");
+const { docopt } = require("docopt");
+
+type Option = string | undefined;
+
+const dropUndefined = (options: Record<string, Option>): Record<string, string> => {
+    return Object.fromEntries(options.entries.filter((o) => o !== undefined));
 }
-const configPath = path.resolve(configPathGiven);
 
-console.log(`Config path: ${configPathGiven} (${configPath})`);
+export const processArgs = (opts: any) => {
+    const configPath = path.resolve(opts["<path>"] as string);
+    const options = dropUndefined({
+        baseUrl: opts["--base-url"] as Option,
+        odinApi: opts["--odin-api"] as Option,
+        redisUrl: opts["--redis-url"] as Option
+    });
+    return { configPath, options };
+}
 
-module.exports = { configPath };
+const options = processArgs(docopt(doc, { version }));
+
+console.log("Command line configuration");
+options.entries.forEach((entry) => {
+    console.log(`  * ${entry[0]}: ${entry[1]}`);
+});
+
+module.exports = { options };

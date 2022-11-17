@@ -22,10 +22,10 @@ app.use(compression({ level: 9 })); // Use best compression
 const rootDir = path.resolve(path.join(__dirname, "../.."));
 
 // Get command line args
-const { configPath } = require("./args");
+const { options } = require("./args");
 
 // Global config
-const configReader = new ConfigReader(configPath);
+const configReader = new ConfigReader(options);
 const wodinConfig = configReader.readConfigFile("wodin.config.json") as WodinConfig;
 const {
     port, appsPath, baseUrl, odinAPI
