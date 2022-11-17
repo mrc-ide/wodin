@@ -279,7 +279,7 @@ test.describe("Wodin App model fit tests", () => {
             .toBe("Plot is out of date: parameters have been changed. Run sensitivity to update.");
     });
 
-    test.only("can display sum of squares on run tab", async ({ page }) => {
+    test("can display sum of squares on run tab", async ({ page }) => {
         await uploadCSVData(page, realisticFitData);
         await page.click(":nth-match(.wodin-right .nav-tabs a, 2)"); // change main to fit tab
         await page.click(":nth-match(.wodin-left .nav-tabs a, 3)"); // change left to options tab
