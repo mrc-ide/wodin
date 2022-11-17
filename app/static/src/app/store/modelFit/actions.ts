@@ -136,8 +136,6 @@ export const actions: ActionTree<ModelFitState, FitState> = {
             const data = prepareData(fitData, link.time, link.data);
             const sumOfSquares = odinRunnerOde.wodinFitValue(solution, data, link.model);
             commit(ModelFitMutation.SetSumOfSquares, sumOfSquares);
-        } else {
-            commit(ModelFitMutation.SetSumOfSquares, null);
         }
     }
 };

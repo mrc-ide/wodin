@@ -259,31 +259,4 @@ describe("ModelFit actions", () => {
         expect(mockWodinFitValue.mock.calls[0][1]).toStrictEqual({ time: [0, 1, 2], value: [10, 20, 30] });
         expect(mockWodinFitValue.mock.calls[0][2]).toBe("S");
     });
-
-    it("UpdateSumOfSquares does not compute if impossible, zeros value", () => {
-        const commit = jest.fn();
-        const testState = mockModelFitState({ fitting: false });
-        const link = { time: "t", data: "v", model: "S" };
-        const rootGetters = {
-            "fitData/link": null,
-            "fitData/dataEnd": 100
-        };
-        const runStateWithSolution = mockRunState({
-            parameterValues,
-            resultOde: {
-                solution: "solution"
-            } as any
-        });
-        const rootStateWithSolution = { ...rootState, run: runStateWithSolution };
-
-        const context = {
-            commit, state: testState, rootState: rootStateWithSolution, rootGetters
-        };
-        (actions[ModelFitAction.UpdateSumOfSquares] as any)(context);
-        expect(commit).toHaveBeenCalledTimes(1);
-        expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetSumOfSquares);
-        expect(commit.mock.calls[0][1]).toBe(null);
-
-        expect(mockWodinFitValue).not.toHaveBeenCalled();
-    });
 });

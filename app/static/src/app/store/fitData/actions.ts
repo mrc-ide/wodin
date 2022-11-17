@@ -63,6 +63,8 @@ export const actions: ActionTree<FitDataState, FitState> = {
                 commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { dataChanged: true }, { root: true });
             })
             .upload(file);
+        // We want to run this on both success and failure
+        commit(`modelFit/${ModelFitMutation.SetSumOfSquares}`, null, { root: true });
     },
 
     [FitDataAction.UpdateTimeVariable](context, timeVariable) {

@@ -82,28 +82,31 @@ describe("Fit Data actions", () => {
         (actions[FitDataAction.Upload] as any)(context, file);
         expectFileRead(mockFileReader);
         setTimeout(() => {
-            expect(commit).toHaveBeenCalledTimes(6);
-            expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetData);
+            expect(commit).toHaveBeenCalledTimes(7);
+            expect(commit.mock.calls[0][0]).toBe(`modelFit/${ModelFitMutation.SetSumOfSquares}`);
+            expect(commit.mock.calls[0][1]).toStrictEqual(null);
+            expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
+            expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetData);
             const expectedSetDataPayload = {
                 data: mockData,
                 columns: ["a", "b"],
                 timeVariableCandidates: ["a"]
             };
-            expect(commit.mock.calls[0][1]).toStrictEqual(expectedSetDataPayload);
-            expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetLinkedVariables);
-            expect(commit.mock.calls[1][1]).toStrictEqual({ a: "X" });
-            expect(commit.mock.calls[2][0]).toBe(`run/${RunMutation.SetEndTime}`);
-            expect(commit.mock.calls[2][1]).toBe(9);
-            expect(commit.mock.calls[2][2]).toStrictEqual({ root: true });
-            expect(commit.mock.calls[3][0]).toBe(`sensitivity/${SensitivityMutation.SetEndTime}`);
-            expect(commit.mock.calls[3][1]).toStrictEqual(9);
+            expect(commit.mock.calls[1][1]).toStrictEqual(expectedSetDataPayload);
+            expect(commit.mock.calls[2][0]).toBe(FitDataMutation.SetLinkedVariables);
+            expect(commit.mock.calls[2][1]).toStrictEqual({ a: "X" });
+            expect(commit.mock.calls[3][0]).toBe(`run/${RunMutation.SetEndTime}`);
+            expect(commit.mock.calls[3][1]).toBe(9);
             expect(commit.mock.calls[3][2]).toStrictEqual({ root: true });
-            expect(commit.mock.calls[4][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
-            expect(commit.mock.calls[4][1]).toStrictEqual({ linkChanged: true });
+            expect(commit.mock.calls[4][0]).toBe(`sensitivity/${SensitivityMutation.SetEndTime}`);
+            expect(commit.mock.calls[4][1]).toStrictEqual(9);
             expect(commit.mock.calls[4][2]).toStrictEqual({ root: true });
             expect(commit.mock.calls[5][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
-            expect(commit.mock.calls[5][1]).toStrictEqual({ dataChanged: true });
+            expect(commit.mock.calls[5][1]).toStrictEqual({ linkChanged: true });
             expect(commit.mock.calls[5][2]).toStrictEqual({ root: true });
+            expect(commit.mock.calls[6][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
+            expect(commit.mock.calls[6][1]).toStrictEqual({ dataChanged: true });
+            expect(commit.mock.calls[6][2]).toStrictEqual({ root: true });
 
             expect(dispatch).toHaveBeenCalledTimes(1);
             expect(dispatch.mock.calls[0]).toEqual(updateSumOfSquaresArgs);
@@ -119,13 +122,16 @@ describe("Fit Data actions", () => {
         (actions[FitDataAction.Upload] as any)({ commit, dispatch }, file);
         expectFileRead(mockFileReader);
         setTimeout(() => {
-            expect(commit).toHaveBeenCalledTimes(1);
-            expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetError);
+            expect(commit).toHaveBeenCalledTimes(2);
+            expect(commit.mock.calls[0][0]).toBe(`modelFit/${ModelFitMutation.SetSumOfSquares}`);
+            expect(commit.mock.calls[0][1]).toStrictEqual(null);
+            expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
+            expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetError);
             const expectedError = {
                 error: "An error occurred when loading data",
                 detail: "Invalid Record Length: columns length is 2, got 3 on line 2"
             };
-            expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
+            expect(commit.mock.calls[1][1]).toStrictEqual(expectedError);
             expect(dispatch).not.toHaveBeenCalled();
             done();
         }, fileTimeout);
@@ -139,13 +145,16 @@ describe("Fit Data actions", () => {
         (actions[FitDataAction.Upload] as any)({ commit, dispatch }, file);
         expectFileRead(mockFileReader);
         setTimeout(() => {
-            expect(commit).toHaveBeenCalledTimes(1);
-            expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetError);
+            expect(commit).toHaveBeenCalledTimes(2);
+            expect(commit.mock.calls[0][0]).toBe(`modelFit/${ModelFitMutation.SetSumOfSquares}`);
+            expect(commit.mock.calls[0][1]).toStrictEqual(null);
+            expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
+            expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetError);
             const expectedError = {
                 error: "An error occurred when loading data",
                 detail: "File must contain at least 5 data rows."
             };
-            expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
+            expect(commit.mock.calls[1][1]).toStrictEqual(expectedError);
 
             expect(dispatch).not.toHaveBeenCalled();
             done();
@@ -166,13 +175,16 @@ describe("Fit Data actions", () => {
         (actions[FitDataAction.Upload] as any)({ commit, dispatch }, file);
         expectFileRead(mockFileReader);
         setTimeout(() => {
-            expect(commit).toHaveBeenCalledTimes(1);
+            expect(commit).toHaveBeenCalledTimes(2);
             expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetError);
             const expectedError = {
                 error: "An error occurred when reading data file",
                 detail: "File cannot be read"
             };
             expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
+            expect(commit.mock.calls[1][0]).toBe(`modelFit/${ModelFitMutation.SetSumOfSquares}`);
+            expect(commit.mock.calls[1][1]).toStrictEqual(null);
+            expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
 
             expect(dispatch).not.toHaveBeenCalled();
             done();
@@ -187,7 +199,10 @@ describe("Fit Data actions", () => {
         (actions[FitDataAction.Upload] as any)({ commit, dispatch }, null);
         expect(mockFileReader.readAsText).not.toHaveBeenCalled();
         setTimeout(() => {
-            expect(commit).not.toHaveBeenCalled();
+            expect(commit).toHaveBeenCalledTimes(1);
+            expect(commit.mock.calls[0][0]).toBe(`modelFit/${ModelFitMutation.SetSumOfSquares}`);
+            expect(commit.mock.calls[0][1]).toStrictEqual(null);
+            expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
             expect(dispatch).not.toHaveBeenCalled();
             done();
         }, fileTimeout);
