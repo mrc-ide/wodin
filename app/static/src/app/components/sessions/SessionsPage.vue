@@ -30,7 +30,7 @@
             <router-link v-if="isCurrentSession(session.id)" to="/" title="Return to session">
               <vue-feather class="inline-icon brand" type="home"></vue-feather>
             </router-link>
-            <a :href="sessionUrl(session.id)" title="Load as new session">
+            <a class="ms-2" :href="sessionUrl(session.id)" title="Load as new session">
               <vue-feather class="inline-icon brand" type="upload"></vue-feather>
             </a>
           </div>
