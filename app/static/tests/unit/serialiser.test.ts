@@ -10,7 +10,7 @@ import { deserialiseState, serialiseState } from "../../src/app/serialise";
 import { FitState } from "../../src/app/store/fit/state";
 import {
     mockCodeState,
-    mockFitDataState,
+    mockFitDataState, mockGraphSettingsState,
     mockModelFitState,
     mockModelState,
     mockRunState,
@@ -188,7 +188,8 @@ describe("serialise", () => {
         model: modelState,
         run: runState,
         sensitivity: sensitivityState,
-        versions: { versions: null }
+        versions: { versions: null },
+        graphSettings: { logScaleYAxis: true }
     };
 
     const fitState: FitState = {
@@ -208,7 +209,8 @@ describe("serialise", () => {
         sensitivity: sensitivityState,
         fitData: fitDataState,
         modelFit: modelFitState,
-        versions: { versions: null }
+        versions: { versions: null },
+        graphSettings: { logScaleYAxis: true }
     };
 
     const expectedCode = { currentCode: ["some code"] };
@@ -258,6 +260,10 @@ describe("serialise", () => {
         }
     };
 
+    const expectedGraphSettings = {
+        logScaleYAxis: true
+    };
+
     const expectedFitData = {
         data: fitDataState.data,
         columns: ["time", "cases"],
@@ -294,7 +300,8 @@ describe("serialise", () => {
             code: expectedCode,
             model: expectedModel,
             run: expectedRun,
-            sensitivity: expectedSensitivity
+            sensitivity: expectedSensitivity,
+            graphSettings: expectedGraphSettings
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
     });
@@ -308,7 +315,8 @@ describe("serialise", () => {
             run: expectedRun,
             sensitivity: expectedSensitivity,
             fitData: expectedFitData,
-            modelFit: expectedModelFit
+            modelFit: expectedModelFit,
+            graphSettings: expectedGraphSettings
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
     });
@@ -361,7 +369,8 @@ describe("serialise", () => {
             modelFit: {
                 ...expectedModelFit,
                 result: { ...expectedModelFit.result, hasResult: false }
-            }
+            },
+            graphSettings: expectedGraphSettings
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
     });
@@ -383,7 +392,8 @@ describe("serialise", () => {
             run: { ...expectedRun, resultOde: null, resultDiscrete: null },
             sensitivity: { ...expectedSensitivity, result: null },
             fitData: expectedFitData,
-            modelFit: { ...expectedModelFit, result: null }
+            modelFit: { ...expectedModelFit, result: null },
+            graphSettings: expectedGraphSettings
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
     });
@@ -397,7 +407,8 @@ describe("serialise", () => {
             sensitivity: mockSensitivityState(),
             fitData: mockFitDataState(),
             modelFit: mockModelFitState(),
-            versions: mockVersionsState()
+            versions: mockVersionsState(),
+            graphSettings: mockGraphSettingsState()
         } as any;
 
         const target = {
@@ -411,7 +422,8 @@ describe("serialise", () => {
             sensitivity: {},
             fitData: {},
             modelFit: {},
-            versions: null
+            versions: null,
+            graphSettings: {}
         } as any;
 
         deserialiseState(target, serialised);
@@ -426,7 +438,8 @@ describe("serialise", () => {
             sensitivity: mockSensitivityState(),
             fitData: mockFitDataState(),
             modelFit: mockModelFitState(),
-            versions: mockVersionsState()
+            versions: mockVersionsState(),
+            graphSettings: mockGraphSettingsState()
         });
     });
 });
