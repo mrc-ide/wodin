@@ -1,6 +1,6 @@
 import { expect, test, Page } from "@playwright/test";
 import {
-    newFitCode, uploadCSVData, writeCode, startModelFit, waitForModelFitCompletion
+    newFitCode, uploadCSVData, writeCode, startModelFit, waitForModelFitCompletion, realisticFitData
 } from "./utils";
 import PlaywrightConfig from "../../playwright.config";
 
@@ -277,5 +277,17 @@ test.describe("Wodin App model fit tests", () => {
         await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
         await expect(await page.innerText(".action-required-msg"))
             .toBe("Plot is out of date: parameters have been changed. Run sensitivity to update.");
+    });
+
+    test.only("can display sum of squares on run tab", async ({ page }) => {
+        await uploadCSVData(page, realisticFitData);
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 2)"); // change main to fit tab
+        await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");  // change left to options tab
+        const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
+        const select1 = await linkContainer.locator(":nth-match(select, 1)");
+        await select1.selectOption("onset");
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 1)"); // change main to run tab
+        const sumOfSquares = await page.innerText(":nth-match(.wodin-plot-container span, 1)");
+        expect(sumOfSquares).toContain("Sum of squares:");
     });
 });
