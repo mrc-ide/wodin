@@ -26,7 +26,9 @@ function serialiseModel(model: ModelState) : SerialisedModelState {
         odinModelResponse: model.odinModelResponse,
         hasOdin: !!model.odin,
         odinModelCodeError: model.odinModelCodeError,
-        paletteModel: model.paletteModel
+        paletteModel: model.paletteModel,
+        selectedVariables: model.selectedVariables,
+        unselectedVariables: model.unselectedVariables
     };
 }
 
@@ -117,4 +119,11 @@ export const deserialiseState = (targetState: AppState, serialised: SerialisedAp
         ...targetState,
         ...serialised
     });
+
+    // Initialise selected variables if required
+    const {model} = targetState;
+    if (model.odinModelResponse?.metadata?.variables && !model.selectedVariables.length && !model.unselectedVariables.length) {
+        // eslint-disable-next-line no-param-reassign
+        targetState.model.selectedVariables = [...model.odinModelResponse.metadata.variables];
+    }
 };

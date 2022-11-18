@@ -69,8 +69,10 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
 
         const variables = state.odinModelResponse.metadata?.variables || [];
         commit(ModelMutation.SetPaletteModel, paletteModel(variables));
-        // TODO: retain selected variables. That will mean remembering which variables were in the model before but weren't selected..
-        commit(ModelMutation.SetSelectedVariables, [...variables]); // select all variables initially
+
+        // Retain variable selections. Newly added variables will be selected by default
+        const select = variables.filter((s) => !state.unselectedVariables.includes(s));
+        commit(ModelMutation.SetSelectedVariables, select);
 
         if (state.compileRequired) {
             commit(ModelMutation.SetCompileRequired, false);
@@ -137,7 +139,7 @@ export const actions: ActionTree<ModelState, AppState> = {
         const { commit, dispatch, rootState } = context;
         commit(ModelMutation.SetSelectedVariables, payload);
         if (rootState.appType === AppType.Fit) {
-            dispatch(`fitData/${FitDataAction.UpdateLinkedVariables}`, null, {root: true});
+            dispatch(`fitData/${FitDataAction.UpdateLinkedVariables}`, null, { root: true });
         }
     }
 };
