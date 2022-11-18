@@ -17,7 +17,7 @@ import {
 import { AxisType, newPlot, Plots } from "plotly.js-basic-dist-min";
 import { useStore } from "vuex";
 import {
-    fadePlotStyle, margin, config, odinToPlotly
+  fadePlotStyle, margin, config, odinToPlotly, filterSeriesSet
 } from "../../plot";
 import { SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
 import userMessages from "../../userMessages";
@@ -39,6 +39,7 @@ export default defineComponent({
         const batch = computed(() => store.state.sensitivity.result?.batch);
         const plotSettings = computed(() => store.state.sensitivity.plotSettings);
         const palette = computed(() => store.state.model.paletteModel);
+        const selectedVariables = computed(() => store.state.model.selectedVariables);
 
         const verifyValidEndTime = () => {
             // update plot settings' end time to be valid before we use it
@@ -75,7 +76,7 @@ export default defineComponent({
                     const extremeParam = `${paramPrefix}${plotSettings.value.extreme}`;
                     data = batch.value.extreme(extremeParam);
                 }
-                return [...odinToPlotly(data!, palette.value)];
+                return [...odinToPlotly(filterSeriesSet(data!, selectedVariables.value), palette.value)];
             }
             return [];
         });

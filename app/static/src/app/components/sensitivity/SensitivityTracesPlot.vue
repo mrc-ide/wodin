@@ -4,7 +4,7 @@
       :placeholder-message="placeholderMessage"
       :end-time="endTime"
       :plot-data="allPlotData"
-      :redrawWatches="solutions ? [...solutions, allFitData] : []">
+      :redrawWatches="solutions ? [...solutions, allFitData, selectedVariables] : []">
     <slot></slot>
   </wodin-plot>
 </template>
@@ -17,7 +17,7 @@ import { format } from "d3-format";
 import { FitDataGetter } from "../../store/fitData/getters";
 import WodinPlot from "../WodinPlot.vue";
 import userMessages from "../../userMessages";
-import { allFitDataToPlotly, odinToPlotly, WodinPlotData } from "../../plot";
+import {allFitDataToPlotly, filterSeriesSet, odinToPlotly, WodinPlotData} from "../../plot";
 import { DiscreteSeriesValues, OdinSolution } from "../../types/responseTypes";
 import { AppType } from "../../store/appState/state";
 
@@ -44,6 +44,8 @@ export default defineComponent({
 
         const palette = computed(() => store.state.model.paletteModel);
 
+        const selectedVariables = computed(() => store.state.model.selectedVariables);
+
         const updatePlotTraceNameWithParameterValue = (plotTrace: Partial<PlotData>, param: string, value: number) => {
             // eslint-disable-next-line no-param-reassign
             plotTrace.name = `${plotTrace.name} (${param}=${format(".3f")(value)})`;
@@ -66,7 +68,7 @@ export default defineComponent({
                         showLegend: false
                     };
                     if (data) {
-                        const plotData = odinToPlotly(data, palette.value, plotlyOptions);
+                        const plotData = odinToPlotly(filterSeriesSet(data, selectedVariables.value), palette.value, plotlyOptions);
                         plotData.forEach((plotTrace) => {
                             updatePlotTraceNameWithParameterValue(plotTrace, pars.name,
                                 pars.values[slnIdx]);
@@ -85,7 +87,7 @@ export default defineComponent({
                                 .filter((v: DiscreteSeriesValues) => v.description !== "Individual");
                         }
                         const plotlyOptions = { includeLegendGroup: true };
-                        result.push(...odinToPlotly(centralData, palette.value, plotlyOptions));
+                        result.push(...odinToPlotly(filterSeriesSet(centralData, selectedVariables.value), palette.value, plotlyOptions));
                     }
                 }
 
@@ -102,7 +104,8 @@ export default defineComponent({
             endTime,
             solutions,
             allPlotData,
-            allFitData
+            allFitData,
+            selectedVariables
         };
     }
 });

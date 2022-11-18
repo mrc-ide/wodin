@@ -68,6 +68,8 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
 
         const variables = state.odinModelResponse.metadata?.variables || [];
         commit(ModelMutation.SetPaletteModel, paletteModel(variables));
+        // TODO: retain selected variables. That will mean remembering which variables were in the model before but weren't selected..
+        commit(ModelMutation.SetSelectedVariables, [...variables]); // select all variables initially
 
         if (state.compileRequired) {
             commit(ModelMutation.SetCompileRequired, false);

@@ -4,7 +4,7 @@
       :placeholder-message="placeholderMessage"
       :end-time="endTime"
       :plot-data="allPlotData"
-      :redrawWatches="solution ? [solution, allFitData] : []">
+      :redrawWatches="solution ? [solution, allFitData, selectedVariables] : []">
     <slot></slot>
   </wodin-plot>
 </template>
@@ -14,7 +14,7 @@ import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
-import { odinToPlotly, allFitDataToPlotly, WodinPlotData } from "../../plot";
+import {odinToPlotly, allFitDataToPlotly, WodinPlotData, filterSeriesSet} from "../../plot";
 import WodinPlot from "../WodinPlot.vue";
 
 export default defineComponent({
@@ -38,6 +38,8 @@ export default defineComponent({
 
         const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData}`]);
 
+        const selectedVariables = computed(() => store.state.model.selectedVariables);
+
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
             const result = solution.value && solution.value({
                 mode: "grid", tStart: start, tEnd: end, nPoints: points
@@ -46,7 +48,7 @@ export default defineComponent({
                 return [];
             }
             return [
-                ...odinToPlotly(result, palette.value),
+                ...odinToPlotly(filterSeriesSet(result, selectedVariables.value), palette.value),
                 ...allFitDataToPlotly(allFitData.value, palette.value, start, end)
             ];
         };
@@ -56,7 +58,8 @@ export default defineComponent({
             endTime,
             solution,
             allFitData,
-            allPlotData
+            allPlotData,
+            selectedVariables
         };
     }
 });
