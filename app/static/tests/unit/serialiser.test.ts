@@ -16,6 +16,7 @@ import {
     mockRunState,
     mockSensitivityState, mockVersionsState
 } from "../mocks";
+import { defaultState as defaultGraphSettingsState } from "../../src/app/store/graphSettings/graphSettings";
 
 describe("serialise", () => {
     const codeState = {
@@ -441,5 +442,40 @@ describe("serialise", () => {
             versions: mockVersionsState(),
             graphSettings: mockGraphSettingsState()
         });
+    });
+
+    it("deserialises default graph settings when undefined in serialised state", () => {
+        // serialised state with no graph settings
+        const serialised = {
+            openVisualisationTab: VisualisationTab.Fit,
+            code: mockCodeState(),
+            model: mockModelState(),
+            run: mockRunState(),
+            sensitivity: mockSensitivityState(),
+            fitData: mockFitDataState(),
+            modelFit: mockModelFitState(),
+            versions: mockVersionsState()
+        } as any;
+
+        // target state with default graph settings - as module will initialise to
+        const target = {
+            sessionId: "123",
+            appType: AppType.Fit,
+            config: {},
+            openVisualisationTab: VisualisationTab.Run,
+            code: {},
+            model: {},
+            run: {},
+            sensitivity: {},
+            fitData: {},
+            modelFit: {},
+            versions: null,
+            graphSettings: defaultGraphSettingsState
+        } as any;
+        // sanity check
+        expect(target.graphSettings.logScaleYAxis).toBe(false);
+
+        deserialiseState(target, serialised);
+        expect(target.graphSettings.logScaleYAxis).toBe(false);
     });
 });
