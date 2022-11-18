@@ -32,15 +32,14 @@ export class WodinExcelDownload {
 
     // Shared method to generate both Modelled and Modelled with Data - provide empty nonTimeColumns param to omit data
     // for Modelled only
-    private static _generateModelledOutput(solutionOutput: OdinSeriesSet, nonTimeColumns: string[],
+    private static _generateModelledOutput(selectedVariables: string[], solutionOutput: OdinSeriesSet, nonTimeColumns: string[],
         fitData: FitData | null) {
         const outputData = [];
-        const names = solutionOutput.values.map((el) => el.name);
-        outputData.push(["t", ...names, ...nonTimeColumns]); // headers
+        outputData.push(["t", ...selectedVariables, ...nonTimeColumns]); // headers
         solutionOutput.x.forEach((x: number, xIdx: number) => {
             outputData.push([
                 x,
-                ...solutionOutput.values.map((el) => el.y[xIdx]),
+                ...selectedVariables.map((v) => solutionOutput.values.find((so) => so.name === v)!.y[xIdx]),
                 ...nonTimeColumns.map((column: string) => (fitData as FitData)[xIdx][column])
             ]);
         });
@@ -54,8 +53,9 @@ export class WodinExcelDownload {
             const solutionOutput = solution({
                 mode: "grid", tStart: 0, tEnd: end, nPoints: this._points
             });
+            const {selectedVariables} = this._state.model;
 
-            const worksheet = WodinExcelDownload._generateModelledOutput(solutionOutput, [], null);
+            const worksheet = WodinExcelDownload._generateModelledOutput(selectedVariables, solutionOutput, [], null);
             XLSX.utils.book_append_sheet(this._workbook, worksheet, "Modelled");
         }
     }
@@ -70,8 +70,9 @@ export class WodinExcelDownload {
             if (fitData && timeVariable) {
                 const times = fitData.map((row: Dict<number>) => row[timeVariable]);
                 const solutionOutput = solution({ mode: "given", times });
+                const {selectedVariables} = this._state.model;
 
-                const worksheet = WodinExcelDownload._generateModelledOutput(solutionOutput, nonTimeColumns, fitData);
+                const worksheet = WodinExcelDownload._generateModelledOutput(selectedVariables, solutionOutput, nonTimeColumns, fitData);
                 XLSX.utils.book_append_sheet(this._workbook, worksheet, "Modelled with Data");
             }
         }
