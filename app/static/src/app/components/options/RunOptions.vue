@@ -21,8 +21,17 @@
                 <numeric-input
                     :value="numberOfReplicates"
                     :allow-negative="false"
-                    @update="updateNumberOfReplicates"></numeric-input>
+                    :max-allowed-value="100"
+                  @update="updateNumberOfReplicates"></numeric-input>
             </div>
+        </div>
+        <div v-if="isStochasticApp" class="row my-2 small text-danger">
+          <div class="col-5"></div>
+          <div class="col-6">
+            <div id="hide-individual-traces" class="col-12" style="min-height: 1.5rem;">
+              {{ showIndividualTraces ? "" : hideIndividualTracesMessage }}
+            </div>
+          </div>
         </div>
     </div>
 </template>
@@ -35,6 +44,7 @@ import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { FitDataGetter } from "../../store/fitData/getters";
 import NumericInput from "./NumericInput.vue";
 import { AppType } from "../../store/appState/state";
+import userMessages from "../../userMessages";
 
 export default defineComponent({
     name: "RunOptions",
@@ -59,6 +69,10 @@ export default defineComponent({
         const numberOfReplicates = computed(() => store.state.run.numberOfReplicates);
         const isStochasticApp = computed(() => store.state.appType === AppType.Stochastic);
 
+        const maxToShow = 50;
+        const showIndividualTraces = computed(() => numberOfReplicates.value && numberOfReplicates.value <= maxToShow);
+        const hideIndividualTracesMessage = userMessages.stochastic.individualTracesHidden;
+
         const updateNumberOfReplicates = (newValue: number) => {
             store.commit(`run/${RunMutation.SetNumberOfReplicates}`, newValue);
             store.commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, {
@@ -72,7 +86,9 @@ export default defineComponent({
             updateEndTime,
             isStochasticApp,
             numberOfReplicates,
-            updateNumberOfReplicates
+            showIndividualTraces,
+            updateNumberOfReplicates,
+            hideIndividualTracesMessage
         };
     }
 });

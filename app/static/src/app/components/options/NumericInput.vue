@@ -12,6 +12,8 @@ import {
     defineComponent, ref, onMounted, watch
 } from "vue";
 
+const parseNumber = (input: string) => parseFloat(input.replace(/,/g, ""));
+
 // Provide a d3 format which uses hyphen for negatives rather than minus sign
 const d3Locale = formatLocale({
     decimal: ".",
@@ -31,6 +33,10 @@ export default defineComponent({
         allowNegative: {
             type: Boolean,
             default: true
+        },
+        maxAllowedValue: {
+            type: Number,
+            default: Infinity
         }
     },
     emits: ["update"],
@@ -53,6 +59,11 @@ export default defineComponent({
             if (!props.allowNegative) {
                 newVal = newVal.replace("-", "");
             }
+            console.log(`max allowed: ${props.maxAllowedValue}, allow negative: ${props.allowNegative}`);
+            if (parseNumber(newVal) > props.maxAllowedValue) {
+                console.log(`...truncating`);
+                newVal = props.maxAllowedValue.toString();
+            }
 
             // within the event handler we need to update the element directly to apply character mask as well as
             // updating reactive value
@@ -60,8 +71,7 @@ export default defineComponent({
             element.value = newVal;
 
             // 2. Remove commas and parse to number, and emit update to container
-            const cleanedValue = newVal.replace(/,/g, "");
-            const numeric = parseFloat(cleanedValue);
+            const numeric = parseNumber(newVal);
             if (!Number.isNaN(numeric)) {
                 lastNumericValueSet.value = numeric;
                 emit("update", numeric);

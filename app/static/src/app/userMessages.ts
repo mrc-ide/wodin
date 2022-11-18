@@ -66,6 +66,9 @@ export default {
             needsParamsToVary: "select at least one parameter to vary (Options tab)"
         }
     },
+    stochastic: {
+        individualTracesHidden: "Individual traces will be hidden",
+    },
     sensitivity: {
         compileRequiredForOptions: "Please compile a valid model in order to set sensitivity options.",
         compileRequiredForUpdate: "Model code has been updated. "
