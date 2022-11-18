@@ -1,9 +1,10 @@
 {
-  "appType": "stochastic",
-  "title": "Day 3 - Stochastic Model",
-  "stochasticProp": "day3 stochastic value",
-  "readOnlyCode": false,
-  "help": {
-    "tabName": "Help"
-  }
+    "appType": "stochastic",
+    "title": "Day 3 - Stochastic Model",
+    "readOnlyCode": false,
+    "maxReplicatesRun": 1000,
+    "maxReplicatesDisplay": 50,
+    "help": {
+        "tabName": "Help"
+    }
 }

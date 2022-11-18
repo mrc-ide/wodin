@@ -37,7 +37,8 @@ export interface FitConfig extends AppConfig {
 }
 
 export interface StochasticConfig extends AppConfig {
-    stochasticProp: string
+    maxReplicatesRun?: number,
+    maxReplicatesDisplay?: number
 }
 
 export interface Odin {

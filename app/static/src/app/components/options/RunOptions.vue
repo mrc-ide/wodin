@@ -21,7 +21,7 @@
                 <numeric-input
                     :value="numberOfReplicates"
                     :allow-negative="false"
-                    :max-allowed-value="100"
+                    :max-allowed-value="maxReplicatesRun"
                   @update="updateNumberOfReplicates"></numeric-input>
             </div>
         </div>
@@ -45,6 +45,7 @@ import { FitDataGetter } from "../../store/fitData/getters";
 import NumericInput from "./NumericInput.vue";
 import { AppType } from "../../store/appState/state";
 import userMessages from "../../userMessages";
+import { StochasticConfig } from "../../types/responseTypes";
 
 export default defineComponent({
     name: "RunOptions",
@@ -69,8 +70,9 @@ export default defineComponent({
         const numberOfReplicates = computed(() => store.state.run.numberOfReplicates);
         const isStochasticApp = computed(() => store.state.appType === AppType.Stochastic);
 
-        const maxToShow = 50;
-        const showIndividualTraces = computed(() => numberOfReplicates.value && numberOfReplicates.value <= maxToShow);
+        const maxReplicatesDisplay = computed(() => (store.state.config as StochasticConfig).maxReplicatesDisplay || 50);
+        const maxReplicatesRun = computed(() => (store.state.config as StochasticConfig).maxReplicatesRun || 1000);
+        const showIndividualTraces = computed(() => numberOfReplicates.value && numberOfReplicates.value <= maxReplicatesDisplay.value);
         const hideIndividualTracesMessage = userMessages.stochastic.individualTracesHidden;
 
         const updateNumberOfReplicates = (newValue: number) => {
@@ -85,6 +87,7 @@ export default defineComponent({
             endTimeData,
             updateEndTime,
             isStochasticApp,
+            maxReplicatesRun,
             numberOfReplicates,
             showIndividualTraces,
             updateNumberOfReplicates,
