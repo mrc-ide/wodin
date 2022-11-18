@@ -15,7 +15,8 @@ export const defaultState: RunState = {
     resultDiscrete: null,
     userDownloadFileName: "",
     downloading: false,
-    numberOfReplicates: 5
+    numberOfReplicates: 5,
+    showIndividualTraces: true
 };
 
 export const run = {

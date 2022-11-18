@@ -35,6 +35,8 @@ export default defineComponent({
 
         const palette = computed(() => store.state.model.paletteModel);
 
+        const showIndividualTraces = computed(() => store.state.run.showIndividualTraces);
+
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
             const result = solution.value && solution.value({
                 mode: "grid", tStart: start, tEnd: end, nPoints: points
@@ -42,7 +44,7 @@ export default defineComponent({
             if (!result) {
                 return [];
             }
-            return discreteSeriesSetToPlotly(result, palette.value);
+            return discreteSeriesSetToPlotly(result, palette.value, showIndividualTraces.value);
         };
 
         return {

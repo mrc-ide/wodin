@@ -12,7 +12,8 @@ export enum RunMutation {
     SetEndTime = "SetEndTime",
     SetUserDownloadFileName = "SetUserDownloadFileName",
     SetDownloading = "SetDownloading",
-    SetNumberOfReplicates = "SetNumberOfReplicates"
+    SetNumberOfReplicates = "SetNumberOfReplicates",
+    SetShowIndividualTraces = "SetShowIndividualTraces"
 }
 
 const runRequiredNone = {
@@ -74,12 +75,14 @@ export const mutations: MutationTree<RunState> = {
     },
 
     [RunMutation.SetNumberOfReplicates](state: RunState, payload: number) {
-        if (payload !== state.numberOfReplicates) {
-            state.numberOfReplicates = payload;
-            state.runRequired = {
-                ...state.runRequired,
-                numberOfReplicatesChanged: true
-            };
-        }
+        state.numberOfReplicates = payload;
+        // state.runRequired = {
+        //     ...state.runRequired,
+        //     numberOfReplicatesChanged: true
+        // };
+    },
+
+    [RunMutation.SetShowIndividualTraces](state: RunState, payload: boolean) {
+        state.showIndividualTraces = payload;
     }
 };

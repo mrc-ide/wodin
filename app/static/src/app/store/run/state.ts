@@ -22,4 +22,5 @@ export interface RunState {
     userDownloadFileName: string;
     downloading: boolean;
     numberOfReplicates: number;
+    showIndividualTraces: boolean;
 }

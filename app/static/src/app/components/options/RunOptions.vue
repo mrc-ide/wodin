@@ -26,11 +26,8 @@
             </div>
         </div>
         <div v-if="isStochasticApp" class="row my-2 small text-danger">
-          <div class="col-5"></div>
-          <div class="col-6">
-            <div id="hide-individual-traces" class="col-12" style="min-height: 1.5rem;">
-              {{ showIndividualTraces ? "" : hideIndividualTracesMessage }}
-            </div>
+          <div id="hide-individual-traces" class="col-12" style="min-height: 1.5rem;">
+            {{ showIndividualTraces ? "" : hideIndividualTracesMessage }}
           </div>
         </div>
     </div>
@@ -76,7 +73,12 @@ export default defineComponent({
         const hideIndividualTracesMessage = userMessages.stochastic.individualTracesHidden;
 
         const updateNumberOfReplicates = (newValue: number) => {
+            // An alternative here would be to have an
+            // UpdateNumberOfReplicates action on the run store which
+            // does all these bits
             store.commit(`run/${RunMutation.SetNumberOfReplicates}`, newValue);
+            store.commit(`run/${RunMutation.SetShowIndividualTraces}`, showIndividualTraces.value);
+            // This seems to duplicate something in the run mutations code; surely one of these should be done at most?
             store.commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, {
                 numberOfReplicatesChanged: true
             });
