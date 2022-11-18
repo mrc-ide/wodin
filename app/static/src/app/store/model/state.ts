@@ -15,5 +15,5 @@ export interface ModelState {
     paletteModel: null | Palette,
     // TODO: rename to simply error
     odinModelCodeError: WodinError | null,
-    selectedVariables: string[] | null
+    selectedVariables: string[]
 }
