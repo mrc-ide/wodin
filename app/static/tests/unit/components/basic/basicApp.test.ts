@@ -17,7 +17,9 @@ import { mount } from "@vue/test-utils";
 import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
 import BasicApp from "../../../../src/app/components/basic/BasicApp.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import { mockBasicState, mockModelState, mockSensitivityState } from "../../../mocks";
+import {
+    mockBasicState, mockGraphSettingsState, mockModelState, mockSensitivityState
+} from "../../../mocks";
 import WodinApp from "../../../../src/app/components/WodinApp.vue";
 import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
@@ -56,6 +58,10 @@ describe("BasicApp", () => {
                     state: {
                         errors: []
                     }
+                },
+                graphSettings: {
+                    namespaced: true,
+                    state: mockGraphSettingsState()
                 }
             }
         });

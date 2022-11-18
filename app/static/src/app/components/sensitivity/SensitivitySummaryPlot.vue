@@ -64,6 +64,13 @@ export default defineComponent({
             };
         });
 
+        const yAxisSettings = computed(() => {
+            const isNotTimePlot = plotSettings.value.plotType !== SensitivityPlotType.TimeAtExtreme;
+            const logScale = store.state.graphSettings.logScaleYAxis && isNotTimePlot;
+            const type = logScale ? "log" : "linear" as AxisType;
+            return { type };
+        });
+
         const plotData = computed(() => {
             if (batch.value) {
                 let data: null | OdinSeriesSet;
@@ -94,6 +101,7 @@ export default defineComponent({
                 const el = plot.value as unknown;
                 const layout = {
                     margin,
+                    yaxis: yAxisSettings.value,
                     xaxis: xAxisSettings.value
                 };
                 newPlot(el as HTMLElement, plotData.value, layout, config);
@@ -104,7 +112,7 @@ export default defineComponent({
 
         onMounted(drawPlot);
 
-        watch(plotData, drawPlot);
+        watch([plotData, yAxisSettings], drawPlot);
 
         onUnmounted(() => {
             if (resizeObserver) {

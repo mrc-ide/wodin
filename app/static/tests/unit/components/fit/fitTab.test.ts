@@ -10,7 +10,7 @@ import { FitState } from "../../../../src/app/store/fit/state";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import FitPlot from "../../../../src/app/components/fit/FitPlot.vue";
-import { mockFitState } from "../../../mocks";
+import { mockFitState, mockGraphSettingsState } from "../../../mocks";
 
 describe("Fit Tab", () => {
     const getWrapper = (
@@ -32,6 +32,10 @@ describe("Fit Tab", () => {
                     state: {
                         compileRequired
                     }
+                },
+                graphSettings: {
+                    namespaced: true,
+                    state: mockGraphSettingsState()
                 },
                 modelFit: {
                     namespaced: true,
