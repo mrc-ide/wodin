@@ -17,6 +17,7 @@ import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import VerticalCollapse from "../VerticalCollapse.vue";
 import {ModelMutation} from "../../store/model/mutations";
+import {ModelAction} from "../../store/model/actions";
 
 export default defineComponent({
     name: "SelectedVariables",
@@ -37,17 +38,13 @@ export default defineComponent({
         };
 
         const toggleVariable = (variable: string) => {
-            console.log(`toggling ${variable}`)
             let newVars: string[];
             if (selectedVariables.value.includes(variable)) {
-                console.log(`variable is already included`)
                 newVars = selectedVariables.value.filter((v) => v !== variable);
             } else {
-                console.log(`variable is not already included`)
                 newVars = [...selectedVariables.value, variable];
             }
-            console.log(`committing new vars: ${JSON.stringify(newVars)}`)
-            store.commit(`model/${ModelMutation.SetSelectedVariables}`, newVars);
+            store.dispatch(`model/${ModelAction.UpdateSelectedVariables}`, newVars);
         };
 
         return {

@@ -21,7 +21,8 @@ export enum ModelAction {
     FetchOdin = "FetchOdin",
     CompileModel = "CompileModel",
     CompileModelOnRehydrate = "CompileModelOnRehydrate",
-    DefaultModel = "DefaultModel"
+    DefaultModel = "DefaultModel",
+    UpdateSelectedVariables = "UpdateSelectedVariables"
 }
 
 const fetchOdin = async (context: ActionContext<ModelState, AppState>) => {
@@ -130,5 +131,13 @@ export const actions: ActionTree<ModelState, AppState> = {
         await fetchOdin(context);
         compileModelAndUpdateStore(context);
         context.dispatch(`run/${RunAction.RunModel}`, null, { root: true });
+    },
+
+    UpdateSelectedVariables(context, payload: string[]) {
+        const { commit, dispatch, rootState } = context;
+        commit(ModelMutation.SetSelectedVariables, payload);
+        if (rootState.appType === AppType.Fit) {
+            dispatch(`fitData/${FitDataAction.UpdateLinkedVariables}`, null, {root: true});
+        }
     }
 };

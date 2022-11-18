@@ -25,7 +25,7 @@ const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) =
         commit, state, rootState, getters
     } = context;
     const modelResponse = rootState.model.odinModelResponse;
-    const modelVariables = modelResponse?.valid ? modelResponse.metadata!.variables : [];
+    const modelVariables = modelResponse?.valid ? rootState.model.selectedVariables : [];
     const dataColumns = getters.nonTimeColumns;
     let newLinks = {};
     if (dataColumns) {
