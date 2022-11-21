@@ -8,6 +8,10 @@
               :style="getStyle(variable)"
               @click="toggleVariable(variable)">{{variable}}</span>
       </div>
+      <div class="ms-2">
+        <span class="clickable text-primary" @click="selectAll">Select all</span> |
+        <span class="clickable text-primary" @click="selectNone">Select none</span>
+      </div>
     </vertical-collapse>
   </div>
 </template>
@@ -37,6 +41,10 @@ export default defineComponent({
             return { "background-color": bgcolor };
         };
 
+        const updateSelectedVariables = (newVariables: string[]) => {
+          store.dispatch(`model/${ModelAction.UpdateSelectedVariables}`, newVariables);
+        };
+
         const toggleVariable = (variable: string) => {
             let newVars: string[];
             if (selectedVariables.value.includes(variable)) {
@@ -44,14 +52,24 @@ export default defineComponent({
             } else {
                 newVars = [...selectedVariables.value, variable];
             }
-            store.dispatch(`model/${ModelAction.UpdateSelectedVariables}`, newVars);
+            updateSelectedVariables(newVars);
+        };
+
+        const selectAll = () => {
+          updateSelectedVariables([...allVariables.value]);
+        };
+
+        const selectNone = () => {
+          updateSelectedVariables([]);
         };
 
         return {
             show,
             allVariables,
             getStyle,
-            toggleVariable
+            toggleVariable,
+            selectAll,
+            selectNone
         };
     }
 });
