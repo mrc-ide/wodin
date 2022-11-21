@@ -53,6 +53,7 @@ function serialiseRun(run: RunState): SerialisedRunState {
         parameterValues: run.parameterValues,
         endTime: run.endTime,
         numberOfReplicates: run.numberOfReplicates,
+        showIndividualTraces: run.showIndividualTraces,
         resultOde: serialiseSolutionResult(run.resultOde),
         resultDiscrete: serialiseDiscreteResult(run.resultDiscrete)
     };
