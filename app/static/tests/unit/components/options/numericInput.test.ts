@@ -84,6 +84,13 @@ describe("NumericInput", () => {
         expect(wrapper.emitted("update")![0]).toStrictEqual([-100]);
     });
 
+    it("truncates to max value if set", async () => {
+        const wrapper = mount(NumericInput, { props: { allowNegative: false, maxAllowedValue: 100, value: 1 } });
+        await wrapper.find("input").setValue("200");
+        expectInputToHaveValue(wrapper, "100");
+        expect(wrapper.emitted("update")![0]).toStrictEqual([100]);
+    });
+
     it("does not emit update if value is not parseable as numeric", async () => {
         const wrapper = mount(NumericInput, { props: { value: 12 } });
         await nextTick();
