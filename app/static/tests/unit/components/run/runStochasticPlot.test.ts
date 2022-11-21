@@ -41,7 +41,8 @@ describe("RunPlot", () => {
                 },
                 run: {
                     endTime: 99,
-                    resultDiscrete: mockResult
+                    resultDiscrete: mockResult,
+                    showIndividualTraces: true
                 }
             } as any
         });

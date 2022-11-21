@@ -173,4 +173,11 @@ describe("Run mutations", () => {
         expect(state.numberOfReplicates).toBe(12);
         expect(state.runRequired.numberOfReplicatesChanged).toBe(true);
     });
+
+    it("sets individual trace flag", () => {
+        const state = mockRunState();
+        expect(state.showIndividualTraces).toBe(true);
+        mutations.SetShowIndividualTraces(state, false);
+        expect(state.showIndividualTraces).toBe(false);
+    });
 });

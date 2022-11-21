@@ -88,7 +88,8 @@ describe("serialise", () => {
         },
         userDownloadFileName: "",
         downloading: false,
-        numberOfReplicates: 5
+        numberOfReplicates: 5,
+        showIndividualTraces: true
     };
 
     const sensitivityBatchPars = {
@@ -233,6 +234,7 @@ describe("serialise", () => {
         parameterValues: runState.parameterValues,
         endTime: 20,
         numberOfReplicates: 5,
+        showIndividualTraces: true,
         resultOde: {
             inputs: runState.resultOde.inputs,
             hasResult: true,

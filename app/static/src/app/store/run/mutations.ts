@@ -76,10 +76,10 @@ export const mutations: MutationTree<RunState> = {
 
     [RunMutation.SetNumberOfReplicates](state: RunState, payload: number) {
         state.numberOfReplicates = payload;
-        // state.runRequired = {
-        //     ...state.runRequired,
-        //     numberOfReplicatesChanged: true
-        // };
+        state.runRequired = {
+            ...state.runRequired,
+            numberOfReplicatesChanged: true
+        };
     },
 
     [RunMutation.SetShowIndividualTraces](state: RunState, payload: boolean) {

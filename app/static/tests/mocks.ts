@@ -78,6 +78,7 @@ export const mockRunState = (state: Partial<RunState> = {}): RunState => {
         userDownloadFileName: "",
         downloading: false,
         numberOfReplicates: 5,
+        showIndividualTraces: true,
         ...state
     };
 };
@@ -229,7 +230,6 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
         queuedStateUploadIntervalId: -1,
         stateUploadInProgress: false,
         config: {
-            stochasticProp: "",
             ...mockAppConfig
         },
         code: mockCodeState(),

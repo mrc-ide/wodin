@@ -67,8 +67,8 @@ export default defineComponent({
         const numberOfReplicates = computed(() => store.state.run.numberOfReplicates);
         const isStochasticApp = computed(() => store.state.appType === AppType.Stochastic);
 
-        const maxReplicatesDisplay = computed(() => (store.state.config as StochasticConfig).maxReplicatesDisplay || 50);
-        const maxReplicatesRun = computed(() => (store.state.config as StochasticConfig).maxReplicatesRun || 1000);
+        const maxReplicatesDisplay = computed(() => (store.state.config as StochasticConfig)?.maxReplicatesDisplay || 50);
+        const maxReplicatesRun = computed(() => (store.state.config as StochasticConfig)?.maxReplicatesRun || 1000);
         const showIndividualTraces = computed(() => numberOfReplicates.value && numberOfReplicates.value <= maxReplicatesDisplay.value);
         const hideIndividualTracesMessage = userMessages.stochastic.individualTracesHidden;
 

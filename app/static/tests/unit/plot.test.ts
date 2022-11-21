@@ -228,7 +228,7 @@ describe("discreteSeriesSetToPlotly", () => {
                 { name: "B", description: "Deterministic", y: [10, 11, 12] }
             ]
         };
-        const res = discreteSeriesSetToPlotly(seriesSet, palette);
+        const res = discreteSeriesSetToPlotly(seriesSet, palette, true);
         expect(res).toStrictEqual([
             {
                 mode: "lines",
@@ -248,6 +248,39 @@ describe("discreteSeriesSetToPlotly", () => {
                 legendgroup: "A",
                 showlegend: false
             },
+            {
+                mode: "lines",
+                line: { color: "#ff0000", width: undefined, opacity: undefined },
+                name: "A (mean)",
+                x: [0, 1, 2],
+                y: [7, 8, 9],
+                legendgroup: "A (mean)",
+                showlegend: true
+            },
+            {
+                mode: "lines",
+                line: { color: "#0000ff", width: undefined, opacity: undefined },
+                name: "B",
+                x: [0, 1, 2],
+                y: [10, 11, 12],
+                legendgroup: "B",
+                showlegend: true
+            }
+        ]);
+    });
+
+    it("can drop individual traces", () => {
+        const seriesSet = {
+            x: [0, 1, 2],
+            values: [
+                { name: "A", description: "Individual", y: [1, 2, 3] },
+                { name: "A", description: "Individual", y: [4, 5, 6] },
+                { name: "A", description: "Mean", y: [7, 8, 9] },
+                { name: "B", description: "Deterministic", y: [10, 11, 12] }
+            ]
+        };
+        const res = discreteSeriesSetToPlotly(seriesSet, palette, false);
+        expect(res).toStrictEqual([
             {
                 mode: "lines",
                 line: { color: "#ff0000", width: undefined, opacity: undefined },
