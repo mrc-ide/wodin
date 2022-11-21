@@ -15,17 +15,22 @@ describe("RunOptions", () => {
     const mockRunSetEndTime = jest.fn();
     const mockSetSensitivityUpdateRequired = jest.fn();
     const mockNumberOfReplicates = jest.fn();
+    const mockShowIndividualTraces = jest.fn();
 
-    const getWrapper = (mockDataEnd: number | null = 0, states = {}) => {
+    const getWrapper = (mockDataEnd: number | null = 0, states = {},
+                        numberOfReplicates: number = 5) => {
         const modules = {
             run: {
                 namespaced: true,
                 state: {
-                    endTime: 99
+                    endTime: 99,
+                    numberOfReplicates,
+                    maxReplicatesDisplay: 50
                 },
                 mutations: {
                     SetEndTime: mockRunSetEndTime,
-                    SetNumberOfReplicates: mockNumberOfReplicates
+                    SetNumberOfReplicates: mockNumberOfReplicates,
+                    SetShowIndividualTraces: mockShowIndividualTraces
                 }
             },
             sensitivity: {
@@ -97,10 +102,30 @@ describe("RunOptions", () => {
         noOfReplicates.findComponent(NumericInput).vm.$emit("update", 20);
         expect(mockNumberOfReplicates.mock.calls[0][1]).toBe(20);
         expect(noOfReplicates.text()).toBe("Number of replicates");
+        expect(mockShowIndividualTraces).toHaveBeenCalledTimes(1);
+        expect(mockShowIndividualTraces.mock.calls[0][1]).toBe(true);
         expect(mockSetSensitivityUpdateRequired).toHaveBeenCalledTimes(1);
         expect(mockSetSensitivityUpdateRequired.mock.calls[0][1]).toStrictEqual({
             numberOfReplicatesChanged: true
         });
+        const msg = wrapper.find("#hide-individual-traces");
+        expect(msg.text()).toBe("");
+    });
+
+    it("can render and update number of replicates when they overshoot", async () => {
+        const wrapper = getWrapper(0, { appType: `${AppType.Stochastic}` }, 55);
+        const noOfReplicates = wrapper.find("#number-of-replicates");
+        noOfReplicates.findComponent(NumericInput).vm.$emit("update", 55);
+        expect(mockNumberOfReplicates.mock.calls[0][1]).toBe(55);
+        expect(mockShowIndividualTraces).toHaveBeenCalledTimes(1);
+        expect(mockShowIndividualTraces.mock.calls[0][1]).toBe(false);
+        expect(noOfReplicates.text()).toBe("Number of replicates");
+        expect(mockSetSensitivityUpdateRequired).toHaveBeenCalledTimes(1);
+        expect(mockSetSensitivityUpdateRequired.mock.calls[0][1]).toStrictEqual({
+            numberOfReplicatesChanged: true
+        });
+        const msg = wrapper.find("#hide-individual-traces");
+        expect(msg.text()).toBe("Individual traces will be hidden");
     });
 
     it("does not render number of replicates when app is not stochastic", () => {

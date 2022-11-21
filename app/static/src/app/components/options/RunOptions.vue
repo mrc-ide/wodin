@@ -79,12 +79,8 @@ export default defineComponent({
         const hideIndividualTracesMessage = userMessages.stochastic.individualTracesHidden;
 
         const updateNumberOfReplicates = (newValue: number) => {
-            // An alternative here would be to have an
-            // UpdateNumberOfReplicates action on the run store which
-            // does all these bits
             store.commit(`run/${RunMutation.SetNumberOfReplicates}`, newValue);
             store.commit(`run/${RunMutation.SetShowIndividualTraces}`, showIndividualTraces.value);
-            // This seems to duplicate something in the run mutations code; surely one of these should be done at most?
             store.commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, {
                 numberOfReplicatesChanged: true
             });
