@@ -18,7 +18,7 @@ describe("RunOptions", () => {
     const mockShowIndividualTraces = jest.fn();
 
     const getWrapper = (mockDataEnd: number | null = 0, states = {},
-                        numberOfReplicates: number = 5) => {
+        numberOfReplicates = 5) => {
         const modules = {
             run: {
                 namespaced: true,
