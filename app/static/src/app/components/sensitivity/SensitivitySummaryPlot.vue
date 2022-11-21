@@ -17,7 +17,7 @@ import {
 import { AxisType, newPlot, Plots } from "plotly.js-basic-dist-min";
 import { useStore } from "vuex";
 import {
-  fadePlotStyle, margin, config, odinToPlotly, filterSeriesSet
+    fadePlotStyle, margin, config, odinToPlotly, filterSeriesSet
 } from "../../plot";
 import { SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
 import userMessages from "../../userMessages";

@@ -17,7 +17,9 @@ import { format } from "d3-format";
 import { FitDataGetter } from "../../store/fitData/getters";
 import WodinPlot from "../WodinPlot.vue";
 import userMessages from "../../userMessages";
-import {allFitDataToPlotly, filterSeriesSet, odinToPlotly, WodinPlotData} from "../../plot";
+import {
+    allFitDataToPlotly, filterSeriesSet, odinToPlotly, WodinPlotData
+} from "../../plot";
 import { DiscreteSeriesValues, OdinSolution } from "../../types/responseTypes";
 import { AppType } from "../../store/appState/state";
 
@@ -68,7 +70,8 @@ export default defineComponent({
                         showLegend: false
                     };
                     if (data) {
-                        const plotData = odinToPlotly(filterSeriesSet(data, selectedVariables.value), palette.value, plotlyOptions);
+                        const filtered = filterSeriesSet(data, selectedVariables.value);
+                        const plotData = odinToPlotly(filtered, palette.value, plotlyOptions);
                         plotData.forEach((plotTrace) => {
                             updatePlotTraceNameWithParameterValue(plotTrace, pars.name,
                                 pars.values[slnIdx]);
@@ -87,7 +90,8 @@ export default defineComponent({
                                 .filter((v: DiscreteSeriesValues) => v.description !== "Individual");
                         }
                         const plotlyOptions = { includeLegendGroup: true };
-                        result.push(...odinToPlotly(filterSeriesSet(centralData, selectedVariables.value), palette.value, plotlyOptions));
+                        const filtered = filterSeriesSet(centralData, selectedVariables.value);
+                        result.push(...odinToPlotly(filtered, palette.value, plotlyOptions));
                     }
                 }
 

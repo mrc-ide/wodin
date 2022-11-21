@@ -24,7 +24,7 @@ import SelectedVariables from "./SelectedVariables.vue";
 export default defineComponent({
     name: "CodeTab",
     components: {
-      SelectedVariables,
+        SelectedVariables,
         ErrorInfo,
         CodeEditor,
         VueFeather

@@ -6,6 +6,7 @@
         <span v-for="variable in allVariables"
               class="badge variable me-2 mb-2"
               :style="getStyle(variable)"
+              :key="variable"
               @click="toggleVariable(variable)">{{variable}}</span>
       </div>
       <div class="ms-2">
@@ -20,8 +21,7 @@
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import VerticalCollapse from "../VerticalCollapse.vue";
-import {ModelMutation} from "../../store/model/mutations";
-import {ModelAction} from "../../store/model/actions";
+import { ModelAction } from "../../store/model/actions";
 
 export default defineComponent({
     name: "SelectedVariables",
@@ -36,13 +36,13 @@ export default defineComponent({
         const getStyle = (variable: string) => {
             let bgcolor = "#bbb"; // grey out unselected variables
             if (selectedVariables.value.includes(variable)) {
-               bgcolor = palette.value[variable]!;
+                bgcolor = palette.value[variable]!;
             }
             return { "background-color": bgcolor };
         };
 
         const updateSelectedVariables = (newVariables: string[]) => {
-          store.dispatch(`model/${ModelAction.UpdateSelectedVariables}`, newVariables);
+            store.dispatch(`model/${ModelAction.UpdateSelectedVariables}`, newVariables);
         };
 
         const toggleVariable = (variable: string) => {
@@ -56,11 +56,11 @@ export default defineComponent({
         };
 
         const selectAll = () => {
-          updateSelectedVariables([...allVariables.value]);
+            updateSelectedVariables([...allVariables.value]);
         };
 
         const selectNone = () => {
-          updateSelectedVariables([]);
+            updateSelectedVariables([]);
         };
 
         return {
