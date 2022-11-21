@@ -34,12 +34,12 @@ export default defineComponent({
         const namespace = "sensitivity";
         const plotStyle = computed(() => (props.fadePlot ? fadePlotStyle : ""));
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
-        const placeholderMessage = userMessages.sensitivity.notRunYet;
 
         const batch = computed(() => store.state.sensitivity.result?.batch);
         const plotSettings = computed(() => store.state.sensitivity.plotSettings);
         const palette = computed(() => store.state.model.paletteModel);
         const selectedVariables = computed(() => store.state.model.selectedVariables);
+        const placeholderMessage = computed(() => (selectedVariables.value.length ? userMessages.sensitivity.notRunYet : userMessages.model.noVariablesSelected));
 
         const verifyValidEndTime = () => {
             // update plot settings' end time to be valid before we use it

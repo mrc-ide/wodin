@@ -81,6 +81,9 @@ export default defineComponent({
             if (store.state.model.compileRequired) {
                 return userMessages.run.compileRequired;
             }
+            if (!store.state.model.selectedVariables.length) {
+                return userMessages.model.selectAVariable;
+            }
             // TODO: eventually make runRequired to runUpdateRequired I think?
             if (anyTrue(store.state.run.runRequired)) {
                 return runRequiredExplanation(store.state.run.runRequired);

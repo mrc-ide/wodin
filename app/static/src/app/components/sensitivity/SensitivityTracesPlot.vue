@@ -34,8 +34,6 @@ export default defineComponent({
     setup() {
         const store = useStore();
 
-        const placeholderMessage = userMessages.sensitivity.notRunYet;
-
         const solutions = computed(() => (store.state.sensitivity.result?.batch?.solutions || []));
         const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
         const centralSolution = computed(() => {
@@ -47,6 +45,8 @@ export default defineComponent({
         const palette = computed(() => store.state.model.paletteModel);
 
         const selectedVariables = computed(() => store.state.model.selectedVariables);
+
+        const placeholderMessage = computed(() => (selectedVariables.value.length ? userMessages.sensitivity.notRunYet : userMessages.model.noVariablesSelected));
 
         const updatePlotTraceNameWithParameterValue = (plotTrace: Partial<PlotData>, param: string, value: number) => {
             // eslint-disable-next-line no-param-reassign
