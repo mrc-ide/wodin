@@ -67,7 +67,7 @@ export default {
         }
     },
     stochastic: {
-        individualTracesHidden: "Individual traces will be hidden",
+        individualTracesHidden: "Individual traces will be hidden"
     },
     sensitivity: {
         compileRequiredForOptions: "Please compile a valid model in order to set sensitivity options.",

@@ -61,7 +61,7 @@ export default defineComponent({
             }
             console.log(`max allowed: ${props.maxAllowedValue}, allow negative: ${props.allowNegative}`);
             if (parseNumber(newVal) > props.maxAllowedValue) {
-                console.log(`...truncating`);
+                console.log("...truncating");
                 newVal = props.maxAllowedValue.toString();
             }
 
