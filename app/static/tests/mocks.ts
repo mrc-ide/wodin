@@ -58,6 +58,8 @@ export const mockModelState = (state: Partial<ModelState> = {}): ModelState => {
         compileRequired: false,
         paletteModel: null,
         odinModelCodeError: null,
+        selectedVariables: [],
+        unselectedVariables: [],
         ...state
     };
 };

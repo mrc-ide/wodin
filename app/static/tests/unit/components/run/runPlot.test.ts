@@ -15,7 +15,8 @@ describe("RunPlot", () => {
         x: [0, 1],
         values: [
             { name: "S", y: [3, 4] },
-            { name: "I", y: [5, 6] }
+            { name: "I", y: [5, 6] },
+            { name: "R", y: [7, 8] }
         ]
     });
     const mockResult = {
@@ -30,6 +31,8 @@ describe("RunPlot", () => {
         R: "#0000ff"
     };
 
+    const selectedVariables = ["S", "I"];
+
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -38,7 +41,8 @@ describe("RunPlot", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 model: {
-                    paletteModel
+                    paletteModel,
+                    selectedVariables
                 },
                 run: {
                     endTime: 99,
@@ -59,7 +63,7 @@ describe("RunPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution, mockAllFitData]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution, mockAllFitData, selectedVariables]);
 
         // Generates expected plot data from model
         const plotData = wodinPlot.props("plotData");
@@ -102,7 +106,8 @@ describe("RunPlot", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 model: {
-                    paletteModel
+                    paletteModel,
+                    selectedVariables
                 },
                 run: {
                     endTime: 99,
@@ -133,6 +138,7 @@ describe("RunPlot", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 model: {
+                    selectedVariables
                 },
                 run: {
                     solution: null
@@ -165,7 +171,8 @@ describe("RunPlot", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 model: {
-                    paletteModel
+                    paletteModel,
+                    selectedVariables
                 },
                 run: {
                     endTime: 99,
@@ -193,7 +200,7 @@ describe("RunPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution, mockAllFitData]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution, mockAllFitData, selectedVariables]);
 
         // Generates expected plot data from model
         const plotData = wodinPlot.props("plotData");
@@ -240,5 +247,28 @@ describe("RunPlot", () => {
         expect(mockSolution).toBeCalledWith({
             mode: "grid", tStart: 0, tEnd: 1, nPoints: 10
         });
+    });
+
+    it("placeholder message indicates no variables selected", () => {
+        const store = new Vuex.Store<BasicState>({
+            state: {
+                model: {
+                    selectedVariables: []
+                },
+                run: {
+                    solution: null
+                }
+            } as any
+        });
+        const wrapper = shallowMount(RunPlot, {
+            props: {
+                fadePlot: true
+            },
+            global: {
+                plugins: [store]
+            }
+        });
+        const wodinPlot = wrapper.findComponent(WodinPlot);
+        expect(wodinPlot.props("placeholderMessage")).toBe("No variables are selected.");
     });
 });

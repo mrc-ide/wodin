@@ -18,6 +18,7 @@ import {
     odinToPlotly, allFitDataToPlotly, WodinPlotData, filterSeriesSet
 } from "../../plot";
 import WodinPlot from "../WodinPlot.vue";
+import {runPlaceholderMessage} from "../../utils";
 
 export default defineComponent({
     name: "RunPlot",
@@ -39,8 +40,7 @@ export default defineComponent({
         const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData}`]);
 
         const selectedVariables = computed(() => store.state.model.selectedVariables);
-
-        const placeholderMessage = computed(() => (selectedVariables.value.length ? userMessages.run.notRunYet : userMessages.model.noVariablesSelected));
+        const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, false));
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
             const result = solution.value && solution.value({

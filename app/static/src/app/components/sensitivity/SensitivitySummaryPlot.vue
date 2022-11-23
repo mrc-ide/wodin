@@ -23,6 +23,7 @@ import { SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivi
 import userMessages from "../../userMessages";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { OdinSeriesSet } from "../../types/responseTypes";
+import {runPlaceholderMessage} from "../../utils";
 
 export default defineComponent({
     name: "SensitivitySummaryPlot",
@@ -39,7 +40,7 @@ export default defineComponent({
         const plotSettings = computed(() => store.state.sensitivity.plotSettings);
         const palette = computed(() => store.state.model.paletteModel);
         const selectedVariables = computed(() => store.state.model.selectedVariables);
-        const placeholderMessage = computed(() => (selectedVariables.value.length ? userMessages.sensitivity.notRunYet : userMessages.model.noVariablesSelected));
+        const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, true));
 
         const verifyValidEndTime = () => {
             // update plot settings' end time to be valid before we use it

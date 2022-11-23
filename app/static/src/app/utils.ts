@@ -201,3 +201,8 @@ export const allTrue = (x: Dict<boolean>): boolean => {
 export const anyTrue = (x: Dict<boolean>): boolean => {
     return Object.values(x).some((el: boolean) => el);
 };
+
+export const runPlaceholderMessage = (selectedVariables: string[], sensitivity: boolean) => {
+    const notRunYet = sensitivity ? userMessages.sensitivity.notRunYet : userMessages.run.notRunYet;
+    return selectedVariables.length ? notRunYet : userMessages.model.noVariablesSelected;
+};

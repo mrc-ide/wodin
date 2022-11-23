@@ -7,7 +7,9 @@
             {{ validMsg }}
         </div>
         <error-info :error="error"></error-info>
-        <selected-variables></selected-variables>
+        <vertical-collapse v-if="showSelectedVariables" title="Select variables" collapse-id="select-variables" class="mt-3">
+          <selected-variables></selected-variables>
+        </vertical-collapse>
     </div>
 </template>
 
@@ -20,6 +22,7 @@ import { ModelAction } from "../../store/model/actions";
 import userMessages from "../../userMessages";
 import ErrorInfo from "../ErrorInfo.vue";
 import SelectedVariables from "./SelectedVariables.vue";
+import VerticalCollapse from "../VerticalCollapse.vue";
 
 export default defineComponent({
     name: "CodeTab",
@@ -27,7 +30,8 @@ export default defineComponent({
         SelectedVariables,
         ErrorInfo,
         CodeEditor,
-        VueFeather
+        VueFeather,
+        VerticalCollapse
     },
     setup() {
         const store = useStore();
@@ -36,6 +40,8 @@ export default defineComponent({
         const validMsg = computed(() => (codeIsValid.value ? userMessages.code.isValid : userMessages.code.isNotValid));
         const validIcon = computed(() => (codeIsValid.value ? "check" : "x"));
         const iconClass = computed(() => (codeIsValid.value ? "text-success" : "text-danger"));
+        const allVariables = computed<string[]>(() => store.state.model.odinModelResponse?.metadata?.variables || []);
+        const showSelectedVariables = computed(() => allVariables.value.length && !store.state.model.compileRequired);
         const compile = () => store.dispatch(`model/${ModelAction.CompileModel}`);
 
         return {
@@ -44,7 +50,8 @@ export default defineComponent({
             validIcon,
             iconClass,
             compile,
-            error
+            error,
+            showSelectedVariables
         };
     }
 });

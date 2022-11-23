@@ -29,7 +29,8 @@ describe("RunTab", () => {
     const defaultModelState = {
         odinRunnerOde: {} as any,
         odin: {} as any,
-        compileRequired: false
+        compileRequired: false,
+        selectedVariables: ["S"]
     };
 
     const defaultRunState = {
@@ -87,6 +88,7 @@ describe("RunTab", () => {
                     state: mockModelState({
                         odin: {} as any,
                         odinRunnerDiscrete: runner as any,
+                        selectedVariables: ["S"],
                         compileRequired
                     }),
                     getters: {
@@ -155,7 +157,7 @@ describe("RunTab", () => {
     });
 
     it("enables download button when model has a solution", () => {
-        const wrapper = getWrapper({}, { resultOde: { solution: {} } as any });
+        const wrapper = getWrapper(defaultModelState, { resultOde: { solution: {} } as any });
         expect((wrapper.find("button#download-btn").element as HTMLButtonElement).disabled).toBe(false);
     });
 
@@ -196,9 +198,17 @@ describe("RunTab", () => {
             endTimeChanged: false,
             numberOfReplicatesChanged: false
         };
-        const wrapper = getWrapper({ compileRequired: false }, { runRequired });
+        const wrapper = getWrapper(defaultModelState, { runRequired });
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Plot is out of date: model code has been recompiled. Run model to update."
+        );
+        expect(wrapper.findComponent(RunPlot).props("fadePlot")).toBe(true);
+    });
+
+    it("fades plot and show message when no selected variables", () => {
+        const wrapper = getWrapper({selectedVariables: []});
+        expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
+            "Please select at least one variable."
         );
         expect(wrapper.findComponent(RunPlot).props("fadePlot")).toBe(true);
     });
@@ -227,7 +237,7 @@ describe("RunTab", () => {
     });
 
     it("opens download dialog on click download button, and closes when dialog emits close event", async () => {
-        const wrapper = getWrapper({}, { resultOde: { solution: {} } as any });
+        const wrapper = getWrapper(defaultModelState, { resultOde: { solution: {} } as any });
         await wrapper.find("button#download-btn").trigger("click");
         const download = wrapper.findComponent(DownloadOutput);
         expect(download.props().open).toBe(true);

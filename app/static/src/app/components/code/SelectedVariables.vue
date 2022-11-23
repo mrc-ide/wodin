@@ -1,37 +1,30 @@
 <template>
-  <div v-if="show" class="mt-3" >
-    <vertical-collapse title="Select variables" collapse-id="select-variables">
-      <div class="ms-2">Click to toggle variables to include in graphs.</div>
-      <div class="selected-variables-panel m-2">
-        <span v-for="variable in allVariables"
-              class="badge variable me-2 mb-2"
-              :style="getStyle(variable)"
-              :key="variable"
-              @click="toggleVariable(variable)">{{variable}}</span>
-      </div>
-      <div class="ms-2">
-        <span class="clickable text-primary" @click="selectAll">Select all</span> |
-        <span class="clickable text-primary" @click="selectNone">Select none</span>
-      </div>
-    </vertical-collapse>
-  </div>
+   <div class="ms-2 ">Click to toggle variables to include in graphs.</div>
+    <div class="selected-variables-panel m-2">
+      <span v-for="variable in allVariables"
+            class="badge variable me-2 mb-2"
+            :style="getStyle(variable)"
+            :key="variable"
+            @click="toggleVariable(variable)">{{variable}}</span>
+    </div>
+    <div class="ms-2">
+      <span class="clickable text-primary" id="select-variables-all" @click="selectAll">Select all</span> |
+      <span class="clickable text-primary" id="select-variables-none" @click="selectNone">Select none</span>
+    </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
-import VerticalCollapse from "../VerticalCollapse.vue";
 import { ModelAction } from "../../store/model/actions";
 
 export default defineComponent({
     name: "SelectedVariables",
-    components: { VerticalCollapse },
     setup() {
         const store = useStore();
-        const allVariables = computed<string[]>(() => store.state.model.odinModelResponse?.metadata.variables || []);
+        const allVariables = computed<string[]>(() => store.state.model.odinModelResponse?.metadata?.variables || []);
         const selectedVariables = computed<string[]>(() => (store.state.model.selectedVariables));
         const palette = computed(() => store.state.model.paletteModel!);
-        const show = computed(() => allVariables.value.length && !store.state.model.compileRequired);
 
         const getStyle = (variable: string) => {
             let bgcolor = "#bbb"; // grey out unselected variables
@@ -64,7 +57,6 @@ export default defineComponent({
         };
 
         return {
-            show,
             allVariables,
             getStyle,
             toggleVariable,

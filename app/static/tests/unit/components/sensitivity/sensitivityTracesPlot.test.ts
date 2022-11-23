@@ -13,7 +13,8 @@ const mockSln1 = jest.fn().mockReturnValue({
     x: [0, 0.5, 1],
     values: [
         { name: "y", y: [5, 6, 7] },
-        { name: "z", y: [1, 2, 3] }
+        { name: "z", y: [1, 2, 3] },
+        { name: "a", y: [1, 2, 3] }
     ]
 });
 
@@ -21,7 +22,8 @@ const mockSln2 = jest.fn().mockReturnValue({
     x: [0, 0.5, 1],
     values: [
         { name: "y", y: [50, 60, 70] },
-        { name: "z", y: [10, 20, 30] }
+        { name: "z", y: [10, 20, 30] },
+        { name: "a", y: [1, 2, 3] }
     ]
 });
 
@@ -29,7 +31,8 @@ const mockCentralSln = jest.fn().mockReturnValue({
     x: [0, 0.5, 1],
     values: [
         { name: "y", y: [15, 16, 17] },
-        { name: "z", y: [11, 12, 13] }
+        { name: "z", y: [11, 12, 13] },
+        { name: "a", y: [1, 2, 3] }
     ]
 });
 
@@ -190,14 +193,17 @@ const expectedFitPlotData = {
     y: [10, 20]
 };
 
+const selectedVariables = ["y", "z"];
+
 describe("SensitivityTracesPlot", () => {
     const getWrapper = (sensitivityHasSolutions = true, fadePlot = false, sensitivityHasData = false,
-        stochastic = false) => {
+        stochastic = false, hasSelectedVariables = true) => {
         const store = new Vuex.Store<AppState>({
             state: {
                 appType: stochastic ? AppType.Stochastic : AppType.Basic,
                 model: {
-                    paletteModel: mockPalette
+                    paletteModel: mockPalette,
+                    selectedVariables: hasSelectedVariables ? selectedVariables : []
                 },
                 run: {
                     resultOde: {
@@ -249,7 +255,7 @@ describe("SensitivityTracesPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Sensitivity has not been run.");
         expect(wodinPlot.props("endTime")).toBe(1);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([...mockSolutions, undefined]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([...mockSolutions, undefined, selectedVariables]);
 
         const plotData = wodinPlot.props("plotData");
         expect(plotData(0, 1, 100)).toStrictEqual(expectedPlotData);
@@ -267,7 +273,7 @@ describe("SensitivityTracesPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Sensitivity has not been run.");
         expect(wodinPlot.props("endTime")).toBe(1);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([...mockSolutions, mockAllFitData]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([...mockSolutions, mockAllFitData, selectedVariables]);
 
         const plotData = wodinPlot.props("plotData");
         expect(plotData(0, 1, 100)).toStrictEqual([...expectedPlotData, expectedFitPlotData]);
@@ -298,6 +304,12 @@ describe("SensitivityTracesPlot", () => {
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 1, 100);
         expect(data).toStrictEqual([]);
+    });
+
+    it("renders placeholder as expected when there are no selected variables", () => {
+        const wrapper = getWrapper(true, false, true, false, false);
+        const wodinPlot = wrapper.findComponent(WodinPlot);
+        expect(wodinPlot.props("placeholderMessage")).toBe("No variables are selected.");
     });
 
     it("fades plot when fadePlot prop is true", () => {

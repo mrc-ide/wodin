@@ -72,6 +72,7 @@ export default defineComponent({
                 if (store.state.model.compileRequired) {
                     return userMessages.sensitivity.compileRequiredForUpdate;
                 }
+
                 if (!store.state.model.selectedVariables.length) {
                     return userMessages.model.selectAVariable;
                 }

@@ -22,6 +22,7 @@ import {
 } from "../../plot";
 import { DiscreteSeriesValues, OdinSolution } from "../../types/responseTypes";
 import { AppType } from "../../store/appState/state";
+import {runPlaceholderMessage} from "../../utils";
 
 export default defineComponent({
     name: "SensitivityTracesPlot",
@@ -46,7 +47,7 @@ export default defineComponent({
 
         const selectedVariables = computed(() => store.state.model.selectedVariables);
 
-        const placeholderMessage = computed(() => (selectedVariables.value.length ? userMessages.sensitivity.notRunYet : userMessages.model.noVariablesSelected));
+        const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, true));
 
         const updatePlotTraceNameWithParameterValue = (plotTrace: Partial<PlotData>, param: string, value: number) => {
             // eslint-disable-next-line no-param-reassign
