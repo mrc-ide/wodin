@@ -28,6 +28,13 @@ const options = processArgs();
 // Global config
 const pathResolved = path.resolve(options.path);
 const configReader = new ConfigReader(pathResolved, options.overrides);
+
+console.log(`Reading config from ${pathResolved} (${options.path})`);
+if (Object.keys(options.overrides).length > 0) {
+    console.log("Applying configuration overrides:");
+    console.log(options.overrides);
+}
+
 const wodinConfig = configReader.readConfigFile("wodin.config.json") as WodinConfig;
 const {
     port, appsPath, baseUrl, odinAPI
