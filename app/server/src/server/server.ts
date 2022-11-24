@@ -25,7 +25,8 @@ const rootDir = path.resolve(path.join(__dirname, "../.."));
 const { options } = require("./args");
 
 // Global config
-const configReader = new ConfigReader(options);
+const { configPath, overrides } = options;
+const configReader = new ConfigReader(configPath, overrides);
 const wodinConfig = configReader.readConfigFile("wodin.config.json") as WodinConfig;
 const {
     port, appsPath, baseUrl, odinAPI

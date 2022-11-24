@@ -13,25 +13,23 @@ const { docopt } = require("docopt");
 
 type Option = string | undefined;
 
-const dropUndefined = (options: Record<string, Option>): Record<string, string> => {
-    return Object.fromEntries(options.entries.filter((o) => o !== undefined));
+const dropUndefined = (options: Record<string, Option>) => {
+    return Object.fromEntries(Object.entries(options).filter((o) => o !== undefined));
 }
 
 export const processArgs = (opts: any) => {
-    const configPath = path.resolve(opts["<path>"] as string);
-    const options = dropUndefined({
+    const path = opts["<path>"] as string;
+    const overrides = dropUndefined({
         baseUrl: opts["--base-url"] as Option,
         odinApi: opts["--odin-api"] as Option,
         redisUrl: opts["--redis-url"] as Option
     });
-    return { configPath, options };
+    return { path, overrides };
 }
 
 const options = processArgs(docopt(doc, { version }));
 
 console.log("Command line configuration");
-options.entries.forEach((entry) => {
-    console.log(`  * ${entry[0]}: ${entry[1]}`);
-});
+console.log(options);
 
 module.exports = { options };
