@@ -9,6 +9,7 @@ import { handleError } from "../errors/handleError";
 import { initialiseLogging } from "../logging";
 import { redisConnection } from "../redis";
 import { version as wodinVersion } from "../version";
+import { processArgs } from "./args";
 
 const express = require("express");
 const path = require("path");
@@ -22,17 +23,17 @@ app.use(compression({ level: 9 })); // Use best compression
 const rootDir = path.resolve(path.join(__dirname, "../.."));
 
 // Get command line args
-const { options } = require("./args");
+const options = processArgs();
 
 // Global config
-const { configPath, overrides } = options;
-const configReader = new ConfigReader(configPath, overrides);
+const pathResolved = path.resolve(options.path);
+const configReader = new ConfigReader(pathResolved, options.overrides);
 const wodinConfig = configReader.readConfigFile("wodin.config.json") as WodinConfig;
 const {
     port, appsPath, baseUrl, odinAPI
 } = wodinConfig;
-const defaultCodeReader = new AppFileReader(`${configPath}/defaultCode`, "R");
-const appHelpReader = new AppFileReader(`${configPath}/help`, "md");
+const defaultCodeReader = new AppFileReader(`${options.path}/defaultCode`, "R");
+const appHelpReader = new AppFileReader(`${options.path}/help`, "md");
 
 const redis = redisConnection(
     wodinConfig.redisURL,
@@ -43,7 +44,7 @@ const redis = redisConnection(
 Object.assign(app.locals, {
     appsPath,
     baseUrl,
-    configPath,
+    configPath: options.path,
     configReader,
     defaultCodeReader,
     appHelpReader,
@@ -55,8 +56,8 @@ Object.assign(app.locals, {
 
 // Static content
 app.use(express.static(path.join(rootDir, "public")));
-app.use("/files", express.static(path.join(configPath, "files")));
-app.use("/help", express.static(path.join(configPath, "help")));
+app.use("/files", express.static(path.join(options.path, "files")));
+app.use("/help", express.static(path.join(options.path, "help")));
 
 // Views
 registerViews(app, rootDir);

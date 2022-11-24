@@ -1,32 +1,43 @@
+import { processArgs } from "../../src/server/args";
+
 describe("args", () => {
-    const mockConsoleLog = jest.fn();
-    const realConsoleLog = console.log;
     const realArgs = process.argv;
-
-    beforeAll(() => {
-        console.log = mockConsoleLog;
-    });
-
-    afterAll(() => {
-        console.log = realConsoleLog;
+    afterEach(() => {
         process.argv = realArgs;
     });
 
-    afterEach(() => {
-        jest.clearAllMocks();
-    });
-
     it("throws error if no config path arg", () => {
-        process.argv = ["node", "/wodinPath"];
-        expect(() => { require("../../src/server/args"); })
-            .toThrow("Please provide a 'config' argument specifying path to the config folder");
+        const argv = ["node", "/wodinPath"];
+        expect(() => { processArgs(argv) })
+            .toThrow("Usage:");
     });
 
     it("returns config path arg", () => {
-        process.argv = ["node", "/wodinPath", "--config=/testConfig"];
-        const args = require("../../src/server/args");
-        expect(args.configPath).toBe("/testConfig");
-        expect(mockConsoleLog).toBeCalledTimes(1);
-        expect(mockConsoleLog.mock.calls[0][0]).toBe("Config path: /testConfig (/testConfig)");
+        const argv = process.argv = ["node", "/wodinPath", "/testConfig"];
+        const args = processArgs(argv);
+        expect(args.path).toBe("/testConfig");
+        expect(args.overrides).toStrictEqual({});
     });
+
+    it("collects overrides", () => {
+        const argv = ["node", "/wodinPath",
+                      "--base-url", "http://example.com/wodin",
+                      "--redis-url=redis:6379",
+                      "/testConfig"];
+        const args = processArgs(argv);
+        expect(args.path).toBe("/testConfig");
+        expect(args.overrides).toStrictEqual({
+            baseUrl: "http://example.com/wodin",
+            redisUrl: "redis:6379"
+        });
+    });
+
+    it("falls back on process.argv", () => {
+        process.argv = ["node", "wodin", "--odin-api=api", "somepath"];
+        const args = processArgs();
+        expect(args.path).toBe("somepath");
+        expect(args.overrides).toStrictEqual({
+            odinApi: "api"
+        });
+    })
 });

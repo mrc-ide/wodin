@@ -8,28 +8,19 @@ Options:
   --redis-url=URL  Url to find Redis
 `;
 
-const { version } = require("./version");
+const { version } = require("../version");
 const { docopt } = require("docopt");
 
-type Option = string | undefined;
+type Option = string | null;
 
-const dropUndefined = (options: Record<string, Option>) => {
-    return Object.fromEntries(Object.entries(options).filter((o) => o !== undefined));
-}
-
-export const processArgs = (opts: any) => {
+export const processArgs = (argv: string[] = process.argv) => {
+    const opts = docopt(doc, { argv: argv.slice(2), version, exit: false });
     const path = opts["<path>"] as string;
-    const overrides = dropUndefined({
+    const given = {
         baseUrl: opts["--base-url"] as Option,
         odinApi: opts["--odin-api"] as Option,
         redisUrl: opts["--redis-url"] as Option
-    });
+    };
+    const overrides = Object.fromEntries(Object.entries(given).filter((o) => o[1] !== null));
     return { path, overrides };
 }
-
-const options = processArgs(docopt(doc, { version }));
-
-console.log("Command line configuration");
-console.log(options);
-
-module.exports = { options };
