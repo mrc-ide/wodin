@@ -59,8 +59,10 @@ export default defineComponent({
             if (!props.allowNegative) {
                 newVal = newVal.replace("-", "");
             }
-            if (parseNumber(newVal) > props.maxAllowedValue) {
+            let numeric = parseNumber(newVal);
+            if (!Number.isNaN(numeric) && numeric > props.maxAllowedValue) {
                 newVal = props.maxAllowedValue.toString();
+                numeric = props.maxAllowedValue;
             }
 
             // within the event handler we need to update the element directly to apply character mask as well as
@@ -69,7 +71,6 @@ export default defineComponent({
             element.value = newVal;
 
             // 2. Remove commas and parse to number, and emit update to container
-            const numeric = parseNumber(newVal);
             if (!Number.isNaN(numeric)) {
                 lastNumericValueSet.value = numeric;
                 emit("update", numeric);
