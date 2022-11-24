@@ -8,12 +8,12 @@ describe("args", () => {
 
     it("throws error if no config path arg", () => {
         const argv = ["node", "/wodinPath"];
-        expect(() => { processArgs(argv) })
+        expect(() => { processArgs(argv); })
             .toThrow("Usage:");
     });
 
     it("returns config path arg", () => {
-        const argv = process.argv = ["node", "/wodinPath", "/testConfig"];
+        const argv = ["node", "/wodinPath", "/testConfig"];
         const args = processArgs(argv);
         expect(args.path).toBe("/testConfig");
         expect(args.overrides).toStrictEqual({});
@@ -21,9 +21,9 @@ describe("args", () => {
 
     it("collects overrides", () => {
         const argv = ["node", "/wodinPath",
-                      "--base-url", "http://example.com/wodin",
-                      "--redis-url=redis:6379",
-                      "/testConfig"];
+            "--base-url", "http://example.com/wodin",
+            "--redis-url=redis:6379",
+            "/testConfig"];
         const args = processArgs(argv);
         expect(args.path).toBe("/testConfig");
         expect(args.overrides).toStrictEqual({
@@ -39,5 +39,5 @@ describe("args", () => {
         expect(args.overrides).toStrictEqual({
             odinApi: "api"
         });
-    })
+    });
 });

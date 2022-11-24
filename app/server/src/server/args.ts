@@ -8,8 +8,8 @@ Options:
   --redis-url=URL  Url to find Redis
 `;
 
-const { version } = require("../version");
 const { docopt } = require("docopt");
+const { version } = require("../version");
 
 type Option = string | null;
 
@@ -23,4 +23,4 @@ export const processArgs = (argv: string[] = process.argv) => {
     };
     const overrides = Object.fromEntries(Object.entries(given).filter((o) => o[1] !== null));
     return { path, overrides };
-}
+};

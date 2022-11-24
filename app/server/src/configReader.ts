@@ -3,6 +3,7 @@ import * as path from "path";
 
 export class ConfigReader {
     rootDir: string;
+
     overrides: Object;
 
     constructor(rootDir: string, overrides: Object = {}) {
