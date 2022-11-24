@@ -5,7 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
-    "serve": "node dist/server/server.js --config=../../config",
+    "serve": "node dist/server/server.js ../../config",
     "test": "jest -c jest.config.js",
     "integration-test": "jest -c jest.config.integration.js",
     "lint": "eslint src tests --ext .ts,.js",

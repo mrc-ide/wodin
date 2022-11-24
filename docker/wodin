@@ -1,10 +1,2 @@
 #!/usr/bin/env bash
-if [ "$#" -eq 0 ]; then
-    CONFIG=/wodin/config
-elif [ "$#" -eq 1 ]; then
-    CONFIG=$1
-else
-    echo "Usage wodin [<config.json>]"
-    exit 1
-fi
-node /wodin/app/server/dist/server/server.js --config $CONFIG
+node /wodin/app/server/dist/server/server.js $*
