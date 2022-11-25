@@ -1,8 +1,8 @@
 import Vuex from "vuex";
-import {BasicState} from "../../../../src/app/store/basic/state";
-import {shallowMount} from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
+import { BasicState } from "../../../../src/app/store/basic/state";
 import SelectedVariables from "../../../../src/app/components/code/SelectedVariables.vue";
-import {ModelAction} from "../../../../src/app/store/model/actions";
+import { ModelAction } from "../../../../src/app/store/model/actions";
 
 describe("SelectedVariables", () => {
     const mockUpdateSelectedVariables = jest.fn();

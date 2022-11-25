@@ -7,7 +7,10 @@
             {{ validMsg }}
         </div>
         <error-info :error="error"></error-info>
-        <vertical-collapse v-if="showSelectedVariables" title="Select variables" collapse-id="select-variables" class="mt-3">
+        <vertical-collapse v-if="showSelectedVariables"
+                           title="Select variables"
+                           collapse-id="select-variables"
+                           class="mt-3">
           <selected-variables></selected-variables>
         </vertical-collapse>
     </div>

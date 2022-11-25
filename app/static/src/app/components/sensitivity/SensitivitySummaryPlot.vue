@@ -20,10 +20,9 @@ import {
     fadePlotStyle, margin, config, odinToPlotly, filterSeriesSet
 } from "../../plot";
 import { SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
-import userMessages from "../../userMessages";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { OdinSeriesSet } from "../../types/responseTypes";
-import {runPlaceholderMessage} from "../../utils";
+import { runPlaceholderMessage } from "../../utils";
 
 export default defineComponent({
     name: "SensitivitySummaryPlot",

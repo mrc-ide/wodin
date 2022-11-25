@@ -12,10 +12,9 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
-import userMessages from "../../userMessages";
-import {WodinPlotData, discreteSeriesSetToPlotly, filterSeriesSet} from "../../plot";
+import { WodinPlotData, discreteSeriesSetToPlotly, filterSeriesSet } from "../../plot";
 import WodinPlot from "../WodinPlot.vue";
-import {runPlaceholderMessage} from "../../utils";
+import { runPlaceholderMessage } from "../../utils";
 
 export default defineComponent({
     name: "RunStochasticPlot",

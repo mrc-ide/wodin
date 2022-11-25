@@ -449,14 +449,16 @@ describe("Model actions", () => {
         const dispatch = jest.fn();
         const fitRootState = mockFitState();
 
-        (actions[ModelAction.UpdateSelectedVariables] as any)({ commit, dispatch, state, rootState: fitRootState }, ["a", "b"]);
+        (actions[ModelAction.UpdateSelectedVariables] as any)({
+            commit, dispatch, state, rootState: fitRootState
+        }, ["a", "b"]);
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetSelectedVariables);
         expect(commit.mock.calls[0][1]).toStrictEqual(["a", "b"]);
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch.mock.calls[0][0]).toBe(`fitData/${FitDataAction.UpdateLinkedVariables}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);
-        expect(dispatch.mock.calls[0][2]).toStrictEqual({root: true});
+        expect(dispatch.mock.calls[0][2]).toStrictEqual({ root: true });
     });
 
     it("Updates selected variables commits selection only, if not fit model", () => {
@@ -464,7 +466,9 @@ describe("Model actions", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
 
-        (actions[ModelAction.UpdateSelectedVariables] as any)({ commit, dispatch, state, rootState }, ["a", "b"]);
+        (actions[ModelAction.UpdateSelectedVariables] as any)({
+            commit, dispatch, state, rootState
+        }, ["a", "b"]);
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetSelectedVariables);
         expect(commit.mock.calls[0][1]).toStrictEqual(["a", "b"]);

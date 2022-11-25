@@ -72,7 +72,7 @@ describe("Model mutations", () => {
     it("SetSelectedVariables sets selected and unselected variables", () => {
         const state = mockModelState({
             odinModelResponse: {
-                metadata:{
+                metadata: {
                     variables: ["x", "y", "z"]
                 }
             } as any

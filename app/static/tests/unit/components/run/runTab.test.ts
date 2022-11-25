@@ -206,7 +206,7 @@ describe("RunTab", () => {
     });
 
     it("fades plot and show message when no selected variables", () => {
-        const wrapper = getWrapper({selectedVariables: []});
+        const wrapper = getWrapper({ selectedVariables: [] });
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Please select at least one variable."
         );

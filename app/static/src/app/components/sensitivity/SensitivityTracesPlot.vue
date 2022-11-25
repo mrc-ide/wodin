@@ -16,13 +16,12 @@ import { PlotData } from "plotly.js-basic-dist-min";
 import { format } from "d3-format";
 import { FitDataGetter } from "../../store/fitData/getters";
 import WodinPlot from "../WodinPlot.vue";
-import userMessages from "../../userMessages";
 import {
     allFitDataToPlotly, filterSeriesSet, odinToPlotly, WodinPlotData
 } from "../../plot";
 import { DiscreteSeriesValues, OdinSolution } from "../../types/responseTypes";
 import { AppType } from "../../store/appState/state";
-import {runPlaceholderMessage} from "../../utils";
+import { runPlaceholderMessage } from "../../utils";
 
 export default defineComponent({
     name: "SensitivityTracesPlot",

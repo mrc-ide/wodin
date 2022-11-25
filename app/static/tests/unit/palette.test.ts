@@ -14,10 +14,10 @@ describe("parse colours", () => {
     });
 
     it("pads colour strings with 0s if necessary", () => {
-       const r = 1 / 255;
-       const g = 15 / 255;
-       const b = 16 / 255;
-       expect(rgb(r, g, b)).toEqual("#010f10");
+        const r = 1 / 255;
+        const g = 15 / 255;
+        const b = 16 / 255;
+        expect(rgb(r, g, b)).toEqual("#010f10");
     });
 });
 

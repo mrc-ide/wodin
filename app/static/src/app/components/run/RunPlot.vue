@@ -13,12 +13,11 @@
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import { FitDataGetter } from "../../store/fitData/getters";
-import userMessages from "../../userMessages";
 import {
     odinToPlotly, allFitDataToPlotly, WodinPlotData, filterSeriesSet
 } from "../../plot";
 import WodinPlot from "../WodinPlot.vue";
-import {runPlaceholderMessage} from "../../utils";
+import { runPlaceholderMessage } from "../../utils";
 
 export default defineComponent({
     name: "RunPlot",
