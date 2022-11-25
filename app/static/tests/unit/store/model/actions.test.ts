@@ -1,6 +1,14 @@
 import Vuex from "vuex";
 import {
-    mockAxios, mockBasicState, mockCodeState, mockFailure, mockModelState, mockRunState, mockRunnerOde, mockSuccess
+    mockAxios,
+    mockBasicState,
+    mockCodeState,
+    mockFailure,
+    mockModelState,
+    mockRunState,
+    mockRunnerOde,
+    mockSuccess,
+    mockFitState
 } from "../../../mocks";
 import { actions, ModelAction } from "../../../../src/app/store/model/actions";
 import { ModelMutation, mutations } from "../../../../src/app/store/model/mutations";
@@ -146,34 +154,38 @@ describe("Model actions", () => {
                         { name: "p3", default: 30 },
                         { name: "p4", default: 40 }
                     ],
-                    variables: ["x", "y"]
+                    variables: ["x", "y", "z"]
                 }
             },
+            selectedVariables: ["x", "a"],
+            unselectedVariables: ["y", "b"],
             compileRequired: true
         };
         const commit = jest.fn();
         const dispatch = jest.fn();
         (actions[ModelAction.CompileModel] as any)({ commit, state, rootState });
-        expect(commit.mock.calls.length).toBe(7);
+        expect(commit.mock.calls.length).toBe(8);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[0][1]).toBe(3);
         expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
         const expectedParams = { p2: 20, p3: 30, p4: 40 };
         expect(commit.mock.calls[1][1]).toStrictEqual(expectedParams);
         expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetPaletteModel);
-        expect(commit.mock.calls[2][1]).toStrictEqual({ x: "#2e5cb8", y: "#cc0044" });
-        // might need a SetCompileRequired false here too?
-        expect(commit.mock.calls[3][0]).toBe(ModelMutation.SetCompileRequired);
-        expect(commit.mock.calls[3][1]).toBe(false);
-        expect(commit.mock.calls[4][0]).toBe(`run/${RunMutation.SetRunRequired}`);
-        expect(commit.mock.calls[4][1]).toStrictEqual({ modelChanged: true });
-        expect(commit.mock.calls[5][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
+        expect(commit.mock.calls[2][1]).toStrictEqual({ x: "#2e5cb8", z: "#cc0044" });
+        // sets selected variables, retaining previous values, and defaulting new variables to selected
+        expect(commit.mock.calls[3][0]).toBe(ModelMutation.SetSelectedVariables);
+        expect(commit.mock.calls[3][1]).toBe(["x", "z"]);
+        expect(commit.mock.calls[4][0]).toBe(ModelMutation.SetCompileRequired);
+        expect(commit.mock.calls[5][1]).toBe(false);
+        expect(commit.mock.calls[5][0]).toBe(`run/${RunMutation.SetRunRequired}`);
         expect(commit.mock.calls[5][1]).toStrictEqual({ modelChanged: true });
-        expect(commit.mock.calls[5][2]).toStrictEqual({ root: true });
-        // TODO: should this not also hit { sensitivityOptionsChanged: true }
-        expect(commit.mock.calls[6][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
-        expect(commit.mock.calls[6][1]).toBe("p2");
+        expect(commit.mock.calls[6][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
+        expect(commit.mock.calls[6][1]).toStrictEqual({ modelChanged: true });
         expect(commit.mock.calls[6][2]).toStrictEqual({ root: true });
+        // TODO: should this not also hit { sensitivityOptionsChanged: true }
+        expect(commit.mock.calls[7][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
+        expect(commit.mock.calls[7][1]).toBe("p2");
+        expect(commit.mock.calls[7][2]).toStrictEqual({ root: true });
 
         // does not dispatch updated linked variables or update params to vary if app type is not Fit
         expect(dispatch).not.toHaveBeenCalled();
@@ -413,5 +425,33 @@ describe("Model actions", () => {
             inputs: { endTime: 99, parameterValues: { p1: 1 } },
             solution: "test solution"
         });
+    });
+
+    it("Updates selected variables commits selection and updates linked variables if fit app", () => {
+        const state = mockModelState();
+        const commit = jest.fn();
+        const dispatch = jest.fn();
+        const fitRootState = mockFitState();
+
+        (actions[ModelAction.UpdateSelectedVariables] as any)({ commit, dispatch, state, rootState: fitRootState }, ["a", "b"]);
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetSelectedVariables);
+        expect(commit.mock.calls[0][1]).toStrictEqual(["a", "b"]);
+        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(dispatch.mock.calls[0][0]).toBe(`fitData/${FitDataAction.UpdateLinkedVariables}`);
+        expect(dispatch.mock.calls[0][1]).toBe(null);
+        expect(dispatch.mock.calls[0][2]).toStrictEqual({root: true});
+    });
+
+    it("Updates selected variables commits selection only, if not fit model", () => {
+        const state = mockModelState();
+        const commit = jest.fn();
+        const dispatch = jest.fn();
+
+        (actions[ModelAction.UpdateSelectedVariables] as any)({ commit, dispatch, state, rootState }, ["a", "b"]);
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetSelectedVariables);
+        expect(commit.mock.calls[0][1]).toStrictEqual(["a", "b"]);
+        expect(dispatch).not.toHaveBeenCalled();
     });
 });

@@ -56,7 +56,9 @@ describe("serialise", () => {
         },
         odin: jest.fn(),
         paletteModel: { S: "#f00", I: "#0f0", R: "#00f" },
-        odinModelCodeError: { error: "odin error", detail: "test odin error" }
+        odinModelCodeError: { error: "odin error", detail: "test odin error" },
+        selectedVariables: ["S", "I"],
+        unselectedVariables: ["R"]
     };
 
     const runState = {
@@ -218,7 +220,9 @@ describe("serialise", () => {
         odinModelResponse: modelState.odinModelResponse,
         hasOdin: true,
         odinModelCodeError: modelState.odinModelCodeError,
-        paletteModel: modelState.paletteModel
+        paletteModel: modelState.paletteModel,
+        selectedVariables: modelState.selectedVariables,
+        unselectedVariables: modelState.unselectedVariables
     };
     const expectedRun = {
         runRequired: {
@@ -429,5 +433,42 @@ describe("serialise", () => {
             modelFit: mockModelFitState(),
             versions: mockVersionsState()
         });
+    });
+
+    it("deserialise initialises selected variables if required", () => {
+        const serialised = {
+            openVisualisationTab: VisualisationTab.Fit,
+            code: mockCodeState(),
+            model: mockModelState({
+                selectedVariables: undefined,
+                unselectedVariables: undefined,
+                odinModelResponse: {
+                    metadata: {
+                        variables: ["S", "I", "R"]
+                    }
+                }
+            } as any),
+            run: mockRunState(),
+            sensitivity: mockSensitivityState(),
+            fitData: mockFitDataState(),
+            modelFit: mockModelFitState(),
+            versions: mockVersionsState()
+        } as any;
+        const target = {
+            sessionId: "123",
+            appType: AppType.Fit,
+            config: {},
+            openVisualisationTab: VisualisationTab.Run,
+            code: {},
+            model: {},
+            run: {},
+            sensitivity: {},
+            fitData: {},
+            modelFit: {},
+            versions: null
+        } as any;
+        deserialiseState(target, serialised);
+        expect(target.model.selectedVariables).toStrictEqual(["S", "I", "R"]);
+        expect(target.model.unselectedVariables).toStrictEqual([]);
     });
 });

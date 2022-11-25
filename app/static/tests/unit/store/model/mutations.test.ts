@@ -68,4 +68,17 @@ describe("Model mutations", () => {
         mutations.SetCompileRequired(state, false);
         expect(state.compileRequired).toBe(false);
     });
+
+    it("SetSelectedVariables sets selected and unselected variables", () => {
+        const state = mockModelState({
+            odinModelResponse: {
+                metadata:{
+                    variables: ["x", "y", "z"]
+                }
+            } as any
+        });
+        mutations.SetSelectedVariables(state, ["x", "z"]);
+        expect(state.selectedVariables).toBe(["x", "z"]);
+        expect(state.selectedVariables).toBe(["y"]);
+    });
 });

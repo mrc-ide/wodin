@@ -20,7 +20,7 @@ jest.mock("xlsx", () => ({
 
 /* eslint-disable import/first */
 import {
-    mockBasicState, mockFitDataState, mockFitState, mockRunState
+    mockBasicState, mockFitDataState, mockFitState, mockModelState, mockRunState
 } from "../mocks";
 import { WodinExcelDownload } from "../../src/app/wodinExcelDownload";
 
@@ -28,7 +28,8 @@ const mockSolution = jest.fn().mockImplementation((options) => {
     const x = options.mode === "grid" ? [options.tStart, options.tEnd] : options.times;
     const values = [
         { name: "A", y: x.map((xVal: number) => 1 + xVal) },
-        { name: "B", y: x.map((xVal: number) => 10 * xVal) }
+        { name: "B", y: x.map((xVal: number) => 10 * xVal) },
+        { name: "C", y: x.map((xVal: number) => 10 * xVal) }
     ];
     return { x, values };
 });
@@ -38,6 +39,10 @@ describe("WodinExcelDownload", () => {
         resultOde: { solution: mockSolution } as any,
         endTime: 10,
         parameterValues: { v1: 1.1, v2: 2.2 }
+    });
+
+    const modelState = mockModelState({
+        selectedVariables: ["A", "B"]
     });
 
     beforeEach(() => {
@@ -65,7 +70,8 @@ describe("WodinExcelDownload", () => {
 
     it("downloads expected workbook for Basic app", () => {
         const rootState = mockBasicState({
-            run: runState
+            run: runState,
+            model: modelState
         });
         const commit = jest.fn();
 
@@ -95,6 +101,7 @@ describe("WodinExcelDownload", () => {
     it("downloads expected workbook for Fit app", () => {
         const rootState = mockFitState({
             run: runState,
+            model: modelState,
             fitData: mockFitDataState({
                 data: [
                     { time: 0, cases: 1, deaths: 2 },
@@ -154,7 +161,8 @@ describe("WodinExcelDownload", () => {
             } as any
         };
         const rootState = mockBasicState({
-            run: errorRunState
+            run: errorRunState,
+            model: modelState
         });
         const commit = jest.fn();
 

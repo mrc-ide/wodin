@@ -12,6 +12,13 @@ describe("parse colours", () => {
         expect(parsed).toEqual([171 / 255, 205 / 255, 239 / 255]);
         expect(rgb(parsed[0], parsed[1], parsed[2])).toEqual("#abcdef");
     });
+
+    it("pads colour strings with 0s if necessary", () => {
+       const r = 1 / 255;
+       const g = 15 / 255;
+       const b = 16 / 255;
+       expect(rgb(r, g, b)).toEqual("#010f10");
+    });
 });
 
 describe("interpolate colours", () => {

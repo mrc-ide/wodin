@@ -224,11 +224,9 @@ describe("Fit Data actions", () => {
         const rootState = {
             model: {
                 odinModelResponse: {
-                    valid: true,
-                    metadata: {
-                        variables: ["B", "C", "D"]
-                    }
-                }
+                    valid: true
+                },
+                selectedVariables: ["B", "C", "D"]
             }
         };
 
