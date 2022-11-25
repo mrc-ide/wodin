@@ -150,4 +150,22 @@ test.describe("Code Tab tests", () => {
         await expect(await page.innerText(".run-tab #error-info"))
             .toBe("An error occurred while running the model: Integration failure: too many steps at 0");
     });
+
+    test("can select and unselect variables", async ({page}) => {
+        // unselect I
+        const iVariable = await page.locator(":nth-match(.selected-variables-panel span.variable, 2)");
+        await iVariable.click();
+
+        // check plot no longer contains R series
+        await expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(2);
+        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 1)").getAttribute("name")).toBe("S");
+        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 2)").getAttribute("name")).toBe("R");
+
+        // re-select I
+        await iVariable.click();
+        await expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(3);
+        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 1)").getAttribute("name")).toBe("S");
+        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 2)").getAttribute("name")).toBe("I");
+        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 3)").getAttribute("name")).toBe("R");
+    });
 });
