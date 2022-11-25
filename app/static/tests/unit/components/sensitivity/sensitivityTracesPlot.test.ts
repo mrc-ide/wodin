@@ -299,7 +299,7 @@ describe("SensitivityTracesPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Sensitivity has not been run.");
         expect(wodinPlot.props("endTime")).toBe(1);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([undefined]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([undefined, selectedVariables]);
 
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 1, 100);

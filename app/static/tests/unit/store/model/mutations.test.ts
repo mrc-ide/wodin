@@ -78,7 +78,7 @@ describe("Model mutations", () => {
             } as any
         });
         mutations.SetSelectedVariables(state, ["x", "z"]);
-        expect(state.selectedVariables).toBe(["x", "z"]);
-        expect(state.selectedVariables).toBe(["y"]);
+        expect(state.selectedVariables).toStrictEqual(["x", "z"]);
+        expect(state.unselectedVariables).toStrictEqual(["y"]);
     });
 });

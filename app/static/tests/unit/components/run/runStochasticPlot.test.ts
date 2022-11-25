@@ -1,4 +1,6 @@
 // Mock plotly before import RunStochasticTab, which indirectly imports plotly via WodinPlot
+import {mockModelState} from "../../../mocks";
+
 jest.mock("plotly.js-basic-dist-min", () => {});
 
 /* eslint-disable import/first */
@@ -29,6 +31,8 @@ describe("RunPlot", () => {
         R: "#0000ff"
     };
 
+    const selectedVariables = ["S", "I", "R"];
+
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -36,9 +40,7 @@ describe("RunPlot", () => {
     it("renders as expected when model has stochastic result", () => {
         const store = new Vuex.Store<StochasticState>({
             state: {
-                model: {
-                    paletteModel
-                },
+                model: mockModelState({paletteModel, selectedVariables}),
                 run: {
                     endTime: 99,
                     resultDiscrete: mockResult
@@ -96,9 +98,7 @@ describe("RunPlot", () => {
     it("renders as expected when model has no stochastic result", () => {
         const store = new Vuex.Store<StochasticState>({
             state: {
-                model: {
-                    paletteModel
-                },
+                model: mockModelState({paletteModel, selectedVariables}),
                 run: {
                     endTime: 99,
                     resultDiscrete: null
@@ -127,9 +127,7 @@ describe("RunPlot", () => {
     it("renders as expected when solution returns no data", () => {
         const store = new Vuex.Store<StochasticState>({
             state: {
-                model: {
-                    paletteModel
-                },
+                model: mockModelState({paletteModel, selectedVariables}),
                 run: {
                     endTime: 99,
                     resultDiscrete: {
@@ -158,8 +156,7 @@ describe("RunPlot", () => {
     it("fades plot when fadePlot prop is true", () => {
         const store = new Vuex.Store<StochasticState>({
             state: {
-                model: {
-                },
+                model: mockModelState({selectedVariables}),
                 run: {
                     resultDiscrete: null
                 }

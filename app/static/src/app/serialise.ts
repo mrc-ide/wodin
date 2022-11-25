@@ -122,9 +122,10 @@ export const deserialiseState = (targetState: AppState, serialised: SerialisedAp
 
     // Initialise selected variables if required
     const { model } = targetState;
-    if (model.odinModelResponse?.metadata?.variables && !model.selectedVariables.length
-        && !model.unselectedVariables.length) {
-        // eslint-disable-next-line no-param-reassign
+    if (model.odinModelResponse?.metadata?.variables && !model.selectedVariables?.length
+        && !model.unselectedVariables?.length) {
+        /* eslint-disable no-param-reassign */
         targetState.model.selectedVariables = [...model.odinModelResponse.metadata.variables];
+        targetState.model.unselectedVariables = [];
     }
 };

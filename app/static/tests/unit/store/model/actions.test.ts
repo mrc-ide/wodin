@@ -171,12 +171,12 @@ describe("Model actions", () => {
         const expectedParams = { p2: 20, p3: 30, p4: 40 };
         expect(commit.mock.calls[1][1]).toStrictEqual(expectedParams);
         expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetPaletteModel);
-        expect(commit.mock.calls[2][1]).toStrictEqual({ x: "#2e5cb8", z: "#cc0044" });
+        expect(commit.mock.calls[2][1]).toStrictEqual({ x: "#2e5cb8", y: "#cccc00", z: "#cc0044" });
         // sets selected variables, retaining previous values, and defaulting new variables to selected
         expect(commit.mock.calls[3][0]).toBe(ModelMutation.SetSelectedVariables);
-        expect(commit.mock.calls[3][1]).toBe(["x", "z"]);
+        expect(commit.mock.calls[3][1]).toStrictEqual(["x", "z"]);
         expect(commit.mock.calls[4][0]).toBe(ModelMutation.SetCompileRequired);
-        expect(commit.mock.calls[5][1]).toBe(false);
+        expect(commit.mock.calls[4][1]).toBe(false);
         expect(commit.mock.calls[5][0]).toBe(`run/${RunMutation.SetRunRequired}`);
         expect(commit.mock.calls[5][1]).toStrictEqual({ modelChanged: true });
         expect(commit.mock.calls[6][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
@@ -200,7 +200,9 @@ describe("Model actions", () => {
                     variables: ["x", "y"]
                 }
             },
-            compileRequired: true
+            compileRequired: true,
+            selectedVariables: ["x", "y"],
+            unselectedVariables: []
         };
         const fitRootState = {
             appType: AppType.Fit,
@@ -215,20 +217,22 @@ describe("Model actions", () => {
         (actions[ModelAction.CompileModel] as any)({
             commit, dispatch, state, rootState: fitRootState
         });
-        expect(commit.mock.calls.length).toBe(8);
+        expect(commit.mock.calls.length).toBe(9);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
         expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetPaletteModel);
-        expect(commit.mock.calls[3][0]).toBe(ModelMutation.SetCompileRequired);
-        expect(commit.mock.calls[4][0]).toBe(`run/${RunMutation.SetRunRequired}`);
-        expect(commit.mock.calls[5][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
-        expect(commit.mock.calls[5][1]).toStrictEqual({ modelChanged: true });
-        expect(commit.mock.calls[6][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
-        expect(commit.mock.calls[6][1]).toBe(null);
-        expect(commit.mock.calls[6][2]).toStrictEqual({ root: true });
-        expect(commit.mock.calls[7][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
-        expect(commit.mock.calls[7][1]).toStrictEqual({ modelChanged: true });
+        expect(commit.mock.calls[3][0]).toBe(ModelMutation.SetSelectedVariables);
+        expect(commit.mock.calls[3][1]).toStrictEqual(["x", "y"]);
+        expect(commit.mock.calls[4][0]).toBe(ModelMutation.SetCompileRequired);
+        expect(commit.mock.calls[5][0]).toBe(`run/${RunMutation.SetRunRequired}`);
+        expect(commit.mock.calls[6][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
+        expect(commit.mock.calls[6][1]).toStrictEqual({ modelChanged: true });
+        expect(commit.mock.calls[7][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
+        expect(commit.mock.calls[7][1]).toBe(null);
         expect(commit.mock.calls[7][2]).toStrictEqual({ root: true });
+        expect(commit.mock.calls[8][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
+        expect(commit.mock.calls[8][1]).toStrictEqual({ modelChanged: true });
+        expect(commit.mock.calls[8][2]).toStrictEqual({ root: true });
 
         expect(dispatch).toHaveBeenCalledTimes(2);
         expect(dispatch.mock.calls[0][0]).toBe(`fitData/${FitDataAction.UpdateLinkedVariables}`);
@@ -247,6 +251,8 @@ describe("Model actions", () => {
                     variables: ["x", "y"]
                 }
             },
+            selectedVariables: ["x", "y"],
+            unselectedVariables: [],
             compileRequired: true,
             runRequired: {
                 modelChanged: false,
@@ -269,16 +275,18 @@ describe("Model actions", () => {
         (actions[ModelAction.CompileModel] as any)({
             commit, dispatch, state, rootState: testRootState
         });
-        expect(commit.mock.calls.length).toBe(6);
+        expect(commit.mock.calls.length).toBe(7);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
         expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetPaletteModel);
-        expect(commit.mock.calls[3][0]).toBe(ModelMutation.SetCompileRequired);
-        expect(commit.mock.calls[4][0]).toBe(`run/${RunMutation.SetRunRequired}`);
-        expect(commit.mock.calls[5][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
+        expect(commit.mock.calls[3][0]).toBe(ModelMutation.SetSelectedVariables);
+        expect(commit.mock.calls[3][1]).toStrictEqual(["x", "y"]);
+        expect(commit.mock.calls[4][0]).toBe(ModelMutation.SetCompileRequired);
+        expect(commit.mock.calls[5][0]).toBe(`run/${RunMutation.SetRunRequired}`);
+        expect(commit.mock.calls[6][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
     });
 
-    it("compile model does not update runRequired or compileRequires if compileRequired was false", () => {
+    it("compile model does not update runRequired or compileRequired if compileRequired was false", () => {
         const state = mockModelState({
             odinModelResponse: {
                 model: "1+2",
@@ -287,17 +295,22 @@ describe("Model actions", () => {
                     variables: ["x", "y"]
                 }
             } as any,
-            compileRequired: false
+            compileRequired: false,
+            selectedVariables: ["x", "y"],
+            unselectedVariables: []
         });
         const commit = jest.fn();
         (actions[ModelAction.CompileModel] as any)({ commit, state, rootState });
-        expect(commit.mock.calls.length).toBe(4);
+        expect(commit.mock.calls.length).toBe(5);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[0][1]).toBe(3);
         expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
         expect(commit.mock.calls[1][1]).toStrictEqual({});
-        expect(commit.mock.calls[3][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
-        expect(commit.mock.calls[3][1]).toBe(null);
+        expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetPaletteModel);
+        expect(commit.mock.calls[3][0]).toBe(ModelMutation.SetSelectedVariables);
+        expect(commit.mock.calls[3][1]).toStrictEqual(["x", "y"]);
+        expect(commit.mock.calls[4][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
+        expect(commit.mock.calls[4][1]).toBe(null);
     });
 
     it("compile model does nothing if no odin response", () => {
@@ -375,7 +388,7 @@ describe("Model actions", () => {
 
         await store.dispatch(`model/${ModelAction.DefaultModel}`);
 
-        expect(commit.mock.calls.length).toBe(10);
+        expect(commit.mock.calls.length).toBe(11);
 
         // fetch
         const postData = JSON.parse(mockAxios.history.post[0].data);
@@ -400,17 +413,20 @@ describe("Model actions", () => {
         expect(commit.mock.calls[4][0]).toBe(`model/${ModelMutation.SetPaletteModel}`);
         expect(commit.mock.calls[4][1]).toStrictEqual({ x: "#2e5cb8", y: "#cc0044" });
 
-        expect(commit.mock.calls[5][0]).toBe(`model/${ModelMutation.SetCompileRequired}`);
-        expect(commit.mock.calls[5][1]).toBe(false);
+        expect(commit.mock.calls[5][0]).toBe(`model/${ModelMutation.SetSelectedVariables}`);
+        expect(commit.mock.calls[5][1]).toStrictEqual(["x", "y"]);
 
-        expect(commit.mock.calls[6][0]).toBe(`run/${RunMutation.SetRunRequired}`);
-        expect(commit.mock.calls[6][1]).toStrictEqual({ modelChanged: true });
+        expect(commit.mock.calls[6][0]).toBe(`model/${ModelMutation.SetCompileRequired}`);
+        expect(commit.mock.calls[6][1]).toBe(false);
 
-        expect(commit.mock.calls[7][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
+        expect(commit.mock.calls[7][0]).toBe(`run/${RunMutation.SetRunRequired}`);
         expect(commit.mock.calls[7][1]).toStrictEqual({ modelChanged: true });
 
-        expect(commit.mock.calls[8][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
-        expect(commit.mock.calls[8][1]).toStrictEqual("p1");
+        expect(commit.mock.calls[8][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
+        expect(commit.mock.calls[8][1]).toStrictEqual({ modelChanged: true });
+
+        expect(commit.mock.calls[9][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
+        expect(commit.mock.calls[9][1]).toStrictEqual("p1");
 
         // runs
         const run = runner.wodinRun;
@@ -419,8 +435,8 @@ describe("Model actions", () => {
         expect(run.mock.calls[0][2]).toBe(0); // start
         expect(run.mock.calls[0][3]).toBe(99); // end
 
-        expect(commit.mock.calls[9][0]).toBe(`run/${RunMutation.SetResultOde}`);
-        expect(commit.mock.calls[9][1]).toEqual({
+        expect(commit.mock.calls[10][0]).toBe(`run/${RunMutation.SetResultOde}`);
+        expect(commit.mock.calls[10][1]).toEqual({
             error: null,
             inputs: { endTime: 99, parameterValues: { p1: 1 } },
             solution: "test solution"
