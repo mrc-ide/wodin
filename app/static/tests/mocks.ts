@@ -20,6 +20,7 @@ import {
     SensitivityVariationType
 } from "../src/app/store/sensitivity/state";
 import { VersionsState } from "../src/app/store/versions/state";
+import { GraphSettingsState } from "../src/app/store/graphSettings/state";
 
 export const mockAxios = new MockAdapter(axios);
 
@@ -97,6 +98,13 @@ export const mockVersionsState = (states: Partial<VersionsState> = {}): Versions
     };
 };
 
+export const mockGraphSettingsState = (state: Partial<GraphSettingsState> = {}): GraphSettingsState => {
+    return {
+        logScaleYAxis: false,
+        ...state
+    };
+};
+
 export const mockFitDataState = (state:Partial<FitDataState> = {}): FitDataState => {
     return {
         data: null,
@@ -159,6 +167,7 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
         run: mockRunState(),
         sensitivity: mockSensitivityState(),
         versions: mockVersionsState(),
+        graphSettings: mockGraphSettingsState(),
         ...state
     };
 };
@@ -205,6 +214,7 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
         sensitivity: mockSensitivityState(),
         modelFit: mockModelFitState(),
         versions: mockVersionsState(),
+        graphSettings: mockGraphSettingsState(),
         ...state
     };
 };
@@ -229,6 +239,7 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
         run: mockRunState(),
         sensitivity: mockSensitivityState(),
         versions: mockVersionsState(),
+        graphSettings: mockGraphSettingsState(),
         ...state
     };
 };

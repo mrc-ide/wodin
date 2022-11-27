@@ -1,4 +1,5 @@
 // Mock the import of plotly so we can mock Plotly methods
+
 jest.mock("plotly.js-basic-dist-min", () => ({
     newPlot: jest.fn(),
     react: jest.fn(),
@@ -11,7 +12,9 @@ jest.mock("plotly.js-basic-dist-min", () => ({
 import { shallowMount, VueWrapper } from "@vue/test-utils";
 import { nextTick } from "vue";
 import * as plotly from "plotly.js-basic-dist-min";
+import Vuex, { Store } from "vuex";
 import WodinPlot from "../../../src/app/components/WodinPlot.vue";
+import { BasicState } from "../../../src/app/store/basic/state";
 
 describe("WodinPlot", () => {
     const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");
@@ -55,9 +58,22 @@ describe("WodinPlot", () => {
         placeholderMessage: "No data available"
     };
 
-    const getWrapper = (props = {}) => {
+    const getStore = (graphSettingsLogScaleYAxis = false) => {
+        return new Vuex.Store<BasicState>({
+            state: {
+                graphSettings: {
+                    logScaleYAxis: graphSettingsLogScaleYAxis
+                }
+            } as any
+        });
+    };
+
+    const getWrapper = (props = {}, store: Store<BasicState> = getStore()) => {
         return shallowMount(WodinPlot, {
-            props: { ...defaultProps, ...props }
+            props: { ...defaultProps, ...props },
+            global: {
+                plugins: [store]
+            }
         });
     };
 
@@ -92,8 +108,12 @@ describe("WodinPlot", () => {
     });
 
     it("renders slot content", () => {
+        const store = getStore();
         const wrapper = shallowMount(WodinPlot, {
             props: defaultProps,
+            global: {
+                plugins: [store]
+            },
             slots: {
                 default: "<h3>test slot content</h3>"
             }
@@ -115,7 +135,8 @@ describe("WodinPlot", () => {
         expect(mockPlotlyNewPlot.mock.calls[0][1]).toStrictEqual(mockPlotData);
         expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({
             margin: { t: 25 },
-            xaxis: { title: "Time" }
+            xaxis: { title: "Time" },
+            yaxis: { type: "linear" }
         });
 
         expect(mockOn.mock.calls[0][0]).toBe("plotly_relayout");
@@ -175,7 +196,7 @@ describe("WodinPlot", () => {
         margin: { t: 25 },
         uirevision: "true",
         xaxis: { autorange: true, title: "Time" },
-        yaxis: { autorange: true }
+        yaxis: { autorange: true, type: "linear" }
     };
 
     it("relayout reruns plotData and calls react if not autorange", async () => {
@@ -316,5 +337,47 @@ describe("WodinPlot", () => {
         wrapper.setProps({ redrawWatches: [{} as any] });
         await nextTick();
         expect(wrapper.find(".plot-placeholder").exists()).toBe(false);
+    });
+
+    it("renders y axis log scale if graph setting is set", async () => {
+        const store = getStore(true);
+        const wrapper = getWrapper({}, store);
+        mockPlotElementOn(wrapper);
+
+        wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+        expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({
+            margin: { t: 25 },
+            xaxis: { title: "Time" },
+            yaxis: { type: "log" }
+        });
+    });
+
+    it("relayout uses graph settings log scale y axis value", async () => {
+        const store = getStore(true);
+        const wrapper = getWrapper({}, store);
+        mockPlotElementOn(wrapper);
+
+        wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+
+        const relayoutEvent = {
+            "xaxis.autorange": false,
+            "xaxis.range[0]": 2,
+            "xaxis.range[1]": 7
+        };
+
+        const { relayout } = wrapper.vm as any;
+        await relayout(relayoutEvent);
+
+        const divElement = wrapper.find("div.plot").element;
+        expect(mockPlotlyReact.mock.calls.length).toBe(1);
+        expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
+        expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual(mockPlotData);
+        const expectedLogScaleLayout = {
+            ...expectedLayout,
+            yaxis: { autorange: true, type: "log" }
+        };
+        expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual(expectedLogScaleLayout);
     });
 });

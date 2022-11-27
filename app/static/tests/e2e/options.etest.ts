@@ -184,4 +184,15 @@ test.describe("Options Tab tests", () => {
         // Verify parameters have been reset to default value
         await expect(await page.inputValue(":nth-match(#model-params input, 1)")).toBe("4");
     });
+
+    test("can change graph setting for log scale y axis", async ({ page }) => {
+        await expect(await page.innerText(":nth-match(.collapse-title, 3)")).toContain("Graph Settings");
+        await page.locator("#log-scale-y-axis input").click();
+        // should update y axis tick
+        const tickSelector = ":nth-match(.plotly .ytick text, 2)";
+        await expect(await page.innerHTML(tickSelector)).toBe("10n");
+        // change back to linear
+        await page.locator("#log-scale-y-axis input").click();
+        await expect(await page.innerHTML(tickSelector)).toBe("0.2M");
+    });
 });

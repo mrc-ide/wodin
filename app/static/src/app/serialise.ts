@@ -13,6 +13,7 @@ import {
     SerialisedSensitivityState,
     SerialisedRunResult
 } from "./types/serialisationTypes";
+import { GraphSettingsState } from "./store/graphSettings/state";
 
 function serialiseCode(code: CodeState) : CodeState {
     return {
@@ -96,13 +97,18 @@ function serialiseModelFit(modelFit: ModelFitState) {
     };
 }
 
+export const serialiseGraphSettings = (state: GraphSettingsState) => {
+    return { ...state };
+};
+
 export const serialiseState = (state: AppState) => {
     const result: SerialisedAppState = {
         openVisualisationTab: state.openVisualisationTab,
         code: serialiseCode(state.code),
         model: serialiseModel(state.model),
         run: serialiseRun(state.run),
-        sensitivity: serialiseSensitivity(state.sensitivity)
+        sensitivity: serialiseSensitivity(state.sensitivity),
+        graphSettings: serialiseGraphSettings(state.graphSettings)
     };
 
     if (state.appType === AppType.Fit) {

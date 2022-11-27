@@ -11,6 +11,7 @@ import { VisualisationTab } from "../store/appState/state";
 import { CodeState } from "../store/code/state";
 import { FitDataState } from "../store/fitData/state";
 import { Palette } from "../palette";
+import { GraphSettingsState } from "../store/graphSettings/state";
 
 export interface SerialisedRunResult {
     inputs: OdinRunInputs | OdinFitInputs,
@@ -64,6 +65,7 @@ export interface SerialisedAppState {
     model: SerialisedModelState,
     run: SerialisedRunState,
     sensitivity: SerialisedSensitivityState,
+    graphSettings: GraphSettingsState,
     fitData?: FitDataState,
-    modelFit?: SerialisedModelFitState
+    modelFit?: SerialisedModelFitState,
 }

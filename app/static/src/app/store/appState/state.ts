@@ -4,6 +4,7 @@ import { RunState } from "../run/state";
 import { AppConfig } from "../../types/responseTypes";
 import { SensitivityState } from "../sensitivity/state";
 import { VersionsState } from "../versions/state";
+import { GraphSettingsState } from "../graphSettings/state";
 
 export enum AppType {
     Basic = "basic",
@@ -32,5 +33,6 @@ export interface AppState {
     model: ModelState
     run: RunState
     sensitivity: SensitivityState,
+    graphSettings: GraphSettingsState,
     versions: VersionsState
 }

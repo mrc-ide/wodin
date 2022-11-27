@@ -13,6 +13,9 @@
         <vertical-collapse v-if="fitTabIsOpen" title="Optimisation" collapse-id="optimisation">
           <optimisation-options></optimisation-options>
         </vertical-collapse>
+        <vertical-collapse title="Graph Settings" collapse-id="graph-settings">
+          <graph-settings></graph-settings>
+        </vertical-collapse>
     </div>
 </template>
 
@@ -26,6 +29,7 @@ import LinkData from "./LinkData.vue";
 import SensitivityOptions from "./SensitivityOptions.vue";
 import OptimisationOptions from "./OptimisationOptions.vue";
 import { AppType, VisualisationTab } from "../../store/appState/state";
+import GraphSettings from "./GraphSettings.vue";
 
 export default {
     name: "OptionsTab",
@@ -35,7 +39,8 @@ export default {
         ParameterValues,
         RunOptions,
         SensitivityOptions,
-        VerticalCollapse
+        VerticalCollapse,
+        GraphSettings
     },
     setup() {
         const store = useStore();
