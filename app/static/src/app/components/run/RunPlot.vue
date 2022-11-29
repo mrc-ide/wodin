@@ -16,6 +16,10 @@ import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
 import { odinToPlotly, allFitDataToPlotly, WodinPlotData } from "../../plot";
 import WodinPlot from "../WodinPlot.vue";
+import { OdinRunResultOde } from "../../types/wrapperTypes";
+import { RunGetter } from "../../store/run/getters";
+import { OdinSolution } from "../../types/responseTypes";
+import { Dict } from "../../types/utilTypes";
 
 export default defineComponent({
     name: "RunPlot",
@@ -31,6 +35,16 @@ export default defineComponent({
         const placeholderMessage = userMessages.run.notRunYet;
 
         const solution = computed(() => (store.state.run.resultOde?.solution));
+        const parameterSetSolutions = computed(() => {
+            const result = {} as Dict<OdinSolution>;
+            Object.keys(store.state.run.parameterSetResults).forEach((name) => {
+                const sln = store.state.run.parameterSetResults[name].solution;
+                if (sln) {
+                    result[name] = sln;
+                }
+            });
+            return result;
+        });
 
         const endTime = computed(() => store.state.run.endTime);
 
@@ -39,16 +53,30 @@ export default defineComponent({
         const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData}`]);
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
-            const result = solution.value && solution.value({
+            const options = {
                 mode: "grid", tStart: start, tEnd: end, nPoints: points
-            });
+            };
+            const result = solution.value && solution.value(options);
             if (!result) {
                 return [];
             }
-            return [
+
+            const allData = [
                 ...odinToPlotly(result, palette.value),
                 ...allFitDataToPlotly(allFitData.value, palette.value, start, end)
             ];
+
+            const lineStylesForParameterSets = store.getters[`run/${RunGetter.lineStylesForParameterSets}`];
+            Object.keys(parameterSetSolutions.value).forEach((name) => {
+                const paramSetSln = parameterSetSolutions.value[name];
+                const paramSetResult = paramSetSln!(options as any);
+
+                const dash = lineStylesForParameterSets[name];
+                if (paramSetResult) {
+                    allData.push(...odinToPlotly(paramSetResult, palette.value, { dash, showLegend: false }));
+                }
+            });
+            return allData;
         };
 
         return {

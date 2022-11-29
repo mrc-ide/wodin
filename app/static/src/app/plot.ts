@@ -1,4 +1,4 @@
-import { PlotData } from "plotly.js-basic-dist-min";
+import {Dash, PlotData} from "plotly.js-basic-dist-min";
 import { Palette, paletteData } from "./palette";
 import type { AllFitData, FitData, FitDataLink } from "./store/fitData/state";
 import {
@@ -40,6 +40,7 @@ export interface PlotlyOptions {
     includeLegendGroup: boolean,
     lineWidth: number
     showLegend: boolean
+    dash: Dash | undefined
 }
 
 const defaultPlotlyOptions = {
@@ -59,7 +60,8 @@ export function odinToPlotly(s: OdinSeriesSet, palette: Palette, options: Partia
             mode: "lines",
             line: {
                 color: palette[el.name],
-                width: plotlyOptions.lineWidth
+                width: plotlyOptions.lineWidth,
+                dash: plotlyOptions.dash
             },
             name: el.name,
             x: s.x,
@@ -142,3 +144,6 @@ export function allFitDataToPlotly(allFitData: AllFitData | null, paletteModel: 
         }
     }));
 }
+
+const lineStyles = ["dot", "dash", "longdash", "dashdot", "longdashdot"];
+export const lineStyleForParameterSetIndex = (index: number): string => (lineStyles[index % lineStyles.length]);
