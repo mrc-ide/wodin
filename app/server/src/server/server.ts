@@ -39,8 +39,8 @@ const wodinConfig = configReader.readConfigFile("wodin.config.json") as WodinCon
 const {
     port, appsPath, baseUrl, odinAPI
 } = wodinConfig;
-const defaultCodeReader = new AppFileReader(`${options.path}/defaultCode`, "R");
-const appHelpReader = new AppFileReader(`${options.path}/help`, "md");
+const defaultCodeReader = new AppFileReader(`${pathResolved}/defaultCode`, "R");
+const appHelpReader = new AppFileReader(`${pathResolved}/help`, "md");
 
 const redis = redisConnection(
     wodinConfig.redisURL,
@@ -51,7 +51,7 @@ const redis = redisConnection(
 Object.assign(app.locals, {
     appsPath,
     baseUrl,
-    configPath: options.path,
+    configPath: pathResolved,
     configReader,
     defaultCodeReader,
     appHelpReader,
@@ -63,8 +63,8 @@ Object.assign(app.locals, {
 
 // Static content
 app.use(express.static(path.join(rootDir, "public")));
-app.use("/files", express.static(path.join(options.path, "files")));
-app.use("/help", express.static(path.join(options.path, "help")));
+app.use("/files", express.static(path.join(pathResolved, "files")));
+app.use("/help", express.static(path.join(pathResolved, "help")));
 
 // Views
 registerViews(app, rootDir);
