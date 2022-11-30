@@ -21,8 +21,8 @@ const parseArgInteger = (arg: string | null, name: string): Perhaps<number> => {
     if (!arg.match(/^[0-9]+$/)) {
         throw Error(`Expected an integer for ${name}`);
     }
-    return parseInt(arg);
-}
+    return parseInt(arg, 10);
+};
 
 export const processArgs = (argv: string[] = process.argv) => {
     const opts = docopt(doc, { argv: argv.slice(2), version, exit: false });
