@@ -23,12 +23,14 @@ describe("args", () => {
         const argv = ["node", "/wodinPath",
             "--base-url", "http://example.com/wodin",
             "--redis-url=redis:6379",
+            "--port=1234",
             "/testConfig"];
         const args = processArgs(argv);
         expect(args.path).toBe("/testConfig");
         expect(args.overrides).toStrictEqual({
             baseUrl: "http://example.com/wodin",
-            redisUrl: "redis:6379"
+            redisUrl: "redis:6379",
+            port: 1234
         });
     });
 
@@ -39,5 +41,10 @@ describe("args", () => {
         expect(args.overrides).toStrictEqual({
             odinApi: "api"
         });
+    });
+
+    it("requires that port is an integer", () => {
+        process.argv = ["node", "wodin", "--port=one", "somepath"];
+        expect(() => processArgs()).toThrow("Expected an integer for port");
     });
 });
