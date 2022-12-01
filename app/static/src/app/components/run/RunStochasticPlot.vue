@@ -12,9 +12,9 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
-import userMessages from "../../userMessages";
-import { WodinPlotData, discreteSeriesSetToPlotly } from "../../plot";
+import { WodinPlotData, discreteSeriesSetToPlotly, filterSeriesSet } from "../../plot";
 import WodinPlot from "../WodinPlot.vue";
+import { runPlaceholderMessage } from "../../utils";
 
 export default defineComponent({
     name: "RunStochasticPlot",
@@ -27,7 +27,8 @@ export default defineComponent({
     setup() {
         const store = useStore();
 
-        const placeholderMessage = userMessages.run.notRunYet;
+        const selectedVariables = computed(() => store.state.model.selectedVariables);
+        const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, false));
 
         const solution = computed(() => (store.state.run.resultDiscrete?.solution));
 
@@ -42,7 +43,7 @@ export default defineComponent({
             if (!result) {
                 return [];
             }
-            return discreteSeriesSetToPlotly(result, palette.value);
+            return discreteSeriesSetToPlotly(filterSeriesSet(result, selectedVariables.value), palette.value);
         };
 
         return {

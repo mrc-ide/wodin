@@ -27,6 +27,10 @@ export default {
         },
         columnToFitPrerequisites: "Please link at least one column in order to set target to fit."
     },
+    model: {
+        noVariablesSelected: "No variables are selected.",
+        selectAVariable: "Please select at least one variable."
+    },
     run: {
         compileRequired: "Model code has been updated. Compile code and Run Model to update.",
         notRunYet: "Model has not been run.",

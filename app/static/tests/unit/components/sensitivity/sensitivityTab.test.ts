@@ -30,6 +30,7 @@ describe("SensitivityTab", () => {
                     state: {
                         odinRunnerOde: {},
                         odin: {},
+                        selectedVariables: ["S"],
                         ...modelState
                     },
                     getters: {
@@ -166,6 +167,21 @@ describe("SensitivityTab", () => {
         const wrapper = getWrapper(AppType.Basic, { compileRequired: true }, sensitivityState);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
             .toBe("Model code has been updated. Compile code and Run Sensitivity to update.");
+        expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);
+    });
+
+    it("renders expected update message when no selected variables", () => {
+        const sensitivityState = {
+            result: {
+                batch: {
+                    solutions: [{}],
+                    errors: []
+                }
+            }
+        } as any;
+        const wrapper = getWrapper(AppType.Basic, { selectedVariables: [] }, sensitivityState);
+        expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
+            .toBe("Please select at least one variable.");
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);
     });
 

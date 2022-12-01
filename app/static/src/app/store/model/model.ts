@@ -10,7 +10,9 @@ export const defaultState: ModelState = {
     odinModelResponse: null,
     odin: null,
     paletteModel: null,
-    odinModelCodeError: null
+    odinModelCodeError: null,
+    selectedVariables: [],
+    unselectedVariables: []
 };
 
 export const model = {

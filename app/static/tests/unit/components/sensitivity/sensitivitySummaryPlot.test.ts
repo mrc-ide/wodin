@@ -39,7 +39,8 @@ describe("SensitivitySummaryPlot", () => {
         x: [1, 1.1],
         values: [
             { name: "S", y: [10, 10.1] },
-            { name: "I", y: [20, 19.9] }
+            { name: "I", y: [20, 19.9] },
+            { name: "R", y: [21, 22.2] }
         ]
     };
 
@@ -65,7 +66,7 @@ describe("SensitivitySummaryPlot", () => {
 
     const getWrapper = (hasData = true, plotSettings: SensitivityPlotSettings = defaultPlotSettings,
         fadePlot = false, paramSettings: SensitivityParameterSettings = defaultParamSettings,
-        logScaleYAxis = false) => {
+        logScaleYAxis = false, selectedVariables = ["S", "I"]) => {
         store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
@@ -74,8 +75,10 @@ describe("SensitivitySummaryPlot", () => {
                     state: {
                         paletteModel: {
                             S: "#ff0000",
-                            I: "#0000ff"
-                        }
+                            I: "#0000ff",
+                            R: "#00ff00"
+                        },
+                        selectedVariables
                     }
                 },
                 run: {
@@ -224,6 +227,12 @@ describe("SensitivitySummaryPlot", () => {
         const wrapper = getWrapper(false);
         expect(mockPlotlyNewPlot).not.toHaveBeenCalled();
         expect(wrapper.find(".plot-placeholder").text()).toBe("Sensitivity has not been run.");
+    });
+
+    it("renders as expected when no selected variables", () => {
+        const wrapper = getWrapper(true, defaultPlotSettings, false, defaultParamSettings, false, []);
+        expect(mockPlotlyNewPlot).not.toHaveBeenCalled();
+        expect(wrapper.find(".plot-placeholder").text()).toBe("No variables are selected.");
     });
 
     it("sets end time to 0 if less", () => {

@@ -34,7 +34,8 @@ describe("LinkData", () => {
                             metadata: {
                                 variables: includeValidModel ? ["S", "I", "R"] : []
                             }
-                        } as any
+                        } as any,
+                        selectedVariables: ["I", "R"]
                     })
                 }
             }
@@ -48,15 +49,13 @@ describe("LinkData", () => {
 
     const checkExpectedSelectOptions = (select: HTMLSelectElement) => {
         const { options } = select;
-        expect(options.length).toBe(4);
+        expect(options.length).toBe(3);
         expect(options[0].text).toBe("-- no link --");
         expect(options[0].value).toBe("");
-        expect(options[1].text).toBe("S");
-        expect(options[1].value).toBe("S");
-        expect(options[2].text).toBe("I");
-        expect(options[2].value).toBe("I");
-        expect(options[3].text).toBe("R");
-        expect(options[3].value).toBe("R");
+        expect(options[1].text).toBe("I");
+        expect(options[1].value).toBe("I");
+        expect(options[2].text).toBe("R");
+        expect(options[2].value).toBe("R");
     };
 
     const checkCannotLink = (wrapper: VueWrapper<any>, expectedMessage: string) => {
