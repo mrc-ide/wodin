@@ -23,7 +23,7 @@ remove_containers
 
 ## main app
 docker pull $TAG_SHA
-docker run --rm -d --name wodin --network=host $TAG_SHA
+docker run --rm -d --name wodin --network=host $TAG_SHA /wodin/config
 
 ## run the tests
 docker run --rm --name wodin-playwright --network=host \

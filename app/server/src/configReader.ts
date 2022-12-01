@@ -4,8 +4,11 @@ import * as path from "path";
 export class ConfigReader {
     rootDir: string;
 
-    constructor(rootDir: string) {
+    overrides: Object;
+
+    constructor(rootDir: string, overrides: Object = {}) {
         this.rootDir = rootDir;
+        this.overrides = overrides;
     }
 
     readConfigFile(...filePath: string[]): Object | null {
@@ -13,7 +16,7 @@ export class ConfigReader {
         const filename = path.join(...fullPath);
         if (fs.existsSync(filename)) {
             const configText = fs.readFileSync(filename, { encoding: "utf-8" });
-            return JSON.parse(configText);
+            return { ...JSON.parse(configText), ...this.overrides };
         }
         return null;
     }

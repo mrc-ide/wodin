@@ -33,7 +33,7 @@ To build front end changes only for a given app type run, `./scripts/build-front
 
 WODIN is deployable via an npm package: https://www.npmjs.com/package/wodin
 
-To run an instance of WODIN with custom configuration, install the package and use `npx wodin --config=/path/to/config`
+To run an instance of WODIN with custom configuration, install the package and use `npx wodin /path/to/config`
 
 The path provided in the `config` argument should be an absolute path to a root config folder containing the following: 
 
