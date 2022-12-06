@@ -16,6 +16,9 @@
         <vertical-collapse title="Graph Settings" collapse-id="graph-settings">
           <graph-settings></graph-settings>
         </vertical-collapse>
+        <vertical-collapse title="Saved Parameter Sets">
+          <parameter-sets></parameter-sets>
+        </vertical-collapse>
     </div>
 </template>
 
@@ -30,10 +33,12 @@ import SensitivityOptions from "./SensitivityOptions.vue";
 import OptimisationOptions from "./OptimisationOptions.vue";
 import { AppType, VisualisationTab } from "../../store/appState/state";
 import GraphSettings from "./GraphSettings.vue";
+import ParameterSets from "./ParameterSets.vue";
 
 export default {
     name: "OptionsTab",
     components: {
+      ParameterSets,
         LinkData,
         OptimisationOptions,
         ParameterValues,
