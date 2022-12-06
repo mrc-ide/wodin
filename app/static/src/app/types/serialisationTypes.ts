@@ -24,7 +24,9 @@ export interface SerialisedModelState {
     odinModelResponse: OdinModelResponse | null,
     hasOdin: boolean,
     odinModelCodeError: WodinError | null,
-    paletteModel: Palette | null
+    paletteModel: Palette | null,
+    selectedVariables: string[],
+    unselectedVariables: string[]
 }
 
 export interface SerialisedRunState {

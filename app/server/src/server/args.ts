@@ -1,14 +1,38 @@
-const yargs = require("yargs/yargs");
-const path = require("path");
-const { hideBin } = require("yargs/helpers");
+const doc = `
+Usage:
+  server [options] <path>
 
-const { argv } = yargs(hideBin(process.argv));
-const configPathGiven = argv.config;
-if (!configPathGiven) {
-    throw new Error("Please provide a 'config' argument specifying path to the config folder");
-}
-const configPath = path.resolve(configPathGiven);
+Options:
+  --base-url=URL   Base url for app
+  --odin-api=URL   Url to find odin api
+  --redis-url=URL  Url to find Redis
+  --port=PORT      Port to serve on
+`;
 
-console.log(`Config path: ${configPathGiven} (${configPath})`);
+const { docopt } = require("docopt");
+const { version } = require("../version");
 
-module.exports = { configPath };
+type Perhaps<T> = T | null;
+
+const parseArgInteger = (arg: string | null, name: string): Perhaps<number> => {
+    if (arg === null) {
+        return null;
+    }
+    if (!arg.match(/^[0-9]+$/)) {
+        throw Error(`Expected an integer for ${name}`);
+    }
+    return parseInt(arg, 10);
+};
+
+export const processArgs = (argv: string[] = process.argv) => {
+    const opts = docopt(doc, { argv: argv.slice(2), version, exit: false });
+    const path = opts["<path>"] as string;
+    const given = {
+        baseUrl: opts["--base-url"] as Perhaps<string>,
+        odinApi: opts["--odin-api"] as Perhaps<string>,
+        redisUrl: opts["--redis-url"] as Perhaps<string>,
+        port: parseArgInteger(opts["--port"], "port")
+    };
+    const overrides = Object.fromEntries(Object.entries(given).filter((o) => o[1] !== null));
+    return { path, overrides };
+};

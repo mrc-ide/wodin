@@ -7,12 +7,18 @@ import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState, mockModelState } from "../../../mocks";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 import { ModelState } from "../../../../src/app/store/model/state";
+import VerticalCollapse from "../../../../src/app/components/VerticalCollapse.vue";
 
 describe("CodeTab", () => {
     const defaultModelState = {
+        compileRequired: false,
         odinModelResponse: {
+            metadata: {
+                variables: ["S", "I", "R"]
+            },
             valid: true
         } as any
+
     };
 
     beforeEach(() => {
@@ -51,6 +57,7 @@ describe("CodeTab", () => {
         const statusIcon = wrapper.find("#code-status").findComponent(VueFeather);
         expect(statusIcon.attributes("type")).toBe("check");
         expect(statusIcon.classes()).toContain("text-success");
+        expect(wrapper.findComponent(VerticalCollapse).props("collapseId")).toBe("select-variables");
     });
 
     it("shows code invalid message and disabled compile button when odin response has valid false", () => {
@@ -77,5 +84,26 @@ describe("CodeTab", () => {
         const wrapper = getWrapper({ odinModelCodeError: odinModelResponseError });
         expect(wrapper.findComponent(ErrorInfo).exists()).toBe(true);
         expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(odinModelResponseError);
+    });
+
+    it("does not render selected variables when no variables in model", () => {
+        const wrapper = getWrapper({
+            ...defaultModelState,
+            odinModelResponse: {
+                metadata: {
+                    variables: []
+                },
+                valid: true
+            } as any
+        });
+        expect(wrapper.findComponent(VerticalCollapse).exists()).toBe(false);
+    });
+
+    it("does not render selected variables when compile required", () => {
+        const wrapper = getWrapper({
+            ...defaultModelState,
+            compileRequired: true
+        });
+        expect(wrapper.findComponent(VerticalCollapse).exists()).toBe(false);
     });
 });

@@ -54,7 +54,9 @@ describe("Fit Data actions", () => {
                     metadata: {
                         variables: ["X", "Y"]
                     }
-                }
+                },
+                selectedVariables: ["X", "Y"],
+                unslectedVariables: []
             }
         };
         const mockData = [
@@ -224,11 +226,9 @@ describe("Fit Data actions", () => {
         const rootState = {
             model: {
                 odinModelResponse: {
-                    valid: true,
-                    metadata: {
-                        variables: ["B", "C", "D"]
-                    }
-                }
+                    valid: true
+                },
+                selectedVariables: ["B", "C", "D"]
             }
         };
 
@@ -300,7 +300,9 @@ describe("Fit Data actions", () => {
                     metadata: {
                         variables: ["A", "B", "C"]
                     }
-                }
+                },
+                selectedVariables: ["A", "B", "C"],
+                unselectedVariables: []
             }
         };
 

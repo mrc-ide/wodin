@@ -66,7 +66,7 @@ export default defineComponent({
             }
             const palette = store.state.model.paletteModel;
             return [
-                ...odinToPlotly(filterSeriesSet(result, link.value.model), palette),
+                ...odinToPlotly(filterSeriesSet(result, [link.value.model]), palette),
                 ...fitDataToPlotly(data, link.value, palette, start, end)
             ];
         };

@@ -1,11 +1,11 @@
 {
   "name": "wodin",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Create web interfaces for odin",
   "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
-    "serve": "node dist/server/server.js --config=../../config",
+    "serve": "node dist/server/server.js ../../config",
     "test": "jest -c jest.config.js",
     "integration-test": "jest -c jest.config.integration.js",
     "lint": "eslint src tests --ext .ts,.js",
@@ -14,15 +14,16 @@
   },
   "bin": "./dist/server.js",
   "dependencies": {
+    "@types/docopt": "^0.6.33",
     "axios": "^0.27.2",
     "body-parser": "^1.20.0",
     "compression": "^1.7.4",
+    "docopt": "^0.6.2",
     "express": "^4.17.2",
     "hbs": "^4.2.0",
     "ioredis": "^5.2.2",
     "morgan": "^1.10.0",
     "uid": "^2.0.0",
-    "yargs": "^17.4.0",
     "zoo-ids": "^2.0.0"
   },
   "devDependencies": {

@@ -10,7 +10,7 @@
                     @change="updateLinkedVariable(dataColumn, $event)"
                     :value="linkedVariables[dataColumn] || ''">
               <option value="">-- no link --</option>
-              <option v-for="modelVar in modelVariables" :value="modelVar" :key="modelVar">{{modelVar}}</option>
+              <option v-for="modelVar in selectedVariables" :value="modelVar" :key="modelVar">{{modelVar}}</option>
             </select>
         </div>
       </div>
@@ -37,7 +37,7 @@ export default defineComponent({
         const store = useStore();
         const dataColumns = computed(() => store.getters[`${namespace}/${FitDataGetter.nonTimeColumns}`]);
         const modelSuccess = computed(() => store.state.model.odinModelResponse?.valid);
-        const modelVariables = computed(() => store.state.model.odinModelResponse?.metadata.variables);
+        const selectedVariables = computed(() => store.state.model.selectedVariables);
         const linkedVariables = computed(() => store.state.fitData.linkedVariables);
         const linkPrerequisitesMessage = computed(() => {
             const messages = [];
@@ -64,7 +64,7 @@ export default defineComponent({
         return {
             dataColumns,
             modelSuccess,
-            modelVariables,
+            selectedVariables,
             linkedVariables,
             updateLinkedVariable,
             linkPrerequisitesMessage

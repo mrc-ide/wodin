@@ -21,12 +21,11 @@ export const config = {
     responsive: true
 };
 
-export function filterSeriesSet(s: OdinSeriesSet, name: string): OdinSeriesSet {
-    const idx = s.values.findIndex((el) => el.name === name);
-    const { y } = s.values[idx];
+export function filterSeriesSet(s: OdinSeriesSet, names: string[]): OdinSeriesSet {
+    const values = s.values.filter((v) => names.includes(v.name));
     return {
         x: s.x,
-        values: [{ name, y }]
+        values
     };
 }
 
