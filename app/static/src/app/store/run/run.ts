@@ -17,17 +17,7 @@ export const defaultState: RunState = {
     userDownloadFileName: "",
     downloading: false,
     numberOfReplicates: 5,
-    parameterSets: [// TODO: initialise to empty once we can create these through the UI
-        {
-            name: "Set 1",
-            parameterValues: {
-                beta: 3,
-                I0: 1,
-                N: 1000000,
-                sigma: 2.5
-            }
-        }
-    ],
+    parameterSets: [],
     parameterSetResults: {}
 };
 

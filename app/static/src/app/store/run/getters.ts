@@ -3,9 +3,12 @@ import {Getter, GetterTree} from "vuex";
 import {AppState} from "../appState/state";
 import {Dict} from "../../types/utilTypes";
 import {lineStyleForParameterSetIndex} from "../../plot";
+import {anyTrue} from "../../utils";
 
 export enum RunGetter {
-    lineStylesForParameterSets
+    lineStylesForParameterSets = "lineStylesForParameterSets",
+    runIsRequired = "runIsRequired",
+    runParameterSetsIsRequired = "runParameterSetsIsRequired"
 }
 
 export interface RunGetters {
@@ -19,5 +22,11 @@ export const getters: RunGetters & GetterTree<RunState, AppState> = {
             result[set.name] = lineStyleForParameterSetIndex(idx);
         });
         return result;
+    },
+    [RunGetter.runIsRequired]: (state: RunState): boolean => {
+        return anyTrue(state.runRequired as unknown as Dict<boolean>);
+    },
+    [RunGetter.runParameterSetsIsRequired]: (state: RunState): boolean => {
+        return !!state.parameterSets.length && anyTrue({...state.runRequired, parameterValueChanged: false});
     }
 };

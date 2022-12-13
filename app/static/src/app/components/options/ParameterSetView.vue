@@ -17,7 +17,7 @@ import { useStore } from "vuex";
 import { ParameterSet } from "../../store/run/state";
 
 export default defineComponent({
-    name: "ParameterSet",
+    name: "ParameterSetView",
     props: {
         parameterSet: {
             type: Object as PropType<ParameterSet>,

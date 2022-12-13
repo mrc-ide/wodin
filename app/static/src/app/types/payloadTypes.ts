@@ -12,5 +12,5 @@ export interface InitialisePayload extends SetAppPayload{
 
 export interface SetParameterSetResultPayload {
     name: string,
-    result: OdinRunResultOde | OdinRunResultDiscrete
+    result: OdinRunResultOde
 }
