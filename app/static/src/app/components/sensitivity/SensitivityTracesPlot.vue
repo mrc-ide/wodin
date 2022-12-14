@@ -22,6 +22,7 @@ import {
 import { DiscreteSeriesValues, OdinSolution } from "../../types/responseTypes";
 import { AppType } from "../../store/appState/state";
 import { runPlaceholderMessage } from "../../utils";
+import { RunGetter } from "../../store/run/getters";
 
 export default defineComponent({
     name: "SensitivityTracesPlot",
@@ -35,10 +36,13 @@ export default defineComponent({
         const store = useStore();
 
         const solutions = computed(() => (store.state.sensitivity.result?.batch?.solutions || []));
+        const parameterSetResults = computed(() => store.state.sensitivity.parameterSetResults);
         const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
         const centralSolution = computed(() => {
             return isStochastic.value ? store.state.run.resultDiscrete?.solution : store.state.run.resultOde?.solution;
         });
+
+        const lineStylesForParameterSets = computed(() => store.getters[`run/${RunGetter.lineStylesForParameterSets}`]);
 
         const endTime = computed(() => store.state.run.endTime);
 
@@ -48,9 +52,10 @@ export default defineComponent({
 
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, true));
 
-        const updatePlotTraceNameWithParameterValue = (plotTrace: Partial<PlotData>, param: string, value: number) => {
+        const updatePlotTraceNameWithParameterValue = (plotTrace: Partial<PlotData>, param: string, value: number, parameterSetName = "") => {
+            const setNameText = parameterSetName ? ` ${parameterSetName}` : ";";
             // eslint-disable-next-line no-param-reassign
-            plotTrace.name = `${plotTrace.name} (${param}=${format(".3f")(value)})`;
+            plotTrace.name = `${plotTrace.name} (${param}=${format(".3f")(value)}${setNameText})`;
         };
 
         const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData}`]);
@@ -94,6 +99,36 @@ export default defineComponent({
                         result.push(...odinToPlotly(filtered, palette.value, plotlyOptions));
                     }
                 }
+
+                // TODO: Be more DRY in constructing the data!!
+                // TODO: 'centrals' for parameter sets are in the run module as parameterSetResults?
+                // TODO: What if haven't run sensitivity before adding param set?
+                // Plot sensitivity for parameter sets
+                const parameterSetNames = Object.keys(parameterSetResults.value);
+                parameterSetNames.forEach((name) => {
+                    const setSolutions = parameterSetResults.value[name].batch?.solutions || [];
+                    const dash = lineStylesForParameterSets.value[name];
+                    const plotlyOptions = {
+                        includeLegendGroup: true,
+                        lineWidth: 1,
+                        showLegend: false,
+                        dash
+                    };
+                    setSolutions.forEach((sln: OdinSolution, slnIdx: number) => {
+                        const data = sln(time);
+
+                        if (data) {
+                            const filtered = filterSeriesSet(data, selectedVariables.value);
+                            const plotData = odinToPlotly(filtered, palette.value, plotlyOptions);
+                            plotData.forEach((plotTrace) => {
+                                updatePlotTraceNameWithParameterValue(plotTrace, pars.name,
+                                    pars.values[slnIdx], name);
+                            });
+
+                            result.push(...plotData);
+                        }
+                    });
+                });
 
                 if (allFitData.value) {
                     result.push(...allFitDataToPlotly(allFitData.value, palette.value, start, end));

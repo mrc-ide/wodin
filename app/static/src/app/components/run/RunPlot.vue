@@ -73,7 +73,7 @@ export default defineComponent({
             ];
 
             // 2. Parameter sets
-            const lineStylesForParameterSets = store.getters[`run/${RunGetter.lineStylesForParameterSets}`];
+            const lineStylesForParameterSets = computed(() => store.getters[`run/${RunGetter.lineStylesForParameterSets}`]);
 
             const updatePlotTraceNameWithParameterSetName = (plotTrace: Partial<PlotData>, setName: string) => {
                 // eslint-disable-next-line no-param-reassign
@@ -84,7 +84,7 @@ export default defineComponent({
                 const paramSetSln = parameterSetSolutions.value[name];
                 const paramSetResult = paramSetSln!(options as any);
 
-                const dash = lineStylesForParameterSets[name];
+                const dash = lineStylesForParameterSets.value[name];
                 if (paramSetResult) {
                     const filteredSetData = filterSeriesSet(paramSetResult, selectedVariables.value);
                     const plotData = odinToPlotly(filteredSetData, palette.value, { dash, showLegend: false });

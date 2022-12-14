@@ -152,7 +152,8 @@ export const actions: ActionTree<RunState, AppState> = {
         if (state.resultOde && !getters[RunGetter.runIsRequired]) {
             const result = state.resultOde;
             commit(RunMutation.SetParameterSetResult, {name, result});
-            commit(SensitivityMutation.ParameterSetAdded, name);
+
+            commit(`sensitivity/${SensitivityMutation.ParameterSetAdded}`, name, {root: true});
         }
     }
 };
