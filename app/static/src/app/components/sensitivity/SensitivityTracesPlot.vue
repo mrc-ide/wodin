@@ -41,6 +41,7 @@ export default defineComponent({
         const centralSolution = computed(() => {
             return isStochastic.value ? store.state.run.resultDiscrete?.solution : store.state.run.resultOde?.solution;
         });
+        const parameterSetCentralResults = computed(() => store.state.run.parameterSetResults);
 
         const lineStylesForParameterSets = computed(() => store.getters[`run/${RunGetter.lineStylesForParameterSets}`]);
 
@@ -52,10 +53,16 @@ export default defineComponent({
 
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, true));
 
-        const updatePlotTraceNameWithParameterValue = (plotTrace: Partial<PlotData>, param: string, value: number, parameterSetName = "") => {
-            const setNameText = parameterSetName ? ` ${parameterSetName}` : ";";
+        const updatePlotTraceName = (plotTrace: Partial<PlotData>, param: string | null, value: number | null, parameterSetName = "") => {
+            const parenthesisItems = [];
+            if (param && value) {
+                parenthesisItems.push(`${param}=${format(".3f")(value)}`);
+            }
+            if (parameterSetName) {
+                parenthesisItems.push(parameterSetName);
+            }
             // eslint-disable-next-line no-param-reassign
-            plotTrace.name = `${plotTrace.name} (${param}=${format(".3f")(value)}${setNameText})`;
+            plotTrace.name = `${plotTrace.name} (${parenthesisItems.join(" ")})`;
         };
 
         const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData}`]);
@@ -78,7 +85,7 @@ export default defineComponent({
                         const filtered = filterSeriesSet(data, selectedVariables.value);
                         const plotData = odinToPlotly(filtered, palette.value, plotlyOptions);
                         plotData.forEach((plotTrace) => {
-                            updatePlotTraceNameWithParameterValue(plotTrace, pars.name,
+                            updatePlotTraceName(plotTrace, pars.name,
                                 pars.values[slnIdx]);
                         });
 
@@ -101,7 +108,6 @@ export default defineComponent({
                 }
 
                 // TODO: Be more DRY in constructing the data!!
-                // TODO: 'centrals' for parameter sets are in the run module as parameterSetResults?
                 // TODO: What if haven't run sensitivity before adding param set?
                 // Plot sensitivity for parameter sets
                 const parameterSetNames = Object.keys(parameterSetResults.value);
@@ -121,13 +127,27 @@ export default defineComponent({
                             const filtered = filterSeriesSet(data, selectedVariables.value);
                             const plotData = odinToPlotly(filtered, palette.value, plotlyOptions);
                             plotData.forEach((plotTrace) => {
-                                updatePlotTraceNameWithParameterValue(plotTrace, pars.name,
+                                updatePlotTraceName(plotTrace, pars.name,
                                     pars.values[slnIdx], name);
                             });
 
                             result.push(...plotData);
                         }
                     });
+
+                    // Also plot the centrals
+                    const setCentralSolution = parameterSetCentralResults.value[name]?.solution;
+                    if (setCentralSolution) {
+                        const setCentralData = setCentralSolution(time);
+                        if (setCentralData) {
+                            const filtered = filterSeriesSet(setCentralData, selectedVariables.value);
+                            const plotData = odinToPlotly(filtered, palette.value, { showLegend: false, dash });
+                            plotData.forEach((plotTrace) => {
+                                updatePlotTraceName(plotTrace, null, null, name);
+                            });
+                            result.push(...plotData);
+                        }
+                    }
                 });
 
                 if (allFitData.value) {
