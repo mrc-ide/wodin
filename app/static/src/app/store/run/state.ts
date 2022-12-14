@@ -29,5 +29,5 @@ export interface RunState {
     downloading: boolean;
     numberOfReplicates: number;
     parameterSets: ParameterSet[];
-    parameterSetResults: Dict<OdinRunResultOde | OdinRunResultDiscrete>;
+    parameterSetResults: Dict<OdinRunResultOde>;
 }

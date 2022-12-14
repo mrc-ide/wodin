@@ -12,6 +12,8 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
+import { PlotData } from "plotly.js-basic-dist-min";
+import { format } from "d3-format";
 import { FitDataGetter } from "../../store/fitData/getters";
 import {
     odinToPlotly, allFitDataToPlotly, WodinPlotData, filterSeriesSet
@@ -64,12 +66,20 @@ export default defineComponent({
                 return [];
             }
 
+            // 1. Current parameter values
             const allData = [
                 ...odinToPlotly(filterSeriesSet(result, selectedVariables.value), palette.value),
                 ...allFitDataToPlotly(allFitData.value, palette.value, start, end)
             ];
 
+            // 2. Parameter sets
             const lineStylesForParameterSets = store.getters[`run/${RunGetter.lineStylesForParameterSets}`];
+
+            const updatePlotTraceNameWithParameterSetName = (plotTrace: Partial<PlotData>, setName: string) => {
+                // eslint-disable-next-line no-param-reassign
+                plotTrace.name = `${plotTrace.name} (${setName})`;
+            };
+
             Object.keys(parameterSetSolutions.value).forEach((name) => {
                 const paramSetSln = parameterSetSolutions.value[name];
                 const paramSetResult = paramSetSln!(options as any);
@@ -77,7 +87,11 @@ export default defineComponent({
                 const dash = lineStylesForParameterSets[name];
                 if (paramSetResult) {
                     const filteredSetData = filterSeriesSet(paramSetResult, selectedVariables.value);
-                    allData.push(...odinToPlotly(filteredSetData, palette.value, { dash, showLegend: false }));
+                    const plotData = odinToPlotly(filteredSetData, palette.value, { dash, showLegend: false });
+                    plotData.forEach((plotTrace) => {
+                        updatePlotTraceNameWithParameterSetName(plotTrace, name);
+                    });
+                    allData.push(...plotData);
                 }
             });
             return allData;

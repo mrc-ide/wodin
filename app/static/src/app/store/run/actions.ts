@@ -8,6 +8,7 @@ import { Odin, OdinRunnerOde, OdinUserType } from "../../types/responseTypes";
 import { WodinExcelDownload } from "../../wodinExcelDownload";
 import { ModelFitAction } from "../modelFit/actions";
 import {RunGetter} from "./getters";
+import {SensitivityMutation} from "../sensitivity/mutations";
 
 export enum RunAction {
     RunModel = "RunModel",
@@ -151,6 +152,7 @@ export const actions: ActionTree<RunState, AppState> = {
         if (state.resultOde && !getters[RunGetter.runIsRequired]) {
             const result = state.resultOde;
             commit(RunMutation.SetParameterSetResult, {name, result});
+            commit(SensitivityMutation.ParameterSetAdded, name);
         }
     }
 };
