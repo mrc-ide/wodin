@@ -17,9 +17,11 @@ import { format } from "d3-format";
 import { FitDataGetter } from "../../store/fitData/getters";
 import WodinPlot from "../WodinPlot.vue";
 import {
-    allFitDataToPlotly, filterSeriesSet, odinToPlotly, WodinPlotData
+    allFitDataToPlotly, filterSeriesSet, odinToPlotly, PlotlyOptions, WodinPlotData
 } from "../../plot";
-import { DiscreteSeriesValues, OdinSolution } from "../../types/responseTypes";
+import {
+    DiscreteSeriesValues, Odin, OdinSeriesSet, OdinSolution
+} from "../../types/responseTypes";
 import { AppType } from "../../store/appState/state";
 import { runPlaceholderMessage } from "../../utils";
 import { RunGetter } from "../../store/run/getters";
@@ -74,41 +76,53 @@ export default defineComponent({
                 const time = {
                     mode: "grid" as const, tStart: start, tEnd: end, nPoints: points
                 };
+
+                const addSolutionOutputToResult = (
+                    solution: OdinSolution,
+                    options: Partial<PlotlyOptions>,
+                    updatePlotTrace?: (plotTrace: Partial<PlotData>) => void,
+                    filterOutput?: (output: OdinSeriesSet) => void
+                ) => {
+                    const data = solution(time);
+                    if (data) {
+                        if (filterOutput) {
+                            filterOutput(data);
+                        }
+                        // Always filter to selected variables
+                        const filtered = filterSeriesSet(data, selectedVariables.value);
+                        const plotData = odinToPlotly(filtered, palette.value, options);
+                        if (updatePlotTrace) {
+                            plotData.forEach((plotTrace) => {
+                                updatePlotTrace(plotTrace);
+                            });
+                        }
+
+                        result.push(...plotData);
+                    }
+                };
+
                 solutions.value.forEach((sln: OdinSolution, slnIdx: number) => {
-                    const data = sln(time);
                     const plotlyOptions = {
                         includeLegendGroup: true,
                         lineWidth: 1,
                         showLegend: false
                     };
-                    if (data) {
-                        const filtered = filterSeriesSet(data, selectedVariables.value);
-                        const plotData = odinToPlotly(filtered, palette.value, plotlyOptions);
-                        plotData.forEach((plotTrace) => {
-                            updatePlotTraceName(plotTrace, pars.name,
-                                pars.values[slnIdx]);
-                        });
-
-                        result.push(...plotData);
-                    }
+                    addSolutionOutputToResult(sln, plotlyOptions,
+                        (plotTrace) => updatePlotTraceName(plotTrace, pars.name, pars.values[slnIdx]));
                 });
 
                 if (centralSolution.value) {
-                    const centralData = centralSolution.value(time);
-                    if (centralData) {
-                        if (isStochastic.value) {
-                            // Only show summary and deterministic values as central for stochastic
-                            centralData.values = centralData.values
-                                .filter((v: DiscreteSeriesValues) => v.description !== "Individual");
-                        }
-                        const plotlyOptions = { includeLegendGroup: true };
-                        const filtered = filterSeriesSet(centralData, selectedVariables.value);
-                        result.push(...odinToPlotly(filtered, palette.value, plotlyOptions));
-                    }
+                    const plotlyOptions = { includeLegendGroup: true };
+                    const filterStochasticCentralOutput = (centralOutput: OdinSeriesSet) => {
+                        // Only show summary and deterministic values as central for stochastic
+                        // eslint-disable-next-line no-param-reassign
+                        centralOutput.values = centralOutput.values
+                            .filter((v: DiscreteSeriesValues) => v.description !== "Individual");
+                    };
+                    addSolutionOutputToResult(centralSolution.value, plotlyOptions, undefined,
+                        isStochastic.value ? filterStochasticCentralOutput : undefined);
                 }
 
-                // TODO: Be more DRY in constructing the data!!
-                // TODO: What if haven't run sensitivity before adding param set?
                 // Plot sensitivity for parameter sets
                 const parameterSetNames = Object.keys(parameterSetResults.value);
                 parameterSetNames.forEach((name) => {
@@ -121,32 +135,15 @@ export default defineComponent({
                         dash
                     };
                     setSolutions.forEach((sln: OdinSolution, slnIdx: number) => {
-                        const data = sln(time);
-
-                        if (data) {
-                            const filtered = filterSeriesSet(data, selectedVariables.value);
-                            const plotData = odinToPlotly(filtered, palette.value, plotlyOptions);
-                            plotData.forEach((plotTrace) => {
-                                updatePlotTraceName(plotTrace, pars.name,
-                                    pars.values[slnIdx], name);
-                            });
-
-                            result.push(...plotData);
-                        }
+                        addSolutionOutputToResult(sln, plotlyOptions,
+                            (plotTrace) => updatePlotTraceName(plotTrace, pars.name, pars.values[slnIdx], name));
                     });
 
                     // Also plot the centrals
                     const setCentralSolution = parameterSetCentralResults.value[name]?.solution;
                     if (setCentralSolution) {
-                        const setCentralData = setCentralSolution(time);
-                        if (setCentralData) {
-                            const filtered = filterSeriesSet(setCentralData, selectedVariables.value);
-                            const plotData = odinToPlotly(filtered, palette.value, { showLegend: false, dash });
-                            plotData.forEach((plotTrace) => {
-                                updatePlotTraceName(plotTrace, null, null, name);
-                            });
-                            result.push(...plotData);
-                        }
+                        addSolutionOutputToResult(setCentralSolution, { showLegend: false, dash },
+                            (plotTrace) => updatePlotTraceName(plotTrace, null, null, name));
                     }
                 });
 
