@@ -8,7 +8,7 @@ export interface WodinConfig {
     port: number,
     baseUrl: string,
     odinAPI: string,
-    redisURL: string,
+    redisUrl: string,
     appsPath: string
 }
 
