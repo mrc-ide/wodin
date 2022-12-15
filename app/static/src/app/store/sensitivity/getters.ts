@@ -34,6 +34,12 @@ export const getters: SensitivityGetters & GetterTree<SensitivityState, AppState
     },
 
     [SensitivityGetter.parameterSetSensitivityUpdateRequired]: (state: SensitivityState, _: SensitivityGetters, rootState: AppState) => {
-        return !!rootState.run.parameterSets.length && anyTrue({ ...state.sensitivityUpdateRequired, parameterValueChanged: false });
+        if (!rootState.run.parameterSets.length) {
+            return false;
+        }
+        // We need to run for param sets if we are missing results for any param sets, as well as if there is
+        // an update required for any reason except parameterValueChanged (e.g. endTime has changed)
+        const missingResults = rootState.run.parameterSets.some((ps: ParameterSet) => !state.parameterSetResults[ps.name]);
+        return missingResults || anyTrue({ ...state.sensitivityUpdateRequired, parameterValueChanged: false });
     }
 };

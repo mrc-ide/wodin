@@ -81,7 +81,7 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
         }
         commit(SensitivityMutation.SetResult, payload);
 
-        if (getters.runParameterSetsIsRequired && !isStochastic) {
+        if (getters.parameterSetSensitivityUpdateRequired && !isStochastic) {
             const parameterSetBatchPars = getters[SensitivityGetter.parameterSetBatchPars];
             const parameterSetNames = Object.keys(parameterSetBatchPars);
             const parameterSetResults = {} as Dict<OdinSensitivityResult>;
