@@ -29,8 +29,9 @@ export default defineComponent({
         const paramNames = computed(() => Object.keys(props.parameterSet.parameterValues));
         const currentParams = computed(() => store.state.run.parameterValues);
         const getStyle = (name: string) => {
-            const isSameValueAsCurrent = props.parameterSet.parameterValues[name] === currentParams.value[name];
-            const color = isSameValueAsCurrent ? "#bbb" : "#479fb6";
+            const diffFromCurrent = props.parameterSet.parameterValues[name] - currentParams.value[name];
+            // Show values > current in green, < current in red, == current in grey
+            const color = diffFromCurrent === 0 ? "#bbb" : diffFromCurrent > 0 ? "#28a745" : "#dc3545";
             return {
                 color,
                 border: `1px solid ${color}`
