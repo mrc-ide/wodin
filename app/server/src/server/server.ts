@@ -43,8 +43,8 @@ const defaultCodeReader = new AppFileReader(`${pathResolved}/defaultCode`, "R");
 const appHelpReader = new AppFileReader(`${pathResolved}/help`, "md");
 
 const redis = redisConnection(
-    wodinConfig.redisURL,
-    () => { throw Error(`Failed to connect to redis server ${wodinConfig.redisURL}`); }
+    wodinConfig.redisUrl,
+    () => { throw Error(`Failed to connect to redis server ${wodinConfig.redisUrl}`); }
 );
 
 // Make app locals available to controllers
