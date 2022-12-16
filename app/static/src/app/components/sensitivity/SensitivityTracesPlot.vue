@@ -142,7 +142,7 @@ export default defineComponent({
                     // Also plot the centrals
                     const setCentralSolution = parameterSetCentralResults.value[name]?.solution;
                     if (setCentralSolution) {
-                        addSolutionOutputToResult(setCentralSolution, { showLegend: false, dash },
+                        addSolutionOutputToResult(setCentralSolution, { showLegend: false, includeLegendGroup: true, dash },
                             (plotTrace) => updatePlotTraceName(plotTrace, null, null, name));
                     }
                 });

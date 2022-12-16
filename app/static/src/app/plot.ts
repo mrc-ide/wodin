@@ -50,25 +50,28 @@ const defaultPlotlyOptions = {
 
 export function odinToPlotly(s: OdinSeriesSet, palette: Palette, options: Partial<PlotlyOptions> = {}): WodinPlotData {
     const plotlyOptions = {
-        ...defaultPlotlyOptions,
         ...options
     };
 
+
     return s.values.map(
-        (el): Partial<PlotData> => ({
-            mode: "lines",
-            line: {
-                color: palette[el.name],
-                width: plotlyOptions.lineWidth,
-                dash: plotlyOptions.dash
-            },
-            name: el.name,
-            x: s.x,
-            y: el.y,
-            hoverlabel: { namelength: -1 },
-            legendgroup: plotlyOptions.includeLegendGroup ? el.name : undefined,
-            showlegend: plotlyOptions.showLegend
-        })
+        (el): Partial<PlotData> => {
+            console.log("Legend group: " + (plotlyOptions.includeLegendGroup ? el.name : undefined));
+            return {
+                mode: "lines",
+                line: {
+                    color: palette[el.name],
+                    width: plotlyOptions.lineWidth,
+                    dash: plotlyOptions.dash
+                },
+                name: el.name,
+                x: s.x,
+                y: el.y,
+                hoverlabel: {namelength: -1},
+                legendgroup: plotlyOptions.includeLegendGroup ? el.name : undefined,
+                showlegend: plotlyOptions.showLegend
+            };
+        }
     );
 }
 

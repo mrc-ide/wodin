@@ -68,7 +68,7 @@ export default defineComponent({
 
             // 1. Current parameter values
             const allData = [
-                ...odinToPlotly(filterSeriesSet(result, selectedVariables.value), palette.value),
+                ...odinToPlotly(filterSeriesSet(result, selectedVariables.value), palette.value, {showLegend: true, includeLegendGroup: true}),
                 ...allFitDataToPlotly(allFitData.value, palette.value, start, end)
             ];
 
@@ -87,7 +87,7 @@ export default defineComponent({
                 const dash = lineStylesForParameterSets.value[name];
                 if (paramSetResult) {
                     const filteredSetData = filterSeriesSet(paramSetResult, selectedVariables.value);
-                    const plotData = odinToPlotly(filteredSetData, palette.value, { dash, showLegend: false });
+                    const plotData = odinToPlotly(filteredSetData, palette.value, { dash, showLegend: false, includeLegendGroup: true });
                     plotData.forEach((plotTrace) => {
                         updatePlotTraceNameWithParameterSetName(plotTrace, name);
                     });
