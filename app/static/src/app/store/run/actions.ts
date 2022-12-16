@@ -39,8 +39,6 @@ const runOdeModel = (parameterValues: OdinUserType, startTime: number, endTime: 
 
 const runOde = (parameterValues: OdinUserType, parameterSets: ParameterSet[], startTime: number, endTime: number,
     rootState: AppState, commit: Commit, runParameterSets: boolean) => {
-    // TODO: This isn't very efficient as it's re-running the model for all parameter sets every time - shouldn't need to do this
-    // e.g. if just changed a current parameter value, shouldn't need to re-run for saved parameter sets...
     if (rootState.model.odinRunnerOde) {
         const runner = rootState.model.odinRunnerOde;
         const odin = rootState.model.odin!;

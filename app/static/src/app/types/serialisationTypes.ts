@@ -1,5 +1,5 @@
 import { OdinModelResponse, OdinUserType, WodinError } from "./responseTypes";
-import { RunUpdateRequiredReasons } from "../store/run/state";
+import {ParameterSet, RunUpdateRequiredReasons} from "../store/run/state";
 import { OdinFitInputs, OdinRunInputs, OdinSensitivityInputs } from "./wrapperTypes";
 import {
     SensitivityParameterSettings,
@@ -12,6 +12,7 @@ import { CodeState } from "../store/code/state";
 import { FitDataState } from "../store/fitData/state";
 import { Palette } from "../palette";
 import { GraphSettingsState } from "../store/graphSettings/state";
+import {Dict} from "./utilTypes";
 
 export interface SerialisedRunResult {
     inputs: OdinRunInputs | OdinFitInputs,
@@ -34,8 +35,16 @@ export interface SerialisedRunState {
     parameterValues: OdinUserType | null,
     endTime: number,
     numberOfReplicates: number,
+    parameterSets: ParameterSet[],
     resultOde: SerialisedRunResult | null,
-    resultDiscrete: SerialisedRunResult | null
+    resultDiscrete: SerialisedRunResult | null,
+    parameterSetResults: Dict<SerialisedRunResult | null>
+}
+
+export interface SerialisedSensitivityResult {
+    inputs: OdinSensitivityInputs,
+    hasResult: boolean,
+    error: WodinError | null
 }
 
 export interface SerialisedSensitivityState {
@@ -43,11 +52,8 @@ export interface SerialisedSensitivityState {
     paramSettings: SensitivityParameterSettings,
     sensitivityUpdateRequired: SensitivityUpdateRequiredReasons,
     plotSettings: SensitivityPlotSettings,
-    result: null | {
-        inputs: OdinSensitivityInputs,
-        hasResult: boolean,
-        error: WodinError | null
-    }
+    result: null | SerialisedSensitivityResult,
+    parameterSetResults: Dict<SerialisedSensitivityResult>
 }
 
 export interface SerialisedModelFitState {
