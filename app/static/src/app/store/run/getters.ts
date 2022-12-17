@@ -32,7 +32,7 @@ export const getters: RunGetters & GetterTree<RunState, AppState> = {
         }
         // We need to run for param sets if we are missing results for any param sets, as well as if there is
         // an update required for any reason except parameterValueChanged (e.g. endTime has changed)
-        const missingSetResults = state.parameterSets.some((ps: ParameterSet) => !state.parameterSetResults[ps.name]);
+        const missingSetResults = state.parameterSets.some((ps: ParameterSet) => !state.parameterSetResults[ps.name]?.solution);
         return missingSetResults || anyTrue({...state.runRequired, parameterValueChanged: false});
     }
 };
