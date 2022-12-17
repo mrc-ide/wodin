@@ -16,7 +16,7 @@
         <vertical-collapse title="Graph Settings" collapse-id="graph-settings">
           <graph-settings></graph-settings>
         </vertical-collapse>
-        <vertical-collapse v-if="!isStochastic" title="Saved Parameter Sets">
+        <vertical-collapse v-if="!isStochastic" title="Saved Parameter Sets" collapse-id="parameter-sets">
           <parameter-sets></parameter-sets>
         </vertical-collapse>
     </div>

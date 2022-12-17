@@ -3,8 +3,8 @@
   <div class="card">
     <div class="card-header">{{parameterSet.name}}</div>
     <div class="card-body">
-       <span v-for="paramName in paramNames" class="badge badge-light me-2 mb-2 parameter" :style="getStyle(paramName)">
-        {{paramName}}: <span style="font-weight:lighter;">{{parameterSet.parameterValues[paramName]}}</span>
+       <span v-for="(value, name) in parameterSet.parameterValues" class="badge badge-light me-2 mb-2 parameter" :style="getStyle(name)">
+        {{name}}: <span style="font-weight:lighter;">{{value}}</span>
        </span>
     </div>
   </div>
@@ -26,7 +26,6 @@ export default defineComponent({
     },
     setup(props) {
         const store = useStore();
-        const paramNames = computed(() => Object.keys(props.parameterSet.parameterValues));
         const currentParams = computed(() => store.state.run.parameterValues);
         const getStyle = (name: string) => {
             const diffFromCurrent = props.parameterSet.parameterValues[name] - currentParams.value[name];
@@ -39,7 +38,6 @@ export default defineComponent({
         };
 
         return {
-            paramNames,
             getStyle
         };
     }

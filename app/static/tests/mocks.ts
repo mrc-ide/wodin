@@ -80,6 +80,8 @@ export const mockRunState = (state: Partial<RunState> = {}): RunState => {
         userDownloadFileName: "",
         downloading: false,
         numberOfReplicates: 5,
+        parameterSets: [],
+        parameterSetResults: {},
         ...state
     };
 };
@@ -143,6 +145,7 @@ export const mockSensitivityState = (state: Partial<SensitivityState> = {}): Sen
             numberOfReplicatesChanged: false
         },
         result: null,
+        parameterSetResults: {},
         ...state
     };
 };
