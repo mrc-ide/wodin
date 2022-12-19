@@ -13,13 +13,11 @@
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import { PlotData } from "plotly.js-basic-dist-min";
-import { format } from "d3-format";
 import { FitDataGetter } from "../../store/fitData/getters";
 import {
     odinToPlotly, allFitDataToPlotly, WodinPlotData, filterSeriesSet
 } from "../../plot";
 import WodinPlot from "../WodinPlot.vue";
-import { OdinRunResultOde } from "../../types/wrapperTypes";
 import { RunGetter } from "../../store/run/getters";
 import { OdinSolution } from "../../types/responseTypes";
 import { Dict } from "../../types/utilTypes";
