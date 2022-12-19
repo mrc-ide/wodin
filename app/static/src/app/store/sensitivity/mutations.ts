@@ -77,7 +77,7 @@ export const mutations: MutationTree<SensitivityState> = {
     },
 
     [SensitivityMutation.ParameterSetAdded](state: SensitivityState, payload: string) {
-        // clone the current result, if any
+        // save the current result, if any, to parameterSetResults
         if (state.result) {
             state.parameterSetResults[payload] = state.result;
         }
