@@ -1,5 +1,5 @@
 import { ActionContext, ActionTree, Commit } from "vuex";
-import {ParameterSet, RunState} from "./state";
+import { ParameterSet, RunState } from "./state";
 import { RunMutation } from "./mutations";
 import { AppState, AppType } from "../appState/state";
 import userMessages from "../../userMessages";
@@ -7,8 +7,8 @@ import type { OdinRunDiscreteInputs, OdinRunResultDiscrete, OdinRunResultOde } f
 import { Odin, OdinRunnerOde, OdinUserType } from "../../types/responseTypes";
 import { WodinExcelDownload } from "../../wodinExcelDownload";
 import { ModelFitAction } from "../modelFit/actions";
-import {RunGetter} from "./getters";
-import {SensitivityMutation} from "../sensitivity/mutations";
+import { RunGetter } from "./getters";
+import { SensitivityMutation } from "../sensitivity/mutations";
 
 export enum RunAction {
     RunModel = "RunModel",
@@ -48,7 +48,7 @@ const runOde = (parameterValues: OdinUserType, parameterSets: ParameterSet[], st
         if (runParameterSets) {
             parameterSets.forEach((paramSet) => {
                 const result = runOdeModel(paramSet.parameterValues, startTime, endTime, runner, odin);
-                commit(RunMutation.SetParameterSetResult, {name: paramSet.name, result});
+                commit(RunMutation.SetParameterSetResult, { name: paramSet.name, result });
             });
         }
     }
@@ -102,7 +102,9 @@ export interface DownloadOutputPayload {
 export const actions: ActionTree<RunState, AppState> = {
     [RunAction.RunModel](context) {
         const { dispatch, state, rootState } = context;
-        const { parameterValues, endTime, numberOfReplicates, parameterSets } = state;
+        const {
+            parameterValues, endTime, numberOfReplicates, parameterSets
+        } = state;
         const isFit = rootState.appType === AppType.Fit;
         runModel(parameterValues, parameterSets, endTime, numberOfReplicates, context);
         if (isFit) {
@@ -139,19 +141,21 @@ export const actions: ActionTree<RunState, AppState> = {
 
     [RunAction.NewParameterSet](context) {
         const { state, commit, getters } = context;
-        const name = `Set ${state.parameterSets.length + 1}`; //This will not be reliable when we add set deletion!
-        const parameterSet = {
-            name,
-            parameterValues: {...state.parameterValues}
-        };
-        commit(RunMutation.AddParameterSet, parameterSet);
-
         // Creating new parameter sets when run is required is disallowed in UI, but check here too
-        if (state.resultOde && !getters[RunGetter.runIsRequired]) {
-            const result = state.resultOde;
-            commit(RunMutation.SetParameterSetResult, {name, result});
+        if (!getters[RunGetter.runIsRequired]) {
+            const name = `Set ${state.parameterSets.length + 1}`; // This will not be reliable when we add set deletion!
+            const parameterSet = {
+                name,
+                parameterValues: { ...state.parameterValues }
+            };
+            commit(RunMutation.AddParameterSet, parameterSet);
 
-            commit(`sensitivity/${SensitivityMutation.ParameterSetAdded}`, name, {root: true});
+            const result = state.resultOde;
+            if (result) {
+                commit(RunMutation.SetParameterSetResult, {name, result});
+            }
+
+            commit(`sensitivity/${SensitivityMutation.ParameterSetAdded}`, name, { root: true });
         }
     }
 };

@@ -1,6 +1,6 @@
 import {
     allFitDataToPlotly, discreteSeriesSetToPlotly,
-    fitDataToPlotly,
+    fitDataToPlotly, lineStyleForParameterSetIndex,
     odinToPlotly
 } from "../../src/app/plot";
 
@@ -267,5 +267,16 @@ describe("discreteSeriesSetToPlotly", () => {
                 showlegend: true
             }
         ]);
+    });
+});
+
+describe("lineStyleForParameterSetIndex", () => {
+    it("fetches expected line styles", () => {
+        expect(lineStyleForParameterSetIndex(0)).toBe("dot");
+        expect(lineStyleForParameterSetIndex(1)).toBe("dash");
+        expect(lineStyleForParameterSetIndex(2)).toBe("longdash");
+        expect(lineStyleForParameterSetIndex(3)).toBe("dashdot");
+        expect(lineStyleForParameterSetIndex(4)).toBe("longdashdot");
+        expect(lineStyleForParameterSetIndex(5)).toBe("dot");
     });
 });
