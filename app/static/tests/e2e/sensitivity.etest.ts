@@ -1,6 +1,6 @@
 import { expect, test, Page } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
-import {expectSummaryValues} from "./utils";
+import { expectSummaryValues } from "./utils";
 
 test.describe("Sensitivity tests", () => {
     const { timeout } = PlaywrightConfig;
@@ -160,7 +160,7 @@ test.describe("Sensitivity tests", () => {
         await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 8)")).toBe("35");
     });
 
-    test("can create parameter set and see sensitivity traces", async ({page}) => {
+    test("can create parameter set and see sensitivity traces", async ({ page }) => {
         await page.click("#create-param-set");
         await page.fill(":nth-match(#model-params input, 1)", "5"); // update a parameter value
         await page.click("#run-sens-btn");

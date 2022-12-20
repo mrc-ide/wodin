@@ -7,8 +7,8 @@ import { WodinExcelDownload } from "../../../../src/app/wodinExcelDownload";
 import { actions, RunAction } from "../../../../src/app/store/run/actions";
 import { AppType } from "../../../../src/app/store/appState/state";
 import { ModelFitAction } from "../../../../src/app/store/modelFit/actions";
-import {RunGetter} from "../../../../src/app/store/run/getters";
-import {SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
+import { RunGetter } from "../../../../src/app/store/run/getters";
+import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 
 jest.mock("../../../../src/app/wodinExcelDownload");
 
@@ -29,8 +29,8 @@ describe("Run actions", () => {
 
         const parameterValues = { p1: 1, p2: 2 };
         const parameterSets = [
-            {name: "Set 1", parameterValues: { p1: 3, p2: 4 }},
-            {name: "Set 2", parameterValues: { p1: 5, p2: 6 }}
+            { name: "Set 1", parameterValues: { p1: 3, p2: 4 } },
+            { name: "Set 2", parameterValues: { p1: 5, p2: 6 } }
         ];
         const runner = mockRunnerOde();
         const modelState = mockModelState({
@@ -53,7 +53,9 @@ describe("Run actions", () => {
         } as any;
         const commit = jest.fn();
 
-        (actions[RunAction.RunModel] as any)({ commit, state, rootState, getters });
+        (actions[RunAction.RunModel] as any)({
+            commit, state, rootState, getters
+        });
 
         const run = runner.wodinRun;
         expect(run).toHaveBeenCalledTimes(1);
@@ -76,8 +78,8 @@ describe("Run actions", () => {
 
         const parameterValues = { p1: 1, p2: 2 };
         const parameterSets = [
-            {name: "Set 1", parameterValues: { p1: 3, p2: 4 }},
-            {name: "Set 2", parameterValues: { p1: 5, p2: 6 }}
+            { name: "Set 1", parameterValues: { p1: 3, p2: 4 } },
+            { name: "Set 2", parameterValues: { p1: 5, p2: 6 } }
         ];
         const runner = mockRunnerOde();
         const modelState = mockModelState({
@@ -100,7 +102,9 @@ describe("Run actions", () => {
         } as any;
         const commit = jest.fn();
 
-        (actions[RunAction.RunModel] as any)({ commit, state, rootState, getters });
+        (actions[RunAction.RunModel] as any)({
+            commit, state, rootState, getters
+        });
 
         const run = runner.wodinRun;
         expect(run).toHaveBeenCalledTimes(3);
@@ -130,7 +134,7 @@ describe("Run actions", () => {
         expect(commit.mock.calls[1][1]).toEqual({
             name: "Set 1",
             result: {
-                inputs: {parameterValues: parameterSets[0].parameterValues, endTime: 99},
+                inputs: { parameterValues: parameterSets[0].parameterValues, endTime: 99 },
                 solution: "test solution",
                 error: null
             }
@@ -139,7 +143,7 @@ describe("Run actions", () => {
         expect(commit.mock.calls[2][1]).toEqual({
             name: "Set 2",
             result: {
-                inputs: {parameterValues: parameterSets[1].parameterValues, endTime: 99},
+                inputs: { parameterValues: parameterSets[1].parameterValues, endTime: 99 },
                 solution: "test solution",
                 error: null
             }
@@ -436,45 +440,45 @@ describe("Run actions", () => {
 
     it("NewParameterSet commits parameter set and result", () => {
         const state = mockRunState({
-            parameterValues: {p1: 1, p2: 2},
-            parameterSets: [{name: "Set 1", parameterValues: {p1: 3, p2: 4}}],
-            resultOde: {solution: "fake result"} as any
+            parameterValues: { p1: 1, p2: 2 },
+            parameterSets: [{ name: "Set 1", parameterValues: { p1: 3, p2: 4 } }],
+            resultOde: { solution: "fake result" } as any
         });
         const getters = {
             [RunGetter.runIsRequired]: false
         };
         const commit = jest.fn();
 
-        (actions[RunAction.NewParameterSet] as any)({state, getters, commit});
+        (actions[RunAction.NewParameterSet] as any)({ state, getters, commit });
         expect(commit).toHaveBeenCalledTimes(3);
         expect(commit.mock.calls[0][0]).toBe(RunMutation.AddParameterSet);
-        expect(commit.mock.calls[0][1]).toStrictEqual({name: "Set 2", parameterValues: {p1: 1, p2: 2}});
+        expect(commit.mock.calls[0][1]).toStrictEqual({ name: "Set 2", parameterValues: { p1: 1, p2: 2 } });
         expect(commit.mock.calls[1][0]).toBe(RunMutation.SetParameterSetResult);
-        expect(commit.mock.calls[1][1]).toStrictEqual({name: "Set 2", result: {solution: "fake result"}});
+        expect(commit.mock.calls[1][1]).toStrictEqual({ name: "Set 2", result: { solution: "fake result" } });
         expect(commit.mock.calls[2][0]).toBe(`sensitivity/${SensitivityMutation.ParameterSetAdded}`);
         expect(commit.mock.calls[2][1]).toBe("Set 2");
-        expect(commit.mock.calls[2][2]).toStrictEqual({root: true});
+        expect(commit.mock.calls[2][2]).toStrictEqual({ root: true });
     });
 
     it("NewParameterSet does nothing if run is required", () => {
         const state = mockRunState({
-            parameterValues: {p1: 1, p2: 2},
-            parameterSets: [{name: "Set 1", parameterValues: {p1: 3, p2: 4}}],
-            resultOde: {solution: "fake result"} as any
+            parameterValues: { p1: 1, p2: 2 },
+            parameterSets: [{ name: "Set 1", parameterValues: { p1: 3, p2: 4 } }],
+            resultOde: { solution: "fake result" } as any
         });
         const getters = {
             [RunGetter.runIsRequired]: true
         };
         const commit = jest.fn();
 
-        (actions[RunAction.NewParameterSet] as any)({state, getters, commit});
+        (actions[RunAction.NewParameterSet] as any)({ state, getters, commit });
         expect(commit).toHaveBeenCalledTimes(0);
     });
 
     it("NewParameterSet does not commit null result", () => {
         const state = mockRunState({
-            parameterValues: {p1: 1, p2: 2},
-            parameterSets: [{name: "Set 1", parameterValues: {p1: 3, p2: 4}}],
+            parameterValues: { p1: 1, p2: 2 },
+            parameterSets: [{ name: "Set 1", parameterValues: { p1: 3, p2: 4 } }],
             resultOde: null
         });
         const getters = {
@@ -482,12 +486,12 @@ describe("Run actions", () => {
         };
         const commit = jest.fn();
 
-        (actions[RunAction.NewParameterSet] as any)({state, getters, commit});
+        (actions[RunAction.NewParameterSet] as any)({ state, getters, commit });
         expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(RunMutation.AddParameterSet);
-        expect(commit.mock.calls[0][1]).toStrictEqual({name: "Set 2", parameterValues: {p1: 1, p2: 2}});
+        expect(commit.mock.calls[0][1]).toStrictEqual({ name: "Set 2", parameterValues: { p1: 1, p2: 2 } });
         expect(commit.mock.calls[1][0]).toBe(`sensitivity/${SensitivityMutation.ParameterSetAdded}`);
         expect(commit.mock.calls[1][1]).toBe("Set 2");
-        expect(commit.mock.calls[1][2]).toStrictEqual({root: true});
+        expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
     });
 });

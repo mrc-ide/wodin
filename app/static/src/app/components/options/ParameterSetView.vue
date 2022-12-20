@@ -3,7 +3,10 @@
   <div class="card">
     <div class="card-header">{{parameterSet.name}}</div>
     <div class="card-body">
-       <span v-for="(value, name) in parameterSet.parameterValues" class="badge badge-light me-2 mb-2 parameter" :style="getStyle(name)">
+       <span v-for="(value, name) in parameterSet.parameterValues"
+             :key="name"
+             class="badge badge-light me-2 mb-2 parameter"
+             :style="getStyle(name)">
         {{name}}: <span style="font-weight:lighter;">{{value}}</span>
        </span>
     </div>
@@ -30,7 +33,12 @@ export default defineComponent({
         const getStyle = (name: string) => {
             const diffFromCurrent = props.parameterSet.parameterValues[name] - currentParams.value[name];
             // Show values > current in green, < current in red, == current in grey
-            const color = diffFromCurrent === 0 ? "#bbb" : diffFromCurrent > 0 ? "#28a745" : "#dc3545";
+            let color = "#bbb";
+            if (diffFromCurrent > 0) {
+                color = "#28a745";
+            } else if (diffFromCurrent < 0) {
+                color = "#dc3545";
+            }
             return {
                 color,
                 border: `1px solid ${color}`

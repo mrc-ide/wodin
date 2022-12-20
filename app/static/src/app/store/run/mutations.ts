@@ -1,5 +1,5 @@
 import { MutationTree } from "vuex";
-import {ParameterSet, RunState, RunUpdateRequiredReasons} from "./state";
+import { ParameterSet, RunState, RunUpdateRequiredReasons } from "./state";
 import { OdinUserType } from "../../types/responseTypes";
 import { OdinRunResultDiscrete, OdinRunResultOde } from "../../types/wrapperTypes";
 import { SetParameterSetResultPayload } from "../../types/payloadTypes";

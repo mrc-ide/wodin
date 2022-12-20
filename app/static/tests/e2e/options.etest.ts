@@ -1,7 +1,7 @@
 import { expect, test, Page } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
 import { newValidCode } from "./code.etest";
-import {expectSummaryValues} from "./utils";
+import { expectSummaryValues } from "./utils";
 
 test.describe("Options Tab tests", () => {
     const { timeout } = PlaywrightConfig;
@@ -197,7 +197,7 @@ test.describe("Options Tab tests", () => {
         await expect(await page.innerHTML(tickSelector)).toBe("0.2M");
     });
 
-    test("can create a parameter set, and see run traces for that set", async ({page}) => {
+    test("can create a parameter set, and see run traces for that set", async ({ page }) => {
         await page.click("#create-param-set");
         await expect(await page.innerText(".parameter-set .card-header")).toBe("Set 1");
         await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 1)")).toBe("beta: 4");

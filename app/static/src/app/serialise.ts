@@ -14,7 +14,7 @@ import {
     SerialisedRunResult, SerialisedSensitivityResult
 } from "./types/serialisationTypes";
 import { GraphSettingsState } from "./store/graphSettings/state";
-import {Dict} from "./types/utilTypes";
+import { Dict } from "./types/utilTypes";
 
 function serialiseCode(code: CodeState) : CodeState {
     return {
@@ -52,7 +52,7 @@ function serialiseDiscreteResult(result: OdinRunResultDiscrete | null): Serialis
 
 function serialiseRun(run: RunState): SerialisedRunState {
     const serialisedParameterSetResults = {} as Dict<SerialisedRunResult | null>;
-    Object.keys(run.parameterSetResults).forEach( (name) => {
+    Object.keys(run.parameterSetResults).forEach((name) => {
         serialisedParameterSetResults[name] = serialiseSolutionResult(run.parameterSetResults[name]);
     });
     return {
@@ -75,7 +75,7 @@ function serialiseSensitivity(sensitivity: SensitivityState): SerialisedSensitiv
             inputs: result.inputs,
             hasResult: !!result.batch,
             error: result.error
-        }
+        };
     });
 
     return {

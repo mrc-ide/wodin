@@ -65,13 +65,14 @@ export default defineComponent({
             }
 
             // 1. Current parameter values
+            const plotOptions = { showLegend: true, includeLegendGroup: true };
             const allData = [
-                ...odinToPlotly(filterSeriesSet(result, selectedVariables.value), palette.value, {showLegend: true, includeLegendGroup: true}),
+                ...odinToPlotly(filterSeriesSet(result, selectedVariables.value), palette.value, plotOptions),
                 ...allFitDataToPlotly(allFitData.value, palette.value, start, end)
             ];
 
             // 2. Parameter sets
-            const lineStylesForParameterSets = computed(() => store.getters[`run/${RunGetter.lineStylesForParameterSets}`]);
+            const lineStylesForParamSets = computed(() => store.getters[`run/${RunGetter.lineStylesForParameterSets}`]);
 
             const updatePlotTraceNameWithParameterSetName = (plotTrace: Partial<PlotData>, setName: string) => {
                 // eslint-disable-next-line no-param-reassign
@@ -82,10 +83,11 @@ export default defineComponent({
                 const paramSetSln = parameterSetSolutions.value[name];
                 const paramSetResult = paramSetSln!(options as any);
 
-                const dash = lineStylesForParameterSets.value[name];
+                const dash = lineStylesForParamSets.value[name];
                 if (paramSetResult) {
                     const filteredSetData = filterSeriesSet(paramSetResult, selectedVariables.value);
-                    const plotData = odinToPlotly(filteredSetData, palette.value, { dash, showLegend: false, includeLegendGroup: true });
+                    const paramSetOptions = { dash, showLegend: false, includeLegendGroup: true };
+                    const plotData = odinToPlotly(filteredSetData, palette.value, paramSetOptions);
                     plotData.forEach((plotTrace) => {
                         updatePlotTraceNameWithParameterSetName(plotTrace, name);
                     });

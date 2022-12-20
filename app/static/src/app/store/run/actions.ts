@@ -78,7 +78,8 @@ const runDiscrete = (parameterValues: OdinUserType, startTime: number, endTime: 
     }
 };
 
-const runModel = (parameterValues: OdinUserType | null, parameterSets: ParameterSet[], endTime: number, numberOfReplicates: number | null,
+const runModel = (parameterValues: OdinUserType | null, parameterSets: ParameterSet[], endTime: number,
+    numberOfReplicates: number | null,
     context: ActionContext<RunState, AppState>) => {
     const { rootState, commit, getters } = context;
     const startTime = 0;
@@ -152,7 +153,7 @@ export const actions: ActionTree<RunState, AppState> = {
 
             const result = state.resultOde;
             if (result) {
-                commit(RunMutation.SetParameterSetResult, {name, result});
+                commit(RunMutation.SetParameterSetResult, { name, result });
             }
 
             commit(`sensitivity/${SensitivityMutation.ParameterSetAdded}`, name, { root: true });

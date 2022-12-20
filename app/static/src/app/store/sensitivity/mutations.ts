@@ -7,7 +7,7 @@ import {
     SensitivityUpdateRequiredReasons
 } from "./state";
 import { OdinSensitivityResult } from "../../types/wrapperTypes";
-import {Dict} from "../../types/utilTypes";
+import { Dict } from "../../types/utilTypes";
 
 export enum SensitivityMutation {
     SetParameterToVary = "SetParameterToVary",

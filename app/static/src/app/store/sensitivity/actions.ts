@@ -12,7 +12,7 @@ import {
     Batch, BatchPars, Odin, OdinRunnerDiscrete, OdinRunnerOde
 } from "../../types/responseTypes";
 import { ModelGetter } from "../model/getters";
-import {Dict} from "../../types/utilTypes";
+import { Dict } from "../../types/utilTypes";
 
 export enum SensitivityAction {
     RunSensitivity = "RunSensitivity",

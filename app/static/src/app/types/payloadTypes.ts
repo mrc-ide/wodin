@@ -1,4 +1,4 @@
-import {OdinRunResultDiscrete, OdinRunResultOde} from "./wrapperTypes";
+import { OdinRunResultOde } from "./wrapperTypes";
 
 export interface SetAppPayload {
     appName: string

@@ -176,14 +176,14 @@ describe("Run mutations", () => {
 
     it("sets parameter set result", () => {
         const state = mockRunState();
-        const payload = {name: "Set 1", result: {solution: "fake solution"}};
+        const payload = { name: "Set 1", result: { solution: "fake solution" } };
         mutations.SetParameterSetResult(state, payload);
-        expect(state.parameterSetResults).toStrictEqual({"Set 1": payload.result})
+        expect(state.parameterSetResults).toStrictEqual({ "Set 1": payload.result });
     });
 
     it("adds parameter set", () => {
         const state = mockRunState();
-        const payload = {name: "Set 1", parameterValues: {p1: 1}};
+        const payload = { name: "Set 1", parameterValues: { p1: 1 } };
         mutations.AddParameterSet(state, payload);
         expect(state.parameterSets).toStrictEqual([payload]);
     });

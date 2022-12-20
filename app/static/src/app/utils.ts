@@ -1,6 +1,8 @@
 import { uid } from "uid";
 import { Dict } from "./types/utilTypes";
-import {BatchPars, OdinModelResponseError, OdinUserType, WodinError} from "./types/responseTypes";
+import {
+    BatchPars, OdinModelResponseError, OdinUserType, WodinError
+} from "./types/responseTypes";
 import userMessages from "./userMessages";
 import settings from "./settings";
 import {

@@ -6,7 +6,7 @@ import { AppState, AppType } from "../../../../src/app/store/appState/state";
 import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/SensitivityTracesPlot.vue";
 import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
-import {mockRunState} from "../../../mocks";
+import { mockRunState } from "../../../mocks";
 import { getters as runGetters } from "../../../../src/app/store/run/getters";
 
 jest.mock("plotly.js-basic-dist-min", () => {});
@@ -354,7 +354,7 @@ const expectedFitPlotData = {
 const selectedVariables = ["y", "z"];
 
 const mockParameterSets = [
-    {name: "Set 1", parameterValues: {alpha: 1}}
+    { name: "Set 1", parameterValues: { alpha: 1 } }
 ];
 
 const mockParameterSetResults = {
@@ -366,7 +366,7 @@ const mockParameterSetResults = {
 };
 
 const mockParameterSetCentralResults = {
-    "Set 1": {solution: mockParameterSetCentralSln}
+    "Set 1": { solution: mockParameterSetCentralSln }
 } as any;
 
 describe("SensitivityTracesPlot", () => {
@@ -460,7 +460,7 @@ describe("SensitivityTracesPlot", () => {
         expect(plotData(0, 1, 100)).toStrictEqual([...expectedPlotData, expectedFitPlotData]);
         expect(mockSln1).toBeCalledWith(slnArgs);
         expect(mockSln2).toBeCalledWith(slnArgs);
-    })
+    });
 
     it("renders as expected when there are sensitivity solutions and parameter sets", () => {
         const wrapper = getWrapper(true, false, true, false, true, true);

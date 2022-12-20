@@ -1,6 +1,6 @@
 import { expect, Page, test } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
-import {expectSummaryValues} from "./utils";
+import { expectSummaryValues } from "./utils";
 
 test.describe("stochastic app", () => {
     const { timeout } = PlaywrightConfig;
@@ -66,7 +66,7 @@ test.describe("stochastic app", () => {
         await expectSummaryValues(page, 4, "extinct (beta=0.450)", 1001, "#cc0044");
         await expectSummaryValues(page, 41, "I_det", 1001, "#2e5cb8");
         await expectSummaryValues(page, 42, "I", 1001, "#6ab74d");
-        await expectSummaryValues(page, 43, "S", 1001,"#ee9f33");
+        await expectSummaryValues(page, 43, "S", 1001, "#ee9f33");
         await expectSummaryValues(page, 44, "extinct", 1001, "#cc0044");
     });
 });

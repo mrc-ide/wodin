@@ -1,6 +1,6 @@
 import { OdinUserType } from "../../types/responseTypes";
 import { OdinRunResultOde, OdinRunResultDiscrete } from "../../types/wrapperTypes";
-import {Dict} from "../../types/utilTypes";
+import { Dict } from "../../types/utilTypes";
 
 export interface RunUpdateRequiredReasons {
     modelChanged: boolean;

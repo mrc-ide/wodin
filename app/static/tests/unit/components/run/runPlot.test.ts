@@ -1,6 +1,4 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via WodinPlot
-import {mockRunState} from "../../../mocks";
-
 jest.mock("plotly.js-basic-dist-min", () => {});
 
 /* eslint-disable import/first */
@@ -11,6 +9,7 @@ import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
 import { getters as runGetters } from "../../../../src/app/store/run/getters";
+import { mockRunState } from "../../../mocks";
 
 describe("RunPlot", () => {
     const mockSolution = jest.fn().mockReturnValue({
@@ -154,12 +153,12 @@ describe("RunPlot", () => {
                         endTime: 99,
                         resultOde: mockResult,
                         parameterSets: [
-                            {name: "Set1", parameterValues: {alpha: 1, beta: 2}},
-                            {name: "Set2", parameterValues: {alpha: 10, beta: 20}}
+                            { name: "Set1", parameterValues: { alpha: 1, beta: 2 } },
+                            { name: "Set2", parameterValues: { alpha: 10, beta: 20 } }
                         ],
                         parameterSetResults: {
-                            "Set1": mockParamSetResult1,
-                            "Set2": mockParamSetResult2
+                            Set1: mockParamSetResult1,
+                            Set2: mockParamSetResult2
                         }
                     },
                     getters: runGetters

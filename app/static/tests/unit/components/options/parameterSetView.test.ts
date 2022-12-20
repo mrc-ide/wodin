@@ -1,7 +1,7 @@
-import {BasicState} from "../../../../src/app/store/basic/state";
 import Vuex from "vuex";
-import {mockRunState} from "../../../mocks";
-import {shallowMount} from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
+import { BasicState } from "../../../../src/app/store/basic/state";
+import { mockRunState } from "../../../mocks";
 import ParameterSetView from "../../../../src/app/components/options/ParameterSetView.vue";
 
 describe("ParameterSetView", () => {
@@ -9,7 +9,7 @@ describe("ParameterSetView", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 run: mockRunState({
-                    parameterValues: {alpha: 1, beta: 2, gamma: 3}
+                    parameterValues: { alpha: 1, beta: 2, gamma: 3 }
                 })
             } as any
         });
@@ -20,7 +20,7 @@ describe("ParameterSetView", () => {
             props: {
                 parameterSet: {
                     name: "Set 1",
-                    parameterValues: {alpha: 0, beta: 2, gamma: 4}
+                    parameterValues: { alpha: 0, beta: 2, gamma: 4 }
                 }
             }
         });

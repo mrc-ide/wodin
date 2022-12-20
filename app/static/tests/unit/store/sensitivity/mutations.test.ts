@@ -144,12 +144,12 @@ describe("Sensitivity mutations", () => {
     });
 
     it("saves result when parameter set added", () => {
-        const mockResult = {batch: "fake batch"} as any;
+        const mockResult = { batch: "fake batch" } as any;
         const state = mockSensitivityState({
             result: mockResult
         });
         mutations.ParameterSetAdded(state, "Set 1");
-        expect(state.parameterSetResults).toStrictEqual({"Set 1": mockResult});
+        expect(state.parameterSetResults).toStrictEqual({ "Set 1": mockResult });
     });
 
     it("does nothing when parameter set added if no current result", () => {
@@ -161,8 +161,8 @@ describe("Sensitivity mutations", () => {
     it("sets parameter set results", () => {
         const state = mockSensitivityState();
         const results = {
-            "Set 1": {batch: "fake batch 1"},
-            "Set 2": {batch: "fake batch 2"}
+            "Set 1": { batch: "fake batch 1" },
+            "Set 2": { batch: "fake batch 2" }
         };
         mutations.SetParameterSetResults(state, results);
         expect(state.parameterSetResults).toBe(results);

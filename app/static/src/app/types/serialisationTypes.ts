@@ -1,5 +1,5 @@
 import { OdinModelResponse, OdinUserType, WodinError } from "./responseTypes";
-import {ParameterSet, RunUpdateRequiredReasons} from "../store/run/state";
+import { ParameterSet, RunUpdateRequiredReasons } from "../store/run/state";
 import { OdinFitInputs, OdinRunInputs, OdinSensitivityInputs } from "./wrapperTypes";
 import {
     SensitivityParameterSettings,
@@ -12,7 +12,7 @@ import { CodeState } from "../store/code/state";
 import { FitDataState } from "../store/fitData/state";
 import { Palette } from "../palette";
 import { GraphSettingsState } from "../store/graphSettings/state";
-import {Dict} from "./utilTypes";
+import { Dict } from "./utilTypes";
 
 export interface SerialisedRunResult {
     inputs: OdinRunInputs | OdinFitInputs,

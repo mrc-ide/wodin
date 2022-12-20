@@ -160,7 +160,8 @@ export default defineComponent({
 
         const centralValue = computed(() => store.state.run.parameterValues[settingsInternal.parameterToVary!]);
 
-        const batchParsResult = computed(() => generateBatchPars(store.state, settingsInternal, store.state.run.parameterValues));
+        const paramValues = computed(() => store.state.run.parameterValues);
+        const batchParsResult = computed(() => generateBatchPars(store.state, settingsInternal, paramValues.value));
         const batchPars = computed(() => batchParsResult.value.batchPars);
         const batchParsError = computed(() => batchParsResult.value.error);
 

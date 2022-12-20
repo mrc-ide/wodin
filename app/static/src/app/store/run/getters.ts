@@ -1,9 +1,9 @@
-import {ParameterSet, RunState} from "./state";
-import {Getter, GetterTree} from "vuex";
-import {AppState} from "../appState/state";
-import {Dict} from "../../types/utilTypes";
-import {lineStyleForParameterSetIndex} from "../../plot";
-import {anyTrue} from "../../utils";
+import { Getter, GetterTree } from "vuex";
+import { ParameterSet, RunState } from "./state";
+import { AppState } from "../appState/state";
+import { Dict } from "../../types/utilTypes";
+import { lineStyleForParameterSetIndex } from "../../plot";
+import { anyTrue } from "../../utils";
 
 export enum RunGetter {
     lineStylesForParameterSets = "lineStylesForParameterSets",
@@ -27,12 +27,13 @@ export const getters: RunGetters & GetterTree<RunState, AppState> = {
         return anyTrue(state.runRequired as unknown as Dict<boolean>);
     },
     [RunGetter.runParameterSetsIsRequired]: (state: RunState): boolean => {
+        const { parameterSets, parameterSetResults } = state;
         if (!state.parameterSets.length) {
             return false;
         }
         // We need to run for param sets if we are missing results for any param sets, as well as if there is
         // an update required for any reason except parameterValueChanged (e.g. endTime has changed)
-        const missingSetResults = state.parameterSets.some((ps: ParameterSet) => !state.parameterSetResults[ps.name]?.solution);
-        return missingSetResults || anyTrue({...state.runRequired, parameterValueChanged: false});
+        const missingSetResults = parameterSets.some((ps: ParameterSet) => !parameterSetResults[ps.name]?.solution);
+        return missingSetResults || anyTrue({ ...state.runRequired, parameterValueChanged: false });
     }
 };

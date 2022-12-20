@@ -20,7 +20,7 @@ import {
     allFitDataToPlotly, filterSeriesSet, odinToPlotly, PlotlyOptions, WodinPlotData
 } from "../../plot";
 import {
-    DiscreteSeriesValues, Odin, OdinSeriesSet, OdinSolution
+    DiscreteSeriesValues, OdinSeriesSet, OdinSolution
 } from "../../types/responseTypes";
 import { AppType } from "../../store/appState/state";
 import { runPlaceholderMessage } from "../../utils";
@@ -55,7 +55,8 @@ export default defineComponent({
 
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, true));
 
-        const updatePlotTraceName = (plotTrace: Partial<PlotData>, param: string | null, value: number | null, parameterSetName = "") => {
+        const updatePlotTraceName = (plotTrace: Partial<PlotData>, param: string | null, value: number | null,
+            parameterSetName = "") => {
             const parenthesisItems = [];
             if (param && value) {
                 parenthesisItems.push(`${param}=${format(".3f")(value)}`);
@@ -141,8 +142,9 @@ export default defineComponent({
 
                     // Also plot the centrals
                     const setCentralSolution = parameterSetCentralResults.value[name]?.solution;
+                    const centralOptions = { showLegend: false, includeLegendGroup: true, dash };
                     if (setCentralSolution) {
-                        addSolutionOutputToResult(setCentralSolution, { showLegend: false, includeLegendGroup: true, dash },
+                        addSolutionOutputToResult(setCentralSolution, centralOptions,
                             (plotTrace) => updatePlotTraceName(plotTrace, null, null, name));
                     }
                 });
