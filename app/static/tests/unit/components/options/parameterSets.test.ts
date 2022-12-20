@@ -7,8 +7,10 @@ import ParameterSets from "../../../../src/app/components/options/ParameterSets.
 import ParameterSetView from "../../../../src/app/components/options/ParameterSetView.vue";
 import { ModelState } from "../../../../src/app/store/model/state";
 import { getters } from "../../../../src/app/store/run/getters";
+import { RunAction } from "../../../../src/app/store/run/actions";
 
 describe("ParameterSets", () => {
+    const mockNewParameterSet = jest.fn();
     const getWrapper = (runState: Partial<RunState>, modelState: Partial<ModelState> = {}) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
@@ -18,7 +20,10 @@ describe("ParameterSets", () => {
                 run: {
                     namespaced: true,
                     state: mockRunState(runState),
-                    getters
+                    getters,
+                    actions: {
+                        [RunAction.NewParameterSet]: mockNewParameterSet
+                    }
                 }
             }
         });
@@ -28,6 +33,10 @@ describe("ParameterSets", () => {
             }
         });
     };
+
+    beforeEach(() => {
+        jest.resetAllMocks();
+    });
 
     it("renders as expected", () => {
         const runState = {
@@ -79,5 +88,11 @@ describe("ParameterSets", () => {
         };
         const wrapper = getWrapper(runState);
         expect((wrapper.find("button").element as HTMLButtonElement).disabled).toBe(true);
+    });
+
+    it("saves new parameter set when click button", async () => {
+        const wrapper = getWrapper({});
+        await wrapper.find("button#create-param-set").trigger("click");
+        expect(mockNewParameterSet).toHaveBeenCalledTimes(1);
     });
 });
