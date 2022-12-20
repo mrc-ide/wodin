@@ -35,7 +35,7 @@ export default defineComponent({
             // Show values > current in green, < current in red, == current in grey
             let color = "#bbb";
             if (diffFromCurrent > 0) {
-                color = "#28a745";
+                color = "#479fb6";
             } else if (diffFromCurrent < 0) {
                 color = "#dc3545";
             }

@@ -34,7 +34,7 @@ describe("ParameterSetView", () => {
         expect((paramSpans[1].element as HTMLSpanElement).style.color).toBe("rgb(187, 187, 187)");
         expect((paramSpans[1].element as HTMLSpanElement).style.borderColor).toBe("#bbb");
         expect(paramSpans[2].text()).toBe("gamma: 4");
-        expect((paramSpans[2].element as HTMLSpanElement).style.color).toBe("rgb(40, 167, 69)");
-        expect((paramSpans[2].element as HTMLSpanElement).style.borderColor).toBe("#28a745");
+        expect((paramSpans[2].element as HTMLSpanElement).style.color).toBe("rgb(71, 159, 182)");
+        expect((paramSpans[2].element as HTMLSpanElement).style.borderColor).toBe("#479fb6");
     });
 });
