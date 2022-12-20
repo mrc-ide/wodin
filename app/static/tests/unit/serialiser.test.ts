@@ -88,6 +88,19 @@ describe("serialise", () => {
             solution: jest.fn(),
             error: { error: "run discrete error", detail: "run discrete error detail" }
         },
+        parameterSets: [
+            {name: "Set 1", parameterValues: { alpha: 1, beta: 3.3 }}
+        ],
+        parameterSetResults: {
+            "Set 1": {
+                inputs: {
+                    parameterValues: { alpha: 1, beta: 3.3 },
+                    endTime: 10
+                },
+                solution: jest.fn(),
+                error: { error: "param set run error", detail: "param set run error detail" }
+            }
+        },
         userDownloadFileName: "",
         downloading: false,
         numberOfReplicates: 5
@@ -97,6 +110,12 @@ describe("serialise", () => {
         base: { alpha: 1, beta: 1.1 },
         name: "alpha",
         values: [0.5, 0.75, 1, 1.25, 1.5]
+    };
+
+    const sensitivityParamSetBatchPars = {
+        base: { alpha: 2, beta: 3.3 },
+        name: "alpha",
+        values: [1.5, 1.75, 2, 2.25, 2.5]
     };
     const sensitivityState = {
         running: true,
@@ -134,6 +153,22 @@ describe("serialise", () => {
                 compute: jest.fn()
             },
             error: { error: "sensitivity error", detail: "sensitivity error detail" }
+        },
+        parameterSetResults: {
+            "Set 1": {
+                inputs: {
+                    endTime: 10,
+                    pars: sensitivityParamSetBatchPars
+                },
+                batch: {
+                    pars: sensitivityParamSetBatchPars,
+                    solutions: [jest.fn(), jest.fn()],
+                    errors: [],
+                    valueAtTime: jest.fn(),
+                    compute: jest.fn()
+                },
+                error: { error: "param set sensitivity error", detail: "param set sensitivity error detail" }
+            }
         }
     };
 
@@ -235,6 +270,7 @@ describe("serialise", () => {
             numberOfReplicatesChanged: false
         },
         parameterValues: runState.parameterValues,
+        parameterSets: runState.parameterSets,
         endTime: 20,
         numberOfReplicates: 5,
         resultOde: {
@@ -246,6 +282,13 @@ describe("serialise", () => {
             inputs: runState.resultDiscrete.inputs,
             hasResult: true,
             error: runState.resultDiscrete.error
+        },
+        parameterSetResults: {
+            "Set 1": {
+                inputs: runState.parameterSetResults["Set 1"].inputs,
+                hasResult: true,
+                error: runState.parameterSetResults["Set 1"].error
+            }
         }
     };
     const expectedSensitivity = {
@@ -263,6 +306,13 @@ describe("serialise", () => {
             inputs: sensitivityState.result.inputs,
             hasResult: true,
             error: sensitivityState.result.error
+        },
+        parameterSetResults: {
+            "Set 1": {
+                inputs: sensitivityState.parameterSetResults["Set 1"].inputs,
+                hasResult: true,
+                error: sensitivityState.parameterSetResults["Set 1"].error
+            }
         }
     };
 

@@ -1,6 +1,7 @@
 import { expect, test, Page } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
 import { newValidCode } from "./code.etest";
+import {expectSummaryValues} from "./utils";
 
 test.describe("Options Tab tests", () => {
     const { timeout } = PlaywrightConfig;
@@ -194,5 +195,25 @@ test.describe("Options Tab tests", () => {
         // change back to linear
         await page.locator("#log-scale-y-axis input").click();
         await expect(await page.innerHTML(tickSelector)).toBe("0.2M");
+    });
+
+    test("can create a parameter set, and see run traces for that set", async ({page}) => {
+        await page.click("#create-param-set");
+        await expect(await page.innerText(".parameter-set .card-header")).toBe("Set 1");
+        await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 1)")).toBe("beta: 4");
+        await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 2)")).toBe("I0: 1");
+        await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 3)")).toBe("N: 1000000");
+        await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 4)")).toBe("sigma: 2");
+
+        await page.click("#run-btn");
+        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(6, { timeout });
+        // current parameters
+        await expectSummaryValues(page, 1, "S", 1000, "#2e5cb8");
+        await expectSummaryValues(page, 2, "I", 1000, "#cccc00");
+        await expectSummaryValues(page, 3, "R", 1000, "#cc0044");
+        // parameter set
+        await expectSummaryValues(page, 4, "S (Set 1)", 1000, "#2e5cb8", "dot");
+        await expectSummaryValues(page, 5, "I (Set 1)", 1000, "#cccc00", "dot");
+        await expectSummaryValues(page, 6, "R (Set 1)", 1000, "#cc0044", "dot");
     });
 });

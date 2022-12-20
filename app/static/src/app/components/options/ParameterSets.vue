@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-2">
-    <button class="btn btn-primary" :disabled="!canCreateParameterSet" @click="createParameterSet">
+    <button id="create-param-set" class="btn btn-primary" :disabled="!canCreateParameterSet" @click="createParameterSet">
       Save Current Parameters
     </button>
   </div>

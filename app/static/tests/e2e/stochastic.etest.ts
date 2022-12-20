@@ -1,19 +1,9 @@
 import { expect, Page, test } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
+import {expectSummaryValues} from "./utils";
 
 test.describe("stochastic app", () => {
     const { timeout } = PlaywrightConfig;
-
-    const expectSummaryValues = async (page: Page, idx: number, name: string, color: string) => {
-        const summary = ".wodin-plot-data-summary-series";
-        const locator = `:nth-match(${summary}, ${idx})`;
-        expect(await page.getAttribute(locator, "name")).toBe(name);
-        expect(await page.getAttribute(locator, "count")).toBe("1001");
-        expect(await page.getAttribute(locator, "x-min")).toBe("0");
-        expect(await page.getAttribute(locator, "x-max")).toBe("100");
-        expect(await page.getAttribute(locator, "mode")).toBe("lines");
-        expect(await page.getAttribute(locator, "line-color")).toBe(color);
-    };
 
     test.beforeEach(async ({ page }) => {
         await page.goto("/apps/day3");
@@ -48,12 +38,12 @@ test.describe("stochastic app", () => {
         const summary = ".wodin-plot-data-summary-series";
         expect(await page.locator(summary).count()).toBe(16);
 
-        await expectSummaryValues(page, 1, "I_det", "#2e5cb8");
-        await expectSummaryValues(page, 2, "I", "#6ab74d");
-        await expectSummaryValues(page, 8, "I (mean)", "#6ab74d");
-        await expectSummaryValues(page, 9, "S", "#ee9f33");
-        await expectSummaryValues(page, 15, "S (mean)", "#ee9f33");
-        await expectSummaryValues(page, 16, "extinct", "#cc0044");
+        await expectSummaryValues(page, 1, "I_det", 1001, "#2e5cb8");
+        await expectSummaryValues(page, 2, "I", 1001, "#6ab74d");
+        await expectSummaryValues(page, 8, "I (mean)", 1001, "#6ab74d");
+        await expectSummaryValues(page, 9, "S", 1001, "#ee9f33");
+        await expectSummaryValues(page, 15, "S (mean)", 1001, "#ee9f33");
+        await expectSummaryValues(page, 16, "extinct", 1001, "#cc0044");
     });
 
     test("can run stochastic sensitivity", async ({ page }) => {
@@ -70,13 +60,13 @@ test.describe("stochastic app", () => {
         const summary = ".wodin-plot-data-summary-series";
         await expect(await page.locator(summary)).toHaveCount(44, { timeout });
 
-        await expectSummaryValues(page, 1, "I_det (beta=0.450)", "#2e5cb8");
-        await expectSummaryValues(page, 2, "I (beta=0.450)", "#6ab74d");
-        await expectSummaryValues(page, 3, "S (beta=0.450)", "#ee9f33");
-        await expectSummaryValues(page, 4, "extinct (beta=0.450)", "#cc0044");
-        await expectSummaryValues(page, 41, "I_det", "#2e5cb8");
-        await expectSummaryValues(page, 42, "I", "#6ab74d");
-        await expectSummaryValues(page, 43, "S", "#ee9f33");
-        await expectSummaryValues(page, 44, "extinct", "#cc0044");
+        await expectSummaryValues(page, 1, "I_det (beta=0.450)", 1001, "#2e5cb8");
+        await expectSummaryValues(page, 2, "I (beta=0.450)", 1001, "#6ab74d");
+        await expectSummaryValues(page, 3, "S (beta=0.450)", 1001, "#ee9f33");
+        await expectSummaryValues(page, 4, "extinct (beta=0.450)", 1001, "#cc0044");
+        await expectSummaryValues(page, 41, "I_det", 1001, "#2e5cb8");
+        await expectSummaryValues(page, 42, "I", 1001, "#6ab74d");
+        await expectSummaryValues(page, 43, "S", 1001,"#ee9f33");
+        await expectSummaryValues(page, 44, "extinct", 1001, "#cc0044");
     });
 });
