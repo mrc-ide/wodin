@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "preinstall": "npx npm-force-resolutions",
     "build-basic": "vue-cli-service build --target lib --name basicApp ./src/app/basic.ts --inline-vue --no-clean",
     "build-fit": "vue-cli-service build --target lib --name fitApp ./src/app/fit.ts --inline-vue --no-clean",
     "build-stochastic": "vue-cli-service build --target lib --name stochasticApp ./src/app/stochastic.ts --inline-vue --no-clean",
