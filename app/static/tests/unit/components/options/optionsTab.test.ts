@@ -14,6 +14,8 @@ import { mockModelState, mockRunState } from "../../../mocks";
 import { RunMutation } from "../../../../src/app/store/run/mutations";
 import GraphSettings from "../../../../src/app/components/options/GraphSettings.vue";
 import ParameterSets from "../../../../src/app/components/options/ParameterSets.vue";
+import { getters as runGetters } from "../../../../src/app/store/run/getters";
+import fitApp from "../../../../src/app/components/fit/FitApp.vue";
 
 describe("OptionsTab", () => {
     const getWrapper = (store: Store<any>) => {
@@ -29,9 +31,9 @@ describe("OptionsTab", () => {
         openVisualisationTab: VisualisationTab.Run,
         model: {
         },
-        run: {
+        run: mockRunState({
             parameterValues: {}
-        },
+        }),
         modelFit: {
             paramsToVary: []
         },
@@ -49,13 +51,19 @@ describe("OptionsTab", () => {
                 appType: AppType.Basic,
                 openVisualisationTab: VisualisationTab.Run,
                 model: mockModelState(),
-                run: mockRunState({
-                    parameterValues: { param1: 1, param2: 2.2 }
-                }),
                 graphSettings: {
                     logScaleYAxis: false
                 }
-            } as any
+            } as any,
+            modules: {
+                run: {
+                    namespaced: true,
+                    state: mockRunState({
+                        parameterValues: { param1: 1, param2: 2.2 }
+                    }),
+                    getters: runGetters
+                }
+            }
         });
         const wrapper = getWrapper(store);
         const collapses = wrapper.findAllComponents(VerticalCollapse);
@@ -127,9 +135,6 @@ describe("OptionsTab", () => {
             state: {
                 appType: AppType.Fit,
                 openVisualisationTab: VisualisationTab.Fit,
-                run: {
-                    parameterValues: { param1: 1, param2: 2.2 }
-                },
                 model: {
                 },
                 modelFit: {
@@ -141,12 +146,21 @@ describe("OptionsTab", () => {
                 graphSettings: {
                     logScaleYAxis: false
                 }
-            } as any
+            } as any,
+            modules: {
+                run: {
+                    namespaced: true,
+                    state: mockRunState({
+                        parameterValues: { param1: 1, param2: 2.2 }
+                    }),
+                    getters: runGetters
+                }
+            }
         });
         const wrapper = getWrapper(store);
 
         const collapses = wrapper.findAllComponents(VerticalCollapse);
-        expect(collapses.length).toBe(5);
+        expect(collapses.length).toBe(6);
         expect(collapses.at(0)!.props("title")).toBe("Link");
         expect(collapses.at(0)!.props("collapseId")).toBe("link-data");
         expect(collapses.at(0)!.findComponent(LinkData).exists()).toBe(true);
@@ -163,6 +177,9 @@ describe("OptionsTab", () => {
         expect(collapses.at(4)!.props("title")).toBe("Graph Settings");
         expect(collapses.at(4)!.props("collapseId")).toBe("graph-settings");
         expect(collapses.at(4)!.findComponent(GraphSettings).exists()).toBe(true);
+        expect(collapses.at(5)!.props("title")).toBe("Saved Parameter Sets");
+        expect(collapses.at(5)!.props("collapseId")).toBe("parameter-sets");
+        expect(collapses.at(5)!.findComponent(ParameterSets).exists()).toBe(true);
         expect(wrapper.find("#reset-params-btn").exists()).toBe(true);
         expect(wrapper.find("#reset-params-btn").text()).toBe("Reset");
     });
@@ -199,7 +216,16 @@ describe("OptionsTab", () => {
     });
 
     it("renders as expected when sensitivity tab is not open", () => {
-        const store = new Vuex.Store<FitState>({ state: fitAppState });
+        const store = new Vuex.Store<FitState>({
+            state: fitAppState,
+            modules: {
+                run: {
+                    namespaced: true,
+                    state: fitAppState.run,
+                    getters: runGetters
+                }
+            }
+        });
         const wrapper = getWrapper(store);
         expect(wrapper.findComponent(SensitivityOptions).exists()).toBe(false);
     });
@@ -208,9 +234,15 @@ describe("OptionsTab", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 ...fitAppState,
-                openVisualisationTab: VisualisationTab.Sensitivity,
+                openVisualisationTab: VisualisationTab.Sensitivity
+            },
+            modules: {
                 run: {
-                    parameterValues: { param1: 1, param2: 2.2 }
+                    namespaced: true,
+                    state: mockRunState({
+                        parameterValues: { param1: 1, param2: 2.2 }
+                    }),
+                    getters: runGetters
                 }
             }
         });

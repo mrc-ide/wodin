@@ -24,6 +24,11 @@ describe("Run actions", () => {
         numberOfReplicatesChanged: true
     };
 
+    const getters = {
+        [RunGetter.runIsRequired]: false,
+        [RunGetter.runParameterSetsIsRequired]: false
+    };
+
     it("runs model for ode app", () => {
         const mockOdin = {} as any;
 
@@ -48,9 +53,6 @@ describe("Run actions", () => {
             endTime: 99,
             parameterSets
         });
-        const getters = {
-            [RunGetter.runParameterSetsIsRequired]: false
-        } as any;
         const commit = jest.fn();
 
         (actions[RunAction.RunModel] as any)({
@@ -97,13 +99,13 @@ describe("Run actions", () => {
             endTime: 99,
             parameterSets
         });
-        const getters = {
+        const testGetters = {
             [RunGetter.runParameterSetsIsRequired]: true
         } as any;
         const commit = jest.fn();
 
         (actions[RunAction.RunModel] as any)({
-            commit, state, rootState, getters
+            commit, state, rootState, getters: testGetters
         });
 
         const run = runner.wodinRun;
@@ -177,7 +179,9 @@ describe("Run actions", () => {
         });
         const commit = jest.fn();
 
-        (actions[RunAction.RunModel] as any)({ commit, state, rootState });
+        (actions[RunAction.RunModel] as any)({
+            commit, state, rootState, getters
+        });
 
         const run = runner.wodinRunDiscrete;
         expect(run.mock.calls[0][0]).toBe(mockOdin);
@@ -210,7 +214,9 @@ describe("Run actions", () => {
         });
         const commit = jest.fn();
 
-        (actions[RunAction.RunModel] as any)({ commit, state, rootState });
+        (actions[RunAction.RunModel] as any)({
+            commit, state, rootState, getters
+        });
         expect(commit.mock.calls.length).toBe(1);
         expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultOde);
     });
@@ -228,7 +234,9 @@ describe("Run actions", () => {
         const state = mockRunState();
         const commit = jest.fn();
 
-        (actions[RunAction.RunModel] as any)({ commit, state, rootState });
+        (actions[RunAction.RunModel] as any)({
+            commit, state, rootState, getters
+        });
 
         expect(commit).not.toHaveBeenCalled();
     });
@@ -245,7 +253,9 @@ describe("Run actions", () => {
         const state = mockRunState();
         const commit = jest.fn();
 
-        (actions[RunAction.RunModel] as any)({ commit, state, rootState });
+        (actions[RunAction.RunModel] as any)({
+            commit, state, rootState, getters
+        });
 
         expect(commit).not.toHaveBeenCalled();
         expect(runner.wodinRun).not.toHaveBeenCalled();
@@ -287,7 +297,7 @@ describe("Run actions", () => {
         const dispatch = jest.fn();
 
         (actions[RunAction.RunModel] as any)({
-            commit, dispatch, state, rootState
+            commit, dispatch, state, rootState, getters
         });
 
         expect(mockRunMethod.mock.calls[0][0]).toBe(mockOdin);
@@ -364,7 +374,7 @@ describe("Run actions", () => {
         const dispatch = jest.fn();
 
         (actions[RunAction.RunModelOnRehydrate] as any)({
-            commit, dispatch, state, rootState
+            commit, dispatch, state, rootState, getters
         });
 
         const run = isStochastic ? runner.wodinRunDiscrete : runner.wodinRun;
@@ -444,9 +454,6 @@ describe("Run actions", () => {
             parameterSets: [{ name: "Set 1", parameterValues: { p1: 3, p2: 4 } }],
             resultOde: { solution: "fake result" } as any
         });
-        const getters = {
-            [RunGetter.runIsRequired]: false
-        };
         const commit = jest.fn();
 
         (actions[RunAction.NewParameterSet] as any)({ state, getters, commit });
@@ -466,12 +473,12 @@ describe("Run actions", () => {
             parameterSets: [{ name: "Set 1", parameterValues: { p1: 3, p2: 4 } }],
             resultOde: { solution: "fake result" } as any
         });
-        const getters = {
+        const testGetters = {
             [RunGetter.runIsRequired]: true
         };
         const commit = jest.fn();
 
-        (actions[RunAction.NewParameterSet] as any)({ state, getters, commit });
+        (actions[RunAction.NewParameterSet] as any)({ state, getters: testGetters, commit });
         expect(commit).toHaveBeenCalledTimes(0);
     });
 
@@ -481,9 +488,6 @@ describe("Run actions", () => {
             parameterSets: [{ name: "Set 1", parameterValues: { p1: 3, p2: 4 } }],
             resultOde: null
         });
-        const getters = {
-            [RunGetter.runIsRequired]: false
-        };
         const commit = jest.fn();
 
         (actions[RunAction.NewParameterSet] as any)({ state, getters, commit });

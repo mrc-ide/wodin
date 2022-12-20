@@ -130,7 +130,8 @@ describe("SensitivitySummaryPlot", () => {
                 mode: "lines",
                 line: {
                     color: "#ff0000",
-                    width: 2
+                    width: 2,
+                    dash: undefined
                 },
                 name: "S",
                 x: [1, 1.1],
@@ -143,7 +144,8 @@ describe("SensitivitySummaryPlot", () => {
                 mode: "lines",
                 line: {
                     color: "#0000ff",
-                    width: 2
+                    width: 2,
+                    dash: undefined
                 },
                 name: "I",
                 x: [1, 1.1],

@@ -350,10 +350,10 @@ describe("RunPlot", () => {
                     paletteModel,
                     selectedVariables
                 },
-                run: {
+                run: mockRunState({
                     endTime: 99,
                     resultOde: mockResult
-                }
+                })
             } as any,
             modules: {
                 fitData: {
@@ -386,27 +386,29 @@ describe("RunPlot", () => {
                 mode: "lines",
                 line: {
                     color: "#ff0000",
-                    width: 2
+                    width: 2,
+                    dash: undefined
                 },
                 name: "S",
                 x: [0, 1],
                 y: [3, 4],
                 hoverlabel: { namelength: -1 },
                 showlegend: true,
-                legendgroup: undefined
+                legendgroup: "S"
             },
             {
                 mode: "lines",
                 line: {
                     color: "#00ff00",
-                    width: 2
+                    width: 2,
+                    dash: undefined
                 },
                 name: "I",
                 x: [0, 1],
                 y: [5, 6],
                 hoverlabel: { namelength: -1 },
                 showlegend: true,
-                legendgroup: undefined
+                legendgroup: "I"
             },
             {
                 mode: "markers",

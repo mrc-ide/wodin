@@ -1,3 +1,4 @@
+import { Dash } from "plotly.js-basic-dist-min";
 import {
     allFitDataToPlotly, discreteSeriesSetToPlotly,
     fitDataToPlotly, lineStyleForParameterSetIndex,
@@ -24,7 +25,8 @@ describe("odinToPlotly", () => {
                 mode: "lines",
                 line: {
                     color: "#ff0000",
-                    width: 2
+                    width: 2,
+                    dash: undefined
                 },
                 name: "a",
                 x: [0, 1],
@@ -37,7 +39,8 @@ describe("odinToPlotly", () => {
                 mode: "lines",
                 line: {
                     color: "#0000ff",
-                    width: 2
+                    width: 2,
+                    dash: undefined
                 },
                 name: "b",
                 x: [0, 1],
@@ -53,7 +56,8 @@ describe("odinToPlotly", () => {
         const options = {
             includeLegendGroup: true,
             lineWidth: 3,
-            showLegend: false
+            showLegend: false,
+            dash: "dot" as Dash
         };
 
         expect(odinToPlotly(series, palette, options)).toStrictEqual([
@@ -61,7 +65,8 @@ describe("odinToPlotly", () => {
                 mode: "lines",
                 line: {
                     color: "#ff0000",
-                    width: 3
+                    width: 3,
+                    dash: "dot"
                 },
                 name: "a",
                 x: [0, 1],
@@ -74,7 +79,8 @@ describe("odinToPlotly", () => {
                 mode: "lines",
                 line: {
                     color: "#0000ff",
-                    width: 3
+                    width: 3,
+                    dash: "dot"
                 },
                 name: "b",
                 x: [0, 1],
