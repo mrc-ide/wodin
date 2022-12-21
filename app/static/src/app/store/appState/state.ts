@@ -34,5 +34,6 @@ export interface AppState {
     run: RunState
     sensitivity: SensitivityState,
     graphSettings: GraphSettingsState,
-    versions: VersionsState
+    versions: VersionsState,
+    configured: boolean // true if configuration has been loaded or rehydrated and defaults set
 }

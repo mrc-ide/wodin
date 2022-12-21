@@ -27,7 +27,8 @@ const defaultState: () => any = () => {
         appsPath: null,
         config: null,
         queuedStateUploadIntervalId: -1,
-        stateUploadInProgress: false
+        stateUploadInProgress: false,
+        configured: false
     };
 };
 
