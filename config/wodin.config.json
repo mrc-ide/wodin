@@ -4,6 +4,6 @@
     "port": 3000,
     "appsPath": "apps",
     "baseUrl": "http://localhost:3000",
-    "odinAPI": "http://localhost:8001",
+    "odinApi": "http://localhost:8001",
     "redisUrl": "redis://localhost:6379"
 }

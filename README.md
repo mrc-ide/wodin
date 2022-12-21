@@ -43,7 +43,7 @@ Contains the following settings for the WODIN instance:
 - `port`: the port number at which WODIN should be served
 - `appsPath`: the url path under root at which each app should be available e.g `/apps/day1` for appPath of "apps" and app 
 name "day1"
-- `odinAPI`: base url for the running instance of [odin.api](https://github.com/mrc-ide/odin.api) to use
+- `odinApi`: base url for the running instance of [odin.api](https://github.com/mrc-ide/odin.api) to use
 
 ### index.html 
 

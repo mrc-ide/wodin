@@ -37,7 +37,7 @@ if (Object.keys(options.overrides).length > 0) {
 
 const wodinConfig = configReader.readConfigFile("wodin.config.json") as WodinConfig;
 const {
-    port, appsPath, baseUrl, odinAPI
+    port, appsPath, baseUrl, odinApi
 } = wodinConfig;
 const defaultCodeReader = new AppFileReader(`${pathResolved}/defaultCode`, "R");
 const appHelpReader = new AppFileReader(`${pathResolved}/help`, "md");
@@ -55,7 +55,7 @@ Object.assign(app.locals, {
     configReader,
     defaultCodeReader,
     appHelpReader,
-    odinAPI,
+    odinApi,
     redis,
     wodinConfig,
     wodinVersion

@@ -7,7 +7,7 @@ export interface WodinConfig {
     savePrefix: string,
     port: number,
     baseUrl: string,
-    odinAPI: string,
+    odinApi: string,
     redisUrl: string,
     appsPath: string
 }
@@ -25,7 +25,7 @@ export interface AppConfig {
 
 export interface AppLocals {
     baseUrl: string,
-    odinAPI: string,
+    odinApi: string,
     appsPath: string,
     configPath: string,
     configReader: ConfigReader,
