@@ -7,7 +7,7 @@ export class APIService {
 
     private readonly _res: Response;
 
-    private readonly _odinAPI: string;
+    private readonly _odinApi: string;
 
     private readonly _next: Function;
 
@@ -15,7 +15,7 @@ export class APIService {
         this._req = req;
         this._res = res;
         this._next = next;
-        this._odinAPI = (req.app.locals as AppLocals).odinAPI;
+        this._odinApi = (req.app.locals as AppLocals).odinApi;
     }
 
     private passThroughResponse = (apiResponse: AxiosResponse) => {
@@ -42,7 +42,7 @@ export class APIService {
     };
 
     private fullUrl = (url: string) => {
-        return `${this._odinAPI}${url}`;
+        return `${this._odinApi}${url}`;
     };
 
     get = async (url: string) => {

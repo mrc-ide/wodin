@@ -11,7 +11,7 @@ describe("apiService", () => {
     const mockReq = {
         app: {
             locals: {
-                odinAPI: "http://test"
+                odinApi: "http://test"
             }
         },
         headers: {
