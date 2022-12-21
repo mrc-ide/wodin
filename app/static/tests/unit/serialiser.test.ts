@@ -193,7 +193,8 @@ describe("serialise", () => {
         run: runState,
         sensitivity: sensitivityState,
         versions: { versions: null },
-        graphSettings: { logScaleYAxis: true }
+        graphSettings: { logScaleYAxis: true },
+        configured: false
     };
 
     const fitState: FitState = {
@@ -214,7 +215,8 @@ describe("serialise", () => {
         fitData: fitDataState,
         modelFit: modelFitState,
         versions: { versions: null },
-        graphSettings: { logScaleYAxis: true }
+        graphSettings: { logScaleYAxis: true },
+        configured: false
     };
 
     const expectedCode = { currentCode: ["some code"] };

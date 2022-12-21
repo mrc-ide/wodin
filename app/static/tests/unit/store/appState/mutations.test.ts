@@ -48,4 +48,10 @@ describe("AppState mutations", () => {
         appStateMutations.SetSessionLabel(state, "new session label");
         expect(state.sessionLabel).toBe("new session label");
     });
+
+    it("sets configured", () => {
+        const state = mockBasicState();
+        appStateMutations.SetConfigured(state);
+        expect(state.configured).toBe(true);
+    });
 });

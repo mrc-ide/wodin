@@ -29,7 +29,9 @@ describe("CodeTab", () => {
 
     const getWrapper = (odinModelState: Partial<ModelState> = defaultModelState) => {
         const store = new Vuex.Store<BasicState>({
-            state: mockBasicState(),
+            state: mockBasicState({
+                configured: true
+            }),
             modules: {
                 model: {
                     namespaced: true,
@@ -105,5 +107,18 @@ describe("CodeTab", () => {
             compileRequired: true
         });
         expect(wrapper.findComponent(VerticalCollapse).exists()).toBe(false);
+    });
+
+    it("renders nothing when app state is not configured", () => {
+        const store = new Vuex.Store<BasicState>({
+            state: mockBasicState()
+        });
+
+        const wrapper = shallowMount(CodeTab, {
+            global: {
+                plugins: [store]
+            }
+        });
+        expect(wrapper.findAll("div").length).toBe(0);
     });
 });

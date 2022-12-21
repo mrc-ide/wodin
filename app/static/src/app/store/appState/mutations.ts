@@ -11,7 +11,6 @@ export enum AppStateMutation {
     SetQueuedStateUpload = "SetQueuedStateUpload",
     SetStateUploadInProgress = "SetStateUploadInProgress",
     SetSessionLabel = "SetSessionLabel",
-
     SetConfigured = "SetConfigured"
 }
 

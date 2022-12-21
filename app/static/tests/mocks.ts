@@ -168,6 +168,7 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
         sensitivity: mockSensitivityState(),
         versions: mockVersionsState(),
         graphSettings: mockGraphSettingsState(),
+        configured: false,
         ...state
     };
 };
@@ -215,6 +216,7 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
         modelFit: mockModelFitState(),
         versions: mockVersionsState(),
         graphSettings: mockGraphSettingsState(),
+        configured: false,
         ...state
     };
 };
@@ -240,6 +242,7 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
         sensitivity: mockSensitivityState(),
         versions: mockVersionsState(),
         graphSettings: mockGraphSettingsState(),
+        configured: false,
         ...state
     };
 };

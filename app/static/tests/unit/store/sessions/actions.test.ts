@@ -60,7 +60,8 @@ describe("SessionsActions", () => {
         const rootState = { appName: "testApp", baseUrl: "", appsPath: "apps" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
-        expect(commit).toHaveBeenCalledTimes(0);
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetConfigured);
         expect(dispatch).toHaveBeenCalledTimes(4);
         expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);
@@ -94,7 +95,8 @@ describe("SessionsActions", () => {
         const rootState = { appName: "testApp", baseUrl: "", appsPath: "apps" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
-        expect(commit).toHaveBeenCalledTimes(0);
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetConfigured);
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);
@@ -111,7 +113,8 @@ describe("SessionsActions", () => {
         const rootState = { appName: "testApp", baseUrl: "", appsPath: "apps" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
-        expect(commit).toHaveBeenCalledTimes(0);
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetConfigured);
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);
@@ -128,7 +131,8 @@ describe("SessionsActions", () => {
         const rootState = { appName: "testApp", baseUrl: "", appsPath: "apps" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
-        expect(commit).toHaveBeenCalledTimes(0);
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetConfigured);
         expect(dispatch).toHaveBeenCalledTimes(3);
         expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);
@@ -151,7 +155,8 @@ describe("SessionsActions", () => {
         const rootState = { appName: "testApp", baseUrl: "", appsPath: "apps" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
-        expect(commit).toHaveBeenCalledTimes(0);
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetConfigured);
         expect(dispatch).toHaveBeenCalledTimes(3);
         expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);

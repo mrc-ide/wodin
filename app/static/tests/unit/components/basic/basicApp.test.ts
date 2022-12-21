@@ -31,7 +31,7 @@ import { AppConfig } from "../../../../src/app/types/responseTypes";
 
 describe("BasicApp", () => {
     const getWrapper = (mockSetOpenVisualisationTab = jest.fn(), config: Partial<AppConfig> = {}) => {
-        const state = mockBasicState({ config: config as any });
+        const state = mockBasicState({ config: config as any, configured: true });
 
         const store = new Vuex.Store<BasicState>({
             state,
