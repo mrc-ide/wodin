@@ -13,6 +13,9 @@ mkdir -p $REPO_PATH
 if [[ ! -d $REPO_PATH/.git ]]; then
     echo "Cloning $REPO_PATH from $REPO_URL"
     git clone $REPO_URL $REPO_PATH
+    REPO_DEFAULT_BRANCH=$(git -C $REPO_PATH rev-parse --abbrev-ref HEAD)
+    git -C $REPO_PATH checkout --detach
+    git -C $REPO_PATH branch -d $REPO_DEFAULT_BRANCH
 else
     echo "Updating $REPO_PATH from $REPO_URL"
     git -C $REPO_PATH fetch
