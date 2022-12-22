@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -eu
+if [[ $# != 3 ]]; then
+    echo "Usage: $0 <path> <url> <ref>"
+    exit 1
+fi
+
+REPO_PATH=$1
+REPO_URL=$2
+REPO_REF=$3
+
+mkdir -p $REPO_PATH
+if [[ ! -d $REPO_PATH/.git ]]; then
+    echo "Cloning $REPO_PATH from $REPO_URL"
+    git clone $REPO_URL $REPO_PATH
+else
+    echo "Updating $REPO_PATH from $REPO_URL"
+    git -C $REPO_PATH fetch
+fi
+
+## The hard bit is converting the reference into a sensible format
+##
+## We could have a branch, in which case we want the *remote* copy of
+## the branch. We can get that with
+##
+##   git show-ref origin/main
+##
+##   git rev-parse origin/main => b50c264eac9a03e8e18d17c41620c73c99b2219f
+##   git rev-parse b50c264 => b50c264eac9a03e8e18d17c41620c73c99b2219f
+##   git rev-parse v1.2.3 => b50c264eac9a03e8e18d17c41620c73c99b2219f
+##
+## So the main issue is that if we have a branch name we need to add
+## origin/ in front of it.
+##
+## Just try and resolve something as a remote branch and then fall
+## back on the reference directly, die noisily if we can't do it.
+REPO_REF_RESOLVED=
+set +e
+echo "...trying to resolve $REPO_REF as remote branch name 'origin/$REPO_REF'"
+REPO_REF_TMP=$(git -C $REPO_PATH rev-parse "origin/$REPO_REF" 2> /dev/null)
+if [[ $? -ne 0 ]]; then
+    echo "...trying to resolve $REPO_REF directly"
+    REPO_REF_TMP=$(git -C $REPO_PATH rev-parse "$REPO_REF" 2> /dev/null)
+    if [[ $? -ne 0 ]]; then
+        echo "Failed to resolve reference $REPO_REF :("
+        exit 1
+    fi
+fi
+echo "Reference resolved as $REPO_REF_TMP"
+set -e
+REPO_REF_RESOLVED=$REPO_REF_TMP
+
+git -C $REPO_PATH reset --hard $REPO_REF_TMP
