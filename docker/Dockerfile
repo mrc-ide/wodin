@@ -6,5 +6,6 @@ RUN apt-get update \
         && apt-get install -y nodejs
 
 COPY . /wodin
-RUN /wodin/scripts/build.sh
+RUN /wodin/scripts/build.sh && \
+        cp ./wodin/docker/update-site /usr/local/bin
 ENTRYPOINT ["/wodin/docker/wodin"]
