@@ -71,7 +71,7 @@ describe("AppState actions", () => {
         await (appStateActions[AppStateAction.Initialise] as any)({
             commit, state, dispatch, rootState, getters
         }, payload);
-        expect(commit.mock.calls.length).toBe(4);
+        expect(commit.mock.calls.length).toBe(5);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
         expect(commit.mock.calls[0][1]).toStrictEqual({ appName: "test-app", baseUrl, appsPath });
@@ -86,6 +86,8 @@ describe("AppState actions", () => {
 
         expect(commit.mock.calls[3][0]).toBe(`run/${RunMutation.SetEndTime}`);
         expect(commit.mock.calls[3][1]).toStrictEqual(101);
+
+        expect(commit.mock.calls[4][0]).toBe(AppStateMutation.SetConfigured);
 
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
@@ -114,11 +116,12 @@ describe("AppState actions", () => {
         await (appStateActions[AppStateAction.Initialise] as any)({
             commit, state, dispatch, rootState, getters
         }, payload);
-        expect(commit.mock.calls.length).toBe(3);
+        expect(commit.mock.calls.length).toBe(4);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
         expect(commit.mock.calls[1][0]).toBe(AppStateMutation.SetConfig);
         expect(commit.mock.calls[2][0]).toBe(`code/${CodeMutation.SetCurrentCode}`);
+        expect(commit.mock.calls[3][0]).toBe(AppStateMutation.SetConfigured);
     });
 
     it("Initialise fetches config, commits any default and fetches runner, if no loadSessionId", async () => {
@@ -141,7 +144,7 @@ describe("AppState actions", () => {
         await (appStateActions[AppStateAction.Initialise] as any)({
             commit, state, dispatch, rootState, getters
         }, payload);
-        expect(commit.mock.calls.length).toBe(4);
+        expect(commit.mock.calls.length).toBe(5);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
         expect(commit.mock.calls[1][0]).toBe(AppStateMutation.SetConfig);
@@ -151,6 +154,8 @@ describe("AppState actions", () => {
 
         expect(commit.mock.calls[3][0]).toBe(`run/${RunMutation.SetEndTime}`);
         expect(commit.mock.calls[3][1]).toStrictEqual(101);
+
+        expect(commit.mock.calls[4][0]).toBe(AppStateMutation.SetConfigured);
 
         expect(dispatch).toHaveBeenCalledTimes(2);
         expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);

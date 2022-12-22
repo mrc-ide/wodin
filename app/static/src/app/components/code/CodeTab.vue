@@ -1,5 +1,5 @@
 <template>
-    <div class="code-tab">
+    <div v-if="appIsConfigured" class="code-tab">
         <code-editor/>
         <button class="btn btn-primary mt-2" id="compile-btn" :disabled="!codeIsValid" @click="compile">Compile</button>
         <div class="mt-2" id="code-status">
@@ -45,9 +45,11 @@ export default defineComponent({
         const iconClass = computed(() => (codeIsValid.value ? "text-success" : "text-danger"));
         const allVariables = computed<string[]>(() => store.state.model.odinModelResponse?.metadata?.variables || []);
         const showSelectedVariables = computed(() => allVariables.value.length && !store.state.model.compileRequired);
+        const appIsConfigured = computed(() => store.state.configured);
         const compile = () => store.dispatch(`model/${ModelAction.CompileModel}`);
 
         return {
+            appIsConfigured,
             codeIsValid,
             validMsg,
             validIcon,

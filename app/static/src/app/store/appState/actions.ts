@@ -55,7 +55,7 @@ export const appStateActions: ActionTree<AppState, AppState> = {
 
         if (response) {
             if (loadSessionId) {
-                // Fetch and rehydrate session datas
+                // Fetch and rehydrate session data
                 await dispatch(`sessions/${SessionsAction.Rehydrate}`, loadSessionId);
             } else {
                 await dispatch(`model/${ModelAction.FetchOdinRunner}`, null, { root: true });
@@ -64,6 +64,7 @@ export const appStateActions: ActionTree<AppState, AppState> = {
                 if (response.data.endTime) {
                     commit(`run/${RunMutation.SetEndTime}`, response.data.endTime, { root: true });
                 }
+                commit(AppStateMutation.SetConfigured);
                 if (state.code.currentCode.length) {
                     // Fetch and run model for default code
                     await dispatch(`model/${ModelAction.DefaultModel}`);

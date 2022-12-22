@@ -40,7 +40,7 @@ export const actions: ActionTree<SessionsState, AppState> = {
     },
 
     async [SessionsAction.Rehydrate](context, sessionId: string) {
-        const { rootState, dispatch } = context;
+        const { rootState, commit, dispatch } = context;
         const { appName, appsPath } = rootState;
         const url = `/${appsPath}/${appName}/sessions/${sessionId}`;
         const response = await api(context)
@@ -52,6 +52,7 @@ export const actions: ActionTree<SessionsState, AppState> = {
             const sessionData = response.data as SerialisedAppState;
 
             deserialiseState(rootState, sessionData);
+            commit(AppStateMutation.SetConfigured, null, { root: true });
 
             const rootOption = { root: true };
             await dispatch(`model/${ModelAction.FetchOdinRunner}`, null, rootOption);
