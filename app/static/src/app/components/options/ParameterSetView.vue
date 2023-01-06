@@ -32,7 +32,7 @@ export default defineComponent({
         const currentParams = computed(() => store.state.run.parameterValues);
         const getStyle = (name: string) => {
             const diffFromCurrent = props.parameterSet.parameterValues[name] - currentParams.value[name];
-            // Show values > current in green, < current in red, == current in grey
+            // Show values > current in blue, < current in red, == current in grey
             let color = "#bbb";
             if (diffFromCurrent > 0) {
                 color = "#479fb6";
