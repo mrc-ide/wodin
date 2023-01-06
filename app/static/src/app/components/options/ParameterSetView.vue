@@ -4,7 +4,7 @@
     <div class="card-header">
       {{parameterSet.name}}
       <span class="float-end">
-        <vue-feather class="inline-icon clickable" type="trash-2" @click="deleteParameterSet"></vue-feather>
+        <vue-feather class="inline-icon clickable" type="trash-2" @click="deleteParameterSet" v-tooltip="'Delete Parameter Set'"></vue-feather>
       </span>
     </div>
     <div class="card-body">
@@ -20,11 +20,12 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType } from "vue";
+import {computed, defineComponent, onMounted, PropType} from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import { ParameterSet } from "../../store/run/state";
 import { RunAction } from "../../store/run/actions";
+import {Tooltip} from "bootstrap";
 
 export default defineComponent({
     name: "ParameterSetView",
@@ -38,6 +39,13 @@ export default defineComponent({
         VueFeather
     },
     setup(props) {
+        onMounted(() => {
+          var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+          var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new Tooltip(tooltipTriggerEl)
+          })
+
+        });
         const store = useStore();
         const currentParams = computed(() => store.state.run.parameterValues);
         const getStyle = (name: string) => {
