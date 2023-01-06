@@ -30,7 +30,9 @@ const mockRunState = {
 
 const mockBatchPars = {};
 const getters = {
-    batchPars: mockBatchPars
+    batchPars: mockBatchPars,
+    parameterSetSensitivityUpdateRequired: false,
+    parameterSetBatchPars: []
 };
 
 const rootGetters = {
@@ -77,6 +79,70 @@ describe("Sensitivity actions", () => {
         expect(dispatch).not.toHaveBeenCalled();
     });
 
+    it("runs sensitivity for parameter sets if required", () => {
+        const rootState = {
+            appType: AppType.Basic,
+            model: mockModelState,
+            run: mockRunState
+        };
+
+        const commit = jest.fn();
+        const dispatch = jest.fn();
+
+        const paramSet1BatchPars = {};
+        const paramSet2BatchPars = {};
+        const mockParamSetBatchPars = {
+            "Set 1": paramSet1BatchPars,
+            "Set 2": paramSet2BatchPars
+        };
+
+        const parameterSetGetters = {
+            ...getters,
+            parameterSetSensitivityUpdateRequired: true,
+            parameterSetBatchPars: mockParamSetBatchPars
+        };
+
+        (actions[SensitivityAction.RunSensitivity] as any)({
+            rootState, getters: parameterSetGetters, commit, dispatch, rootGetters
+        });
+
+        expect(commit).toHaveBeenCalledTimes(3);
+        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetResult);
+        expect(commit.mock.calls[0][1]).toStrictEqual({
+            inputs: { endTime: 99, pars: mockBatchPars },
+            batch: mockBatch,
+            error: null
+        });
+        expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetParameterSetResults);
+        expect(commit.mock.calls[1][1]).toStrictEqual({
+            "Set 1": {
+                inputs: { endTime: 99, pars: paramSet1BatchPars },
+                batch: mockBatch,
+                error: null
+            },
+            "Set 2": {
+                inputs: { endTime: 99, pars: paramSet2BatchPars },
+                batch: mockBatch,
+                error: null
+            }
+        });
+        expect(commit.mock.calls[2][0]).toBe(SensitivityMutation.SetUpdateRequired);
+        expect(commit.mock.calls[2][1]).toStrictEqual({
+            endTimeChanged: false,
+            modelChanged: false,
+            parameterValueChanged: false,
+            sensitivityOptionsChanged: false,
+            numberOfReplicatesChanged: false
+        });
+
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledTimes(3);
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(rootState.model.odin, mockBatchPars, 0, 99, {});
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(rootState.model.odin, paramSet1BatchPars, 0, 99, {});
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(rootState.model.odin, paramSet2BatchPars, 0, 99, {});
+
+        expect(dispatch).not.toHaveBeenCalled();
+    });
+
     it("catches and commits run sensitivity error", () => {
         const errorRunner = {
             batchRun: () => { throw new Error("a test error"); }
@@ -110,6 +176,83 @@ describe("Sensitivity actions", () => {
             error: {
                 error: "An error occurred while running sensitivity",
                 detail: "a test error"
+            }
+        });
+
+        expect(dispatch).not.toHaveBeenCalled();
+    });
+
+    it("catches and commits run sensitivity error for parameter sets", () => {
+        const errorRunner = {
+            batchRun: () => { throw new Error("a test error"); }
+        };
+        const modelState = {
+            ...mockModelState,
+            odinRunnerOde: errorRunner
+        };
+
+        const rootState = {
+            appType: AppType.Basic,
+            model: modelState,
+            run: mockRunState
+        };
+
+        const paramSet1BatchPars = {};
+        const paramSet2BatchPars = {};
+        const mockParamSetBatchPars = {
+            "Set 1": paramSet1BatchPars,
+            "Set 2": paramSet2BatchPars
+        };
+
+        const parameterSetGetters = {
+            ...getters,
+            parameterSetSensitivityUpdateRequired: true,
+            parameterSetBatchPars: mockParamSetBatchPars
+        };
+
+        const commit = jest.fn();
+        const dispatch = jest.fn();
+
+        (actions[SensitivityAction.RunSensitivity] as any)({
+            rootState, getters: parameterSetGetters, commit, dispatch, rootGetters
+        });
+
+        expect(commit).toHaveBeenCalledTimes(2);
+        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetResult);
+        expect(commit.mock.calls[0][1]).toStrictEqual({
+            inputs: {
+                endTime: 99,
+                pars: mockBatchPars
+            },
+            batch: null,
+            error: {
+                error: "An error occurred while running sensitivity",
+                detail: "a test error"
+            }
+        });
+        expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetParameterSetResults);
+        expect(commit.mock.calls[1][1]).toStrictEqual({
+            "Set 1": {
+                inputs: {
+                    endTime: 99,
+                    pars: paramSet1BatchPars
+                },
+                batch: null,
+                error: {
+                    error: "An error occurred while running sensitivity",
+                    detail: "a test error"
+                }
+            },
+            "Set 2": {
+                inputs: {
+                    endTime: 99,
+                    pars: paramSet2BatchPars
+                },
+                batch: null,
+                error: {
+                    error: "An error occurred while running sensitivity",
+                    detail: "a test error"
+                }
             }
         });
 

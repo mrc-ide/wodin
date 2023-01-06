@@ -1,11 +1,17 @@
 import { OdinUserType } from "../../types/responseTypes";
 import { OdinRunResultOde, OdinRunResultDiscrete } from "../../types/wrapperTypes";
+import { Dict } from "../../types/utilTypes";
 
 export interface RunUpdateRequiredReasons {
     modelChanged: boolean;
     parameterValueChanged: boolean;
     endTimeChanged: boolean;
     numberOfReplicatesChanged: boolean;
+}
+
+export interface ParameterSet {
+    name: string,
+    parameterValues: OdinUserType
 }
 
 export interface RunState {
@@ -22,4 +28,6 @@ export interface RunState {
     userDownloadFileName: string;
     downloading: boolean;
     numberOfReplicates: number;
+    parameterSets: ParameterSet[];
+    parameterSetResults: Dict<OdinRunResultOde>;
 }

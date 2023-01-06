@@ -1,4 +1,5 @@
 import { OdinSensitivityResult } from "../../types/wrapperTypes";
+import { Dict } from "../../types/utilTypes";
 
 export enum SensitivityScaleType {
     Arithmetic = "Arithmetic",
@@ -52,5 +53,6 @@ export interface SensitivityState {
     sensitivityUpdateRequired: SensitivityUpdateRequiredReasons
     plotSettings: SensitivityPlotSettings,
     result: OdinSensitivityResult | null;
+    parameterSetResults: Dict<OdinSensitivityResult>,
     running: boolean;
 }

@@ -129,3 +129,16 @@ export const expectWodinPlotDataSummary = async (summaryLocator: Locator, name: 
     expect(await summaryLocator.getAttribute("line-color")).toBe(lineColor);
     expect(await summaryLocator.getAttribute("marker-color")).toBe(markerColor);
 };
+
+export const expectSummaryValues = async (page: Page, idx: number, name: string, count: number, color: string,
+    dash: string | null = null) => {
+    const summary = ".wodin-plot-data-summary-series";
+    const locator = `:nth-match(${summary}, ${idx})`;
+    expect(await page.getAttribute(locator, "name")).toBe(name);
+    expect(await page.getAttribute(locator, "count")).toBe(count.toString());
+    expect(await page.getAttribute(locator, "x-min")).toBe("0");
+    expect(await page.getAttribute(locator, "x-max")).toBe("100");
+    expect(await page.getAttribute(locator, "mode")).toBe("lines");
+    expect(await page.getAttribute(locator, "line-color")).toBe(color);
+    expect(await page.getAttribute(locator, "line-dash")).toBe(dash);
+};

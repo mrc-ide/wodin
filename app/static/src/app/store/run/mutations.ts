@@ -1,7 +1,8 @@
 import { MutationTree } from "vuex";
-import { RunState, RunUpdateRequiredReasons } from "./state";
+import { ParameterSet, RunState, RunUpdateRequiredReasons } from "./state";
 import { OdinUserType } from "../../types/responseTypes";
 import { OdinRunResultDiscrete, OdinRunResultOde } from "../../types/wrapperTypes";
+import { SetParameterSetResultPayload } from "../../types/payloadTypes";
 
 export enum RunMutation {
     SetRunRequired = "SetRunRequired",
@@ -12,7 +13,9 @@ export enum RunMutation {
     SetEndTime = "SetEndTime",
     SetUserDownloadFileName = "SetUserDownloadFileName",
     SetDownloading = "SetDownloading",
-    SetNumberOfReplicates = "SetNumberOfReplicates"
+    SetNumberOfReplicates = "SetNumberOfReplicates",
+    SetParameterSetResult = "SetParameterSetResult",
+    AddParameterSet = "AddParameterSet"
 }
 
 const runRequiredNone = {
@@ -81,5 +84,13 @@ export const mutations: MutationTree<RunState> = {
                 numberOfReplicatesChanged: true
             };
         }
+    },
+
+    [RunMutation.SetParameterSetResult](state: RunState, payload: SetParameterSetResultPayload) {
+        state.parameterSetResults[payload.name] = payload.result;
+    },
+
+    [RunMutation.AddParameterSet](state: RunState, payload: ParameterSet) {
+        state.parameterSets.push(payload);
     }
 };

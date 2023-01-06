@@ -1,6 +1,8 @@
 import { uid } from "uid";
 import { Dict } from "./types/utilTypes";
-import { BatchPars, OdinModelResponseError, WodinError } from "./types/responseTypes";
+import {
+    BatchPars, OdinModelResponseError, OdinUserType, WodinError
+} from "./types/responseTypes";
 import userMessages from "./userMessages";
 import settings from "./settings";
 import {
@@ -128,13 +130,13 @@ export interface GenerateBatchParsResult {
 
 export function generateBatchPars(
     rootState: AppState,
-    paramSettings: SensitivityParameterSettings
+    paramSettings: SensitivityParameterSettings,
+    paramValues: OdinUserType | null
 ): GenerateBatchParsResult {
     let batchPars = null;
     let errorDetail = null;
     // TODO: NB For now we use ode runner to generate batch pars for all app types, but expect this to change
     const runner = rootState.model.odinRunnerOde;
-    const paramValues = rootState.run.parameterValues;
     const {
         variationType, parameterToVary, numberOfRuns, variationPercentage, scaleType, rangeFrom, rangeTo
     } = paramSettings;

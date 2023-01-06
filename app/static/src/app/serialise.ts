@@ -11,9 +11,10 @@ import {
     SerialisedAppState, SerialisedModelState,
     SerialisedRunState,
     SerialisedSensitivityState,
-    SerialisedRunResult
+    SerialisedRunResult, SerialisedSensitivityResult
 } from "./types/serialisationTypes";
 import { GraphSettingsState } from "./store/graphSettings/state";
+import { Dict } from "./types/utilTypes";
 
 function serialiseCode(code: CodeState) : CodeState {
     return {
@@ -50,17 +51,33 @@ function serialiseDiscreteResult(result: OdinRunResultDiscrete | null): Serialis
 }
 
 function serialiseRun(run: RunState): SerialisedRunState {
+    const serialisedParameterSetResults = {} as Dict<SerialisedRunResult | null>;
+    Object.keys(run.parameterSetResults).forEach((name) => {
+        serialisedParameterSetResults[name] = serialiseSolutionResult(run.parameterSetResults[name]);
+    });
     return {
         runRequired: run.runRequired,
         parameterValues: run.parameterValues,
         endTime: run.endTime,
         numberOfReplicates: run.numberOfReplicates,
+        parameterSets: run.parameterSets,
         resultOde: serialiseSolutionResult(run.resultOde),
-        resultDiscrete: serialiseDiscreteResult(run.resultDiscrete)
+        resultDiscrete: serialiseDiscreteResult(run.resultDiscrete),
+        parameterSetResults: serialisedParameterSetResults
     };
 }
 
 function serialiseSensitivity(sensitivity: SensitivityState): SerialisedSensitivityState {
+    const serialisedParameterSetResults = {} as Dict<SerialisedSensitivityResult>;
+    Object.keys(sensitivity.parameterSetResults).forEach((name) => {
+        const result = sensitivity.parameterSetResults[name];
+        serialisedParameterSetResults[name] = {
+            inputs: result.inputs,
+            hasResult: !!result.batch,
+            error: result.error
+        };
+    });
+
     return {
         running: false,
         paramSettings: sensitivity.paramSettings,
@@ -70,7 +87,8 @@ function serialiseSensitivity(sensitivity: SensitivityState): SerialisedSensitiv
             inputs: sensitivity.result.inputs,
             hasResult: !!sensitivity.result.batch,
             error: sensitivity.result.error
-        } : null
+        } : null,
+        parameterSetResults: serialisedParameterSetResults
     };
 }
 

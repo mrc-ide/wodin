@@ -1,6 +1,10 @@
 import { expect, test, Page } from "@playwright/test";
+import PlaywrightConfig from "../../playwright.config";
+import { expectSummaryValues } from "./utils";
 
 test.describe("Sensitivity tests", () => {
+    const { timeout } = PlaywrightConfig;
+
     test.beforeEach(async ({ page }) => {
         await page.goto("/apps/day1");
         // Open Options tab
@@ -154,5 +158,27 @@ test.describe("Sensitivity tests", () => {
         await expect(await page.locator(".plotly .yaxislayer-above .ytick").count()).toBe(8);
         await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 1)")).toBe("0");
         await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 8)")).toBe("35");
+    });
+
+    test("can create parameter set and see sensitivity traces", async ({ page }) => {
+        await page.click("#create-param-set");
+        await page.fill(":nth-match(#model-params input, 1)", "5"); // update a parameter value
+        await page.click("#run-sens-btn");
+        // Expect 3 (number of vars) * (10 (sensitivity runs) + 1 (central)) * 2 (current params + param set)
+        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(66, { timeout });
+        // current parameters
+        await expectSummaryValues(page, 1, "S (beta=4.500)", 1000, "#2e5cb8");
+        await expectSummaryValues(page, 2, "I (beta=4.500)", 1000, "#cccc00");
+        await expectSummaryValues(page, 3, "R (beta=4.500)", 1000, "#cc0044");
+        await expectSummaryValues(page, 31, "S", 1000, "#2e5cb8");
+        await expectSummaryValues(page, 32, "I", 1000, "#cccc00");
+        await expectSummaryValues(page, 33, "R", 1000, "#cc0044");
+        // parameter set
+        await expectSummaryValues(page, 34, "S (beta=4.500 Set 1)", 1000, "#2e5cb8", "dot");
+        await expectSummaryValues(page, 35, "I (beta=4.500 Set 1)", 1000, "#cccc00", "dot");
+        await expectSummaryValues(page, 36, "R (beta=4.500 Set 1)", 1000, "#cc0044", "dot");
+        await expectSummaryValues(page, 64, "S (Set 1)", 1000, "#2e5cb8", "dot");
+        await expectSummaryValues(page, 65, "I (Set 1)", 1000, "#cccc00", "dot");
+        await expectSummaryValues(page, 66, "R (Set 1)", 1000, "#cc0044", "dot");
     });
 });

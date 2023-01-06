@@ -7,6 +7,7 @@ import {
     SensitivityUpdateRequiredReasons
 } from "./state";
 import { OdinSensitivityResult } from "../../types/wrapperTypes";
+import { Dict } from "../../types/utilTypes";
 
 export enum SensitivityMutation {
     SetParameterToVary = "SetParameterToVary",
@@ -17,7 +18,9 @@ export enum SensitivityMutation {
     SetPlotType = "SetPlotType",
     SetPlotExtreme = "SetPlotExtreme",
     SetPlotTime = "SetPlotTime",
-    SetRunning = "SetRunning"
+    SetRunning = "SetRunning",
+    ParameterSetAdded = "ParameterSetAdded",
+    SetParameterSetResults = "SetParameterSetResults"
 }
 
 export const mutations: MutationTree<SensitivityState> = {
@@ -71,5 +74,15 @@ export const mutations: MutationTree<SensitivityState> = {
 
     [SensitivityMutation.SetRunning](state: SensitivityState, payload: boolean) {
         state.running = payload;
+    },
+
+    [SensitivityMutation.ParameterSetAdded](state: SensitivityState, payload: string) {
+        // save the current result, if any, to parameterSetResults
+        if (state.result) {
+            state.parameterSetResults[payload] = state.result;
+        }
+    },
+    [SensitivityMutation.SetParameterSetResults](state: SensitivityState, payload: Dict<OdinSensitivityResult>) {
+        state.parameterSetResults = payload;
     }
 };

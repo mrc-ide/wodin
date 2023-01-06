@@ -12,11 +12,15 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
+import { PlotData } from "plotly.js-basic-dist-min";
 import { FitDataGetter } from "../../store/fitData/getters";
 import {
     odinToPlotly, allFitDataToPlotly, WodinPlotData, filterSeriesSet
 } from "../../plot";
 import WodinPlot from "../WodinPlot.vue";
+import { RunGetter } from "../../store/run/getters";
+import { OdinSolution } from "../../types/responseTypes";
+import { Dict } from "../../types/utilTypes";
 import { runPlaceholderMessage } from "../../utils";
 
 export default defineComponent({
@@ -31,6 +35,16 @@ export default defineComponent({
         const store = useStore();
 
         const solution = computed(() => (store.state.run.resultOde?.solution));
+        const parameterSetSolutions = computed(() => {
+            const result = {} as Dict<OdinSolution>;
+            Object.keys(store.state.run.parameterSetResults).forEach((name) => {
+                const sln = store.state.run.parameterSetResults[name].solution;
+                if (sln) {
+                    result[name] = sln;
+                }
+            });
+            return result;
+        });
 
         const endTime = computed(() => store.state.run.endTime);
 
@@ -42,16 +56,45 @@ export default defineComponent({
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, false));
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
-            const result = solution.value && solution.value({
+            const options = {
                 mode: "grid", tStart: start, tEnd: end, nPoints: points
-            });
+            };
+            const result = solution.value && solution.value(options);
             if (!result) {
                 return [];
             }
-            return [
-                ...odinToPlotly(filterSeriesSet(result, selectedVariables.value), palette.value),
+
+            // 1. Current parameter values
+            const plotOptions = { showLegend: true, includeLegendGroup: true };
+            const allData = [
+                ...odinToPlotly(filterSeriesSet(result, selectedVariables.value), palette.value, plotOptions),
                 ...allFitDataToPlotly(allFitData.value, palette.value, start, end)
             ];
+
+            // 2. Parameter sets
+            const lineStylesForParamSets = computed(() => store.getters[`run/${RunGetter.lineStylesForParameterSets}`]);
+
+            const updatePlotTraceNameWithParameterSetName = (plotTrace: Partial<PlotData>, setName: string) => {
+                // eslint-disable-next-line no-param-reassign
+                plotTrace.name = `${plotTrace.name} (${setName})`;
+            };
+
+            Object.keys(parameterSetSolutions.value).forEach((name) => {
+                const paramSetSln = parameterSetSolutions.value[name];
+                const paramSetResult = paramSetSln!(options as any);
+
+                const dash = lineStylesForParamSets.value[name];
+                if (paramSetResult) {
+                    const filteredSetData = filterSeriesSet(paramSetResult, selectedVariables.value);
+                    const paramSetOptions = { dash, showLegend: false, includeLegendGroup: true };
+                    const plotData = odinToPlotly(filteredSetData, palette.value, paramSetOptions);
+                    plotData.forEach((plotTrace) => {
+                        updatePlotTraceNameWithParameterSetName(plotTrace, name);
+                    });
+                    allData.push(...plotData);
+                }
+            });
+            return allData;
         };
 
         return {

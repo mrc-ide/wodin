@@ -1,6 +1,7 @@
 import { RunState } from "./state";
 import { mutations } from "./mutations";
 import { actions } from "./actions";
+import { getters } from "./getters";
 
 export const defaultState: RunState = {
     runRequired: {
@@ -15,12 +16,15 @@ export const defaultState: RunState = {
     resultDiscrete: null,
     userDownloadFileName: "",
     downloading: false,
-    numberOfReplicates: 5
+    numberOfReplicates: 5,
+    parameterSets: [],
+    parameterSetResults: {}
 };
 
 export const run = {
     namespaced: true,
     state: defaultState,
     mutations,
-    actions
+    actions,
+    getters
 };

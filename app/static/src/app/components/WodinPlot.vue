@@ -15,6 +15,7 @@
            :y-max="Math.max(...data.y)"
            :mode="data.mode"
            :line-color="data.line?.color"
+           :line-dash="data.line?.dash"
            :marker-color="data.marker?.color"
       ></div>
     </div>

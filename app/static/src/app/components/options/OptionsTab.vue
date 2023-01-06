@@ -16,6 +16,9 @@
         <vertical-collapse title="Graph Settings" collapse-id="graph-settings">
           <graph-settings></graph-settings>
         </vertical-collapse>
+        <vertical-collapse v-if="!isStochastic" title="Saved Parameter Sets" collapse-id="parameter-sets">
+          <parameter-sets></parameter-sets>
+        </vertical-collapse>
     </div>
 </template>
 
@@ -30,10 +33,12 @@ import SensitivityOptions from "./SensitivityOptions.vue";
 import OptimisationOptions from "./OptimisationOptions.vue";
 import { AppType, VisualisationTab } from "../../store/appState/state";
 import GraphSettings from "./GraphSettings.vue";
+import ParameterSets from "./ParameterSets.vue";
 
 export default {
     name: "OptionsTab",
     components: {
+        ParameterSets,
         LinkData,
         OptimisationOptions,
         ParameterValues,
@@ -45,12 +50,14 @@ export default {
     setup() {
         const store = useStore();
         const isFit = computed(() => store.state.appType === AppType.Fit);
+        const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
 
         const sensitivityOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Sensitivity);
         const fitTabIsOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Fit);
 
         return {
             isFit,
+            isStochastic,
             sensitivityOpen,
             fitTabIsOpen
         };

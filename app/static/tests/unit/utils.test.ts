@@ -345,7 +345,7 @@ describe("generateBatchPars", () => {
     };
 
     it("generates BatchPars for Percentage variation type", () => {
-        const result = generateBatchPars(rootState, percentSettings)!;
+        const result = generateBatchPars(rootState, percentSettings, parameterValues)!;
         expect(result.error).toBe(null);
         expect(result.batchPars!.name).toBe("A");
         expect(result.batchPars!.base).toBe(parameterValues);
@@ -360,7 +360,7 @@ describe("generateBatchPars", () => {
     });
 
     it("generates BatchPars for Range variation type", () => {
-        const result = generateBatchPars(rootState, rangeSettings)!;
+        const result = generateBatchPars(rootState, rangeSettings, parameterValues)!;
         expect(result.error).toBe(null);
         expect(result.batchPars!.name).toBe("B");
         expect(result.batchPars!.base).toBe(parameterValues);
@@ -385,7 +385,7 @@ describe("generateBatchPars", () => {
                 parameterValues
             }
         } as any;
-        const result = generateBatchPars(noRunnerState, percentSettings);
+        const result = generateBatchPars(noRunnerState, percentSettings, parameterValues);
         expect(result.batchPars).toBe(null);
         expect(result.error).toStrictEqual(expectedNotInitialisedError);
     });
@@ -399,7 +399,7 @@ describe("generateBatchPars", () => {
                 parameterValues: null
             }
         } as any;
-        const result = generateBatchPars(noParamsState, rangeSettings);
+        const result = generateBatchPars(noParamsState, rangeSettings, null);
         expect(result.batchPars).toBe(null);
         expect(result.error).toStrictEqual(expectedNotInitialisedError);
         expect(spyBatchParsRange).not.toHaveBeenCalled();
@@ -407,7 +407,7 @@ describe("generateBatchPars", () => {
 
     it("returns error if no param to vary in settings", () => {
         const settings = { ...percentSettings, parameterToVary: null };
-        const result = generateBatchPars(rootState, settings);
+        const result = generateBatchPars(rootState, settings, parameterValues);
         expect(result.batchPars).toBe(null);
         expect(result.error)
             .toStrictEqual({ error: "Invalid settings", detail: "Parameter to vary is not set" });
@@ -416,7 +416,7 @@ describe("generateBatchPars", () => {
 
     it("returns error if batchParsRange throws error", () => {
         const settings = { ...rangeSettings, rangeFrom: 0, rangeTo: 0 };
-        const result = generateBatchPars(rootState, settings);
+        const result = generateBatchPars(rootState, settings, parameterValues);
         expect(result.batchPars).toBe(null);
         expect(result.error)
             .toStrictEqual({ error: "Invalid settings", detail: "Mock error: min must be less than max" });
@@ -425,7 +425,7 @@ describe("generateBatchPars", () => {
 
     it("returns error if batchParsDisplace throws error", () => {
         const settings = { ...percentSettings, numberOfRuns: 0 };
-        const result = generateBatchPars(rootState, settings);
+        const result = generateBatchPars(rootState, settings, parameterValues);
         expect(result.batchPars).toBe(null);
         expect(result.error)
             .toStrictEqual({ error: "Invalid settings", detail: "Mock error: count must be 2 or more" });
@@ -433,7 +433,7 @@ describe("generateBatchPars", () => {
     });
 });
 
-describe("newSesionId", () => {
+describe("newSessionId", () => {
     it("generates expected id format", () => {
         const id = newSessionId();
         expect(id).toMatch(/^[a-z0-9]{32}$/);

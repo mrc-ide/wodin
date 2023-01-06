@@ -12,6 +12,7 @@ import {
     Batch, BatchPars, Odin, OdinRunnerDiscrete, OdinRunnerOde
 } from "../../types/responseTypes";
 import { ModelGetter } from "../model/getters";
+import { Dict } from "../../types/utilTypes";
 
 export enum SensitivityAction {
     RunSensitivity = "RunSensitivity",
@@ -50,7 +51,7 @@ const batchRunDiscrete = (runner: OdinRunnerDiscrete,
 
 const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionContext<SensitivityState, AppState>) => {
     const {
-        rootState, commit, dispatch, rootGetters
+        rootState, commit, dispatch, getters, rootGetters
     } = context;
     const {
         odinRunnerOde, odinRunnerDiscrete, odin, odinModelResponse
@@ -79,6 +80,31 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
             };
         }
         commit(SensitivityMutation.SetResult, payload);
+
+        if (getters.parameterSetSensitivityUpdateRequired && !isStochastic) {
+            const parameterSetBatchPars = getters[SensitivityGetter.parameterSetBatchPars];
+            const parameterSetNames = Object.keys(parameterSetBatchPars);
+            const parameterSetResults = {} as Dict<OdinSensitivityResult>;
+            parameterSetNames.forEach((name: string) => {
+                const setResult : OdinSensitivityResult = {
+                    inputs: { endTime, pars: batchPars },
+                    batch: null,
+                    error: null
+                };
+                const setBatchPars = parameterSetBatchPars[name];
+                try {
+                    setResult.batch = batchRunOde(odinRunnerOde!, odin, setBatchPars, endTime);
+                } catch (e: unknown) {
+                    setResult.error = {
+                        error: userMessages.errors.wodinSensitivityError,
+                        detail: (e as Error).message
+                    };
+                }
+                parameterSetResults[name] = setResult;
+            });
+            commit(SensitivityMutation.SetParameterSetResults, parameterSetResults);
+        }
+
         if (payload.batch !== null) {
             commit(SensitivityMutation.SetUpdateRequired, {
                 modelChanged: false,

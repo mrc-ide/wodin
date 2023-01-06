@@ -39,7 +39,8 @@ describe("FitPlot", () => {
             y: [5, 6, 7],
             line: {
                 color: "#0000ff",
-                width: 2
+                width: 2,
+                dash: undefined
             },
             hoverlabel: { namelength: -1 },
             legendgroup: undefined,
@@ -65,7 +66,8 @@ describe("FitPlot", () => {
             y: [50, 60, 70],
             line: {
                 color: "#0000ff",
-                width: 2
+                width: 2,
+                dash: undefined
             },
             hoverlabel: { namelength: -1 },
             legendgroup: undefined,
