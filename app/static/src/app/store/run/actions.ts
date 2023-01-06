@@ -14,7 +14,8 @@ export enum RunAction {
     RunModel = "RunModel",
     RunModelOnRehydrate = "RunModelOnRehydrate",
     DownloadOutput = "DownloadOutput",
-    NewParameterSet = "NewParameterSet"
+    NewParameterSet = "NewParameterSet",
+    DeleteParameterSet = "DeleteParameterSet"
 }
 
 const runOdeModel = (parameterValues: OdinUserType, startTime: number, endTime: number, runner: OdinRunnerOde,
@@ -158,5 +159,11 @@ export const actions: ActionTree<RunState, AppState> = {
 
             commit(`sensitivity/${SensitivityMutation.ParameterSetAdded}`, name, { root: true });
         }
+    },
+
+    [RunAction.DeleteParameterSet](context, parameterSetName: string) {
+        const { commit } = context;
+        commit(RunMutation.DeleteParameterSet, parameterSetName);
+        commit(`sensitivity/${SensitivityMutation.ParameterSetDeleted}`, parameterSetName, {root: true})
     }
 };

@@ -1,7 +1,12 @@
 <template>
 <div class="container parameter-set">
   <div class="card">
-    <div class="card-header">{{parameterSet.name}}</div>
+    <div class="card-header">
+      {{parameterSet.name}}
+      <span class="float-end">
+        <vue-feather class="inline-icon clickable" type="trash-2" @click="deleteParameterSet"></vue-feather>
+      </span>
+    </div>
     <div class="card-body">
        <span v-for="(value, name) in parameterSet.parameterValues"
              :key="name"
@@ -17,7 +22,9 @@
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
 import { useStore } from "vuex";
+import VueFeather from "vue-feather";
 import { ParameterSet } from "../../store/run/state";
+import { RunAction } from "../../store/run/actions";
 
 export default defineComponent({
     name: "ParameterSetView",
@@ -26,6 +33,9 @@ export default defineComponent({
             type: Object as PropType<ParameterSet>,
             required: true
         }
+    },
+    components: {
+        VueFeather
     },
     setup(props) {
         const store = useStore();
@@ -45,8 +55,13 @@ export default defineComponent({
             };
         };
 
+        const deleteParameterSet = () => {
+            store.dispatch(`run/${RunAction.DeleteParameterSet}`, props.parameterSet.name);
+        };
+
         return {
-            getStyle
+            getStyle,
+            deleteParameterSet
         };
     }
 });

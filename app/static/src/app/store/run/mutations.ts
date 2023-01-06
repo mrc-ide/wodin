@@ -15,7 +15,8 @@ export enum RunMutation {
     SetDownloading = "SetDownloading",
     SetNumberOfReplicates = "SetNumberOfReplicates",
     SetParameterSetResult = "SetParameterSetResult",
-    AddParameterSet = "AddParameterSet"
+    AddParameterSet = "AddParameterSet",
+    DeleteParameterSet = "DeleteParameterSet"
 }
 
 const runRequiredNone = {
@@ -92,5 +93,10 @@ export const mutations: MutationTree<RunState> = {
 
     [RunMutation.AddParameterSet](state: RunState, payload: ParameterSet) {
         state.parameterSets.push(payload);
+    },
+
+    [RunMutation.DeleteParameterSet](state: RunState, parameterSetName: string) {
+        state.parameterSets = state.parameterSets.filter((set: ParameterSet) => set.name !== parameterSetName);
+        delete state.parameterSetResults[parameterSetName];
     }
 };

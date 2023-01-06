@@ -4,7 +4,7 @@
       :placeholder-message="placeholderMessage"
       :end-time="endTime"
       :plot-data="allPlotData"
-      :redrawWatches="solutions ? [...solutions, allFitData, selectedVariables] : []">
+      :redrawWatches="solutions ? [...solutions, allFitData, selectedVariables, parameterSetBatches] : []">
     <slot></slot>
   </wodin-plot>
 </template>
@@ -20,11 +20,13 @@ import {
     allFitDataToPlotly, filterSeriesSet, odinToPlotly, PlotlyOptions, WodinPlotData
 } from "../../plot";
 import {
-    DiscreteSeriesValues, OdinSeriesSet, OdinSolution
+  Batch,
+  DiscreteSeriesValues, OdinSeriesSet, OdinSolution
 } from "../../types/responseTypes";
 import { AppType } from "../../store/appState/state";
 import { runPlaceholderMessage } from "../../utils";
 import { RunGetter } from "../../store/run/getters";
+import {Dict} from "../../types/utilTypes";
 
 export default defineComponent({
     name: "SensitivityTracesPlot",
@@ -38,7 +40,14 @@ export default defineComponent({
         const store = useStore();
 
         const solutions = computed(() => (store.state.sensitivity.result?.batch?.solutions || []));
-        const parameterSetResults = computed(() => store.state.sensitivity.parameterSetResults);
+        // const parameterSetResults = computed(() => store.state.sensitivity.parameterSetResults);
+        const parameterSetBatches = computed(() => {
+            const result = {} as Dict<Batch>;
+            Object.keys(store.state.sensitivity.parameterSetResults).forEach((name) => {
+                result[name] = store.state.sensitivity.parameterSetResults[name].batch;
+            });
+            return result;
+        });
         const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
         const centralSolution = computed(() => {
             return isStochastic.value ? store.state.run.resultDiscrete?.solution : store.state.run.resultOde?.solution;
@@ -125,9 +134,9 @@ export default defineComponent({
                 }
 
                 // Plot sensitivity for parameter sets
-                const parameterSetNames = Object.keys(parameterSetResults.value);
+                const parameterSetNames = Object.keys(parameterSetBatches.value);
                 parameterSetNames.forEach((name) => {
-                    const setSolutions = parameterSetResults.value[name].batch?.solutions || [];
+                    const setSolutions = parameterSetBatches.value[name]?.solutions || [];
                     const dash = lineStylesForParameterSets.value[name];
                     const plotlyOptions = {
                         includeLegendGroup: true,
@@ -163,7 +172,8 @@ export default defineComponent({
             solutions,
             allPlotData,
             allFitData,
-            selectedVariables
+            selectedVariables,
+            parameterSetBatches
         };
     }
 });
