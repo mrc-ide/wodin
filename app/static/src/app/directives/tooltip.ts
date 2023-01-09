@@ -1,9 +1,9 @@
-import {Tooltip} from "bootstrap";
-import {DirectiveBinding} from "vue";
+import { Tooltip } from "bootstrap";
+import { DirectiveBinding } from "vue";
 
 export default {
     beforeMount(el: HTMLElement, binding: DirectiveBinding<string>) {
-        const {value} = binding;
+        const { value } = binding;
         el.setAttribute("data-bs-toggle", "tooltip");
         el.setAttribute("title", value);
         // eslint-disable-next-line no-new
@@ -15,4 +15,4 @@ export default {
             tooltip.dispose();
         }
     }
-}
+};

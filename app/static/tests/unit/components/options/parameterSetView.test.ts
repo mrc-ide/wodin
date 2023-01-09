@@ -2,10 +2,10 @@ import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import VueFeather from "vue-feather";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import {mockBasicState, mockRunState} from "../../../mocks";
+import { mockBasicState, mockRunState } from "../../../mocks";
 import ParameterSetView from "../../../../src/app/components/options/ParameterSetView.vue";
 import tooltip from "../../../../src/app/directives/tooltip";
-import {RunAction} from "../../../../src/app/store/run/actions";
+import { RunAction } from "../../../../src/app/store/run/actions";
 
 describe("ParameterSetView", () => {
     const mockDeleteParameterSet = jest.fn();

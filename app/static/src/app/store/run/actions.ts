@@ -164,6 +164,6 @@ export const actions: ActionTree<RunState, AppState> = {
     [RunAction.DeleteParameterSet](context, parameterSetName: string) {
         const { commit } = context;
         commit(RunMutation.DeleteParameterSet, parameterSetName);
-        commit(`sensitivity/${SensitivityMutation.ParameterSetDeleted}`, parameterSetName, {root: true})
+        commit(`sensitivity/${SensitivityMutation.ParameterSetDeleted}`, parameterSetName, { root: true });
     }
 };

@@ -217,7 +217,7 @@ test.describe("Options Tab tests", () => {
         await expectSummaryValues(page, 6, "R (Set 1)", 1000, "#cc0044", "dot");
     });
 
-    test("can delete a parameter set", async ({page}) => {
+    test("can delete a parameter set", async ({ page }) => {
         await page.click("#create-param-set");
         await page.click("#run-btn");
         await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(6, { timeout });

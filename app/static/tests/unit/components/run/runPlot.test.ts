@@ -9,7 +9,7 @@ import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
 import { getters as runGetters } from "../../../../src/app/store/run/getters";
-import {mockBasicState, mockRunState} from "../../../mocks";
+import { mockBasicState, mockRunState } from "../../../mocks";
 
 describe("RunPlot", () => {
     const mockSolution = jest.fn().mockReturnValue({
@@ -182,7 +182,7 @@ describe("RunPlot", () => {
             mockSolution,
             mockAllFitData,
             selectedVariables,
-            {Set1: mockParamSetResult1.solution, Set2: mockParamSetResult2.solution}
+            { Set1: mockParamSetResult1.solution, Set2: mockParamSetResult2.solution }
         ]);
 
         // Generates expected plot data from model
@@ -325,7 +325,7 @@ describe("RunPlot", () => {
         });
         const wrapper = shallowMount(RunPlot, {
             props: {
-                fadePlot: true,
+                fadePlot: true
             },
             global: {
                 plugins: [store]

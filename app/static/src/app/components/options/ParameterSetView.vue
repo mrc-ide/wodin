@@ -4,7 +4,9 @@
     <div class="card-header">
       {{parameterSet.name}}
       <span class="float-end">
-        <vue-feather class="inline-icon clickable delete-param-set" type="trash-2" @click="deleteParameterSet" v-tooltip="'Delete Parameter Set'"></vue-feather>
+        <vue-feather class="inline-icon clickable delete-param-set"
+                     type="trash-2" @click="deleteParameterSet"
+                     v-tooltip="'Delete Parameter Set'"></vue-feather>
       </span>
     </div>
     <div class="card-body">
@@ -20,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, PropType} from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import { ParameterSet } from "../../store/run/state";

@@ -1,11 +1,11 @@
 import { mount } from "@vue/test-utils";
-import {Tooltip} from "bootstrap";
+import { Tooltip } from "bootstrap";
 import tooltip from "../../../src/app/directives/tooltip";
 
 describe("tooltip directive", () => {
     const mountTemplate = () => {
         const testComponent = {
-            template: `<template><div v-tooltip="'hello'"></div></template>`
+            template: "<template><div v-tooltip=\"'hello'\"></div></template>"
         };
         return mount(testComponent, {
             global: {

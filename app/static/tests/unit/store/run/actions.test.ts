@@ -501,12 +501,12 @@ describe("Run actions", () => {
 
     it("DeleteParameterSet commits run and sensitivity mutations", () => {
         const commit = jest.fn();
-        (actions[RunAction.DeleteParameterSet] as any)({commit}, "Set 1");
+        (actions[RunAction.DeleteParameterSet] as any)({ commit }, "Set 1");
         expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(RunMutation.DeleteParameterSet);
         expect(commit.mock.calls[0][1]).toBe("Set 1");
         expect(commit.mock.calls[1][0]).toBe(`sensitivity/${SensitivityMutation.ParameterSetDeleted}`);
         expect(commit.mock.calls[1][1]).toBe("Set 1");
-        expect(commit.mock.calls[1][2]).toStrictEqual({root: true});
+        expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
     });
 });

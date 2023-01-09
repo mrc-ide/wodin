@@ -20,13 +20,13 @@ import {
     allFitDataToPlotly, filterSeriesSet, odinToPlotly, PlotlyOptions, WodinPlotData
 } from "../../plot";
 import {
-  Batch,
-  DiscreteSeriesValues, OdinSeriesSet, OdinSolution
+    Batch,
+    DiscreteSeriesValues, OdinSeriesSet, OdinSolution
 } from "../../types/responseTypes";
 import { AppType } from "../../store/appState/state";
 import { runPlaceholderMessage } from "../../utils";
 import { RunGetter } from "../../store/run/getters";
-import {Dict} from "../../types/utilTypes";
+import { Dict } from "../../types/utilTypes";
 
 export default defineComponent({
     name: "SensitivityTracesPlot",

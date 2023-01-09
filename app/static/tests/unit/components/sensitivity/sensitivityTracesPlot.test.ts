@@ -484,7 +484,7 @@ describe("SensitivityTracesPlot", () => {
             ...mockSolutions,
             mockAllFitData,
             selectedVariables,
-            {"Set 1": mockParameterSetBatch}
+            { "Set 1": mockParameterSetBatch }
         ]);
 
         const plotData = wodinPlot.props("plotData");
