@@ -167,4 +167,12 @@ describe("Sensitivity mutations", () => {
         mutations.SetParameterSetResults(state, results);
         expect(state.parameterSetResults).toBe(results);
     });
+
+    it("deleted parameter set results", () => {
+        const state = mockSensitivityState({
+            parameterSetResults: {Set1: {batch: "test 1"}, Set2: {batch: "test 2"}} as any
+        });
+        mutations.ParameterSetDeleted(state, "Set1");
+        expect(state.parameterSetResults).toStrictEqual({Set2: {batch: "test 2"}});
+    });
 });

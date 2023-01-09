@@ -187,4 +187,14 @@ describe("Run mutations", () => {
         mutations.AddParameterSet(state, payload);
         expect(state.parameterSets).toStrictEqual([payload]);
     });
+
+    it("deletes parameter set", () => {
+        const state = mockRunState({
+            parameterSets: [{name: "Set1", parameterValues:{a: 1}}, {name: "Set2", parameterValues: {a: 2}}],
+            parameterSetResults: {Set1: {value: "test 1"}, Set2: {value: "test 2"}} as any
+        });
+        mutations.DeleteParameterSet(state, "Set1");
+        expect(state.parameterSets).toStrictEqual([{name: "Set2", parameterValues: {a: 2}}]);
+        expect(state.parameterSetResults).toStrictEqual({Set2: {value: "test 2"}});
+    });
 });
