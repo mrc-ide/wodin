@@ -4,7 +4,7 @@
     <div class="card-header">
       {{parameterSet.name}}
       <span class="float-end">
-        <vue-feather class="inline-icon clickable" type="trash-2" @click="deleteParameterSet" v-tooltip="'Delete Parameter Set'"></vue-feather>
+        <vue-feather class="inline-icon clickable delete-param-set" type="trash-2" @click="deleteParameterSet" v-tooltip="'Delete Parameter Set'"></vue-feather>
       </span>
     </div>
     <div class="card-body">

@@ -216,4 +216,16 @@ test.describe("Options Tab tests", () => {
         await expectSummaryValues(page, 5, "I (Set 1)", 1000, "#cccc00", "dot");
         await expectSummaryValues(page, 6, "R (Set 1)", 1000, "#cc0044", "dot");
     });
+
+    test("can delete a parameter set", async ({page}) => {
+        await page.click("#create-param-set");
+        await page.click("#run-btn");
+        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(6, { timeout });
+
+        await page.click(".delete-param-set");
+        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(3, { timeout });
+        await expectSummaryValues(page, 1, "S", 1000, "#2e5cb8");
+        await expectSummaryValues(page, 2, "I", 1000, "#cccc00");
+        await expectSummaryValues(page, 3, "R", 1000, "#cc0044");
+    });
 });
