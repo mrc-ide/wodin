@@ -40,7 +40,7 @@ export default defineComponent({
         const store = useStore();
 
         const solutions = computed(() => (store.state.sensitivity.result?.batch?.solutions || []));
-        // const parameterSetResults = computed(() => store.state.sensitivity.parameterSetResults);
+
         const parameterSetBatches = computed(() => {
             const result = {} as Dict<Batch>;
             Object.keys(store.state.sensitivity.parameterSetResults).forEach((name) => {

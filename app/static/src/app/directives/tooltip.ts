@@ -1,7 +1,8 @@
 import {Tooltip} from "bootstrap";
+import {DirectiveBinding} from "vue";
 
 export default {
-    beforeMount(el: HTMLElement, binding: any) {
+    beforeMount(el: HTMLElement, binding: DirectiveBinding<string>) {
         const {value} = binding;
         el.setAttribute("data-bs-toggle", "tooltip");
         el.setAttribute("title", value);
