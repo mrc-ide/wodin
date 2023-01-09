@@ -8,7 +8,7 @@ import RunStochasticPlot from "../../../../src/app/components/run/RunStochasticP
 import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import { StochasticState } from "../../../../src/app/store/stochastic/state";
 import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
-import {mockModelState, mockRunState} from "../../../mocks";
+import { mockModelState, mockRunState } from "../../../mocks";
 
 describe("RunPlot for stochastic", () => {
     const mockSolution = jest.fn().mockReturnValue({
