@@ -4,11 +4,11 @@ import VueFeather from "vue-feather";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState, mockRunState } from "../../../mocks";
 import ParameterSetView from "../../../../src/app/components/options/ParameterSetView.vue";
-import tooltip from "../../../../src/app/directives/tooltip";
 import { RunAction } from "../../../../src/app/store/run/actions";
 
 describe("ParameterSetView", () => {
     const mockDeleteParameterSet = jest.fn();
+    const mockTooltipDirective = jest.fn();
 
     beforeEach(() => {
         jest.resetAllMocks();
@@ -32,7 +32,7 @@ describe("ParameterSetView", () => {
         return shallowMount(ParameterSetView, {
             global: {
                 plugins: [store],
-                directives: { tooltip }
+                directives: { tooltip: mockTooltipDirective }
             },
             props: {
                 parameterSet: {
@@ -60,9 +60,14 @@ describe("ParameterSetView", () => {
 
         const deleteIcon = wrapper.findComponent(VueFeather);
         expect(deleteIcon.props("type")).toBe("trash-2");
-        expect(deleteIcon.attributes("data-bs-toggle")).toBe("tooltip");
-        expect(deleteIcon.attributes("data-bs-original-title")).toBe("Delete Parameter Set");
-        expect(deleteIcon.attributes("aria-label")).toBe("Delete Parameter Set");
+    });
+
+    it("uses tooltip directive", () => {
+        const wrapper = getWrapper();
+        expect(mockTooltipDirective).toHaveBeenCalledTimes(1);
+        const iconElement = wrapper.findComponent(VueFeather).element;
+        expect(mockTooltipDirective.mock.calls[0][0]).toBe(iconElement);
+        expect(mockTooltipDirective.mock.calls[0][1].value).toBe("Delete Parameter Set");
     });
 
     it("clicking delete icon dispatches DeleteParameterSet action", async () => {
