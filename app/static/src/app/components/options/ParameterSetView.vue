@@ -4,12 +4,17 @@
     <div class="card-header">
       {{parameterSet.name}}
       <span class="float-end">
-        <vue-feather class="inline-icon clickable delete-param-set"
-                     type="trash-2" @click="deleteParameterSet"
+        <vue-feather class="inline-icon clickable hide-param-set"
+                     :type="parameterSet.hidden ? 'eye' : 'eye-off'"
+                     @click="toggleHidden"
+                     v-tooltip="parameterSet.hidden ? 'Show Parameter Set' : 'Hide Parameter Set'"></vue-feather>
+        <vue-feather class="inline-icon clickable delete-param-set ms-2"
+                     type="trash-2"
+                     @click="deleteParameterSet"
                      v-tooltip="'Delete Parameter Set'"></vue-feather>
       </span>
     </div>
-    <div class="card-body">
+    <div class="card-body" :class="parameterSet.hidden ? 'hidden-parameter-set' : ''">
        <span v-for="(value, name) in parameterSet.parameterValues"
              :key="name"
              class="badge badge-light me-2 mb-2 parameter"
@@ -27,6 +32,7 @@ import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import { ParameterSet } from "../../store/run/state";
 import { RunAction } from "../../store/run/actions";
+import {RunMutation} from "../../store/run/mutations";
 
 export default defineComponent({
     name: "ParameterSetView",
@@ -61,9 +67,14 @@ export default defineComponent({
             store.dispatch(`run/${RunAction.DeleteParameterSet}`, props.parameterSet.name);
         };
 
+        const toggleHidden = () => {
+            store.commit(`run/${RunMutation.ToggleParameterSetHidden}`, props.parameterSet.name);
+        };
+
         return {
             getStyle,
-            deleteParameterSet
+            deleteParameterSet,
+            toggleHidden
         };
     }
 });
