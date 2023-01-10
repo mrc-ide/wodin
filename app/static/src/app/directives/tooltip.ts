@@ -23,6 +23,8 @@ export default {
     beforeUnmount(el: HTMLElement) {
         disposeTooltip(el);
     },
+    // TODO: This is flaky! :(
+    // Needs to be async?
     updated(el: HTMLElement, binding: DirectiveBinding<string>) {
         disposeTooltip(el);
         setTooltip(el, binding);

@@ -35,11 +35,13 @@ export default defineComponent({
         const store = useStore();
 
         const solution = computed(() => (store.state.run.resultOde?.solution));
+        const visibleParameterSetNames = computed(() => store.getters[`run/${RunGetter.visibleParameterSetNames}`]);
+
         const parameterSetSolutions = computed(() => {
             const result = {} as Dict<OdinSolution>;
             Object.keys(store.state.run.parameterSetResults).forEach((name) => {
                 const sln = store.state.run.parameterSetResults[name].solution;
-                if (sln) {
+                if (sln && visibleParameterSetNames.value.includes(name)) {
                     result[name] = sln;
                 }
             });

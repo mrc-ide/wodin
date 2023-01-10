@@ -8,7 +8,8 @@ import { anyTrue } from "../../utils";
 export enum RunGetter {
     lineStylesForParameterSets = "lineStylesForParameterSets",
     runIsRequired = "runIsRequired",
-    runParameterSetsIsRequired = "runParameterSetsIsRequired"
+    runParameterSetsIsRequired = "runParameterSetsIsRequired",
+    visibleParameterSetNames = "visibleParameterSetNames"
 }
 
 export interface RunGetters {
@@ -35,5 +36,9 @@ export const getters: RunGetters & GetterTree<RunState, AppState> = {
         // an update required for any reason except parameterValueChanged (e.g. endTime has changed)
         const missingSetResults = parameterSets.some((ps: ParameterSet) => !parameterSetResults[ps.name]?.solution);
         return missingSetResults || anyTrue({ ...state.runRequired, parameterValueChanged: false });
+    },
+    [RunGetter.visibleParameterSetNames]: (state: RunState): string[] => {
+        // gets the names of all parameter sets which are not hidden
+        return state.parameterSets.filter((set) => !set.hidden).map((set) => set.name);
     }
 };
