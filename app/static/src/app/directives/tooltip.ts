@@ -1,32 +1,19 @@
 import { Tooltip } from "bootstrap";
 import { DirectiveBinding } from "vue";
 
-const disposeTooltip = (el: HTMLElement) => {
-    const tooltip = Tooltip.getInstance(el);
-    if (tooltip) {
-        tooltip.dispose();
-    }
-};
-
-const setTooltip = (el: HTMLElement, binding: DirectiveBinding<string>) => {
-    const { value } = binding;
-    el.setAttribute("title", value);
-    // eslint-disable-next-line no-new
-    new Tooltip(el);
-};
-
 export default {
     beforeMount(el: HTMLElement, binding: DirectiveBinding<string>) {
+        const { value } = binding;
         el.setAttribute("data-bs-toggle", "tooltip");
-        setTooltip(el, binding);
+        el.setAttribute("title", value);
+        // eslint-disable-next-line no-new
+        new Tooltip(el);
     },
     beforeUnmount(el: HTMLElement) {
-        disposeTooltip(el);
-    },
-    // TODO: This is flaky! :(
-    // Needs to be async?
-    updated(el: HTMLElement, binding: DirectiveBinding<string>) {
-        disposeTooltip(el);
-        setTooltip(el, binding);
+        const tooltip = Tooltip.getInstance(el);
+        if (tooltip) {
+            tooltip.dispose();
+        }
     }
 };
+

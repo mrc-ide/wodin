@@ -5,9 +5,15 @@
       {{parameterSet.name}}
       <span class="float-end">
         <vue-feather class="inline-icon clickable hide-param-set"
-                     :type="parameterSet.hidden ? 'eye' : 'eye-off'"
+                     v-if="!parameterSet.hidden"
+                     type="eye-off"
                      @click="toggleHidden"
-                     v-tooltip="parameterSet.hidden ? 'Show Parameter Set' : 'Hide Parameter Set'"></vue-feather>
+                     v-tooltip="'Hide Parameter Set'"></vue-feather>
+        <vue-feather class="inline-icon clickable hide-param-set"
+                     v-if="parameterSet.hidden"
+                     type="eye"
+                     @click="toggleHidden"
+                     v-tooltip="'Show Parameter Set'"></vue-feather>
         <vue-feather class="inline-icon clickable delete-param-set ms-2"
                      type="trash-2"
                      @click="deleteParameterSet"
