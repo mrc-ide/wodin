@@ -4,7 +4,7 @@
       :placeholder-message="placeholderMessage"
       :end-time="endTime"
       :plot-data="allPlotData"
-      :redrawWatches="solution ? [solution, allFitData, selectedVariables] : []">
+      :redrawWatches="solution ? [solution, allFitData, selectedVariables, parameterSetSolutions] : []">
     <slot></slot>
   </wodin-plot>
 </template>
@@ -103,7 +103,8 @@ export default defineComponent({
             solution,
             allFitData,
             allPlotData,
-            selectedVariables
+            selectedVariables,
+            parameterSetSolutions
         };
     }
 });

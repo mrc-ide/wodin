@@ -8,9 +8,9 @@ import RunStochasticPlot from "../../../../src/app/components/run/RunStochasticP
 import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import { StochasticState } from "../../../../src/app/store/stochastic/state";
 import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
-import { mockModelState } from "../../../mocks";
+import { mockModelState, mockRunState } from "../../../mocks";
 
-describe("RunPlot", () => {
+describe("RunPlot for stochastic", () => {
     const mockSolution = jest.fn().mockReturnValue({
         x: [0, 1],
         values: [
@@ -98,10 +98,9 @@ describe("RunPlot", () => {
         const store = new Vuex.Store<StochasticState>({
             state: {
                 model: mockModelState({ paletteModel, selectedVariables }),
-                run: {
-                    endTime: 99,
-                    resultDiscrete: null
-                }
+                run: mockRunState({
+                    endTime: 99
+                })
             } as any
         });
         const wrapper = shallowMount(RunPlot, {
@@ -156,9 +155,7 @@ describe("RunPlot", () => {
         const store = new Vuex.Store<StochasticState>({
             state: {
                 model: mockModelState({ selectedVariables }),
-                run: {
-                    resultDiscrete: null
-                }
+                run: mockRunState()
             } as any
         });
         const wrapper = shallowMount(RunPlot, {

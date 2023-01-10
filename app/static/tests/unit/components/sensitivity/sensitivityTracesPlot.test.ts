@@ -357,11 +357,13 @@ const mockParameterSets = [
     { name: "Set 1", parameterValues: { alpha: 1 } }
 ];
 
+const mockParameterSetBatch = {
+    solutions: [mockParameterSetSln1, mockParameterSetSln2]
+};
+
 const mockParameterSetResults = {
     "Set 1": {
-        batch: {
-            solutions: [mockParameterSetSln1, mockParameterSetSln2]
-        }
+        batch: mockParameterSetBatch
     }
 };
 
@@ -440,7 +442,12 @@ describe("SensitivityTracesPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Sensitivity has not been run.");
         expect(wodinPlot.props("endTime")).toBe(1);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([...mockSolutions, undefined, selectedVariables]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([
+            ...mockSolutions,
+            undefined,
+            selectedVariables,
+            {}
+        ]);
 
         const plotData = wodinPlot.props("plotData");
         expect(plotData(0, 1, 100)).toStrictEqual(expectedPlotData);
@@ -454,7 +461,12 @@ describe("SensitivityTracesPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Sensitivity has not been run.");
         expect(wodinPlot.props("endTime")).toBe(1);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([...mockSolutions, mockAllFitData, selectedVariables]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([
+            ...mockSolutions,
+            mockAllFitData,
+            selectedVariables,
+            {}
+        ]);
 
         const plotData = wodinPlot.props("plotData");
         expect(plotData(0, 1, 100)).toStrictEqual([...expectedPlotData, expectedFitPlotData]);
@@ -468,7 +480,12 @@ describe("SensitivityTracesPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Sensitivity has not been run.");
         expect(wodinPlot.props("endTime")).toBe(1);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([...mockSolutions, mockAllFitData, selectedVariables]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([
+            ...mockSolutions,
+            mockAllFitData,
+            selectedVariables,
+            { "Set 1": mockParameterSetBatch }
+        ]);
 
         const plotData = wodinPlot.props("plotData");
         expect(plotData(0, 1, 100)).toStrictEqual([...expectedParameterSetPlotData, expectedFitPlotData]);
@@ -493,7 +510,11 @@ describe("SensitivityTracesPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Sensitivity has not been run.");
         expect(wodinPlot.props("endTime")).toBe(1);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([undefined, selectedVariables]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([
+            undefined,
+            selectedVariables,
+            {}
+        ]);
 
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 1, 100);

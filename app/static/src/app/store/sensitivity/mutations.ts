@@ -20,7 +20,8 @@ export enum SensitivityMutation {
     SetPlotTime = "SetPlotTime",
     SetRunning = "SetRunning",
     ParameterSetAdded = "ParameterSetAdded",
-    SetParameterSetResults = "SetParameterSetResults"
+    SetParameterSetResults = "SetParameterSetResults",
+    ParameterSetDeleted = "ParameterSetDeleted"
 }
 
 export const mutations: MutationTree<SensitivityState> = {
@@ -84,5 +85,8 @@ export const mutations: MutationTree<SensitivityState> = {
     },
     [SensitivityMutation.SetParameterSetResults](state: SensitivityState, payload: Dict<OdinSensitivityResult>) {
         state.parameterSetResults = payload;
+    },
+    [SensitivityMutation.ParameterSetDeleted](state: SensitivityState, parameterSetName: string) {
+        delete state.parameterSetResults[parameterSetName];
     }
 };

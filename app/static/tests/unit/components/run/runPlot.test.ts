@@ -9,7 +9,7 @@ import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
 import { getters as runGetters } from "../../../../src/app/store/run/getters";
-import { mockRunState } from "../../../mocks";
+import { mockBasicState, mockRunState } from "../../../mocks";
 
 describe("RunPlot", () => {
     const mockSolution = jest.fn().mockReturnValue({
@@ -97,7 +97,7 @@ describe("RunPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution, mockAllFitData, selectedVariables]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution, mockAllFitData, selectedVariables, {}]);
 
         // Generates expected plot data from model
         const plotData = wodinPlot.props("plotData");
@@ -178,7 +178,12 @@ describe("RunPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution, mockAllFitData, selectedVariables]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([
+            mockSolution,
+            mockAllFitData,
+            selectedVariables,
+            { Set1: mockParamSetResult1.solution, Set2: mockParamSetResult2.solution }
+        ]);
 
         // Generates expected plot data from model
         const plotData = wodinPlot.props("plotData");
@@ -285,10 +290,9 @@ describe("RunPlot", () => {
                     paletteModel,
                     selectedVariables
                 },
-                run: {
-                    endTime: 99,
-                    solution: null
-                }
+                run: mockRunState({
+                    endTime: 99
+                })
             } as any
         });
         const wrapper = shallowMount(RunPlot, {
@@ -316,9 +320,7 @@ describe("RunPlot", () => {
                 model: {
                     selectedVariables
                 },
-                run: {
-                    solution: null
-                }
+                run: mockRunState()
             } as any
         });
         const wrapper = shallowMount(RunPlot, {
@@ -376,7 +378,7 @@ describe("RunPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution, mockAllFitData, selectedVariables]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution, mockAllFitData, selectedVariables, {}]);
 
         // Generates expected plot data from model
         const plotData = wodinPlot.props("plotData");
@@ -433,9 +435,7 @@ describe("RunPlot", () => {
                 model: {
                     selectedVariables: []
                 },
-                run: {
-                    solution: null
-                }
+                run: mockRunState()
             } as any
         });
         const wrapper = shallowMount(RunPlot, {
