@@ -459,7 +459,8 @@ describe("Run actions", () => {
         (actions[RunAction.NewParameterSet] as any)({ state, getters, commit });
         expect(commit).toHaveBeenCalledTimes(3);
         expect(commit.mock.calls[0][0]).toBe(RunMutation.AddParameterSet);
-        expect(commit.mock.calls[0][1]).toStrictEqual({ name: "Set 2", parameterValues: { p1: 1, p2: 2 }, hidden: false });
+        expect(commit.mock.calls[0][1])
+            .toStrictEqual({ name: "Set 2", parameterValues: { p1: 1, p2: 2 }, hidden: false });
         expect(commit.mock.calls[1][0]).toBe(RunMutation.SetParameterSetResult);
         expect(commit.mock.calls[1][1]).toStrictEqual({ name: "Set 2", result: { solution: "fake result" } });
         expect(commit.mock.calls[2][0]).toBe(`sensitivity/${SensitivityMutation.ParameterSetAdded}`);
@@ -493,7 +494,8 @@ describe("Run actions", () => {
         (actions[RunAction.NewParameterSet] as any)({ state, getters, commit });
         expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(RunMutation.AddParameterSet);
-        expect(commit.mock.calls[0][1]).toStrictEqual({ name: "Set 2", parameterValues: { p1: 1, p2: 2 }, hidden: false });
+        expect(commit.mock.calls[0][1])
+            .toStrictEqual({ name: "Set 2", parameterValues: { p1: 1, p2: 2 }, hidden: false });
         expect(commit.mock.calls[1][0]).toBe(`sensitivity/${SensitivityMutation.ParameterSetAdded}`);
         expect(commit.mock.calls[1][1]).toBe("Set 2");
         expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });

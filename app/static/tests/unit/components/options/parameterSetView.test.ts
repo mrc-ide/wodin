@@ -5,7 +5,7 @@ import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState, mockRunState } from "../../../mocks";
 import ParameterSetView from "../../../../src/app/components/options/ParameterSetView.vue";
 import { RunAction } from "../../../../src/app/store/run/actions";
-import {RunMutation} from "../../../../src/app/store/run/mutations";
+import { RunMutation } from "../../../../src/app/store/run/mutations";
 
 describe("ParameterSetView", () => {
     const mockDeleteParameterSet = jest.fn();

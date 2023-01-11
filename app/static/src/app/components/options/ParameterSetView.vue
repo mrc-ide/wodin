@@ -38,7 +38,7 @@ import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import { ParameterSet } from "../../store/run/state";
 import { RunAction } from "../../store/run/actions";
-import {RunMutation} from "../../store/run/mutations";
+import { RunMutation } from "../../store/run/mutations";
 
 export default defineComponent({
     name: "ParameterSetView",

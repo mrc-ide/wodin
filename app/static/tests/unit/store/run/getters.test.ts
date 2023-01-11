@@ -89,9 +89,9 @@ describe("Run getters", () => {
     it("gets visibleParameterSetNames", () => {
         const state = mockRunState({
             parameterSets: [
-                {name: "Set 1", parameterValues: {alpha: 1}, hidden: false},
-                {name: "Set 2", parameterValues: {alpha: 1}, hidden: true},
-                {name: "Set 3", parameterValues: {alpha: 1}, hidden: false}
+                { name: "Set 1", parameterValues: { alpha: 1 }, hidden: false },
+                { name: "Set 2", parameterValues: { alpha: 1 }, hidden: true },
+                { name: "Set 3", parameterValues: { alpha: 1 }, hidden: false }
             ]
         });
         expect((getters[RunGetter.visibleParameterSetNames] as any)(state)).toStrictEqual(["Set 1", "Set 3"]);
