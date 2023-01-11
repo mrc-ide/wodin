@@ -5,16 +5,18 @@ import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState, mockRunState } from "../../../mocks";
 import ParameterSetView from "../../../../src/app/components/options/ParameterSetView.vue";
 import { RunAction } from "../../../../src/app/store/run/actions";
+import {RunMutation} from "../../../../src/app/store/run/mutations";
 
 describe("ParameterSetView", () => {
     const mockDeleteParameterSet = jest.fn();
+    const mockToggleParameterSetHidden = jest.fn();
     const mockTooltipDirective = jest.fn();
 
     beforeEach(() => {
         jest.resetAllMocks();
     });
 
-    const getWrapper = () => {
+    const getWrapper = (paramSetHidden = false) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
@@ -25,6 +27,9 @@ describe("ParameterSetView", () => {
                     }),
                     actions: {
                         [RunAction.DeleteParameterSet]: mockDeleteParameterSet
+                    },
+                    mutations: {
+                        [RunMutation.ToggleParameterSetHidden]: mockToggleParameterSetHidden
                     }
                 }
             }
@@ -37,7 +42,8 @@ describe("ParameterSetView", () => {
             props: {
                 parameterSet: {
                     name: "Set 1",
-                    parameterValues: { alpha: 0, beta: 2, gamma: 4 }
+                    parameterValues: { alpha: 0, beta: 2, gamma: 4 },
+                    hidden: paramSetHidden
                 }
             }
         });
@@ -58,22 +64,70 @@ describe("ParameterSetView", () => {
         expect((paramSpans[2].element as HTMLSpanElement).style.color).toBe("rgb(71, 159, 182)");
         expect((paramSpans[2].element as HTMLSpanElement).style.borderColor).toBe("#479fb6");
 
-        const deleteIcon = wrapper.findComponent(VueFeather);
+        const icons = wrapper.findAllComponents(VueFeather);
+        expect(icons.length).toBe(2);
+        const hideIcon = icons.at(0)!;
+        expect(hideIcon.classes()).toContain("hide-param-set");
+        expect(hideIcon.props("type")).toBe("eye-off");
+        const deleteIcon = icons.at(1)!;
+        expect(deleteIcon.classes()).toContain("delete-param-set");
         expect(deleteIcon.props("type")).toBe("trash-2");
+
+        expect(wrapper.find(".card-body").classes()).not.toContain("hidden-parameter-set");
     });
 
     it("uses tooltip directive", () => {
         const wrapper = getWrapper();
-        expect(mockTooltipDirective).toHaveBeenCalledTimes(1);
-        const iconElement = wrapper.findComponent(VueFeather).element;
-        expect(mockTooltipDirective.mock.calls[0][0]).toBe(iconElement);
-        expect(mockTooltipDirective.mock.calls[0][1].value).toBe("Delete Parameter Set");
+        expect(mockTooltipDirective).toHaveBeenCalledTimes(2);
+        const icons = wrapper.findAllComponents(VueFeather);
+        expect(icons.length).toBe(2);
+        const hideIconEl = icons.at(0)!.element;
+        expect(mockTooltipDirective.mock.calls[0][0]).toBe(hideIconEl);
+        expect(mockTooltipDirective.mock.calls[0][1].value).toBe("Hide Parameter Set");
+        const deleteIconEl = icons.at(1)!.element;
+        expect(mockTooltipDirective.mock.calls[1][0]).toBe(deleteIconEl);
+        expect(mockTooltipDirective.mock.calls[1][1].value).toBe("Delete Parameter Set");
+    });
+
+    it("renders as expected when parameter set is hidden", () => {
+        const wrapper = getWrapper(true);
+
+        const icons = wrapper.findAllComponents(VueFeather);
+        expect(icons.length).toBe(2);
+        const showIcon = icons.at(0)!;
+        expect(showIcon.classes()).toContain("show-param-set");
+        expect(showIcon.props("type")).toBe("eye");
+        const deleteIcon = icons.at(1)!;
+        expect(deleteIcon.classes()).toContain("delete-param-set");
+        expect(deleteIcon.props("type")).toBe("trash-2");
+
+        expect(wrapper.find(".card-body").classes()).toContain("hidden-parameter-set");
+
+        expect(mockTooltipDirective).toHaveBeenCalledTimes(2);
+        expect(mockTooltipDirective.mock.calls[0][0]).toBe(showIcon.element);
+        expect(mockTooltipDirective.mock.calls[0][1].value).toBe("Show Parameter Set");
+        expect(mockTooltipDirective.mock.calls[1][0]).toBe(deleteIcon.element);
+        expect(mockTooltipDirective.mock.calls[1][1].value).toBe("Delete Parameter Set");
     });
 
     it("clicking delete icon dispatches DeleteParameterSet action", async () => {
         const wrapper = getWrapper();
-        await wrapper.findComponent(VueFeather).trigger("click");
+        await wrapper.find(".delete-param-set").trigger("click");
         expect(mockDeleteParameterSet).toHaveBeenCalledTimes(1);
         expect(mockDeleteParameterSet.mock.calls[0][1]).toBe("Set 1");
+    });
+
+    it("clicking hide icon commits ToggleParameterSetHidden", async () => {
+        const wrapper = getWrapper();
+        await wrapper.find(".hide-param-set").trigger("click");
+        expect(mockToggleParameterSetHidden).toHaveBeenCalledTimes(1);
+        expect(mockToggleParameterSetHidden.mock.calls[0][1]).toBe("Set 1");
+    });
+
+    it("clicking show icon commits ToggleParameterSetHidden", async () => {
+        const wrapper = getWrapper(true);
+        await wrapper.find(".show-param-set").trigger("click");
+        expect(mockToggleParameterSetHidden).toHaveBeenCalledTimes(1);
+        expect(mockToggleParameterSetHidden.mock.calls[0][1]).toBe("Set 1");
     });
 });

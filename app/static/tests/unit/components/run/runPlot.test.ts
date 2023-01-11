@@ -59,6 +59,22 @@ describe("RunPlot", () => {
         error: null
     };
 
+    const mockParamSetSolution3 = jest.fn().mockReturnValue({
+        names: ["S", "I"],
+        x: [0, 1],
+        values: [
+            { name: "S", y: [300, 4000] },
+            { name: "I", y: [500, 6000] },
+            { name: "R", y: [700, 8000] }
+        ]
+    });
+
+    const mockParamSetResult3 = {
+        inputs: {},
+        solution: mockParamSetSolution3,
+        error: null
+    };
+
     const paletteModel = {
         S: "#ff0000",
         I: "#00ff00",
@@ -153,12 +169,14 @@ describe("RunPlot", () => {
                         endTime: 99,
                         resultOde: mockResult,
                         parameterSets: [
-                            { name: "Set1", parameterValues: { alpha: 1, beta: 2 } },
-                            { name: "Set2", parameterValues: { alpha: 10, beta: 20 } }
+                            { name: "Set1", parameterValues: { alpha: 1, beta: 2 }, hidden: false },
+                            { name: "Set2", parameterValues: { alpha: 10, beta: 20 }, hidden: false },
+                            { name: "Set3", parameterValues: { alpha: 100, beta: 200 }, hidden: true }
                         ],
                         parameterSetResults: {
                             Set1: mockParamSetResult1,
-                            Set2: mockParamSetResult2
+                            Set2: mockParamSetResult2,
+                            Set3: mockParamSetResult3
                         }
                     },
                     getters: runGetters

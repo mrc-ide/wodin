@@ -354,21 +354,30 @@ const expectedFitPlotData = {
 const selectedVariables = ["y", "z"];
 
 const mockParameterSets = [
-    { name: "Set 1", parameterValues: { alpha: 1 } }
+    { name: "Set 1", parameterValues: { alpha: 1 }, hidden: false },
+    { name: "Set 2", parameterValues: { alpha: 2 }, hidden: true }
 ];
 
-const mockParameterSetBatch = {
+const mockParameterSetBatch1 = {
+    solutions: [mockParameterSetSln1, mockParameterSetSln2]
+};
+
+const mockParameterSetBatch2 = {
     solutions: [mockParameterSetSln1, mockParameterSetSln2]
 };
 
 const mockParameterSetResults = {
     "Set 1": {
-        batch: mockParameterSetBatch
+        batch: mockParameterSetBatch1
+    },
+    "Set 2": {
+        batch: mockParameterSetBatch2
     }
 };
 
 const mockParameterSetCentralResults = {
-    "Set 1": { solution: mockParameterSetCentralSln }
+    "Set 1": { solution: mockParameterSetCentralSln },
+    "Set 2": { solution: mockParameterSetCentralSln }
 } as any;
 
 describe("SensitivityTracesPlot", () => {
@@ -484,7 +493,7 @@ describe("SensitivityTracesPlot", () => {
             ...mockSolutions,
             mockAllFitData,
             selectedVariables,
-            { "Set 1": mockParameterSetBatch }
+            { "Set 1": mockParameterSetBatch1 }
         ]);
 
         const plotData = wodinPlot.props("plotData");

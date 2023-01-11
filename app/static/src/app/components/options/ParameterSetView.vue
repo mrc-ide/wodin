@@ -9,7 +9,7 @@
                      type="eye-off"
                      @click="toggleHidden"
                      v-tooltip="'Hide Parameter Set'"></vue-feather>
-        <vue-feather class="inline-icon clickable hide-param-set"
+        <vue-feather class="inline-icon clickable show-param-set"
                      v-if="parameterSet.hidden"
                      type="eye"
                      @click="toggleHidden"

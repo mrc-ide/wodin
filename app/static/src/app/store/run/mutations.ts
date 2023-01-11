@@ -17,7 +17,7 @@ export enum RunMutation {
     SetParameterSetResult = "SetParameterSetResult",
     AddParameterSet = "AddParameterSet",
     DeleteParameterSet = "DeleteParameterSet",
-    ToggleParameterSetHidden = "TogglParameterSetHidden"
+    ToggleParameterSetHidden = "ToggleParameterSetHidden"
 }
 
 const runRequiredNone = {

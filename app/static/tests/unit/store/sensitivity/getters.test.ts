@@ -86,7 +86,7 @@ describe("Sensitivity getters", () => {
     it("parameterSetSensitivityUpdateRequired is true if any reason except parameterValueChanged is true", () => {
         const paramSetSensUpdateRequired = getters[SensitivityGetter.parameterSetSensitivityUpdateRequired] as any;
         const runState = mockRunState({
-            parameterSets: [{ name: "Set 1", parameterValues: { p1: 1 } }]
+            parameterSets: [{ name: "Set 1", parameterValues: { p1: 1 }, hidden: false }]
         });
         const rootState = { run: runState };
 
@@ -127,7 +127,7 @@ describe("Sensitivity getters", () => {
 
     it("parameterSetSensitivityUpdateRequired returns true if there are missing parameter set results", () => {
         const runState = mockRunState({
-            parameterSets: [{ name: "Set 1", parameterValues: { p1: 1 } }]
+            parameterSets: [{ name: "Set 1", parameterValues: { p1: 1 }, hidden: false }]
         });
 
         const rootState = { run: runState };
@@ -138,7 +138,7 @@ describe("Sensitivity getters", () => {
 
     it("parameterSetSensitivityUpdateRequired returns true if parameter set result has no batch", () => {
         const runState = mockRunState({
-            parameterSets: [{ name: "Set 1", parameterValues: { p1: 1 } }]
+            parameterSets: [{ name: "Set 1", parameterValues: { p1: 1 }, hidden: false }]
         });
         const rootState = { run: runState };
         const state = mockSensitivityState({
