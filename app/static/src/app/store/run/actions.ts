@@ -148,7 +148,8 @@ export const actions: ActionTree<RunState, AppState> = {
             const name = `Set ${state.parameterSets.length + 1}`; // This will not be reliable when we add set deletion!
             const parameterSet = {
                 name,
-                parameterValues: { ...state.parameterValues }
+                parameterValues: { ...state.parameterValues },
+                hidden: false
             };
             commit(RunMutation.AddParameterSet, parameterSet);
 

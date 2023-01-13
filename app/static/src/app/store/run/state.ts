@@ -11,7 +11,8 @@ export interface RunUpdateRequiredReasons {
 
 export interface ParameterSet {
     name: string,
-    parameterValues: OdinUserType
+    parameterValues: OdinUserType,
+    hidden: boolean
 }
 
 export interface RunState {

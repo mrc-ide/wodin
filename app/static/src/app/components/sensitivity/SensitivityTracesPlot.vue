@@ -41,10 +41,14 @@ export default defineComponent({
 
         const solutions = computed(() => (store.state.sensitivity.result?.batch?.solutions || []));
 
+        const visibleParameterSetNames = computed(() => store.getters[`run/${RunGetter.visibleParameterSetNames}`]);
+
         const parameterSetBatches = computed(() => {
             const result = {} as Dict<Batch>;
             Object.keys(store.state.sensitivity.parameterSetResults).forEach((name) => {
-                result[name] = store.state.sensitivity.parameterSetResults[name].batch;
+                if (visibleParameterSetNames.value.includes(name)) {
+                    result[name] = store.state.sensitivity.parameterSetResults[name].batch;
+                }
             });
             return result;
         });

@@ -89,7 +89,7 @@ describe("serialise", () => {
             error: { error: "run discrete error", detail: "run discrete error detail" }
         },
         parameterSets: [
-            { name: "Set 1", parameterValues: { alpha: 1, beta: 3.3 } }
+            { name: "Set 1", parameterValues: { alpha: 1, beta: 3.3 }, hidden: false }
         ],
         parameterSetResults: {
             "Set 1": {
