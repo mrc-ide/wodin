@@ -3,6 +3,7 @@
   <div class="card">
     <div class="card-header">
       {{parameterSet.name}}
+      <div class="d-inline-block trace ms-2" :class="'trace-'+lineStyle"></div>
       <span class="float-end">
         <vue-feather class="inline-icon clickable hide-param-set"
                      v-if="!parameterSet.hidden"
@@ -39,10 +40,15 @@ import VueFeather from "vue-feather";
 import { ParameterSet } from "../../store/run/state";
 import { RunAction } from "../../store/run/actions";
 import { RunMutation } from "../../store/run/mutations";
+import { lineStyleForParameterSetIndex } from "../../plot";
 
 export default defineComponent({
     name: "ParameterSetView",
     props: {
+        index: {
+            type: Number,
+            required: true
+        },
         parameterSet: {
             type: Object as PropType<ParameterSet>,
             required: true
@@ -69,6 +75,8 @@ export default defineComponent({
             };
         };
 
+        const lineStyle = computed(() => lineStyleForParameterSetIndex(props.index));
+
         const deleteParameterSet = () => {
             store.dispatch(`run/${RunAction.DeleteParameterSet}`, props.parameterSet.name);
         };
@@ -78,6 +86,7 @@ export default defineComponent({
         };
 
         return {
+            lineStyle,
             getStyle,
             deleteParameterSet,
             toggleHidden
@@ -88,6 +97,42 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .parameter-set {
+
+  $trace-color: #333;
+
+  .trace {
+    border-top: $trace-color;
+    border-top-width: 2px;
+    width: 6rem;
+    height: 0.5rem;
+    background-position: left top;
+    background-repeat: repeat-x;
+  }
+
+  .trace-dot {
+    border-top-style: dotted;
+  }
+
+  .trace-dash {
+    background-image: linear-gradient(to right, $trace-color 50%, transparent 50%);
+    background-size: 10px 2px;
+  }
+
+  .trace-longdash {
+    background-image: linear-gradient(to right, $trace-color 50%, transparent 50%);
+    background-size: 20px 2px;
+  }
+
+  .trace-dashdot {
+    background-image: linear-gradient(to right, $trace-color 10%, transparent 10% 30%, $trace-color 30% 80%, transparent 80%);
+    background-size: 16px 2px;
+  }
+
+  .trace-longdashdot {
+    background-image: linear-gradient(to right, $trace-color 8%, transparent 8% 30%, $trace-color 30% 78%, transparent 78%);
+    background-size: 24px 2px;
+  }
+
   .parameter {
     font-size: medium;
   }

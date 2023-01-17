@@ -7,7 +7,7 @@
       Save Current Parameters
     </button>
   </div>
-  <parameter-set-view v-for="paramSet in parameterSets" :parameter-set="paramSet" class="mt-2" :key="paramSet.name">
+  <parameter-set-view v-for="(paramSet, index) in parameterSets" :parameter-set="paramSet" :index="index" class="mt-2" :key="paramSet.name">
   </parameter-set-view>
 </template>
 
