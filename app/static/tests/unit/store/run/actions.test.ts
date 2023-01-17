@@ -450,6 +450,7 @@ describe("Run actions", () => {
 
     it("NewParameterSet commits parameter set and result", () => {
         const state = mockRunState({
+            parameterSetsCreated: 3,
             parameterValues: { p1: 1, p2: 2 },
             parameterSets: [{ name: "Set 1", parameterValues: { p1: 3, p2: 4 }, hidden: false }],
             resultOde: { solution: "fake result" } as any
@@ -460,11 +461,11 @@ describe("Run actions", () => {
         expect(commit).toHaveBeenCalledTimes(3);
         expect(commit.mock.calls[0][0]).toBe(RunMutation.AddParameterSet);
         expect(commit.mock.calls[0][1])
-            .toStrictEqual({ name: "Set 2", parameterValues: { p1: 1, p2: 2 }, hidden: false });
+            .toStrictEqual({ name: "Set 4", parameterValues: { p1: 1, p2: 2 }, hidden: false });
         expect(commit.mock.calls[1][0]).toBe(RunMutation.SetParameterSetResult);
-        expect(commit.mock.calls[1][1]).toStrictEqual({ name: "Set 2", result: { solution: "fake result" } });
+        expect(commit.mock.calls[1][1]).toStrictEqual({ name: "Set 4", result: { solution: "fake result" } });
         expect(commit.mock.calls[2][0]).toBe(`sensitivity/${SensitivityMutation.ParameterSetAdded}`);
-        expect(commit.mock.calls[2][1]).toBe("Set 2");
+        expect(commit.mock.calls[2][1]).toBe("Set 4");
         expect(commit.mock.calls[2][2]).toStrictEqual({ root: true });
     });
 
@@ -486,6 +487,7 @@ describe("Run actions", () => {
     it("NewParameterSet does not commit null result", () => {
         const state = mockRunState({
             parameterValues: { p1: 1, p2: 2 },
+            parameterSetsCreated: 1,
             parameterSets: [{ name: "Set 1", parameterValues: { p1: 3, p2: 4 }, hidden: false }],
             resultOde: null
         });
