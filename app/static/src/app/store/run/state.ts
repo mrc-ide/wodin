@@ -29,6 +29,8 @@ export interface RunState {
     userDownloadFileName: string;
     downloading: boolean;
     numberOfReplicates: number;
+    // counter of how many parmeter sets have been created in this session, including those subsequently deleted
+    parameterSetsCreated: number;
     parameterSets: ParameterSet[];
     parameterSetResults: Dict<OdinRunResultOde>;
 }

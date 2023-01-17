@@ -80,6 +80,7 @@ export const mockRunState = (state: Partial<RunState> = {}): RunState => {
         userDownloadFileName: "",
         downloading: false,
         numberOfReplicates: 5,
+        parameterSetsCreated: 0,
         parameterSets: [],
         parameterSetResults: {},
         ...state
