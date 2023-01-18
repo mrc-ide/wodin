@@ -3,7 +3,7 @@
   <div class="card">
     <div class="card-header">
       {{parameterSet.name}}
-      <div class="d-inline-block trace ms-2" :class="'trace-'+lineStyle"></div>
+      <div class="d-inline-block trace ms-2" :class="'trace-' + lineStyle"></div>
       <span class="float-end">
         <vue-feather class="inline-icon clickable hide-param-set"
                      v-if="!parameterSet.hidden"
@@ -124,12 +124,22 @@ export default defineComponent({
   }
 
   .trace-dashdot {
-    background-image: linear-gradient(to right, $trace-color 10%, transparent 10% 30%, $trace-color 30% 80%, transparent 80%);
+    background-image: linear-gradient(
+            to right,
+            $trace-color 10%,
+            transparent 10% 30%,
+            $trace-color 30% 80%,
+            transparent 80%);
     background-size: 16px 2px;
   }
 
   .trace-longdashdot {
-    background-image: linear-gradient(to right, $trace-color 8%, transparent 8% 30%, $trace-color 30% 78%, transparent 78%);
+    background-image: linear-gradient(
+            to right,
+            $trace-color 8%,
+            transparent 8% 30%,
+            $trace-color 30% 78%,
+            transparent 78%);
     background-size: 24px 2px;
   }
 
