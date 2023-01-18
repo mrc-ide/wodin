@@ -199,7 +199,7 @@ test.describe("Options Tab tests", () => {
 
     test("can create a parameter set, and see run traces for that set", async ({ page }) => {
         await page.click("#create-param-set");
-        await expect(await page.innerText(".parameter-set .card-header")).toBe("Set 1");
+        await expect((await page.innerText(".parameter-set .card-header")).trim()).toBe("Set 1");
         await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 1)")).toBe("beta: 4");
         await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 2)")).toBe("I0: 1");
         await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 3)")).toBe("N: 1000000");
