@@ -35,6 +35,7 @@ export interface SerialisedRunState {
     parameterValues: OdinUserType | null,
     endTime: number,
     numberOfReplicates: number,
+    parameterSetsCreated: number,
     parameterSets: ParameterSet[],
     resultOde: SerialisedRunResult | null,
     resultDiscrete: SerialisedRunResult | null,
