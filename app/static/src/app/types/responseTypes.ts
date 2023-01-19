@@ -153,6 +153,7 @@ export interface Batch {
     solutions: OdinSolution[],
     errors: BatchError[],
     valueAtTime: (time: number) => OdinSeriesSet,
+    extreme: (type: string) => OdinSeriesSet,
     compute: () => boolean
 }
 

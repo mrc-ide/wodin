@@ -17,12 +17,14 @@ import {
 import { AxisType, newPlot, Plots } from "plotly.js-basic-dist-min";
 import { useStore } from "vuex";
 import {
-    fadePlotStyle, margin, config, odinToPlotly, filterSeriesSet
+  fadePlotStyle, margin, config, odinToPlotly, filterSeriesSet, updatePlotTraceName
 } from "../../plot";
 import { SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
-import {Batch, OdinSeriesSet} from "../../types/responseTypes";
+import { Batch, OdinSeriesSet } from "../../types/responseTypes";
 import { runPlaceholderMessage } from "../../utils";
+import { RunGetter } from "../../store/run/getters";
+import { Dict } from "../../types/utilTypes";
 
 export default defineComponent({
     name: "SensitivitySummaryPlot",
@@ -73,35 +75,53 @@ export default defineComponent({
         });
 
         const paramSetBatches = computed(() => {
-            const result: Batch[] = [];
-            Object.keys(store.state.sensitivity.parameterSetResults).forEach((key: string) => {
-                const psBatch = store.state.sensitivity.parameterSetResults[key]?.batch;
+            const result = {} as Dict<Batch>;
+            Object.keys(store.state.sensitivity.parameterSetResults).forEach((paramSetName: string) => {
+                const psBatch = store.state.sensitivity.parameterSetResults[paramSetName]?.batch;
                 if (psBatch) {
-                    result.push(psBatch);
+                    result[paramSetName] = psBatch;
                 }
             });
             return result;
         });
+        const lineStylesForParamSets = computed(() => store.getters[`run/${RunGetter.lineStylesForParameterSets}`]);
 
         const plotData = computed(() => {
             if (batch.value) {
                 let data: null | OdinSeriesSet;
-                let paramSetData: null | OdinSeriesSet[];
+                const paramSetData: Dict<OdinSeriesSet> = {};
                 if (plotSettings.value.plotType === SensitivityPlotType.ValueAtTime) {
                     verifyValidEndTime();
                     data = batch.value.valueAtTime(plotSettings.value.time);
-                    paramSetData = paramSetBatches.value.map((psBatch: Batch) => psBatch.valueAtTime(plotSettings.value.time));
+                    Object.keys(paramSetBatches.value).forEach((paramSetName) => {
+                        paramSetData[paramSetName] = paramSetBatches.value[paramSetName].valueAtTime(plotSettings.value.time);
+                    });
                 } else {
                     const paramPrefix = plotSettings.value.plotType === SensitivityPlotType.TimeAtExtreme ? "t" : "y";
                     const extremeParam = `${paramPrefix}${plotSettings.value.extreme}`;
                     data = batch.value.extreme(extremeParam);
-                    paramSetData = paramSetBatches.value.map((psBatch: Batch) => psBatch.extreme(extremeParam));
+                    Object.keys(paramSetBatches.value).forEach((paramSetName) => {
+                        paramSetData[paramSetName] = paramSetBatches.value[paramSetName].extreme(extremeParam);
+                    });
                 }
 
                 const result = [...odinToPlotly(filterSeriesSet(data!, selectedVariables.value), palette.value)];
-                paramSetData.forEach((psData) => {
-                  result.push(...odinToPlotly(filterSeriesSet(psData, selectedVariables.value), palette.value)));
+                Object.keys(paramSetData).forEach((paramSetName: string) => {
+                    const dash = lineStylesForParamSets.value[paramSetName];
+                    const options = {
+                        includeLegendGroup: true,
+                        lineWidth: 1,
+                        showLegend: false,
+                        dash
+                    };
+                    const psData = paramSetData[paramSetName];
+                    const psPlotData = odinToPlotly(filterSeriesSet(psData, selectedVariables.value), palette.value, options);
+                    psPlotData.forEach((plotTrace) => {
+                        updatePlotTraceName(plotTrace, null, null, paramSetName);
+                    });
+                    result.push(...psPlotData);
                 });
+                return result;
             }
             return [];
         });

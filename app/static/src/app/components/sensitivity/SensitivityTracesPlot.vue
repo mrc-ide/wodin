@@ -17,7 +17,7 @@ import { format } from "d3-format";
 import { FitDataGetter } from "../../store/fitData/getters";
 import WodinPlot from "../WodinPlot.vue";
 import {
-    allFitDataToPlotly, filterSeriesSet, odinToPlotly, PlotlyOptions, WodinPlotData
+  allFitDataToPlotly, filterSeriesSet, odinToPlotly, PlotlyOptions, updatePlotTraceName, WodinPlotData
 } from "../../plot";
 import {
     Batch,
@@ -52,6 +52,7 @@ export default defineComponent({
             });
             return result;
         });
+
         const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
         const centralSolution = computed(() => {
             return isStochastic.value ? store.state.run.resultDiscrete?.solution : store.state.run.resultOde?.solution;
@@ -67,19 +68,6 @@ export default defineComponent({
         const selectedVariables = computed(() => store.state.model.selectedVariables);
 
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, true));
-
-        const updatePlotTraceName = (plotTrace: Partial<PlotData>, param: string | null, value: number | null,
-            parameterSetName = "") => {
-            const parenthesisItems = [];
-            if (param && value) {
-                parenthesisItems.push(`${param}=${format(".3f")(value)}`);
-            }
-            if (parameterSetName) {
-                parenthesisItems.push(parameterSetName);
-            }
-            // eslint-disable-next-line no-param-reassign
-            plotTrace.name = `${plotTrace.name} (${parenthesisItems.join(" ")})`;
-        };
 
         const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData}`]);
 

@@ -5,6 +5,7 @@ import {
     DiscreteSeriesSet, OdinSeriesSet, OdinSeriesSetValues
 } from "./types/responseTypes";
 import { Dict } from "./types/utilTypes";
+import {format} from "d3-format";
 
 export type WodinPlotData = Partial<PlotData>[];
 
@@ -146,3 +147,16 @@ export function allFitDataToPlotly(allFitData: AllFitData | null, paletteModel: 
 
 const lineStyles = ["dot", "dash", "longdash", "dashdot", "longdashdot"];
 export const lineStyleForParameterSetIndex = (index: number): string => (lineStyles[index % lineStyles.length]);
+
+export const updatePlotTraceName = (plotTrace: Partial<PlotData>, param: string | null, value: number | null,
+                             parameterSetName = "") => {
+    const parenthesisItems = [];
+    if (param && value) {
+        parenthesisItems.push(`${param}=${format(".3f")(value)}`);
+    }
+    if (parameterSetName) {
+        parenthesisItems.push(parameterSetName);
+    }
+    // eslint-disable-next-line no-param-reassign
+    plotTrace.name = `${plotTrace.name} (${parenthesisItems.join(" ")})`;
+};
