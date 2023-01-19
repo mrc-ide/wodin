@@ -21,7 +21,7 @@ import {
 } from "../../plot";
 import { SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
-import { OdinSeriesSet } from "../../types/responseTypes";
+import {Batch, OdinSeriesSet} from "../../types/responseTypes";
 import { runPlaceholderMessage } from "../../utils";
 
 export default defineComponent({
@@ -72,18 +72,36 @@ export default defineComponent({
             return { type };
         });
 
+        const paramSetBatches = computed(() => {
+            const result: Batch[] = [];
+            Object.keys(store.state.sensitivity.parameterSetResults).forEach((key: string) => {
+                const psBatch = store.state.sensitivity.parameterSetResults[key]?.batch;
+                if (psBatch) {
+                    result.push(psBatch);
+                }
+            });
+            return result;
+        });
+
         const plotData = computed(() => {
             if (batch.value) {
                 let data: null | OdinSeriesSet;
+                let paramSetData: null | OdinSeriesSet[];
                 if (plotSettings.value.plotType === SensitivityPlotType.ValueAtTime) {
                     verifyValidEndTime();
                     data = batch.value.valueAtTime(plotSettings.value.time);
+                    paramSetData = paramSetBatches.value.map((psBatch: Batch) => psBatch.valueAtTime(plotSettings.value.time));
                 } else {
                     const paramPrefix = plotSettings.value.plotType === SensitivityPlotType.TimeAtExtreme ? "t" : "y";
                     const extremeParam = `${paramPrefix}${plotSettings.value.extreme}`;
                     data = batch.value.extreme(extremeParam);
+                    paramSetData = paramSetBatches.value.map((psBatch: Batch) => psBatch.extreme(extremeParam));
                 }
-                return [...odinToPlotly(filterSeriesSet(data!, selectedVariables.value), palette.value)];
+
+                const result = [...odinToPlotly(filterSeriesSet(data!, selectedVariables.value), palette.value)];
+                paramSetData.forEach((psData) => {
+                  result.push(...odinToPlotly(filterSeriesSet(psData, selectedVariables.value), palette.value)));
+                });
             }
             return [];
         });
