@@ -16,7 +16,7 @@ describe("ParameterSetView", () => {
         jest.resetAllMocks();
     });
 
-    const getWrapper = (paramSetHidden = false) => {
+    const getWrapper = (paramSetHidden = false, index = 0) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
@@ -44,7 +44,8 @@ describe("ParameterSetView", () => {
                     name: "Set 1",
                     parameterValues: { alpha: 0, beta: 2, gamma: 4 },
                     hidden: paramSetHidden
-                }
+                },
+                index
             }
         });
     };
@@ -74,6 +75,19 @@ describe("ParameterSetView", () => {
         expect(deleteIcon.props("type")).toBe("trash-2");
 
         expect(wrapper.find(".card-body").classes()).not.toContain("hidden-parameter-set");
+    });
+
+    it("renders all trace line styles", () => {
+        const testExpectedTraceClassForIndex = (index: number, expectedClass: string) => {
+            const wrapper = getWrapper(false, index);
+            expect(wrapper.find("div.trace").classes()).toContain(expectedClass);
+        };
+        testExpectedTraceClassForIndex(0, "trace-dot");
+        testExpectedTraceClassForIndex(1, "trace-dash");
+        testExpectedTraceClassForIndex(2, "trace-longdash");
+        testExpectedTraceClassForIndex(3, "trace-dashdot");
+        testExpectedTraceClassForIndex(4, "trace-longdashdot");
+        testExpectedTraceClassForIndex(5, "trace-dot"); // back to start
     });
 
     it("uses tooltip directive", () => {

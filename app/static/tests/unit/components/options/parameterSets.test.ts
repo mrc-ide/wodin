@@ -52,7 +52,9 @@ describe("ParameterSets", () => {
         const paramSetViews = wrapper.findAllComponents(ParameterSetView);
         expect(paramSetViews.length).toBe(2);
         expect(paramSetViews.at(0)!.props("parameterSet")).toStrictEqual(runState.parameterSets[0]);
+        expect(paramSetViews.at(0)!.props("index")).toBe(0);
         expect(paramSetViews.at(1)!.props("parameterSet")).toStrictEqual(runState.parameterSets[1]);
+        expect(paramSetViews.at(1)!.props("index")).toBe(1);
     });
 
     it("cannot save new parameter set if compile is required", () => {

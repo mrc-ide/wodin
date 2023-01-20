@@ -212,7 +212,7 @@ test.describe("Options Tab tests", () => {
 
     test("can create a parameter set, and see run traces for that set", async ({ page }) => {
         await createParameterSet(page);
-        await expect(await page.innerText(".parameter-set .card-header")).toBe("Set 1");
+        await expect((await page.innerText(".parameter-set .card-header")).trim()).toBe("Set 1");
         await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 1)")).toBe("beta: 4");
         await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 2)")).toBe("I0: 1");
         await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 3)")).toBe("N: 1000000");
@@ -271,7 +271,7 @@ test.describe("Options Tab tests", () => {
         await updateBetaParamAndRun(2, page);
         await createParameterSet(page);
         await expect(await page.locator(".parameter-set").count()).toBe(2);
-        await expect(await page.innerText(":nth-match(.parameter-set  .card-header, 1)")).toBe("Set 1");
-        await expect(await page.innerText(":nth-match(.parameter-set  .card-header, 2)")).toBe("Set 3");
+        await expect((await page.innerText(":nth-match(.parameter-set  .card-header, 1)")).trim()).toBe("Set 1");
+        await expect((await page.innerText(":nth-match(.parameter-set  .card-header, 2)")).trim()).toBe("Set 3");
     });
 });
