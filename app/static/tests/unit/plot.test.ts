@@ -1,7 +1,7 @@
 import { Dash } from "plotly.js-basic-dist-min";
 import {
     allFitDataToPlotly, discreteSeriesSetToPlotly,
-    fitDataToPlotly, lineStyleForParameterSetIndex,
+    fitDataToPlotly, paramSetLineStyle,
     odinToPlotly
 } from "../../src/app/plot";
 
@@ -276,13 +276,13 @@ describe("discreteSeriesSetToPlotly", () => {
     });
 });
 
-describe("lineStyleForParameterSetIndex", () => {
+describe("paramSetLineStyle", () => {
     it("fetches expected line styles", () => {
-        expect(lineStyleForParameterSetIndex(0)).toBe("dot");
-        expect(lineStyleForParameterSetIndex(1)).toBe("dash");
-        expect(lineStyleForParameterSetIndex(2)).toBe("longdash");
-        expect(lineStyleForParameterSetIndex(3)).toBe("dashdot");
-        expect(lineStyleForParameterSetIndex(4)).toBe("longdashdot");
-        expect(lineStyleForParameterSetIndex(5)).toBe("dot");
+        expect(paramSetLineStyle(0)).toBe("dot");
+        expect(paramSetLineStyle(1)).toBe("dash");
+        expect(paramSetLineStyle(2)).toBe("longdash");
+        expect(paramSetLineStyle(3)).toBe("dashdot");
+        expect(paramSetLineStyle(4)).toBe("longdashdot");
+        expect(paramSetLineStyle(5)).toBe("dot");
     });
 });

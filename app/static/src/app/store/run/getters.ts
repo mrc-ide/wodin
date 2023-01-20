@@ -2,7 +2,7 @@ import { Getter, GetterTree } from "vuex";
 import { ParameterSet, RunState } from "./state";
 import { AppState } from "../appState/state";
 import { Dict } from "../../types/utilTypes";
-import { lineStyleForParameterSetIndex } from "../../plot";
+import { paramSetLineStyle } from "../../plot";
 import { anyTrue } from "../../utils";
 
 export enum RunGetter {
@@ -20,7 +20,7 @@ export const getters: RunGetters & GetterTree<RunState, AppState> = {
     [RunGetter.lineStylesForParameterSets]: (state: RunState): Dict<string> => {
         const result: Dict<string> = {};
         state.parameterSets.forEach((set, idx) => {
-            result[set.name] = lineStyleForParameterSetIndex(idx);
+            result[set.name] = paramSetLineStyle(idx);
         });
         return result;
     },

@@ -3,7 +3,7 @@
   <div class="card">
     <div class="card-header">
       {{parameterSet.name}}
-      <div class="d-inline-block trace ms-2" :class="'trace-' + lineStyle"></div>
+      <div class="d-inline-block trace ms-2" :class="lineStyleClass"></div>
       <span class="float-end">
         <vue-feather class="inline-icon clickable hide-param-set"
                      v-if="!parameterSet.hidden"
@@ -40,7 +40,7 @@ import VueFeather from "vue-feather";
 import { ParameterSet } from "../../store/run/state";
 import { RunAction } from "../../store/run/actions";
 import { RunMutation } from "../../store/run/mutations";
-import { lineStyleForParameterSetIndex } from "../../plot";
+import { paramSetLineStyle } from "../../plot";
 
 export default defineComponent({
     name: "ParameterSetView",
@@ -75,7 +75,7 @@ export default defineComponent({
             };
         };
 
-        const lineStyle = computed(() => lineStyleForParameterSetIndex(props.index));
+        const lineStyleClass = computed(() => `trace-${paramSetLineStyle(props.index)}`);
 
         const deleteParameterSet = () => {
             store.dispatch(`run/${RunAction.DeleteParameterSet}`, props.parameterSet.name);
@@ -86,7 +86,7 @@ export default defineComponent({
         };
 
         return {
-            lineStyle,
+            lineStyleClass,
             getStyle,
             deleteParameterSet,
             toggleHidden

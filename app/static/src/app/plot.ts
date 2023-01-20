@@ -145,4 +145,4 @@ export function allFitDataToPlotly(allFitData: AllFitData | null, paletteModel: 
 }
 
 const lineStyles = ["dot", "dash", "longdash", "dashdot", "longdashdot"];
-export const lineStyleForParameterSetIndex = (index: number): string => (lineStyles[index % lineStyles.length]);
+export const paramSetLineStyle = (index: number): string => (lineStyles[index % lineStyles.length]);
