@@ -271,7 +271,7 @@ test.describe("Options Tab tests", () => {
         await updateBetaParamAndRun(2, page);
         await createParameterSet(page);
         await expect(await page.locator(".parameter-set").count()).toBe(2);
-        await expect(await page.innerText(":nth-match(.parameter-set  .card-header, 1)")).toBe("Set 1");
-        await expect(await page.innerText(":nth-match(.parameter-set  .card-header, 2)")).toBe("Set 3");
+        await expect((await page.innerText(":nth-match(.parameter-set  .card-header, 1)")).trim()).toBe("Set 1");
+        await expect((await page.innerText(":nth-match(.parameter-set  .card-header, 2)")).trim()).toBe("Set 3");
     });
 });
