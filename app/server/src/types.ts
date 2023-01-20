@@ -38,7 +38,7 @@ export interface AppConfigFit extends AppConfigBase {
 export interface AppConfigStochastic extends AppConfigBase {
     appType: "stochastic",
     maxReplicatesRun: number,
-    maxReplicatedDisplay: number,
+    maxReplicatesDisplay: number,
 }
 
 export type AppConfig = AppConfigBasic | AppConfigFit | AppConfigStochastic;
