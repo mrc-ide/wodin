@@ -13,11 +13,10 @@
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import { PlotData } from "plotly.js-basic-dist-min";
-import { format } from "d3-format";
 import { FitDataGetter } from "../../store/fitData/getters";
 import WodinPlot from "../WodinPlot.vue";
 import {
-  allFitDataToPlotly, filterSeriesSet, odinToPlotly, PlotlyOptions, updatePlotTraceName, WodinPlotData
+    allFitDataToPlotly, filterSeriesSet, odinToPlotly, PlotlyOptions, updatePlotTraceName, WodinPlotData
 } from "../../plot";
 import {
     Batch,

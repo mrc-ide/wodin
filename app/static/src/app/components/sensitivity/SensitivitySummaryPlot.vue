@@ -17,7 +17,7 @@ import {
 import { AxisType, newPlot, Plots } from "plotly.js-basic-dist-min";
 import { useStore } from "vuex";
 import {
-  fadePlotStyle, margin, config, odinToPlotly, filterSeriesSet, updatePlotTraceName
+    fadePlotStyle, margin, config, odinToPlotly, filterSeriesSet, updatePlotTraceName
 } from "../../plot";
 import { SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
@@ -74,11 +74,13 @@ export default defineComponent({
             return { type };
         });
 
+        const visibleParameterSetNames = computed(() => store.getters[`run/${RunGetter.visibleParameterSetNames}`]);
+
         const paramSetBatches = computed(() => {
             const result = {} as Dict<Batch>;
             Object.keys(store.state.sensitivity.parameterSetResults).forEach((paramSetName: string) => {
                 const psBatch = store.state.sensitivity.parameterSetResults[paramSetName]?.batch;
-                if (psBatch) {
+                if (psBatch && visibleParameterSetNames.value.includes(paramSetName)) {
                     result[paramSetName] = psBatch;
                 }
             });
@@ -93,8 +95,8 @@ export default defineComponent({
                 if (plotSettings.value.plotType === SensitivityPlotType.ValueAtTime) {
                     verifyValidEndTime();
                     data = batch.value.valueAtTime(plotSettings.value.time);
-                    Object.keys(paramSetBatches.value).forEach((paramSetName) => {
-                        paramSetData[paramSetName] = paramSetBatches.value[paramSetName].valueAtTime(plotSettings.value.time);
+                    Object.keys(paramSetBatches.value).forEach((name) => {
+                        paramSetData[name] = paramSetBatches.value[name].valueAtTime(plotSettings.value.time);
                     });
                 } else {
                     const paramPrefix = plotSettings.value.plotType === SensitivityPlotType.TimeAtExtreme ? "t" : "y";
@@ -105,19 +107,21 @@ export default defineComponent({
                     });
                 }
 
-                const result = [...odinToPlotly(filterSeriesSet(data!, selectedVariables.value), palette.value)];
-                Object.keys(paramSetData).forEach((paramSetName: string) => {
-                    const dash = lineStylesForParamSets.value[paramSetName];
+                const filtered = filterSeriesSet(data!, selectedVariables.value);
+                const result = [...odinToPlotly(filtered, palette.value, { includeLegendGroup: true })];
+                Object.keys(paramSetData).forEach((name: string) => {
+                    const dash = lineStylesForParamSets.value[name];
                     const options = {
                         includeLegendGroup: true,
                         lineWidth: 1,
                         showLegend: false,
                         dash
                     };
-                    const psData = paramSetData[paramSetName];
-                    const psPlotData = odinToPlotly(filterSeriesSet(psData, selectedVariables.value), palette.value, options);
+                    const psData = paramSetData[name];
+                    const psFiltered = filterSeriesSet(psData, selectedVariables.value);
+                    const psPlotData = odinToPlotly(psFiltered, palette.value, options);
                     psPlotData.forEach((plotTrace) => {
-                        updatePlotTraceName(plotTrace, null, null, paramSetName);
+                        updatePlotTraceName(plotTrace, null, null, name);
                     });
                     result.push(...psPlotData);
                 });

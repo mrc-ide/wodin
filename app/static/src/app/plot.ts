@@ -1,11 +1,11 @@
 import { Dash, PlotData } from "plotly.js-basic-dist-min";
+import { format } from "d3-format";
 import { Palette, paletteData } from "./palette";
 import type { AllFitData, FitData, FitDataLink } from "./store/fitData/state";
 import {
     DiscreteSeriesSet, OdinSeriesSet, OdinSeriesSetValues
 } from "./types/responseTypes";
 import { Dict } from "./types/utilTypes";
-import {format} from "d3-format";
 
 export type WodinPlotData = Partial<PlotData>[];
 
@@ -149,7 +149,7 @@ const lineStyles = ["dot", "dash", "longdash", "dashdot", "longdashdot"];
 export const lineStyleForParameterSetIndex = (index: number): string => (lineStyles[index % lineStyles.length]);
 
 export const updatePlotTraceName = (plotTrace: Partial<PlotData>, param: string | null, value: number | null,
-                             parameterSetName = "") => {
+    parameterSetName = "") => {
     const parenthesisItems = [];
     if (param && value) {
         parenthesisItems.push(`${param}=${format(".3f")(value)}`);
