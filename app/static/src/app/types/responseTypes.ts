@@ -17,28 +17,35 @@ export interface ResponseSuccess {
     errors: null;
 }
 
-export interface AppConfig {
+export interface AppConfigBase {
     defaultCode: string[],
+    endTime: number,
     readOnlyCode: boolean,
-    stateUploadIntervalMillis?: number | null
-    endTime?: number,
+    stateUploadIntervalMillis: number,
+    endTime: number,
     help?: {
         markdown?: string[],
         tabName?: string
     }
 }
 
-export interface BasicConfig extends AppConfig {
+export interface BasicConfig extends AppConfigBase {
+    appType: "basic",
+    // This is used in some testing still.
     basicProp: string
 }
 
-export interface FitConfig extends AppConfig {
-    fitProp: string
+export interface FitConfig extends AppConfigBase {
+    appType: "fit"
 }
 
-export interface StochasticConfig extends AppConfig {
-    stochasticProp: string
+export interface StochasticConfig extends AppConfigBase {
+    appType: "stochastic"
+    maxReplicatesRun: number,
+    maxReplicatesDisplay: number,
 }
+
+export type AppConfig = BasicConfig | FitConfig | StochasticConfig;
 
 export interface Odin {
     new(...args : unknown[]): unknown
