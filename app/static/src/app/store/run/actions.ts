@@ -145,7 +145,7 @@ export const actions: ActionTree<RunState, AppState> = {
         const { state, commit, getters } = context;
         // Creating new parameter sets when run is required is disallowed in UI, but check here too
         if (!getters[RunGetter.runIsRequired]) {
-            const name = `Set ${state.parameterSets.length + 1}`; // This will not be reliable when we add set deletion!
+            const name = `Set ${state.parameterSetsCreated + 1}`;
             const parameterSet = {
                 name,
                 parameterValues: { ...state.parameterValues },

@@ -17,6 +17,7 @@ export const defaultState: RunState = {
     userDownloadFileName: "",
     downloading: false,
     numberOfReplicates: 5,
+    parameterSetsCreated: 0,
     parameterSets: [],
     parameterSetResults: {}
 };
