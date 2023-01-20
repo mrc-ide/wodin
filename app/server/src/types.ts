@@ -12,16 +12,35 @@ export interface WodinConfig {
     appsPath: string
 }
 
-export interface AppConfig {
-    appType: string,
+export interface AppConfigBase {
     title: string,
+    // can we drop this? it's not clear why it's here, or why it is
+    // used? try knocking it out and see what fails...
     baseUrl: string,
+    readOnlyCode: boolean,
+    stateUploadIntervalMillis: number,
     defaultCode: string[] | undefined
     help?: {
         markdown?: string[]
         tabName?: string
     }
 }
+
+export interface AppConfigBasic extends AppConfigBase {
+    appType: "basic"
+}
+
+export interface AppConfigFit extends AppConfigBase {
+    appType: "fit"
+}
+
+export interface AppConfigStochastic extends AppConfigBase {
+    appType: "stochastic",
+    maxReplicatesRun: number,
+    maxReplicatedDisplay: number,
+}
+
+export type AppConfig = AppConfigBasic | AppConfigFit | AppConfigStochastic;
 
 export interface AppLocals {
     baseUrl: string,
