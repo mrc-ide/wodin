@@ -8,6 +8,7 @@ import { WodinError } from "../errors/wodinError";
 
 export const configDefaults = (appType: string) => {
     const base = {
+        endTime: 100,
         readOnlyCode: false,
         stateUploadIntervalMillis: 2000
     };

@@ -65,6 +65,7 @@ describe("configController", () => {
         expect(spyJsonResponseSuccess.mock.calls[0][0]).toStrictEqual({
             ...basicConfig,
             baseUrl: "http://localhost:3000",
+            endTime: 100,
             readOnlyCode: false,
             stateUploadIntervalMillis: 2000,
             defaultCode,
@@ -88,6 +89,7 @@ describe("configController", () => {
         expect(spyJsonResponseSuccess.mock.calls[0][0]).toStrictEqual({
             ...basicConfig,
             baseUrl: "http://localhost:3000",
+            endTime: 100,
             readOnlyCode: false,
             stateUploadIntervalMillis: 2000,
             defaultCode: []
@@ -114,6 +116,7 @@ describe("configController", () => {
         expect(spyJsonResponseSuccess.mock.calls[0][0]).toStrictEqual({
             ...basicConfig,
             baseUrl: "http://localhost:3000",
+            endTime: 100,
             readOnlyCode: false,
             stateUploadIntervalMillis: 2000,
             defaultCode: [],
