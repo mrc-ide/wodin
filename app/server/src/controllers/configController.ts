@@ -6,6 +6,21 @@ import { AppFileReader } from "../appFileReader";
 import { ErrorType } from "../errors/errorType";
 import { WodinError } from "../errors/wodinError";
 
+export const configDefaults = (appType: string) => {
+    const base = {
+        readOnlyCode: false,
+        stateUploadIntervalMillis: 2000
+    };
+    if (appType === "stochastic") {
+        return {
+            ...base,
+            maxReplicatesRun: 1000,
+            maxReplicatesDisplay: 20
+        };
+    }
+    return base;
+};
+
 export class ConfigController {
     private static _readAppConfigFile = (
         appName: string,
@@ -17,6 +32,7 @@ export class ConfigController {
     ) => {
         const result = configReader.readConfigFile(appsPath, `${appName}.config.json`) as AppConfig;
         if (result) {
+            const defaults = configDefaults(result.appType);
             result.defaultCode = defaultCodeReader.readFile(appName);
             const appHelp = appHelpReader.readFile(appName);
             if (appHelp.length) {
@@ -25,7 +41,11 @@ export class ConfigController {
                 }
                 result.help.markdown = appHelp;
             }
+
+            // TODO: I want to know what breaks if this is removed.
             result.baseUrl = baseUrl;
+
+            return { ...defaults, ...result };
         }
         return result;
     };
