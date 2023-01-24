@@ -14,7 +14,7 @@ import {
 } from "../../../../src/app/store/sensitivity/state";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
-import {RunGetter} from "../../../../src/app/store/run/getters";
+import { RunGetter } from "../../../../src/app/store/run/getters";
 
 jest.mock("plotly.js-basic-dist-min", () => ({
     newPlot: jest.fn(),
@@ -82,7 +82,7 @@ describe("SensitivitySummaryPlot", () => {
     const mockBatchSet1 = {
         valueAtTime: jest.fn().mockReturnValue(mockDataSet1),
         extreme: jest.fn().mockReturnValue(mockDataSet1)
-    }
+    };
 
     const mockBatchSet2 = {
         valueAtTime: jest.fn().mockReturnValue(mockDataSet2),
@@ -110,9 +110,8 @@ describe("SensitivitySummaryPlot", () => {
     const defaultSelectedVariables = ["S", "I"];
 
     const getWrapper = (hasData = true, plotSettings: SensitivityPlotSettings = defaultPlotSettings,
-                        fadePlot = false, paramSettings: SensitivityParameterSettings = defaultParamSettings,
-                        logScaleYAxis = false, selectedVariables = defaultSelectedVariables, includeParameterSets = false) => {
-
+        fadePlot = false, paramSettings: SensitivityParameterSettings = defaultParamSettings,
+        logScaleYAxis = false, selectedVariables = defaultSelectedVariables, includeParameterSets = false) => {
         const visibleParameterSetNames = includeParameterSets ? ["Set1", "Set2"] : [];
         const parameterSetResults = includeParameterSets ? {
             Set1: {
