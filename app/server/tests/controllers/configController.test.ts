@@ -64,7 +64,6 @@ describe("configController", () => {
         expect(spyJsonResponseSuccess.mock.calls.length).toBe(1);
         expect(spyJsonResponseSuccess.mock.calls[0][0]).toStrictEqual({
             ...basicConfig,
-            baseUrl: "http://localhost:3000",
             endTime: 100,
             readOnlyCode: false,
             stateUploadIntervalMillis: 2000,
@@ -88,7 +87,6 @@ describe("configController", () => {
         expect(spyJsonResponseSuccess.mock.calls.length).toBe(1);
         expect(spyJsonResponseSuccess.mock.calls[0][0]).toStrictEqual({
             ...basicConfig,
-            baseUrl: "http://localhost:3000",
             endTime: 100,
             readOnlyCode: false,
             stateUploadIntervalMillis: 2000,
@@ -115,7 +113,6 @@ describe("configController", () => {
         expect(spyJsonResponseSuccess.mock.calls.length).toBe(1);
         expect(spyJsonResponseSuccess.mock.calls[0][0]).toStrictEqual({
             ...basicConfig,
-            baseUrl: "http://localhost:3000",
             endTime: 100,
             readOnlyCode: false,
             stateUploadIntervalMillis: 2000,
