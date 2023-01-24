@@ -14,6 +14,7 @@ import {
 } from "../../../../src/app/store/sensitivity/state";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
+import {RunGetter} from "../../../../src/app/store/run/getters";
 
 jest.mock("plotly.js-basic-dist-min", () => ({
     newPlot: jest.fn(),
@@ -44,11 +45,53 @@ describe("SensitivitySummaryPlot", () => {
         ]
     };
 
+    const mockDataSet1 = {
+        x: [10, 10.1],
+        values: [
+            { name: "S", y: [100, 100.1] },
+            { name: "I", y: [200, 190.9] },
+            { name: "R", y: [210, 220.2] }
+        ]
+    };
+
+    const mockDataSet2 = {
+        x: [20, 20.1],
+        values: [
+            { name: "S", y: [101, 101.1] },
+            { name: "I", y: [201, 191.9] },
+            { name: "R", y: [211, 221.2] }
+        ]
+    };
+
+    const mockDataSet3 = {
+        x: [30, 30.1],
+        values: [
+            { name: "S", y: [102, 102.1] },
+            { name: "I", y: [202, 192.9] },
+            { name: "R", y: [212, 222.2] }
+        ]
+    };
+
     const mockValueAtTime = jest.fn().mockReturnValue(mockData);
     const mockExtreme = jest.fn().mockReturnValue(mockData);
     const mockBatch = {
         valueAtTime: mockValueAtTime,
         extreme: mockExtreme
+    };
+
+    const mockBatchSet1 = {
+        valueAtTime: jest.fn().mockReturnValue(mockDataSet1),
+        extreme: jest.fn().mockReturnValue(mockDataSet1)
+    }
+
+    const mockBatchSet2 = {
+        valueAtTime: jest.fn().mockReturnValue(mockDataSet2),
+        extreme: jest.fn().mockReturnValue(mockDataSet2)
+    };
+
+    const mockBatchSet3 = {
+        valueAtTime: jest.fn().mockReturnValue(mockDataSet3),
+        extreme: jest.fn().mockReturnValue(mockDataSet3)
     };
 
     let store: Store<BasicState> | null = null;
@@ -64,9 +107,24 @@ describe("SensitivitySummaryPlot", () => {
         scaleType: SensitivityScaleType.Arithmetic
     } as SensitivityParameterSettings;
 
+    const defaultSelectedVariables = ["S", "I"];
+
     const getWrapper = (hasData = true, plotSettings: SensitivityPlotSettings = defaultPlotSettings,
-        fadePlot = false, paramSettings: SensitivityParameterSettings = defaultParamSettings,
-        logScaleYAxis = false, selectedVariables = ["S", "I"]) => {
+                        fadePlot = false, paramSettings: SensitivityParameterSettings = defaultParamSettings,
+                        logScaleYAxis = false, selectedVariables = defaultSelectedVariables, includeParameterSets = false) => {
+
+        const visibleParameterSetNames = includeParameterSets ? ["Set1", "Set2"] : [];
+        const parameterSetResults = includeParameterSets ? {
+            Set1: {
+                batch: mockBatchSet1
+            },
+            Set2: {
+                batch: mockBatchSet2
+            },
+            Set3: {
+                batch: mockBatchSet3
+            }
+        } : [];
         store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
@@ -85,7 +143,15 @@ describe("SensitivitySummaryPlot", () => {
                     namespaced: true,
                     state: {
                         endTime: 100
-                    }
+                    },
+                    getters: {
+                        [RunGetter.visibleParameterSetNames]: () => visibleParameterSetNames,
+                        [RunGetter.lineStylesForParameterSets]: () => ({
+                            Set1: "dot",
+                            Set2: "dash",
+                            Set3: "longdash"
+                        })
+                    } as any
                 },
                 sensitivity: {
                     namespaced: true,
@@ -94,7 +160,8 @@ describe("SensitivitySummaryPlot", () => {
                             batch: hasData ? mockBatch : null
                         },
                         plotSettings: { ...plotSettings },
-                        paramSettings: { ...paramSettings }
+                        paramSettings: { ...paramSettings },
+                        parameterSetResults
                     },
                     mutations: {
                         [SensitivityMutation.SetPlotTime]: mockSetPlotTime
@@ -121,7 +188,7 @@ describe("SensitivitySummaryPlot", () => {
         jest.clearAllMocks();
     });
 
-    const expectDataToHaveBeenPlotted = (wrapper: VueWrapper<any>, layout: any = {}) => {
+    const expectDataToHaveBeenPlotted = (wrapper: VueWrapper<any>, layout: any = {}, includesParameterSets = false) => {
         expect(mockPlotlyNewPlot).toHaveBeenCalledTimes(1);
         const plotEl = wrapper.find(".plot").element;
         expect(mockPlotlyNewPlot.mock.calls[0][0]).toBe(plotEl);
@@ -137,7 +204,7 @@ describe("SensitivitySummaryPlot", () => {
                 x: [1, 1.1],
                 y: [10, 10.1],
                 hoverlabel: { namelength: -1 },
-                legendgroup: undefined,
+                legendgroup: "S",
                 showlegend: true
             },
             {
@@ -151,10 +218,74 @@ describe("SensitivitySummaryPlot", () => {
                 x: [1, 1.1],
                 y: [20, 19.9],
                 hoverlabel: { namelength: -1 },
-                legendgroup: undefined,
+                legendgroup: "I",
                 showlegend: true
             }
-        ];
+        ] as any;
+
+        if (includesParameterSets) {
+            expectedPlotData.push(
+                // Set 1
+                {
+                    mode: "lines",
+                    line: {
+                        color: "#ff0000",
+                        width: 1,
+                        dash: "dot"
+                    },
+                    name: "S (Set1)",
+                    x: [10, 10.1],
+                    y: [100, 100.1],
+                    hoverlabel: { namelength: -1 },
+                    legendgroup: "S",
+                    showlegend: false
+                },
+                {
+                    mode: "lines",
+                    line: {
+                        color: "#0000ff",
+                        width: 1,
+                        dash: "dot"
+                    },
+                    name: "I (Set1)",
+                    x: [10, 10.1],
+                    y: [200, 190.9],
+                    hoverlabel: { namelength: -1 },
+                    legendgroup: "I",
+                    showlegend: false
+                },
+                // Set 2
+                {
+                    mode: "lines",
+                    line: {
+                        color: "#ff0000",
+                        width: 1,
+                        dash: "dash"
+                    },
+                    name: "S (Set2)",
+                    x: [20, 20.1],
+                    y: [101, 101.1],
+                    hoverlabel: { namelength: -1 },
+                    legendgroup: "S",
+                    showlegend: false
+                },
+                {
+                    mode: "lines",
+                    line: {
+                        color: "#0000ff",
+                        width: 1,
+                        dash: "dash"
+                    },
+                    name: "I (Set2)",
+                    x: [20, 20.1],
+                    y: [201, 191.9],
+                    hoverlabel: { namelength: -1 },
+                    legendgroup: "I",
+                    showlegend: false
+                }
+            );
+        }
+
         const expectedLayout = {
             margin: {
                 t: 25
@@ -181,6 +312,17 @@ describe("SensitivitySummaryPlot", () => {
         expectDataToHaveBeenPlotted(wrapper);
     });
 
+    it("plots ValueAtTime with parameter set traces", () => {
+        const wrapper = getWrapper(true, defaultPlotSettings, false, defaultParamSettings, false,
+            defaultSelectedVariables, true);
+        expect(wrapper.find(".plot-placeholder").exists()).toBe(false);
+        expect(mockValueAtTime).toHaveBeenCalledWith(99);
+        expect(mockBatchSet1.valueAtTime).toHaveBeenCalledWith(99);
+        expect(mockBatchSet2.valueAtTime).toHaveBeenCalledWith(99);
+        expect(mockBatchSet3.valueAtTime).not.toHaveBeenCalled();
+        expectDataToHaveBeenPlotted(wrapper, {}, true);
+    });
+
     it("plots TimeAtExtreme min data as expected", () => {
         const plotSettings = {
             plotType: SensitivityPlotType.TimeAtExtreme,
@@ -203,6 +345,21 @@ describe("SensitivitySummaryPlot", () => {
         expectDataToHaveBeenPlotted(wrapper);
     });
 
+    it("plots timeAtExtreme with parameter set traces", () => {
+        const plotSettings = {
+            plotType: SensitivityPlotType.TimeAtExtreme,
+            extreme: SensitivityPlotExtreme.Min,
+            time: null
+        };
+        const wrapper = getWrapper(true, plotSettings, false, defaultParamSettings, false,
+            defaultSelectedVariables, true);
+        expect(mockExtreme).toHaveBeenCalledWith("tMin");
+        expect(mockBatchSet1.extreme).toHaveBeenCalledWith("tMin");
+        expect(mockBatchSet2.extreme).toHaveBeenCalledWith("tMin");
+        expect(mockBatchSet3.extreme).not.toHaveBeenCalled();
+        expectDataToHaveBeenPlotted(wrapper, {}, true);
+    });
+
     it("plots ValueAtExtreme min data as expected", () => {
         const plotSettings = {
             plotType: SensitivityPlotType.ValueAtExtreme,
@@ -223,6 +380,21 @@ describe("SensitivitySummaryPlot", () => {
         const wrapper = getWrapper(true, plotSettings);
         expect(mockExtreme).toHaveBeenCalledWith("yMax");
         expectDataToHaveBeenPlotted(wrapper);
+    });
+
+    it("plots ValueAtExtreme with parameter set traces", () => {
+        const plotSettings = {
+            plotType: SensitivityPlotType.ValueAtExtreme,
+            extreme: SensitivityPlotExtreme.Max,
+            time: null
+        };
+        const wrapper = getWrapper(true, plotSettings, false, defaultParamSettings, false,
+            defaultSelectedVariables, true);
+        expect(mockExtreme).toHaveBeenCalledWith("yMax");
+        expect(mockBatchSet1.extreme).toHaveBeenCalledWith("yMax");
+        expect(mockBatchSet2.extreme).toHaveBeenCalledWith("yMax");
+        expect(mockBatchSet3.extreme).not.toHaveBeenCalled();
+        expectDataToHaveBeenPlotted(wrapper, {}, true);
     });
 
     it("renders as expected when no data", () => {
