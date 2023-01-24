@@ -43,9 +43,6 @@ export class ConfigController {
                 result.help.markdown = appHelp;
             }
 
-            // TODO: I want to know what breaks if this is removed.
-            result.baseUrl = baseUrl;
-
             return { ...defaults, ...result };
         }
         return result;

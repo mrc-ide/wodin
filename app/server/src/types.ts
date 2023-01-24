@@ -14,9 +14,6 @@ export interface WodinConfig {
 
 export interface AppConfigBase {
     title: string,
-    // can we drop this? it's not clear why it's here, or why it is
-    // used? try knocking it out and see what fails...
-    baseUrl: string,
     endTime: number,
     readOnlyCode: boolean,
     stateUploadIntervalMillis: number,
