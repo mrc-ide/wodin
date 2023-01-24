@@ -94,6 +94,7 @@ export const mutations: MutationTree<RunState> = {
 
     [RunMutation.AddParameterSet](state: RunState, payload: ParameterSet) {
         state.parameterSets.push(payload);
+        state.parameterSetsCreated += 1;
     },
 
     [RunMutation.DeleteParameterSet](state: RunState, parameterSetName: string) {

@@ -88,6 +88,7 @@ describe("serialise", () => {
             solution: jest.fn(),
             error: { error: "run discrete error", detail: "run discrete error detail" }
         },
+        parameterSetsCreated: 3,
         parameterSets: [
             { name: "Set 1", parameterValues: { alpha: 1, beta: 3.3 }, hidden: false }
         ],
@@ -274,6 +275,7 @@ describe("serialise", () => {
             numberOfReplicatesChanged: false
         },
         parameterValues: runState.parameterValues,
+        parameterSetsCreated: runState.parameterSetsCreated,
         parameterSets: runState.parameterSets,
         endTime: 20,
         numberOfReplicates: 5,

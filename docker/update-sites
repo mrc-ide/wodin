@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -e
+if [[ $# -eq 0 ]]; then
+    echo "No args given"
+    exit 1
+elif (( $# % 3 != 0 )); then
+    echo "Invalid number given"
+    exit 1
+fi
+
+echo "Updating $(( $# / 3 )) sites"
+
+while [[ $# -ne 0 ]]; do
+    update-site $1 $2 $3
+    shift 3
+done

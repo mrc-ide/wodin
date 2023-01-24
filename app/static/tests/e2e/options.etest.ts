@@ -197,9 +197,22 @@ test.describe("Options Tab tests", () => {
         await expect(await page.innerHTML(tickSelector)).toBe("0.2M");
     });
 
-    test("can create a parameter set, and see run traces for that set", async ({ page }) => {
+    const createParameterSet = async (page: Page) => {
         await page.click("#create-param-set");
-        await expect(await page.innerText(".parameter-set .card-header")).toBe("Set 1");
+    };
+
+    const deleteParameterSet = async (index: number, page: Page) => {
+        await page.click(`:nth-match(.delete-param-set, ${index})`);
+    };
+
+    const updateBetaParamAndRun = async (value: number, page: Page) => {
+        await page.fill(":nth-match(.parameter-input, 1)", value.toString());
+        await page.click("#run-btn");
+    };
+
+    test("can create a parameter set, and see run traces for that set", async ({ page }) => {
+        await createParameterSet(page);
+        await expect((await page.innerText(".parameter-set .card-header")).trim()).toBe("Set 1");
         await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 1)")).toBe("beta: 4");
         await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 2)")).toBe("I0: 1");
         await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 3)")).toBe("N: 1000000");
@@ -218,11 +231,11 @@ test.describe("Options Tab tests", () => {
     });
 
     test("can delete a parameter set", async ({ page }) => {
-        await page.click("#create-param-set");
+        await createParameterSet(page);
         await page.click("#run-btn");
         await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(6, { timeout });
 
-        await page.click(".delete-param-set");
+        await deleteParameterSet(1, page);
         await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(3, { timeout });
         await expectSummaryValues(page, 1, "S", 1000, "#2e5cb8");
         await expectSummaryValues(page, 2, "I", 1000, "#cccc00");
@@ -230,7 +243,7 @@ test.describe("Options Tab tests", () => {
     });
 
     test("can hide and show a parameter set", async ({ page }) => {
-        await page.click("#create-param-set");
+        await createParameterSet(page);
         await page.click("#run-btn");
         await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(6, { timeout });
 
@@ -245,5 +258,20 @@ test.describe("Options Tab tests", () => {
         await expectSummaryValues(page, 4, "S (Set 1)", 1000, "#2e5cb8", "dot");
         await expectSummaryValues(page, 5, "I (Set 1)", 1000, "#cccc00", "dot");
         await expectSummaryValues(page, 6, "R (Set 1)", 1000, "#cc0044", "dot");
+    });
+
+    test("can get unique parameter set name after delete", async ({ page }) => {
+        // Create Set 1 and Set 2
+        await createParameterSet(page);
+        await updateBetaParamAndRun(1, page); // Need to do this to enable Save Current Parameters
+        await createParameterSet(page);
+        // Delete Set 2
+        await deleteParameterSet(2, page);
+        // Create Set 3
+        await updateBetaParamAndRun(2, page);
+        await createParameterSet(page);
+        await expect(await page.locator(".parameter-set").count()).toBe(2);
+        await expect((await page.innerText(":nth-match(.parameter-set  .card-header, 1)")).trim()).toBe("Set 1");
+        await expect((await page.innerText(":nth-match(.parameter-set  .card-header, 2)")).trim()).toBe("Set 3");
     });
 });
