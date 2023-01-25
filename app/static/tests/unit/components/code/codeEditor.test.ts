@@ -21,6 +21,7 @@ import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
 import CodeEditor from "../../../../src/app/components/code/CodeEditor.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
+import { BasicConfig } from "../../../../src/app/types/responseTypes";
 import { mockBasicState, mockCodeState } from "../../../mocks";
 
 describe("CodeEditor", () => {
@@ -31,7 +32,7 @@ describe("CodeEditor", () => {
                     defaultCode,
                     readOnlyCode,
                     basicProp: ""
-                }
+                } as BasicConfig
             }),
             modules: {
                 code: {

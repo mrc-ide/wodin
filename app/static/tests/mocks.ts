@@ -47,6 +47,8 @@ export const mockFailure = (errorMessage: string): ResponseFailure => {
 const mockAppConfig = {
     baseUrl: "http://localhost:3000",
     readOnlyCode: false,
+    endTime: 100,
+    stateUploadIntervalMillis: 2000,
     defaultCode: []
 };
 
@@ -163,6 +165,7 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
         queuedStateUploadIntervalId: -1,
         stateUploadInProgress: false,
         config: {
+            appType: "basic",
             basicProp: "",
             ...mockAppConfig
         },
@@ -209,7 +212,7 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
         queuedStateUploadIntervalId: -1,
         stateUploadInProgress: false,
         config: {
-            fitProp: "",
+            appType: "fit",
             ...mockAppConfig
         },
         code: mockCodeState(),
@@ -237,7 +240,9 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
         queuedStateUploadIntervalId: -1,
         stateUploadInProgress: false,
         config: {
-            stochasticProp: "",
+            appType: "stochastic",
+            maxReplicatesRun: 1000,
+            maxReplicatesDisplay: 20,
             ...mockAppConfig
         },
         code: mockCodeState(),

@@ -12,16 +12,33 @@ export interface WodinConfig {
     appsPath: string
 }
 
-export interface AppConfig {
-    appType: string,
+export interface AppConfigBase {
     title: string,
-    baseUrl: string,
+    endTime: number,
+    readOnlyCode: boolean,
+    stateUploadIntervalMillis: number,
     defaultCode: string[] | undefined
     help?: {
         markdown?: string[]
         tabName?: string
     }
 }
+
+export interface AppConfigBasic extends AppConfigBase {
+    appType: "basic"
+}
+
+export interface AppConfigFit extends AppConfigBase {
+    appType: "fit"
+}
+
+export interface AppConfigStochastic extends AppConfigBase {
+    appType: "stochastic",
+    maxReplicatesRun: number,
+    maxReplicatesDisplay: number,
+}
+
+export type AppConfig = AppConfigBasic | AppConfigFit | AppConfigStochastic;
 
 export interface AppLocals {
     baseUrl: string,
