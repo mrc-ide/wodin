@@ -151,6 +151,7 @@ describe("serialise", () => {
                 solutions: [jest.fn(), jest.fn()],
                 errors: [],
                 valueAtTime: jest.fn(),
+                extreme: jest.fn(),
                 compute: jest.fn()
             },
             error: { error: "sensitivity error", detail: "sensitivity error detail" }
@@ -166,6 +167,7 @@ describe("serialise", () => {
                     solutions: [jest.fn(), jest.fn()],
                     errors: [],
                     valueAtTime: jest.fn(),
+                    extreme: jest.fn(),
                     compute: jest.fn()
                 },
                 error: { error: "param set sensitivity error", detail: "param set sensitivity error detail" }

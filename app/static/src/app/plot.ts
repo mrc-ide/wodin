@@ -1,4 +1,5 @@
 import { Dash, PlotData } from "plotly.js-basic-dist-min";
+import { format } from "d3-format";
 import { Palette, paletteData } from "./palette";
 import type { AllFitData, FitData, FitDataLink } from "./store/fitData/state";
 import {
@@ -146,3 +147,16 @@ export function allFitDataToPlotly(allFitData: AllFitData | null, paletteModel: 
 
 const lineStyles = ["dot", "dash", "longdash", "dashdot", "longdashdot"];
 export const paramSetLineStyle = (index: number): string => (lineStyles[index % lineStyles.length]);
+
+export const updatePlotTraceName = (plotTrace: Partial<PlotData>, param: string | null, value: number | null,
+    parameterSetName = "") => {
+    const parenthesisItems = [];
+    if (param && value) {
+        parenthesisItems.push(`${param}=${format(".3f")(value)}`);
+    }
+    if (parameterSetName) {
+        parenthesisItems.push(parameterSetName);
+    }
+    // eslint-disable-next-line no-param-reassign
+    plotTrace.name = `${plotTrace.name} (${parenthesisItems.join(" ")})`;
+};
