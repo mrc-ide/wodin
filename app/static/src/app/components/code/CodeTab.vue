@@ -1,6 +1,6 @@
 <template>
     <div v-if="appIsConfigured" class="code-tab">
-        <generic-help></generic-help>
+        <generic-help :markdown="codeHelp"></generic-help>
         <code-editor/>
         <button class="btn btn-primary mt-2" id="compile-btn" :disabled="!codeIsValid" @click="compile">Compile</button>
         <div class="mt-2" id="code-status">
@@ -28,6 +28,7 @@ import ErrorInfo from "../ErrorInfo.vue";
 import SelectedVariables from "./SelectedVariables.vue";
 import VerticalCollapse from "../VerticalCollapse.vue";
 import GenericHelp from "../help/GenericHelp.vue";
+import codeHelp from "raw-loader!../../help/code.md";
 
 export default defineComponent({
     name: "CodeTab",
@@ -59,7 +60,8 @@ export default defineComponent({
             iconClass,
             compile,
             error,
-            showSelectedVariables
+            showSelectedVariables,
+            codeHelp
         };
     }
 });

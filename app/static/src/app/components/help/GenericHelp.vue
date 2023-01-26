@@ -1,17 +1,17 @@
 <template>
-  {{raw}}
+  <vertical-collapse title="?">
+    {{markdown}}
+  </vertical-collapse>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import code from "raw-loader!./code.md";
+import VerticalCollapse from "../VerticalCollapse.vue";
 
 export default defineComponent({
     name: "GenericHelp",
-    setup() {
-        const raw = code;
-        return {
-            raw
-        };
+  components: {VerticalCollapse},
+    props: {
+      markdown: String
     }
 });
 </script>
