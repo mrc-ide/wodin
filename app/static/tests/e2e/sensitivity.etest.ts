@@ -183,7 +183,7 @@ test.describe("Sensitivity tests", () => {
 
         // Switch to summary view
         await page.locator("#sensitivity-plot-type select").selectOption("ValueAtTime");
-        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(6,{ timeout });
+        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(6, { timeout });
         await expectSummaryValues(page, 1, "S", 10, "#2e5cb8", null, "4.5", "5.5");
         await expectSummaryValues(page, 2, "I", 10, "#cccc00", null, "4.5", "5.5");
         await expectSummaryValues(page, 3, "R", 10, "#cc0044", null, "4.5", "5.5");
