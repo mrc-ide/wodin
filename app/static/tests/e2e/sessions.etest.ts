@@ -105,7 +105,8 @@ test.describe("Sessions tests", () => {
         await page.click("#edit-current-session-label");
         await enterSessionLabel(page, "header-edit-session-label", "current session label");
         await expect(await page.locator(":nth-match(.session-label, 1)")).toHaveText(
-            "current session label", { timeout });
+            "current session label", { timeout }
+        );
         await expect(await page.innerText("#sessions-menu")).toBe("Session: current session label");
 
         // Set the current session label on a previous session
