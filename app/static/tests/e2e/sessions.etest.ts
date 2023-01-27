@@ -112,7 +112,9 @@ test.describe("Sessions tests", () => {
         // Set the current session label on a previous session
         await page.click(":nth-match(.session-edit-label i, 2)");
         await enterSessionLabel(page, "page-edit-session-label", "previous session label");
-        await expect(await page.innerText(":nth-match(.session-label, 2)")).toBe("previous session label");
+        await expect(await page.locator(":nth-match(.session-label, 2)")).toHaveText(
+            "previous session label", { timeout }
+        );
 
         // NB this will load the second load link, i.e. the older session, not the current one
         await page.click(":nth-match(.session-load a, 3)"); // 3rd because there are two of these on the current
