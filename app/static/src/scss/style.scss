@@ -75,3 +75,10 @@ $grey: #ccc;
 .hidden-parameter-set {
   background-color: $light-grey;
 }
+
+.generic-help-header {
+  color: $brand;
+  .collapse-icon {
+    float: right;
+  }
+}

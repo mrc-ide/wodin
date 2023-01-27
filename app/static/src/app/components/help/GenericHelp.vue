@@ -1,5 +1,5 @@
 <template>
-  <vertical-collapse title="?" initial-collapsed="true">
+  <vertical-collapse icon="help-circle" initial-collapsed="true" title-class="generic-help-header">
     <markdown-panel :markdown="[markdown]"></markdown-panel>
   </vertical-collapse>
 </template>
