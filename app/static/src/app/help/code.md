@@ -1,8 +1,8 @@
-# Write odin code
+## Write odin code
 
 Write code in this editor and press “Compile” and the odin model will be created, which will be available for use in the other tabs.
 
-## Key bits to remember
+### Key bits to remember
 ```
 deriv(X) <- ...
 ```
@@ -25,6 +25,3 @@ You can also add comments and notes to your code by using the `#` symbol.
 # This is a comment and will be ignored
 b <- 2 * a # the text after the '#' is a comment and will be ignored
 ```
-
-## Further help
-A more detailed user guide can be found [here](https://mrc-ide.github.io/infectiousdiseasemodels-2019/guide/) (opens in new page).

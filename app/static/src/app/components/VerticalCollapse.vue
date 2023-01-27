@@ -5,7 +5,7 @@
      :aria-expanded="!collapsed"
      :aria-controls="collapseId"
      @click="toggleCollapse">
-    <div class="p-2" :class="titleClass">
+    <div class="p-2 clearfix" :class="titleClass">
         {{title}}
         <vue-feather v-if="icon" class="collapse-icon" :type="icon"></vue-feather>
         <vue-feather class="collapse-icon" :type="toggleIconType"></vue-feather>

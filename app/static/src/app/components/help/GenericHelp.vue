@@ -1,6 +1,6 @@
 <template>
   <vertical-collapse icon="help-circle" initial-collapsed="true" title-class="generic-help-header">
-    <markdown-panel :markdown="[markdown]"></markdown-panel>
+    <markdown-panel class="generic-help p-2 my-2" :markdown="[markdown]"></markdown-panel>
   </vertical-collapse>
 </template>
 <script lang="ts">
