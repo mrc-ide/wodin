@@ -174,7 +174,7 @@ export const actions: ActionTree<RunState, AppState> = {
         // Swapping parameter sets when run is required is disallowed in UI, but check here too
         if (!getters[RunGetter.runIsRequired]) {
             commit(RunMutation.SwapParameterSet, parameterSetName);
-            // commit(`sensitivity/${SensitivityMutation.ParameterSetAdded}`, name, { root: true });
+            commit(`sensitivity/${SensitivityMutation.ParameterSetSwapped}`, parameterSetName, { root: true });
         }
     },
 };
