@@ -15,6 +15,10 @@
                      type="eye"
                      @click="toggleHidden"
                      v-tooltip="'Show Parameter Set'"></vue-feather>
+        <vue-feather class="inline-icon clickable swap-param-set ms-2"
+                     type="refresh-cw"
+                     @click="swapParameterSet"
+                     v-tooltip="'Swap Parameter Set'"></vue-feather>
         <vue-feather class="inline-icon clickable delete-param-set ms-2"
                      type="trash-2"
                      @click="deleteParameterSet"
@@ -81,6 +85,10 @@ export default defineComponent({
             store.dispatch(`run/${RunAction.DeleteParameterSet}`, props.parameterSet.name);
         };
 
+        const swapParameterSet = () => {
+            store.dispatch(`run/${RunAction.SwapParameterSet}`, props.parameterSet.name);
+        };
+
         const toggleHidden = () => {
             store.commit(`run/${RunMutation.ToggleParameterSetHidden}`, props.parameterSet.name);
         };
@@ -89,6 +97,7 @@ export default defineComponent({
             lineStyleClass,
             getStyle,
             deleteParameterSet,
+            swapParameterSet,
             toggleHidden
         };
     }
