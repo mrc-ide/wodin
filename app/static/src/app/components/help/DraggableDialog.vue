@@ -1,5 +1,8 @@
 <template>
   <div ref="draggable" class="draggable-dialog" :style="dialogStyle">
+    <div ref="dragtarget">
+      <h1>Title</h1>
+    </div>
     <slot></slot>
   </div>
 </template>
@@ -12,10 +15,10 @@ import {
 export default defineComponent({
     name: "DraggableDialog",
     setup() {
-        // TODO: Make text non-selectable
-        // TODO: replace initial margin auto with calculated position on show
+        // TODO: Max height and scrollable
 
         const draggable = ref<null | HTMLElement>(null); // Picks up the element with 'draggable' ref in the template
+        const dragtarget = ref<null | HTMLElement>(null);
         const startingLeft = ref(0);
         const startingTop = ref(0);
         const shiftLeft = ref(0);
@@ -26,7 +29,7 @@ export default defineComponent({
         };
 
         const addDraggableListeners = () => {
-            const dragger = draggable.value;
+            const dragger = dragtarget.value;
             if (dragger) {
                 let startX = 0;
                 let startY = 0;
@@ -68,11 +71,13 @@ export default defineComponent({
             }
         };
 
-        // TODO: reset shiftLeft + shiftTop on hide
+        const draggableRect = () => (draggable.value ? draggable.value.getBoundingClientRect() : {left: 0, top: 0, width: 0, height: 0});
+
+        // TODO: reset shiftLeft + shiftTop on hide - or not?
         onMounted(() => {
             addDraggableListeners();
             if (draggable.value) {
-                const rect = draggable.value.getBoundingClientRect();
+                const rect = draggableRect();
                 startingLeft.value = rect.left;
                 startingTop.value = rect.top;
             }
@@ -80,15 +85,24 @@ export default defineComponent({
 
         const dialogStyle = computed(() => {
             if (shiftLeft.value === 0 && shiftTop.value === 0) {
-                return { margin: "auto" };
+                return {};
             }
-            const top = startingTop.value + shiftTop.value;
-            const left = startingLeft.value + shiftLeft.value;
-            return {top: `${top}px`, left: `${left}px`};
+
+            // Don't allow top of draggable to move above the top of window - as will lose ability to drag from title
+            // Don't allow draggable to be dragged more than 50% of screen in either dimension
+            const rect = draggableRect();
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const maximizedTop = Math.max(startingTop.value + shiftTop.value, 0);
+            const minimizedTop = Math.min(maximizedTop, viewportHeight - (rect.height / 2));
+            const maximizedLeft = Math.max(startingLeft.value + shiftLeft.value, -(rect.width / 2));
+            const minimizedLeft = Math.min(maximizedLeft, viewportWidth - (rect.width / 2));
+            return {top: `${minimizedTop}px`, left: `${minimizedLeft}px`};
         });
 
         return {
             draggable,
+            dragtarget,
             dialogStyle
         };
     }
@@ -102,5 +116,8 @@ export default defineComponent({
     width: 80%;  // TODO: replace with size props
     max-height: 80%;
     z-index: 9999;
+    box-shadow: 10px 10px 15px 0px rgba(117,117,117,0.5);
+    top: 10%;
+    left: 10%;
   }
 </style>
