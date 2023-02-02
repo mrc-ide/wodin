@@ -503,6 +503,31 @@ describe("Run actions", () => {
         expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
     });
 
+    it("SwapParameterSet commits run and sensitivity mutations", () => {
+        const state = mockRunState({
+            parameterSetsCreated: 1,
+            parameterValues: { p1: 1, p2: 2 },
+            parameterSets: [{ name: "Set 1", parameterValues: { p1: 3, p2: 4 }, hidden: false }],
+            parameterSetResults: { "Set 1": { solution: "another fake result" } } as any,
+            resultOde: { solution: "fake result" } as any
+        });
+
+        const commit = jest.fn();
+
+        const testGetters = {
+            [RunGetter.runIsRequired]: false
+        };
+
+        (actions[RunAction.SwapParameterSet] as any)({ state, getters: testGetters, commit }, "Set 1");
+        expect(commit).toHaveBeenCalledTimes(2);
+        // ? ask about better way to test the swap of parameters and results
+        expect(commit.mock.calls[0][0]).toBe(RunMutation.SwapParameterSet);
+        expect(commit.mock.calls[0][1]).toBe("Set 1");
+        expect(commit.mock.calls[1][0]).toBe(`sensitivity/${SensitivityMutation.ParameterSetSwapped}`);
+        expect(commit.mock.calls[1][1]).toBe("Set 1");
+        expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
+    });
+
     it("DeleteParameterSet commits run and sensitivity mutations", () => {
         const commit = jest.fn();
         (actions[RunAction.DeleteParameterSet] as any)({ commit }, "Set 1");
