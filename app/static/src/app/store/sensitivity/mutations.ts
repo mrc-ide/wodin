@@ -93,7 +93,8 @@ export const mutations: MutationTree<SensitivityState> = {
 
     [SensitivityMutation.ParameterSetSwapped](state: SensitivityState, parameterSetName: string) {
         if (state.parameterSetResults[parameterSetName] && state.result) {
-            [state.parameterSetResults[parameterSetName], state.result] = [state.result, state.parameterSetResults[parameterSetName]]
+            [state.parameterSetResults[parameterSetName], state.result] 
+            = [state.result, state.parameterSetResults[parameterSetName]];
         }
-    },
+    }
 };

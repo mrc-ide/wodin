@@ -206,7 +206,7 @@ describe("Run mutations", () => {
         const state = mockRunState({
             parameterValues: { a: 1 },
             parameterSets: [
-                { name: "Set1", parameterValues: { a: 2 }, hidden: false },
+                { name: "Set1", parameterValues: { a: 2 }, hidden: false }
             ],
             parameterSetResults: { Set1: { solution: "another fake result" } } as any,
             resultOde: { solution: "fake result" } as any
@@ -215,7 +215,7 @@ describe("Run mutations", () => {
         expect(state.parameterValues).toStrictEqual({ a: 2 });
         expect(state.parameterSets).toStrictEqual([{ name: "Set1", parameterValues: { a: 1 }, hidden: false }]);
         expect(state.parameterSetResults).toStrictEqual({ Set1: { solution: "fake result" } });
-        expect(state.resultOde).toStrictEqual({ solution: "another fake result" })
+        expect(state.resultOde).toStrictEqual({ solution: "another fake result" });
     });
 
     it("toggles parameter set hidden", () => {
