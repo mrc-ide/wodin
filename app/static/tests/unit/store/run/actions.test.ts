@@ -528,6 +528,25 @@ describe("Run actions", () => {
         expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
     });
 
+    it("SwapParameterSet does nothing if run is required", () => {
+        const state = mockRunState({
+            parameterSetsCreated: 1,
+            parameterValues: { p1: 1, p2: 2 },
+            parameterSets: [{ name: "Set 1", parameterValues: { p1: 3, p2: 4 }, hidden: false }],
+            parameterSetResults: { "Set 1": { solution: "another fake result" } } as any,
+            resultOde: { solution: "fake result" } as any
+        });
+
+        const testGetters = {
+            [RunGetter.runIsRequired]: true
+        };
+
+        const commit = jest.fn();
+
+        (actions[RunAction.SwapParameterSet] as any)({ state, getters: testGetters, commit });
+        expect(commit).toHaveBeenCalledTimes(0);
+    });
+
     it("DeleteParameterSet commits run and sensitivity mutations", () => {
         const commit = jest.fn();
         (actions[RunAction.DeleteParameterSet] as any)({ commit }, "Set 1");
