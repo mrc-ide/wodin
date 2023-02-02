@@ -520,7 +520,6 @@ describe("Run actions", () => {
 
         (actions[RunAction.SwapParameterSet] as any)({ state, getters: testGetters, commit }, "Set 1");
         expect(commit).toHaveBeenCalledTimes(2);
-        // ? ask about better way to test the swap of parameters and results
         expect(commit.mock.calls[0][0]).toBe(RunMutation.SwapParameterSet);
         expect(commit.mock.calls[0][1]).toBe("Set 1");
         expect(commit.mock.calls[1][0]).toBe(`sensitivity/${SensitivityMutation.ParameterSetSwapped}`);
