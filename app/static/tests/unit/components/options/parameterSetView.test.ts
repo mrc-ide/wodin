@@ -74,7 +74,7 @@ describe("ParameterSetView", () => {
         expect(hideIcon.props("type")).toBe("eye-off");
         const swapIcon = icons.at(1)!;
         expect(swapIcon.classes()).toContain("swap-param-set");
-        expect(swapIcon.props("type")).toBe("refresh-cw");
+        expect(swapIcon.props("type")).toBe("shuffle");
         const deleteIcon = icons.at(2)!;
         expect(deleteIcon.classes()).toContain("delete-param-set");
         expect(deleteIcon.props("type")).toBe("trash-2");
@@ -121,7 +121,7 @@ describe("ParameterSetView", () => {
         expect(showIcon.props("type")).toBe("eye");
         const swapIcon = icons.at(1)!;
         expect(swapIcon.classes()).toContain("swap-param-set");
-        expect(swapIcon.props("type")).toBe("refresh-cw");
+        expect(swapIcon.props("type")).toBe("shuffle");
         const deleteIcon = icons.at(2)!;
         expect(deleteIcon.classes()).toContain("delete-param-set");
         expect(deleteIcon.props("type")).toBe("trash-2");

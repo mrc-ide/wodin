@@ -16,7 +16,7 @@
                      @click="toggleHidden"
                      v-tooltip="'Show Parameter Set'"></vue-feather>
         <vue-feather class="inline-icon clickable swap-param-set ms-2"
-                     type="refresh-cw"
+                     type="shuffle"
                      @click="swapParameterSet"
                      v-tooltip="'Swap Parameter Set'"></vue-feather>
         <vue-feather class="inline-icon clickable delete-param-set ms-2"
