@@ -106,12 +106,14 @@ export const mutations: MutationTree<RunState> = {
     [RunMutation.SwapParameterSet](state: RunState, parameterSetName: string) {
         const paramSet = state.parameterSets.find((set: ParameterSet) => set.name === parameterSetName);
         if (paramSet && state.parameterValues) {
-            [state.parameterValues, paramSet.parameterValues] 
-            = [paramSet.parameterValues, state.parameterValues];
+            const temp = structuredClone(state.parameterValues);
+            state.parameterValues = paramSet.parameterValues;
+            paramSet.parameterValues = temp;
         }
         if (state.parameterSetResults[parameterSetName] && state.resultOde) {
-            [state.parameterSetResults[parameterSetName], state.resultOde] 
-            = [state.resultOde, state.parameterSetResults[parameterSetName]];
+            const temp = structuredClone(state.resultOde);
+            state.resultOde = state.parameterSetResults[parameterSetName];
+            state.parameterSetResults[parameterSetName] = temp;
         }
     },
 
