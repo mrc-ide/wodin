@@ -175,4 +175,14 @@ describe("Sensitivity mutations", () => {
         mutations.ParameterSetDeleted(state, "Set1");
         expect(state.parameterSetResults).toStrictEqual({ Set2: { batch: "test 2" } });
     });
+
+    it("swaps parameter set results", () => {
+        const state = mockSensitivityState({
+            result: { solution: "fake result" } as any,
+            parameterSetResults: { Set1: { solution: "another fake result" } } as any
+        });
+        mutations.ParameterSetSwapped(state, "Set1");
+        expect(state.parameterSetResults).toStrictEqual({ Set1: { solution: "fake result" } });
+        expect(state.result).toStrictEqual({ solution: "another fake result" });
+    });
 });
