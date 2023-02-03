@@ -1,6 +1,6 @@
 <template>
   <div ref="draggable" class="draggable-dialog p-2" :style="dialogStyle">
-    <div ref="dragtarget">
+    <div ref="dragtarget" @mousedown="handleDragStart" @touchstart="handleDragStart">
       <h2 class="move prevent-select">
          <vue-feather type="move" class="grey"></vue-feather>
           {{title}}
@@ -22,107 +22,100 @@ import {
 } from "vue";
 import VueFeather from "vue-feather";
 
+interface Point {
+  x: number,
+  y: number
+}
+
 export default defineComponent({
+    // TODO: remove close button, reduce header size
     name: "DraggableDialog",
     props: {
-      title: String
+        title: String
     },
     components: {
-      VueFeather
+        VueFeather
     },
     setup(props, { emit }) {
-        // TODO: Max height and scrollable
-
         const draggable = ref<null | HTMLElement>(null); // Picks up the element with 'draggable' ref in the template
         const dragtarget = ref<null | HTMLElement>(null);
-        const startingLeft = ref(0);
-        const startingTop = ref(0);
-        const shiftLeft = ref(0);
-        const shiftTop = ref(0);
 
-        const getTouchEvent = (event: any) => {
-            return event.touches && event.touches.length > 0 ? event.touches[0] : event;
+        const position = ref<Point>({ x: 0, y: 0 });
+        const moveClientStart = ref<Point>({ x: 0, y: 0 });
+        const movePositionStart = ref<Point>({ x: 0, y: 0 });
+
+        const getTouchEvent = (event: Event) => {
+            return (event as TouchEvent).touches?.length > 0 ? (event as TouchEvent).touches[0] : event;
         };
 
-        const addDraggableListeners = () => {
-            const dragger = dragtarget.value;
-            if (dragger) {
-                let startX = 0;
-                let startY = 0;
-                let initialShiftLeft = 0;
-                let initialShiftTop = 0;
+        const draggableRect = () => (draggable.value ? draggable.value.getBoundingClientRect() : {
+            left: 0, top: 0, width: 0, height: 0
+        });
 
-                const handleDraggableMousemove = (event: any) => {
-                    const { clientX, clientY } = getTouchEvent(event);
-                    shiftLeft.value = initialShiftLeft + clientX - startX;
-                    shiftTop.value = initialShiftTop + clientY - startY;
-                    event.preventDefault();
-                };
+        const containInWindow = (newPosition: Point) => {
+            // Don't allow top of draggable to move outside the bounds of the window
+            const rect = draggableRect();
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
 
-                const handleDraggableMouseup = (event: any) => {
-                    document.removeEventListener("mousemove", handleDraggableMousemove);
-                    document.removeEventListener("touchmove", handleDraggableMousemove);
-                    document.removeEventListener("mouseup", handleDraggableMouseup);
-                    document.removeEventListener("touchend", handleDraggableMouseup);
-                    event.preventDefault();
-                };
-                const handleDraggableMousedown = (event: any) => {
-                    const { target } = event;
-                    if (target?.nodeName === "BUTTON") {
-                        return;
-                    }
-                    const { clientX, clientY } = getTouchEvent(event);
-                    document.addEventListener("mousemove", handleDraggableMousemove);
-                    document.addEventListener("touchmove", handleDraggableMousemove);
-                    document.addEventListener("mouseup", handleDraggableMouseup);
-                    document.addEventListener("touchend", handleDraggableMouseup);
-                    startX = clientX;
-                    startY = clientY;
-                    initialShiftLeft = shiftLeft.value;
-                    initialShiftTop = shiftTop.value;
-                };
+            const containedX = Math.min(Math.max(newPosition.x, 0), viewportWidth - rect.width);
+            const containedY = Math.min(Math.max(newPosition.y, 0), viewportHeight - rect.height);
 
-                dragger.addEventListener("mousedown", handleDraggableMousedown);
-                dragger.addEventListener("touchstart", handleDraggableMousedown);
-            }
+            return { x: containedX, y: containedY };
         };
 
-        const draggableRect = () => (draggable.value ? draggable.value.getBoundingClientRect() : {left: 0, top: 0, width: 0, height: 0});
+        const handleDragMove = (event: Event) => {
+            const { clientX, clientY } = getTouchEvent(event) as MouseEvent | Touch;
+            position.value = containInWindow({
+                x: movePositionStart.value.x + clientX - moveClientStart.value.x,
+                y: movePositionStart.value.y + clientY - moveClientStart.value.y
+            });
+            event.preventDefault();
+        };
+
+        const handleDragEnd = (event: any) => {
+            document.removeEventListener("mousemove", handleDragMove);
+            document.removeEventListener("touchmove", handleDragMove);
+            document.removeEventListener("mouseup", handleDragEnd);
+            document.removeEventListener("touchend", handleDragEnd);
+            event.preventDefault();
+        };
+        const handleDragStart = (event: any) => {
+            const { clientX, clientY } = getTouchEvent(event) as MouseEvent | Touch;
+            document.addEventListener("mousemove", handleDragMove);
+            document.addEventListener("touchmove", handleDragMove);
+            document.addEventListener("mouseup", handleDragEnd);
+            document.addEventListener("touchend", handleDragEnd);
+
+            moveClientStart.value = { x: clientX, y: clientY };
+            movePositionStart.value = { x: position.value.x, y: position.value.y };
+        };
+
+        const close = () => { emit("close"); };
 
         onMounted(() => {
-            addDraggableListeners();
             if (draggable.value) {
                 const rect = draggableRect();
-                startingLeft.value = rect.left;
-                startingTop.value = rect.top;
+                position.value = { x: rect.left, y: rect.top };
             }
             // close on resize - we'll reset initial size when re-mount
             window.addEventListener("resize", close);
         });
 
-        const close = () => { emit("close"); };
-
         const dialogStyle = computed(() => {
-            if (shiftLeft.value === 0 && shiftTop.value === 0) {
+            if (position.value.x === 0 && position.value.y === 0) {
                 return {};
             }
 
-            // Don't allow top of draggable to move outside the bounds of the window
-            const rect = draggableRect();
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
-            const maximizedTop = Math.max(startingTop.value + shiftTop.value, 0);
-            const minimizedTop = Math.min(maximizedTop, viewportHeight - rect.height);
-            const maximizedLeft = Math.max(startingLeft.value + shiftLeft.value, 0);
-            const minimizedLeft = Math.min(maximizedLeft, viewportWidth - rect.width);
-            return {top: `${minimizedTop}px`, left: `${minimizedLeft}px`};
+            return { top: `${position.value.y}px`, left: `${position.value.x}px` };
         });
 
         return {
             draggable,
             dragtarget,
             dialogStyle,
-            close
+            close,
+            handleDragStart
         };
     }
 });
