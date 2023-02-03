@@ -1,6 +1,6 @@
 <template>
     <div v-if="appIsConfigured" class="code-tab">
-        <generic-help :markdown="codeHelp"></generic-help>
+        <generic-help title="Write odin code" :markdown="codeHelp"></generic-help>
         <code-editor/>
         <button class="btn btn-primary mt-2" id="compile-btn" :disabled="!codeIsValid" @click="compile">Compile</button>
         <div class="mt-2" id="code-status">

@@ -76,13 +76,12 @@ $grey: #ccc;
   background-color: $light-grey;
 }
 
-.generic-help-header {
+.generic-help-icon {
   color: $brand;
-  .collapse-icon {
-    float: right;
-  }
+  float: right;
 }
 
-.generic-help {
-  border: #ccc 1px solid;
+.prevent-select {
+  -webkit-user-select: none; /* Safari */
+  user-select: none; /* Standard syntax */
 }

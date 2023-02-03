@@ -1,9 +1,18 @@
 <template>
-  <div ref="draggable" class="draggable-dialog" :style="dialogStyle">
+  <div ref="draggable" class="draggable-dialog p-2" :style="dialogStyle">
     <div ref="dragtarget">
-      <h1>Title</h1>
+      <h2 class="move prevent-select">
+         <vue-feather type="move" class="grey"></vue-feather>
+          {{title}}
+        <vue-feather type="x" class="clickable grey float-end" @click="close"></vue-feather>
+      </h2>
     </div>
-    <slot></slot>
+    <div class="overflow-auto draggable-content">
+      <slot></slot>
+    </div>
+    <div>
+      <button class="btn btn-primary m-2 float-end" @click="close">Close</button>
+    </div>
   </div>
 </template>
 
@@ -11,10 +20,17 @@
 import {
     computed, defineComponent, onMounted, ref
 } from "vue";
+import VueFeather from "vue-feather";
 
 export default defineComponent({
     name: "DraggableDialog",
-    setup() {
+    props: {
+      title: String
+    },
+    components: {
+      VueFeather
+    },
+    setup(props, { emit }) {
         // TODO: Max height and scrollable
 
         const draggable = ref<null | HTMLElement>(null); // Picks up the element with 'draggable' ref in the template
@@ -73,7 +89,6 @@ export default defineComponent({
 
         const draggableRect = () => (draggable.value ? draggable.value.getBoundingClientRect() : {left: 0, top: 0, width: 0, height: 0});
 
-        // TODO: reset shiftLeft + shiftTop on hide - or not?
         onMounted(() => {
             addDraggableListeners();
             if (draggable.value) {
@@ -81,43 +96,57 @@ export default defineComponent({
                 startingLeft.value = rect.left;
                 startingTop.value = rect.top;
             }
+            // close on resize - we'll reset initial size when re-mount
+            window.addEventListener("resize", close);
         });
+
+        const close = () => { emit("close"); };
 
         const dialogStyle = computed(() => {
             if (shiftLeft.value === 0 && shiftTop.value === 0) {
                 return {};
             }
 
-            // Don't allow top of draggable to move above the top of window - as will lose ability to drag from title
-            // Don't allow draggable to be dragged more than 50% of screen in either dimension
+            // Don't allow top of draggable to move outside the bounds of the window
             const rect = draggableRect();
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
             const maximizedTop = Math.max(startingTop.value + shiftTop.value, 0);
-            const minimizedTop = Math.min(maximizedTop, viewportHeight - (rect.height / 2));
-            const maximizedLeft = Math.max(startingLeft.value + shiftLeft.value, -(rect.width / 2));
-            const minimizedLeft = Math.min(maximizedLeft, viewportWidth - (rect.width / 2));
+            const minimizedTop = Math.min(maximizedTop, viewportHeight - rect.height);
+            const maximizedLeft = Math.max(startingLeft.value + shiftLeft.value, 0);
+            const minimizedLeft = Math.min(maximizedLeft, viewportWidth - rect.width);
             return {top: `${minimizedTop}px`, left: `${minimizedLeft}px`};
         });
 
         return {
             draggable,
             dragtarget,
-            dialogStyle
+            dialogStyle,
+            close
         };
     }
 });
 </script>
 
 <style lang="scss" scoped>
+  .move {
+    cursor: move;
+  }
+
   .draggable-dialog {
     background-color: white;
     position: absolute;
-    width: 80%;  // TODO: replace with size props
-    max-height: 80%;
+    width: 60%;
+    height: 80%;
     z-index: 9999;
-    box-shadow: 10px 10px 15px 0px rgba(117,117,117,0.5);
+    box-shadow: 0 0 15px 0 rgba(117,117,117,0.5);
     top: 10%;
-    left: 10%;
+    left: 20%;
+
+    .draggable-content {
+      background-color: aliceblue;
+      border: #ccc 1px solid;
+      height: calc(100% - 6rem);
+    }
   }
 </style>
