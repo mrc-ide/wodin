@@ -5,10 +5,9 @@
      :aria-expanded="!collapsed"
      :aria-controls="collapseId"
      @click="toggleCollapse">
-    <div class="p-2 clearfix" :class="titleClass">
+    <div class="collapse-title p-2">
         {{title}}
-        <vue-feather class="collapse-icon" :type="toggleIconType"></vue-feather>
-        <vue-feather v-if="icon" class="collapse-icon" :type="icon"></vue-feather>
+        <vue-feather class="collapse-icon" :type="iconType"></vue-feather>
     </div>
   </a>
   <div class="collapse" :class="collapsed ? '' : 'show'" :id="collapseId">
@@ -27,33 +26,24 @@ export default defineComponent({
     name: "VerticalCollapse",
     props: {
         title: String,
-        icon: String,
-        collapseId: String,
-        initialCollapsed: {
-            type: Boolean,
-            default: false
-        },
-        titleClass: {
-          type: String,
-          default: "collapse-title"
-        }
+        collapseId: String
     },
     components: {
         VueFeather
     },
-    setup(props) {
-        const collapsed = ref(props.initialCollapsed);
+    setup() {
+        const collapsed = ref(false); // default to expanded view
 
         const toggleCollapse = () => {
             collapsed.value = !collapsed.value;
         };
 
-        const toggleIconType = computed(() => (collapsed.value ? "chevron-down" : "chevron-up"));
+        const iconType = computed(() => (collapsed.value ? "chevron-down" : "chevron-up"));
 
         return {
             toggleCollapse,
             collapsed,
-            toggleIconType
+            iconType
         };
     }
 });
