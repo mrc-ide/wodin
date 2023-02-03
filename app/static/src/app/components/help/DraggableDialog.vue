@@ -1,17 +1,14 @@
 <template>
   <div ref="draggable" class="draggable-dialog p-2" :style="dialogStyle">
     <div ref="dragtarget" @mousedown="handleDragStart" @touchstart="handleDragStart">
-      <h2 class="move prevent-select">
+      <h3 class="move prevent-select">
          <vue-feather type="move" class="grey"></vue-feather>
           {{title}}
         <vue-feather type="x" class="clickable grey float-end" @click="close"></vue-feather>
-      </h2>
+      </h3>
     </div>
     <div class="overflow-auto draggable-content">
       <slot></slot>
-    </div>
-    <div>
-      <button class="btn btn-primary m-2 float-end" @click="close">Close</button>
     </div>
   </div>
 </template>
@@ -28,7 +25,6 @@ interface Point {
 }
 
 export default defineComponent({
-    // TODO: remove close button, reduce header size
     name: "DraggableDialog",
     props: {
         title: String
@@ -139,7 +135,7 @@ export default defineComponent({
     .draggable-content {
       background-color: aliceblue;
       border: #ccc 1px solid;
-      height: calc(100% - 6rem);
+      height: calc(100% - 2.5rem);
     }
   }
 </style>
