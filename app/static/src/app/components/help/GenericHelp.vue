@@ -1,10 +1,8 @@
 <template>
-  <div class="clearfix">
-    <vue-feather type="help-circle"
-                 v-tooltip="'Display help'"
-                 class="generic-help-icon float-end clickable"
-                 @click="toggleDialog(true)"></vue-feather>
-  </div>
+  <vue-feather type="help-circle"
+               v-tooltip="'Display help'"
+               class="generic-help-icon float-end clickable"
+               @click="toggleDialog(true)"></vue-feather>
   <draggable-dialog v-if="show"
                     :title = "title"
                     @close="toggleDialog(false)">
