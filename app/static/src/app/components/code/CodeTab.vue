@@ -21,6 +21,7 @@
 import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
+// eslint-disable-next-line import/no-webpack-loader-syntax
 import codeHelp from "raw-loader!../../help/code.md";
 import CodeEditor from "./CodeEditor.vue";
 import { ModelAction } from "../../store/model/actions";
