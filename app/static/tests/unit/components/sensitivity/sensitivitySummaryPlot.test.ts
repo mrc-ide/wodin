@@ -15,6 +15,7 @@ import {
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
 import { RunGetter } from "../../../../src/app/store/run/getters";
+import WodinPlotDataSummary from "../../../../src/app/components/WodinPlotDataSummary.vue";
 
 jest.mock("plotly.js-basic-dist-min", () => ({
     newPlot: jest.fn(),
@@ -301,6 +302,8 @@ describe("SensitivitySummaryPlot", () => {
         expect(mockPlotlyNewPlot.mock.calls[0][1]).toStrictEqual(expectedPlotData);
         expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual(expectedLayout);
         expect(mockPlotlyNewPlot.mock.calls[0][3]).toStrictEqual({ responsive: true });
+
+        expect(wrapper.findComponent(WodinPlotDataSummary).props("data")).toStrictEqual(expectedPlotData);
     };
 
     it("plots ValueAtTime data as expected", () => {
