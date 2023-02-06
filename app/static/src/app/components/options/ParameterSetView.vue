@@ -20,7 +20,7 @@
                      :disabled="!canSwapParameterSet"
                      :stroke="canSwapParameterSet ? 'black' : 'lightgray'"
                      @click="swapParameterSet"
-                     v-tooltip="'Swap Parameter Set'"></vue-feather>
+                     v-tooltip="'Swap Parameter Set with Current Parameter Values'"></vue-feather>
         <vue-feather class="inline-icon clickable delete-param-set ms-2"
                      type="trash-2"
                      @click="deleteParameterSet"
@@ -98,7 +98,7 @@ export default defineComponent({
 
         const runRequired = computed(() => store.getters[`run/${RunGetter.runIsRequired}`]);
         const canSwapParameterSet = computed(() => {
-          return !(store.state.model.compileRequired || runRequired.value);
+            return !(store.state.model.compileRequired || runRequired.value);
         });
 
         return {
