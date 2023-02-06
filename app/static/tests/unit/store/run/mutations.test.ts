@@ -218,6 +218,54 @@ describe("Run mutations", () => {
         expect(state.resultOde).toStrictEqual({ solution: "another fake result" });
     });
 
+    it("does not swap parameter sets if paramSet does not exist", () => {
+        const state = mockRunState({
+            parameterValues: { a: 1 },
+            parameterSets: [
+                { name: "Set1", parameterValues: { a: 2 }, hidden: false }
+            ],
+            parameterSetResults: { Set1: { solution: "another fake result" } } as any,
+            resultOde: { solution: "fake result" } as any
+        });
+        mutations.SwapParameterSet(state, "Set2");
+        expect(state.parameterValues).toStrictEqual({ a: 1 });
+        expect(state.parameterSets).toStrictEqual([{ name: "Set1", parameterValues: { a: 2 }, hidden: false }]);
+        expect(state.parameterSetResults).toStrictEqual({ Set1: { solution: "another fake result" } });
+        expect(state.resultOde).toStrictEqual({ solution: "fake result" });
+    });
+
+    it("does not swap parameter sets if parameterValues do not exist", () => {
+        const state = mockRunState({
+            parameterValues: null,
+            parameterSets: [
+                { name: "Set1", parameterValues: { a: 2 }, hidden: false }
+            ],
+            parameterSetResults: { Set1: { solution: "another fake result" } } as any,
+            resultOde: { solution: "fake result" } as any
+        });
+        mutations.SwapParameterSet(state, "Set2");
+        expect(state.parameterValues).toStrictEqual(null);
+        expect(state.parameterSets).toStrictEqual([{ name: "Set1", parameterValues: { a: 2 }, hidden: false }]);
+        expect(state.parameterSetResults).toStrictEqual({ Set1: { solution: "another fake result" } });
+        expect(state.resultOde).toStrictEqual({ solution: "fake result" });
+    });
+
+    it("does not swap parameter sets if resultOde does not exist", () => {
+        const state = mockRunState({
+            parameterValues: { a: 1 },
+            parameterSets: [
+                { name: "Set1", parameterValues: { a: 2 }, hidden: false }
+            ],
+            parameterSetResults: { Set1: { solution: "another fake result" } } as any,
+            resultOde: null
+        });
+        mutations.SwapParameterSet(state, "Set2");
+        expect(state.parameterValues).toStrictEqual({ a: 1 });
+        expect(state.parameterSets).toStrictEqual([{ name: "Set1", parameterValues: { a: 2 }, hidden: false }]);
+        expect(state.parameterSetResults).toStrictEqual({ Set1: { solution: "another fake result" } });
+        expect(state.resultOde).toStrictEqual(null);
+    });
+
     it("toggles parameter set hidden", () => {
         const state = mockRunState({
             parameterSets: [
