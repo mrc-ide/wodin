@@ -1,6 +1,6 @@
 <template>
   <div ref="draggable" class="draggable-dialog p-2" :style="dialogStyle">
-    <div ref="dragtarget" @mousedown="handleDragStart" @touchstart="handleDragStart">
+    <div class="dragtarget" @mousedown="handleDragStart" @touchstart="handleDragStart">
       <h3 class="move prevent-select">
          <vue-feather type="move" class="grey"></vue-feather>
           {{title}}
@@ -34,7 +34,6 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const draggable = ref<null | HTMLElement>(null); // Picks up the element with 'draggable' ref in the template
-        const dragtarget = ref<null | HTMLElement>(null);
 
         const position = ref<Point>({ x: 0, y: 0 });
         const moveClientStart = ref<Point>({ x: 0, y: 0 });
@@ -108,7 +107,9 @@ export default defineComponent({
 
         return {
             draggable,
-            dragtarget,
+            moveClientStart,
+            movePositionStart,
+            position,
             dialogStyle,
             close,
             handleDragStart

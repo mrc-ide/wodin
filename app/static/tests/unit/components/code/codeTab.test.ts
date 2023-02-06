@@ -8,6 +8,7 @@ import { mockBasicState, mockModelState } from "../../../mocks";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 import { ModelState } from "../../../../src/app/store/model/state";
 import VerticalCollapse from "../../../../src/app/components/VerticalCollapse.vue";
+import GenericHelp from "../../../../src/app/components/help/GenericHelp.vue";
 
 describe("CodeTab", () => {
     const defaultModelState = {
@@ -60,6 +61,8 @@ describe("CodeTab", () => {
         expect(statusIcon.attributes("type")).toBe("check");
         expect(statusIcon.classes()).toContain("text-success");
         expect(wrapper.findComponent(VerticalCollapse).props("collapseId")).toBe("select-variables");
+        expect(wrapper.findComponent(GenericHelp).props("title")).toBe("Write odin code");
+        expect(wrapper.findComponent(GenericHelp).props("markdown")).toContain("Write code in this editor");
     });
 
     it("shows code invalid message and disabled compile button when odin response has valid false", () => {
