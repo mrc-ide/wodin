@@ -19,6 +19,7 @@
                      type="shuffle"
                      :disabled="!canSwapParameterSet"
                      :stroke="canSwapParameterSet ? 'black' : 'lightgray'"
+                     :style="{ cursor: canSwapParameterSet ? 'pointer' : 'default' }"
                      @click="swapParameterSet"
                      v-tooltip="'Swap Parameter Set with Current Parameter Values'"></vue-feather>
         <vue-feather class="inline-icon clickable delete-param-set ms-2"
@@ -46,7 +47,7 @@ import VueFeather from "vue-feather";
 import { ParameterSet } from "../../store/run/state";
 import { RunAction } from "../../store/run/actions";
 import { RunMutation } from "../../store/run/mutations";
-import { paramSetLineStyle } from "../../plot";
+import { paramSetLineStyle } from '../../plot';
 import { RunGetter } from "../../store/run/getters";
 
 export default defineComponent({

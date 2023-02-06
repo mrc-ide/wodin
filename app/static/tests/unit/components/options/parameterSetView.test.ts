@@ -87,6 +87,7 @@ describe("ParameterSetView", () => {
         expect(swapIcon.classes()).toContain("swap-param-set");
         expect(swapIcon.props("type")).toBe("shuffle");
         expect(swapIcon.props("stroke")).toBe("black");
+        expect((swapIcon.element as HTMLButtonElement).style.cursor).toBe("pointer");
         const deleteIcon = icons.at(2)!;
         expect(deleteIcon.classes()).toContain("delete-param-set");
         expect(deleteIcon.props("type")).toBe("trash-2");
@@ -135,6 +136,8 @@ describe("ParameterSetView", () => {
         const swapIcon = icons.at(1)!;
         expect(swapIcon.classes()).toContain("swap-param-set");
         expect(swapIcon.props("type")).toBe("shuffle");
+        expect(swapIcon.props("stroke")).toBe("black");
+        expect((swapIcon.element as HTMLButtonElement).style.cursor).toBe("pointer");
         const deleteIcon = icons.at(2)!;
         expect(deleteIcon.classes()).toContain("delete-param-set");
         expect(deleteIcon.props("type")).toBe("trash-2");
@@ -163,6 +166,7 @@ describe("ParameterSetView", () => {
         expect(swapIcon.classes()).toContain("swap-param-set");
         expect(swapIcon.props("type")).toBe("shuffle");
         expect(swapIcon.props("stroke")).toBe("lightgray");
+        expect((swapIcon.element as HTMLButtonElement).style.cursor).toBe("default");
         const deleteIcon = icons.at(2)!;
         expect(deleteIcon.classes()).toContain("delete-param-set");
         expect(deleteIcon.props("type")).toBe("trash-2");
@@ -190,6 +194,7 @@ describe("ParameterSetView", () => {
         expect(swapIcon.classes()).toContain("swap-param-set");
         expect(swapIcon.props("type")).toBe("shuffle");
         expect(swapIcon.props("stroke")).toBe("lightgray");
+        expect((swapIcon.element as HTMLButtonElement).style.cursor).toBe("default");
         const deleteIcon = icons.at(2)!;
         expect(deleteIcon.classes()).toContain("delete-param-set");
         expect(deleteIcon.props("type")).toBe("trash-2");
