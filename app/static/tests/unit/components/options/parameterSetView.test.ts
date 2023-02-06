@@ -2,10 +2,11 @@ import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import VueFeather from "vue-feather";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import { mockBasicState, mockRunState } from "../../../mocks";
+import { mockBasicState, mockRunState, mockModelState } from '../../../mocks';
 import ParameterSetView from "../../../../src/app/components/options/ParameterSetView.vue";
 import { RunAction } from "../../../../src/app/store/run/actions";
 import { RunMutation } from "../../../../src/app/store/run/mutations";
+import { getters } from "../../../../src/app/store/run/getters";
 
 describe("ParameterSetView", () => {
     const mockDeleteParameterSet = jest.fn();
@@ -17,14 +18,22 @@ describe("ParameterSetView", () => {
         jest.resetAllMocks();
     });
 
-    const getWrapper = (paramSetHidden = false, index = 0) => {
+    const getWrapper = (paramSetHidden = false, index = 0, modelChanged = false, compileRequired = false) => {
         const store = new Vuex.Store<BasicState>({
-            state: mockBasicState(),
+            state: mockBasicState({
+                model: mockModelState({ compileRequired: compileRequired })
+            }),
             modules: {
                 run: {
                     namespaced: true,
                     state: mockRunState({
-                        parameterValues: { alpha: 1, beta: 2, gamma: 3 }
+                        parameterValues: { alpha: 1, beta: 2, gamma: 3 },
+                        runRequired: {
+                            modelChanged: modelChanged,
+                            parameterValueChanged: false,
+                            endTimeChanged: false,
+                            numberOfReplicatesChanged: false
+                        }
                     }),
                     actions: {
                         [RunAction.DeleteParameterSet]: mockDeleteParameterSet,
@@ -32,7 +41,8 @@ describe("ParameterSetView", () => {
                     },
                     mutations: {
                         [RunMutation.ToggleParameterSetHidden]: mockToggleParameterSetHidden
-                    }
+                    },
+                    getters
                 }
             }
         });
@@ -72,12 +82,15 @@ describe("ParameterSetView", () => {
         const hideIcon = icons.at(0)!;
         expect(hideIcon.classes()).toContain("hide-param-set");
         expect(hideIcon.props("type")).toBe("eye-off");
+        expect(hideIcon.props("stroke")).toBe("currentColor");
         const swapIcon = icons.at(1)!;
         expect(swapIcon.classes()).toContain("swap-param-set");
         expect(swapIcon.props("type")).toBe("shuffle");
+        expect(swapIcon.props("stroke")).toBe("black");
         const deleteIcon = icons.at(2)!;
         expect(deleteIcon.classes()).toContain("delete-param-set");
         expect(deleteIcon.props("type")).toBe("trash-2");
+        expect(deleteIcon.props("stroke")).toBe("currentColor");
 
         expect(wrapper.find(".card-body").classes()).not.toContain("hidden-parameter-set");
     });
@@ -137,6 +150,60 @@ describe("ParameterSetView", () => {
         expect(mockTooltipDirective.mock.calls[2][1].value).toBe("Delete Parameter Set");
     });
 
+    it("renders as expected when run is required", () => {
+        const wrapper = getWrapper(false, 0, true);
+
+        const icons = wrapper.findAllComponents(VueFeather);
+        expect(icons.length).toBe(3);
+        const showIcon = icons.at(0)!;
+        expect(showIcon.classes()).toContain("hide-param-set");
+        expect(showIcon.props("type")).toBe("eye-off");
+        expect(showIcon.props("stroke")).toBe("currentColor");
+        const swapIcon = icons.at(1)!;
+        expect(swapIcon.classes()).toContain("swap-param-set");
+        expect(swapIcon.props("type")).toBe("shuffle");
+        expect(swapIcon.props("stroke")).toBe("lightgray");
+        const deleteIcon = icons.at(2)!;
+        expect(deleteIcon.classes()).toContain("delete-param-set");
+        expect(deleteIcon.props("type")).toBe("trash-2");
+        expect(deleteIcon.props("stroke")).toBe("currentColor");
+
+        expect(mockTooltipDirective).toHaveBeenCalledTimes(3);
+        expect(mockTooltipDirective.mock.calls[0][0]).toBe(showIcon.element);
+        expect(mockTooltipDirective.mock.calls[0][1].value).toBe("Hide Parameter Set");
+        expect(mockTooltipDirective.mock.calls[1][0]).toBe(swapIcon.element);
+        expect(mockTooltipDirective.mock.calls[1][1].value).toBe("Swap Parameter Set");
+        expect(mockTooltipDirective.mock.calls[2][0]).toBe(deleteIcon.element);
+        expect(mockTooltipDirective.mock.calls[2][1].value).toBe("Delete Parameter Set");
+    });
+
+    it("renders as expected when compile is required", () => {
+        const wrapper = getWrapper(false, 0, false, true);
+
+        const icons = wrapper.findAllComponents(VueFeather);
+        expect(icons.length).toBe(3);
+        const showIcon = icons.at(0)!;
+        expect(showIcon.classes()).toContain("hide-param-set");
+        expect(showIcon.props("type")).toBe("eye-off");
+        expect(showIcon.props("stroke")).toBe("currentColor");
+        const swapIcon = icons.at(1)!;
+        expect(swapIcon.classes()).toContain("swap-param-set");
+        expect(swapIcon.props("type")).toBe("shuffle");
+        expect(swapIcon.props("stroke")).toBe("lightgray");
+        const deleteIcon = icons.at(2)!;
+        expect(deleteIcon.classes()).toContain("delete-param-set");
+        expect(deleteIcon.props("type")).toBe("trash-2");
+        expect(deleteIcon.props("stroke")).toBe("currentColor");
+
+        expect(mockTooltipDirective).toHaveBeenCalledTimes(3);
+        expect(mockTooltipDirective.mock.calls[0][0]).toBe(showIcon.element);
+        expect(mockTooltipDirective.mock.calls[0][1].value).toBe("Hide Parameter Set");
+        expect(mockTooltipDirective.mock.calls[1][0]).toBe(swapIcon.element);
+        expect(mockTooltipDirective.mock.calls[1][1].value).toBe("Swap Parameter Set");
+        expect(mockTooltipDirective.mock.calls[2][0]).toBe(deleteIcon.element);
+        expect(mockTooltipDirective.mock.calls[2][1].value).toBe("Delete Parameter Set");
+    });
+
     it("clicking delete icon dispatches DeleteParameterSet action", async () => {
         const wrapper = getWrapper();
         await wrapper.find(".delete-param-set").trigger("click");
@@ -150,6 +217,8 @@ describe("ParameterSetView", () => {
         expect(mockSwapParameterSet).toHaveBeenCalledTimes(1);
         expect(mockSwapParameterSet.mock.calls[0][1]).toBe("Set 1");
     });
+
+
 
     it("clicking hide icon commits ToggleParameterSetHidden", async () => {
         const wrapper = getWrapper();
