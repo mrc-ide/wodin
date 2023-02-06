@@ -21,6 +21,7 @@
 import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
+import codeHelp from "raw-loader!../../help/code.md";
 import CodeEditor from "./CodeEditor.vue";
 import { ModelAction } from "../../store/model/actions";
 import userMessages from "../../userMessages";
@@ -28,12 +29,11 @@ import ErrorInfo from "../ErrorInfo.vue";
 import SelectedVariables from "./SelectedVariables.vue";
 import VerticalCollapse from "../VerticalCollapse.vue";
 import GenericHelp from "../help/GenericHelp.vue";
-import codeHelp from "raw-loader!../../help/code.md";
 
 export default defineComponent({
     name: "CodeTab",
     components: {
-      GenericHelp,
+        GenericHelp,
         SelectedVariables,
         ErrorInfo,
         CodeEditor,

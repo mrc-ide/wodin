@@ -1,7 +1,7 @@
-import {mount, shallowMount} from "@vue/test-utils";
-import DraggableDialog from "../../../../src/app/components/help/DraggableDialog.vue";
+import { mount, shallowMount } from "@vue/test-utils";
 import VueFeather from "vue-feather";
-import {nextTick} from "vue";
+import { nextTick } from "vue";
+import DraggableDialog from "../../../../src/app/components/help/DraggableDialog.vue";
 
 const docAddListenerSpy = jest.spyOn(document, "addEventListener");
 const docRemoveListenerSpy = jest.spyOn(document, "removeEventListener");
@@ -32,13 +32,13 @@ describe("DraggableDialog", () => {
         expect(wrapper.find("div.draggable-content h1").text()).toBe("TEST SLOT CONTENT");
     });
 
-    const testHandlesDrag =  async (touch = false, moveTo = {x: 15, y: 28},
-                                    expectedEndPosition = {x: 5, y: 8}) => {
+    const testHandlesDrag = async (touch = false, moveTo = { x: 15, y: 28 },
+        expectedEndPosition = { x: 5, y: 8 }) => {
         const wrapper = getWrapper();
 
         // Start drag
         const startEvent = touch ? "touchstart" : "mousedown";
-        await wrapper.find(".dragtarget").trigger(startEvent, {clientX: 10, clientY: 20});
+        await wrapper.find(".dragtarget").trigger(startEvent, { clientX: 10, clientY: 20 });
         expect(docAddListenerSpy).toHaveBeenCalledTimes(4);
         expect(docAddListenerSpy.mock.calls[0][0]).toBe("mousemove");
         expect(docAddListenerSpy.mock.calls[1][0]).toBe("touchmove");
@@ -46,9 +46,9 @@ describe("DraggableDialog", () => {
         expect(docAddListenerSpy.mock.calls[3][0]).toBe("touchend");
         expect(docRemoveListenerSpy).toHaveBeenCalledTimes(0);
 
-        expect((wrapper.vm as any).moveClientStart).toStrictEqual({x: 10, y: 20});
+        expect((wrapper.vm as any).moveClientStart).toStrictEqual({ x: 10, y: 20 });
         // vue test-utils gives bounding rect of 0 for all elements so we'll have initialised position to 0,0
-        expect((wrapper.vm as any).movePositionStart).toStrictEqual({x: 0, y: 0});
+        expect((wrapper.vm as any).movePositionStart).toStrictEqual({ x: 0, y: 0 });
 
         // Move
         const moveHandlerIndex = touch ? 1 : 0; // touchmove or mousemove
@@ -65,7 +65,7 @@ describe("DraggableDialog", () => {
         // End drag
         const endHandlerIndex = touch ? 3 : 2; // touchend or mouseup
         const mouseUpHandler = docAddListenerSpy.mock.calls[endHandlerIndex][1] as any;
-        const mouseUpEvent = {preventDefault: jest.fn()};
+        const mouseUpEvent = { preventDefault: jest.fn() };
         mouseUpHandler(mouseUpEvent);
         expect(docRemoveListenerSpy).toHaveBeenCalledTimes(4);
         expect(docRemoveListenerSpy.mock.calls[0][0]).toBe("mousemove");
@@ -95,7 +95,7 @@ describe("DraggableDialog", () => {
     });
 
     it("contains drag within viewport", () => {
-        testHandlesDrag(false, {x: -30, y: -40}, {x: 0, y: 0});
+        testHandlesDrag(false, { x: -30, y: -40 }, { x: 0, y: 0 });
     });
 
     it("emits close event when click x", async () => {

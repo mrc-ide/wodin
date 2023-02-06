@@ -173,4 +173,14 @@ test.describe("Code Tab tests", () => {
         await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 3)").getAttribute("name"))
             .toBe("R");
     });
+
+    test("can display help dialog", async ({ page }) => {
+        await page.click("div.code-tab i.generic-help-icon");
+        expect((await page.innerText(".draggable-dialog .dragtarget")).trim()).toBe("Write odin code");
+        expect(await page.innerText(".draggable-dialog .draggable-content")).toContain("Write code in this editor");
+
+        // close dialog
+        await page.click("i.vue-feather--x");
+        expect(await page.locator(".draggable-dialog")).not.toBeVisible();
+    });
 });
