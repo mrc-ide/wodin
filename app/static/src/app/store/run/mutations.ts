@@ -105,15 +105,15 @@ export const mutations: MutationTree<RunState> = {
 
     [RunMutation.SwapParameterSet](state: RunState, parameterSetName: string) {
         const paramSet = state.parameterSets.find((set: ParameterSet) => set.name === parameterSetName);
-        if (paramSet && state.parameterValues) {
+        if (paramSet && state.parameterValues && state.resultOde) {
+            // swap values
             const temp = state.parameterValues;
             state.parameterValues = paramSet.parameterValues;
             paramSet.parameterValues = temp;
-        }
-        if (state.parameterSetResults[parameterSetName] && state.resultOde) {
-            const temp = state.resultOde;
+            // swap results
+            const tempResult = state.resultOde;
             state.resultOde = state.parameterSetResults[parameterSetName];
-            state.parameterSetResults[parameterSetName] = temp;
+            state.parameterSetResults[parameterSetName] = tempResult;
         }
     },
 
