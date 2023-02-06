@@ -5,6 +5,7 @@
     <div v-if="!hasPlotData" class="plot-placeholder">
       {{ placeholderMessage }}
     </div>
+    <wodin-plot-data-summary :data="plotData"></wodin-plot-data-summary>
     <slot></slot>
   </div>
 </template>
@@ -25,9 +26,11 @@ import { Batch, OdinSeriesSet } from "../../types/responseTypes";
 import { runPlaceholderMessage } from "../../utils";
 import { RunGetter } from "../../store/run/getters";
 import { Dict } from "../../types/utilTypes";
+import WodinPlotDataSummary from "../WodinPlotDataSummary.vue";
 
 export default defineComponent({
     name: "SensitivitySummaryPlot",
+    components: { WodinPlotDataSummary },
     props: {
         fadePlot: Boolean
     },
