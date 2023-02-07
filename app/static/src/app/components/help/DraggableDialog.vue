@@ -68,14 +68,14 @@ export default defineComponent({
             event.preventDefault();
         };
 
-        const handleDragEnd = (event: any) => {
+        const handleDragEnd = (event: Event) => {
             document.removeEventListener("mousemove", handleDragMove);
             document.removeEventListener("touchmove", handleDragMove);
             document.removeEventListener("mouseup", handleDragEnd);
             document.removeEventListener("touchend", handleDragEnd);
             event.preventDefault();
         };
-        const handleDragStart = (event: any) => {
+        const handleDragStart = (event: Event) => {
             const { clientX, clientY } = getTouchEvent(event) as MouseEvent | Touch;
             document.addEventListener("mousemove", handleDragMove);
             document.addEventListener("touchmove", handleDragMove);
