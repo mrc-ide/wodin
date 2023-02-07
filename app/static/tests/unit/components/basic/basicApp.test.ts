@@ -68,7 +68,10 @@ describe("BasicApp", () => {
 
         const options = {
             global: {
-                plugins: [store]
+                plugins: [store],
+                stubs: {
+                    GenericHelp: true
+                }
             }
         };
 
