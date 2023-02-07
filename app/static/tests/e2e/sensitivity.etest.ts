@@ -180,5 +180,15 @@ test.describe("Sensitivity tests", () => {
         await expectSummaryValues(page, 64, "S (Set 1)", 1000, "#2e5cb8", "dot");
         await expectSummaryValues(page, 65, "I (Set 1)", 1000, "#cccc00", "dot");
         await expectSummaryValues(page, 66, "R (Set 1)", 1000, "#cc0044", "dot");
+
+        // Switch to summary view
+        await page.locator("#sensitivity-plot-type select").selectOption("ValueAtTime");
+        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(6, { timeout });
+        await expectSummaryValues(page, 1, "S", 10, "#2e5cb8", null, "4.5", "5.5");
+        await expectSummaryValues(page, 2, "I", 10, "#cccc00", null, "4.5", "5.5");
+        await expectSummaryValues(page, 3, "R", 10, "#cc0044", null, "4.5", "5.5");
+        await expectSummaryValues(page, 4, "S (Set 1)", 10, "#2e5cb8", "dot", "3.6", "4.4");
+        await expectSummaryValues(page, 5, "I (Set 1)", 10, "#cccc00", "dot", "3.6", "4.4");
+        await expectSummaryValues(page, 6, "R (Set 1)", 10, "#cc0044", "dot", "3.6", "4.4");
     });
 });

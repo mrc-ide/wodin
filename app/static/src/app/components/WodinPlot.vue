@@ -5,20 +5,7 @@
     <div v-if="!hasPlotData" class="plot-placeholder">
       {{ placeholderMessage }}
     </div>
-    <div v-if="hasPlotData" hidden class="wodin-plot-data-summary">
-      <div class="wodin-plot-data-summary-series" v-for="(data, index) in baseData" :key="index"
-           :name="data.name"
-           :count="data.x?.length"
-           :x-min="Math.min(...data.x)"
-           :x-max="Math.max(...data.x)"
-           :y-min="Math.min(...data.y)"
-           :y-max="Math.max(...data.y)"
-           :mode="data.mode"
-           :line-color="data.line?.color"
-           :line-dash="data.line?.dash"
-           :marker-color="data.marker?.color"
-      ></div>
-    </div>
+    <wodin-plot-data-summary :data="baseData"></wodin-plot-data-summary>
     <slot></slot>
   </div>
 </template>
@@ -35,9 +22,11 @@ import {
 import {
     WodinPlotData, fadePlotStyle, margin, config
 } from "../plot";
+import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
 
 export default defineComponent({
     name: "WodinPlot",
+    components: { WodinPlotDataSummary },
     props: {
         fadePlot: Boolean,
         placeholderMessage: String,
