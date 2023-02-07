@@ -10,6 +10,7 @@
     <div class="overflow-auto draggable-content">
       <slot></slot>
     </div>
+    <div class="resize-handle"></div>
   </div>
 </template>
 
@@ -34,10 +35,15 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const draggable = ref<null | HTMLElement>(null); // Picks up the element with 'draggable' ref in the template
+        const zeroPoint = { x: 0, y: 0 };
 
-        const position = ref<Point>({ x: 0, y: 0 });
-        const moveClientStart = ref<Point>({ x: 0, y: 0 });
-        const movePositionStart = ref<Point>({ x: 0, y: 0 });
+        const position = ref<Point>({...zeroPoint});
+        const moveClientStart = ref<Point>({...zeroPoint});
+        const movePositionStart = ref<Point>({...zeroPoint});
+        const resizeClientStart = ref<Point>({...zeroPoint});
+        const resizePositionStart = ref<Point>({...zeroPoint});
+        const resizeWidth = ref(0);
+        const resizeHeight = ref(0);
 
         const getTouchEvent = (event: Event) => {
             return (event as TouchEvent).touches?.length > 0 ? (event as TouchEvent).touches[0] : event;
@@ -84,6 +90,10 @@ export default defineComponent({
 
             moveClientStart.value = { x: clientX, y: clientY };
             movePositionStart.value = { x: position.value.x, y: position.value.y };
+        };
+
+        const handleResizeStart = (event: any) => {
+
         };
 
         const close = () => { emit("close"); };
@@ -137,6 +147,21 @@ export default defineComponent({
       background-color: aliceblue;
       border: #ccc 1px solid;
       height: calc(100% - 2.5rem);
+    }
+
+    .resize-handle {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+      cursor: nw-resize;
+      border-top: 0;
+      border-right: 0;
+      border-left: 2rem solid transparent;
+      border-bottom: 2rem solid grey;
+
+
     }
   }
 </style>
