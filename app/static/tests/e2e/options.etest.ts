@@ -246,39 +246,62 @@ test.describe("Options Tab tests", () => {
         await expectSummaryValues(page, 3, "R", 1000, "#cc0044");
     });
 
-    test("can swap a parameter set", async ({ page }) => {
+    test("can swap a parameter set and its run traces", async ({ page }) => {
+        await page.fill(":nth-match(#model-params input, 1)", "6");
+        await page.fill(":nth-match(#model-params input, 2)", "1000000");
+        await page.fill(":nth-match(#model-params input, 3)", "1000000");
+        await page.fill(":nth-match(#model-params input, 4)", "0");
+        await page.click("#run-btn");
         await createParameterSet(page);
         await page.fill(":nth-match(#model-params input, 1)", "5");
-        await page.fill(":nth-match(#model-params input, 2)", "2");
-        await page.fill(":nth-match(#model-params input, 3)", "2000000");
+        await page.fill(":nth-match(#model-params input, 2)", "0");
+        await page.fill(":nth-match(#model-params input, 3)", "1000000");
         await page.fill(":nth-match(#model-params input, 4)", "1.5");
         await page.click("#run-btn");
         await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(6, { timeout });
 
         await expect(await page.inputValue(":nth-match(#model-params input, 1)")).toBe("5");
-        await expect(await page.inputValue(":nth-match(#model-params input, 2)")).toBe("2");
-        await expect(await page.inputValue(":nth-match(#model-params input, 3)")).toBe("2,000,000");
+        await expect(await page.inputValue(":nth-match(#model-params input, 2)")).toBe("0");
+        await expect(await page.inputValue(":nth-match(#model-params input, 3)")).toBe("1,000,000");
         await expect(await page.inputValue(":nth-match(#model-params input, 4)")).toBe("1.5");
 
         await expect((await page.innerText(".parameter-set .card-header")).trim()).toBe("Set 1");
-        await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 1)")).toBe("beta: 4");
-        await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 2)")).toBe("I0: 1");
+        await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 1)")).toBe("beta: 6");
+        await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 2)")).toBe("I0: 1000000");
         await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 3)")).toBe("N: 1000000");
-        await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 4)")).toBe("sigma: 2");
+        await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 4)")).toBe("sigma: 0");
+
+        // current parameters
+        await expectSummaryValues(page, 1, "S", 1000, "#2e5cb8", null, "0", "100", "1000000", "1000000");
+        await expectSummaryValues(page, 2, "I", 1000, "#cccc00", null, "0", "100", "0", "0");
+        await expectSummaryValues(page, 3, "R", 1000, "#cc0044", null, "0", "100", "0", "0");
+        // parameter set
+        await expectSummaryValues(page, 4, "S (Set 1)", 1000, "#2e5cb8", "dot", "0", "100", "0", "0");
+        await expectSummaryValues(page, 5, "I (Set 1)", 1000, "#cccc00", "dot", "0", "100", "1000000", "1000000");
+        await expectSummaryValues(page, 6, "R (Set 1)", 1000, "#cc0044", "dot", "0", "100", "0", "0");
 
         await swapParameterSet(1, page);
         await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(6, { timeout });
 
-        await expect(await page.inputValue(":nth-match(#model-params input, 1)")).toBe("4");
-        await expect(await page.inputValue(":nth-match(#model-params input, 2)")).toBe("1");
+        await expect(await page.inputValue(":nth-match(#model-params input, 1)")).toBe("6");
+        await expect(await page.inputValue(":nth-match(#model-params input, 2)")).toBe("1,000,000");
         await expect(await page.inputValue(":nth-match(#model-params input, 3)")).toBe("1,000,000");
-        await expect(await page.inputValue(":nth-match(#model-params input, 4)")).toBe("2");
+        await expect(await page.inputValue(":nth-match(#model-params input, 4)")).toBe("0");
 
         await expect((await page.innerText(".parameter-set .card-header")).trim()).toBe("Set 1");
         await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 1)")).toBe("beta: 5");
-        await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 2)")).toBe("I0: 2");
-        await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 3)")).toBe("N: 2000000");
+        await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 2)")).toBe("I0: 0");
+        await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 3)")).toBe("N: 1000000");
         await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 4)")).toBe("sigma: 1.5");
+
+        // current parameters
+        await expectSummaryValues(page, 1, "S", 1000, "#2e5cb8", null, "0", "100", "0", "0");
+        await expectSummaryValues(page, 2, "I", 1000, "#cccc00", null, "0", "100", "1000000", "1000000");
+        await expectSummaryValues(page, 3, "R", 1000, "#cc0044", null, "0", "100", "0", "0");
+        // parameter set
+        await expectSummaryValues(page, 4, "S (Set 1)", 1000, "#2e5cb8", "dot", "0", "100", "1000000", "1000000");
+        await expectSummaryValues(page, 5, "I (Set 1)", 1000, "#cccc00", "dot", "0", "100", "0", "0");
+        await expectSummaryValues(page, 6, "R (Set 1)", 1000, "#cc0044", "dot", "0", "100", "0", "0");
     });
 
     test("can hide and show a parameter set", async ({ page }) => {

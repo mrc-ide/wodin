@@ -131,7 +131,7 @@ export const expectWodinPlotDataSummary = async (summaryLocator: Locator, name: 
 };
 
 export const expectSummaryValues = async (page: Page, idx: number, name: string, count: number, color: string,
-    dash: string | null = null, xMin = "0", xMax = "100") => {
+    dash: string | null = null, xMin = "0", xMax = "100", yMin: string | null = null, yMax: string | null = null) => {
     const summary = ".wodin-plot-data-summary-series";
     const locator = `:nth-match(${summary}, ${idx})`;
     expect(await page.getAttribute(locator, "name")).toBe(name);
@@ -141,4 +141,10 @@ export const expectSummaryValues = async (page: Page, idx: number, name: string,
     expect(await page.getAttribute(locator, "mode")).toBe("lines");
     expect(await page.getAttribute(locator, "line-color")).toBe(color);
     expect(await page.getAttribute(locator, "line-dash")).toBe(dash);
+    if (yMin) {
+        expect(await page.getAttribute(locator, "y-min")).toBe(yMin);
+    }
+    if (yMax) {
+        expect(await page.getAttribute(locator, "y-max")).toBe(yMax);
+    }
 };
