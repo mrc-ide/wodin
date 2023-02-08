@@ -10,7 +10,7 @@
     <div class="overflow-auto draggable-content">
       <slot></slot>
     </div>
-    <div class="resize-handle"></div>
+    <div class="resize-handle" @mousedown="handleResizeStart" @touchstart="handleResizeStart"></div>
   </div>
 </template>
 
@@ -37,11 +37,12 @@ export default defineComponent({
         const draggable = ref<null | HTMLElement>(null); // Picks up the element with 'draggable' ref in the template
         const zeroPoint = { x: 0, y: 0 };
 
-        const position = ref<Point>({...zeroPoint});
-        const moveClientStart = ref<Point>({...zeroPoint});
-        const movePositionStart = ref<Point>({...zeroPoint});
-        const resizeClientStart = ref<Point>({...zeroPoint});
-        const resizePositionStart = ref<Point>({...zeroPoint});
+        const position = ref<Point>({ ...zeroPoint });
+        const moveClientStart = ref<Point>({ ...zeroPoint });
+        const movePositionStart = ref<Point>({ ...zeroPoint });
+        const resizeClientStart = ref<Point>({ ...zeroPoint });
+        const resizeStartWidth = ref(0);
+        const resizeStartHeight = ref(0);
         const resizeWidth = ref(0);
         const resizeHeight = ref(0);
 
@@ -74,14 +75,14 @@ export default defineComponent({
             event.preventDefault();
         };
 
-        const handleDragEnd = (event: any) => {
+        const handleDragEnd = (event: Event) => {
             document.removeEventListener("mousemove", handleDragMove);
             document.removeEventListener("touchmove", handleDragMove);
             document.removeEventListener("mouseup", handleDragEnd);
             document.removeEventListener("touchend", handleDragEnd);
             event.preventDefault();
         };
-        const handleDragStart = (event: any) => {
+        const handleDragStart = (event: Event) => {
             const { clientX, clientY } = getTouchEvent(event) as MouseEvent | Touch;
             document.addEventListener("mousemove", handleDragMove);
             document.addEventListener("touchmove", handleDragMove);
@@ -92,11 +93,36 @@ export default defineComponent({
             movePositionStart.value = { x: position.value.x, y: position.value.y };
         };
 
-        const handleResizeStart = (event: any) => {
-
+        const handleResizeMove = (event: Event) => {
+            const { clientX, clientY } = getTouchEvent(event) as MouseEvent | Touch;
+            resizeWidth.value = resizeStartWidth.value + clientX - resizeClientStart.value.x;
+            resizeHeight.value = resizeStartHeight.value + clientY - resizeClientStart.value.y;
+            event.preventDefault();
         };
 
-        const close = () => { emit("close"); };
+        const handleResizeEnd = (event: Event) => {
+            document.removeEventListener("mousemove", handleResizeMove);
+            document.removeEventListener("touchmove", handleResizeMove);
+            document.removeEventListener("mouseup", handleResizeEnd);
+            document.removeEventListener("touchend", handleResizeEnd);
+            event.preventDefault();
+        };
+
+        const handleResizeStart = (event: any) => {
+            const { clientX, clientY } = getTouchEvent(event) as MouseEvent | Touch;
+            document.addEventListener("mousemove", handleResizeMove);
+            document.addEventListener("touchmove", handleResizeMove);
+            document.addEventListener("mouseup", handleResizeEnd);
+            document.addEventListener("touchend", handleResizeEnd);
+            resizeClientStart.value = { x: clientX, y: clientY };
+            const rect = draggableRect();
+            resizeStartWidth.value = rect.width;
+            resizeStartHeight.value = rect.height;
+        };
+
+        const close = () => {
+            emit("close");
+        };
 
         onMounted(() => {
             if (draggable.value) {
@@ -108,11 +134,17 @@ export default defineComponent({
         });
 
         const dialogStyle = computed(() => {
-            if (position.value.x === 0 && position.value.y === 0) {
-                return {};
+            const result = {} as any; // TODO: sort this out Partial style
+            if (position.value.x !== 0 || position.value.y !== 0) {
+                result.top = `${position.value.y}px`;
+                result.left = `${position.value.x}px`;
+            }
+            if (resizeWidth.value !== 0 || resizeHeight.value !== 0) {
+                result.width = `${resizeWidth.value}px`;
+                result.height = `${resizeHeight.value}px`;
             }
 
-            return { top: `${position.value.y}px`, left: `${position.value.x}px` };
+            return result;
         });
 
         return {
@@ -122,7 +154,8 @@ export default defineComponent({
             position,
             dialogStyle,
             close,
-            handleDragStart
+            handleDragStart,
+            handleResizeStart
         };
     }
 });
@@ -160,7 +193,6 @@ export default defineComponent({
       border-right: 0;
       border-left: 2rem solid transparent;
       border-bottom: 2rem solid grey;
-
 
     }
   }
