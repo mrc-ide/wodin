@@ -35,9 +35,9 @@ export default defineComponent({
     setup(props, { emit }) {
         const draggable = ref<null | HTMLElement>(null); // Picks up the element with 'draggable' ref in the template
 
-        const position = ref<Point>({ x: 0, y: 0 });
-        const moveClientStart = ref<Point>({ x: 0, y: 0 });
-        const movePositionStart = ref<Point>({ x: 0, y: 0 });
+        const position = ref<Point | null>(null);
+        const moveClientStart = ref<Point | null>(null);
+        const movePositionStart = ref<Point | null>(null);
 
         const getTouchEvent = (event: Event) => {
             return (event as TouchEvent).touches?.length > 0 ? (event as TouchEvent).touches[0] : event;
@@ -60,11 +60,13 @@ export default defineComponent({
         };
 
         const handleDragMove = (event: Event) => {
-            const { clientX, clientY } = getTouchEvent(event) as MouseEvent | Touch;
-            position.value = containInWindow({
-                x: movePositionStart.value.x + clientX - moveClientStart.value.x,
-                y: movePositionStart.value.y + clientY - moveClientStart.value.y
-            });
+            if (movePositionStart.value && moveClientStart.value) {
+                const { clientX, clientY } = getTouchEvent(event) as MouseEvent | Touch;
+                position.value = containInWindow({
+                    x: movePositionStart.value.x + clientX - moveClientStart.value.x,
+                    y: movePositionStart.value.y + clientY - moveClientStart.value.y
+                });
+            }
             event.preventDefault();
         };
 
@@ -73,6 +75,8 @@ export default defineComponent({
             document.removeEventListener("touchmove", handleDragMove);
             document.removeEventListener("mouseup", handleDragEnd);
             document.removeEventListener("touchend", handleDragEnd);
+            movePositionStart.value = null;
+            moveClientStart.value = null;
             event.preventDefault();
         };
         const handleDragStart = (event: Event) => {
@@ -83,7 +87,7 @@ export default defineComponent({
             document.addEventListener("touchend", handleDragEnd);
 
             moveClientStart.value = { x: clientX, y: clientY };
-            movePositionStart.value = { x: position.value.x, y: position.value.y };
+            movePositionStart.value = position.value ? { x: position.value.x, y: position.value.y } : { x: 0, y: 0 };
         };
 
         const close = () => { emit("close"); };
@@ -98,10 +102,9 @@ export default defineComponent({
         });
 
         const dialogStyle = computed(() => {
-            if (position.value.x === 0 && position.value.y === 0) {
+            if (!position.value) {
                 return {};
             }
-
             return { top: `${position.value.y}px`, left: `${position.value.x}px` };
         });
 

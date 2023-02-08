@@ -77,13 +77,8 @@ describe("DraggableDialog", () => {
         await nextTick();
 
         const dialogElement = wrapper.find(".draggable-dialog").element as HTMLElement;
-        if (expectedEndPosition.x === 0 && expectedEndPosition.y === 0) {
-            expect(dialogElement.style.top).toBe("");
-            expect(dialogElement.style.left).toBe("");
-        } else {
-            expect(dialogElement.style.top).toBe(`${expectedEndPosition.y}px`);
-            expect(dialogElement.style.left).toBe(`${expectedEndPosition.x}px`);
-        }
+        expect(dialogElement.style.top).toBe(`${expectedEndPosition.y}px`);
+        expect(dialogElement.style.left).toBe(`${expectedEndPosition.x}px`);
     };
 
     it("handles mouse drag", () => {
