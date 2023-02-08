@@ -92,12 +92,12 @@ export const mutations: MutationTree<SensitivityState> = {
     },
 
     [SensitivityMutation.ParameterSetSwapped](state: SensitivityState, parameterSetName: string) {
-        const temp = state.result;
+        const result = state.result;
         state.result = state.parameterSetResults[parameterSetName] || null;
-        if (temp == null) {
+        if (!result) {
             delete state.parameterSetResults[parameterSetName];
         } else {
-            state.parameterSetResults[parameterSetName] = temp;
+            state.parameterSetResults[parameterSetName] = result;
         }
     }
 };
