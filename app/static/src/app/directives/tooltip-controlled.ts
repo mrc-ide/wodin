@@ -1,9 +1,9 @@
 import { Tooltip } from "bootstrap";
 import { DirectiveBinding } from 'vue';
 
-interface ToolTipContent {
+export interface ToolTipContent {
     content?: string,
-    trigger?: "hover" | "focus" | "click" | "click focus" | "click hover" | "click hover focus" | "hover focus",
+    show?: boolean,
     variant?: "text" | "error"| "warning" | "success",
     placement?: "top" | "bottom" | "left" | "right",
 };
@@ -18,7 +18,7 @@ export default {
         new Tooltip(el, {
             title: value?.content || "",
             placement: value?.placement || "top",
-            trigger:  value?.trigger || "hover",
+            trigger: "manual",
             customClass: (variant === "text") ? "" : `tooltip-${variant}`
         });
     },
@@ -30,6 +30,10 @@ export default {
 
         if (tooltip) {
             el.setAttribute("data-bs-original-title", content);
+            if (!content) {
+                tooltip.hide();
+            }
+            tooltip.show();
         }
     },
     beforeUnmount(el: HTMLElement) {
