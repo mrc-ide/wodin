@@ -109,4 +109,60 @@ describe("DraggableDialog", () => {
         resizeHandler();
         expect(wrapper.emitted("close")!.length).toBe(1);
     });
+
+    const testHandlesResize = async (touch = false, resizeTo = { x: 200, y: 300 },
+        expectedEndSize = { width: 190, height: 280 }) => {
+        const wrapper = getWrapper();
+        // Start resize
+        const startEvent = touch ? "touchstart" : "mousedown";
+        await wrapper.find(".resize-handle").trigger(startEvent, { clientX: 10, clientY: 20 });
+        expect(docAddListenerSpy).toHaveBeenCalledTimes(4);
+        expect(docAddListenerSpy.mock.calls[0][0]).toBe("mousemove");
+        expect(docAddListenerSpy.mock.calls[1][0]).toBe("touchmove");
+        expect(docAddListenerSpy.mock.calls[2][0]).toBe("mouseup");
+        expect(docAddListenerSpy.mock.calls[3][0]).toBe("touchend");
+        expect(docRemoveListenerSpy).toHaveBeenCalledTimes(0);
+
+        // Move event
+        const moveHandlerIndex = touch ? 1 : 0; // touchmove or mousemove
+        const moveHandler = docAddListenerSpy.mock.calls[moveHandlerIndex][1] as any;
+        const moveEvent = {
+            clientX: resizeTo.x,
+            clientY: resizeTo.y,
+            preventDefault: jest.fn()
+        };
+        moveHandler(moveEvent);
+        expect((wrapper.vm as any).resizedSize).toStrictEqual(expectedEndSize);
+        expect(moveEvent.preventDefault).toHaveBeenCalledTimes(1);
+
+        // End resize
+        const endHandlerIndex = touch ? 3 : 2; // touchend or mouseup
+        const endHandler = docAddListenerSpy.mock.calls[endHandlerIndex][1] as any;
+        const endEvent = { preventDefault: jest.fn() };
+        endHandler(endEvent);
+        expect(docRemoveListenerSpy).toHaveBeenCalledTimes(4);
+        expect(docRemoveListenerSpy.mock.calls[0][0]).toBe("mousemove");
+        expect(docRemoveListenerSpy.mock.calls[1][0]).toBe("touchmove");
+        expect(docRemoveListenerSpy.mock.calls[2][0]).toBe("mouseup");
+        expect(docRemoveListenerSpy.mock.calls[3][0]).toBe("touchend");
+        expect(endEvent.preventDefault).toHaveBeenCalledTimes(1);
+
+        await nextTick();
+
+        const dialogElement = wrapper.find(".draggable-dialog").element as HTMLElement;
+        expect(dialogElement.style.width).toBe(`${expectedEndSize.width}px`);
+        expect(dialogElement.style.height).toBe(`${expectedEndSize.height}px`);
+    };
+
+    it("handles mouse resize", async () => {
+        await testHandlesResize();
+    });
+
+    it("handles touch resize", async () => {
+        await testHandlesResize(true);
+    });
+
+    it("constrains resize to minimum", async () => {
+        await testHandlesResize(false, { x: 10, y: 20 }, { width: 140, height: 140 });
+    });
 });
