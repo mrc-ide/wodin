@@ -3,7 +3,8 @@
          type="text"
          :value="textValue"
          @input="updateValue"
-         @blur="formatTextValue"/>
+         @blur="formatTextValue(true)"
+         v-tooltip-controlled="errorTooltipProps"/>
 </template>
 
 <script lang="ts">
@@ -11,6 +12,7 @@ import { formatLocale } from "d3-format";
 import {
     defineComponent, ref, onMounted, watch
 } from "vue";
+import { ToolTipContent } from "../../directives/tooltip-controlled";
 
 // Provide a d3 format which uses hyphen for negatives rather than minus sign
 const d3Locale = formatLocale({
@@ -31,6 +33,14 @@ export default defineComponent({
         allowNegative: {
             type: Boolean,
             default: true
+        },
+        max: {
+            type: Number,
+            default: Infinity
+        },
+        min: {
+            type: Number,
+            default: -Infinity
         }
     },
     emits: ["update"],
@@ -41,9 +51,18 @@ export default defineComponent({
         const lastNumericValueSet = ref<null|number>(null);
         const textValue = ref("");
 
-        const formatTextValue = () => {
+        const errorTooltipProps: ToolTipContent = {
+            content: "",
+            variant: "error",
+            placement: "right"
+        }
+
+        const formatTextValue = (blur?: boolean) => {
             // display value with thousands formats
             textValue.value = d3Locale.format(",")(props.value);
+            if (blur) {
+                errorTooltipProps.content = "";
+            }
         };
 
         const updateValue = (event: Event) => {
@@ -63,8 +82,24 @@ export default defineComponent({
             const cleanedValue = newVal.replace(/,/g, "");
             const numeric = parseFloat(cleanedValue);
             if (!Number.isNaN(numeric)) {
-                lastNumericValueSet.value = numeric;
-                emit("update", numeric);
+
+                // min max validation
+                var validatedNumeric: number = numeric;
+                if (numeric <= props.max && numeric >= props.min) {
+                    validatedNumeric = numeric;
+                    errorTooltipProps.content = "";
+                }
+                if (numeric > props.max) {
+                    validatedNumeric = props.max;
+                    errorTooltipProps.content = `Please enter value less than ${props.max}`;
+                }
+                if (numeric < props.min) {
+                    validatedNumeric = props.min;
+                    errorTooltipProps.content = `Please enter value greater than ${props.min}`;
+                }
+
+                lastNumericValueSet.value = validatedNumeric;
+                emit("update", validatedNumeric);
             }
         };
 
@@ -78,7 +113,8 @@ export default defineComponent({
         return {
             textValue,
             updateValue,
-            formatTextValue
+            formatTextValue,
+            errorTooltipProps
         };
     }
 });
