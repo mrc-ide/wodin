@@ -7,6 +7,7 @@ import AppHeader from "./components/header/AppHeader.vue";
 import { FitState } from "./store/fit/state";
 import { initialiseRouter } from "./router";
 import tooltip from "./directives/tooltip";
+import tooltipControlled from "./directives/tooltip-controlled";
 
 export const store = new Vuex.Store<FitState>(storeOptions);
 
@@ -14,6 +15,7 @@ const app = createApp({ components: { WodinSession, AppHeader } });
 app.use(store);
 
 app.directive("tooltip", tooltip);
+app.directive("tooltip-controlled", tooltipControlled);
 
 app.mount("#app");
 
