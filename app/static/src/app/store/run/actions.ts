@@ -15,7 +15,8 @@ export enum RunAction {
     RunModelOnRehydrate = "RunModelOnRehydrate",
     DownloadOutput = "DownloadOutput",
     NewParameterSet = "NewParameterSet",
-    DeleteParameterSet = "DeleteParameterSet"
+    DeleteParameterSet = "DeleteParameterSet",
+    SwapParameterSet = "SwapParameterSet"
 }
 
 const runOdeModel = (parameterValues: OdinUserType, startTime: number, endTime: number, runner: OdinRunnerOde,
@@ -166,5 +167,15 @@ export const actions: ActionTree<RunState, AppState> = {
         const { commit } = context;
         commit(RunMutation.DeleteParameterSet, parameterSetName);
         commit(`sensitivity/${SensitivityMutation.ParameterSetDeleted}`, parameterSetName, { root: true });
+    },
+
+    [RunAction.SwapParameterSet](context, parameterSetName: string) {
+        const { commit, getters } = context;
+        // Swapping parameter sets when run is required is disallowed
+        // to stop replacing saving parameter sets without results
+        if (!getters[RunGetter.runIsRequired]) {
+            commit(RunMutation.SwapParameterSet, parameterSetName);
+            commit(`sensitivity/${SensitivityMutation.ParameterSetSwapped}`, parameterSetName, { root: true });
+        }
     }
 };
