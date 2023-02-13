@@ -9,28 +9,28 @@ interface ToolTipContent {
 };
 
 export default {
-    mounted(el: HTMLElement, binding: DirectiveBinding<ToolTipContent>) {
+    mounted(el: HTMLElement, binding: DirectiveBinding<string | ToolTipContent>) {
         const { value } = binding;
 
         el.setAttribute("data-bs-toggle", "tooltip");
-        const variant = value?.variant || "text";
 
-        new Tooltip(el, {
-            title: value?.content || "",
-            placement: value?.placement || "top",
-            trigger:  value?.trigger || "hover",
-            customClass: (variant === "text") ? "" : `tooltip-${variant}`
-        });
-    },
-    updated(el: HTMLElement, binding: DirectiveBinding<ToolTipContent>) {
-        const { value } = binding;
-
-        const tooltip = Tooltip.getInstance(el);
-        const content = value?.content || "";
-
-        if (tooltip) {
-            el.setAttribute("data-bs-original-title", content);
+        if (typeof value === "string") {
+            new Tooltip(el, {
+                title: value || "",
+                placement: "top",
+                trigger: "hover"
+            });
+        } else {
+            const variant = value?.variant || "text";
+            new Tooltip(el, {
+                title: value?.content || "",
+                placement: value?.placement || "top",
+                trigger:  value?.trigger || "hover",
+                customClass: (variant === "text") ? "" : `tooltip-${variant}`
+            });
         }
+
+        
     },
     beforeUnmount(el: HTMLElement) {
         const tooltip = Tooltip.getInstance(el);
