@@ -11,9 +11,11 @@
       <slot></slot>
     </div>
     <svg class="resize-handle" height="24" width="24" @mousedown="handleResizeStart" @touchstart="handleResizeStart">
-      <polygon points="0,24 24,0 24,24" style="fill:#ddd" />
+      <polygon points="0,24 24,0 24,24" style="fill:white" />
       <line x1="0" y1="24" x2="24" y2="0" style="stroke:#aaa;stroke-width:2" />
       <line x1="6" y1="24" x2="24" y2="6" style="stroke:#aaa;stroke-width:2" />
+      <line x1="12" y1="24" x2="24" y2="12" style="stroke:#aaa;stroke-width:2" />
+      <line x1="18" y1="24" x2="24" y2="18" style="stroke:#aaa;stroke-width:2" />
     </svg>
   </div>
 </template>
