@@ -14,6 +14,8 @@ import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import { ModelState } from "../../../../src/app/store/model/state";
 
+const mockTooltipControlledDirective = jest.fn();
+
 describe("ParameterValues", () => {
     const getStore = (
         fitTabIsOpen = false,
@@ -68,7 +70,8 @@ describe("ParameterValues", () => {
     const getWrapper = (store: Store<BasicState>) => {
         return shallowMount(ParameterValues, {
             global: {
-                plugins: [store]
+                plugins: [store],
+                directives: { ["tooltip-controlled"]: mockTooltipControlledDirective }
             }
         });
     };
@@ -228,7 +231,8 @@ describe("ParameterValues", () => {
         const store = getStore();
         const wrapper = mount(ParameterValues, {
             global: {
-                plugins: [store]
+                plugins: [store],
+                directives: { ["tooltip-controlled"]: mockTooltipControlledDirective }
             }
         });
         wrapper.findAll("input").at(1)!.setValue("");

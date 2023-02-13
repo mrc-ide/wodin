@@ -2,13 +2,25 @@ import { mount, VueWrapper } from "@vue/test-utils";
 import { nextTick } from "vue";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
 
+const mockTooltipControlledDirective = jest.fn();
+
 describe("NumericInput", () => {
+
+    const getWrapper = (value: number, allowNegative: boolean = true) => {
+        return mount(NumericInput, {
+            props: { value, allowNegative },
+            global: {
+                directives: { ["tooltip-controlled"]: mockTooltipControlledDirective }
+            }
+        });
+    };
+
     const expectInputToHaveValue = (wrapper: VueWrapper<any>, expectedTextValue: string) => {
         expect((wrapper.find("input").element as HTMLInputElement).value).toBe(expectedTextValue);
     };
 
     const expectInitialValueOnMount = async (value: number, expectedTextValue: string) => {
-        const wrapper = mount(NumericInput, { props: { value } });
+        const wrapper = getWrapper(value)
         expect(wrapper.find("input").attributes("type")).toBe("text");
         await nextTick();
         expectInputToHaveValue(wrapper, expectedTextValue);
@@ -23,7 +35,7 @@ describe("NumericInput", () => {
     });
 
     it("Updates and formats input when prop updates to externally changed value", async () => {
-        const wrapper = mount(NumericInput, { props: { value: 12 } });
+        const wrapper = getWrapper(12);
         await nextTick();
 
         await wrapper.setProps({ value: 9999 });
@@ -31,7 +43,7 @@ describe("NumericInput", () => {
     });
 
     it("Does not reformat input when prop updates to last numeric value set in component", async () => {
-        const wrapper = mount(NumericInput, { props: { value: 12 } });
+        const wrapper = getWrapper(12);
         await nextTick();
 
         await wrapper.find("input").setValue("9999");
@@ -42,7 +54,7 @@ describe("NumericInput", () => {
     });
 
     const expectEmitOnInputChange = async (newInputValue: string, expectedEmitValue: number) => {
-        const wrapper = mount(NumericInput, { props: { value: 12 } });
+        const wrapper = getWrapper(12);
         await nextTick();
 
         await wrapper.find("input").setValue(newInputValue);
@@ -62,7 +74,7 @@ describe("NumericInput", () => {
     });
 
     it("applies character mask", async () => {
-        const wrapper = mount(NumericInput, { props: { value: 12 } });
+        const wrapper = getWrapper(12);
         await nextTick();
 
         await wrapper.find("input").setValue("100abc!");
@@ -71,21 +83,21 @@ describe("NumericInput", () => {
     });
 
     it("masks out hyphen if allowNegative is false", async () => {
-        const wrapper = mount(NumericInput, { props: { allowNegative: false, value: 1 } });
+        const wrapper = getWrapper(1, false);
         await wrapper.find("input").setValue("-100");
         expectInputToHaveValue(wrapper, "100");
         expect(wrapper.emitted("update")![0]).toStrictEqual([100]);
     });
 
     it("does not mask out hyphen if allowNegative is true", async () => {
-        const wrapper = mount(NumericInput, { props: { allowNegative: true, value: 1 } });
+        const wrapper = getWrapper(1, true);
         await wrapper.find("input").setValue("-100");
         expectInputToHaveValue(wrapper, "-100");
         expect(wrapper.emitted("update")![0]).toStrictEqual([-100]);
     });
 
     it("does not emit update if value is not parseable as numeric", async () => {
-        const wrapper = mount(NumericInput, { props: { value: 12 } });
+        const wrapper = getWrapper(12);
         await nextTick();
 
         await wrapper.find("input").setValue("..1.2.3");
@@ -94,7 +106,7 @@ describe("NumericInput", () => {
     });
 
     it("formats input value on blur", async () => {
-        const wrapper = mount(NumericInput, { props: { value: 12 } });
+        const wrapper = getWrapper(12);
         await nextTick();
 
         await wrapper.find("input").setValue("9999.9");
