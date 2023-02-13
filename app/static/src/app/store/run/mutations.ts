@@ -17,6 +17,7 @@ export enum RunMutation {
     SetParameterSetResult = "SetParameterSetResult",
     AddParameterSet = "AddParameterSet",
     DeleteParameterSet = "DeleteParameterSet",
+    SwapParameterSet = "SwapParameterSet",
     ToggleParameterSetHidden = "ToggleParameterSetHidden"
 }
 
@@ -100,6 +101,20 @@ export const mutations: MutationTree<RunState> = {
     [RunMutation.DeleteParameterSet](state: RunState, parameterSetName: string) {
         state.parameterSets = state.parameterSets.filter((set: ParameterSet) => set.name !== parameterSetName);
         delete state.parameterSetResults[parameterSetName];
+    },
+
+    [RunMutation.SwapParameterSet](state: RunState, parameterSetName: string) {
+        const paramSet = state.parameterSets.find((set: ParameterSet) => set.name === parameterSetName);
+        if (paramSet && state.parameterValues && state.resultOde) {
+            // swap values
+            const value = state.parameterValues;
+            state.parameterValues = paramSet.parameterValues;
+            paramSet.parameterValues = value;
+            // swap results
+            const result = state.resultOde;
+            state.resultOde = state.parameterSetResults[parameterSetName];
+            state.parameterSetResults[parameterSetName] = result;
+        }
     },
 
     [RunMutation.ToggleParameterSetHidden](state: RunState, parameterSetName: string) {

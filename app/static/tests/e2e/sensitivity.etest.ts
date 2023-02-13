@@ -191,4 +191,40 @@ test.describe("Sensitivity tests", () => {
         await expectSummaryValues(page, 5, "I (Set 1)", 10, "#cccc00", "dot", "3.6", "4.4");
         await expectSummaryValues(page, 6, "R (Set 1)", 10, "#cc0044", "dot", "3.6", "4.4");
     });
+
+    test("can swap sensitivity run traces", async ({ page }) => {
+        await page.fill(":nth-match(#model-params input, 1)", "6");
+        await page.fill(":nth-match(#model-params input, 2)", "1000000");
+        await page.fill(":nth-match(#model-params input, 3)", "1000000");
+        await page.fill(":nth-match(#model-params input, 4)", "0");
+        await page.click("#run-sens-btn");
+        await page.click("#create-param-set");
+        await page.fill(":nth-match(#model-params input, 1)", "5");
+        await page.fill(":nth-match(#model-params input, 2)", "0");
+        await page.fill(":nth-match(#model-params input, 3)", "1000000");
+        await page.fill(":nth-match(#model-params input, 4)", "1.5");
+        await page.click("#run-sens-btn");
+        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(66, { timeout });
+
+        // current parameters
+        await expectSummaryValues(page, 31, "S", 1000, "#2e5cb8", null, "0", "100", "1000000", "1000000");
+        await expectSummaryValues(page, 32, "I", 1000, "#cccc00", null, "0", "100", "0", "0");
+        await expectSummaryValues(page, 33, "R", 1000, "#cc0044", null, "0", "100", "0", "0");
+        // parameter set
+        await expectSummaryValues(page, 64, "S (Set 1)", 1000, "#2e5cb8", "dot", "0", "100", "0", "0");
+        await expectSummaryValues(page, 65, "I (Set 1)", 1000, "#cccc00", "dot", "0", "100", "1000000", "1000000");
+        await expectSummaryValues(page, 66, "R (Set 1)", 1000, "#cc0044", "dot", "0", "100", "0", "0");
+
+        await page.click(`:nth-match(.swap-param-set, ${1})`);
+        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(66, { timeout });
+
+        // current parameters
+        await expectSummaryValues(page, 31, "S", 1000, "#2e5cb8", null, "0", "100", "0", "0");
+        await expectSummaryValues(page, 32, "I", 1000, "#cccc00", null, "0", "100", "1000000", "1000000");
+        await expectSummaryValues(page, 33, "R", 1000, "#cc0044", null, "0", "100", "0", "0");
+        // parameter set
+        await expectSummaryValues(page, 64, "S (Set 1)", 1000, "#2e5cb8", "dot", "0", "100", "1000000", "1000000");
+        await expectSummaryValues(page, 65, "I (Set 1)", 1000, "#cccc00", "dot", "0", "100", "0", "0");
+        await expectSummaryValues(page, 66, "R (Set 1)", 1000, "#cc0044", "dot", "0", "100", "0", "0");
+    });
 });

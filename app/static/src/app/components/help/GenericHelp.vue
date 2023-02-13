@@ -16,7 +16,7 @@ import DraggableDialog from "./DraggableDialog.vue";
 import MarkdownPanel from "./MarkdownPanel.vue";
 
 export default defineComponent({
-    name: "GenericHelp",
+    name: "GenericHelp", // Generic long-form help for Wodin functionality, as opposed to configured app-specific help
     components: { MarkdownPanel, DraggableDialog, VueFeather },
     props: {
         title: String,
