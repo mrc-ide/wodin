@@ -9,16 +9,16 @@
                      v-if="!parameterSet.hidden"
                      type="eye-off"
                      @click="toggleHidden"
-                     v-tooltip="'Hide Parameter Set'"></vue-feather>
+                     v-tooltip="{ content: 'Hide Parameter Set' }"></vue-feather>
         <vue-feather class="inline-icon clickable show-param-set"
                      v-if="parameterSet.hidden"
                      type="eye"
                      @click="toggleHidden"
-                     v-tooltip="'Show Parameter Set'"></vue-feather>
+                     v-tooltip="{ content: 'Show Parameter Set' }"></vue-feather>
         <vue-feather class="inline-icon clickable delete-param-set ms-2"
                      type="trash-2"
                      @click="deleteParameterSet"
-                     v-tooltip="'Delete Parameter Set'"></vue-feather>
+                     v-tooltip="{ content: 'Delete Parameter Set' }"></vue-feather>
       </span>
     </div>
     <div class="card-body" :class="parameterSet.hidden ? 'hidden-parameter-set' : ''">
