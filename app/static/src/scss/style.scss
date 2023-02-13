@@ -75,3 +75,13 @@ $grey: #ccc;
 .hidden-parameter-set {
   background-color: $light-grey;
 }
+
+.generic-help-icon {
+  color: $brand;
+  float: right;
+}
+
+.prevent-select {
+  -webkit-user-select: none; /* Safari */
+  user-select: none; /* Standard syntax */
+}

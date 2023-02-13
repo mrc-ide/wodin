@@ -8,3 +8,4 @@ declare module "vue/dist/vue.esm-bundler";
 declare module "vue-monaco";
 declare module "csv-parse";
 declare module "markdown-it-mathjax";
+declare module "raw-loader!*";
