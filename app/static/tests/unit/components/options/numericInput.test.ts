@@ -6,9 +6,9 @@ const mockTooltipControlledDirective = jest.fn();
 
 describe("NumericInput", () => {
 
-    const getWrapper = (value: number, allowNegative: boolean = true) => {
+    const getWrapper = (value: number, allowNegative: boolean = true, max: number = Infinity, min: number = -Infinity) => {
         return mount(NumericInput, {
-            props: { value, allowNegative },
+            props: { value, allowNegative, max, min },
             global: {
                 directives: { ["tooltip-controlled"]: mockTooltipControlledDirective }
             }
@@ -25,6 +25,10 @@ describe("NumericInput", () => {
         await nextTick();
         expectInputToHaveValue(wrapper, expectedTextValue);
     };
+
+    beforeEach(() => {
+        jest.resetAllMocks();
+    });
 
     it("renders as expected", async () => {
         await expectInitialValueOnMount(12, "12");
@@ -103,6 +107,21 @@ describe("NumericInput", () => {
         await wrapper.find("input").setValue("..1.2.3");
         expectInputToHaveValue(wrapper, "..1.2.3"); // only clears value on blur
         expect(wrapper.emitted("update")).toBe(undefined);
+    });
+
+    it("does max validation", async () => {
+        const wrapper = getWrapper(10, false, 10);
+        await wrapper.find("input").setValue("11");
+        expect(wrapper.emitted("update")![0]).toStrictEqual([10]);
+        // mount and updated calls
+        expect(mockTooltipControlledDirective).toHaveBeenCalledTimes(2);
+    });
+
+    it("does min validation", async () => {
+        const wrapper = getWrapper(1, false, 10, 2);
+        await wrapper.find("input").setValue("1");
+        expect(wrapper.emitted("update")![0]).toStrictEqual([2]);
+        expect(mockTooltipControlledDirective).toHaveBeenCalledTimes(2);
     });
 
     it("formats input value on blur", async () => {
