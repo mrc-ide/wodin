@@ -28,9 +28,7 @@ export default {
                 trigger:  value?.trigger || "hover",
                 customClass: (variant === "text") ? "" : `tooltip-${variant}`
             });
-        }
-
-        
+        }       
     },
     beforeUnmount(el: HTMLElement) {
         const tooltip = Tooltip.getInstance(el);

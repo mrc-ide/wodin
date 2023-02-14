@@ -3,7 +3,6 @@ import { DirectiveBinding } from 'vue';
 
 export interface ToolTipContent {
     content?: string,
-    show?: boolean,
     variant?: "text" | "error"| "warning" | "success",
     placement?: "top" | "bottom" | "left" | "right",
 };
@@ -22,14 +21,15 @@ export default {
             customClass: (variant === "text") ? "" : `tooltip-${variant}`
         });
     },
-    updated(el: HTMLElement, binding: DirectiveBinding<ToolTipContent>) {
+    beforeUpdate(el: HTMLElement, binding: DirectiveBinding<ToolTipContent>) {
         const { value } = binding;
 
         const tooltip = Tooltip.getInstance(el);
+        console.log(tooltip)
         const content = value?.content || "";
 
         if (tooltip) {
-            el.setAttribute("data-bs-original-title", content);
+            (tooltip as string{})["_config"]["title"] = content;
             if (!content) {
                 tooltip.hide();
             }
