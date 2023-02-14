@@ -15,6 +15,13 @@
                      type="eye"
                      @click="toggleHidden"
                      v-tooltip="'Show Parameter Set'"></vue-feather>
+        <vue-feather class="inline-icon clickable swap-param-set ms-2"
+                     type="shuffle"
+                     :disabled="!canSwapParameterSet"
+                     :stroke="canSwapParameterSet ? 'black' : 'lightgray'"
+                     :style="{ cursor: canSwapParameterSet ? 'pointer' : 'default' }"
+                     @click="swapParameterSet"
+                     v-tooltip="'Swap Parameter Set with Current Parameter Values'"></vue-feather>
         <vue-feather class="inline-icon clickable delete-param-set ms-2"
                      type="trash-2"
                      @click="deleteParameterSet"
@@ -41,6 +48,7 @@ import { ParameterSet } from "../../store/run/state";
 import { RunAction } from "../../store/run/actions";
 import { RunMutation } from "../../store/run/mutations";
 import { paramSetLineStyle } from "../../plot";
+import { RunGetter } from "../../store/run/getters";
 
 export default defineComponent({
     name: "ParameterSetView",
@@ -81,15 +89,26 @@ export default defineComponent({
             store.dispatch(`run/${RunAction.DeleteParameterSet}`, props.parameterSet.name);
         };
 
+        const swapParameterSet = () => {
+            store.dispatch(`run/${RunAction.SwapParameterSet}`, props.parameterSet.name);
+        };
+
         const toggleHidden = () => {
             store.commit(`run/${RunMutation.ToggleParameterSetHidden}`, props.parameterSet.name);
         };
+
+        const runRequired = computed(() => store.getters[`run/${RunGetter.runIsRequired}`]);
+        const canSwapParameterSet = computed(() => {
+            return !(store.state.model.compileRequired || runRequired.value);
+        });
 
         return {
             lineStyleClass,
             getStyle,
             deleteParameterSet,
-            toggleHidden
+            swapParameterSet,
+            toggleHidden,
+            canSwapParameterSet
         };
     }
 });

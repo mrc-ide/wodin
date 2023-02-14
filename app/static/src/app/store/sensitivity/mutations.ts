@@ -21,7 +21,8 @@ export enum SensitivityMutation {
     SetRunning = "SetRunning",
     ParameterSetAdded = "ParameterSetAdded",
     SetParameterSetResults = "SetParameterSetResults",
-    ParameterSetDeleted = "ParameterSetDeleted"
+    ParameterSetDeleted = "ParameterSetDeleted",
+    ParameterSetSwapped = "ParameterSetSwapped"
 }
 
 export const mutations: MutationTree<SensitivityState> = {
@@ -88,5 +89,15 @@ export const mutations: MutationTree<SensitivityState> = {
     },
     [SensitivityMutation.ParameterSetDeleted](state: SensitivityState, parameterSetName: string) {
         delete state.parameterSetResults[parameterSetName];
+    },
+
+    [SensitivityMutation.ParameterSetSwapped](state: SensitivityState, parameterSetName: string) {
+        const { result } = state;
+        state.result = state.parameterSetResults[parameterSetName] || null;
+        if (!result) {
+            delete state.parameterSetResults[parameterSetName];
+        } else {
+            state.parameterSetResults[parameterSetName] = result;
+        }
     }
 };

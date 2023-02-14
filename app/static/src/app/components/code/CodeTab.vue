@@ -1,5 +1,6 @@
 <template>
     <div v-if="appIsConfigured" class="code-tab">
+        <generic-help title="Write odin code" :markdown="codeHelp"></generic-help>
         <code-editor/>
         <button class="btn btn-primary mt-2" id="compile-btn" :disabled="!codeIsValid" @click="compile">Compile</button>
         <div class="mt-2" id="code-status">
@@ -20,16 +21,20 @@
 import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import codeHelp from "raw-loader!../../help/code.md";
 import CodeEditor from "./CodeEditor.vue";
 import { ModelAction } from "../../store/model/actions";
 import userMessages from "../../userMessages";
 import ErrorInfo from "../ErrorInfo.vue";
 import SelectedVariables from "./SelectedVariables.vue";
 import VerticalCollapse from "../VerticalCollapse.vue";
+import GenericHelp from "../help/GenericHelp.vue";
 
 export default defineComponent({
     name: "CodeTab",
     components: {
+        GenericHelp,
         SelectedVariables,
         ErrorInfo,
         CodeEditor,
@@ -56,7 +61,8 @@ export default defineComponent({
             iconClass,
             compile,
             error,
-            showSelectedVariables
+            showSelectedVariables,
+            codeHelp
         };
     }
 });
