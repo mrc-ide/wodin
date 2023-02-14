@@ -1,10 +1,10 @@
-import { mount, shallowMount } from '@vue/test-utils';
+import { nextTick, ref } from "vue";
+import { mount, shallowMount } from "@vue/test-utils";
 import { Tooltip } from "bootstrap";
 import tooltipControlled from "../../../src/app/directives/tooltip-controlled";
-import { nextTick, ref } from 'vue';
 
 describe("tooltip directive", () => {
-    const mountTemplate = (startContent: string = "hey", endContent: string = "hello", variant: string = "") => {
+    const mountTemplate = (startContent = "hey", endContent = "hello", variant = "") => {
         const testComponent = {
             template: `<template>
                 <div v-tooltip-controlled="tooltipProps" :value="value" @click="handleClick"/>
@@ -14,17 +14,17 @@ describe("tooltip directive", () => {
                     content: startContent,
                     placement: null,
                     variant
-                }
-                const value = ref(0)
+                };
+                const value = ref(0);
                 const handleClick = () => {
-                    tooltipProps.content = endContent
-                    value.value += 1
-                }
+                    tooltipProps.content = endContent;
+                    value.value += 1;
+                };
                 return {
                     tooltipProps,
                     value,
                     handleClick
-                }
+                };
             }
         };
         return mount(testComponent, {
@@ -44,7 +44,7 @@ describe("tooltip directive", () => {
         await expect(tooltip._config.toggle).toBe("tooltip");
         await expect(tooltip._config.customClass).toBe("");
         await expect(tooltip._config.title).toBe("hey");
-        await div.trigger("click")
+        await div.trigger("click");
         await expect(tooltip._config.title).toBe("hello");
     });
 
@@ -59,10 +59,10 @@ describe("tooltip directive", () => {
         const wrapper = mountTemplate("hey", "");
         const div = wrapper.find("div");
         const tooltip = Tooltip.getInstance(div.element) as any;
-        const spyHide = jest.spyOn(tooltip, "hide")
+        const spyHide = jest.spyOn(tooltip, "hide");
         await expect(tooltip._config.title).toBe("hey");
-        await div.trigger("click")
-        expect(spyHide).toHaveBeenCalled()
+        await div.trigger("click");
+        expect(spyHide).toHaveBeenCalled();
         const divClick = wrapper.find("div");
         const tooltipClick = Tooltip.getInstance(divClick.element) as any;
         await expect(tooltipClick._config.title).toBe("");
@@ -72,10 +72,10 @@ describe("tooltip directive", () => {
         const wrapper = mountTemplate("", "hey");
         const div = wrapper.find("div");
         const tooltip = Tooltip.getInstance(div.element) as any;
-        const spyShow = jest.spyOn(tooltip, "show")
+        const spyShow = jest.spyOn(tooltip, "show");
         await expect(tooltip._config.title).toBe("");
-        await div.trigger("click")
-        expect(spyShow).toHaveBeenCalled()
+        await div.trigger("click");
+        expect(spyShow).toHaveBeenCalled();
         const divClick = wrapper.find("div");
         const tooltipClick = Tooltip.getInstance(divClick.element) as any;
         await expect(tooltipClick._config.title).toBe("hey");
@@ -85,10 +85,10 @@ describe("tooltip directive", () => {
         const wrapper = mountTemplate("hey", "");
         const div = wrapper.find("div");
         const tooltip = Tooltip.getInstance(div.element) as any;
-        const spyHide = jest.spyOn(tooltip, "show")
+        const spyHide = jest.spyOn(tooltip, "show");
         tooltip.dispose();
-        await div.trigger("click")
-        expect(spyHide).not.toHaveBeenCalled()
+        await div.trigger("click");
+        expect(spyHide).not.toHaveBeenCalled();
     });
 
     it("disposes of tooltip on unmount", () => {
@@ -105,7 +105,7 @@ describe("tooltip directive", () => {
         const el = wrapper.find("div").element;
         const tooltipInstance = Tooltip.getInstance(el)!;
         const spyDispose = jest.spyOn(tooltipInstance, "dispose");
-        tooltipInstance.dispose()
+        tooltipInstance.dispose();
         wrapper.unmount();
         // my dispose above rather than disposing when unmount
         expect(spyDispose).toHaveBeenCalledTimes(1);

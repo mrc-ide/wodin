@@ -5,12 +5,16 @@ import NumericInput from "../../../../src/app/components/options/NumericInput.vu
 const mockTooltipControlledDirective = jest.fn();
 
 describe("NumericInput", () => {
-
-    const getWrapper = (value: number, allowNegative: boolean = true, max: number = Infinity, min: number = -Infinity) => {
+    const getWrapper = (value: number, allowNegative = true, max = Infinity, min = -Infinity) => {
         return mount(NumericInput, {
-            props: { value, allowNegative, max, min },
+            props: {
+                value,
+                allowNegative,
+                max,
+                min
+            },
             global: {
-                directives: { ["tooltip-controlled"]: mockTooltipControlledDirective }
+                directives: { "tooltip-controlled": mockTooltipControlledDirective }
             }
         });
     };
@@ -20,7 +24,7 @@ describe("NumericInput", () => {
     };
 
     const expectInitialValueOnMount = async (value: number, expectedTextValue: string) => {
-        const wrapper = getWrapper(value)
+        const wrapper = getWrapper(value);
         expect(wrapper.find("input").attributes("type")).toBe("text");
         await nextTick();
         expectInputToHaveValue(wrapper, expectedTextValue);

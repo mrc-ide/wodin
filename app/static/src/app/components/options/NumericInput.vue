@@ -49,13 +49,14 @@ export default defineComponent({
         // this on every keystroke, so update text value on blur, mounted, and external value change (a change
         // to a value which wasn't the last one changed to here e.g. caused by model fit)
         const lastNumericValueSet = ref<null|number>(null);
+        const validatedNumeric = ref<null|number>(null);
         const textValue = ref("");
 
         const errorTooltipProps: ToolTipContent = {
             content: "",
             variant: "error",
             placement: "right"
-        }
+        };
 
         const formatTextValue = (blur?: boolean) => {
             // display value with thousands formats
@@ -82,24 +83,22 @@ export default defineComponent({
             const cleanedValue = newVal.replace(/,/g, "");
             const numeric = parseFloat(cleanedValue);
             if (!Number.isNaN(numeric)) {
-
                 // min max validation
-                var validatedNumeric: number = numeric;
                 if (numeric <= props.max && numeric >= props.min) {
-                    validatedNumeric = numeric;
+                    validatedNumeric.value = numeric;
                     errorTooltipProps.content = "";
                 }
                 if (numeric > props.max) {
-                    validatedNumeric = props.max;
+                    validatedNumeric.value = props.max;
                     errorTooltipProps.content = `Please enter value less than ${props.max}`;
                 }
                 if (numeric < props.min) {
-                    validatedNumeric = props.min;
+                    validatedNumeric.value = props.min;
                     errorTooltipProps.content = `Please enter value greater than ${props.min}`;
                 }
 
-                lastNumericValueSet.value = validatedNumeric;
-                emit("update", validatedNumeric);
+                lastNumericValueSet.value = validatedNumeric.value;
+                emit("update", validatedNumeric.value);
             }
         };
 

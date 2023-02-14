@@ -71,7 +71,7 @@ describe("ParameterValues", () => {
         return shallowMount(ParameterValues, {
             global: {
                 plugins: [store],
-                directives: { ["tooltip-controlled"]: mockTooltipControlledDirective }
+                directives: { "tooltip-controlled": mockTooltipControlledDirective }
             }
         });
     };
@@ -232,7 +232,7 @@ describe("ParameterValues", () => {
         const wrapper = mount(ParameterValues, {
             global: {
                 plugins: [store],
-                directives: { ["tooltip-controlled"]: mockTooltipControlledDirective }
+                directives: { "tooltip-controlled": mockTooltipControlledDirective }
             }
         });
         wrapper.findAll("input").at(1)!.setValue("");

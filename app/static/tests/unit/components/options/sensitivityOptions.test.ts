@@ -48,7 +48,7 @@ describe("SensitivityOptions", () => {
         return mount(SensitivityOptions, {
             global: {
                 plugins: [store],
-                directives: { ["tooltip-controlled"]: mockTooltipControlledDirective }
+                directives: { "tooltip-controlled": mockTooltipControlledDirective }
             }
         });
     };
