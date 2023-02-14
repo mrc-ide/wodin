@@ -40,22 +40,19 @@ describe("tooltip directive", () => {
         const tooltip = Tooltip.getInstance(div.element) as any;
 
         // checking tooltip props directly
-        await expect(tooltip["_config"]["placement"]).toBe("top");
-        await expect(tooltip["_config"]["toggle"]).toBe("tooltip");
-        await expect(tooltip["_config"]["customClass"]).toBe("");
-        await expect(tooltip["_config"]["title"]).toBe("hey");
+        await expect(tooltip._config.placement).toBe("top");
+        await expect(tooltip._config.toggle).toBe("tooltip");
+        await expect(tooltip._config.customClass).toBe("");
+        await expect(tooltip._config.title).toBe("hey");
         await div.trigger("click")
-        await div.trigger("click")
-        const divClick = wrapper.find("div");
-        const tooltipClick = Tooltip.getInstance(divClick.element) as any;
-        await expect(tooltip["_config"]["title"]).toBe("hello");
+        await expect(tooltip._config.title).toBe("hello");
     });
 
     it("variant works", async () => {
         const wrapper = mountTemplate("hey", "hello", "error");
         const div = wrapper.find("div");
         const tooltip = Tooltip.getInstance(div.element) as any;
-        await expect(tooltip["_config"]["customClass"]).toBe("tooltip-error");
+        await expect(tooltip._config.customClass).toBe("tooltip-error");
     });
 
     it("disposes if no content", async () => {
@@ -63,12 +60,12 @@ describe("tooltip directive", () => {
         const div = wrapper.find("div");
         const tooltip = Tooltip.getInstance(div.element) as any;
         const spyHide = jest.spyOn(tooltip, "hide")
-        await expect(tooltip["_config"]["title"]).toBe("hey");
+        await expect(tooltip._config.title).toBe("hey");
         await div.trigger("click")
         expect(spyHide).toHaveBeenCalled()
         const divClick = wrapper.find("div");
         const tooltipClick = Tooltip.getInstance(divClick.element) as any;
-        await expect(tooltipClick["_config"]["title"]).toBe("");
+        await expect(tooltipClick._config.title).toBe("");
     });
 
     it("shows if content", async () => {
@@ -76,12 +73,12 @@ describe("tooltip directive", () => {
         const div = wrapper.find("div");
         const tooltip = Tooltip.getInstance(div.element) as any;
         const spyShow = jest.spyOn(tooltip, "show")
-        await expect(tooltip["_config"]["title"]).toBe("");
+        await expect(tooltip._config.title).toBe("");
         await div.trigger("click")
         expect(spyShow).toHaveBeenCalled()
         const divClick = wrapper.find("div");
         const tooltipClick = Tooltip.getInstance(divClick.element) as any;
-        await expect(tooltipClick["_config"]["title"]).toBe("hey");
+        await expect(tooltipClick._config.title).toBe("hey");
     });
 
     it("update does not occur if tooltip is null", async () => {
