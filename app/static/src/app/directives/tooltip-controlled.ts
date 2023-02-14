@@ -25,11 +25,10 @@ export default {
         const { value } = binding;
 
         const tooltip = Tooltip.getInstance(el);
-        console.log(tooltip)
         const content = value?.content || "";
 
         if (tooltip) {
-            (tooltip as string{})["_config"]["title"] = content;
+            (tooltip as any)._config.title = content;
             if (!content) {
                 tooltip.hide();
             }

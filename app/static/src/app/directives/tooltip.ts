@@ -30,6 +30,18 @@ export default {
             });
         }       
     },
+    beforeUpdate(el: HTMLElement, binding: DirectiveBinding<ToolTipContent>) {
+        const { value } = binding;
+
+        const tooltip = Tooltip.getInstance(el);
+        const content = (typeof value === "string") ?
+                        value :
+                        value?.content || "";
+
+        if (tooltip) {
+            (tooltip as any)._config.title = content;
+        }
+    },
     beforeUnmount(el: HTMLElement) {
         const tooltip = Tooltip.getInstance(el);
         if (tooltip) {
