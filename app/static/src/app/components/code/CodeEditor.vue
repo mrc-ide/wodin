@@ -3,6 +3,7 @@
         <button v-if="defaultCodeExists"
                 class="btn btn-primary btn-sm mb-2"
                 id="reset-btn"
+                v-help="'resetCode'"
                 @click="resetCode">Reset
         </button>
         <div class="editor-container mb-2">

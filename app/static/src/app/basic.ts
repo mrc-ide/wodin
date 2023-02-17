@@ -7,13 +7,16 @@ import AppHeader from "./components/header/AppHeader.vue";
 import { BasicState } from "./store/basic/state";
 import { initialiseRouter } from "./router";
 import tooltip from "./directives/tooltip";
+import help from "./directives/help";
 
 export const store = new Vuex.Store<BasicState>(storeOptions);
 
 const app = createApp({ components: { WodinSession, AppHeader } });
 app.use(store);
 
+// TODO: make registerDirectives method and call from all app types
 app.directive("tooltip", tooltip);
+app.directive("help", help);
 
 app.mount("#app");
 
