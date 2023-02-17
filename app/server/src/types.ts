@@ -9,8 +9,7 @@ export interface WodinConfig {
     baseUrl: string,
     odinApi: string,
     redisUrl: string,
-    appsPath: string,
-    hotReload: boolean
+    appsPath: string
 }
 
 export interface AppConfigBase {
