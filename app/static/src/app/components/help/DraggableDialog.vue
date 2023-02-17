@@ -226,7 +226,7 @@ export default defineComponent({
     .draggable-content {
       background-color: aliceblue;
       border: #ccc 1px solid;
-      height: calc(100% - 3.5rem);
+      height: calc(100% - 42px);
     }
 
     .resize-handle {
