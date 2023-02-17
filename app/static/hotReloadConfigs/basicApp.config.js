@@ -3,7 +3,7 @@ const path = require("path")
 
 module.exports = {
     lintOnSave: false,
-    outputDir: path.join(__dirname, "../../server/public"),
+    outputDir: path.join(__dirname, "../../server/public/js"),
     runtimeCompiler: true,
     configureWebpack: {
         plugins: [new MonacoWebpackPlugin({
@@ -16,13 +16,16 @@ module.exports = {
             filename: "basicApp.umd.min.js",
             libraryTarget: "umd",
             library: "lib",
-            hotUpdateChunkFilename: "hot/hot-update.js",
-            hotUpdateMainFilename: "hot/hot-update.json"
+            hotUpdateChunkFilename: "../hot/hot-update.js",
+            hotUpdateMainFilename: "../hot/hot-update.json"
         },
+        optimization: {
+            splitChunks: false
+        }
     },
     css: {
         extract: {
-            filename: "./css/basicApp.css"
+            filename: "../css/basicApp.css"
         }
     }
 };

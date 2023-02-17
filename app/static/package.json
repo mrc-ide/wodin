@@ -16,7 +16,8 @@
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint --no-fix",
     "lint:fix": "vue-cli-service lint",
-    "e2e-test": "npx playwright test"
+    "e2e-test": "npx playwright test",
+    "serve-basic": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/hotReloadConfigs/basicApp.config.js vue-cli-service serve ./src/app/basic.ts"
   },
   "resolutions": {
     "ansi-regex": "5.0.1"
