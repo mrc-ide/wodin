@@ -12,7 +12,7 @@ import { formatLocale } from "d3-format";
 import {
     defineComponent, ref, onMounted, watch
 } from "vue";
-import { ToolTipContent } from "../../directives/tooltip-controlled";
+import { ToolTipSettings } from "../../directives/tooltip";
 
 // Provide a d3 format which uses hyphen for negatives rather than minus sign
 const d3Locale = formatLocale({
@@ -34,11 +34,11 @@ export default defineComponent({
             type: Boolean,
             default: true
         },
-        max: {
+        maxAllowed: {
             type: Number,
             default: Infinity
         },
-        min: {
+        minAllowed: {
             type: Number,
             default: -Infinity
         }
@@ -49,10 +49,9 @@ export default defineComponent({
         // this on every keystroke, so update text value on blur, mounted, and external value change (a change
         // to a value which wasn't the last one changed to here e.g. caused by model fit)
         const lastNumericValueSet = ref<null|number>(null);
-        const validatedNumeric = ref<null|number>(null);
         const textValue = ref("");
 
-        const errorTooltipProps: ToolTipContent = {
+        const errorTooltipProps: ToolTipSettings = {
             content: "",
             variant: "error",
             placement: "right"
@@ -83,22 +82,22 @@ export default defineComponent({
             const cleanedValue = newVal.replace(/,/g, "");
             const numeric = parseFloat(cleanedValue);
             if (!Number.isNaN(numeric)) {
-                // min max validation
-                if (numeric <= props.max && numeric >= props.min) {
-                    validatedNumeric.value = numeric;
+                let validatedNumeric: number;
+
+                // min/max validation
+                if (numeric > props.maxAllowed) {
+                    validatedNumeric = props.maxAllowed;
+                    errorTooltipProps.content = `Please enter a value no greater than ${props.maxAllowed}`;
+                } else if (numeric < props.minAllowed) {
+                    validatedNumeric = props.minAllowed;
+                    errorTooltipProps.content = `Please enter a value no less than ${props.minAllowed}`;
+                } else {
+                    validatedNumeric = numeric;
                     errorTooltipProps.content = "";
                 }
-                if (numeric > props.max) {
-                    validatedNumeric.value = props.max;
-                    errorTooltipProps.content = `Please enter value less than ${props.max}`;
-                }
-                if (numeric < props.min) {
-                    validatedNumeric.value = props.min;
-                    errorTooltipProps.content = `Please enter value greater than ${props.min}`;
-                }
 
-                lastNumericValueSet.value = validatedNumeric.value;
-                emit("update", validatedNumeric.value);
+                lastNumericValueSet.value = validatedNumeric;
+                emit("update", validatedNumeric);
             }
         };
 
