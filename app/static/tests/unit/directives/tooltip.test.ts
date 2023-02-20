@@ -149,6 +149,28 @@ describe("tooltip directive", () => {
         expect(spyDispose).toHaveBeenCalledTimes(1);
     });
 
+    it("does not update tooltip if already null", async () => {
+        const wrapper = mountTemplate("", true, {
+            content: "",
+            trigger: "manual"
+        }, {
+            content: "hey",
+            trigger: "manual"
+        });
+        const div = wrapper.find("div")
+        const el = div.element;
+        const tooltipInstance = Tooltip.getInstance(el)!;
+        const spyDispose = jest.spyOn(tooltipInstance, "dispose");
+        const spyHide = jest.spyOn(tooltipInstance, "hide");
+        const spyShow = jest.spyOn(tooltipInstance, "show");
+        tooltipInstance.dispose();
+        await div.trigger("click");
+        // my dispose above rather than disposing when unmount
+        expect(spyDispose).toHaveBeenCalledTimes(1);
+        expect(spyHide).toHaveBeenCalledTimes(0);
+        expect(spyShow).toHaveBeenCalledTimes(0);
+    });
+
     it("hides if no content", async () => {
         const wrapper = mountTemplate("", true, {
             content: "",
@@ -166,7 +188,7 @@ describe("tooltip directive", () => {
         expect((Tooltip.getInstance(divClick.element) as any)._config.title).toBe("");
     });
 
-    it("shows if no content", async () => {
+    it("shows if content", async () => {
         const wrapper = mountTemplate("", true, {
             content: "hey",
             trigger: "manual"
@@ -176,10 +198,10 @@ describe("tooltip directive", () => {
         });
         const div = wrapper.find("div");
         const spyShow = jest.spyOn((Tooltip.getInstance(div.element) as any), "show");
-        expect((Tooltip.getInstance(div.element) as any)._config.title).toBe("hey");
+        expect((Tooltip.getInstance(div.element) as any)._config.title).toBe("");
         await div.trigger("click");
         expect(spyShow).toHaveBeenCalled();
         const divClick = wrapper.find("div");
-        expect((Tooltip.getInstance(divClick.element) as any)._config.title).toBe("");
+        expect((Tooltip.getInstance(divClick.element) as any)._config.title).toBe("hey");
     });
 });
