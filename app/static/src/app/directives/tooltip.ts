@@ -5,7 +5,7 @@ export interface ToolTipSettings {
     content?: string,
     trigger?: bootstrap.Tooltip.Options["trigger"],
     variant?: "text" | "error"| "warning" | "success",
-    placement?: bootstrap.Tooltip.PopoverPlacement,
+    placement?: bootstrap.Tooltip.PopoverPlacement
 }
 
 export default {
@@ -19,7 +19,7 @@ export default {
             // needs the new keyword
             // eslint-disable-next-line no-new
             new Tooltip(el, {
-                title: value || "",
+                title: value,
                 placement: "top",
                 trigger: "hover"
             });
@@ -44,6 +44,14 @@ export default {
 
         if (tooltip) {
             (tooltip as any)._config.title = content;
+            const trigger = (tooltip as any)._config.trigger
+            if (trigger === "manual") {
+                if (!content) {
+                    tooltip.hide();
+                } else {
+                    tooltip.show();
+                }
+            }
         }
     },
     beforeUnmount(el: HTMLElement) {
