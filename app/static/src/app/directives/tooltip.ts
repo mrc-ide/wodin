@@ -1,15 +1,15 @@
 import { DirectiveBinding } from "vue";
 import { Tooltip } from "bootstrap";
 
-interface ToolTipContent {
+export interface ToolTipSettings {
     content?: string,
-    trigger?: "hover" | "focus" | "click" | "click focus" | "click hover" | "click hover focus" | "hover focus",
+    trigger?: bootstrap.Tooltip.Options["trigger"],
     variant?: "text" | "error"| "warning" | "success",
-    placement?: "top" | "bottom" | "left" | "right",
+    placement?: bootstrap.Tooltip.PopoverPlacement,
 }
 
 export default {
-    mounted(el: HTMLElement, binding: DirectiveBinding<string | ToolTipContent>) {
+    mounted(el: HTMLElement, binding: DirectiveBinding<string | ToolTipSettings>) {
         const { value } = binding;
 
         el.setAttribute("data-bs-toggle", "tooltip");
@@ -34,7 +34,7 @@ export default {
             });
         }
     },
-    beforeUpdate(el: HTMLElement, binding: DirectiveBinding<ToolTipContent>) {
+    beforeUpdate(el: HTMLElement, binding: DirectiveBinding<ToolTipSettings>) {
         const { value } = binding;
 
         const tooltip = Tooltip.getInstance(el);
