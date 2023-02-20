@@ -4,7 +4,7 @@
          :value="textValue"
          @input="updateValue"
          @blur="formatTextValue(true)"
-         v-tooltip-controlled="errorTooltipProps"/>
+         v-tooltip="errorTooltipProps"/>
 </template>
 
 <script lang="ts">
@@ -54,7 +54,8 @@ export default defineComponent({
         const errorTooltipProps: ToolTipSettings = {
             content: "",
             variant: "error",
-            placement: "right"
+            placement: "right",
+            trigger: "manual"
         };
 
         const formatTextValue = (blur?: boolean) => {
