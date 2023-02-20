@@ -71,7 +71,7 @@ describe("BasicApp", () => {
         const options = {
             global: {
                 plugins: [store],
-                directives: { "tooltip": mockTooltipDirective },
+                directives: { tooltip: mockTooltipDirective },
                 stubs: {
                     GenericHelp: true
                 }

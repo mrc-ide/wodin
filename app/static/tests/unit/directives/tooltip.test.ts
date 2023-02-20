@@ -157,7 +157,7 @@ describe("tooltip directive", () => {
             content: "hey",
             trigger: "manual"
         });
-        const div = wrapper.find("div")
+        const div = wrapper.find("div");
         const el = div.element;
         const tooltipInstance = Tooltip.getInstance(el)!;
         const spyDispose = jest.spyOn(tooltipInstance, "dispose");

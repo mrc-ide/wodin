@@ -76,7 +76,7 @@ describe("EditParamSettings", () => {
         const wrapper = mount(EditParamSettings, {
             global: {
                 plugins: [store],
-                directives: { "tooltip": mockTooltipDirective }
+                directives: { tooltip: mockTooltipDirective }
             },
             props: {
                 open: false

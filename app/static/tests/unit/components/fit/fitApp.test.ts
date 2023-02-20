@@ -86,7 +86,7 @@ describe("FitApp", () => {
         const options = {
             global: {
                 plugins: [store],
-                directives: { "tooltip": mockTooltipDirective }
+                directives: { tooltip: mockTooltipDirective }
             }
         };
 

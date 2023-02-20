@@ -14,7 +14,7 @@ describe("NumericInput", () => {
                 minAllowed
             },
             global: {
-                directives: { "tooltip": mockTooltipDirective }
+                directives: { tooltip: mockTooltipDirective }
             }
         });
     };

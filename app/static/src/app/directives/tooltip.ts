@@ -44,7 +44,7 @@ export default {
 
         if (tooltip) {
             (tooltip as any)._config.title = content;
-            const trigger = (tooltip as any)._config.trigger
+            const { trigger } = (tooltip as any)._config;
             if (trigger === "manual") {
                 if (!content) {
                     tooltip.hide();

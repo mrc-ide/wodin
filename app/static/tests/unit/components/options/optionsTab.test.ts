@@ -24,7 +24,7 @@ describe("OptionsTab", () => {
         return mount(OptionsTab, {
             global: {
                 plugins: [store],
-                directives: { "tooltip": mockTooltipDirective }
+                directives: { tooltip: mockTooltipDirective }
             }
         });
     };
