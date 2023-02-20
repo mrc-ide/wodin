@@ -29,7 +29,7 @@ import { VisualisationTab } from "../../../../src/app/store/appState/state";
 import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
 import { AppConfig } from "../../../../src/app/types/responseTypes";
 
-const mockTooltipControlledDirective = jest.fn();
+const mockTooltipDirective = jest.fn();
 
 describe("BasicApp", () => {
     const getWrapper = (mockSetOpenVisualisationTab = jest.fn(), config: Partial<AppConfig> = {}) => {
@@ -71,7 +71,7 @@ describe("BasicApp", () => {
         const options = {
             global: {
                 plugins: [store],
-                directives: { "tooltip-controlled": mockTooltipControlledDirective },
+                directives: { "tooltip": mockTooltipDirective },
                 stubs: {
                     GenericHelp: true
                 }

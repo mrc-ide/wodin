@@ -13,7 +13,7 @@ import { SensitivityGetter } from "../../../../src/app/store/sensitivity/getters
 import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
 import SensitivityPlotOptions from "../../../../src/app/components/options/SensitivityPlotOptions.vue";
 
-const mockTooltipControlledDirective = jest.fn();
+const mockTooltipDirective = jest.fn();
 
 describe("SensitivityOptions", () => {
     const mockBatchPars = {
@@ -48,7 +48,7 @@ describe("SensitivityOptions", () => {
         return mount(SensitivityOptions, {
             global: {
                 plugins: [store],
-                directives: { "tooltip-controlled": mockTooltipControlledDirective }
+                directives: { "tooltip": mockTooltipDirective }
             }
         });
     };

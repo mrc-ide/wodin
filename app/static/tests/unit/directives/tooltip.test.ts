@@ -1,7 +1,21 @@
-import { nextTick, ref } from "vue";
+import { ref } from "vue";
 import { mount } from "@vue/test-utils";
 import { Tooltip } from "bootstrap";
 import tooltip from "../../../src/app/directives/tooltip";
+
+const expectTooltipConfig = (
+        el: HTMLElement,
+        title: string,
+        placement: bootstrap.Tooltip.PopoverPlacement,
+        trigger: bootstrap.Tooltip.Options["trigger"],
+        customClass: string
+    ) => {
+        expect((Tooltip.getInstance(el) as any)._config.title).toBe(title);
+        expect((Tooltip.getInstance(el) as any)._config.placement).toBe(placement);
+        expect((Tooltip.getInstance(el) as any)._config.trigger).toBe(trigger);
+        expect((Tooltip.getInstance(el) as any)._config.toggle).toBe("tooltip");
+        expect((Tooltip.getInstance(el) as any)._config.customClass).toBe(customClass);
+    };
 
 describe("tooltip directive", () => {
     const mountTemplate = (props: Record<string, unknown> | string = "hello",
@@ -43,24 +57,26 @@ describe("tooltip directive", () => {
         const div = wrapper.find("div");
 
         // checking tooltip props directly
-        expect((Tooltip.getInstance(div.element) as any)._config.placement).toBe("top");
-        expect((Tooltip.getInstance(div.element) as any)._config.title).toBe("hello");
-        expect((Tooltip.getInstance(div.element) as any)._config.toggle).toBe("tooltip");
-        expect((Tooltip.getInstance(div.element) as any)._config.customClass).toBe("");
+        expectTooltipConfig(div.element, "hello", "top", "hover", "");
+    });
+
+    it("adds expected attributes (object)", async () => {
+        const wrapper = mountTemplate({ trigger: "manual" });
+        const div = wrapper.find("div");
+
+        // checking tooltip props directly
+        expectTooltipConfig(div.element, "", "top", "manual", "");
     });
 
     it("adds expected attributes with variants and placement", async () => {
         const wrapper = mountTemplate({
             content: "hello",
             placement: "right",
-            variant: "warning"
+            variant: "warning",
+            trigger: "click"
         });
         const div = wrapper.find("div");
-
-        expect((Tooltip.getInstance(div.element) as any)._config.placement).toBe("right");
-        expect((Tooltip.getInstance(div.element) as any)._config.title).toBe("hello");
-        expect((Tooltip.getInstance(div.element) as any)._config.toggle).toBe("tooltip");
-        expect((Tooltip.getInstance(div.element) as any)._config.customClass).toBe("tooltip-warning");
+        expectTooltipConfig(div.element, "hello", "right", "click", "tooltip-warning");
     });
 
     it("updates title (string) when component is updated", async () => {
@@ -104,21 +120,13 @@ describe("tooltip directive", () => {
             content: ""
         });
         const div = wrapper.find("div");
-
-        expect((Tooltip.getInstance(div.element) as any)._config.placement).toBe("top");
-        expect((Tooltip.getInstance(div.element) as any)._config.title).toBe("");
-        expect((Tooltip.getInstance(div.element) as any)._config.toggle).toBe("tooltip");
-        expect((Tooltip.getInstance(div.element) as any)._config.customClass).toBe("");
+        expectTooltipConfig(div.element, "", "top", "hover", "");
     });
 
     it("does not show if no content provided", async () => {
         const wrapper = mountTemplate("");
         const div = wrapper.find("div");
-
-        expect((Tooltip.getInstance(div.element) as any)._config.placement).toBe("top");
-        expect((Tooltip.getInstance(div.element) as any)._config.title).toBe("");
-        expect((Tooltip.getInstance(div.element) as any)._config.toggle).toBe("tooltip");
-        expect((Tooltip.getInstance(div.element) as any)._config.customClass).toBe("");
+        expectTooltipConfig(div.element, "", "top", "hover", "");
     });
 
     it("disposes of tooltip on unmount", () => {
@@ -139,5 +147,43 @@ describe("tooltip directive", () => {
         wrapper.unmount();
         // my dispose above rather than disposing when unmount
         expect(spyDispose).toHaveBeenCalledTimes(1);
+    });
+
+    it("hides if no content", async () => {
+        const wrapper = mountTemplate("", true, {
+            content: "",
+            trigger: "manual"
+        }, {
+            content: "hey",
+            trigger: "manual"
+        });
+        const div = wrapper.find("div");
+        const tooltip = Tooltip.getInstance(div.element) as any;
+        const spyHide = jest.spyOn(tooltip, "hide");
+        expect(tooltip._config.title).toBe("hey");
+        await div.trigger("click");
+        expect(spyHide).toHaveBeenCalled();
+        const divClick = wrapper.find("div");
+        const tooltipClick = Tooltip.getInstance(divClick.element) as any;
+        expect(tooltipClick._config.title).toBe("");
+    });
+
+    it("shows if content", async () => {
+        const wrapper = mountTemplate("", true, {
+            content: "hey",
+            trigger: "manual"
+        }, {
+            content: "",
+            trigger: "manual"
+        });
+        const div = wrapper.find("div");
+        const tooltip = Tooltip.getInstance(div.element) as any;
+        const spyShow = jest.spyOn(tooltip, "show");
+        expect(tooltip._config.title).toBe("");
+        await div.trigger("click");
+        expect(spyShow).toHaveBeenCalled();
+        const divClick = wrapper.find("div");
+        const tooltipClick = Tooltip.getInstance(divClick.element) as any;
+        expect(tooltipClick._config.title).toBe("hey");
     });
 });

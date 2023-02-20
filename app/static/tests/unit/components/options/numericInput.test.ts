@@ -2,19 +2,19 @@ import { mount, VueWrapper } from "@vue/test-utils";
 import { nextTick } from "vue";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
 
-const mockTooltipControlledDirective = jest.fn();
+const mockTooltipDirective = jest.fn();
 
 describe("NumericInput", () => {
-    const getWrapper = (value: number, allowNegative = true, max = Infinity, min = -Infinity) => {
+    const getWrapper = (value: number, allowNegative = true, maxAllowed = Infinity, minAllowed = -Infinity) => {
         return mount(NumericInput, {
             props: {
                 value,
                 allowNegative,
-                max,
-                min
+                maxAllowed,
+                minAllowed
             },
             global: {
-                directives: { "tooltip-controlled": mockTooltipControlledDirective }
+                directives: { "tooltip": mockTooltipDirective }
             }
         });
     };
@@ -118,14 +118,14 @@ describe("NumericInput", () => {
         await wrapper.find("input").setValue("11");
         expect(wrapper.emitted("update")![0]).toStrictEqual([10]);
         // mount and updated calls
-        expect(mockTooltipControlledDirective).toHaveBeenCalledTimes(2);
+        expect(mockTooltipDirective).toHaveBeenCalledTimes(2);
     });
 
     it("does min validation", async () => {
         const wrapper = getWrapper(1, false, 10, 2);
         await wrapper.find("input").setValue("1");
         expect(wrapper.emitted("update")![0]).toStrictEqual([2]);
-        expect(mockTooltipControlledDirective).toHaveBeenCalledTimes(2);
+        expect(mockTooltipDirective).toHaveBeenCalledTimes(2);
     });
 
     it("formats input value on blur", async () => {

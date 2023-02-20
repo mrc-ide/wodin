@@ -30,7 +30,7 @@ import { VisualisationTab } from "../../../../src/app/store/appState/state";
 import { AppConfig } from "../../../../src/app/types/responseTypes";
 
 const mockSetOpenVisualisationTab = jest.fn();
-const mockTooltipControlledDirective = jest.fn();
+const mockTooltipDirective = jest.fn();
 
 describe("StochasticApp", () => {
     const getWrapper = (config: Partial<AppConfig> = {}) => {
@@ -64,7 +64,7 @@ describe("StochasticApp", () => {
         const options = {
             global: {
                 plugins: [store],
-                directives: { "tooltip-controlled": mockTooltipControlledDirective }
+                directives: { "tooltip": mockTooltipDirective }
             }
         };
 

@@ -18,13 +18,13 @@ import { getters as runGetters } from "../../../../src/app/store/run/getters";
 import fitApp from "../../../../src/app/components/fit/FitApp.vue";
 
 describe("OptionsTab", () => {
-    const mockTooltipControlledDirective = jest.fn();
+    const mockTooltipDirective = jest.fn();
 
     const getWrapper = (store: Store<any>) => {
         return mount(OptionsTab, {
             global: {
                 plugins: [store],
-                directives: { "tooltip-controlled": mockTooltipControlledDirective }
+                directives: { "tooltip": mockTooltipDirective }
             }
         });
     };
