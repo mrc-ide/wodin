@@ -17,11 +17,8 @@
     "lint": "vue-cli-service lint --no-fix",
     "lint:fix": "vue-cli-service lint",
     "e2e-test": "npx playwright test",
-    "serve-basic": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/hotReloadConfigs/basicApp.config.js vue-cli-service serve ./src/app/basic.ts",
-    "serve-fit": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/hotReloadConfigs/fitApp.config.js vue-cli-service serve ./src/app/fit.ts",
-    "serve-stochastic": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/hotReloadConfigs/stochasticApp.config.js vue-cli-service serve ./src/app/stochastic.ts",
-    "serve-all": "concurrently \"npm run serve-basic\" \"npm run serve-fit\" \" npm run serve-stochastic\"",
-    "copy-bootstrap": "mkdir -p ../server/public/css && find ../static/node_modules/bootstrap/dist/css/bootstrap.css -exec cp '{}' ../server/public/css/ ';'"
+    "copy-bootstrap": "mkdir -p ../server/public/css && find ../static/node_modules/bootstrap/dist/css/bootstrap.css -exec cp '{}' ../server/public/css/ ';'",
+    "serve-app": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/hotReloadConfigs/${APPTYPE}App.config.js vue-cli-service serve ./src/app/${APPTYPE}.ts"
   },
   "resolutions": {
     "ansi-regex": "5.0.1"
