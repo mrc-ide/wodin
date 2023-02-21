@@ -50,8 +50,7 @@ export default defineComponent({
             required: true
         },
         sessionLabel: {
-            type: String,
-            required: true
+            type: String
         }
     },
     setup(props, { emit }) {
@@ -63,7 +62,7 @@ export default defineComponent({
         });
 
         watch(() => props.open, (newValue) => {
-            if (newValue) {
+            if (newValue && props.sessionLabel) {
                 sessionLabelInternal.value = props.sessionLabel;
             }
         });
