@@ -29,7 +29,7 @@ WODIN fetches compiled odin code from [odin.api](https://github.com/mrc-ide/odin
 For development, you can install all dependencies and serve the app, with hot reloading, using two terminals. In one terminal, use `./scripts/serve-backend.sh` to run the server. In another terminal use `./scripts/serve-frontend.sh basic` (or replace `basic` with `fit` or
 `stochastic` as the script argument) to serve the given app type. The app will be available at http://localhost:3000.
 
-You can also install dependencies, build and run the app locally in one step using `./scripts/build-and-run.sh`. The app will be available at http://localhost:3000 
+You can also install dependencies, build and run the app locally, supporting all app types, in one step using `./scripts/build-and-run.sh`. The app will be available at http://localhost:3000 
 
 To build front end changes only for a given app type run, `./scripts/build-frontend.sh basic` (or replace `basic` with `fit` or
 `stochastic` as the script argument).
