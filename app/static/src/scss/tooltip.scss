@@ -1,0 +1,53 @@
+@import "../../node_modules/bootstrap/scss/bootstrap.scss";
+
+$tooltip-error: #d10404;
+$tooltip-warning: #c58804f6;
+$tooltip-success: #54ac01;
+
+.tooltip-error .tooltip-inner {
+    background-color: $tooltip-error;
+}
+.tooltip-error.bs-tooltip-end .tooltip-arrow::before {
+    border-right-color: $tooltip-error !important;
+}
+.tooltip-error.bs-tooltip-start .tooltip-arrow::before {
+    border-left-color: $tooltip-error !important;
+}
+.tooltip-error.bs-tooltip-bottom .tooltip-arrow::before {
+    border-bottom-color: $tooltip-error !important;
+}
+.tooltip-error.bs-tooltip-top .tooltip-arrow::before {
+    border-top-color: $tooltip-error !important;
+}
+
+.tooltip-success .tooltip-inner {
+    background-color: $tooltip-success;
+}
+.tooltip-success.bs-tooltip-end .tooltip-arrow::before {
+    border-right-color: $tooltip-success !important;
+}
+.tooltip-success.bs-tooltip-start .tooltip-arrow::before {
+    border-left-color: $tooltip-success !important;
+}
+.tooltip-success.bs-tooltip-bottom .tooltip-arrow::before {
+    border-bottom-color: $tooltip-success !important;
+}
+.tooltip-success.bs-tooltip-top .tooltip-arrow::before {
+    border-top-color: $tooltip-success !important;
+}
+
+.tooltip-warning .tooltip-inner {
+    background-color: $tooltip-warning;
+}
+.tooltip-warning.bs-tooltip-end .tooltip-arrow::before {
+    border-right-color: $tooltip-warning !important;
+}
+.tooltip-warning.bs-tooltip-start .tooltip-arrow::before {
+    border-left-color: $tooltip-warning !important;
+}
+.tooltip-warning.bs-tooltip-bottom .tooltip-arrow::before {
+    border-bottom-color: $tooltip-warning !important;
+}
+.tooltip-warning.bs-tooltip-top .tooltip-arrow::before {
+    border-top-color: $tooltip-warning !important;
+}
