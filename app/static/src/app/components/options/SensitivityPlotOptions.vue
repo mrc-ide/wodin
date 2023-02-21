@@ -26,7 +26,7 @@
       </div>
       <div class="col-xl-6 col-11">
         <numeric-input  :value="time"
-                        :allow-negative="false"
+                        :min-allowed="0"
                         @update="(n) => time = n"></numeric-input>
       </div>
     </div>

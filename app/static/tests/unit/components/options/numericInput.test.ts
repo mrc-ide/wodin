@@ -5,11 +5,10 @@ import NumericInput from "../../../../src/app/components/options/NumericInput.vu
 const mockTooltipDirective = jest.fn();
 
 describe("NumericInput", () => {
-    const getWrapper = (value: number, allowNegative = true, maxAllowed = Infinity, minAllowed = -Infinity) => {
+    const getWrapper = (value: number, maxAllowed = Infinity, minAllowed = -Infinity) => {
         return mount(NumericInput, {
             props: {
                 value,
-                allowNegative,
                 maxAllowed,
                 minAllowed
             },
@@ -90,16 +89,9 @@ describe("NumericInput", () => {
         expect(wrapper.emitted("update")![0]).toStrictEqual([100]);
     });
 
-    it("masks out hyphen if allowNegative is false", async () => {
-        const wrapper = getWrapper(1, false);
-        await wrapper.find("input").setValue("-100");
-        expectInputToHaveValue(wrapper, "100");
-        expect(wrapper.emitted("update")![0]).toStrictEqual([100]);
-    });
-
-    it("does not mask out hyphen if allowNegative is true", async () => {
-        const wrapper = getWrapper(1, true);
-        await wrapper.find("input").setValue("-100");
+    it("masks out hyphen if it is in the middle of number", async () => {
+        const wrapper = getWrapper(1);
+        await wrapper.find("input").setValue("-10-0");
         expectInputToHaveValue(wrapper, "-100");
         expect(wrapper.emitted("update")![0]).toStrictEqual([-100]);
     });
@@ -114,7 +106,7 @@ describe("NumericInput", () => {
     });
 
     it("does max validation", async () => {
-        const wrapper = getWrapper(10, false, 10);
+        const wrapper = getWrapper(10, 10);
         await wrapper.find("input").setValue("11");
         expect(wrapper.emitted("update")![0]).toStrictEqual([10]);
         // mount and updated calls
@@ -122,7 +114,7 @@ describe("NumericInput", () => {
     });
 
     it("does min validation", async () => {
-        const wrapper = getWrapper(1, false, 10, 2);
+        const wrapper = getWrapper(1, 10, 2);
         await wrapper.find("input").setValue("1");
         expect(wrapper.emitted("update")![0]).toStrictEqual([2]);
         expect(mockTooltipDirective).toHaveBeenCalledTimes(2);

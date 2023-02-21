@@ -30,10 +30,6 @@ export default defineComponent({
             type: Number,
             required: true
         },
-        allowNegative: {
-            type: Boolean,
-            default: true
-        },
         maxAllowed: {
             type: Number,
             default: Infinity
@@ -70,8 +66,10 @@ export default defineComponent({
             // 1. Apply character mask - only allow numerics, decimal point, comma, and hyphen (for negatives)
             const element = event.target as HTMLInputElement;
             let newVal = element.value.replace(/[^0-9,.-]/g, "");
-            if (!props.allowNegative) {
-                newVal = newVal.replace("-", "");
+
+            // only let there be a hyphen at the start of string
+            if (newVal.length > 1) {
+                newVal = newVal[0] + newVal.slice(1).replace("-", "");
             }
 
             // within the event handler we need to update the element directly to apply character mask as well as
@@ -91,7 +89,9 @@ export default defineComponent({
                     errorTooltipProps.content = `Please enter a value no greater than ${props.maxAllowed}`;
                 } else if (numeric < props.minAllowed) {
                     validatedNumeric = props.minAllowed;
-                    errorTooltipProps.content = `Please enter a value no less than ${props.minAllowed}`;
+                    errorTooltipProps.content = (props.minAllowed === 0)
+                        ? "Please enter a non-negative number"
+                        : `Please enter a value no less than ${props.minAllowed}`;
                 } else {
                     validatedNumeric = numeric;
                     errorTooltipProps.content = "";
