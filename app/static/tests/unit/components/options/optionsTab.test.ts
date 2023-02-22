@@ -1,4 +1,4 @@
-import { mount } from "@vue/test-utils";
+import { mount, shallowMount } from "@vue/test-utils";
 import Vuex, { Store } from "vuex";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
 import VerticalCollapse from "../../../../src/app/components/VerticalCollapse.vue";
@@ -18,10 +18,13 @@ import { getters as runGetters } from "../../../../src/app/store/run/getters";
 import fitApp from "../../../../src/app/components/fit/FitApp.vue";
 
 describe("OptionsTab", () => {
+    const mockTooltipDirective = jest.fn();
+
     const getWrapper = (store: Store<any>) => {
         return mount(OptionsTab, {
             global: {
-                plugins: [store]
+                plugins: [store],
+                directives: { tooltip: mockTooltipDirective }
             }
         });
     };

@@ -62,7 +62,7 @@ describe("RunOptions", () => {
         expect(wrapper.find("label").text()).toBe("End time");
         const input = wrapper.findComponent(NumericInput);
         expect(input.props("value")).toBe(99);
-        expect(input.props("allowNegative")).toBe(false);
+        expect(input.props("minAllowed")).toBe(0);
     });
 
     it("renders as expected when data present", () => {
@@ -78,7 +78,7 @@ describe("RunOptions", () => {
         expect(wrapper.find("label").text()).toBe("End time");
         const input = wrapper.findComponent(NumericInput);
         expect(input.props("value")).toBe(99);
-        expect(input.props("allowNegative")).toBe(false);
+        expect(input.props("minAllowed")).toBe(0);
     });
 
     it("commits end time change", () => {

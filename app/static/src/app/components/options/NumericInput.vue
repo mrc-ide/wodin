@@ -3,7 +3,8 @@
          type="text"
          :value="textValue"
          @input="updateValue"
-         @blur="formatTextValue"/>
+         @blur="formatTextValue(true)"
+         v-tooltip="errorTooltipProps"/>
 </template>
 
 <script lang="ts">
@@ -11,6 +12,7 @@ import { formatLocale } from "d3-format";
 import {
     defineComponent, ref, onMounted, watch
 } from "vue";
+import { ToolTipSettings } from "../../directives/tooltip";
 
 // Provide a d3 format which uses hyphen for negatives rather than minus sign
 const d3Locale = formatLocale({
@@ -28,9 +30,13 @@ export default defineComponent({
             type: Number,
             required: true
         },
-        allowNegative: {
-            type: Boolean,
-            default: true
+        maxAllowed: {
+            type: Number,
+            default: Infinity
+        },
+        minAllowed: {
+            type: Number,
+            default: -Infinity
         }
     },
     emits: ["update"],
@@ -41,17 +47,29 @@ export default defineComponent({
         const lastNumericValueSet = ref<null|number>(null);
         const textValue = ref("");
 
-        const formatTextValue = () => {
+        const errorTooltipProps: ToolTipSettings = {
+            content: "",
+            variant: "error",
+            placement: "right",
+            trigger: "manual"
+        };
+
+        const formatTextValue = (blur?: boolean) => {
             // display value with thousands formats
             textValue.value = d3Locale.format(",")(props.value);
+            if (blur) {
+                errorTooltipProps.content = "";
+            }
         };
 
         const updateValue = (event: Event) => {
             // 1. Apply character mask - only allow numerics, decimal point, comma, and hyphen (for negatives)
             const element = event.target as HTMLInputElement;
             let newVal = element.value.replace(/[^0-9,.-]/g, "");
-            if (!props.allowNegative) {
-                newVal = newVal.replace("-", "");
+
+            // only let there be a hyphen at the start of string
+            if (newVal.length > 1) {
+                newVal = newVal[0] + newVal.slice(1).replace("-", "");
             }
 
             // within the event handler we need to update the element directly to apply character mask as well as
@@ -63,8 +81,24 @@ export default defineComponent({
             const cleanedValue = newVal.replace(/,/g, "");
             const numeric = parseFloat(cleanedValue);
             if (!Number.isNaN(numeric)) {
-                lastNumericValueSet.value = numeric;
-                emit("update", numeric);
+                let validatedNumeric: number;
+
+                // min/max validation
+                if (numeric > props.maxAllowed) {
+                    validatedNumeric = props.maxAllowed;
+                    errorTooltipProps.content = `Please enter a value no greater than ${props.maxAllowed}`;
+                } else if (numeric < props.minAllowed) {
+                    validatedNumeric = props.minAllowed;
+                    errorTooltipProps.content = (props.minAllowed === 0)
+                        ? "Please enter a non-negative number"
+                        : `Please enter a value no less than ${props.minAllowed}`;
+                } else {
+                    validatedNumeric = numeric;
+                    errorTooltipProps.content = "";
+                }
+
+                lastNumericValueSet.value = validatedNumeric;
+                emit("update", validatedNumeric);
             }
         };
 
@@ -78,7 +112,8 @@ export default defineComponent({
         return {
             textValue,
             updateValue,
-            formatTextValue
+            formatTextValue,
+            errorTooltipProps
         };
     }
 });
