@@ -16,7 +16,9 @@
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint --no-fix",
     "lint:fix": "vue-cli-service lint",
-    "e2e-test": "npx playwright test"
+    "e2e-test": "npx playwright test",
+    "copy-bootstrap": "mkdir -p ../server/public/css && find ../static/node_modules/bootstrap/dist/css/bootstrap.css -exec cp '{}' ../server/public/css/ ';'",
+    "serve-app": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/hotReloadConfigs/${APPTYPE}App.config.js vue-cli-service serve ./src/app/${APPTYPE}.ts"
   },
   "resolutions": {
     "ansi-regex": "5.0.1"
