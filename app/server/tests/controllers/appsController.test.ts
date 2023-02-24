@@ -63,7 +63,12 @@ describe("appsController", () => {
     });
 
     it("renders view with app config", () => {
-        const appConfig = { title: "testTitle", appType: "testType" };
+        const appConfig = {
+            title: "testTitle",
+            appType: "testType",
+            internationalisation: true,
+            defaultLanguage: "en"
+        };
         const request = getMockRequest(appConfig, "1234", undefined);
         AppsController.getApp(request, mockResponse, jest.fn());
 
@@ -79,13 +84,20 @@ describe("appsController", () => {
             wodinVersion: "1.2.3",
             loadSessionId: "1234",
             shareNotFound: "",
-            mathjaxSrc
+            mathjaxSrc,
+            internationalisation: true,
+            defaultLanguage: "en"
         });
         expect(mockStatus).not.toBeCalled();
     });
 
     it("sets loadSessionId to be empty when not in query string", () => {
-        const request = getMockRequest({ title: "testTitle", appType: "testType" }, undefined, undefined);
+        const request = getMockRequest({
+            title: "testTitle",
+            appType: "testType",
+            internationalisation: false,
+            defaultLanguage: "en"
+        }, undefined, undefined);
         AppsController.getApp(request, mockResponse, jest.fn());
 
         expect(mockRender.mock.calls[0][1]).toStrictEqual({
@@ -98,7 +110,9 @@ describe("appsController", () => {
             wodinVersion: "1.2.3",
             loadSessionId: "",
             shareNotFound: "",
-            mathjaxSrc
+            mathjaxSrc,
+            internationalisation: true,
+            defaultLanguage: "en"
         });
     });
 
@@ -121,7 +135,9 @@ describe("appsController", () => {
             wodinVersion: "1.2.3",
             loadSessionId: "123456",
             shareNotFound: "",
-            mathjaxSrc
+            mathjaxSrc,
+            internationalisation: true,
+            defaultLanguage: "en"
         });
     });
 
@@ -142,7 +158,9 @@ describe("appsController", () => {
             wodinVersion: "1.2.3",
             loadSessionId: "",
             shareNotFound: "tiny-mouse",
-            mathjaxSrc
+            mathjaxSrc,
+            internationalisation: true,
+            defaultLanguage: "en"
         });
     });
 
