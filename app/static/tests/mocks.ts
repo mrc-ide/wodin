@@ -21,6 +21,8 @@ import {
 } from "../src/app/store/sensitivity/state";
 import { VersionsState } from "../src/app/store/versions/state";
 import { GraphSettingsState } from "../src/app/store/graphSettings/state";
+import { LanguageState } from "../src/app/store/language/state";
+import { Language } from "../src/app/store/translations/locales";
 
 export const mockAxios = new MockAdapter(axios);
 
@@ -92,6 +94,15 @@ export const mockRunState = (state: Partial<RunState> = {}): RunState => {
 export const mockCodeState = (state: Partial<CodeState> = {}): CodeState => {
     return {
         currentCode: [],
+        ...state
+    };
+};
+
+export const mockLanguageState = (state: Partial<LanguageState> = {}): LanguageState => {
+    return {
+        currentLanguage: Language["en"],
+        updatingLanguage: false,
+        internationalisation: true,
         ...state
     };
 };
@@ -176,6 +187,7 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
         versions: mockVersionsState(),
         graphSettings: mockGraphSettingsState(),
         configured: false,
+        language: mockLanguageState(),
         ...state
     };
 };
@@ -224,6 +236,7 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
         versions: mockVersionsState(),
         graphSettings: mockGraphSettingsState(),
         configured: false,
+        language: mockLanguageState(),
         ...state
     };
 };
@@ -252,6 +265,7 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
         versions: mockVersionsState(),
         graphSettings: mockGraphSettingsState(),
         configured: false,
+        language: mockLanguageState(),
         ...state
     };
 };

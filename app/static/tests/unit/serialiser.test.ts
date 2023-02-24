@@ -17,6 +17,7 @@ import {
     mockSensitivityState, mockVersionsState
 } from "../mocks";
 import { defaultState as defaultGraphSettingsState } from "../../src/app/store/graphSettings/graphSettings";
+import { Language } from "../../src/app/store/translations/locales";
 
 describe("serialise", () => {
     const codeState = {
@@ -232,7 +233,12 @@ describe("serialise", () => {
         sensitivity: sensitivityState,
         versions: { versions: null },
         graphSettings: { logScaleYAxis: true },
-        configured: false
+        configured: false,
+        language: {
+            currentLanguage: Language["en"],
+            internationalisation: true,
+            updatingLanguage: false
+        }
     };
 
     const fitState: FitState = {
@@ -254,7 +260,12 @@ describe("serialise", () => {
         modelFit: modelFitState,
         versions: { versions: null },
         graphSettings: { logScaleYAxis: true },
-        configured: false
+        configured: false,
+        language: {
+            currentLanguage: Language["en"],
+            internationalisation: true,
+            updatingLanguage: false
+        }
     };
 
     const expectedCode = { currentCode: ["some code"] };
