@@ -35,14 +35,18 @@ export default defineComponent({
                 appName,
                 baseUrl,
                 loadSessionId,
-                appsPath
+                appsPath,
+                internationalisation,
+                defaultLanguage
             } = props;
             store.dispatch(AppStateAction.Initialise,
                 {
                     appName,
                     baseUrl,
                     loadSessionId,
-                    appsPath
+                    appsPath,
+                    internationalisation,
+                    defaultLanguage
                 });
         });
 
