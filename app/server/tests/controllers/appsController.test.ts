@@ -85,7 +85,7 @@ describe("appsController", () => {
             loadSessionId: "1234",
             shareNotFound: "",
             mathjaxSrc,
-            internationalisation: true,
+            internationalisation: false,
             defaultLanguage: "en"
         });
         expect(mockStatus).not.toBeCalled();
@@ -111,7 +111,7 @@ describe("appsController", () => {
             loadSessionId: "",
             shareNotFound: "",
             mathjaxSrc,
-            internationalisation: true,
+            internationalisation: false,
             defaultLanguage: "en"
         });
     });
@@ -136,7 +136,7 @@ describe("appsController", () => {
             loadSessionId: "123456",
             shareNotFound: "",
             mathjaxSrc,
-            internationalisation: true,
+            internationalisation: false,
             defaultLanguage: "en"
         });
     });
@@ -159,7 +159,7 @@ describe("appsController", () => {
             loadSessionId: "",
             shareNotFound: "tiny-mouse",
             mathjaxSrc,
-            internationalisation: true,
+            internationalisation: false,
             defaultLanguage: "en"
         });
     });

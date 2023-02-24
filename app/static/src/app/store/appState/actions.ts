@@ -44,7 +44,13 @@ export const appStateActions: ActionTree<AppState, AppState> = {
             internationalisation,
             defaultLanguage
         } = payload;
-        commit(AppStateMutation.SetApp, { appName, baseUrl, appsPath, internationalisation, defaultLanguage });
+        commit(AppStateMutation.SetApp, {
+            appName,
+            baseUrl,
+            appsPath,
+            internationalisation,
+            defaultLanguage
+        });
         localStorageManager.addSessionId(appName, getters[AppStateGetter.baseUrlPath], state.sessionId);
 
         const response = await api(context)

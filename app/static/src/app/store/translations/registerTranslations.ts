@@ -1,6 +1,6 @@
+import { Store } from "vuex";
 import i18next from "i18next";
 import { Language, locales } from "./locales";
-import { Store } from "vuex";
 import { AppState } from "../appState/state";
 
 export default <S extends AppState>(store: Store<S>) => {
@@ -13,4 +13,4 @@ export default <S extends AppState>(store: Store<S>) => {
         },
         fallbackLng: Language.en
     });
-}
+};

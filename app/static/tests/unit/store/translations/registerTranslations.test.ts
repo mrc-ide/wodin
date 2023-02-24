@@ -1,9 +1,8 @@
-import registerTranslations from "../../../../src/app/store/translations/registerTranslations";
-import i18next from "i18next";
 import { Store } from "vuex";
+import i18next from "i18next";
+import registerTranslations from "../../../../src/app/store/translations/registerTranslations";
 import { AppState } from "../../../../src/app/store/appState/state";
 import { Language } from "../../../../src/app/store/translations/locales";
-import { mockBasicState } from "../../../mocks";
 
 describe("Register translations", () => {
     it("initialises i18next", () => {

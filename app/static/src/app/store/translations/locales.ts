@@ -20,4 +20,5 @@ export const locales = {
     pt
 };
 
+// eslint-disable-next-line @typescript-eslint/no-shadow
 export enum Language {en = "en", fr = "fr", pt = "pt"}

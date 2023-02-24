@@ -100,7 +100,7 @@ export const mockCodeState = (state: Partial<CodeState> = {}): CodeState => {
 
 export const mockLanguageState = (state: Partial<LanguageState> = {}): LanguageState => {
     return {
-        currentLanguage: Language["en"],
+        currentLanguage: Language.en,
         updatingLanguage: false,
         internationalisation: true,
         ...state

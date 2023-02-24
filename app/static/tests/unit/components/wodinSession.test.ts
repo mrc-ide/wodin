@@ -21,8 +21,7 @@ describe("WodinSession", () => {
         baseUrl = "http://localhost:3000",
         appsPath = "apps",
         defaultLanguage = "en",
-        internationalisation = true
-        ) => {
+        internationalisation = true) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
                 appName,

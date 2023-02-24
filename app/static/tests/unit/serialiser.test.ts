@@ -235,7 +235,7 @@ describe("serialise", () => {
         graphSettings: { logScaleYAxis: true },
         configured: false,
         language: {
-            currentLanguage: Language["en"],
+            currentLanguage: Language.en,
             internationalisation: true,
             updatingLanguage: false
         }
@@ -262,7 +262,7 @@ describe("serialise", () => {
         graphSettings: { logScaleYAxis: true },
         configured: false,
         language: {
-            currentLanguage: Language["en"],
+            currentLanguage: Language.en,
             internationalisation: true,
             updatingLanguage: false
         }
