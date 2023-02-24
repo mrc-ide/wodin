@@ -1,14 +1,11 @@
 const path = require("path");
-const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
+const baseConfig = require("../vue.config");
 
 module.exports = {
-    lintOnSave: false,
+    ...baseConfig,
     outputDir: path.join(__dirname, "../../server/public/js"),
-    runtimeCompiler: true,
     configureWebpack: {
-        plugins: [new MonacoWebpackPlugin({
-            languages: ["r"]
-        })],
+        ...baseConfig.configureWebpack,
         devServer: {
             writeToDisk: true
         },

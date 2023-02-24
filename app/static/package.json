@@ -15,7 +15,7 @@
     "lint:fix": "vue-cli-service lint",
     "e2e-test": "npx playwright test",
     "copy-bootstrap": "mkdir -p ../server/public/css && find ../static/node_modules/bootstrap/dist/css/bootstrap.css -exec cp '{}' ../server/public/css/ ';'",
-    "serve-app": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/hotReloadConfigs/wodin.config.js vue-cli-service serve ./src/app/wodin.ts"
+    "serve-app": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/hotReload/vue.config.js vue-cli-service serve ./src/app/wodin.ts"
   },
   "resolutions": {
     "ansi-regex": "5.0.1"
