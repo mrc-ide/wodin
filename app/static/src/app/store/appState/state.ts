@@ -5,6 +5,7 @@ import { AppConfig } from "../../types/responseTypes";
 import { SensitivityState } from "../sensitivity/state";
 import { VersionsState } from "../versions/state";
 import { GraphSettingsState } from "../graphSettings/state";
+import { LanguageState } from "../language/state";
 
 export enum AppType {
     Basic = "basic",
@@ -35,5 +36,6 @@ export interface AppState {
     sensitivity: SensitivityState,
     graphSettings: GraphSettingsState,
     versions: VersionsState,
-    configured: boolean // true if configuration has been loaded or rehydrated and defaults set
+    configured: boolean, // true if configuration has been loaded or rehydrated and defaults set
+    language: LanguageState
 }

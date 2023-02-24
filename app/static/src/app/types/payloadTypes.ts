@@ -4,6 +4,8 @@ export interface SetAppPayload {
     appName: string
     baseUrl: string
     appsPath: string
+    internationalisation: boolean
+    defaultLanguage: "en" | "fr" | "pt"
 }
 
 export interface InitialisePayload extends SetAppPayload{

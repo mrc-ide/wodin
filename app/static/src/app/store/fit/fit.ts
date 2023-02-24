@@ -7,6 +7,7 @@ import { model } from "../model/model";
 import { run } from "../run/run";
 import { code } from "../code/code";
 import { sensitivity } from "../sensitivity/sensitivity";
+import { language } from "../language/language";
 import { fitData } from "../fitData/fitData";
 import { modelFit } from "../modelFit/modelFit";
 import { AppType, VisualisationTab } from "../appState/state";
@@ -49,7 +50,8 @@ export const storeOptions: StoreOptions<FitState> = {
         sensitivity,
         sessions,
         versions,
-        graphSettings
+        graphSettings,
+        language
     },
     plugins: [
         logMutations,

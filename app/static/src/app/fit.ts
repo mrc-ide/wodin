@@ -7,8 +7,10 @@ import AppHeader from "./components/header/AppHeader.vue";
 import { FitState } from "./store/fit/state";
 import { initialiseRouter } from "./router";
 import tooltip from "./directives/tooltip";
+import registerTranslations from "./store/translations/registerTranslations";
 
 export const store = new Vuex.Store<FitState>(storeOptions);
+registerTranslations(store);
 
 const app = createApp({ components: { WodinSession, AppHeader } });
 app.use(store);

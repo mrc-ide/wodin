@@ -16,7 +16,9 @@ export default defineComponent({
         baseUrl: String,
         appsPath: String,
         loadSessionId: String,
-        shareNotFound: String
+        shareNotFound: String,
+        internationalisation: Boolean,
+        defaultLanguage: String
     },
     components: {
         RouterView

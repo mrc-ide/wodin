@@ -7,6 +7,7 @@ import { model } from "../model/model";
 import { run } from "../run/run";
 import { code } from "../code/code";
 import { sensitivity } from "../sensitivity/sensitivity";
+import { language } from "../language/language";
 import { AppType, VisualisationTab } from "../appState/state";
 import { newSessionId } from "../../utils";
 import { logMutations, persistState } from "../plugins";
@@ -45,7 +46,8 @@ export const storeOptions: StoreOptions<StochasticState> = {
         sensitivity,
         sessions,
         versions,
-        graphSettings
+        graphSettings,
+        language
     },
     plugins: [
         logMutations,

@@ -45,7 +45,7 @@ export class AppsController {
                     loadSessionId: sessionId || "",
                     shareNotFound: shareNotFound || "",
                     mathjaxSrc: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js",
-                    i18n: wodinConfig.internationalisation,
+                    internationalisation: wodinConfig.internationalisation,
                     defaultLanguage: wodinConfig?.defaultLanguage || "en"
                 };
                 res.render(view, viewOptions);
