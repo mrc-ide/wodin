@@ -4,21 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build-basic": "vue-cli-service build --target lib --name basicApp ./src/app/basic.ts --inline-vue --no-clean",
-    "build-fit": "vue-cli-service build --target lib --name fitApp ./src/app/fit.ts --inline-vue --no-clean",
-    "build-stochastic": "vue-cli-service build --target lib --name stochasticApp ./src/app/stochastic.ts --inline-vue --no-clean",
-    "copy-js": "mkdir -p ../server/public/js && find dist/ -type f -name '*.umd.min.js' -exec cp '{}' ../server/public/js/ ';'",
+    "build-wodin": "vue-cli-service build --target lib --name wodin ./src/app/wodin.ts --inline-vue --no-clean",
+    "copy-js": "mkdir -p ../server/public/js && find dist/ -type f -name 'wodin.umd.min.js' -exec cp '{}' ../server/public/js/ ';'",
     "copy-css": "mkdir -p ../server/public/css && find dist/ -type f -name '*.css' -exec cp '{}' ../server/public/css/ ';' && cp node_modules/bootstrap/dist/css/bootstrap.css ../server/public/css",
-    "copy-js-map": "find dist/ -type f -name '*.umd.min.js.map' -exec cp '{}' ../server/public/js/ ';'",
+    "copy-js-map": "find dist/ -type f -name 'wodin.umd.min.js.map' -exec cp '{}' ../server/public/js/ ';'",
     "copy-all": "concurrently \"npm run copy-js\" \"npm run copy-css \" \" npm run copy-js-map\"",
-    "build-all": "concurrently \"npm run build-basic\" \"npm run build-fit\" \"npm run build-stochastic\"",
-    "build": "npm run build-all && npm run copy-all",
+    "build": "npm run build-wodin && npm run copy-all",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint --no-fix",
     "lint:fix": "vue-cli-service lint",
     "e2e-test": "npx playwright test",
     "copy-bootstrap": "mkdir -p ../server/public/css && find ../static/node_modules/bootstrap/dist/css/bootstrap.css -exec cp '{}' ../server/public/css/ ';'",
-    "serve-app": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/hotReloadConfigs/${APPTYPE}App.config.js vue-cli-service serve ./src/app/${APPTYPE}.ts"
+    "serve-app": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/hotReloadConfigs/wodin.config.js vue-cli-service serve ./src/app/wodin.ts"
   },
   "resolutions": {
     "ansi-regex": "5.0.1"
