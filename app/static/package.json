@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build-wodin": "vue-cli-service build --target lib --name wodin ./src/app/wodin.ts --inline-vue --no-clean",
+    "build-wodin": "vue-cli-service build --target lib --name wodin ./src/app/wodin.ts --inline-vue",
     "copy-js": "mkdir -p ../server/public/js && cp dist/wodin.umd.min.js ../server/public/js/",
     "copy-bootstrap": "mkdir -p ../server/public/css && cp node_modules/bootstrap/dist/css/bootstrap.css ../server/public/css",
     "copy-css": "cp dist/wodin.css ../server/public/css/",
