@@ -30,6 +30,9 @@ export class AppsController {
             if (config) {
                 const baseUrl = wodinConfig.baseUrl.replace(/\/$/, "");
                 const view = `${config.appType}-app`;
+                if (!wodinConfig.hasOwnProperty("internationalisation")) {
+                    wodinConfig.internationalisation = true;
+                }
                 // TODO: validate config against schema for app type
                 const viewOptions = {
                     appName,
@@ -41,7 +44,9 @@ export class AppsController {
                     wodinVersion,
                     loadSessionId: sessionId || "",
                     shareNotFound: shareNotFound || "",
-                    mathjaxSrc: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
+                    mathjaxSrc: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js",
+                    i18n: wodinConfig.internationalisation,
+                    defaultLanguage: wodinConfig?.defaultLanguage || "en"
                 };
                 res.render(view, viewOptions);
             } else {

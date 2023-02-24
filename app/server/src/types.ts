@@ -9,7 +9,9 @@ export interface WodinConfig {
     baseUrl: string,
     odinApi: string,
     redisUrl: string,
-    appsPath: string
+    appsPath: string,
+    internationalisation: boolean,
+    defaultLanguage: "en" | "fr" | "pt"
 }
 
 export interface AppConfigBase {
