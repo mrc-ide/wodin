@@ -4,8 +4,7 @@ import { LanguageState } from "./state";
 
 export enum LanguageStateMutation {
     ChangeLanguage = "ChangeLanguage",
-    SetUpdatingLanguage = "SetUpdatingLanguage",
-    ToggleInternationalisation = "ToggleInternationalisation"
+    SetUpdatingLanguage = "SetUpdatingLanguage"
 }
 
 export const mutations: MutationTree<LanguageState> = {
@@ -15,9 +14,5 @@ export const mutations: MutationTree<LanguageState> = {
 
     [LanguageStateMutation.SetUpdatingLanguage](state: LanguageState, payload: boolean) {
         state.updatingLanguage = payload;
-    },
-
-    [LanguageStateMutation.ToggleInternationalisation](state: LanguageState, payload: boolean) {
-        state.internationalisation = payload;
     }
 };
