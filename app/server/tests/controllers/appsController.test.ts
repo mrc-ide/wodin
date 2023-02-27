@@ -68,10 +68,11 @@ describe("appsController", () => {
         AppsController.getApp(request, mockResponse, jest.fn());
 
         expect(mockRender).toBeCalledTimes(1);
-        expect(mockRender.mock.calls[0][0]).toBe("testType-app");
+        expect(mockRender.mock.calls[0][0]).toBe("app");
         expect(mockRender.mock.calls[0][1]).toStrictEqual({
             appName: "test",
             appsPath: "testapps",
+            appType: "testType",
             baseUrl: "http://localhost:3000",
             title: "testTitle - Test Course Title",
             appTitle: "testTitle",
@@ -91,6 +92,7 @@ describe("appsController", () => {
         expect(mockRender.mock.calls[0][1]).toStrictEqual({
             appName: "test",
             appsPath: "testapps",
+            appType: "testType",
             baseUrl: "http://localhost:3000",
             title: "testTitle - Test Course Title",
             appTitle: "testTitle",
@@ -114,6 +116,7 @@ describe("appsController", () => {
         expect(mockRender.mock.calls[0][1]).toStrictEqual({
             appName: "test",
             appsPath: "testapps",
+            appType: "testType",
             baseUrl: "http://localhost:3000",
             appTitle: "testTitle",
             courseTitle: "Test Course Title",
@@ -135,6 +138,7 @@ describe("appsController", () => {
         expect(mockRender.mock.calls[0][1]).toStrictEqual({
             appName: "test",
             appsPath: "testapps",
+            appType: "testType",
             baseUrl: "http://localhost:3000",
             appTitle: "testTitle",
             courseTitle: "Test Course Title",

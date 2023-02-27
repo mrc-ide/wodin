@@ -1,0 +1,28 @@
+const path = require("path");
+const baseConfig = require("../vue.config");
+
+module.exports = {
+    ...baseConfig,
+    outputDir: path.join(__dirname, "../../server/public/js"),
+    configureWebpack: {
+        ...baseConfig.configureWebpack,
+        devServer: {
+            writeToDisk: true
+        },
+        output: {
+            filename: "wodin.umd.min.js",
+            libraryTarget: "umd",
+            library: "lib",
+            hotUpdateChunkFilename: "../hot/hot-update.js",
+            hotUpdateMainFilename: "../hot/hot-update.json"
+        },
+        optimization: {
+            splitChunks: false
+        }
+    },
+    css: {
+        extract: {
+            filename: "../css/wodin.css"
+        }
+    }
+};
