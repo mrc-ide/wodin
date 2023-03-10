@@ -40,7 +40,9 @@ export const appStateActions: ActionTree<AppState, AppState> = {
             appName,
             baseUrl,
             loadSessionId,
-            appsPath
+            appsPath,
+            i18n,
+            defaultLanguage
         } = payload;
         commit(AppStateMutation.SetApp, { appName, baseUrl, appsPath });
         localStorageManager.addSessionId(appName, getters[AppStateGetter.baseUrlPath], state.sessionId);
