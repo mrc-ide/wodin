@@ -5,5 +5,7 @@
     "appsPath": "apps",
     "baseUrl": "http://localhost:3000",
     "odinApi": "http://localhost:8001",
-    "redisUrl": "redis://localhost:6379"
+    "redisUrl": "redis://localhost:6379",
+    "i18n": true,
+    "defaultLanguage": "en"
 }
