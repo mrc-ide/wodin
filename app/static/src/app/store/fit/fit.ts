@@ -16,6 +16,7 @@ import { sessions } from "../sessions/sessions";
 import { versions } from "../versions/versions";
 import { graphSettings } from "../graphSettings/graphSettings";
 import { getters } from "../appState/getters";
+import { language } from "../../../../translationPackage/store/language";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
@@ -49,7 +50,8 @@ export const storeOptions: StoreOptions<FitState> = {
         sensitivity,
         sessions,
         versions,
-        graphSettings
+        graphSettings,
+        language
     },
     plugins: [
         logMutations,
