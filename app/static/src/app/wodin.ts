@@ -14,6 +14,7 @@ import { storeOptions as stochasticStoreOptions } from "./store/stochastic/stoch
 import { initialiseRouter } from "./router";
 import tooltip from "./directives/tooltip";
 import { AppType } from "./store/appState/state";
+import registerTranslations from "../../translationPackage/registerTranslations"
 
 declare let appType: AppType;
 
@@ -45,6 +46,7 @@ const getComponent = () => {
 };
 
 export const store = getStore();
+registerTranslations(store.state.language);
 
 const app = createApp({ components: { WodinSession, AppHeader } });
 app.use(store);
