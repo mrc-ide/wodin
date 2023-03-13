@@ -5,7 +5,7 @@ import { LanguageState } from "./state";
 import { AppState } from "../../src/app/store/appState/state";
 
 export enum LanguageAction {
-    UpdateLanguage= "UpdateLanguage"
+    UpdateLanguage="UpdateLanguage"
 }
 
 export const actions: ActionTree<LanguageState, AppState> = {
