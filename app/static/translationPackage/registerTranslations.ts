@@ -30,9 +30,6 @@ const registerResources = (lng: string, resources: Resource[]) => {
 };
 
 const addResource = (lng: string, resource: Resource) => {
-    console.log(lng);
-    console.log(resource);
-
     const existingBundle = i18next.getResourceBundle(lng, "translation");
     if (!existingBundle) {
         i18next.addResources(lng, "translation", resource);
