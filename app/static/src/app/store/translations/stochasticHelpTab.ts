@@ -1,4 +1,4 @@
-export interface StochasticHelpTranslations {
+interface StochasticHelpTranslations {
     stochasticHelpExample: string
 }
 

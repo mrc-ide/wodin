@@ -1,4 +1,4 @@
-export interface GenericHelpTranslations {
+interface GenericHelpTranslations {
     genericHelpExample: string
 }
 

@@ -1,4 +1,4 @@
-export interface HeaderTranslations {
+interface HeaderTranslations {
     headerExample: string
 }
 

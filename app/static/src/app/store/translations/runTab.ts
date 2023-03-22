@@ -1,4 +1,4 @@
-export interface RunTabTranslations {
+interface RunTabTranslations {
     runTabExample: string
 }
 

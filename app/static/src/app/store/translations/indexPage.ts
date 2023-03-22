@@ -1,4 +1,4 @@
-export interface IndexPageTranslations {
+interface IndexPageTranslations {
     indexPageExample: string
 }
 

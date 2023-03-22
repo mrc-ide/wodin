@@ -1,4 +1,4 @@
-export interface OptionsTabTranslations {
+interface OptionsTabTranslations {
     optionsTabExample: string
 }
 

@@ -1,4 +1,4 @@
-export interface DataTabTranslations {
+interface DataTabTranslations {
     dataTabExample: string
 }
 

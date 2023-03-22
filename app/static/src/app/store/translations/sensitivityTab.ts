@@ -1,4 +1,4 @@
-export interface SensitivityTabTranslations {
+interface SensitivityTabTranslations {
     sensitivityTabExample: string
 }
 

@@ -1,4 +1,4 @@
-export interface CodeTabTranslations {
+interface CodeTabTranslations {
     codeTabExample: string
 }
 

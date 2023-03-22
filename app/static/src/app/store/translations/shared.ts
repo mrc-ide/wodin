@@ -1,4 +1,4 @@
-export interface SharedTranslations {
+interface SharedTranslations {
     sharedExample: string
 }
 
