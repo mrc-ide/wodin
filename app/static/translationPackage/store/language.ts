@@ -5,7 +5,7 @@ import { actions } from "./actions";
 export const defaultState: LanguageState = {
     currentLanguage: "",
     updatingLanguage: false,
-    internationalisation: true
+    i18n: true // this is default for package, not the app
 };
 
 export const language = {
