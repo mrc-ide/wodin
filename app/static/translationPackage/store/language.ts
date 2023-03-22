@@ -3,7 +3,7 @@ import { mutations } from "./mutations";
 import { actions } from "./actions";
 
 export const defaultState: LanguageState = {
-    currentLanguage: "en",
+    currentLanguage: "",
     updatingLanguage: false,
     internationalisation: true
 };

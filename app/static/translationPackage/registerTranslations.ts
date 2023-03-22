@@ -11,11 +11,7 @@ type ResourceObject<L extends string> = {
 
 export default function registerTranslations<L extends string>(languageState: LanguageState, resourceObject: ResourceObject<L>) {
     i18next.init({
-        lng: languageState.currentLanguage,
-        fallbackLng: "en",
-        resources: {
-            en: { translation: { hey: "hello"} }
-        }
+        lng: languageState.currentLanguage
     });
     const languages = Object.keys(resourceObject) as L[];
     languages.forEach(lng => {
