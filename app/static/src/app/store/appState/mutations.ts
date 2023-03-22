@@ -25,6 +25,8 @@ export const appStateMutations: MutationTree<AppState> = {
         state.appName = payload.appName;
         state.baseUrl = payload.baseUrl;
         state.appsPath = payload.appsPath;
+        state.language.currentLanguage = payload.defaultLanguage;
+        state.language.i18n = payload.i18n;
     },
 
     [AppStateMutation.SetConfig](state: AppState, payload: AppConfig) {
