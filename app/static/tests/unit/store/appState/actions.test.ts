@@ -76,7 +76,13 @@ describe("AppState actions", () => {
         expect(commit.mock.calls.length).toBe(5);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
-        expect(commit.mock.calls[0][1]).toStrictEqual({ appName: "test-app", baseUrl, appsPath, defaultLanguage, i18n });
+        expect(commit.mock.calls[0][1]).toStrictEqual({
+            appName: "test-app",
+            baseUrl,
+            appsPath,
+            defaultLanguage,
+            i18n
+        });
 
         expect(commit.mock.calls[1][0]).toBe(AppStateMutation.SetConfig);
         const committedConfig = commit.mock.calls[1][1];
@@ -183,7 +189,13 @@ describe("AppState actions", () => {
         expect(commit.mock.calls.length).toBe(2);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
-        expect(commit.mock.calls[0][1]).toStrictEqual({ appName: "test-app", baseUrl, appsPath, defaultLanguage, i18n });
+        expect(commit.mock.calls[0][1]).toStrictEqual({
+            appName: "test-app",
+            baseUrl,
+            appsPath,
+            defaultLanguage,
+            i18n
+        });
 
         expect(commit.mock.calls[1][0]).toBe(`errors/${ErrorsMutation.AddError}`);
         expect((commit.mock.calls[1][1] as any).detail).toBe("Test Error Msg");

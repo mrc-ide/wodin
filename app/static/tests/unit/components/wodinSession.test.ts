@@ -25,7 +25,12 @@ describe("WodinSession", () => {
             i18n: false
         }) => {
         const store = new Vuex.Store<BasicState>({
-            state: mockBasicState({ appName, baseUrl, appsPath, language }),
+            state: mockBasicState({
+                appName,
+                baseUrl,
+                appsPath,
+                language
+            }),
             actions: {
                 [AppStateAction.Initialise]: mockInitialise
             },

@@ -5,7 +5,7 @@ import { AppConfig } from "../../types/responseTypes";
 import { SensitivityState } from "../sensitivity/state";
 import { VersionsState } from "../versions/state";
 import { GraphSettingsState } from "../graphSettings/state";
-import { LanguageState } from "../../../../translationPackage/store/state"
+import { LanguageState } from "../../../../translationPackage/store/state";
 
 export enum AppType {
     Basic = "basic",

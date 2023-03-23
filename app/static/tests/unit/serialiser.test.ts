@@ -219,7 +219,7 @@ describe("serialise", () => {
         currentLanguage: "en",
         updatingLanguage: false,
         i18n: true
-    }
+    };
 
     const basicState: BasicState = {
         sessionId: "1234",

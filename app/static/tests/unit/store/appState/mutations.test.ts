@@ -4,15 +4,17 @@ import { mockBasicState } from "../../../mocks";
 
 describe("AppState mutations", () => {
     it("Sets app", () => {
-        const state = { appType: "test",
+        const state = {
+            appType: "test",
             appName: null,
             baseUrl: null,
             language: {
                 currentLanguage: null,
                 i18n: null
-            } 
+            }
         } as any;
-        appStateMutations.SetApp(state, {appName: "Test Name",
+        appStateMutations.SetApp(state, {
+            appName: "Test Name",
             baseUrl: "http://localhost:3000",
             defaultLanguage: "en",
             i18n: true

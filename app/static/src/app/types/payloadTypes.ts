@@ -1,5 +1,5 @@
 import { OdinRunResultOde } from "./wrapperTypes";
-import { Language } from "./languageTypes"
+import { Language } from "./languageTypes";
 
 export interface SetAppPayload {
     appName: string

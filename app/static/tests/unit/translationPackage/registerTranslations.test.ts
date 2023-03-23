@@ -1,5 +1,5 @@
-import registerTranslations from "../../../translationPackage/registerTranslations";
 import i18next from "i18next";
+import registerTranslations from "../../../translationPackage/registerTranslations";
 
 describe("Registering translations", () => {
     const getLanguageState = (currentLanguage = "en", i18n = true) => {
@@ -7,22 +7,22 @@ describe("Registering translations", () => {
             currentLanguage,
             i18n,
             updatingLanguage: false
-        }
+        };
     };
 
     const getEnglishLocales = (translation = {}) => {
         return {
             hello: "hey",
             ...translation
-        }
-    }
+        };
+    };
 
     const getFrenchLocales = (translation = {}) => {
         return {
             hello: "bonjour",
             ...translation
-        }
-    }
+        };
+    };
 
     it("registers resources", () => {
         registerTranslations(getLanguageState(), {
@@ -41,22 +41,22 @@ describe("Registering translations", () => {
         registerTranslations(getLanguageState("fr", false), {
             en: [getEnglishLocales()],
             fr: [getFrenchLocales()]
-        })
+        });
         expect(i18next.getResourceBundle("en", "translation")).toBeUndefined();
         expect(i18next.getResourceBundle("fr", "translation")).toStrictEqual({
             hello: "bonjour"
         });
-    })
+    });
 
     it("throws error if keys are in common in same language", () => {
         try {
             const error = registerTranslations(getLanguageState(), {
-                en: [getEnglishLocales(), {hello: "hello"}],
+                en: [getEnglishLocales(), { hello: "hello" }],
                 fr: [getFrenchLocales()]
             });
             expect(true).toBe(false);
         } catch (err: any) {
-            expect(err.toString()).toBe(`Error: The keys [hello] are shared by more than one resource bundle.`);
+            expect(err.toString()).toBe("Error: The keys [hello] are shared by more than one resource bundle.");
         }
-    })
+    });
 });

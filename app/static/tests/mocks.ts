@@ -117,8 +117,8 @@ export const mockLanguageState = (state: Partial<LanguageState> = {}): LanguageS
         i18n: true,
         updatingLanguage: false,
         ...state
-    }
-}
+    };
+};
 
 export const mockFitDataState = (state:Partial<FitDataState> = {}): FitDataState => {
     return {
