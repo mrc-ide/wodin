@@ -18,9 +18,14 @@ describe("WodinSession", () => {
     const getWrapper = (appName: string | null = "test",
         shareNotFound = "",
         baseUrl = "http://localhost:3000",
-        appsPath = "apps") => {
+        appsPath = "apps",
+        language = {
+            currentLanguage: "fr",
+            updatingLanguage: false,
+            i18n: false
+        }) => {
         const store = new Vuex.Store<BasicState>({
-            state: mockBasicState({ appName, baseUrl, appsPath }),
+            state: mockBasicState({ appName, baseUrl, appsPath, language }),
             actions: {
                 [AppStateAction.Initialise]: mockInitialise
             },
@@ -43,6 +48,8 @@ describe("WodinSession", () => {
                 baseUrl: "http://localhost:3000",
                 appsPath: "apps",
                 loadSessionId: "session1",
+                defaultLanguage: "en",
+                i18n: true,
                 shareNotFound
             }
         };
@@ -63,7 +70,9 @@ describe("WodinSession", () => {
             appName: "testApp",
             loadSessionId: "session1",
             appsPath: "apps",
-            baseUrl: "http://localhost:3000"
+            baseUrl: "http://localhost:3000",
+            defaultLanguage: "en",
+            i18n: true
         });
     });
 

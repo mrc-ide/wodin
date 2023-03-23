@@ -80,7 +80,9 @@ describe("appsController", () => {
             wodinVersion: "1.2.3",
             loadSessionId: "1234",
             shareNotFound: "",
-            mathjaxSrc
+            mathjaxSrc,
+            defaultLanguage: "en",
+            i18n: true
         });
         expect(mockStatus).not.toBeCalled();
     });
@@ -100,7 +102,9 @@ describe("appsController", () => {
             wodinVersion: "1.2.3",
             loadSessionId: "",
             shareNotFound: "",
-            mathjaxSrc
+            mathjaxSrc,
+            defaultLanguage: "en",
+            i18n: true
         });
     });
 
@@ -124,7 +128,9 @@ describe("appsController", () => {
             wodinVersion: "1.2.3",
             loadSessionId: "123456",
             shareNotFound: "",
-            mathjaxSrc
+            mathjaxSrc,
+            defaultLanguage: "en",
+            i18n: true
         });
     });
 
@@ -146,7 +152,9 @@ describe("appsController", () => {
             wodinVersion: "1.2.3",
             loadSessionId: "",
             shareNotFound: "tiny-mouse",
-            mathjaxSrc
+            mathjaxSrc,
+            defaultLanguage: "en",
+            i18n: true
         });
     });
 

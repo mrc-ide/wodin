@@ -24,6 +24,8 @@ import { AppStateGetter } from "../../../../src/app/store/appState/getters";
 describe("AppState actions", () => {
     const baseUrl = "http://localhost:3000";
     const appsPath = "apps";
+    const defaultLanguage = "en";
+    const i18n = true;
     const getStore = () => {
         const state = mockBasicState({ config: null, sessionId: "1234" });
         return new Vuex.Store<BasicState>({
@@ -66,7 +68,7 @@ describe("AppState actions", () => {
 
         const spyOnAddSessionId = jest.spyOn(localStorageManager, "addSessionId");
         const payload = {
-            appName: "test-app", loadSessionId: "", baseUrl, appsPath
+            appName: "test-app", loadSessionId: "", baseUrl, appsPath, defaultLanguage, i18n
         };
         await (appStateActions[AppStateAction.Initialise] as any)({
             commit, state, dispatch, rootState, getters
@@ -74,7 +76,7 @@ describe("AppState actions", () => {
         expect(commit.mock.calls.length).toBe(5);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
-        expect(commit.mock.calls[0][1]).toStrictEqual({ appName: "test-app", baseUrl, appsPath });
+        expect(commit.mock.calls[0][1]).toStrictEqual({ appName: "test-app", baseUrl, appsPath, defaultLanguage, i18n });
 
         expect(commit.mock.calls[1][0]).toBe(AppStateMutation.SetConfig);
         const committedConfig = commit.mock.calls[1][1];
@@ -173,7 +175,7 @@ describe("AppState actions", () => {
         const rootState = state;
 
         const payload = {
-            appName: "test-app", loadSessionId: "", baseUrl, appsPath
+            appName: "test-app", loadSessionId: "", baseUrl, appsPath, defaultLanguage, i18n
         };
         await (appStateActions[AppStateAction.Initialise] as any)({
             commit, state, dispatch, rootState, getters
@@ -181,7 +183,7 @@ describe("AppState actions", () => {
         expect(commit.mock.calls.length).toBe(2);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
-        expect(commit.mock.calls[0][1]).toStrictEqual({ appName: "test-app", baseUrl, appsPath });
+        expect(commit.mock.calls[0][1]).toStrictEqual({ appName: "test-app", baseUrl, appsPath, defaultLanguage, i18n });
 
         expect(commit.mock.calls[1][0]).toBe(`errors/${ErrorsMutation.AddError}`);
         expect((commit.mock.calls[1][1] as any).detail).toBe("Test Error Msg");

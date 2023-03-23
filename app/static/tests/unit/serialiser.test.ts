@@ -215,6 +215,12 @@ describe("serialise", () => {
         }
     };
 
+    const langaugeState = {
+        currentLanguage: "en",
+        updatingLanguage: false,
+        i18n: true
+    }
+
     const basicState: BasicState = {
         sessionId: "1234",
         sessionLabel: null,
@@ -232,7 +238,8 @@ describe("serialise", () => {
         sensitivity: sensitivityState,
         versions: { versions: null },
         graphSettings: { logScaleYAxis: true },
-        configured: false
+        configured: false,
+        language: langaugeState
     };
 
     const fitState: FitState = {
@@ -254,7 +261,8 @@ describe("serialise", () => {
         modelFit: modelFitState,
         versions: { versions: null },
         graphSettings: { logScaleYAxis: true },
-        configured: false
+        configured: false,
+        language: langaugeState
     };
 
     const expectedCode = { currentCode: ["some code"] };
