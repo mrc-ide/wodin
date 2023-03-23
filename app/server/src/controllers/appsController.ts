@@ -43,7 +43,7 @@ export class AppsController {
                     shareNotFound: shareNotFound || "",
                     mathjaxSrc: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js",
                     i18n: wodinConfig.i18n ?? true, // if option not set then true by default
-                    defaultLanguage: wodinConfig?.defaultLanguage || ""
+                    defaultLanguage: wodinConfig?.defaultLanguage || "en"
                 };
                 res.render("app", viewOptions);
             } else {
