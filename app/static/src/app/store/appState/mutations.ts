@@ -3,17 +3,7 @@ import { AppState, VisualisationTab } from "./state";
 import { AppConfig } from "../../types/responseTypes";
 import { SetAppPayload } from "../../types/payloadTypes";
 import registerTranslations from "../../../../translationPackage/registerTranslations";
-import { codeTabLocales } from "../translations/codeTab";
-import { dataTabLocales } from "../translations/dataTab";
-import { fitTabLocales } from "../translations/fitTab";
-import { genericHelpLocales } from "../translations/genericHelp";
-import { headerLocales } from "../translations/header";
-import { indexPageLocales } from "../translations/indexPage";
-import { optionsTabLocales } from "../translations/optionsTab";
-import { runTabLocales } from "../translations/runTab";
-import { sensitivityTabLocales } from "../translations/sensitivityTab";
-import { stochasticHelpLocales } from "../translations/stochasticHelpTab";
-import { sharedLocales } from "../translations/shared";
+import { collectedTranslations } from "../translations/collectedTranslations";
 
 export enum AppStateMutation {
     SetApp = "SetApp",
@@ -39,34 +29,8 @@ export const appStateMutations: MutationTree<AppState> = {
         state.appsPath = payload.appsPath;
         state.language.currentLanguage = payload.defaultLanguage;
         state.language.enableI18n = payload.enableI18n;
-        registerTranslations(state.language, {
-            en: [
-                codeTabLocales.en,
-                dataTabLocales.en,
-                fitTabLocales.en,
-                genericHelpLocales.en,
-                headerLocales.en,
-                indexPageLocales.en,
-                optionsTabLocales.en,
-                runTabLocales.en,
-                sensitivityTabLocales.en,
-                stochasticHelpLocales.en,
-                sharedLocales.en
-            ],
-            fr: [
-                codeTabLocales.fr,
-                dataTabLocales.fr,
-                fitTabLocales.fr,
-                genericHelpLocales.fr,
-                headerLocales.fr,
-                indexPageLocales.fr,
-                optionsTabLocales.fr,
-                runTabLocales.fr,
-                sensitivityTabLocales.fr,
-                stochasticHelpLocales.fr,
-                sharedLocales.fr
-            ]
-        });
+        registerTranslations(state.language, collectedTranslations);
+        console.log(collectedTranslations);
     },
 
     [AppStateMutation.SetConfig](state: AppState, payload: AppConfig) {
