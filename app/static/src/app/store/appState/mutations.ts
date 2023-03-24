@@ -30,7 +30,6 @@ export const appStateMutations: MutationTree<AppState> = {
         state.language.currentLanguage = payload.defaultLanguage;
         state.language.enableI18n = payload.enableI18n;
         registerTranslations(state.language, collectedTranslations);
-        console.log(collectedTranslations);
     },
 
     [AppStateMutation.SetConfig](state: AppState, payload: AppConfig) {
