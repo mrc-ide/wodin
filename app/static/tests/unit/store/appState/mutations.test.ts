@@ -10,19 +10,19 @@ describe("AppState mutations", () => {
             baseUrl: null,
             language: {
                 currentLanguage: null,
-                i18n: null
+                enableI18n: null
             }
         } as any;
         appStateMutations.SetApp(state, {
             appName: "Test Name",
             baseUrl: "http://localhost:3000",
             defaultLanguage: "en",
-            i18n: true
+            enableI18n: true
         });
         expect(state.appName).toBe("Test Name");
         expect(state.baseUrl).toBe("http://localhost:3000");
         expect(state.language.currentLanguage).toBe("en");
-        expect(state.language.i18n).toBe(true);
+        expect(state.language.enableI18n).toBe(true);
     });
 
     it("sets config", () => {

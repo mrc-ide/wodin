@@ -114,7 +114,7 @@ export const mockGraphSettingsState = (state: Partial<GraphSettingsState> = {}):
 export const mockLanguageState = (state: Partial<LanguageState> = {}): LanguageState => {
     return {
         currentLanguage: "en",
-        i18n: true,
+        enableI18n: true,
         updatingLanguage: false,
         ...state
     };

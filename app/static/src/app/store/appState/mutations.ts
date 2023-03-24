@@ -38,7 +38,7 @@ export const appStateMutations: MutationTree<AppState> = {
         state.baseUrl = payload.baseUrl;
         state.appsPath = payload.appsPath;
         state.language.currentLanguage = payload.defaultLanguage;
-        state.language.i18n = payload.i18n;
+        state.language.enableI18n = payload.enableI18n;
         registerTranslations(state.language, {
             en: [
                 codeTabLocales.en,

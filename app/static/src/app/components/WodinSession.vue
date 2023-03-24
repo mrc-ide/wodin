@@ -17,7 +17,7 @@ export default defineComponent({
         appsPath: String,
         loadSessionId: String,
         shareNotFound: String,
-        i18n: Boolean,
+        enableI18n: Boolean,
         defaultLanguage: String
     },
     components: {
@@ -36,7 +36,7 @@ export default defineComponent({
                 baseUrl,
                 loadSessionId,
                 appsPath,
-                i18n,
+                enableI18n,
                 defaultLanguage
             } = props;
             store.dispatch(AppStateAction.Initialise,
@@ -45,7 +45,7 @@ export default defineComponent({
                     baseUrl,
                     loadSessionId,
                     appsPath,
-                    i18n,
+                    enableI18n,
                     defaultLanguage
                 });
         });

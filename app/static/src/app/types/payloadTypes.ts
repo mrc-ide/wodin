@@ -5,7 +5,7 @@ export interface SetAppPayload {
     appName: string
     baseUrl: string
     appsPath: string,
-    i18n: boolean,
+    enableI18n: boolean,
     defaultLanguage: Language
 }
 

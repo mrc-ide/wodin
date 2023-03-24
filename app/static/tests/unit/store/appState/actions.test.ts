@@ -25,7 +25,7 @@ describe("AppState actions", () => {
     const baseUrl = "http://localhost:3000";
     const appsPath = "apps";
     const defaultLanguage = "en";
-    const i18n = true;
+    const enableI18n = true;
     const getStore = () => {
         const state = mockBasicState({ config: null, sessionId: "1234" });
         return new Vuex.Store<BasicState>({
@@ -68,7 +68,7 @@ describe("AppState actions", () => {
 
         const spyOnAddSessionId = jest.spyOn(localStorageManager, "addSessionId");
         const payload = {
-            appName: "test-app", loadSessionId: "", baseUrl, appsPath, defaultLanguage, i18n
+            appName: "test-app", loadSessionId: "", baseUrl, appsPath, defaultLanguage, enableI18n
         };
         await (appStateActions[AppStateAction.Initialise] as any)({
             commit, state, dispatch, rootState, getters
@@ -81,7 +81,7 @@ describe("AppState actions", () => {
             baseUrl,
             appsPath,
             defaultLanguage,
-            i18n
+            enableI18n
         });
 
         expect(commit.mock.calls[1][0]).toBe(AppStateMutation.SetConfig);
@@ -181,7 +181,7 @@ describe("AppState actions", () => {
         const rootState = state;
 
         const payload = {
-            appName: "test-app", loadSessionId: "", baseUrl, appsPath, defaultLanguage, i18n
+            appName: "test-app", loadSessionId: "", baseUrl, appsPath, defaultLanguage, enableI18n
         };
         await (appStateActions[AppStateAction.Initialise] as any)({
             commit, state, dispatch, rootState, getters
@@ -194,7 +194,7 @@ describe("AppState actions", () => {
             baseUrl,
             appsPath,
             defaultLanguage,
-            i18n
+            enableI18n
         });
 
         expect(commit.mock.calls[1][0]).toBe(`errors/${ErrorsMutation.AddError}`);

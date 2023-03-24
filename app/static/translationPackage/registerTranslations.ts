@@ -15,10 +15,10 @@ export default function registerTranslations<L extends string>(languageState: La
     });
     const languages = Object.keys(resourceObject) as L[];
     languages.forEach(lng => {
-        // if i18n is off we only register resources for
+        // if enableI18n is off we only register resources for
         // default language config (which is already set
         // by this point)
-        if (languageState.i18n || lng == languageState.currentLanguage) {
+        if (languageState.enableI18n || lng == languageState.currentLanguage) {
             registerResources(lng, resourceObject[lng]);
         }
     })

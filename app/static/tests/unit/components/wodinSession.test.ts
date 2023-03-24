@@ -22,7 +22,7 @@ describe("WodinSession", () => {
         language = {
             currentLanguage: "fr",
             updatingLanguage: false,
-            i18n: false
+            enableI18n: false
         }) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
@@ -54,7 +54,7 @@ describe("WodinSession", () => {
                 appsPath: "apps",
                 loadSessionId: "session1",
                 defaultLanguage: "en",
-                i18n: true,
+                enableI18n: true,
                 shareNotFound
             }
         };
@@ -77,7 +77,7 @@ describe("WodinSession", () => {
             appsPath: "apps",
             baseUrl: "http://localhost:3000",
             defaultLanguage: "en",
-            i18n: true
+            enableI18n: true
         });
     });
 

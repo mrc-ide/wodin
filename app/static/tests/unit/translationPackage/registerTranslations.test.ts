@@ -2,10 +2,10 @@ import i18next from "i18next";
 import registerTranslations from "../../../translationPackage/registerTranslations";
 
 describe("Registering translations", () => {
-    const getLanguageState = (currentLanguage = "en", i18n = true) => {
+    const getLanguageState = (currentLanguage = "en", enableI18n = true) => {
         return {
             currentLanguage,
-            i18n,
+            enableI18n,
             updatingLanguage: false
         };
     };

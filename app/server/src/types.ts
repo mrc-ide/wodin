@@ -10,7 +10,7 @@ export interface WodinConfig {
     odinApi: string,
     redisUrl: string,
     appsPath: string,
-    i18n: boolean,
+    enableI18n: boolean,
     defaultLanguage: string
 }
 

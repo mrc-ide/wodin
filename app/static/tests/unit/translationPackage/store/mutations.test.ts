@@ -5,11 +5,11 @@ const expectLanguageState = (
     state: LanguageState,
     currentLanguage = "en",
     updatingLanguage = false,
-    i18n = true
+    enableI18n = true
 ) => {
     expect(state.currentLanguage).toBe(currentLanguage);
     expect(state.updatingLanguage).toBe(updatingLanguage);
-    expect(state.i18n).toBe(i18n);
+    expect(state.enableI18n).toBe(enableI18n);
 };
 
 describe("Language mutations", () => {
@@ -17,7 +17,7 @@ describe("Language mutations", () => {
         const state = {
             currentLanguage: "en",
             updatingLanguage: false,
-            i18n: true
+            enableI18n: true
         };
         mutations.ChangeLanguage(state, "fr");
         expectLanguageState(state, "fr", false, true);
@@ -27,7 +27,7 @@ describe("Language mutations", () => {
         const state = {
             currentLanguage: "en",
             updatingLanguage: false,
-            i18n: true
+            enableI18n: true
         };
         mutations.SetUpdatingLanguage(state, true);
         expectLanguageState(state, "en", true, true);

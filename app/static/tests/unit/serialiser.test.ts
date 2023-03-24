@@ -218,7 +218,7 @@ describe("serialise", () => {
     const langaugeState = {
         currentLanguage: "en",
         updatingLanguage: false,
-        i18n: true
+        enableI18n: true
     };
 
     const basicState: BasicState = {
