@@ -25,6 +25,6 @@ const locales = [
 ];
 
 export const collectedTranslations = {
-    en: locales.map(locale => locale.en),
-    fr: locales.map(locale => locale.fr)
-}
+    en: locales.map((locale) => locale.en),
+    fr: locales.map((locale) => locale.fr)
+};
