@@ -57,7 +57,7 @@ describe("Registering translations", () => {
             });
             expect(true).toBe(false);
         } catch (err: any) {
-            expect(err.toString()).toBe("Error: The keys [hello] are shared by more than one resource bundle.");
+            expect(err.toString()).toBe("Error: The keys [hello] are shared by more than one resource.");
         }
     });
 });
