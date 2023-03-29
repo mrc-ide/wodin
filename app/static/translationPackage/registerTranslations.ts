@@ -42,7 +42,7 @@ const addResource = (lng: string, resource: Resource) => {
         return resourceKeys.indexOf(key) > -1;
     });
     if (commonKeys.length > 0) {
-        throw new Error(`The keys [${commonKeys.join(", ")}] are shared by more than one resource bundle.`)
+        throw new Error(`The keys [${commonKeys.join(", ")}] are shared by more than one resource.`)
     } else {
         i18next.addResources(lng, "translation", resource);
     }
