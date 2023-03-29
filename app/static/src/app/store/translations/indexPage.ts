@@ -1,4 +1,6 @@
-interface IndexPageTranslations {
+import { TranslationLocales } from "../../types/languageTypes";
+
+interface IndexPageTranslations extends TranslationLocales {
     indexPageExample: string
 }
 

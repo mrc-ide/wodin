@@ -1,4 +1,6 @@
-interface SensitivityTabTranslations {
+import { TranslationLocales } from "../../types/languageTypes";
+
+interface SensitivityTabTranslations extends TranslationLocales {
     sensitivityTabExample: string
 }
 

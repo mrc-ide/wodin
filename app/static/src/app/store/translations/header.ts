@@ -1,4 +1,6 @@
-interface HeaderTranslations {
+import { TranslationLocales } from "../../types/languageTypes";
+
+interface HeaderTranslations extends TranslationLocales {
     headerExample: string
 }
 

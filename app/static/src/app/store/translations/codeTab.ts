@@ -1,4 +1,6 @@
-interface CodeTabTranslations {
+import { TranslationLocales } from "../../types/languageTypes";
+
+interface CodeTabTranslations extends TranslationLocales {
     codeTabExample: string
 }
 

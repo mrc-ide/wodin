@@ -1,4 +1,6 @@
-interface DataTabTranslations {
+import { TranslationLocales } from "../../types/languageTypes";
+
+interface DataTabTranslations extends TranslationLocales {
     dataTabExample: string
 }
 

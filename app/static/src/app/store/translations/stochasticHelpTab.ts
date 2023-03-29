@@ -1,4 +1,6 @@
-interface StochasticHelpTranslations {
+import { TranslationLocales } from "../../types/languageTypes";
+
+interface StochasticHelpTranslations extends TranslationLocales {
     stochasticHelpExample: string
 }
 

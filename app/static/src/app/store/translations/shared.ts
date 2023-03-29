@@ -1,4 +1,6 @@
-interface SharedTranslations {
+import { TranslationLocales } from "../../types/languageTypes";
+
+interface SharedTranslations extends TranslationLocales {
     sharedExample: string
 }
 
