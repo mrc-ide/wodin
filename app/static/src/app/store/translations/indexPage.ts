@@ -2,11 +2,11 @@ interface IndexPageTranslations {
     indexPageExample: string
 }
 
-const en: Partial<IndexPageTranslations> = {
+const en: IndexPageTranslations = {
     indexPageExample: "hello index page"
 };
 
-const fr: Partial<IndexPageTranslations> = {
+const fr: IndexPageTranslations = {
     indexPageExample: "bonjour la page d'index"
 };
 

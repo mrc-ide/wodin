@@ -2,11 +2,11 @@ interface SensitivityTabTranslations {
     sensitivityTabExample: string
 }
 
-const en: Partial<SensitivityTabTranslations> = {
+const en: SensitivityTabTranslations = {
     sensitivityTabExample: "hello sensitivity tab"
 };
 
-const fr: Partial<SensitivityTabTranslations> = {
+const fr: SensitivityTabTranslations = {
     sensitivityTabExample: "bonjour onglet sensibilité"
 };
 

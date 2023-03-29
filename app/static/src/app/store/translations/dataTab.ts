@@ -2,11 +2,11 @@ interface DataTabTranslations {
     dataTabExample: string
 }
 
-const en: Partial<DataTabTranslations> = {
+const en: DataTabTranslations = {
     dataTabExample: "hello data tab"
 };
 
-const fr: Partial<DataTabTranslations> = {
+const fr: DataTabTranslations = {
     dataTabExample: "bonjour onglet données"
 };
 

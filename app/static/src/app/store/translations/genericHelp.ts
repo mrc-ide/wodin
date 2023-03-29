@@ -2,11 +2,11 @@ interface GenericHelpTranslations {
     genericHelpExample: string
 }
 
-const en: Partial<GenericHelpTranslations> = {
+const en: GenericHelpTranslations = {
     genericHelpExample: "hello generic help"
 };
 
-const fr: Partial<GenericHelpTranslations> = {
+const fr: GenericHelpTranslations = {
     genericHelpExample: "bonjour aide générique"
 };
 

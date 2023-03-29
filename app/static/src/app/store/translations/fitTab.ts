@@ -2,11 +2,11 @@ interface FitTabTranslations {
     fitTabExample: string
 }
 
-const en: Partial<FitTabTranslations> = {
+const en: FitTabTranslations = {
     fitTabExample: "hello fit tab"
 };
 
-const fr: Partial<FitTabTranslations> = {
+const fr: FitTabTranslations = {
     fitTabExample: "bonjour onglet fit"
 };
 

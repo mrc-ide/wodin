@@ -2,11 +2,11 @@ interface StochasticHelpTranslations {
     stochasticHelpExample: string
 }
 
-const en: Partial<StochasticHelpTranslations> = {
+const en: StochasticHelpTranslations = {
     stochasticHelpExample: "hello stochastic help"
 };
 
-const fr: Partial<StochasticHelpTranslations> = {
+const fr: StochasticHelpTranslations = {
     stochasticHelpExample: "bonjour aide stochastique"
 };
 

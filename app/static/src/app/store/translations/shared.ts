@@ -2,11 +2,11 @@ interface SharedTranslations {
     sharedExample: string
 }
 
-const en: Partial<SharedTranslations> = {
+const en: SharedTranslations = {
     sharedExample: "hello shared"
 };
 
-const fr: Partial<SharedTranslations> = {
+const fr: SharedTranslations = {
     sharedExample: "bonjour partagé"
 };
 

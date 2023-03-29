@@ -2,11 +2,11 @@ interface RunTabTranslations {
     runTabExample: string
 }
 
-const en: Partial<RunTabTranslations> = {
+const en: RunTabTranslations = {
     runTabExample: "hello run tab"
 };
 
-const fr: Partial<RunTabTranslations> = {
+const fr: RunTabTranslations = {
     runTabExample: "bonjour run tab"
 };
 

@@ -2,11 +2,11 @@ interface CodeTabTranslations {
     codeTabExample: string
 }
 
-const en: Partial<CodeTabTranslations> = {
+const en: CodeTabTranslations = {
     codeTabExample: "hello code tab"
 };
 
-const fr: Partial<CodeTabTranslations> = {
+const fr: CodeTabTranslations = {
     codeTabExample: "bonjour onglet code"
 };
 

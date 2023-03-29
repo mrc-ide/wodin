@@ -2,11 +2,11 @@ interface OptionsTabTranslations {
     optionsTabExample: string
 }
 
-const en: Partial<OptionsTabTranslations> = {
+const en: OptionsTabTranslations = {
     optionsTabExample: "hello options tab"
 };
 
-const fr: Partial<OptionsTabTranslations> = {
+const fr: OptionsTabTranslations = {
     optionsTabExample: "bonjour onglet options"
 };
 
