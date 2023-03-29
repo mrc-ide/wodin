@@ -22,6 +22,7 @@ import {
 import { VersionsState } from "../src/app/store/versions/state";
 import { GraphSettingsState } from "../src/app/store/graphSettings/state";
 import { LanguageState } from "../translationPackage/store/state";
+import { Language } from "../src/app/types/languageTypes";
 
 export const mockAxios = new MockAdapter(axios);
 
@@ -113,7 +114,7 @@ export const mockGraphSettingsState = (state: Partial<GraphSettingsState> = {}):
 
 export const mockLanguageState = (state: Partial<LanguageState> = {}): LanguageState => {
     return {
-        currentLanguage: "en",
+        currentLanguage: Language.en,
         enableI18n: true,
         updatingLanguage: false,
         ...state

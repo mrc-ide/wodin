@@ -20,11 +20,12 @@ import { serialiseState } from "../../../../src/app/serialise";
 import { SessionsAction } from "../../../../src/app/store/sessions/actions";
 import { localStorageManager } from "../../../../src/app/localStorageManager";
 import { AppStateGetter } from "../../../../src/app/store/appState/getters";
+import { Language } from "../../../../src/app/types/languageTypes";
 
 describe("AppState actions", () => {
     const baseUrl = "http://localhost:3000";
     const appsPath = "apps";
-    const defaultLanguage = "en";
+    const defaultLanguage = Language.en;
     const enableI18n = true;
     const getStore = () => {
         const state = mockBasicState({ config: null, sessionId: "1234" });

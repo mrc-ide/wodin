@@ -1,5 +1,6 @@
 import { appStateMutations } from "../../../../src/app/store/appState/mutations";
 import { VisualisationTab } from "../../../../src/app/store/appState/state";
+import { Language } from "../../../../src/app/types/languageTypes";
 import { mockBasicState } from "../../../mocks";
 
 describe("AppState mutations", () => {
@@ -16,12 +17,12 @@ describe("AppState mutations", () => {
         appStateMutations.SetApp(state, {
             appName: "Test Name",
             baseUrl: "http://localhost:3000",
-            defaultLanguage: "en",
+            defaultLanguage: Language.en,
             enableI18n: true
         });
         expect(state.appName).toBe("Test Name");
         expect(state.baseUrl).toBe("http://localhost:3000");
-        expect(state.language.currentLanguage).toBe("en");
+        expect(state.language.currentLanguage).toBe(Language.en);
         expect(state.language.enableI18n).toBe(true);
     });
 

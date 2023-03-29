@@ -17,6 +17,7 @@ import {
     mockSensitivityState, mockVersionsState
 } from "../mocks";
 import { defaultState as defaultGraphSettingsState } from "../../src/app/store/graphSettings/graphSettings";
+import { Language } from "../../src/app/types/languageTypes";
 
 describe("serialise", () => {
     const codeState = {
@@ -216,7 +217,7 @@ describe("serialise", () => {
     };
 
     const langaugeState = {
-        currentLanguage: "en",
+        currentLanguage: Language.en,
         updatingLanguage: false,
         enableI18n: true
     };

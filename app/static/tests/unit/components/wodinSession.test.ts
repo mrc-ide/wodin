@@ -6,6 +6,7 @@ import { AppStateAction } from "../../../src/app/store/appState/actions";
 import { mockBasicState } from "../../mocks";
 import { BasicState } from "../../../src/app/store/basic/state";
 import { ErrorsMutation } from "../../../src/app/store/errors/mutations";
+import { Language } from "../../../src/app/types/languageTypes";
 
 describe("WodinSession", () => {
     const mockInitialise = jest.fn();
@@ -20,7 +21,7 @@ describe("WodinSession", () => {
         baseUrl = "http://localhost:3000",
         appsPath = "apps",
         language = {
-            currentLanguage: "fr",
+            currentLanguage: Language.fr,
             updatingLanguage: false,
             enableI18n: false
         }) => {
@@ -53,7 +54,7 @@ describe("WodinSession", () => {
                 baseUrl: "http://localhost:3000",
                 appsPath: "apps",
                 loadSessionId: "session1",
-                defaultLanguage: "en",
+                defaultLanguage: Language.en,
                 enableI18n: true,
                 shareNotFound
             }
@@ -76,7 +77,7 @@ describe("WodinSession", () => {
             loadSessionId: "session1",
             appsPath: "apps",
             baseUrl: "http://localhost:3000",
-            defaultLanguage: "en",
+            defaultLanguage: Language.en,
             enableI18n: true
         });
     });

@@ -1,8 +1,9 @@
 import i18next from "i18next";
+import { Language } from "../../../src/app/types/languageTypes";
 import registerTranslations from "../../../translationPackage/registerTranslations";
 
 describe("Registering translations", () => {
-    const getLanguageState = (currentLanguage = "en", enableI18n = true) => {
+    const getLanguageState = (currentLanguage = Language.en, enableI18n = true) => {
         return {
             currentLanguage,
             enableI18n,
@@ -29,21 +30,21 @@ describe("Registering translations", () => {
             en: [getEnglishLocales()],
             fr: [getFrenchLocales()]
         });
-        expect(i18next.getResourceBundle("en", "translation")).toStrictEqual({
+        expect(i18next.getResourceBundle(Language.en, "translation")).toStrictEqual({
             hello: "hey"
         });
-        expect(i18next.getResourceBundle("fr", "translation")).toStrictEqual({
+        expect(i18next.getResourceBundle(Language.fr, "translation")).toStrictEqual({
             hello: "bonjour"
         });
     });
 
     it("only registers currentLanguage if i18n is off", () => {
-        registerTranslations(getLanguageState("fr", false), {
+        registerTranslations(getLanguageState(Language.fr, false), {
             en: [getEnglishLocales()],
             fr: [getFrenchLocales()]
         });
-        expect(i18next.getResourceBundle("en", "translation")).toBeUndefined();
-        expect(i18next.getResourceBundle("fr", "translation")).toStrictEqual({
+        expect(i18next.getResourceBundle(Language.en, "translation")).toBeUndefined();
+        expect(i18next.getResourceBundle(Language.fr, "translation")).toStrictEqual({
             hello: "bonjour"
         });
     });
