@@ -1,6 +1,6 @@
 # WODIN
 
-[odin](https://github.com/mrc-ide/odin) on the web
+[odin](https://github.com/mrc-ide/odin) on the web.
 
 ## Introduction
 
