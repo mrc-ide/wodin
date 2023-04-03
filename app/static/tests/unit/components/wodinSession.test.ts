@@ -6,6 +6,7 @@ import { AppStateAction } from "../../../src/app/store/appState/actions";
 import { mockBasicState } from "../../mocks";
 import { BasicState } from "../../../src/app/store/basic/state";
 import { ErrorsMutation } from "../../../src/app/store/errors/mutations";
+import { Language } from "../../../src/app/types/languageTypes";
 
 describe("WodinSession", () => {
     const mockInitialise = jest.fn();
@@ -18,9 +19,19 @@ describe("WodinSession", () => {
     const getWrapper = (appName: string | null = "test",
         shareNotFound = "",
         baseUrl = "http://localhost:3000",
-        appsPath = "apps") => {
+        appsPath = "apps",
+        language = {
+            currentLanguage: Language.fr,
+            updatingLanguage: false,
+            enableI18n: false
+        }) => {
         const store = new Vuex.Store<BasicState>({
-            state: mockBasicState({ appName, baseUrl, appsPath }),
+            state: mockBasicState({
+                appName,
+                baseUrl,
+                appsPath,
+                language
+            }),
             actions: {
                 [AppStateAction.Initialise]: mockInitialise
             },
@@ -43,6 +54,8 @@ describe("WodinSession", () => {
                 baseUrl: "http://localhost:3000",
                 appsPath: "apps",
                 loadSessionId: "session1",
+                defaultLanguage: Language.en,
+                enableI18n: true,
                 shareNotFound
             }
         };
@@ -63,7 +76,9 @@ describe("WodinSession", () => {
             appName: "testApp",
             loadSessionId: "session1",
             appsPath: "apps",
-            baseUrl: "http://localhost:3000"
+            baseUrl: "http://localhost:3000",
+            defaultLanguage: Language.en,
+            enableI18n: true
         });
     });
 
