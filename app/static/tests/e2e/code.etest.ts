@@ -38,6 +38,10 @@ const editorGlyphs: any = {
     warning: "fa-solid fa-triangle-exclamation"
 };
 
+test.beforeEach(async ({ page }) => {
+    await page.goto("/apps/day1");
+});
+
 const expectMonacoSummary = async (state: any, line: number, numOfLines: number, page: any) => {
     Array.from(Array(numOfLines).keys()).forEach(async (_, i) => {
         const lineElement = await page.locator(`.view-overlays div:nth-child(${i + 1}) >> div`);
