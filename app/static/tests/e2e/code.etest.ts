@@ -1,4 +1,5 @@
 import { expect, test, Page } from "@playwright/test";
+import { nextTick } from "vue";
 import PlaywrightConfig from "../../playwright.config";
 import { writeCode } from "./utils";
 
@@ -32,6 +33,41 @@ I0 <- user(1)
 beta <- user(4)
 sigma <- user(2)
 `;
+
+const editorGlyphs: any = {
+    error: "fa-solid fa-circle-xmark",
+    warning: "fa-solid fa-triangle-exclamation"
+};
+
+const expectMonacoSummary = async (state: any, line: number, numOfLines: number, page: any) => {
+    Array.from(Array(numOfLines).keys()).forEach(async (_, i) => {
+        const lineElement = await page.locator(`.view-overlays div:nth-child(${i + 1}) >> div`);
+        const glyphElement = await page.locator(`.margin-view-overlays div:nth-child(${i + 1}) >> div`);
+        if (i === line - 1) {
+            expect(lineElement).toHaveClass(`cdr editor-${state}-background`);
+            expect(glyphElement.nth(0)).toHaveClass(`cgmr codicon ${editorGlyphs[state]} ${state}-glyph-style ms-1`);
+            expect(glyphElement.nth(1)).toHaveClass("line-numbers lh-odd");
+        } else if (i === numOfLines - 1) {
+            expect(lineElement).toHaveClass("current-line");
+            expect(glyphElement.nth(0)).toHaveClass("current-line current-line-margin-both");
+            expect(glyphElement.nth(1)).toHaveClass("active-line-number line-numbers lh-odd");
+        } else {
+            expect(lineElement).toHaveCount(0);
+            expect(glyphElement).toHaveClass("line-numbers lh-odd");
+        }
+    });
+};
+
+const expectMonacoHover = async (type: "glyph" | "content", line: number, message: string, page: any) => {
+    const isGlyph = type === "glyph";
+    const hoverElem = `.${isGlyph ? "margin-" : ""}view-overlays div:nth-child(${line}) >> div`;
+    const tooltipElem = `${isGlyph ? ".overlayWidgets" : ".overflowingContentWidgets"} .hover-contents div p`;
+    await page.hover(hoverElem, { force: true });
+    const tooltip = await page.locator(tooltipElem);
+    await tooltip.waitFor({ timeout: 500 });
+    await expect(tooltip).toHaveText(message);
+    await expect(tooltip).toHaveCSS("visibility", "visible");
+};
 
 test.describe("Code Tab tests", () => {
     const { timeout } = PlaywrightConfig;
@@ -93,6 +129,78 @@ test.describe("Code Tab tests", () => {
         await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is not valid");
         const compileBtn = await page.locator("#compile-btn");
         expect(await compileBtn.isDisabled()).toBe(true);
+    });
+
+    test("can see red background and error glyph when update code with syntax error", async ({ page }) => {
+        const invalidCode = "alpha <- 2\nderiv(y1) test * faker\nbeta <- 10";
+        await writeCode(page, invalidCode);
+
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
+            "Model code has been updated. Compile code and Run Model to update.", {
+                timeout
+            }
+        );
+        await expectMonacoSummary("error", 2, 3, page);
+    });
+
+    test("can see glyph hover message with correct text with syntax error", async ({ page }) => {
+        const invalidCode = "alpha <- 2\nderiv(y1) test * faker\nbeta <- 10";
+        await writeCode(page, invalidCode);
+
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
+            "Model code has been updated. Compile code and Run Model to update.", {
+                timeout
+            }
+        );
+        await expectMonacoHover("glyph", 2, "unexpected symbol", page);
+    });
+
+    test("can see line content hover message with correct text with syntax error", async ({ page }) => {
+        const invalidCode = "alpha <- 2\nderiv(y1) test * faker\nbeta <- 10";
+        await writeCode(page, invalidCode);
+
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
+            "Model code has been updated. Compile code and Run Model to update.", {
+                timeout
+            }
+        );
+        await expectMonacoHover("content", 2, "unexpected symbol", page);
+    });
+
+    test("can see orange background and warning glyph when update code with unused var", async ({ page }) => {
+        const warningCode = "beta <- 10\nderiv(I) <- beta * 2\nalpha <- 2\ninitial(I) <- 2";
+        await writeCode(page, warningCode);
+
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
+            "Model code has been updated. Compile code and Run Model to update.", {
+                timeout
+            }
+        );
+        await expectMonacoSummary("warning", 3, 4, page);
+    });
+
+    test("can see glyph hover message with correct text with warning", async ({ page }) => {
+        const warningCode = "beta <- 10\nderiv(I) <- beta * 2\nalpha <- 2\ninitial(I) <- 2";
+        await writeCode(page, warningCode);
+
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
+            "Model code has been updated. Compile code and Run Model to update.", {
+                timeout
+            }
+        );
+        await expectMonacoHover("glyph", 3, "Unused equation: alpha", page);
+    });
+
+    test("can see line content hover message with correct text with warning", async ({ page }) => {
+        const warningCode = "beta <- 10\nderiv(I) <- beta * 2\nalpha <- 2\ninitial(I) <- 2";
+        await writeCode(page, warningCode);
+
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
+            "Model code has been updated. Compile code and Run Model to update.", {
+                timeout
+            }
+        );
+        await expectMonacoHover("content", 3, "Unused equation: alpha", page);
     });
 
     test("can reset code editor ", async ({ page }) => {

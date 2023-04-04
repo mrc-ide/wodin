@@ -50,7 +50,7 @@ describe("serialise", () => {
                         name: "beta", default: 0.1, min: -1, max: 10.5, is_integer: false, rank: 1
                     }
                 ],
-                messages: ["a test message"]
+                messages: [{ message: "a test message", line: [1] }]
             },
             model: "a test model",
             error: { line: [1], message: "test model error" }
