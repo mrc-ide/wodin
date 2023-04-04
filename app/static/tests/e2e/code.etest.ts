@@ -1,5 +1,4 @@
 import { expect, test, Page } from "@playwright/test";
-import { nextTick } from "vue";
 import PlaywrightConfig from "../../playwright.config";
 import { writeCode } from "./utils";
 
