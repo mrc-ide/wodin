@@ -67,17 +67,13 @@ const expectMonacoHover = async (type: "glyph" | "content", line: number, messag
     const tooltipElem = `${isGlyph ? ".overlayWidgets" : ".overflowingContentWidgets"} .hover-contents div p`;
     await page.hover(hoverElem, { force: true });
     const tooltip = await page.locator(tooltipElem);
-    await tooltip.waitFor({ timeout: 500 });
+    await tooltip.waitFor({ timeout: 1000 });
     await expect(tooltip).toHaveText(message);
     await expect(tooltip).toHaveCSS("visibility", "visible");
 };
 
 test.describe("Code Tab tests", () => {
     const { timeout } = PlaywrightConfig;
-
-    test.beforeEach(async ({ page }) => {
-        await page.goto("/apps/day1");
-    });
 
     const getRunPlotOpacity = async (page: Page) => {
         const plot = await page.locator(".wodin-plot-container");
