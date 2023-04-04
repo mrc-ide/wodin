@@ -237,7 +237,7 @@ describe("CodeEditor", () => {
         });
     });
 
-    it("only executes deltaDecorations once when success", (done) => {
+    it("only executes deltaDecorations once when success response", (done) => {
         const mockUpdateCode = jest.fn();
         const odinSuccessResponse = {
             valid: true
