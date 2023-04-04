@@ -16,7 +16,9 @@ export default defineComponent({
         baseUrl: String,
         appsPath: String,
         loadSessionId: String,
-        shareNotFound: String
+        shareNotFound: String,
+        enableI18n: Boolean,
+        defaultLanguage: String
     },
     components: {
         RouterView
@@ -33,14 +35,18 @@ export default defineComponent({
                 appName,
                 baseUrl,
                 loadSessionId,
-                appsPath
+                appsPath,
+                enableI18n,
+                defaultLanguage
             } = props;
             store.dispatch(AppStateAction.Initialise,
                 {
                     appName,
                     baseUrl,
                     loadSessionId,
-                    appsPath
+                    appsPath,
+                    enableI18n,
+                    defaultLanguage
                 });
         });
 
