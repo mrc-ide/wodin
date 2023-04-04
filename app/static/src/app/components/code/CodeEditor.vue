@@ -19,7 +19,7 @@ import { useStore } from "vuex";
 import loader from "@monaco-editor/loader";
 import * as monaco from "monaco-editor";
 import Timeout = NodeJS.Timeout;
-import { AppConfig } from "../../types/responseTypes";
+import { AppConfig, OdinModelResponse } from "../../types/responseTypes";
 import { CodeAction } from "../../store/code/actions";
 
 export default defineComponent({
@@ -29,23 +29,92 @@ export default defineComponent({
         const store = useStore();
 
         const editor = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
+        const oldDecorations = ref<string[]>([]);
 
         const currentCode = computed(() => store.state.code.currentCode);
         const readOnly = computed(() => (store.state.config as AppConfig).readOnlyCode);
         const defaultCode = computed(() => (store.state.config as AppConfig).defaultCode);
         const defaultCodeExists = computed(() => defaultCode.value && (defaultCode.value.length && !readOnly.value));
+        const odinModelResponse = computed(() => store.state.model.odinModelResponse as OdinModelResponse);
 
         let newCode: string[] | null = null;
         let timeoutId: null | Timeout = null;
         let editorInstance: monaco.editor.IStandaloneCodeEditor;
-        const updateCode = () => store.dispatch(`code/${CodeAction.UpdateCode}`, newCode, { root: true });
+
+        const getMonacoRange = (line: number, reset = false) => {
+            return {
+                startLineNumber: line,
+                startColumn: reset ? 1 : 0,
+                endLineNumber: line,
+                endColumn: reset ? 1 : Infinity
+            };
+        };
+
+        type EditorStates = "error" | "warning"
+
+        type EditorGlyphs = {
+            [K in EditorStates]: string
+        }
+
+        const editorGlyphs: EditorGlyphs = {
+            error: "fa-solid fa-circle-xmark",
+            warning: "fa-solid fa-triangle-exclamation"
+        };
+
+        const getEditorOptions = (state: EditorStates, message: string) => {
+            return {
+                className: `editor-${state}-background`,
+                glyphMarginClassName: `${editorGlyphs[state]} ${state}-glyph-style ms-1`,
+                hoverMessage: { value: message },
+                glyphMarginHoverMessage: { value: message }
+            };
+        };
+        const getNewDecorations = (lines: number[], state: EditorStates, message: string) => {
+            const errorLineDecorations = lines.map((line) => {
+                return {
+                    range: getMonacoRange(line),
+                    options: getEditorOptions(state, message)
+                };
+            });
+            return errorLineDecorations;
+        };
+        const applyDecorations = (lines: number[], state: EditorStates, message: string, decorations: string[]) => {
+            let decors = decorations;
+            decors = editorInstance.deltaDecorations(decors, getNewDecorations(lines, state, message));
+            oldDecorations.value = decors;
+        };
+        const resetDecorations = (decorations: string[]) => {
+            editorInstance.deltaDecorations(decorations, [{ range: getMonacoRange(1, true), options: {} }]);
+        };
+
+        const updateCode = () => {
+            store.dispatch(`code/${CodeAction.UpdateCode}`, newCode, { root: true })
+                .then(() => {
+                    resetDecorations(oldDecorations.value);
+                })
+                .then(() => {
+                    if (odinModelResponse.value.error) {
+                        const newErrors = odinModelResponse.value.error.line || [];
+                        const message = odinModelResponse.value.error.message || "";
+                        applyDecorations(newErrors, "error", message, oldDecorations.value);
+                    }
+                    if (odinModelResponse.value.metadata?.messages) {
+                        const { messages } = odinModelResponse.value.metadata;
+                        messages.forEach((message) => {
+                            const warningLine = message.line || [];
+                            const warningMessage = message.message || "";
+                            applyDecorations(warningLine, "warning", warningMessage, oldDecorations.value);
+                        });
+                    }
+                });
+        };
 
         const setPendingCodeUpdate = () => {
             if (!timeoutId) {
                 timeoutId = setTimeout(() => {
                     updateCode();
                     timeoutId = null;
-                }, 1000);
+                }, 700); // 1 second felt too long
             }
         };
 
@@ -56,7 +125,9 @@ export default defineComponent({
                     language: "r",
                     minimap: { enabled: false },
                     readOnly: readOnly.value,
-                    automaticLayout: true
+                    automaticLayout: true,
+                    glyphMargin: true,
+                    lineNumbersMinChars: 3 // so glyph margin isn't huge
                 });
 
                 editorInstance.onDidChangeModelContent(() => {
