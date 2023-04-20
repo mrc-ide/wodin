@@ -42,7 +42,8 @@ const expectDeltaDecorationInputs = (line: number, state: string, message: strin
         changeHandler();
         setTimeout(() => {
             // 1 for resetting all decorations and 1 for adding state decorations
-            expect(mockMonacoEditor.deltaDecorations).toHaveBeenCalledTimes(2);
+            // x2 (these trigger on mount too)
+            expect(mockMonacoEditor.deltaDecorations).toHaveBeenCalledTimes(4);
             expect(mockMonacoEditor.deltaDecorations.mock.calls[0][1]).toStrictEqual([{
                 range: monacoLineRange(1, true),
                 options: {}
@@ -198,7 +199,7 @@ describe("CodeEditor", () => {
             const changeHandler = mockMonacoEditor.onDidChangeModelContent.mock.calls[0][0];
             changeHandler();
             setTimeout(() => {
-                expect(mockMonacoEditor.deltaDecorations).toHaveBeenCalledTimes(2);
+                expect(mockMonacoEditor.deltaDecorations).toHaveBeenCalledTimes(4);
                 expect(mockMonacoEditor.deltaDecorations.mock.calls[1][1]).toStrictEqual([]);
                 done();
             }, 700);
@@ -230,24 +231,8 @@ describe("CodeEditor", () => {
             const changeHandler = mockMonacoEditor.onDidChangeModelContent.mock.calls[0][0];
             changeHandler();
             setTimeout(() => {
-                expect(mockMonacoEditor.deltaDecorations).toHaveBeenCalledTimes(2);
+                expect(mockMonacoEditor.deltaDecorations).toHaveBeenCalledTimes(4);
                 expect(mockMonacoEditor.deltaDecorations.mock.calls[1][1]).toStrictEqual([]);
-                done();
-            }, 700);
-        });
-    });
-
-    it("only executes deltaDecorations once when success response", (done) => {
-        const mockUpdateCode = jest.fn();
-        const odinSuccessResponse = {
-            valid: true
-        };
-        getWrapper(false, mockUpdateCode, ["hey code"], odinSuccessResponse);
-        setTimeout(() => {
-            const changeHandler = mockMonacoEditor.onDidChangeModelContent.mock.calls[0][0];
-            changeHandler();
-            setTimeout(() => {
-                expect(mockMonacoEditor.deltaDecorations).toHaveBeenCalledTimes(1);
                 done();
             }, 700);
         });

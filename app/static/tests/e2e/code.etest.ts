@@ -42,8 +42,8 @@ test.beforeEach(async ({ page }) => {
     await page.goto("/apps/day1");
 });
 
-const expectMonacoSummary = async (state: any, line: number, numOfLines: number, page: any) => {
-    Array.from(Array(numOfLines).keys()).forEach(async (_, i) => {
+const expectMonacoDecoration = async (state: any, line: number, numOfLines: number, page: any) => {
+    [...Array(numOfLines).keys()].forEach(async (_, i) => {
         const lineElement = await page.locator(`.view-overlays div:nth-child(${i + 1}) >> div`);
         const glyphElement = await page.locator(`.margin-view-overlays div:nth-child(${i + 1}) >> div`);
         if (i === line - 1) {
@@ -139,7 +139,7 @@ test.describe("Code Tab tests", () => {
                 timeout
             }
         );
-        await expectMonacoSummary("error", 2, 3, page);
+        await expectMonacoDecoration("error", 2, 3, page);
     });
 
     test("can see glyph hover message with correct text with syntax error", async ({ page }) => {
@@ -175,7 +175,7 @@ test.describe("Code Tab tests", () => {
                 timeout
             }
         );
-        await expectMonacoSummary("warning", 3, 4, page);
+        await expectMonacoDecoration("warning", 3, 4, page);
     });
 
     test("can see glyph hover message with correct text with warning", async ({ page }) => {
@@ -289,5 +289,39 @@ test.describe("Code Tab tests", () => {
         // close dialog
         await page.click("i.vue-feather--x");
         expect(await page.locator(".draggable-dialog")).not.toBeVisible();
+    });
+
+    test("can see error after changing tabs and coming back", async ({ page }) => {
+        const invalidCode = "alpha <- 2\nderiv(y1) test * faker\nbeta <- 10";
+        await writeCode(page, invalidCode);
+
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
+            "Model code has been updated. Compile code and Run Model to update.", {
+                timeout
+            }
+        );
+        await expectMonacoDecoration("error", 2, 3, page);
+
+        await page.click(".nav-tabs a:has-text('Options')");
+        await page.click(".nav-tabs a:has-text('Code')");
+        const lineElement = await page.locator(`.view-overlays div:nth-child(${2}) >> div`);
+        expect(lineElement).toHaveClass("cdr editor-error-background");
+    });
+
+    test("can see warning after changing tabs and coming back", async ({ page }) => {
+        const warningCode = "beta <- 10\nderiv(I) <- beta * 2\nalpha <- 2\ninitial(I) <- 2";
+        await writeCode(page, warningCode);
+
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
+            "Model code has been updated. Compile code and Run Model to update.", {
+                timeout
+            }
+        );
+        await expectMonacoDecoration("warning", 3, 4, page);
+
+        await page.click(".nav-tabs a:has-text('Options')");
+        await page.click(".nav-tabs a:has-text('Code')");
+        const lineElement = await page.locator(`.view-overlays div:nth-child(${3}) >> div`);
+        expect(lineElement).toHaveClass("cdr editor-warning-background");
     });
 });
