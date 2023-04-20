@@ -22,6 +22,30 @@ import Timeout = NodeJS.Timeout;
 import { AppConfig, OdinModelResponse } from "../../types/responseTypes";
 import { CodeAction } from "../../store/code/actions";
 
+interface DecorationOptions {
+    range: {
+        startLineNumber: number;
+        startColumn: number;
+        endLineNumber: number;
+        endColumn: number;
+    };
+    options: {
+        className: string;
+        glyphMarginClassName: string;
+        hoverMessage: { value: string; };
+        glyphMarginHoverMessage: { value: string; };
+    };
+}
+
+enum EditorStates {
+    error = "error",
+    warning = "warning"
+}
+
+type EditorGlyphs = {
+    [K in EditorStates]: string
+}
+
 export default defineComponent({
     name: "CodeEditor",
 
@@ -41,6 +65,11 @@ export default defineComponent({
         let timeoutId: null | Timeout = null;
         let editorInstance: monaco.editor.IStandaloneCodeEditor;
 
+        const editorGlyphs: EditorGlyphs = {
+            error: "fa-solid fa-circle-xmark",
+            warning: "fa-solid fa-triangle-exclamation"
+        };
+
         const getMonacoRange = (line: number, reset = false) => {
             return {
                 startLineNumber: line,
@@ -49,19 +78,7 @@ export default defineComponent({
                 endColumn: reset ? 1 : Infinity
             };
         };
-
-        type EditorStates = "error" | "warning"
-
-        type EditorGlyphs = {
-            [K in EditorStates]: string
-        }
-
-        const editorGlyphs: EditorGlyphs = {
-            error: "fa-solid fa-circle-xmark",
-            warning: "fa-solid fa-triangle-exclamation"
-        };
-
-        const getEditorOptions = (state: EditorStates, message: string) => {
+        const getLineDecorationOptions = (state: EditorStates, message: string) => {
             return {
                 className: `editor-${state}-background`,
                 glyphMarginClassName: `${editorGlyphs[state]} ${state}-glyph-style ms-1`,
@@ -70,43 +87,44 @@ export default defineComponent({
             };
         };
         const getNewDecorations = (lines: number[], state: EditorStates, message: string) => {
-            const errorLineDecorations = lines.map((line) => {
+            const lineDecorations = lines.map((line) => {
                 return {
                     range: getMonacoRange(line),
-                    options: getEditorOptions(state, message)
+                    options: getLineDecorationOptions(state, message)
                 };
             });
-            return errorLineDecorations;
+            return lineDecorations;
         };
-        const applyDecorations = (lines: number[], state: EditorStates, message: string, decorations: string[]) => {
-            let decors = decorations;
-            decors = editorInstance.deltaDecorations(decors, getNewDecorations(lines, state, message));
-            oldDecorations.value = decors;
+
+        const resetDecorations = () => {
+            oldDecorations.value = editorInstance.deltaDecorations(oldDecorations.value, [{
+                range: getMonacoRange(1, true),
+                options: {}
+            }]);
         };
-        const resetDecorations = (decorations: string[]) => {
-            editorInstance.deltaDecorations(decorations, [{ range: getMonacoRange(1, true), options: {} }]);
+
+        const updateDecorations = () => {
+            let newDecorations: DecorationOptions[] = [];
+            resetDecorations();
+            if (odinModelResponse.value.error) {
+                const newErrors = odinModelResponse.value.error.line || [];
+                const errorMessage = odinModelResponse.value.error.message || "";
+                newDecorations = getNewDecorations(newErrors, EditorStates.error, errorMessage);
+            }
+            if (odinModelResponse.value.metadata?.messages) {
+                const { messages } = odinModelResponse.value.metadata;
+                messages.forEach((message) => {
+                    const newWarnings = message.line || [];
+                    const warningMessage = message.message || "";
+                    newDecorations.push(...getNewDecorations(newWarnings, EditorStates.warning, warningMessage));
+                });
+            }
+            oldDecorations.value = editorInstance.deltaDecorations(oldDecorations.value, newDecorations);
         };
 
         const updateCode = () => {
             store.dispatch(`code/${CodeAction.UpdateCode}`, newCode, { root: true })
-                .then(() => {
-                    resetDecorations(oldDecorations.value);
-                })
-                .then(() => {
-                    if (odinModelResponse.value.error) {
-                        const newErrors = odinModelResponse.value.error.line || [];
-                        const message = odinModelResponse.value.error.message || "";
-                        applyDecorations(newErrors, "error", message, oldDecorations.value);
-                    }
-                    if (odinModelResponse.value.metadata?.messages) {
-                        const { messages } = odinModelResponse.value.metadata;
-                        messages.forEach((message) => {
-                            const warningLine = message.line || [];
-                            const warningMessage = message.message || "";
-                            applyDecorations(warningLine, "warning", warningMessage, oldDecorations.value);
-                        });
-                    }
-                });
+                .then(updateDecorations);
         };
 
         const setPendingCodeUpdate = () => {
@@ -114,7 +132,7 @@ export default defineComponent({
                 timeoutId = setTimeout(() => {
                     updateCode();
                     timeoutId = null;
-                }, 700); // 1 second felt too long
+                }, 700);
             }
         };
 
@@ -134,6 +152,8 @@ export default defineComponent({
                     newCode = editorInstance.getModel()!.getLinesContent();
                     setPendingCodeUpdate();
                 });
+
+                updateDecorations();
             });
         };
 
