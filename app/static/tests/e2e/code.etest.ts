@@ -44,7 +44,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 const expectMonacoDecoration = async (state: EditorStates, line: number, numOfLines: number, page: any) => {
-    [...Array(numOfLines).keys()].forEach(async (_, i) => {
+    for (let i = 0; i < numOfLines; i += 1) {
         const lineElement = await page.locator(`.view-overlays div:nth-child(${i + 1}) >> div`);
         const glyphElement = await page.locator(`.margin-view-overlays div:nth-child(${i + 1}) >> div`);
         if (i === line - 1) {
@@ -62,7 +62,7 @@ const expectMonacoDecoration = async (state: EditorStates, line: number, numOfLi
             expect(lineElement).toHaveCount(0);
             expect(glyphElement).toHaveClass("line-numbers lh-odd");
         }
-    });
+    }
 };
 
 const expectMonacoHover = async (type: "glyph" | "content", line: number, message: string, page: any) => {
