@@ -119,6 +119,20 @@ export default defineComponent({
                     newDecorations.push(...getNewDecorations(newWarnings, EditorStates.warning, warningMessage));
                 });
             }
+
+            /*
+            deltaDecorations takes in an array of strings (ids of decorations already created) which it will
+            delete and an array of new decorations (which need a range and options to determine how they
+            will look) to create.
+            
+            It will return an array of ids of the new decorations it has created (which we keep track of with
+            the oldDecorations ref). These ids are generated randomly everytime it creates a decoration so
+            there is no pattern!
+            
+            deltaDecorations does not delete decorations on update so before adding new decorations we have
+            to delete the old ones first (resetDecorations function replaces all decorations with an empty
+            decoration)
+            */ 
             oldDecorations.value = editorInstance.deltaDecorations(oldDecorations.value, newDecorations);
         };
 
