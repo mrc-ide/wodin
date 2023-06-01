@@ -1,7 +1,6 @@
 import { expect, test, Page } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
 import { writeCode } from "./utils";
-import { EditorStates } from "../../src/app/components/code/CodeEditor.vue";
 
 export const newValidCode = `## Derivatives
 deriv(y1) <- sigma * (y2 - y1)
@@ -38,6 +37,11 @@ const editorGlyphs: any = {
     error: "fa-solid fa-circle-xmark",
     warning: "fa-solid fa-triangle-exclamation"
 };
+
+enum EditorStates {
+    error = "error",
+    warning = "warning"
+}
 
 test.beforeEach(async ({ page }) => {
     await page.goto("/apps/day1");
