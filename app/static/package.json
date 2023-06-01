@@ -9,7 +9,9 @@
     "copy-bootstrap": "mkdir -p ../server/public/css && cp node_modules/bootstrap/dist/css/bootstrap.css ../server/public/css",
     "copy-css": "cp dist/wodin.css ../server/public/css/",
     "copy-js-map": "cp dist/wodin.umd.min.js.map ../server/public/js/",
-    "copy-all": "concurrently \"npm run copy-js\" \"npm run copy-bootstrap\" && concurrently \"npm run copy-css \" \" npm run copy-js-map\"",
+    "copy-fonts": "cp -r dist/fonts/ ../server/public/css/",
+    "copy-fonts-serve": "cp -r ../server/public/js/fonts/ ../server/public/",
+    "copy-all": "concurrently \"npm run copy-js\" \"npm run copy-bootstrap\" && concurrently \"npm run copy-css \" \"npm run copy-js-map\" \"npm run copy-fonts\"",
     "build": "npm run build-wodin && npm run copy-all",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint --no-fix",
@@ -21,6 +23,7 @@
     "ansi-regex": "5.0.1"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.4.0",
     "@monaco-editor/loader": "^1.3.2",
     "@types/d3-format": "^3.0.1",
     "axios": "^0.26.0",
@@ -77,6 +80,7 @@
     "typescript": "^4.5.5",
     "vue-jest": "^5.0.0-alpha.10",
     "vue-loader": "^17.0.0",
-    "webpack": "^4.46.0"
+    "webpack": "^4.46.0",
+    "webpack-shell-plugin": "^0.5.0"
   }
 }

@@ -106,7 +106,7 @@ export default defineComponent({
         const updateDecorations = () => {
             let newDecorations: DecorationOptions[] = [];
             resetDecorations();
-            if (odinModelResponse.value.error) {
+            if (odinModelResponse.value?.error) {
                 const newErrors = odinModelResponse.value.error.line || [];
                 const errorMessage = odinModelResponse.value.error.message || "";
                 newDecorations = getNewDecorations(newErrors, EditorStates.error, errorMessage);
