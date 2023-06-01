@@ -1,6 +1,7 @@
 import { expect, test, Page } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
 import { writeCode } from "./utils";
+import { EditorStates } from "../../src/app/components/code/CodeEditor.vue";
 
 export const newValidCode = `## Derivatives
 deriv(y1) <- sigma * (y2 - y1)
@@ -42,7 +43,7 @@ test.beforeEach(async ({ page }) => {
     await page.goto("/apps/day1");
 });
 
-const expectMonacoDecoration = async (state: any, line: number, numOfLines: number, page: any) => {
+const expectMonacoDecoration = async (state: EditorStates, line: number, numOfLines: number, page: any) => {
     [...Array(numOfLines).keys()].forEach(async (_, i) => {
         const lineElement = await page.locator(`.view-overlays div:nth-child(${i + 1}) >> div`);
         const glyphElement = await page.locator(`.margin-view-overlays div:nth-child(${i + 1}) >> div`);
@@ -55,7 +56,8 @@ const expectMonacoDecoration = async (state: any, line: number, numOfLines: numb
             expect(glyphElement.nth(0)).toHaveClass("current-line current-line-margin-both");
             // regex to check all three classes are in string, this was required as monaco sometimes switches the
             // order of the classes on this element
-            expect(glyphElement.nth(1)).toHaveClass(/^(?=.*\bactive-line-number\b)(?=.*\bline-numbers\b)(?=.*\blh-odd\b).*$/);
+            expect(glyphElement.nth(1))
+                .toHaveClass(/^(?=.*\bactive-line-number\b)(?=.*\bline-numbers\b)(?=.*\blh-odd\b).*$/);
         } else {
             expect(lineElement).toHaveCount(0);
             expect(glyphElement).toHaveClass("line-numbers lh-odd");
@@ -141,7 +143,7 @@ test.describe("Code Tab tests", () => {
                 timeout
             }
         );
-        await expectMonacoDecoration("error", 2, 3, page);
+        await expectMonacoDecoration(EditorStates.error, 2, 3, page);
     });
 
     test("can see glyph hover message with correct text with syntax error", async ({ page }) => {
@@ -177,7 +179,7 @@ test.describe("Code Tab tests", () => {
                 timeout
             }
         );
-        await expectMonacoDecoration("warning", 3, 4, page);
+        await expectMonacoDecoration(EditorStates.warning, 3, 4, page);
     });
 
     test("can see glyph hover message with correct text with warning", async ({ page }) => {
@@ -302,7 +304,7 @@ test.describe("Code Tab tests", () => {
                 timeout
             }
         );
-        await expectMonacoDecoration("error", 2, 3, page);
+        await expectMonacoDecoration(EditorStates.error, 2, 3, page);
 
         await page.click(".nav-tabs a:has-text('Options')");
         await page.click(".nav-tabs a:has-text('Code')");
@@ -319,7 +321,7 @@ test.describe("Code Tab tests", () => {
                 timeout
             }
         );
-        await expectMonacoDecoration("warning", 3, 4, page);
+        await expectMonacoDecoration(EditorStates.warning, 3, 4, page);
 
         await page.click(".nav-tabs a:has-text('Options')");
         await page.click(".nav-tabs a:has-text('Code')");

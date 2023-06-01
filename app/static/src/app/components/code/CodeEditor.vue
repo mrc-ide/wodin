@@ -37,7 +37,7 @@ interface DecorationOptions {
     };
 }
 
-enum EditorStates {
+export enum EditorStates {
     error = "error",
     warning = "warning"
 }
