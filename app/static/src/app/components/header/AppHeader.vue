@@ -75,9 +75,9 @@ export default defineComponent({
         });
 
         const languagesKeys: LanguagesKeys = {
-          [Language.en]: "English",
-          [Language.fr]: "Français"
-        }
+            [Language.en]: "English",
+            [Language.fr]: "Français"
+        };
         const enableI18n = computed(() => store.state.language.enableI18n);
 
         return {
