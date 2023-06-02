@@ -18,9 +18,9 @@
         <li><router-link id="all-sessions-link" class="dropdown-item" to="/sessions">All Sessions</router-link></li>
       </ul>
     </span>
-    <span style="display: flex; align-items: center;">
-      <version-menu v-if="initialised" :wodin-version="wodinVersion"></version-menu>
-      <language-switcher :languagesKeys="languagesKeys"/>
+    <span v-if="initialised" style="display: flex; align-items: center;">
+      <version-menu :wodin-version="wodinVersion"></version-menu>
+      <language-switcher v-if="enableI18n" :languagesKeys="languagesKeys"/>
     </span>
   </nav>
   <edit-session-label id="header-edit-session-label"
@@ -78,6 +78,7 @@ export default defineComponent({
           [Language.en]: "English",
           [Language.fr]: "Français"
         }
+        const enableI18n = computed(() => store.state.language.enableI18n);
 
         return {
             baseUrl,
@@ -87,7 +88,8 @@ export default defineComponent({
             sessionId,
             sessionLabel,
             sessionMenuHeader,
-            languagesKeys
+            languagesKeys,
+            enableI18n
         };
     }
 });
