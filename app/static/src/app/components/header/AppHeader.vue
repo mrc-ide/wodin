@@ -18,7 +18,10 @@
         <li><router-link id="all-sessions-link" class="dropdown-item" to="/sessions">All Sessions</router-link></li>
       </ul>
     </span>
-    <version-menu v-if="initialised" :wodin-version="wodinVersion"></version-menu>
+    <span style="display: flex; align-items: center;">
+      <version-menu v-if="initialised" :wodin-version="wodinVersion"></version-menu>
+      <language-switcher :languagesKeys="languagesKeys"/>
+    </span>
   </nav>
   <edit-session-label id="header-edit-session-label"
                       :open="editSessionLabelOpen"
@@ -35,6 +38,10 @@ import { RouterLink } from "vue-router";
 import { useStore } from "vuex";
 import EditSessionLabel from "../sessions/EditSessionLabel.vue";
 import VersionMenu from "./VersionMenu.vue";
+import { LanguageSwitcher } from "../../../../translationPackage";
+import { Language } from "../../types/languageTypes";
+
+type LanguagesKeys = Record<Language, string>
 
 export default defineComponent({
     name: "AppHeader",
@@ -47,7 +54,8 @@ export default defineComponent({
         RouterLink,
         EditSessionLabel,
         VueFeather,
-        VersionMenu
+        VersionMenu,
+        LanguageSwitcher
     },
     setup() {
         const store = useStore();
@@ -66,6 +74,11 @@ export default defineComponent({
             return sessionLabel.value ? `Session: ${sessionLabel.value}` : "Sessions";
         });
 
+        const languagesKeys: LanguagesKeys = {
+          [Language.en]: "English",
+          [Language.fr]: "Français"
+        }
+
         return {
             baseUrl,
             initialised,
@@ -73,7 +86,8 @@ export default defineComponent({
             editSessionLabelOpen,
             sessionId,
             sessionLabel,
-            sessionMenuHeader
+            sessionMenuHeader,
+            languagesKeys
         };
     }
 });

@@ -14,7 +14,7 @@ import { sessions } from "../sessions/sessions";
 import { versions } from "../versions/versions";
 import { graphSettings } from "../graphSettings/graphSettings";
 import { getters } from "../appState/getters";
-import getStoreModule from "../../../../translationPackage/getStoreModule";
+import { getStoreModule } from "../../../../translationPackage";
 
 const language = getStoreModule();
 

@@ -1,10 +1,9 @@
-import { Language } from "../../../../src/app/types/languageTypes";
-import { mutations } from "../../../../translationPackage/store/mutations";
-import { LanguageState } from "../../../../translationPackage/store/state";
+import { mutations } from "../../store/mutations";
+import { LanguageState } from "../../store/state";
 
 const expectLanguageState = (
     state: LanguageState,
-    currentLanguage = Language.en,
+    currentLanguage = "en",
     updatingLanguage = false,
     enableI18n = true
 ) => {
@@ -16,21 +15,21 @@ const expectLanguageState = (
 describe("Language mutations", () => {
     it("changes language", () => {
         const state = {
-            currentLanguage: Language.en,
+            currentLanguage: "en",
             updatingLanguage: false,
             enableI18n: true
         };
-        mutations.ChangeLanguage(state, Language.fr);
-        expectLanguageState(state, Language.fr, false, true);
+        mutations.ChangeLanguage(state, "fr");
+        expectLanguageState(state, "fr", false, true);
     });
 
     it("sets updating language", () => {
         const state = {
-            currentLanguage: Language.en,
+            currentLanguage: "en",
             updatingLanguage: false,
             enableI18n: true
         };
         mutations.SetUpdatingLanguage(state, true);
-        expectLanguageState(state, Language.en, true, true);
+        expectLanguageState(state, "en", true, true);
     });
 });

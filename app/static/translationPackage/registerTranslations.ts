@@ -24,7 +24,7 @@ export default function registerTranslations<L extends string>(languageState: La
     })
 };
 
-const registerResources = (lng: string, resources: Resource[]) => {
+export const registerResources = (lng: string, resources: Resource[]) => {
     resources.forEach(resource => {
         addResource(lng, resource);
     })
