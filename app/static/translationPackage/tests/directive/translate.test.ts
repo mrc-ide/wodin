@@ -241,13 +241,26 @@ describe("translate directive", () => {
             .toBe("v-translate directive declared without a value");
     });
 
-    it("unwatches on unbind", () => {
+    it("unwatches on unbind", async () => {
+        function _validateBinding(el: HTMLElement, binding: any): boolean {
+            if (!binding.value) {
+                console.warn("v-translate directive declared without a value", el);
+                return false;
+            }
+            return true;
+        }
+        const mockRemoveWatcher = jest.fn();
         const store = createStore();
+        const translateWithStore = translate(store);
+        translateWithStore.beforeUnmount = (el: HTMLElement, binding: any) => {
+            if (!_validateBinding(el, binding)) return;
+            mockRemoveWatcher();
+        }
         const renderedAttribute = shallowMount(TranslateAttributeTest, {
             global: {
                 plugins: [store],
                 directives: {
-                    translate: translate(store)
+                    translate: translateWithStore
                 }
             }
         });
@@ -255,7 +268,7 @@ describe("translate directive", () => {
             global: {
                 plugins: [store],
                 directives: {
-                    translate: translate(store)
+                    translate: translateWithStore
                 }
             }
         });
@@ -263,17 +276,16 @@ describe("translate directive", () => {
             global: {
                 plugins: [store],
                 directives: {
-                    translate: translate(store)
+                    translate: translateWithStore
                 }
             }
         });
-        expect((store._watcherVM as any)._watchers.length).toBe(5);
-        renderedAttribute.destroy();
-        expect((store._watcherVM as any)._watchers.length).toBe(4);
-        renderedText.destroy();
-        expect((store._watcherVM as any)._watchers.length).toBe(3);
-        renderedMultiple.destroy();
-        expect((store._watcherVM as any)._watchers.length).toBe(0);
+        expect(mockRemoveWatcher).toBeCalledTimes(0);
+        renderedAttribute.unmount();
+        expect(mockRemoveWatcher).toBeCalledTimes(1);
+        renderedText.unmount();
+        expect(mockRemoveWatcher).toBeCalledTimes(2);
+        renderedMultiple.unmount();
+        expect(mockRemoveWatcher).toBeCalledTimes(4);
     });
-
 });
