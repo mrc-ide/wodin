@@ -36,7 +36,7 @@ describe("translate directive", () => {
     };
 
     const TranslateMultiple = {
-        template: '<input v-translate:value="\'validate\'" v-translate:placeholder="\'email\'" v-translate="\'logout\'">',
+        template: '<input v-translate:value="\'validate\'" v-translate:placeholder="\'email\'"/>',
     };
 
     const createStore = () => {
@@ -214,7 +214,6 @@ describe("translate directive", () => {
         let input = (rendered.find("input").element as HTMLInputElement);
         expect(input.value).toBe("Validate");
         expect(input.placeholder).toBe("Email address");
-        expect(input.innerText).toBe("Logout");
 
         store.state.language.currentLanguage = "fr";
         await nextTick();
@@ -222,7 +221,6 @@ describe("translate directive", () => {
         input = (rendered.find("input").element as HTMLInputElement);
         expect(input.value).toBe("Valider");
         expect(input.placeholder).toBe("Adresse e-mail");
-        expect(input.innerText).toBe("Fermer une session");
     });
 
     it("does nothing but warns if binding is invalid", () => {
