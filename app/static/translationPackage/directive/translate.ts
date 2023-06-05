@@ -3,7 +3,11 @@ import { DirectiveBinding } from "vue";
 import { Store } from "vuex";
 import { LanguageState } from "../store/state";
 
-const translate = <S extends LanguageState>(store: Store<S>) => {
+interface LanguageStore {
+    language: LanguageState
+}
+
+const translate = <S extends LanguageStore>(store: Store<S>) => {
 
     function _translateText(lng: string, el: HTMLElement, binding: DirectiveBinding) {
         const attribute = binding.arg;
@@ -23,12 +27,12 @@ const translate = <S extends LanguageState>(store: Store<S>) => {
         ele.__lang_unwatch__ = ele.__lang_unwatch__ || {};
         if (binding.arg) {
             // this is an attribute binding
-            ele.__lang_unwatch__[binding.arg] = store.watch(state => state.currentLanguage, lng => {
+            ele.__lang_unwatch__[binding.arg] = store.watch(state => state.language.currentLanguage, lng => {
                 _translateText(lng, el, binding);
             })
         } else {
             // this is a default, i.e. innerHTML, binding
-            ele.__lang_unwatch__["innerHTML"] = store.watch(state => state.currentLanguage, lng => {
+            ele.__lang_unwatch__["innerHTML"] = store.watch(state => state.language.currentLanguage, lng => {
                 _translateText(lng, el, binding);
             })
         }
@@ -57,13 +61,13 @@ const translate = <S extends LanguageState>(store: Store<S>) => {
     return {
         beforeMount(el: HTMLElement, binding: DirectiveBinding) {
             if (!_validateBinding(el, binding)) return;
-            _translateText(store.state.currentLanguage, el, binding);
+            _translateText(store.state.language.currentLanguage, el, binding);
             _addWatcher(el, binding);
         },
         beforeUpdate(el: HTMLElement, binding: DirectiveBinding) {
             if (!_validateBinding(el, binding)) return;
             _removeWatcher(el, binding);
-            _translateText(store.state.currentLanguage, el, binding);
+            _translateText(store.state.language.currentLanguage, el, binding);
             _addWatcher(el, binding);
         },
         beforeUnmount(el: HTMLElement, binding: DirectiveBinding) {
