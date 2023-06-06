@@ -20,24 +20,25 @@ declare let appType: AppType;
 
 const { Basic, Fit, Stochastic } = AppType;
 const getStoreAndTranslate = () => {
+    let store;
     switch (appType) {
     case Basic:
-        const basicStore = new Vuex.Store<BasicState>(basicStoreOptions);
+        store = new Vuex.Store<BasicState>(basicStoreOptions);
         return {
-            store: basicStore,
-            translateWithStore: translate(basicStore)
+            store,
+            translateWithStore: translate(store)
         };
     case Fit:
-        const fitStore = new Vuex.Store<FitState>(fitStoreOptions);
+        store = new Vuex.Store<FitState>(fitStoreOptions);
         return {
-            store: fitStore,
-            translateWithStore: translate(fitStore)
+            store,
+            translateWithStore: translate(store)
         };
     case Stochastic:
-        const stochasticStore = new Vuex.Store<StochasticState>(stochasticStoreOptions);
+        store = new Vuex.Store<StochasticState>(stochasticStoreOptions);
         return {
-            store: stochasticStore,
-            translateWithStore: translate(stochasticStore)
+            store,
+            translateWithStore: translate(store)
         };
     default:
         throw new Error("Unknown app type");
