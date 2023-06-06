@@ -58,10 +58,9 @@ const expectMonacoDecoration = async (state: EditorStates, line: number, numOfLi
         } else if (i === numOfLines - 1) {
             expect(lineElement).toHaveClass("current-line");
             expect(glyphElement.nth(0)).toHaveClass("current-line current-line-margin-both");
-            // regex to check all three classes are in string, this was required as monaco sometimes switches the
-            // order of the classes on this element
-            expect(glyphElement.nth(1))
-                .toHaveClass(/^(?=.*\bactive-line-number\b)(?=.*\bline-numbers\b)(?=.*\blh-odd\b).*$/);
+            expect(glyphElement.nth(1)).toHaveClass(/\bactive-line-number\b/);
+            expect(glyphElement.nth(1)).toHaveClass(/\bline-numbers\b/);
+            expect(glyphElement.nth(1)).toHaveClass(/\blh-odd\b/);
         } else {
             expect(lineElement).toHaveCount(0);
             expect(glyphElement).toHaveClass("line-numbers lh-odd");
