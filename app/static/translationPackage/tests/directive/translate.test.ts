@@ -36,7 +36,7 @@ describe("translate directive", () => {
     };
 
     const TranslateMultiple = {
-        template: '<input v-translate:value="\'validate\'" v-translate:placeholder="\'email\'"/>',
+        template: '<input v-translate:value="\'validate\'" v-translate:placeholder="\'email\'" v-translate="\'logout\'"/>',
     };
 
     const createStore = () => {
@@ -214,6 +214,7 @@ describe("translate directive", () => {
         let input = (rendered.find("input").element as HTMLInputElement);
         expect(input.value).toBe("Validate");
         expect(input.placeholder).toBe("Email address");
+        expect(input.textContent).toBe("Logout");
 
         store.state.language.currentLanguage = "fr";
         await nextTick();
@@ -221,6 +222,7 @@ describe("translate directive", () => {
         input = (rendered.find("input").element as HTMLInputElement);
         expect(input.value).toBe("Valider");
         expect(input.placeholder).toBe("Adresse e-mail");
+        expect(input.textContent).toBe("Fermer une session");
     });
 
     it("does nothing but warns if binding is invalid", () => {
@@ -241,21 +243,9 @@ describe("translate directive", () => {
             .toBe("v-translate directive declared without a value");
     });
 
-    it("unwatches on unbind", async () => {
-        function _validateBinding(el: HTMLElement, binding: any): boolean {
-            if (!binding.value) {
-                console.warn("v-translate directive declared without a value", el);
-                return false;
-            }
-            return true;
-        }
-        const mockRemoveWatcher = jest.fn();
+    it("removes watcher on unbind", async () => {
         const store = createStore();
         const translateWithStore = translate(store);
-        translateWithStore.beforeUnmount = (el: HTMLElement, binding: any) => {
-            if (!_validateBinding(el, binding)) return;
-            mockRemoveWatcher();
-        }
         const renderedAttribute = shallowMount(TranslateAttributeTest, {
             global: {
                 plugins: [store],
@@ -280,12 +270,16 @@ describe("translate directive", () => {
                 }
             }
         });
-        expect(mockRemoveWatcher).toBeCalledTimes(0);
+        expect((renderedAttribute.element as any).__lang_unwatch__).toHaveProperty("value")
+        expect((renderedText.element as any).__lang_unwatch__).toHaveProperty("innerHTML")
+        expect((renderedMultiple.element as any).__lang_unwatch__).toHaveProperty("innerHTML")
+        expect((renderedMultiple.element as any).__lang_unwatch__).toHaveProperty("placeholder")
+        expect((renderedMultiple.element as any).__lang_unwatch__).toHaveProperty("value")
         renderedAttribute.unmount();
-        expect(mockRemoveWatcher).toBeCalledTimes(1);
+        expect((renderedAttribute.element as any).__lang_unwatch__).toStrictEqual({})
         renderedText.unmount();
-        expect(mockRemoveWatcher).toBeCalledTimes(2);
+        expect((renderedText.element as any).__lang_unwatch__).toStrictEqual({})
         renderedMultiple.unmount();
-        expect(mockRemoveWatcher).toBeCalledTimes(4);
+        expect((renderedMultiple.element as any).__lang_unwatch__).toStrictEqual({})
     });
 });
