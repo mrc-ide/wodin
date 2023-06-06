@@ -34,7 +34,7 @@ export default defineComponent({
     setup(props) {
         const store = useStore();
         const currentLanguage = computed(() => store.state.language.currentLanguage);
-        const changeWodinLang = (language: string) => {
+        const changeLang = (language: string) => {
             store.dispatch(`language/${LanguageAction.UpdateLanguage}`, language);
         };
 
