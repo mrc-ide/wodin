@@ -1,7 +1,11 @@
 <template>
   <div class="fit-tab">
     <div>
-      <button class="btn btn-primary me-2" id="fit-btn" :disabled="!canFitModel" @click="fitModel">Fit model</button>
+      <loading-button class="btn btn-primary me-2"
+                      id="fit-btn"
+                      :loading="loading"
+                      :is-disabled="!canFitModel"
+                      @click="fitModel">Fit model</loading-button>
       <button class="btn btn-outline" id="cancel-fit-btn" :disabled="!fitting" @click="cancelFit">Cancel fit</button>
       <action-required-message :message="actionRequiredMessage"></action-required-message>
       <fit-plot :fade-plot="!!actionRequiredMessage" :model-fit="true">
@@ -22,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import FitPlot from "./FitPlot.vue";
@@ -34,15 +38,17 @@ import LoadingSpinner from "../LoadingSpinner.vue";
 import { ModelFitMutation } from "../../store/modelFit/mutations";
 import { fitRequirementsExplanation, fitUpdateRequiredExplanation } from "./support";
 import { allTrue, anyTrue } from "../../utils";
+import LoadingButton from "../LoadingButton.vue";
 
 export default {
     name: "FitTab",
     components: {
-        LoadingSpinner,
-        FitPlot,
-        ActionRequiredMessage,
-        VueFeather
-    },
+    LoadingSpinner,
+    FitPlot,
+    ActionRequiredMessage,
+    VueFeather,
+    LoadingButton
+},
     setup() {
         const store = useStore();
         const namespace = "modelFit";
@@ -51,9 +57,17 @@ export default {
         const canFitModel = computed(() => allTrue(fitRequirements.value));
         const compileRequired = computed(() => store.state.model.compileRequired);
         const fitUpdateRequired = computed(() => store.state.modelFit.fitUpdateRequired);
-        const fitModel = () => store.dispatch(`${namespace}/${ModelFitAction.FitModel}`);
+        const loading = ref(false);
+        const fitModel = () => {
+            loading.value = true;
+            store.dispatch(`${namespace}/${ModelFitAction.FitModel}`)
+            .then(() => loading.value = false)
+        };
 
-        const cancelFit = () => store.commit(`${namespace}/${ModelFitMutation.SetFitting}`, false);
+        const cancelFit = () => {
+            store.commit(`${namespace}/${ModelFitMutation.SetFitting}`, false)
+            loading.value = false;
+        };
 
         const iterations = computed(() => store.state.modelFit.iterations);
         const converged = computed(() => store.state.modelFit.converged);
@@ -114,7 +128,8 @@ export default {
             sumOfSquares,
             actionRequiredMessage,
             iconType,
-            iconClass
+            iconClass,
+            loading
         };
     }
 };
