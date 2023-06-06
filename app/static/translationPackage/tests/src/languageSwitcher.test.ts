@@ -5,7 +5,7 @@ import LanguageSwitcher from "../../src/LanguageSwitcher.vue";
 describe("languageSwitcher component", () => {
     const mockUpdateLanguage = jest.fn();
 
-    const createStore = () => {
+    const createStore = (enableI18n: boolean) => {
         return new Vuex.Store({
             modules: {
                 language: {
@@ -13,7 +13,7 @@ describe("languageSwitcher component", () => {
                     state: {
                         currentLanguage: "en",
                         updatingLanguage: false,
-                        enableI18n: true
+                        enableI18n
                     },
                     actions: {
                         UpdateLanguage: mockUpdateLanguage
@@ -23,7 +23,7 @@ describe("languageSwitcher component", () => {
         })
     }
 
-    const getWrapper = (isMount: boolean) => {
+    const getWrapper = (isMount: boolean, enableI18n = true) => {
         if (isMount) {
             return mount(LanguageSwitcher, {
                 props: {
@@ -33,7 +33,7 @@ describe("languageSwitcher component", () => {
                     }
                 },
                 global: {
-                    plugins: [createStore()]
+                    plugins: [createStore(enableI18n)]
                 }
             });
         } else {
@@ -45,7 +45,7 @@ describe("languageSwitcher component", () => {
                     }
                 },
                 global: {
-                    plugins: [createStore()]
+                    plugins: [createStore(enableI18n)]
                 }
             });
         }
@@ -65,4 +65,9 @@ describe("languageSwitcher component", () => {
         await menuItems[1].find("span").trigger("click");
         expect(mockUpdateLanguage).toBeCalledTimes(1);
     });
+
+    it("disabling i18n returns empty wrapper", () => {
+        const wrapper = getWrapper(false, false);
+        expect(wrapper.html()).toBe("<!--v-if-->")
+    })
 });

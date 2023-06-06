@@ -1,10 +1,10 @@
 <template>
-    <div class="navbar-text navbar-version ms-3 me-1">
+    <div v-if="enableI18n" class="navbar-text navbar-version ms-3 me-1">
         <drop-down :text="languagesKeys[currentLanguage]">
             <template v-slot:items>
                 <li v-for="(language, i18n, index) in languagesKeys" :key="index">
                     <span class="dropdown-item"
-                    @click="changeWodinLang(i18n)">{{ language }}</span>
+                    @click="changeLang(i18n)">{{ language }}</span>
                 </li>
             </template>
         </drop-down>
@@ -34,14 +34,16 @@ export default defineComponent({
     setup(props) {
         const store = useStore();
         const currentLanguage = computed(() => store.state.language.currentLanguage);
+        const enableI18n = computed(() => store.state.language.enableI18n);
         const changeLang = (language: string) => {
             store.dispatch(`language/${LanguageAction.UpdateLanguage}`, language);
         };
 
         return {
             languagesKeys: props.languagesKeys,
-            changeWodinLang,
-            currentLanguage
+            changeLang,
+            currentLanguage,
+            enableI18n
         }
     }
 });
