@@ -20,7 +20,7 @@
     </span>
     <span v-if="initialised" style="display: flex; align-items: center;">
       <version-menu :wodin-version="wodinVersion"></version-menu>
-      <language-switcher v-if="enableI18n" :languagesKeys="languagesKeys"/>
+      <language-switcher :languagesKeys="languagesKeys"/>
     </span>
   </nav>
   <edit-session-label id="header-edit-session-label"
@@ -78,7 +78,6 @@ export default defineComponent({
             [Language.en]: "English",
             [Language.fr]: "Français"
         };
-        const enableI18n = computed(() => store.state.language.enableI18n);
 
         return {
             baseUrl,
@@ -88,8 +87,7 @@ export default defineComponent({
             sessionId,
             sessionLabel,
             sessionMenuHeader,
-            languagesKeys,
-            enableI18n
+            languagesKeys
         };
     }
 });
