@@ -66,7 +66,12 @@ const translate = <S extends LanguageStore>(store: Store<S>) => {
         },
         beforeUpdate(el: HTMLElement, binding: DirectiveBinding) {
             if (!_validateBinding(el, binding)) return;
+            
+            // first remove the existing watcher for this directive instance
+            // since it has the previous value of the binding cached
             _removeWatcher(el, binding);
+            
+            // now re-add them with the new binding properties
             _translateText(store.state.language.currentLanguage, el, binding);
             _addWatcher(el, binding);
         },
