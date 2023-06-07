@@ -19,27 +19,14 @@ import { translate } from "../../translationPackage";
 declare let appType: AppType;
 
 const { Basic, Fit, Stochastic } = AppType;
-const getStoreAndTranslate = () => {
-    let store;
+const getStore = () => {
     switch (appType) {
     case Basic:
-        store = new Vuex.Store<BasicState>(basicStoreOptions);
-        return {
-            store,
-            translateWithStore: translate(store)
-        };
+        return new Vuex.Store<BasicState>(basicStoreOptions);
     case Fit:
-        store = new Vuex.Store<FitState>(fitStoreOptions);
-        return {
-            store,
-            translateWithStore: translate(store)
-        };
+        return new Vuex.Store<FitState>(fitStoreOptions);
     case Stochastic:
-        store = new Vuex.Store<StochasticState>(stochasticStoreOptions);
-        return {
-            store,
-            translateWithStore: translate(store)
-        };
+        return new Vuex.Store<StochasticState>(stochasticStoreOptions);
     default:
         throw new Error("Unknown app type");
     }
@@ -58,14 +45,13 @@ const getComponent = () => {
     }
 };
 
-const { store, translateWithStore } = getStoreAndTranslate();
-export { store };
+export const store = getStore();
 
 const app = createApp({ components: { WodinSession, AppHeader } });
 app.use(store);
 
 app.directive("tooltip", tooltip);
-app.directive("translate", translateWithStore);
+app.directive("translate", translate<BasicState | FitState | StochasticState>(store));
 
 app.mount("#app");
 
