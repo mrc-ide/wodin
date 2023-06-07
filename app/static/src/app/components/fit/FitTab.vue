@@ -61,7 +61,6 @@ export default {
         const fitModel = () => {
             loading.value = true;
             store.dispatch(`${namespace}/${ModelFitAction.FitModel}`)
-            .then(() => loading.value = false)
         };
 
         const cancelFit = () => {
@@ -70,7 +69,12 @@ export default {
         };
 
         const iterations = computed(() => store.state.modelFit.iterations);
-        const converged = computed(() => store.state.modelFit.converged);
+        const converged = computed(() => {
+            if (store.state.modelFit.converged) {
+                loading.value = false
+            }
+            return store.state.modelFit.converged
+        });
         const fitting = computed(() => store.state.modelFit.fitting);
         const cancelled = computed(() => iterations.value && !fitting.value && !converged.value);
         const sumOfSquares = computed(() => store.state.modelFit.sumOfSquares);

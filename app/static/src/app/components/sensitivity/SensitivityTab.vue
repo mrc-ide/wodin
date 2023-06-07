@@ -1,10 +1,11 @@
 <template>
   <div class="sensitivity-tab">
     <div>
-      <button class="btn btn-primary"
+      <loading-button class="btn btn-primary"
               id="run-sens-btn"
-              :disabled="!canRunSensitivity"
-              @click="runSensitivity">Run sensitivity</button>
+              :loading="loading"
+              :is-disabled="!canRunSensitivity"
+              @click="runSensitivity">Run sensitivity</loading-button>
     </div>
     <action-required-message :message="updateMsg"></action-required-message>
     <sensitivity-traces-plot v-if="tracesPlot" :fade-plot="!!updateMsg"></sensitivity-traces-plot>
@@ -18,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { useStore } from "vuex";
 import SensitivityTracesPlot from "./SensitivityTracesPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
@@ -32,20 +33,27 @@ import { sensitivityUpdateRequiredExplanation } from "./support";
 import { anyTrue } from "../../utils";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import { ModelGetter } from "../../store/model/getters";
+import LoadingButton from "../LoadingButton.vue";
 
 export default defineComponent({
     name: "SensitivityTab",
     components: {
-        ErrorInfo,
-        LoadingSpinner,
-        SensitivitySummaryPlot,
-        ActionRequiredMessage,
-        SensitivityTracesPlot
-    },
+    ErrorInfo,
+    LoadingSpinner,
+    SensitivitySummaryPlot,
+    ActionRequiredMessage,
+    SensitivityTracesPlot,
+    LoadingButton
+},
     setup() {
         const store = useStore();
 
-        const running = computed(() => store.state.sensitivity.running);
+        const running = computed(() => {
+            if (!store.state.sensitivity.running) {
+                loading.value = false;
+            }
+            return store.state.sensitivity.running
+        });
 
         const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
 
@@ -54,8 +62,9 @@ export default defineComponent({
             && !store.state.model.compileRequired
             && !!store.getters[`sensitivity/${SensitivityGetter.batchPars}`];
         });
-
+        const loading = ref(false);
         const runSensitivity = () => {
+            loading.value = true;
             store.dispatch(`sensitivity/${SensitivityAction.RunSensitivity}`);
         };
 
@@ -96,7 +105,8 @@ export default defineComponent({
             runSensitivity,
             updateMsg,
             tracesPlot,
-            error
+            error,
+            loading
         };
     }
 });
