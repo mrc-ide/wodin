@@ -66,13 +66,13 @@ describe("Registering translations", () => {
             en: [getEnglishLocales()],
             fr: [getFrenchLocales()]
         });
-        registerResources("fr", [{ you: "tu" }]);
+        registerResources("fr", [{ you: "vous" }]);
         expect(i18next.getResourceBundle("en", "translation")).toStrictEqual({
             hello: "hey"
         });
         expect(i18next.getResourceBundle("fr", "translation")).toStrictEqual({
             hello: "bonjour",
-            you: "tu"
+            you: "vous"
         });
     });
 });
