@@ -14,6 +14,7 @@ import { storeOptions as stochasticStoreOptions } from "./store/stochastic/stoch
 import { initialiseRouter } from "./router";
 import tooltip from "./directives/tooltip";
 import { AppType } from "./store/appState/state";
+import "@fortawesome/fontawesome-free/css/all.css";
 
 declare let appType: AppType;
 
