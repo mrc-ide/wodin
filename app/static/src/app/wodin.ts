@@ -13,7 +13,8 @@ import { storeOptions as fitStoreOptions } from "./store/fit/fit";
 import { storeOptions as stochasticStoreOptions } from "./store/stochastic/stochastic";
 import { initialiseRouter } from "./router";
 import tooltip from "./directives/tooltip";
-import { AppType } from "./store/appState/state";
+import { AppState, AppType } from "./store/appState/state";
+import { translate } from "../../translationPackage";
 import "@fortawesome/fontawesome-free/css/all.css";
 
 declare let appType: AppType;
@@ -51,6 +52,7 @@ const app = createApp({ components: { WodinSession, AppHeader } });
 app.use(store);
 
 app.directive("tooltip", tooltip);
+app.directive("translate", translate<AppState>(store));
 
 app.mount("#app");
 
