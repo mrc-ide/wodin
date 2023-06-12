@@ -19,8 +19,8 @@
       </ul>
     </span>
     <span v-if="initialised" style="display: flex; align-items: center;">
-      <version-menu :wodin-version="wodinVersion"></version-menu>
       <language-switcher :languagesKeys="languagesKeys"/>
+      <version-menu :wodin-version="wodinVersion"></version-menu>
     </span>
   </nav>
   <edit-session-label id="header-edit-session-label"

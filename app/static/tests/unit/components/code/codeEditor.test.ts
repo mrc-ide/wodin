@@ -4,9 +4,9 @@ const mockMonacoEditor = {
     getModel: () => {
         return { getLinesContent: jest.fn().mockReturnValueOnce(["new code"]) };
     },
-    setValue: jest.fn()
+    setValue: jest.fn(),
+    deltaDecorations: jest.fn()
 };
-
 const mockMonaco = {
     editor: {
         create: jest.fn().mockReturnValue(mockMonacoEditor)
@@ -16,16 +16,60 @@ jest.mock("@monaco-editor/loader", () => {
     return { init: async () => mockMonaco };
 });
 
+const editorGlyphs: any = {
+    error: "fa-solid fa-circle-xmark",
+    warning: "fa-solid fa-triangle-exclamation"
+};
+const monacoLineRange = (line: number, reset = false) => {
+    return {
+        startLineNumber: line,
+        startColumn: reset ? 1 : 0,
+        endLineNumber: line,
+        endColumn: reset ? 1 : Infinity
+    };
+};
+const monacoOptions = (state: string, message: string) => {
+    return {
+        className: `editor-${state}-background`,
+        glyphMarginClassName: `${editorGlyphs[state]} ${state}-glyph-style ms-1`,
+        hoverMessage: { value: message },
+        glyphMarginHoverMessage: { value: message }
+    };
+};
+const expectDeltaDecorationInputs = (line: number, state: string, message: string, done: jest.DoneCallback) => {
+    setTimeout(() => {
+        const changeHandler = mockMonacoEditor.onDidChangeModelContent.mock.calls[0][0];
+        changeHandler();
+        setTimeout(() => {
+            // 1 for resetting all decorations and 1 for adding state decorations
+            // x2 (these trigger on mount too)
+            expect(mockMonacoEditor.deltaDecorations).toHaveBeenCalledTimes(4);
+            expect(mockMonacoEditor.deltaDecorations.mock.calls[0][1]).toStrictEqual([{
+                range: monacoLineRange(1, true),
+                options: {}
+            }]);
+            expect(mockMonacoEditor.deltaDecorations.mock.calls[1][1]).toStrictEqual([{
+                range: monacoLineRange(line),
+                options: monacoOptions(state, message)
+            }]);
+            done();
+        }, 700);
+    });
+};
+
 /* eslint-disable import/first */
 import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
 import CodeEditor from "../../../../src/app/components/code/CodeEditor.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { BasicConfig } from "../../../../src/app/types/responseTypes";
-import { mockBasicState, mockCodeState } from "../../../mocks";
+import { mockBasicState, mockCodeState, mockModelState } from "../../../mocks";
 
 describe("CodeEditor", () => {
-    const getWrapper = (readOnlyCode = false, mockUpdateCode = jest.fn(), defaultCode = ["default code"]) => {
+    const getWrapper = (readOnlyCode = false,
+        mockUpdateCode = jest.fn(),
+        defaultCode = ["default code"],
+        odinModelResponse = { valid: true }) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
                 config: {
@@ -43,6 +87,12 @@ describe("CodeEditor", () => {
                     actions: {
                         UpdateCode: mockUpdateCode
                     }
+                },
+                model: {
+                    namespaced: true,
+                    state: mockModelState({
+                        odinModelResponse
+                    })
                 }
             }
         });
@@ -68,7 +118,9 @@ describe("CodeEditor", () => {
                 language: "r",
                 minimap: { enabled: false },
                 readOnly: false,
-                automaticLayout: true
+                automaticLayout: true,
+                glyphMargin: true,
+                lineNumbersMinChars: 3
             });
 
             done();
@@ -90,7 +142,7 @@ describe("CodeEditor", () => {
                 expect(mockUpdateCode).toHaveBeenCalled();
                 expect(mockUpdateCode.mock.calls[0][1]).toStrictEqual(["new code"]);
                 done();
-            }, 1000);
+            }, 700);
         });
     });
 
@@ -124,5 +176,65 @@ describe("CodeEditor", () => {
         const mockUpdateCode = jest.fn();
         const wrapper = getWrapper(true, mockUpdateCode);
         expect(wrapper.find("#reset-btn").exists()).toBe(false);
+    });
+
+    it("executes deltaDecorations when there is an error", (done) => {
+        const mockUpdateCode = jest.fn();
+        const odinModelResponse = {
+            valid: false,
+            error: { line: [2], message: "error here" }
+        };
+        getWrapper(false, mockUpdateCode, ["hey code"], odinModelResponse);
+        expectDeltaDecorationInputs(2, "error", "error here", done);
+    });
+
+    it("no input in deltaDecorations when error lines and messages are empty", (done) => {
+        const mockUpdateCode = jest.fn();
+        const odinModelResponse = {
+            valid: false,
+            error: {}
+        };
+        getWrapper(false, mockUpdateCode, ["hey code"], odinModelResponse);
+        setTimeout(() => {
+            const changeHandler = mockMonacoEditor.onDidChangeModelContent.mock.calls[0][0];
+            changeHandler();
+            setTimeout(() => {
+                expect(mockMonacoEditor.deltaDecorations).toHaveBeenCalledTimes(4);
+                expect(mockMonacoEditor.deltaDecorations.mock.calls[1][1]).toStrictEqual([]);
+                done();
+            }, 700);
+        });
+    });
+
+    it("executes deltaDecorations when there is an warning", (done) => {
+        const mockUpdateCode = jest.fn();
+        const odinModelResponse = {
+            valid: true,
+            metadata: {
+                messages: [{ line: [3], message: "warning here" }]
+            }
+        };
+        getWrapper(false, mockUpdateCode, ["hey code"], odinModelResponse);
+        expectDeltaDecorationInputs(3, "warning", "warning here", done);
+    });
+
+    it("no input in deltaDecorations when warning lines and messages are empty", (done) => {
+        const mockUpdateCode = jest.fn();
+        const odinModelResponse = {
+            valid: true,
+            metadata: {
+                messages: [{ line: [], message: "" }]
+            }
+        };
+        getWrapper(false, mockUpdateCode, ["hey code"], odinModelResponse);
+        setTimeout(() => {
+            const changeHandler = mockMonacoEditor.onDidChangeModelContent.mock.calls[0][0];
+            changeHandler();
+            setTimeout(() => {
+                expect(mockMonacoEditor.deltaDecorations).toHaveBeenCalledTimes(4);
+                expect(mockMonacoEditor.deltaDecorations.mock.calls[1][1]).toStrictEqual([]);
+                done();
+            }, 700);
+        });
     });
 });

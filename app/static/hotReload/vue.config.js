@@ -1,5 +1,6 @@
 const path = require("path");
 const baseConfig = require("../vue.config");
+const WebpackShellPlugin = require('webpack-shell-plugin');
 
 module.exports = {
     ...baseConfig,
@@ -18,7 +19,13 @@ module.exports = {
         },
         optimization: {
             splitChunks: false
-        }
+        },
+        plugins: [
+            ...baseConfig.configureWebpack?.plugins,
+            new WebpackShellPlugin({
+                onBuildEnd: "npm run copy-fonts-serve"
+            })
+        ]
     },
     css: {
         extract: {

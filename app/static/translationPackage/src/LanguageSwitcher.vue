@@ -1,5 +1,5 @@
 <template>
-    <div v-if="enableI18n" class="navbar-text navbar-version ms-3 me-1">
+    <div v-if="enableI18n" class="navbar-text navbar-version me-3">
         <drop-down :text="languagesKeys[currentLanguage]">
             <template v-slot:items>
                 <li v-for="(language, i18n, index) in languagesKeys" :key="index">

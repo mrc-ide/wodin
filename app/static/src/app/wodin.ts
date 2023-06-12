@@ -15,6 +15,7 @@ import { initialiseRouter } from "./router";
 import tooltip from "./directives/tooltip";
 import { AppState, AppType } from "./store/appState/state";
 import { translate } from "../../translationPackage";
+import "@fortawesome/fontawesome-free/css/all.css";
 
 declare let appType: AppType;
 

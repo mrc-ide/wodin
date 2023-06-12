@@ -53,7 +53,7 @@ describe("languageSwitcher component", () => {
 
     it("renders as expected", () => {
         const wrapper = getWrapper(false);
-        expect(wrapper.find("div").classes()).toStrictEqual(["navbar-text", "navbar-version", "ms-3", "me-1"]);
+        expect(wrapper.find("div").classes()).toStrictEqual(["navbar-text", "navbar-version", "me-3"]);
         expect(wrapper.find("drop-down-stub").attributes("text")).toBe("English")
     });
 

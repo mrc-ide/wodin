@@ -25,7 +25,8 @@ module.exports = {
         "@typescript-eslint/no-shadow": ["error"],
         "no-underscore-dangle": "off",
         "no-unused-vars": "off",
-        "@typescript-eslint/no-unused-vars": ["error"]
+        "@typescript-eslint/no-unused-vars": ["error"],
+        "no-await-in-loop": "off"
     },
     overrides: [{
         files: [

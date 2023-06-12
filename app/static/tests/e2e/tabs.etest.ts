@@ -9,7 +9,8 @@ test.describe("Wodin App tabs tests", () => {
         expect(await page.innerText("nav a.navbar-brand")).toBe("WODIN Example");
         expect(await page.getAttribute("nav a.navbar-brand", "href")).toBe("http://localhost:3000");
         expect(await page.innerText("nav .navbar-app")).toBe("Day 1 - Basic Model");
-        expect(await page.innerText("nav .navbar-version")).toMatch(/^WODIN v[0-9].[0-9].[0-9]$/);
+        expect(await page.innerText("nav .navbar-version >> nth=1")).toMatch(/^WODIN v[0-9].[0-9].[0-9]$/);
+        expect(await page.innerText("nav span .navbar-text >> nth=0")).toBe("English");
     });
 
     test("link in header navigates to index page", async ({ page }) => {
@@ -57,5 +58,13 @@ test.describe("Wodin App tabs tests", () => {
         await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Sensitivity");
         await expect(await page.innerText(".wodin-right .wodin-content div.mt-4 button"))
             .toBe("Run sensitivity");
+    });
+
+    test("can change language to French", async ({ page }) => {
+        const languageSwitcher = await page.locator("nav span .navbar-text >> nth=0");
+        await languageSwitcher.click();
+        const frenchMenuItem = await languageSwitcher.locator(".dropdown-item >> nth=1");
+        await frenchMenuItem.click();
+        expect(await page.innerText("nav span .navbar-text >> nth=0")).toBe("Français");
     });
 });
