@@ -8,6 +8,7 @@ import EditSessionLabel from "../../../../src/app/components/sessions/EditSessio
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState } from "../../../mocks";
 import VersionMenu from "../../../../src/app/components/header/VersionMenu.vue";
+import { LanguageSwitcher } from "../../../../translationPackage";
 
 describe("AppHeader", () => {
     const getWrapper = (appName: string | null = "test", sessionLabel: string | null = null,
@@ -51,6 +52,8 @@ describe("AppHeader", () => {
         expect(editDlg.props("open")).toBe(false);
         expect(editDlg.props("sessionId")).toBe("testSessionId");
         expect(editDlg.props("sessionLabel")).toBe(null);
+
+        expect(wrapper.findAllComponents(LanguageSwitcher)).toHaveLength(1);
     });
 
     it("renders version menu as expected", () => {
