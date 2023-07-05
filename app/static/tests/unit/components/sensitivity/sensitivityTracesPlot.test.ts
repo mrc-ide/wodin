@@ -556,6 +556,6 @@ describe("SensitivityTracesPlot", () => {
         const wodinPlot = wrapper.findComponent(WodinPlot);
         const plotData = wodinPlot.props("plotData");
         plotData(0, 1, 100);
-        expect(mockSetLoading).toHaveBeenCalledTimes(1)
+        expect(mockSetLoading).toHaveBeenCalledTimes(1);
     });
 });
