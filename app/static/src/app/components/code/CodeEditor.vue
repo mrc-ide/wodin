@@ -21,6 +21,7 @@ import * as monaco from "monaco-editor";
 import Timeout = NodeJS.Timeout;
 import { AppConfig, OdinModelResponse } from "../../types/responseTypes";
 import { CodeAction } from "../../store/code/actions";
+import { CodeMutation } from "../../store/code/mutations";
 
 interface DecorationOptions {
     range: {
@@ -134,6 +135,7 @@ export default defineComponent({
             decoration)
             */
             oldDecorations.value = editorInstance.deltaDecorations(oldDecorations.value, newDecorations);
+            store.commit(`code/${CodeMutation.SetLoading}`, false);
         };
 
         const updateCode = () => {
@@ -142,6 +144,7 @@ export default defineComponent({
         };
 
         const setPendingCodeUpdate = () => {
+            store.commit(`code/${CodeMutation.SetLoading}`, true);
             if (!timeoutId) {
                 timeoutId = setTimeout(() => {
                     updateCode();

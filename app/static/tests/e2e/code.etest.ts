@@ -123,6 +123,15 @@ test.describe("Code Tab tests", () => {
         await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 3)`)).toBe("y3");
     });
 
+    test("code loading on input renders as expected", async ({ page }) => {
+        await page.press(".monaco-editor textarea", "Control+A");
+        await page.press(".monaco-editor textarea", "Delete");
+        page.fill(".monaco-editor textarea", "blah");
+        expect(page.locator("#code-loading")).toHaveText("Code is validating");
+        expect(page.locator("#code-loading").locator("span"))
+            .toHaveClass("spinner-border spinner-border-sm me-2 text-warning");
+    });
+
     test("can see code not valid msg when update code with syntax error", async ({ page }) => {
         const invalidCode = "deriv(y1) test * faker";
         await writeCode(page, invalidCode);

@@ -21,7 +21,8 @@ import { Language } from "../../src/app/types/languageTypes";
 
 describe("serialise", () => {
     const codeState = {
-        currentCode: ["some code"]
+        currentCode: ["some code"],
+        loading: false
     };
 
     const modelState = {

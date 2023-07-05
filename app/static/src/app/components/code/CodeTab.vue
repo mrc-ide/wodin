@@ -3,9 +3,17 @@
         <generic-help title="Write odin code" :markdown="codeHelp"></generic-help>
         <code-editor/>
         <button class="btn btn-primary mt-2" id="compile-btn" :disabled="!codeIsValid" @click="compile">Compile</button>
-        <div class="mt-2" id="code-status">
-            <vue-feather class="inline-icon" :class="iconClass" :type="validIcon"></vue-feather>
+        <div v-show="!codeValidating" class="mt-2" id="code-status">
+            <vue-feather class="inline-icon me-1"
+                         :class="iconClass"
+                         :type="validIcon"
+                         :size="20"
+                         :stroke-width="4"></vue-feather>
             {{ validMsg }}
+        </div>
+        <div v-show="codeValidating" class="mt-2" id="code-loading">
+            <span class="spinner-border spinner-border-sm me-2 text-warning"></span>
+            {{ loadingMessage }}
         </div>
         <error-info :error="error"></error-info>
         <div class="mt-3">
@@ -45,6 +53,7 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const codeIsValid = computed(() => store.state.model.odinModelResponse?.valid);
+        const codeValidating = computed(() => store.state.code.loading);
         const error = computed(() => store.state.model.odinModelCodeError);
         const validMsg = computed(() => (codeIsValid.value ? userMessages.code.isValid : userMessages.code.isNotValid));
         const validIcon = computed(() => (codeIsValid.value ? "check" : "x"));
@@ -53,6 +62,7 @@ export default defineComponent({
         const showSelectedVariables = computed(() => allVariables.value.length && !store.state.model.compileRequired);
         const appIsConfigured = computed(() => store.state.configured);
         const compile = () => store.dispatch(`model/${ModelAction.CompileModel}`);
+        const loadingMessage = userMessages.code.isValidating;
 
         return {
             appIsConfigured,
@@ -63,7 +73,9 @@ export default defineComponent({
             compile,
             error,
             showSelectedVariables,
-            codeHelp
+            codeHelp,
+            codeValidating,
+            loadingMessage
         };
     }
 });
