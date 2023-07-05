@@ -18,6 +18,12 @@ describe("ModelFit mutations", () => {
         expect(state.fitting).toBe(true);
     });
 
+    it("sets loading", () => {
+        const state = mockModelFitState();
+        mutations.SetLoading(state, true);
+        expect(state.loading).toBe(true);
+    });
+
     it("sets model fit inputs", () => {
         const state = mockModelFitState();
         mutations.SetInputs(state, mockInputs);

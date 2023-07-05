@@ -39,13 +39,13 @@ import { SensitivityMutation } from "../../store/sensitivity/mutations";
 export default defineComponent({
     name: "SensitivityTab",
     components: {
-    ErrorInfo,
-    LoadingSpinner,
-    SensitivitySummaryPlot,
-    ActionRequiredMessage,
-    SensitivityTracesPlot,
-    LoadingButton
-},
+        ErrorInfo,
+        LoadingSpinner,
+        SensitivitySummaryPlot,
+        ActionRequiredMessage,
+        SensitivityTracesPlot,
+        LoadingButton
+    },
     setup() {
         const store = useStore();
 
@@ -69,7 +69,7 @@ export default defineComponent({
             // to react to loading being true
             setTimeout(() => {
                 store.dispatch(`sensitivity/${SensitivityAction.RunSensitivity}`);
-            }, 100)
+            }, 100);
         };
 
         const sensitivityProgressMsg = computed(() => {

@@ -8,6 +8,7 @@ import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/Se
 import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
 import { mockRunState } from "../../../mocks";
 import { getters as runGetters } from "../../../../src/app/store/run/getters";
+import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 
 jest.mock("plotly.js-basic-dist-min", () => {});
 
@@ -380,6 +381,8 @@ const mockParameterSetCentralResults = {
     "Set 2": { solution: mockParameterSetCentralSln }
 } as any;
 
+const mockSetLoading = jest.fn();
+
 describe("SensitivityTracesPlot", () => {
     const getWrapper = (sensitivityHasSolutions = true, fadePlot = false, sensitivityHasData = false,
         stochastic = false, hasSelectedVariables = true, hasParameterSets = false) => {
@@ -389,19 +392,6 @@ describe("SensitivityTracesPlot", () => {
                 model: {
                     paletteModel: mockPalette,
                     selectedVariables: hasSelectedVariables ? selectedVariables : []
-                },
-                sensitivity: {
-                    result: {
-                        batch: {
-                            solutions: sensitivityHasSolutions ? mockSolutions : null,
-                            allFitData: sensitivityHasData ? mockAllFitData : undefined,
-                            pars: {
-                                name: "alpha",
-                                values: [1.11111, 2.22222]
-                            }
-                        }
-                    },
-                    parameterSetResults: hasParameterSets ? mockParameterSetResults : {}
                 }
             } as any,
             modules: {
@@ -425,6 +415,25 @@ describe("SensitivityTracesPlot", () => {
                         parameterSetResults: hasParameterSets ? mockParameterSetCentralResults : {}
                     }),
                     getters: runGetters
+                },
+                sensitivity: {
+                    namespaced: true,
+                    state: {
+                        result: {
+                            batch: {
+                                solutions: sensitivityHasSolutions ? mockSolutions : null,
+                                allFitData: sensitivityHasData ? mockAllFitData : undefined,
+                                pars: {
+                                    name: "alpha",
+                                    values: [1.11111, 2.22222]
+                                }
+                            }
+                        },
+                        parameterSetResults: hasParameterSets ? mockParameterSetResults : {}
+                    },
+                    mutations: {
+                        [SensitivityMutation.SetLoading]: mockSetLoading
+                    }
                 }
             }
         });
@@ -539,5 +548,15 @@ describe("SensitivityTracesPlot", () => {
     it("fades plot when fadePlot prop is true", () => {
         const wrapper = getWrapper(true, false);
         expect(wrapper.findComponent(WodinPlot).props("fadePlot")).toBe(false);
+    });
+
+    it("commits set loading when plotData is run", () => {
+        const wrapper = getWrapper();
+        expect(mockSetLoading).toHaveBeenCalledTimes(0);
+        const wodinPlot = wrapper.findComponent(WodinPlot);
+        const plotData = wodinPlot.props("plotData");
+        console.log(plotData)
+        plotData(0, 1, 100);
+        expect(mockSetLoading).toHaveBeenCalledTimes(1)
     });
 });

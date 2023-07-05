@@ -121,6 +121,7 @@ describe("serialise", () => {
     };
     const sensitivityState = {
         running: true,
+        loading: false,
         paramSettings: {
             parameterToVary: "alpha",
             scaleType: SensitivityScaleType.Arithmetic,
@@ -188,6 +189,7 @@ describe("serialise", () => {
 
     const modelFitState = {
         fitting: false,
+        loading: false,
         fitUpdateRequired: {
             modelChanged: false,
             dataChanged: false,

@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import FitPlot from "./FitPlot.vue";
@@ -43,12 +43,12 @@ import LoadingButton from "../LoadingButton.vue";
 export default {
     name: "FitTab",
     components: {
-    LoadingSpinner,
-    FitPlot,
-    ActionRequiredMessage,
-    VueFeather,
-    LoadingButton
-},
+        LoadingSpinner,
+        FitPlot,
+        ActionRequiredMessage,
+        VueFeather,
+        LoadingButton
+    },
     setup() {
         const store = useStore();
         const namespace = "modelFit";
@@ -57,24 +57,20 @@ export default {
         const canFitModel = computed(() => allTrue(fitRequirements.value));
         const compileRequired = computed(() => store.state.model.compileRequired);
         const fitUpdateRequired = computed(() => store.state.modelFit.fitUpdateRequired);
-        const loading = ref(false);
+        const loading = computed(() => store.state.modelFit.loading);
+
         const fitModel = () => {
-            loading.value = true;
-            store.dispatch(`${namespace}/${ModelFitAction.FitModel}`)
+            store.commit(`${namespace}/${ModelFitMutation.SetLoading}`, true);
+            store.dispatch(`${namespace}/${ModelFitAction.FitModel}`);
         };
 
         const cancelFit = () => {
-            store.commit(`${namespace}/${ModelFitMutation.SetFitting}`, false)
-            loading.value = false;
+            store.commit(`${namespace}/${ModelFitMutation.SetFitting}`, false);
+            store.commit(`${namespace}/${ModelFitMutation.SetLoading}`, false);
         };
 
         const iterations = computed(() => store.state.modelFit.iterations);
-        const converged = computed(() => {
-            if (store.state.modelFit.converged) {
-                loading.value = false
-            }
-            return store.state.modelFit.converged
-        });
+        const converged = computed(() => store.state.modelFit.converged);
         const fitting = computed(() => store.state.modelFit.fitting);
         const cancelled = computed(() => iterations.value && !fitting.value && !converged.value);
         const sumOfSquares = computed(() => store.state.modelFit.sumOfSquares);

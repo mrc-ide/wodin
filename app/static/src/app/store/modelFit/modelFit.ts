@@ -17,7 +17,8 @@ export const defaultState: ModelFitState = {
     sumOfSquares: null,
     paramsToVary: [],
     inputs: null,
-    result: null
+    result: null,
+    loading: false
 };
 
 export const modelFit = {

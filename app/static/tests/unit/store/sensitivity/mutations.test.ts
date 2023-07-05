@@ -143,6 +143,12 @@ describe("Sensitivity mutations", () => {
         expect(state.running).toBe(true);
     });
 
+    it("sets running", () => {
+        const state = mockSensitivityState();
+        mutations.SetLoading(state, true);
+        expect(state.loading).toBe(true);
+    });
+
     it("saves result when parameter set added", () => {
         const mockResult = { batch: "fake batch" } as any;
         const state = mockSensitivityState({

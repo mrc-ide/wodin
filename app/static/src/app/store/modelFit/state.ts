@@ -17,6 +17,7 @@ export interface FitUpdateRequiredReasons {
 
 export interface ModelFitState {
     fitting: boolean,
+    loading: boolean,
     fitUpdateRequired: FitUpdateRequiredReasons,
     iterations: number | null,
     converged: boolean | null,

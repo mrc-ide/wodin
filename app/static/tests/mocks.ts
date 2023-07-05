@@ -137,6 +137,7 @@ export const mockFitDataState = (state:Partial<FitDataState> = {}): FitDataState
 export const mockSensitivityState = (state: Partial<SensitivityState> = {}): SensitivityState => {
     return {
         running: false,
+        loading: false,
         paramSettings: {
             parameterToVary: null,
             scaleType: SensitivityScaleType.Arithmetic,
@@ -195,6 +196,7 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
 export const mockModelFitState = (state: Partial<ModelFitState> = {}): ModelFitState => {
     return {
         fitting: false,
+        loading: false,
         fitUpdateRequired: {
             modelChanged: false,
             dataChanged: false,
