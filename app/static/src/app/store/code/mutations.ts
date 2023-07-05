@@ -2,7 +2,7 @@ import { MutationTree } from "vuex";
 import { CodeState } from "./state";
 
 export enum CodeMutation {
-    SetCurrentCode = "SetCurrentCodes",
+    SetCurrentCode = "SetCurrentCode",
     SetLoading = "SetLoading"
 }
 

@@ -267,7 +267,7 @@ describe("serialise", () => {
         language: langaugeState
     };
 
-    const expectedCode = { currentCode: ["some code"] };
+    const expectedCode = { currentCode: ["some code"], loading: false };
     const expectedModel = {
         compileRequired: true,
         odinModelResponse: modelState.odinModelResponse,

@@ -8,4 +8,10 @@ describe("Code mutations", () => {
         mutations.SetCurrentCode(state, code);
         expect(state.currentCode).toBe(code);
     });
+
+    it("sets loading", () => {
+        const state = mockCodeState();
+        mutations.SetLoading(state, true);
+        expect(state.loading).toBe(true);
+    });
 });
