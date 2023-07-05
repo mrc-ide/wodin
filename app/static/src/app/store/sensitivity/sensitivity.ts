@@ -33,7 +33,8 @@ export const defaultState: SensitivityState = {
     },
     result: null,
     parameterSetResults: {},
-    running: false
+    running: false,
+    loading: false
 };
 
 export const sensitivity = {

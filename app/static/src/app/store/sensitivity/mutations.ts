@@ -19,6 +19,7 @@ export enum SensitivityMutation {
     SetPlotExtreme = "SetPlotExtreme",
     SetPlotTime = "SetPlotTime",
     SetRunning = "SetRunning",
+    SetLoading = "SetLoading",
     ParameterSetAdded = "ParameterSetAdded",
     SetParameterSetResults = "SetParameterSetResults",
     ParameterSetDeleted = "ParameterSetDeleted",
@@ -76,6 +77,10 @@ export const mutations: MutationTree<SensitivityState> = {
 
     [SensitivityMutation.SetRunning](state: SensitivityState, payload: boolean) {
         state.running = payload;
+    },
+
+    [SensitivityMutation.SetLoading](state: SensitivityState, payload: boolean) {
+        state.loading = payload;
     },
 
     [SensitivityMutation.ParameterSetAdded](state: SensitivityState, payload: string) {
