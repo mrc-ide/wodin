@@ -18,7 +18,9 @@ export enum RunMutation {
     AddParameterSet = "AddParameterSet",
     DeleteParameterSet = "DeleteParameterSet",
     SwapParameterSet = "SwapParameterSet",
-    ToggleParameterSetHidden = "ToggleParameterSetHidden"
+    ToggleParameterSetHidden = "ToggleParameterSetHidden",
+    SaveParameterDisplayName = "SaveParameterDisplayName",
+    TurnOffDuplicateDisplayName = "TurnOffDuplicateDisplayName"
 }
 
 const runRequiredNone = {
@@ -27,6 +29,11 @@ const runRequiredNone = {
     endTimeChanged: false,
     numberOfReplicatesChanged: false
 };
+
+interface ParameterSetNames {
+    parameterSetName: string
+    newDisplayName: string
+}
 
 export const mutations: MutationTree<RunState> = {
     [RunMutation.SetResultOde](state: RunState, payload: OdinRunResultOde) {
@@ -121,6 +128,27 @@ export const mutations: MutationTree<RunState> = {
         const paramSet = state.parameterSets.find((set: ParameterSet) => set.name === parameterSetName);
         if (paramSet) {
             paramSet.hidden = !paramSet.hidden;
+        }
+    },
+
+    [RunMutation.SaveParameterDisplayName](state: RunState, payload: ParameterSetNames) {
+        const isDuplicateDisplayName = state.parameterSets.find((set: ParameterSet) => {
+            return set.displayName === payload.newDisplayName
+        });
+        const paramSet = state.parameterSets.find((set: ParameterSet) => set.name === payload.parameterSetName);
+        if (paramSet) {
+            if (isDuplicateDisplayName) {
+                paramSet.duplicateDisplayName = true;
+            } else {
+                paramSet.displayName = payload.newDisplayName;
+            }
+        }
+    },
+
+    [RunMutation.TurnOffDuplicateDisplayName](state: RunState, parameterSetName: string) {
+        const paramSet = state.parameterSets.find((set: ParameterSet) => set.name === parameterSetName);
+        if (paramSet) {
+            paramSet.duplicateDisplayName = false;
         }
     }
 };

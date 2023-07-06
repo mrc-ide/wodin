@@ -91,7 +91,13 @@ describe("serialise", () => {
         },
         parameterSetsCreated: 3,
         parameterSets: [
-            { name: "Set 1", parameterValues: { alpha: 1, beta: 3.3 }, hidden: false }
+            {
+                name: "Set 1",
+                displayName: "Set 1",
+                duplicateDisplayName: false,
+                parameterValues: { alpha: 1, beta: 3.3 },
+                hidden: false
+            }
         ],
         parameterSetResults: {
             "Set 1": {

@@ -11,6 +11,8 @@ export interface RunUpdateRequiredReasons {
 
 export interface ParameterSet {
     name: string,
+    displayName: string,
+    duplicateDisplayName: boolean,
     parameterValues: OdinUserType,
     hidden: boolean
 }

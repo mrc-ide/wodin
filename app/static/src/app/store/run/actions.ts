@@ -147,8 +147,10 @@ export const actions: ActionTree<RunState, AppState> = {
         // Creating new parameter sets when run is required is disallowed in UI, but check here too
         if (!getters[RunGetter.runIsRequired]) {
             const name = `Set ${state.parameterSetsCreated + 1}`;
+            const displayName = `Set ${state.parameterSetsCreated + 1}`
             const parameterSet = {
                 name,
+                displayName,
                 parameterValues: { ...state.parameterValues },
                 hidden: false
             };

@@ -1,28 +1,47 @@
 <template>
 <div class="container parameter-set">
   <div class="card">
-    <div class="card-header">
-      {{parameterSet.name}}
-      <div class="d-inline-block trace ms-2" :class="lineStyleClass"></div>
+    <div class="card-header param-card-header">
+      <div v-if="!editDisplayName" class="ms-2 align-center" @click="editDisplayNameOn">
+        {{parameterSet.displayName}}
+      </div>
+      <span v-else>
+        <input class="d-inline form-control param-name-input"
+               v-model="newDisplayName"
+               @keydown.enter="saveDisplayName"
+               v-tooltip="{ content: parameterSet.duplicateDisplayName ? 'Name already exists' : '',
+                  trigger: 'manual',
+                  variant: 'error' }"/>
+      </span>
       <span class="float-end">
-        <vue-feather class="inline-icon clickable hide-param-set"
+        <vue-feather class="inline-icon clickable edit-display-name param-set-icon"
+                     v-if="!editDisplayName"
+                     type="edit"
+                     @click="editDisplayNameOn"
+                     v-tooltip="'Rename Parameter Set'"></vue-feather>
+        <vue-feather class="inline-icon clickable save-display-name param-set-icon"
+                     v-else
+                     type="save"
+                     @click="saveDisplayName"
+                     v-tooltip="'Save Parameter Set Name'"></vue-feather>
+        <vue-feather class="inline-icon clickable hide-param-set ms-2 param-set-icon"
                      v-if="!parameterSet.hidden"
                      type="eye-off"
                      @click="toggleHidden"
                      v-tooltip="'Hide Parameter Set'"></vue-feather>
-        <vue-feather class="inline-icon clickable show-param-set"
+        <vue-feather class="inline-icon clickable show-param-set ms-2 param-set-icon"
                      v-if="parameterSet.hidden"
                      type="eye"
                      @click="toggleHidden"
                      v-tooltip="'Show Parameter Set'"></vue-feather>
-        <vue-feather class="inline-icon clickable swap-param-set ms-2"
+        <vue-feather class="inline-icon clickable swap-param-set ms-2 param-set-icon"
                      type="shuffle"
                      :disabled="!canSwapParameterSet"
                      :stroke="canSwapParameterSet ? 'black' : 'lightgray'"
                      :style="{ cursor: canSwapParameterSet ? 'pointer' : 'default' }"
                      @click="swapParameterSet"
                      v-tooltip="'Swap Parameter Set with Current Parameter Values'"></vue-feather>
-        <vue-feather class="inline-icon clickable delete-param-set ms-2"
+        <vue-feather class="inline-icon clickable delete-param-set ms-2 param-set-icon"
                      type="trash-2"
                      @click="deleteParameterSet"
                      v-tooltip="'Delete Parameter Set'"></vue-feather>
@@ -32,7 +51,7 @@
        <span v-for="(value, name) in parameterSet.parameterValues"
              :key="name"
              class="badge badge-light me-2 mb-2 parameter"
-             :style="getStyle(name)">
+             :style="getStyle(`${name}`)">
         {{name}}: <span style="font-weight:lighter;">{{value}}</span>
        </span>
     </div>
@@ -41,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType, ref, watch } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import { ParameterSet } from "../../store/run/state";
@@ -97,6 +116,28 @@ export default defineComponent({
             store.commit(`run/${RunMutation.ToggleParameterSetHidden}`, props.parameterSet.name);
         };
 
+        const editDisplayName = ref(false);
+        const newDisplayName = ref(props.parameterSet.displayName);
+        const editDisplayNameOn = () => {
+            editDisplayName.value = true;
+        };
+        const saveDisplayName = () => {
+            const payload = {
+                parameterSetName: props.parameterSet.name,
+                newDisplayName: newDisplayName.value
+            };
+            store.commit(`run/${RunMutation.SaveParameterDisplayName}`, payload);
+            if (!props.parameterSet.duplicateDisplayName) {
+              editDisplayName.value = false;
+            }
+        };
+
+        watch(newDisplayName, () => {
+            if (props.parameterSet.duplicateDisplayName) {
+                store.commit(`run/${RunMutation.TurnOffDuplicateDisplayName}`, props.parameterSet.name);
+            } 
+        });
+
         const runRequired = computed(() => store.getters[`run/${RunGetter.runIsRequired}`]);
         const canSwapParameterSet = computed(() => {
             return !(store.state.model.compileRequired || runRequired.value);
@@ -108,7 +149,11 @@ export default defineComponent({
             deleteParameterSet,
             swapParameterSet,
             toggleHidden,
-            canSwapParameterSet
+            canSwapParameterSet,
+            editDisplayName,
+            editDisplayNameOn,
+            newDisplayName,
+            saveDisplayName
         };
     }
 });
