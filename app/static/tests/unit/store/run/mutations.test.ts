@@ -403,4 +403,122 @@ describe("Run mutations", () => {
             }
         ]);
     });
+
+    it("can change parameter display name", () => {
+        const state = mockRunState({
+            parameterValues: { a: 1 },
+            parameterSets: [
+                {
+                    name: "Set1",
+                    displayName: "Set1",
+                    isDisplayNameError: false,
+                    displayNameErrorMsg: "",
+                    parameterValues: { a: 2 },
+                    hidden: false
+                }
+            ]
+        });
+        mutations.SaveParameterDisplayName(state, {
+            parameterSetName: "Set1",
+            newDisplayName: "random name"
+        });
+        expect(state.parameterSets).toStrictEqual([{
+            name: "Set1",
+            displayName: "random name",
+            isDisplayNameError: false,
+            displayNameErrorMsg: "",
+            parameterValues: { a: 2 },
+            hidden: false
+        }]);
+    });
+
+    it("error if two names are the same", () => {
+        const state = mockRunState({
+            parameterValues: { a: 1 },
+            parameterSets: [
+                {
+                    name: "Set1",
+                    displayName: "random name",
+                    isDisplayNameError: false,
+                    displayNameErrorMsg: "",
+                    parameterValues: { a: 2 },
+                    hidden: false
+                },
+                {
+                    name: "Set2",
+                    displayName: "Set2",
+                    isDisplayNameError: false,
+                    displayNameErrorMsg: "",
+                    parameterValues: { a: 2 },
+                    hidden: false
+                }
+            ]
+        });
+        mutations.SaveParameterDisplayName(state, {
+            parameterSetName: "Set2",
+            newDisplayName: "random name"
+        });
+        expect(state.parameterSets[1]).toStrictEqual({
+            name: "Set2",
+            displayName: "Set2",
+            isDisplayNameError: true,
+            displayNameErrorMsg: "Name already exists",
+            parameterValues: { a: 2 },
+            hidden: false
+        });
+    });
+
+    it("error if you try and name it Set [number]", () => {
+        const state = mockRunState({
+            parameterValues: { a: 1 },
+            parameterSets: [
+                {
+                    name: "Set1",
+                    displayName: "random name",
+                    isDisplayNameError: false,
+                    displayNameErrorMsg: "",
+                    parameterValues: { a: 2 },
+                    hidden: false
+                }
+            ]
+        });
+        mutations.SaveParameterDisplayName(state, {
+            parameterSetName: "Set1",
+            newDisplayName: "Set 123"
+        });
+        expect(state.parameterSets).toStrictEqual([{
+            name: "Set1",
+            displayName: "random name",
+            isDisplayNameError: true,
+            displayNameErrorMsg: `Set [number] combination is reserved for default set names.
+                Please choose another set name or name this set: Set1`,
+            parameterValues: { a: 2 },
+            hidden: false
+        }]);
+    });
+
+    it("turns off display name error", () => {
+        const state = mockRunState({
+            parameterValues: { a: 1 },
+            parameterSets: [
+                {
+                    name: "Set1",
+                    displayName: "Set1",
+                    isDisplayNameError: true,
+                    displayNameErrorMsg: "Name already exists",
+                    parameterValues: { a: 2 },
+                    hidden: false
+                }
+            ]
+        });
+        mutations.TurnOffDisplayNameError(state, "Set1");
+        expect(state.parameterSets).toStrictEqual([{
+            name: "Set1",
+            displayName: "Set1",
+            isDisplayNameError: false,
+            displayNameErrorMsg: "",
+            parameterValues: { a: 2 },
+            hidden: false
+        }]);
+    });
 });
