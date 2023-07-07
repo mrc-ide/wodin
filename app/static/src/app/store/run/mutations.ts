@@ -138,10 +138,12 @@ export const mutations: MutationTree<RunState> = {
         const isSpecialSetName = payload.newDisplayName.match(/^ *set \d+ *$/gi);
         const paramSet = state.parameterSets.find((set: ParameterSet) => set.name === payload.parameterSetName);
         if (paramSet) {
-            if (isDuplicateDisplayName && payload.newDisplayName !== paramSet.name) {
+            const isParamSetName = payload.newDisplayName === paramSet.name;
+            const isParamSetDisplayName = payload.newDisplayName === paramSet.displayName;
+            if (isDuplicateDisplayName && !isParamSetName && !isParamSetDisplayName) {
                 paramSet.isDisplayNameError = true;
                 paramSet.displayNameErrorMsg = "Name already exists";
-            } else if (isSpecialSetName && payload.newDisplayName !== paramSet.name) {
+            } else if (isSpecialSetName && !isParamSetName) {
                 paramSet.isDisplayNameError = true;
                 paramSet.displayNameErrorMsg = `Set [number] combination is reserved for default set names.
                 Please choose another set name or name this set: ${paramSet.name}`;
