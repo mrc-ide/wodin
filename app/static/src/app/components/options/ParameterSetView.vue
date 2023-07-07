@@ -61,7 +61,14 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, nextTick, PropType, ref, watch } from "vue";
+import {
+    computed,
+    defineComponent,
+    nextTick,
+    PropType,
+    ref,
+    watch
+} from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import { ParameterSet } from "../../store/run/state";
@@ -123,8 +130,8 @@ export default defineComponent({
         const editDisplayNameOn = () => {
             editDisplayName.value = true;
             nextTick(() => {
-              (paramNameInput.value! as HTMLInputElement).select();
-            })
+                (paramNameInput.value! as HTMLInputElement).select();
+            });
         };
         const saveDisplayName = () => {
             const payload = {
@@ -133,15 +140,17 @@ export default defineComponent({
             };
             store.commit(`run/${RunMutation.SaveParameterDisplayName}`, payload);
             if (!props.parameterSet.isDisplayNameError) {
-              editDisplayName.value = false;
+                editDisplayName.value = false;
             }
         };
 
-        watch(newDisplayName, () => {
+        const turnOffDisplayNameError = () => {
             if (props.parameterSet.isDisplayNameError) {
                 store.commit(`run/${RunMutation.TurnOffDisplayNameError}`, props.parameterSet.name);
-            } 
-        });
+            }
+        };
+
+        watch(newDisplayName, turnOffDisplayNameError);
 
         const runRequired = computed(() => store.getters[`run/${RunGetter.runIsRequired}`]);
         const canSwapParameterSet = computed(() => {
@@ -159,7 +168,8 @@ export default defineComponent({
             editDisplayNameOn,
             newDisplayName,
             saveDisplayName,
-            paramNameInput
+            paramNameInput,
+            turnOffDisplayNameError
         };
     }
 });

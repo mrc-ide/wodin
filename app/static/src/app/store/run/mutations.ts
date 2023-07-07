@@ -133,7 +133,7 @@ export const mutations: MutationTree<RunState> = {
 
     [RunMutation.SaveParameterDisplayName](state: RunState, payload: ParameterSetNames) {
         const isDuplicateDisplayName = state.parameterSets.find((set: ParameterSet) => {
-            return set.displayName === payload.newDisplayName
+            return set.displayName === payload.newDisplayName;
         });
         const isSpecialSetName = payload.newDisplayName.match(/^ *set \d+ *$/gi);
         const paramSet = state.parameterSets.find((set: ParameterSet) => set.name === payload.parameterSetName);

@@ -354,8 +354,22 @@ const expectedFitPlotData = {
 const selectedVariables = ["y", "z"];
 
 const mockParameterSets = [
-    { name: "Set 1", parameterValues: { alpha: 1 }, hidden: false },
-    { name: "Set 2", parameterValues: { alpha: 2 }, hidden: true }
+    {
+        name: "Set 1",
+        displayName: "Set 1",
+        isDisplayNameError: false,
+        displayNameErrorMsg: "",
+        parameterValues: { alpha: 1 },
+        hidden: false
+    },
+    {
+        name: "Set 2",
+        displayName: "Set 2",
+        isDisplayNameError: false,
+        displayNameErrorMsg: "",
+        parameterValues: { alpha: 2 },
+        hidden: true
+    }
 ];
 
 const mockParameterSetBatch1 = {

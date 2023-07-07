@@ -41,8 +41,22 @@ describe("ParameterSets", () => {
     it("renders as expected", () => {
         const runState = {
             parameterSets: [
-                { name: "Set 1", parameterValues: { alpha: 1, beta: 2, gamma: 3 }, hidden: false },
-                { name: "Set 2", parameterValues: { alpha: 10, beta: 20, gamma: 30 }, hidden: false }
+                {
+                    name: "Set 1",
+                    displayName: "Set 1",
+                    isDisplayNameError: false,
+                    displayNameErrorMsg: "",
+                    parameterValues: { alpha: 1, beta: 2, gamma: 3 },
+                    hidden: false
+                },
+                {
+                    name: "Set 2",
+                    displayName: "Set 2",
+                    isDisplayNameError: false,
+                    displayNameErrorMsg: "",
+                    parameterValues: { alpha: 10, beta: 20, gamma: 30 },
+                    hidden: false
+                }
             ],
             parameterValues: { alpha: 2, beta: 3, gamma: 4 }
         };
@@ -84,8 +98,22 @@ describe("ParameterSets", () => {
         const runState = {
             parameterValues: { alpha: 2, beta: 3, gamma: 4 },
             parameterSets: [
-                { name: "Set 1", parameterValues: { alpha: 1, beta: 2, gamma: 3 }, hidden: false },
-                { name: "Set 2", parameterValues: { alpha: 2, beta: 3, gamma: 4 }, hidden: false }
+                {
+                    name: "Set 1",
+                    displayName: "Set 1",
+                    isDisplayNameError: false,
+                    displayNameErrorMsg: "",
+                    parameterValues: { alpha: 1, beta: 2, gamma: 3 },
+                    hidden: false
+                },
+                {
+                    name: "Set 2",
+                    displayName: "Set 2",
+                    isDisplayNameError: false,
+                    displayNameErrorMsg: "",
+                    parameterValues: { alpha: 2, beta: 3, gamma: 4 },
+                    hidden: false
+                }
             ]
         };
         const wrapper = getWrapper(runState);
