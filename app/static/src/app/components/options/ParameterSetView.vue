@@ -2,14 +2,15 @@
 <div class="container parameter-set">
   <div class="card">
     <div class="card-header param-card-header">
-      <div v-if="!editDisplayName" class="ms-2 align-center" @click="editDisplayNameOn">
+      <div v-show="!editDisplayName" class="ms-2 align-center" @click="editDisplayNameOn">
         {{parameterSet.displayName}}
       </div>
-      <span v-else>
+      <span v-show="editDisplayName">
         <input class="d-inline form-control param-name-input"
+               ref="paramNameInput"
                v-model="newDisplayName"
                @keydown.enter="saveDisplayName"
-               v-tooltip="{ content: parameterSet.duplicateDisplayName ? 'Name already exists' : '',
+               v-tooltip="{ content: parameterSet.displayNameErrorMsg,
                   trigger: 'manual',
                   variant: 'error' }"/>
       </span>
@@ -60,7 +61,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, ref, watch } from "vue";
+import { computed, defineComponent, nextTick, PropType, ref, watch } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import { ParameterSet } from "../../store/run/state";
@@ -116,10 +117,14 @@ export default defineComponent({
             store.commit(`run/${RunMutation.ToggleParameterSetHidden}`, props.parameterSet.name);
         };
 
+        const paramNameInput = ref(null);
         const editDisplayName = ref(false);
         const newDisplayName = ref(props.parameterSet.displayName);
         const editDisplayNameOn = () => {
             editDisplayName.value = true;
+            nextTick(() => {
+              (paramNameInput.value! as HTMLInputElement).select();
+            })
         };
         const saveDisplayName = () => {
             const payload = {
@@ -127,14 +132,14 @@ export default defineComponent({
                 newDisplayName: newDisplayName.value
             };
             store.commit(`run/${RunMutation.SaveParameterDisplayName}`, payload);
-            if (!props.parameterSet.duplicateDisplayName) {
+            if (!props.parameterSet.isDisplayNameError) {
               editDisplayName.value = false;
             }
         };
 
         watch(newDisplayName, () => {
-            if (props.parameterSet.duplicateDisplayName) {
-                store.commit(`run/${RunMutation.TurnOffDuplicateDisplayName}`, props.parameterSet.name);
+            if (props.parameterSet.isDisplayNameError) {
+                store.commit(`run/${RunMutation.TurnOffDisplayNameError}`, props.parameterSet.name);
             } 
         });
 
@@ -153,7 +158,8 @@ export default defineComponent({
             editDisplayName,
             editDisplayNameOn,
             newDisplayName,
-            saveDisplayName
+            saveDisplayName,
+            paramNameInput
         };
     }
 });

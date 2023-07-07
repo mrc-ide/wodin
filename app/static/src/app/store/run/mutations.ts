@@ -20,7 +20,7 @@ export enum RunMutation {
     SwapParameterSet = "SwapParameterSet",
     ToggleParameterSetHidden = "ToggleParameterSetHidden",
     SaveParameterDisplayName = "SaveParameterDisplayName",
-    TurnOffDuplicateDisplayName = "TurnOffDuplicateDisplayName"
+    TurnOffDisplayNameError = "TurnOffDisplayNameError"
 }
 
 const runRequiredNone = {
@@ -135,20 +135,27 @@ export const mutations: MutationTree<RunState> = {
         const isDuplicateDisplayName = state.parameterSets.find((set: ParameterSet) => {
             return set.displayName === payload.newDisplayName
         });
+        const isSpecialSetName = payload.newDisplayName.match(/^ *set \d+ *$/gi);
         const paramSet = state.parameterSets.find((set: ParameterSet) => set.name === payload.parameterSetName);
         if (paramSet) {
-            if (isDuplicateDisplayName) {
-                paramSet.duplicateDisplayName = true;
+            if (isDuplicateDisplayName && payload.newDisplayName !== paramSet.name) {
+                paramSet.isDisplayNameError = true;
+                paramSet.displayNameErrorMsg = "Name already exists";
+            } else if (isSpecialSetName && payload.newDisplayName !== paramSet.name) {
+                paramSet.isDisplayNameError = true;
+                paramSet.displayNameErrorMsg = `Set [number] combination is reserved for default set names.
+                Please choose another set name or name this set: ${paramSet.name}`;
             } else {
                 paramSet.displayName = payload.newDisplayName;
             }
         }
     },
 
-    [RunMutation.TurnOffDuplicateDisplayName](state: RunState, parameterSetName: string) {
+    [RunMutation.TurnOffDisplayNameError](state: RunState, parameterSetName: string) {
         const paramSet = state.parameterSets.find((set: ParameterSet) => set.name === parameterSetName);
         if (paramSet) {
-            paramSet.duplicateDisplayName = false;
+            paramSet.isDisplayNameError = false;
+            paramSet.displayNameErrorMsg = "";
         }
     }
 };
