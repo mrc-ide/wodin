@@ -145,8 +145,9 @@ export const mutations: MutationTree<RunState> = {
                 paramSet.displayNameErrorMsg = "Name already exists";
             } else if (isSpecialSetName && !isParamSetName) {
                 paramSet.isDisplayNameError = true;
-                paramSet.displayNameErrorMsg = `Set [number] combination is reserved for default set names.
-                Please choose another set name or name this set: ${paramSet.name}`;
+                paramSet.displayNameErrorMsg = `${payload.newDisplayName} (or any Set [number] combination) is reserved
+                for default set names. Please choose another set name or name this set back to
+                its original name of '${paramSet.name}'`;
             } else {
                 paramSet.displayName = payload.newDisplayName;
             }

@@ -65,6 +65,7 @@ import {
     computed,
     defineComponent,
     nextTick,
+    onBeforeUnmount,
     PropType,
     ref,
     watch
@@ -156,6 +157,8 @@ export default defineComponent({
         const canSwapParameterSet = computed(() => {
             return !(store.state.model.compileRequired || runRequired.value);
         });
+
+        onBeforeUnmount(turnOffDisplayNameError);
 
         return {
             lineStyleClass,

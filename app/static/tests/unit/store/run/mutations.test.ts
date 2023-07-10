@@ -490,8 +490,9 @@ describe("Run mutations", () => {
             name: "Set1",
             displayName: "random name",
             isDisplayNameError: true,
-            displayNameErrorMsg: `Set [number] combination is reserved for default set names.
-                Please choose another set name or name this set: Set1`,
+            displayNameErrorMsg: `Set 123 (or any Set [number] combination) is reserved
+                for default set names. Please choose another set name or name this set back to
+                its original name of 'Set1'`,
             parameterValues: { a: 2 },
             hidden: false
         }]);

@@ -396,8 +396,8 @@ test.describe("Options Tab tests", () => {
         await inputDisplayName(1, page, "Set 10");
         await saveDisplayName(1, page);
         await expect((await page.innerText(":nth-match(.tooltip-inner, 2)")).trim())
-            .toBe("Set [number] combination is reserved for default set names. "
-            + "Please choose another set name or name this set: Set 1");
+            .toBe("Set 10 (or any Set [number] combination) is reserved for default set names. "
+            + "Please choose another set name or name this set back to its original name of 'Set 1'");
         await expect(await page.isVisible(".param-name-input")).toBe(true);
     });
 });
