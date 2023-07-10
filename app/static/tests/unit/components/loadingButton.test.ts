@@ -13,7 +13,7 @@ describe("LoadingButton", () => {
             }
         });
     };
-    
+
     it("renders as expected", () => {
         const wrapper = getWrapper();
         expect(wrapper.find("button").classes()).toContain("loading-btn");
