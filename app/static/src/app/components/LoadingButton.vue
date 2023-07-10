@@ -1,6 +1,6 @@
 <template>
     <button :disabled="loading || isDisabled" class="loading-btn">
-        <span v-if="loading" class="spinner-border loading-spinner" role="status" aria-hidden="true" style=""></span>
+        <span v-if="loading" class="spinner-border loading-spinner" role="status" aria-hidden="true"></span>
         <div :class="loading ? 'hidden-loading' : ''">
             <slot></slot>
         </div>
