@@ -82,16 +82,11 @@ describe("CodeTab", () => {
         expect(statusIcon.classes()).toContain("text-danger");
     });
 
-    it("shows loading icon and code-loading when code is validating", () => {
+    it("shows greyed out icon and greyed out message when code is validating", () => {
         const wrapper = getWrapper(defaultModelState, true);
-        expect(wrapper.find("#code-loading").isVisible()).toBe(true);
-        expect(wrapper.find("#code-status").isVisible()).toBe(false);
-        const statusIcon = wrapper.find("#code-loading").find("span");
-        expect(statusIcon.classes()).toContain("text-warning");
-        expect(statusIcon.classes()).toContain("spinner-border");
-        expect(statusIcon.classes()).toContain("spinner-border-sm");
-        expect(statusIcon.classes()).toContain("me-2");
-        expect(wrapper.find("#code-loading").text()).toBe("Code is validating");
+        expect(wrapper.find("#code-status").classes()).toContain("code-validating-text");
+        const statusIcon = wrapper.find("#code-status").findComponent(VueFeather);
+        expect(statusIcon.classes()).toContain("code-validating-icon");
     });
 
     it("compile button dispatches compile action", () => {

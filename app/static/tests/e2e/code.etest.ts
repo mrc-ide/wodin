@@ -127,9 +127,9 @@ test.describe("Code Tab tests", () => {
         await page.press(".monaco-editor textarea", "Control+A");
         await page.press(".monaco-editor textarea", "Delete");
         page.fill(".monaco-editor textarea", "blah");
-        expect(page.locator("#code-loading")).toHaveText("Code is validating");
-        expect(page.locator("#code-loading").locator("span"))
-            .toHaveClass("spinner-border spinner-border-sm me-2 text-warning");
+        expect(page.locator("#code-status")).toHaveClass("mt-2 code-validating-text");
+        expect(page.locator("#code-status").locator("i"))
+            .toHaveClass("vue-feather vue-feather--check inline-icon me-1 code-validating-icon");
     });
 
     test("can see code not valid msg when update code with syntax error", async ({ page }) => {

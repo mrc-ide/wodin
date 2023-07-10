@@ -3,17 +3,13 @@
         <generic-help title="Write odin code" :markdown="codeHelp"></generic-help>
         <code-editor/>
         <button class="btn btn-primary mt-2" id="compile-btn" :disabled="!codeIsValid" @click="compile">Compile</button>
-        <div v-show="!codeValidating" class="mt-2" id="code-status">
+        <div class="mt-2" id="code-status" :class="codeValidating ? 'code-validating-text' : ''">
             <vue-feather class="inline-icon me-1"
                          :class="iconClass"
                          :type="validIcon"
                          :size="20"
                          :stroke-width="4"></vue-feather>
             {{ validMsg }}
-        </div>
-        <div v-show="codeValidating" class="mt-2" id="code-loading">
-            <span class="spinner-border spinner-border-sm me-2 text-warning"></span>
-            {{ loadingMessage }}
         </div>
         <error-info :error="error"></error-info>
         <div class="mt-3">
@@ -57,7 +53,8 @@ export default defineComponent({
         const error = computed(() => store.state.model.odinModelCodeError);
         const validMsg = computed(() => (codeIsValid.value ? userMessages.code.isValid : userMessages.code.isNotValid));
         const validIcon = computed(() => (codeIsValid.value ? "check" : "x"));
-        const iconClass = computed(() => (codeIsValid.value ? "text-success" : "text-danger"));
+        const iconValidatedClass = computed(() => (codeIsValid.value ? "text-success" : "text-danger"));
+        const iconClass = computed(() => (codeValidating.value ? "code-validating-icon" : iconValidatedClass.value));
         const allVariables = computed<string[]>(() => store.state.model.odinModelResponse?.metadata?.variables || []);
         const showSelectedVariables = computed(() => allVariables.value.length && !store.state.model.compileRequired);
         const appIsConfigured = computed(() => store.state.configured);
@@ -80,3 +77,11 @@ export default defineComponent({
     }
 });
 </script>
+<style>
+    .code-validating-icon {
+        color: gray;
+    }
+    .code-validating-text {
+        color: rgba(0, 0, 0, 0.7);
+    }
+</style>
