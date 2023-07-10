@@ -57,7 +57,6 @@ export default {
         const canFitModel = computed(() => allTrue(fitRequirements.value));
         const compileRequired = computed(() => store.state.model.compileRequired);
         const fitUpdateRequired = computed(() => store.state.modelFit.fitUpdateRequired);
-        const loading = computed(() => store.state.modelFit.loading);
 
         const fitModel = () => {
             store.dispatch(`${namespace}/${ModelFitAction.FitModel}`);
@@ -126,8 +125,7 @@ export default {
             sumOfSquares,
             actionRequiredMessage,
             iconType,
-            iconClass,
-            loading
+            iconClass
         };
     }
 };
