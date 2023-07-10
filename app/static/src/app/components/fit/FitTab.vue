@@ -57,14 +57,9 @@ export default {
         const canFitModel = computed(() => allTrue(fitRequirements.value));
         const compileRequired = computed(() => store.state.model.compileRequired);
         const fitUpdateRequired = computed(() => store.state.modelFit.fitUpdateRequired);
-
-        const fitModel = () => {
-            store.dispatch(`${namespace}/${ModelFitAction.FitModel}`);
-        };
-
-        const cancelFit = () => {
-            store.commit(`${namespace}/${ModelFitMutation.SetFitting}`, false);
-        };
+        const fitModel = () => store.dispatch(`${namespace}/${ModelFitAction.FitModel}`);
+        
+        const cancelFit = () => store.commit(`${namespace}/${ModelFitMutation.SetFitting}`, false);
 
         const iterations = computed(() => store.state.modelFit.iterations);
         const converged = computed(() => store.state.modelFit.converged);
