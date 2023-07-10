@@ -3,7 +3,7 @@
     <div>
       <loading-button class="btn btn-primary me-2"
                       id="fit-btn"
-                      :loading="loading"
+                      :loading="fitting"
                       :is-disabled="!canFitModel"
                       @click="fitModel">Fit model</loading-button>
       <button class="btn btn-outline" id="cancel-fit-btn" :disabled="!fitting" @click="cancelFit">Cancel fit</button>
@@ -60,13 +60,11 @@ export default {
         const loading = computed(() => store.state.modelFit.loading);
 
         const fitModel = () => {
-            store.commit(`${namespace}/${ModelFitMutation.SetLoading}`, true);
             store.dispatch(`${namespace}/${ModelFitAction.FitModel}`);
         };
 
         const cancelFit = () => {
             store.commit(`${namespace}/${ModelFitMutation.SetFitting}`, false);
-            store.commit(`${namespace}/${ModelFitMutation.SetLoading}`, false);
         };
 
         const iterations = computed(() => store.state.modelFit.iterations);

@@ -196,7 +196,6 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
 export const mockModelFitState = (state: Partial<ModelFitState> = {}): ModelFitState => {
     return {
         fitting: false,
-        loading: false,
         fitUpdateRequired: {
             modelChanged: false,
             dataChanged: false,

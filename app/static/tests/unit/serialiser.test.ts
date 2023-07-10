@@ -189,7 +189,6 @@ describe("serialise", () => {
 
     const modelFitState = {
         fitting: false,
-        loading: false,
         fitUpdateRequired: {
             modelChanged: false,
             dataChanged: false,

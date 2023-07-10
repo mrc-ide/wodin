@@ -1,7 +1,9 @@
 <template>
-    <button :disabled="loading || isDisabled">
-        <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-        <slot></slot>
+    <button :disabled="loading || isDisabled" class="loading-btn">
+        <span v-if="loading" class="spinner-border loading-spinner" role="status" aria-hidden="true" style=""></span>
+        <div :class="loading ? 'hidden-loading' : ''">
+            <slot></slot>
+        </div>
     </button>
 </template>
 <script lang="ts">
@@ -14,3 +16,18 @@ export default defineComponent({
     }
 });
 </script>
+<style scoped>
+    .hidden-loading {
+        visibility: hidden;
+    }
+    .loading-btn {
+        position: relative;
+    }
+    .loading-spinner {
+        position: absolute;
+        height: 1.25rem;
+        width: 1.25rem;
+        left: calc(50% - 0.625rem);
+        top: calc(50% - 0.625rem);
+    }
+</style>

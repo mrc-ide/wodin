@@ -2,7 +2,7 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <div v-if="loading" class="text-center">
+                <div v-if="loading" class="text-center center-of-screen">
                   <loading-spinner size="lg"></loading-spinner>
                   <h2 id="loading-message">Loading application...</h2>
                 </div>
@@ -49,4 +49,9 @@ export default defineComponent({
 </script>
 <style lang="scss">
     @import "src/scss/style";
+    .center-of-screen {
+        position: fixed;
+        top: calc(50% - 100px);
+        left: calc(50% - 100px);
+    }
 </style>

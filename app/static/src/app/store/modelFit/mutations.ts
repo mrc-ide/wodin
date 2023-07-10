@@ -8,8 +8,7 @@ export enum ModelFitMutation {
     SetInputs = "SetInputs",
     SetParamsToVary = "SetParamsToVary",
     SetSumOfSquares = "SetSumOfSquares",
-    SetFitUpdateRequired = "SetFitUpdateRequired",
-    SetLoading = "SetLoading"
+    SetFitUpdateRequired = "SetFitUpdateRequired"
 }
 
 export const mutations: MutationTree<ModelFitState> = {
@@ -19,9 +18,6 @@ export const mutations: MutationTree<ModelFitState> = {
 
     [ModelFitMutation.SetResult](state: ModelFitState, payload: SimplexResult) {
         state.converged = payload.converged;
-        if (payload.converged) {
-            state.loading = false;
-        }
         state.iterations = payload.iterations;
         state.sumOfSquares = payload.value;
         const inputs = {
@@ -45,10 +41,6 @@ export const mutations: MutationTree<ModelFitState> = {
 
     [ModelFitMutation.SetSumOfSquares](state: ModelFitState, payload: number | null) {
         state.sumOfSquares = payload;
-    },
-
-    [ModelFitMutation.SetLoading](state: ModelFitState, payload: boolean) {
-        state.loading = payload;
     },
 
     [ModelFitMutation.SetFitUpdateRequired](state: ModelFitState, payload: null | Partial<FitUpdateRequiredReasons>) {
