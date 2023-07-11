@@ -248,7 +248,7 @@ const expectedParameterSetPlotData = [
             width: 1,
             dash: "dot"
         },
-        name: "y (alpha=1.111 Set 1)",
+        name: "y (alpha=1.111 Hey)",
         x: [0, 0.5, 1],
         y: [51, 61, 71],
         hoverlabel: { namelength: -1 },
@@ -262,7 +262,7 @@ const expectedParameterSetPlotData = [
             width: 1,
             dash: "dot"
         },
-        name: "z (alpha=1.111 Set 1)",
+        name: "z (alpha=1.111 Hey)",
         x: [0, 0.5, 1],
         y: [11, 21, 31],
         hoverlabel: { namelength: -1 },
@@ -277,7 +277,7 @@ const expectedParameterSetPlotData = [
             width: 1,
             dash: "dot"
         },
-        name: "y (alpha=2.222 Set 1)",
+        name: "y (alpha=2.222 Hey)",
         x: [0, 0.5, 1],
         y: [52, 62, 72],
         hoverlabel: { namelength: -1 },
@@ -291,7 +291,7 @@ const expectedParameterSetPlotData = [
             width: 1,
             dash: "dot"
         },
-        name: "z (alpha=2.222 Set 1)",
+        name: "z (alpha=2.222 Hey)",
         x: [0, 0.5, 1],
         y: [12, 22, 32],
         hoverlabel: { namelength: -1 },
@@ -306,7 +306,7 @@ const expectedParameterSetPlotData = [
             width: 2,
             dash: "dot"
         },
-        name: "y (Set 1)",
+        name: "y (Hey)",
         x: [0, 0.5, 1],
         y: [151, 161, 171],
         hoverlabel: { namelength: -1 },
@@ -320,7 +320,7 @@ const expectedParameterSetPlotData = [
             width: 2,
             dash: "dot"
         },
-        name: "z (Set 1)",
+        name: "z (Hey)",
         x: [0, 0.5, 1],
         y: [111, 121, 131],
         hoverlabel: { namelength: -1 },
@@ -356,7 +356,7 @@ const selectedVariables = ["y", "z"];
 const mockParameterSets = [
     {
         name: "Set 1",
-        displayName: "Set 1",
+        displayName: "Hey",
         isDisplayNameError: false,
         displayNameErrorMsg: "",
         parameterValues: { alpha: 1 },
@@ -364,7 +364,7 @@ const mockParameterSets = [
     },
     {
         name: "Set 2",
-        displayName: "Set 2",
+        displayName: "Bye",
         isDisplayNameError: false,
         displayNameErrorMsg: "",
         parameterValues: { alpha: 2 },
@@ -469,7 +469,8 @@ describe("SensitivityTracesPlot", () => {
             ...mockSolutions,
             undefined,
             selectedVariables,
-            {}
+            {},
+            []
         ]);
 
         const plotData = wodinPlot.props("plotData");
@@ -488,7 +489,8 @@ describe("SensitivityTracesPlot", () => {
             ...mockSolutions,
             mockAllFitData,
             selectedVariables,
-            {}
+            {},
+            []
         ]);
 
         const plotData = wodinPlot.props("plotData");
@@ -507,7 +509,8 @@ describe("SensitivityTracesPlot", () => {
             ...mockSolutions,
             mockAllFitData,
             selectedVariables,
-            { "Set 1": mockParameterSetBatch1 }
+            { "Set 1": mockParameterSetBatch1 },
+            ["Hey", "Bye"]
         ]);
 
         const plotData = wodinPlot.props("plotData");
@@ -536,7 +539,8 @@ describe("SensitivityTracesPlot", () => {
         expect(wodinPlot.props("redrawWatches")).toStrictEqual([
             undefined,
             selectedVariables,
-            {}
+            {},
+            []
         ]);
 
         const plotData = wodinPlot.props("plotData");

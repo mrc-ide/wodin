@@ -1,10 +1,10 @@
 <template>
   <wodin-plot
-      :fade-plot="fadePlot"
-      :placeholder-message="placeholderMessage"
-      :end-time="endTime"
-      :plot-data="allPlotData"
-      :redrawWatches="solutions ? [...solutions, allFitData, selectedVariables, parameterSetBatches] : []">
+     :fade-plot="fadePlot"
+     :placeholder-message="placeholderMessage"
+     :end-time="endTime"
+     :plot-data="allPlotData"
+     :redrawWatches="solutions ? [...solutions, allFitData, selectedVariables, parameterSetBatches, displayNames] : []">
     <slot></slot>
   </wodin-plot>
 </template>
@@ -26,6 +26,7 @@ import { AppType } from "../../store/appState/state";
 import { runPlaceholderMessage } from "../../utils";
 import { RunGetter } from "../../store/run/getters";
 import { Dict } from "../../types/utilTypes";
+import { ParameterSet } from "../../store/run/state";
 
 export default defineComponent({
     name: "SensitivityTracesPlot",
@@ -41,6 +42,10 @@ export default defineComponent({
         const solutions = computed(() => (store.state.sensitivity.result?.batch?.solutions || []));
 
         const visibleParameterSetNames = computed(() => store.getters[`run/${RunGetter.visibleParameterSetNames}`]);
+        const parameterSets = computed(() => store.state.run.parameterSets as ParameterSet[]);
+        const displayNames = computed(() => {
+            return parameterSets.value.map((paramSet) => paramSet.displayName);
+        });
 
         const parameterSetBatches = computed(() => {
             const result = {} as Dict<Batch>;
@@ -135,9 +140,15 @@ export default defineComponent({
                         showLegend: false,
                         dash
                     };
+                    const currentParamSet = parameterSets.value.find((paramSet) => paramSet.name === name);
                     setSolutions.forEach((sln: OdinSolution, slnIdx: number) => {
                         addSolutionOutputToResult(sln, plotlyOptions,
-                            (plotTrace) => updatePlotTraceName(plotTrace, pars.name, pars.values[slnIdx], name));
+                            (plotTrace) => updatePlotTraceName(
+                                plotTrace,
+                                pars.name,
+                                pars.values[slnIdx],
+                                currentParamSet!.displayName
+                            ));
                     });
 
                     // Also plot the centrals
@@ -145,7 +156,12 @@ export default defineComponent({
                     const centralOptions = { showLegend: false, includeLegendGroup: true, dash };
                     if (setCentralSolution) {
                         addSolutionOutputToResult(setCentralSolution, centralOptions,
-                            (plotTrace) => updatePlotTraceName(plotTrace, null, null, name));
+                            (plotTrace) => updatePlotTraceName(
+                                plotTrace,
+                                null,
+                                null,
+                                currentParamSet!.displayName
+                            ));
                     }
                 });
 
@@ -164,7 +180,8 @@ export default defineComponent({
             allPlotData,
             allFitData,
             selectedVariables,
-            parameterSetBatches
+            parameterSetBatches,
+            displayNames
         };
     }
 });
