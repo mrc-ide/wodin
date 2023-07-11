@@ -96,7 +96,25 @@ describe("RunPlot", () => {
                 },
                 run: mockRunState({
                     endTime: 99,
-                    resultOde: mockResult
+                    resultOde: mockResult,
+                    parameterSets: [
+                        {
+                            name: "Set 1",
+                            displayName: "Hey",
+                            isDisplayNameError: false,
+                            displayNameErrorMsg: "",
+                            hidden: false,
+                            parameterValues: { a: 2 }
+                        },
+                        {
+                            name: "Set 2",
+                            displayName: "Bye",
+                            isDisplayNameError: false,
+                            displayNameErrorMsg: "",
+                            hidden: false,
+                            parameterValues: { a: 4 }
+                        }
+                    ]
                 })
             } as any
         });
@@ -113,7 +131,13 @@ describe("RunPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution, mockAllFitData, selectedVariables, {}]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([
+            mockSolution,
+            mockAllFitData,
+            selectedVariables,
+            {},
+            ["Hey", "Bye"]
+        ]);
 
         // Generates expected plot data from model
         const plotData = wodinPlot.props("plotData");
@@ -169,9 +193,24 @@ describe("RunPlot", () => {
                         endTime: 99,
                         resultOde: mockResult,
                         parameterSets: [
-                            { name: "Set1", parameterValues: { alpha: 1, beta: 2 }, hidden: false },
-                            { name: "Set2", parameterValues: { alpha: 10, beta: 20 }, hidden: false },
-                            { name: "Set3", parameterValues: { alpha: 100, beta: 200 }, hidden: true }
+                            {
+                                name: "Set1",
+                                displayName: "rand1",
+                                parameterValues: { alpha: 1, beta: 2 },
+                                hidden: false
+                            },
+                            {
+                                name: "Set2",
+                                displayName: "rand2",
+                                parameterValues: { alpha: 10, beta: 20 },
+                                hidden: false
+                            },
+                            {
+                                name: "Set3",
+                                displayName: "rand3",
+                                parameterValues: { alpha: 100, beta: 200 },
+                                hidden: true
+                            }
                         ],
                         parameterSetResults: {
                             Set1: mockParamSetResult1,
@@ -200,7 +239,8 @@ describe("RunPlot", () => {
             mockSolution,
             mockAllFitData,
             selectedVariables,
-            { Set1: mockParamSetResult1.solution, Set2: mockParamSetResult2.solution }
+            { Set1: mockParamSetResult1.solution, Set2: mockParamSetResult2.solution },
+            ["rand1", "rand2", "rand3"]
         ]);
 
         // Generates expected plot data from model
@@ -244,7 +284,7 @@ describe("RunPlot", () => {
                     width: 2,
                     dash: "dot"
                 },
-                name: "S (Set1)",
+                name: "S (rand1)",
                 x: [0, 1],
                 y: [30, 40],
                 hoverlabel: { namelength: -1 },
@@ -258,7 +298,7 @@ describe("RunPlot", () => {
                     width: 2,
                     dash: "dot"
                 },
-                name: "I (Set1)",
+                name: "I (rand1)",
                 x: [0, 1],
                 y: [50, 60],
                 hoverlabel: { namelength: -1 },
@@ -273,7 +313,7 @@ describe("RunPlot", () => {
                     width: 2,
                     dash: "dash"
                 },
-                name: "S (Set2)",
+                name: "S (rand2)",
                 x: [0, 1],
                 y: [300, 400],
                 hoverlabel: { namelength: -1 },
@@ -287,7 +327,7 @@ describe("RunPlot", () => {
                     width: 2,
                     dash: "dash"
                 },
-                name: "I (Set2)",
+                name: "I (rand2)",
                 x: [0, 1],
                 y: [500, 600],
                 hoverlabel: { namelength: -1 },
@@ -372,7 +412,25 @@ describe("RunPlot", () => {
                 },
                 run: mockRunState({
                     endTime: 99,
-                    resultOde: mockResult
+                    resultOde: mockResult,
+                    parameterSets: [
+                        {
+                            name: "Set 1",
+                            displayName: "Hey",
+                            isDisplayNameError: false,
+                            displayNameErrorMsg: "",
+                            hidden: false,
+                            parameterValues: { a: 2 }
+                        },
+                        {
+                            name: "Set 2",
+                            displayName: "Bye",
+                            isDisplayNameError: false,
+                            displayNameErrorMsg: "",
+                            hidden: false,
+                            parameterValues: { a: 4 }
+                        }
+                    ]
                 })
             } as any,
             modules: {
@@ -396,7 +454,13 @@ describe("RunPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution, mockAllFitData, selectedVariables, {}]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([
+            mockSolution,
+            mockAllFitData,
+            selectedVariables,
+            {},
+            ["Hey", "Bye"]
+        ]);
 
         // Generates expected plot data from model
         const plotData = wodinPlot.props("plotData");
