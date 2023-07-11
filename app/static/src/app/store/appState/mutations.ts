@@ -2,6 +2,8 @@ import { MutationTree } from "vuex";
 import { AppState, VisualisationTab } from "./state";
 import { AppConfig } from "../../types/responseTypes";
 import { SetAppPayload } from "../../types/payloadTypes";
+import registerTranslations from "../../../../translationPackage/registerTranslations";
+import { collectedTranslations } from "../translations/collectedTranslations";
 
 export enum AppStateMutation {
     SetApp = "SetApp",
@@ -25,6 +27,9 @@ export const appStateMutations: MutationTree<AppState> = {
         state.appName = payload.appName;
         state.baseUrl = payload.baseUrl;
         state.appsPath = payload.appsPath;
+        state.language.currentLanguage = payload.defaultLanguage;
+        state.language.enableI18n = payload.enableI18n;
+        registerTranslations(state.language, collectedTranslations);
     },
 
     [AppStateMutation.SetConfig](state: AppState, payload: AppConfig) {

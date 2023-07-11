@@ -4,31 +4,33 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build-basic": "vue-cli-service build --target lib --name basicApp ./src/app/basic.ts --inline-vue --no-clean",
-    "build-fit": "vue-cli-service build --target lib --name fitApp ./src/app/fit.ts --inline-vue --no-clean",
-    "build-stochastic": "vue-cli-service build --target lib --name stochasticApp ./src/app/stochastic.ts --inline-vue --no-clean",
-    "copy-js": "mkdir -p ../server/public/js && find dist/ -type f -name '*.umd.min.js' -exec cp '{}' ../server/public/js/ ';'",
-    "copy-css": "mkdir -p ../server/public/css && find dist/ -type f -name '*.css' -exec cp '{}' ../server/public/css/ ';' && cp node_modules/bootstrap/dist/css/bootstrap.css ../server/public/css",
-    "copy-js-map": "find dist/ -type f -name '*.umd.min.js.map' -exec cp '{}' ../server/public/js/ ';'",
-    "copy-all": "concurrently \"npm run copy-js\" \"npm run copy-css \" \" npm run copy-js-map\"",
-    "build-all": "concurrently \"npm run build-basic\" \"npm run build-fit\" \"npm run build-stochastic\"",
-    "build": "npm run build-all && npm run copy-all",
+    "build-wodin": "vue-cli-service build --target lib --name wodin ./src/app/wodin.ts --inline-vue",
+    "copy-js": "mkdir -p ../server/public/js && cp dist/wodin.umd.min.js ../server/public/js/",
+    "copy-bootstrap": "mkdir -p ../server/public/css && cp node_modules/bootstrap/dist/css/bootstrap.css ../server/public/css",
+    "copy-css": "cp dist/wodin.css ../server/public/css/",
+    "copy-js-map": "cp dist/wodin.umd.min.js.map ../server/public/js/",
+    "copy-fonts": "cp -r dist/fonts/ ../server/public/css/",
+    "copy-fonts-serve": "cp -r ../server/public/js/fonts/ ../server/public/",
+    "copy-all": "concurrently \"npm run copy-js\" \"npm run copy-bootstrap\" && concurrently \"npm run copy-css \" \"npm run copy-js-map\" \"npm run copy-fonts\"",
+    "build": "npm run build-wodin && npm run copy-all",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint --no-fix",
     "lint:fix": "vue-cli-service lint",
-    "e2e-test": "npx playwright test"
+    "e2e-test": "npx playwright test",
+    "serve-app": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/hotReload/vue.config.js vue-cli-service serve ./src/app/wodin.ts"
   },
   "resolutions": {
     "ansi-regex": "5.0.1"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.4.0",
     "@monaco-editor/loader": "^1.3.2",
-    "@popperjs/core": "^2.11.5",
     "@types/d3-format": "^3.0.1",
     "axios": "^0.26.0",
     "bootstrap": "^5.1.3",
     "csv-parse": "^5.2.1",
     "d3-format": "^3.1.0",
+    "i18next": "^22.4.11",
     "markdown-it": "^13.0.1",
     "markdown-it-mathjax": "^2.0.0",
     "moment": "^2.29.4",
@@ -43,7 +45,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.20.0",
-    "@types/bootstrap": "^5.1.3",
+    "@types/bootstrap": "^5.2.6",
     "@types/jest": "^27.4.0",
     "@types/markdown-it": "^12.2.3",
     "@types/plotly.js-basic-dist-min": "^2.12.1",
@@ -78,6 +80,7 @@
     "typescript": "^4.5.5",
     "vue-jest": "^5.0.0-alpha.10",
     "vue-loader": "^17.0.0",
-    "webpack": "^4.46.0"
+    "webpack": "^4.46.0",
+    "webpack-shell-plugin": "^0.5.0"
   }
 }

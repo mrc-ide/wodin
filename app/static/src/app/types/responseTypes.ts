@@ -66,13 +66,18 @@ export interface OdinModelResponseError {
     message: string
 }
 
+export interface OdinMetadataMessage {
+    line: number[],
+    message: string
+}
+
 export interface OdinModelResponse{
     valid: boolean,
     metadata?: {
         variables: string[],
         dt: number | null,
         parameters: OdinParameter[],
-        messages: string[]
+        messages: OdinMetadataMessage[]
     },
     model?: string,
     error?: OdinModelResponseError

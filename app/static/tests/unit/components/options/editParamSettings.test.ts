@@ -15,6 +15,8 @@ import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutat
 import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
 import { expectCloseNumericArray } from "../../../testUtils";
 
+const mockTooltipDirective = jest.fn();
+
 describe("EditParamSettings", () => {
     const percentSettings = {
         parameterToVary: "B",
@@ -73,7 +75,8 @@ describe("EditParamSettings", () => {
         });
         const wrapper = mount(EditParamSettings, {
             global: {
-                plugins: [store]
+                plugins: [store],
+                directives: { tooltip: mockTooltipDirective }
             },
             props: {
                 open: false

@@ -92,7 +92,7 @@ describe("SensitivityPlotOptions", () => {
         expect(wrapper.find("#sensitivity-plot-time label").text()).toBe("Time to use");
         const timeInput = wrapper.find("#sensitivity-plot-time").findComponent(NumericInput);
         expect(timeInput.props("value")).toBe(100);
-        expect(timeInput.props("allowNegative")).toBe(false);
+        expect(timeInput.props("minAllowed")).toBe(0);
     });
 
     it("renders as expected for Value at min/max", () => {

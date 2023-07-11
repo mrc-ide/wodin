@@ -29,21 +29,23 @@ export class AppsController {
             const config = configReader.readConfigFile(appsPath, `${appName}.config.json`) as any;
             if (config) {
                 const baseUrl = wodinConfig.baseUrl.replace(/\/$/, "");
-                const view = `${config.appType}-app`;
                 // TODO: validate config against schema for app type
                 const viewOptions = {
                     appName,
                     baseUrl,
                     appsPath,
+                    appType: config.appType,
                     title: `${config.title} - ${wodinConfig.courseTitle}`,
                     appTitle: config.title,
                     courseTitle: wodinConfig.courseTitle,
                     wodinVersion,
                     loadSessionId: sessionId || "",
                     shareNotFound: shareNotFound || "",
-                    mathjaxSrc: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
+                    mathjaxSrc: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js",
+                    enableI18n: wodinConfig.enableI18n ?? true, // if option not set then true by default
+                    defaultLanguage: wodinConfig?.defaultLanguage || "en"
                 };
-                res.render(view, viewOptions);
+                res.render("app", viewOptions);
             } else {
                 throw new WodinWebError(
                     `App not found: ${appName}`,

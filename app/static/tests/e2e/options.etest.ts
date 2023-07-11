@@ -1,7 +1,22 @@
 import { expect, test, Page } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
-import { newValidCode } from "./code.etest";
 import { expectSummaryValues } from "./utils";
+
+const newValidCode = `## Derivatives
+deriv(y1) <- sigma * (y2 - y1)
+deriv(y2) <- R * y1 - y2 - y1 * y3
+deriv(y3) <- -b * y3 + y1 * y2
+
+## Initial conditions
+initial(y1) <- 10.0
+initial(y2) <- 1.0
+initial(y3) <- 1.0
+
+## parameters
+sigma <- user(10.0)
+R     <- user(28.0)
+b     <-  user(3.0)
+`;
 
 test.describe("Options Tab tests", () => {
     const { timeout } = PlaywrightConfig;

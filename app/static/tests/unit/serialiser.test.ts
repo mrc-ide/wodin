@@ -17,6 +17,7 @@ import {
     mockSensitivityState, mockVersionsState
 } from "../mocks";
 import { defaultState as defaultGraphSettingsState } from "../../src/app/store/graphSettings/graphSettings";
+import { Language } from "../../src/app/types/languageTypes";
 
 describe("serialise", () => {
     const codeState = {
@@ -50,7 +51,7 @@ describe("serialise", () => {
                         name: "beta", default: 0.1, min: -1, max: 10.5, is_integer: false, rank: 1
                     }
                 ],
-                messages: ["a test message"]
+                messages: [{ message: "a test message", line: [1] }]
             },
             model: "a test model",
             error: { line: [1], message: "test model error" }
@@ -215,6 +216,12 @@ describe("serialise", () => {
         }
     };
 
+    const langaugeState = {
+        currentLanguage: Language.en,
+        updatingLanguage: false,
+        enableI18n: true
+    };
+
     const basicState: BasicState = {
         sessionId: "1234",
         sessionLabel: null,
@@ -232,7 +239,8 @@ describe("serialise", () => {
         sensitivity: sensitivityState,
         versions: { versions: null },
         graphSettings: { logScaleYAxis: true },
-        configured: false
+        configured: false,
+        language: langaugeState
     };
 
     const fitState: FitState = {
@@ -254,7 +262,8 @@ describe("serialise", () => {
         modelFit: modelFitState,
         versions: { versions: null },
         graphSettings: { logScaleYAxis: true },
-        configured: false
+        configured: false,
+        language: langaugeState
     };
 
     const expectedCode = { currentCode: ["some code"] };

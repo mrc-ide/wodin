@@ -1,6 +1,6 @@
 # WODIN
 
-[odin](https://github.com/mrc-ide/odin) on the web
+[odin](https://github.com/mrc-ide/odin) on the web.
 
 ## Introduction
 
@@ -26,10 +26,12 @@ Each app will have one of these three app types, as well as any further configur
 WODIN fetches compiled odin code from [odin.api](https://github.com/mrc-ide/odin.api), which should be run locally using 
 `./scripts/run-dev-dependencies.sh`.
 
-For development, you can install dependencies, build and run the app locally in one step using `./scripts/build-and-run.sh`. The app will be available at http://localhost:3000 
+For development, you can install all dependencies and serve the app, with hot reloading, using two terminals. In one terminal, use `./scripts/serve-backend.sh` to run the server. In another terminal use `./scripts/serve-frontend.sh`.
+The app will be available at http://localhost:3000.
 
-To build front end changes only for a given app type run, `./scripts/build-frontend.sh basic` (or replace `basic` with `fit` or
-`stochastic` as the script argument).
+You can also install dependencies, build and run the app locally in one step using `./scripts/build-and-run.sh`. The app will be available at http://localhost:3000 
+
+To build front end changes only run `./scripts/build-frontend.sh`.
 
 WODIN is deployable via an npm package: https://www.npmjs.com/package/wodin
 
@@ -86,9 +88,7 @@ should fix this issue.
 Front-end source can be found under `app/static/src`. The front end can be built by running `npm run build` from
 `app/static`. This builds output to be picked up by the back end at `app/server/public`.
 
-There are entry point scripts for each of the three app types (`basic.ts`, `fit.ts` and `stochastic.ts`), which are each
-built separately. You can build an individual app type using e.g. `npm run build-basic`. Each entry script invokes a store
-and top-level component for the given app type. 
+The entry point script is `app/static/src/app/wodin.ts`.
 
 ### Unit Tests
 Run unit tests from `app/static` using `npm run test:unit`. Run [eslint](https://eslint.org/) with `npm run lint` or `npm run lint:fix`.
@@ -96,8 +96,9 @@ Run unit tests from `app/static` using `npm run test:unit`. Run [eslint](https:/
 ## Backend
 
 The back end handles requests for apps by reading the corresponding config files and rendering an html [Handlebars](https://handlebarsjs.com/) template
-`views/app.hbs` to use the appropriate js file, and also to provide configuration values to the relevant store via
-the `appConfig` object.
+`views/app.hbs` which uses the built front end js file, and also provides configuration from the `appConfig` object via the
+top-level `WodinSession` component. It also sets an `appType` variable which is used by `wodin.ts` to select which type
+of store to initialise. 
 
 The back-end server can be built using `npm run build` and run using `npm run serve`, both from `app/server`.
 

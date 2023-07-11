@@ -35,6 +35,8 @@ import { ModelFitGetter } from "../../../../src/app/store/modelFit/getters";
 import { AppConfig } from "../../../../src/app/types/responseTypes";
 
 describe("FitApp", () => {
+    const mockTooltipDirective = jest.fn();
+
     const getWrapper = (mockSetOpenVisualisationTab = jest.fn(), config: Partial<AppConfig> = {}) => {
         const state = mockFitState({ config: config as any });
         const store = new Vuex.Store<FitState>({
@@ -83,7 +85,8 @@ describe("FitApp", () => {
 
         const options = {
             global: {
-                plugins: [store]
+                plugins: [store],
+                directives: { tooltip: mockTooltipDirective }
             }
         };
 
