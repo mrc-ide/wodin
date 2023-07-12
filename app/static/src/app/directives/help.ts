@@ -1,7 +1,7 @@
-import {DirectiveBinding} from "vue";
-import tooltip, {ToolTipSettings} from "./tooltip";
+import { DirectiveBinding } from "vue";
+import tooltip, { ToolTipSettings } from "./tooltip";
 import userMessages from "../userMessages";
-import {Dict} from "../types/utilTypes";
+import { Dict } from "../types/utilTypes";
 
 const lookupHelpStringFromBinding = (binding: DirectiveBinding<string>) => {
     const { value } = binding; // value should be key in userMessages.help

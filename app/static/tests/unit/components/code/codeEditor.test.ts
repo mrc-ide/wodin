@@ -66,6 +66,7 @@ import { BasicConfig } from "../../../../src/app/types/responseTypes";
 import { mockBasicState, mockCodeState, mockModelState } from "../../../mocks";
 
 describe("CodeEditor", () => {
+    const mockHelpDirective = jest.fn();
     const getWrapper = (readOnlyCode = false,
         mockUpdateCode = jest.fn(),
         defaultCode = ["default code"],
@@ -99,7 +100,10 @@ describe("CodeEditor", () => {
 
         return shallowMount(CodeEditor, {
             global: {
-                plugins: [store]
+                plugins: [store],
+                directives: {
+                    help: mockHelpDirective
+                }
             }
         });
     };
@@ -152,6 +156,14 @@ describe("CodeEditor", () => {
             expect(mockMonaco.editor.create.mock.calls[0][1].readOnly).toBe(true);
             done();
         });
+    });
+
+    it("uses help directive on reset button", () => {
+        const wrapper = getWrapper();
+        const reset = wrapper.find("button#reset-btn");
+        expect(mockHelpDirective).toHaveBeenCalledTimes(1);
+        expect(mockHelpDirective.mock.calls[0][0]).toBe(reset.element);
+        expect(mockHelpDirective.mock.calls[0][1].value).toBe("resetCode");
     });
 
     it("can reset monaco editor", (done) => {
