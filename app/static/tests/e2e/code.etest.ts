@@ -123,6 +123,15 @@ test.describe("Code Tab tests", () => {
         await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 3)`)).toBe("y3");
     });
 
+    test("code loading on input renders as expected", async ({ page }) => {
+        await page.press(".monaco-editor textarea", "Control+A");
+        await page.press(".monaco-editor textarea", "Delete");
+        page.fill(".monaco-editor textarea", "blah");
+        expect(page.locator("#code-status")).toHaveClass("mt-2 code-validating-text");
+        expect(page.locator("#code-status").locator("i"))
+            .toHaveClass("vue-feather vue-feather--check inline-icon me-1 code-validating-icon");
+    });
+
     test("can see code not valid msg when update code with syntax error", async ({ page }) => {
         const invalidCode = "deriv(y1) test * faker";
         await writeCode(page, invalidCode);

@@ -18,7 +18,8 @@ import { Dict } from "./types/utilTypes";
 
 function serialiseCode(code: CodeState) : CodeState {
     return {
-        currentCode: code.currentCode
+        currentCode: code.currentCode,
+        loading: code.loading
     };
 }
 

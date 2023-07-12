@@ -1,3 +1,4 @@
 export interface CodeState {
-    currentCode: string[]
+    currentCode: string[],
+    loading: boolean
 }

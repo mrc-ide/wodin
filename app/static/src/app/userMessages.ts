@@ -3,7 +3,8 @@ import settings from "./settings";
 export default {
     code: {
         isValid: "Code is valid",
-        isNotValid: "Code is not valid"
+        isNotValid: "Code is not valid",
+        isValidating: "Code is validating"
     },
     download: {
         invalidPoints: "Modelled points must be between 1 and 50,001"
