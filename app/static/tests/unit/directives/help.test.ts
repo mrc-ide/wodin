@@ -11,7 +11,7 @@ const binding = {
 
 const el = {} as HTMLElement;
 
-const expectedHelpString = "Revert to default code - all your changes will be lo st";
+const expectedHelpString = "Revert to default code - all your changes will be lost";
 describe("help directive", () => {
     it("calls tooltip mounted with help string", () => {
         const mockTooltipMounted = jest.spyOn(tooltip, "mounted").mockImplementation(() => {});
