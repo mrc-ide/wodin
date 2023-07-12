@@ -1,16 +1,23 @@
 import {DirectiveBinding} from "vue";
-import tooltip from "./tooltip";
+import tooltip, {ToolTipSettings} from "./tooltip";
 import userMessages from "../userMessages";
 import {Dict} from "../types/utilTypes";
 
+const lookupHelpStringFromBinding = (binding: DirectiveBinding<string>) => {
+    const { value } = binding; // value should be key in userMessages.help
+    return (userMessages.help as Dict<string>)[value as string];
+};
+
 export default {
-    beforeMount(el: HTMLElement, binding: DirectiveBinding<string>) {
-        // TODO: is still shown after click, even after move away!
-        const { value } = binding; // value should be key in userStrings.help
-        const helpString = (userMessages.help as Dict<string>)[value];
-        tooltip.beforeMount(el, {...binding, value: helpString});
+    mounted(el: HTMLElement, binding: DirectiveBinding<string>) {
+        const helpString = lookupHelpStringFromBinding(binding);
+        tooltip.mounted(el, { ...binding, value: helpString } as DirectiveBinding<string | ToolTipSettings>);
+    },
+    beforeUpdate(el: HTMLElement, binding: DirectiveBinding<string>) {
+        const helpString = lookupHelpStringFromBinding(binding);
+        tooltip.beforeUpdate(el, { ...binding, value: helpString } as DirectiveBinding<string | ToolTipSettings>);
     },
     beforeUnmount(el: HTMLElement) {
-       tooltip.beforeUnmount(el);
+        tooltip.beforeUnmount(el);
     }
 };

@@ -16,6 +16,7 @@ import tooltip from "./directives/tooltip";
 import { AppState, AppType } from "./store/appState/state";
 import { translate } from "../../translationPackage";
 import "@fortawesome/fontawesome-free/css/all.css";
+import help from "./directives/help";
 
 declare let appType: AppType;
 
@@ -52,6 +53,7 @@ const app = createApp({ components: { WodinSession, AppHeader } });
 app.use(store);
 
 app.directive("tooltip", tooltip);
+app.directive("help", help);
 app.directive("translate", translate<AppState>(store));
 
 app.mount("#app");

@@ -34,7 +34,7 @@ export default {
             });
         }
     },
-    beforeUpdate(el: HTMLElement, binding: DirectiveBinding<ToolTipSettings>) {
+    beforeUpdate(el: HTMLElement, binding: DirectiveBinding<string | ToolTipSettings>) {
         const { value } = binding;
 
         const tooltip = Tooltip.getInstance(el);
