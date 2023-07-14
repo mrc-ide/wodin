@@ -94,7 +94,6 @@ describe("serialise", () => {
             {
                 name: "Set 1",
                 displayName: "Set 1",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { alpha: 1, beta: 3.3 },
                 hidden: false

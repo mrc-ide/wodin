@@ -151,7 +151,6 @@ export const actions: ActionTree<RunState, AppState> = {
             const parameterSet = {
                 name,
                 displayName,
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { ...state.parameterValues },
                 hidden: false

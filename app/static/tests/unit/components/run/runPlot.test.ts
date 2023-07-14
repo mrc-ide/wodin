@@ -101,7 +101,6 @@ describe("RunPlot", () => {
                         {
                             name: "Set 1",
                             displayName: "Hey",
-                            isDisplayNameError: false,
                             displayNameErrorMsg: "",
                             hidden: false,
                             parameterValues: { a: 2 }
@@ -109,7 +108,6 @@ describe("RunPlot", () => {
                         {
                             name: "Set 2",
                             displayName: "Bye",
-                            isDisplayNameError: false,
                             displayNameErrorMsg: "",
                             hidden: false,
                             parameterValues: { a: 4 }
@@ -417,7 +415,6 @@ describe("RunPlot", () => {
                         {
                             name: "Set 1",
                             displayName: "Hey",
-                            isDisplayNameError: false,
                             displayNameErrorMsg: "",
                             hidden: false,
                             parameterValues: { a: 2 }
@@ -425,7 +422,6 @@ describe("RunPlot", () => {
                         {
                             name: "Set 2",
                             displayName: "Bye",
-                            isDisplayNameError: false,
                             displayNameErrorMsg: "",
                             hidden: false,
                             parameterValues: { a: 4 }

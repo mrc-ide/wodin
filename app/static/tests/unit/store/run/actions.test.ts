@@ -37,7 +37,6 @@ describe("Run actions", () => {
             {
                 name: "Set 1",
                 displayName: "Set 1",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { p1: 3, p2: 4 },
                 hidden: false
@@ -45,7 +44,6 @@ describe("Run actions", () => {
             {
                 name: "Set 2",
                 displayName: "Set 2",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { p1: 5, p2: 6 },
                 hidden: false
@@ -97,7 +95,6 @@ describe("Run actions", () => {
             {
                 name: "Set 1",
                 displayName: "Set 1",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { p1: 3, p2: 4 },
                 hidden: false
@@ -105,7 +102,6 @@ describe("Run actions", () => {
             {
                 name: "Set 2",
                 displayName: "Set 2",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { p1: 5, p2: 6 },
                 hidden: false
@@ -483,7 +479,6 @@ describe("Run actions", () => {
             parameterSets: [{
                 name: "Set 1",
                 displayName: "Set 1",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { p1: 3, p2: 4 },
                 hidden: false
@@ -499,7 +494,6 @@ describe("Run actions", () => {
             .toStrictEqual({
                 name: "Set 4",
                 displayName: "Set 4",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { p1: 1, p2: 2 },
                 hidden: false
@@ -517,7 +511,6 @@ describe("Run actions", () => {
             parameterSets: [{
                 name: "Set 1",
                 displayName: "Set 1",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { p1: 3, p2: 4 },
                 hidden: false
@@ -540,7 +533,6 @@ describe("Run actions", () => {
             parameterSets: [{
                 name: "Set 1",
                 displayName: "Set 1",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { p1: 3, p2: 4 },
                 hidden: false
@@ -556,7 +548,6 @@ describe("Run actions", () => {
             .toStrictEqual({
                 name: "Set 2",
                 displayName: "Set 2",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { p1: 1, p2: 2 },
                 hidden: false
@@ -573,7 +564,6 @@ describe("Run actions", () => {
             parameterSets: [{
                 name: "Set 1",
                 displayName: "Set 1",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { p1: 3, p2: 4 },
                 hidden: false
@@ -604,7 +594,6 @@ describe("Run actions", () => {
             parameterSets: [{
                 name: "Set 1",
                 displayName: "Set 1",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { p1: 3, p2: 4 },
                 hidden: false

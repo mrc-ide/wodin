@@ -357,7 +357,6 @@ const mockParameterSets = [
     {
         name: "Set 1",
         displayName: "Hey",
-        isDisplayNameError: false,
         displayNameErrorMsg: "",
         parameterValues: { alpha: 1 },
         hidden: false
@@ -365,7 +364,6 @@ const mockParameterSets = [
     {
         name: "Set 2",
         displayName: "Bye",
-        isDisplayNameError: false,
         displayNameErrorMsg: "",
         parameterValues: { alpha: 2 },
         hidden: true

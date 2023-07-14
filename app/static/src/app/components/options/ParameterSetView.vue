@@ -10,6 +10,7 @@
                ref="paramNameInput"
                v-model="newDisplayName"
                @keydown.enter="saveDisplayName"
+               @blur="cancelEditDisplayName"
                v-tooltip="{ content: parameterSet.displayNameErrorMsg,
                   trigger: 'manual',
                   variant: 'error' }"/>
@@ -140,13 +141,18 @@ export default defineComponent({
                 newDisplayName: newDisplayName.value
             };
             store.commit(`run/${RunMutation.SaveParameterDisplayName}`, payload);
-            if (!props.parameterSet.isDisplayNameError) {
+            if (!props.parameterSet.displayNameErrorMsg) {
                 editDisplayName.value = false;
             }
         };
+        const cancelEditDisplayName = () => {
+            store.commit(`run/${RunMutation.TurnOffDisplayNameError}`, props.parameterSet.name);
+            newDisplayName.value = props.parameterSet.displayName;
+            editDisplayName.value = false;
+        };
 
         const turnOffDisplayNameError = () => {
-            if (props.parameterSet.isDisplayNameError) {
+            if (props.parameterSet.displayNameErrorMsg) {
                 store.commit(`run/${RunMutation.TurnOffDisplayNameError}`, props.parameterSet.name);
             }
         };
@@ -172,7 +178,8 @@ export default defineComponent({
             newDisplayName,
             saveDisplayName,
             paramNameInput,
-            turnOffDisplayNameError
+            turnOffDisplayNameError,
+            cancelEditDisplayName
         };
     }
 });

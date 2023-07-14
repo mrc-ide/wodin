@@ -141,15 +141,14 @@ export const mutations: MutationTree<RunState> = {
             const isParamSetName = payload.newDisplayName === paramSet.name;
             const isParamSetDisplayName = payload.newDisplayName === paramSet.displayName;
             if (isDuplicateDisplayName && !isParamSetName && !isParamSetDisplayName) {
-                paramSet.isDisplayNameError = true;
                 paramSet.displayNameErrorMsg = "Name already exists";
             } else if (isSpecialSetName && !isParamSetName) {
-                paramSet.isDisplayNameError = true;
                 paramSet.displayNameErrorMsg = `${payload.newDisplayName} (or any Set [number] combination) is reserved
                 for default set names. Please choose another set name or name this set back to
                 its original name of '${paramSet.name}'`;
             } else {
                 paramSet.displayName = payload.newDisplayName;
+                paramSet.displayNameErrorMsg = "";
             }
         }
     },
@@ -157,7 +156,6 @@ export const mutations: MutationTree<RunState> = {
     [RunMutation.TurnOffDisplayNameError](state: RunState, parameterSetName: string) {
         const paramSet = state.parameterSets.find((set: ParameterSet) => set.name === parameterSetName);
         if (paramSet) {
-            paramSet.isDisplayNameError = false;
             paramSet.displayNameErrorMsg = "";
         }
     }

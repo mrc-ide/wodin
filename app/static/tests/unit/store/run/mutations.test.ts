@@ -195,7 +195,6 @@ describe("Run mutations", () => {
                 {
                     name: "Set1",
                     displayName: "Set1",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { a: 1 },
                     hidden: false
@@ -203,7 +202,6 @@ describe("Run mutations", () => {
                 {
                     name: "Set2",
                     displayName: "Set2",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { a: 2 },
                     hidden: false
@@ -215,7 +213,6 @@ describe("Run mutations", () => {
         expect(state.parameterSets).toStrictEqual([{
             name: "Set2",
             displayName: "Set2",
-            isDisplayNameError: false,
             displayNameErrorMsg: "",
             parameterValues: { a: 2 },
             hidden: false
@@ -230,7 +227,6 @@ describe("Run mutations", () => {
                 {
                     name: "Set1",
                     displayName: "Set1",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { a: 2 },
                     hidden: false
@@ -244,7 +240,6 @@ describe("Run mutations", () => {
         expect(state.parameterSets).toStrictEqual([{
             name: "Set1",
             displayName: "Set1",
-            isDisplayNameError: false,
             displayNameErrorMsg: "",
             parameterValues: { a: 1 },
             hidden: false
@@ -260,7 +255,6 @@ describe("Run mutations", () => {
                 {
                     name: "Set1",
                     displayName: "Set1",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { a: 2 },
                     hidden: false
@@ -274,7 +268,6 @@ describe("Run mutations", () => {
         expect(state.parameterSets).toStrictEqual([{
             name: "Set1",
             displayName: "Set1",
-            isDisplayNameError: false,
             displayNameErrorMsg: "",
             parameterValues: { a: 2 },
             hidden: false
@@ -290,7 +283,6 @@ describe("Run mutations", () => {
                 {
                     name: "Set1",
                     displayName: "Set1",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { a: 2 },
                     hidden: false
@@ -304,7 +296,6 @@ describe("Run mutations", () => {
         expect(state.parameterSets).toStrictEqual([{
             name: "Set1",
             displayName: "Set1",
-            isDisplayNameError: false,
             displayNameErrorMsg: "",
             parameterValues: { a: 2 },
             hidden: false
@@ -320,7 +311,6 @@ describe("Run mutations", () => {
                 {
                     name: "Set1",
                     displayName: "Set1",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { a: 2 },
                     hidden: false
@@ -334,7 +324,6 @@ describe("Run mutations", () => {
         expect(state.parameterSets).toStrictEqual([{
             name: "Set1",
             displayName: "Set1",
-            isDisplayNameError: false,
             displayNameErrorMsg: "",
             parameterValues: { a: 2 },
             hidden: false
@@ -349,7 +338,6 @@ describe("Run mutations", () => {
                 {
                     name: "Set1",
                     displayName: "Set1",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { a: 1 },
                     hidden: false
@@ -357,7 +345,6 @@ describe("Run mutations", () => {
                 {
                     name: "Set2",
                     displayName: "Set2",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { a: 2 },
                     hidden: false
@@ -369,7 +356,6 @@ describe("Run mutations", () => {
             {
                 name: "Set1",
                 displayName: "Set1",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { a: 1 },
                 hidden: false
@@ -377,7 +363,6 @@ describe("Run mutations", () => {
             {
                 name: "Set2",
                 displayName: "Set2",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { a: 2 },
                 hidden: true
@@ -388,7 +373,6 @@ describe("Run mutations", () => {
             {
                 name: "Set1",
                 displayName: "Set1",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { a: 1 },
                 hidden: false
@@ -396,7 +380,6 @@ describe("Run mutations", () => {
             {
                 name: "Set2",
                 displayName: "Set2",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { a: 2 },
                 hidden: false
@@ -411,7 +394,6 @@ describe("Run mutations", () => {
                 {
                     name: "Set1",
                     displayName: "Set1",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { a: 2 },
                     hidden: false
@@ -425,7 +407,6 @@ describe("Run mutations", () => {
         expect(state.parameterSets).toStrictEqual([{
             name: "Set1",
             displayName: "random name",
-            isDisplayNameError: false,
             displayNameErrorMsg: "",
             parameterValues: { a: 2 },
             hidden: false
@@ -439,7 +420,6 @@ describe("Run mutations", () => {
                 {
                     name: "Set1",
                     displayName: "random name",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { a: 2 },
                     hidden: false
@@ -447,7 +427,6 @@ describe("Run mutations", () => {
                 {
                     name: "Set2",
                     displayName: "Set2",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { a: 2 },
                     hidden: false
@@ -461,7 +440,6 @@ describe("Run mutations", () => {
         expect(state.parameterSets[1]).toStrictEqual({
             name: "Set2",
             displayName: "Set2",
-            isDisplayNameError: true,
             displayNameErrorMsg: "Name already exists",
             parameterValues: { a: 2 },
             hidden: false
@@ -475,7 +453,6 @@ describe("Run mutations", () => {
                 {
                     name: "Set1",
                     displayName: "random name",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { a: 2 },
                     hidden: false
@@ -489,7 +466,6 @@ describe("Run mutations", () => {
         expect(state.parameterSets).toStrictEqual([{
             name: "Set1",
             displayName: "random name",
-            isDisplayNameError: true,
             displayNameErrorMsg: `Set 123 (or any Set [number] combination) is reserved
                 for default set names. Please choose another set name or name this set back to
                 its original name of 'Set1'`,
@@ -505,7 +481,6 @@ describe("Run mutations", () => {
                 {
                     name: "Set1",
                     displayName: "Set1",
-                    isDisplayNameError: true,
                     displayNameErrorMsg: "Name already exists",
                     parameterValues: { a: 2 },
                     hidden: false
@@ -516,7 +491,6 @@ describe("Run mutations", () => {
         expect(state.parameterSets).toStrictEqual([{
             name: "Set1",
             displayName: "Set1",
-            isDisplayNameError: false,
             displayNameErrorMsg: "",
             parameterValues: { a: 2 },
             hidden: false

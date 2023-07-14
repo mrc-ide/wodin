@@ -8,7 +8,6 @@ describe("Run getters", () => {
                 {
                     name: "Set 1",
                     displayName: "Set 1",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { p1: 1 },
                     hidden: false
@@ -16,7 +15,6 @@ describe("Run getters", () => {
                 {
                     name: "Set 2",
                     displayName: "Set 2",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { p1: 2 },
                     hidden: false
@@ -64,7 +62,6 @@ describe("Run getters", () => {
             parameterSets: [{
                 name: "Set 1",
                 displayName: "Set 1",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { p1: 1 },
                 hidden: false
@@ -96,7 +93,6 @@ describe("Run getters", () => {
             parameterSets: [{
                 name: "Set 1",
                 displayName: "Set 1",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { p1: 1 },
                 hidden: false
@@ -111,7 +107,6 @@ describe("Run getters", () => {
             parameterSets: [{
                 name: "Set 1",
                 displayName: "Set 1",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { p1: 1 },
                 hidden: false
@@ -127,7 +122,6 @@ describe("Run getters", () => {
                 {
                     name: "Set 1",
                     displayName: "Set 1",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { alpha: 1 },
                     hidden: false
@@ -135,7 +129,6 @@ describe("Run getters", () => {
                 {
                     name: "Set 2",
                     displayName: "Set 2",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { alpha: 1 },
                     hidden: true
@@ -143,7 +136,6 @@ describe("Run getters", () => {
                 {
                     name: "Set 3",
                     displayName: "Set 3",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { alpha: 1 },
                     hidden: false

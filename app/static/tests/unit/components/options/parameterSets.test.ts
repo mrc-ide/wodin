@@ -44,7 +44,6 @@ describe("ParameterSets", () => {
                 {
                     name: "Set 1",
                     displayName: "Set 1",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { alpha: 1, beta: 2, gamma: 3 },
                     hidden: false
@@ -52,7 +51,6 @@ describe("ParameterSets", () => {
                 {
                     name: "Set 2",
                     displayName: "Set 2",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { alpha: 10, beta: 20, gamma: 30 },
                     hidden: false
@@ -101,7 +99,6 @@ describe("ParameterSets", () => {
                 {
                     name: "Set 1",
                     displayName: "Set 1",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { alpha: 1, beta: 2, gamma: 3 },
                     hidden: false
@@ -109,7 +106,6 @@ describe("ParameterSets", () => {
                 {
                     name: "Set 2",
                     displayName: "Set 2",
-                    isDisplayNameError: false,
                     displayNameErrorMsg: "",
                     parameterValues: { alpha: 2, beta: 3, gamma: 4 },
                     hidden: false

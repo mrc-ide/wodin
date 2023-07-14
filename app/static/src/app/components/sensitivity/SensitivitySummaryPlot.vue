@@ -27,6 +27,7 @@ import { runPlaceholderMessage } from "../../utils";
 import { RunGetter } from "../../store/run/getters";
 import { Dict } from "../../types/utilTypes";
 import WodinPlotDataSummary from "../WodinPlotDataSummary.vue";
+import { ParameterSet } from "../../store/run/state";
 
 export default defineComponent({
     name: "SensitivitySummaryPlot",
@@ -78,6 +79,10 @@ export default defineComponent({
         });
 
         const visibleParameterSetNames = computed(() => store.getters[`run/${RunGetter.visibleParameterSetNames}`]);
+        const parameterSets = computed(() => store.state.run.parameterSets as ParameterSet[]);
+        const parameterSetDisplayNames = computed(() => {
+            return parameterSets.value.map((paramSet) => paramSet.displayName);
+        });
 
         const paramSetBatches = computed(() => {
             const result = {} as Dict<Batch>;
@@ -123,8 +128,9 @@ export default defineComponent({
                     const psData = paramSetData[name];
                     const psFiltered = filterSeriesSet(psData, selectedVariables.value);
                     const psPlotData = odinToPlotly(psFiltered, palette.value, options);
+                    const currentParamSet = parameterSets.value.find((paramSet) => paramSet.name === name);
                     psPlotData.forEach((plotTrace) => {
-                        updatePlotTraceName(plotTrace, null, null, name);
+                        updatePlotTraceName(plotTrace, null, null, currentParamSet!.displayName);
                     });
                     result.push(...psPlotData);
                 });
@@ -158,7 +164,7 @@ export default defineComponent({
 
         onMounted(drawPlot);
 
-        watch([plotData, yAxisSettings], drawPlot);
+        watch([plotData, yAxisSettings, parameterSetDisplayNames], drawPlot);
 
         onUnmounted(() => {
             if (resizeObserver) {

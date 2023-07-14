@@ -26,7 +26,7 @@ describe("ParameterSetView", () => {
         index = 0,
         modelChanged = false,
         compileRequired = false,
-        dispNameError = false
+        dispNameErrorMsg = ""
     ) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
@@ -66,8 +66,7 @@ describe("ParameterSetView", () => {
                 parameterSet: {
                     name: "Set 1",
                     displayName: "Set 1",
-                    isDisplayNameError: dispNameError,
-                    displayNameErrorMsg: "",
+                    displayNameErrorMsg: dispNameErrorMsg,
                     parameterValues: { alpha: 0, beta: 2, gamma: 4 },
                     hidden: paramSetHidden
                 },
@@ -302,8 +301,25 @@ describe("ParameterSetView", () => {
         expect(mockSaveParameterDisplayName).toHaveBeenCalledTimes(1);
     });
 
+    it("commits turn off error message + can cancel rename when you blur input", async () => {
+        const wrapper = getWrapper(false, 0, false, false);
+        const editIcon = wrapper.findAllComponents(VueFeather)[0];
+        await editIcon.trigger("click");
+        const input = wrapper.find("input");
+
+        expect(mockTurnOffDisplayNameError).toHaveBeenCalledTimes(0);
+        await input.setValue("hey");
+        await input.trigger("blur");
+        // watchers don't work so we won't get turn off error commit
+        // from changing value in input, only from blur
+        expect(mockTurnOffDisplayNameError).toHaveBeenCalledTimes(1);
+        expect(input.element.value).toBe("Set 1");
+        const editIcon1 = wrapper.findAllComponents(VueFeather)[0];
+        expect(editIcon1.props("type")).toBe("edit");
+    });
+
     it("commits display name error off mutation if there is error", async () => {
-        const wrapper = getWrapper(false, 0, false, false, true);
+        const wrapper = getWrapper(false, 0, false, false, "error");
         expect(mockTurnOffDisplayNameError).toHaveBeenCalledTimes(0);
 
         (wrapper.vm as any).turnOffDisplayNameError();
@@ -313,7 +329,7 @@ describe("ParameterSetView", () => {
     });
 
     it("does not commit display name error off mutation if there is no error", async () => {
-        const wrapper = getWrapper(false, 0, false, false, false);
+        const wrapper = getWrapper(false, 0, false, false);
         expect(mockTurnOffDisplayNameError).toHaveBeenCalledTimes(0);
 
         (wrapper.vm as any).turnOffDisplayNameError();

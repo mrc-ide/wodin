@@ -89,7 +89,6 @@ describe("Sensitivity getters", () => {
             parameterSets: [{
                 name: "Set 1",
                 displayName: "Set 1",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { p1: 1 },
                 hidden: false
@@ -137,7 +136,6 @@ describe("Sensitivity getters", () => {
             parameterSets: [{
                 name: "Set 1",
                 displayName: "Set 1",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { p1: 1 },
                 hidden: false
@@ -155,7 +153,6 @@ describe("Sensitivity getters", () => {
             parameterSets: [{
                 name: "Set 1",
                 displayName: "Set 1",
-                isDisplayNameError: false,
                 displayNameErrorMsg: "",
                 parameterValues: { p1: 1 },
                 hidden: false

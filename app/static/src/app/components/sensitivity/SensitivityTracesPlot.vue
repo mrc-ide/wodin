@@ -4,7 +4,12 @@
      :placeholder-message="placeholderMessage"
      :end-time="endTime"
      :plot-data="allPlotData"
-     :redrawWatches="solutions ? [...solutions, allFitData, selectedVariables, parameterSetBatches, displayNames] : []">
+     :redrawWatches="solutions ? [
+        ...solutions,
+        allFitData,
+        selectedVariables,
+        parameterSetBatches,
+        parameterSetDisplayNames] : []">
     <slot></slot>
   </wodin-plot>
 </template>
@@ -43,7 +48,7 @@ export default defineComponent({
 
         const visibleParameterSetNames = computed(() => store.getters[`run/${RunGetter.visibleParameterSetNames}`]);
         const parameterSets = computed(() => store.state.run.parameterSets as ParameterSet[]);
-        const displayNames = computed(() => {
+        const parameterSetDisplayNames = computed(() => {
             return parameterSets.value.map((paramSet) => paramSet.displayName);
         });
 
@@ -181,7 +186,7 @@ export default defineComponent({
             allFitData,
             selectedVariables,
             parameterSetBatches,
-            displayNames
+            parameterSetDisplayNames
         };
     }
 });
