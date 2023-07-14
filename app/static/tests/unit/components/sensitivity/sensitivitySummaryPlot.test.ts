@@ -503,9 +503,9 @@ describe("SensitivitySummaryPlot", () => {
         expectDataToHaveBeenPlotted(wrapper);
     });
 
-    it("commits set loading when plotData is run", async () => {
-        // update store's time value to force re-compute of plotData, and then redraw
+    it("commits set loading when plotData is computed", async () => {
         const wrapper = getWrapper();
+        // drawPlot on mount
         expect(mockSetLoading).toHaveBeenCalledTimes(1);
         store!.state.sensitivity.plotSettings.time = 50;
         await nextTick();
