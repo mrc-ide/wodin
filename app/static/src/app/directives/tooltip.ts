@@ -5,7 +5,8 @@ export interface ToolTipSettings {
     content?: string,
     trigger?: bootstrap.Tooltip.Options["trigger"],
     variant?: "text" | "error"| "warning" | "success",
-    placement?: bootstrap.Tooltip.PopoverPlacement
+    placement?: bootstrap.Tooltip.PopoverPlacement,
+    delayMs?: number
 }
 
 export default {
@@ -30,7 +31,8 @@ export default {
                 title: value?.content || "",
                 placement: value?.placement || "top",
                 trigger: value?.trigger || "hover",
-                customClass: (variant === "text") ? "" : `tooltip-${variant}`
+                customClass: (variant === "text") ? "" : `tooltip-${variant}`,
+                delay: { show: value?.delayMs || 0, hide: 0 }
             });
         }
     },

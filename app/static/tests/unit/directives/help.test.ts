@@ -16,13 +16,19 @@ describe("help directive", () => {
     it("calls tooltip mounted with help string", () => {
         const mockTooltipMounted = jest.spyOn(tooltip, "mounted").mockImplementation(() => {});
         help.mounted(el, binding);
-        expect(mockTooltipMounted).toHaveBeenCalledWith(el, { ...binding, value: expectedHelpString });
+        expect(mockTooltipMounted).toHaveBeenCalledWith(el, {
+            ...binding,
+            value: { content: expectedHelpString, delayMs: 500 }
+        });
     });
 
     it("calls tooltip beforeUpdate with help string", () => {
         const mockTooltipBeforeUpdate = jest.spyOn(tooltip, "beforeUpdate").mockImplementation(() => {});
         help.beforeUpdate(el, binding);
-        expect(mockTooltipBeforeUpdate).toHaveBeenCalledWith(el, { ...binding, value: expectedHelpString });
+        expect(mockTooltipBeforeUpdate).toHaveBeenCalledWith(el, {
+            ...binding,
+            value: { content: expectedHelpString, delayMs: 500 }
+        });
     });
 
     it("calls tooltip beforeUnmount", () => {

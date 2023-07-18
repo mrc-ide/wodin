@@ -3,19 +3,19 @@ import tooltip, { ToolTipSettings } from "./tooltip";
 import userMessages from "../userMessages";
 import { Dict } from "../types/utilTypes";
 
-const lookupHelpStringFromBinding = (binding: DirectiveBinding<string>) => {
+const getHelpBinding = (binding: DirectiveBinding<string>) => {
     const { value } = binding; // value should be key in userMessages.help
-    return (userMessages.help as Dict<string>)[value as string];
+    const helpString = (userMessages.help as Dict<string>)[value as string];
+    const settings: ToolTipSettings = { content: helpString, delayMs: 500 };
+    return { ...binding, value: settings } as DirectiveBinding<string | ToolTipSettings>;
 };
 
 export default {
     mounted(el: HTMLElement, binding: DirectiveBinding<string>) {
-        const helpString = lookupHelpStringFromBinding(binding);
-        tooltip.mounted(el, { ...binding, value: helpString } as DirectiveBinding<string | ToolTipSettings>);
+        tooltip.mounted(el, getHelpBinding(binding));
     },
     beforeUpdate(el: HTMLElement, binding: DirectiveBinding<string>) {
-        const helpString = lookupHelpStringFromBinding(binding);
-        tooltip.beforeUpdate(el, { ...binding, value: helpString } as DirectiveBinding<string | ToolTipSettings>);
+        tooltip.beforeUpdate(el, getHelpBinding(binding));
     },
     beforeUnmount(el: HTMLElement) {
         tooltip.beforeUnmount(el);
