@@ -6,14 +6,11 @@ import BasicApp from "./components/basic/BasicApp.vue";
 import AppHeader from "./components/header/AppHeader.vue";
 import { BasicState } from "./store/basic/state";
 import { initialiseRouter } from "./router";
-import tooltip from "./directives/tooltip";
 
 export const store = new Vuex.Store<BasicState>(storeOptions);
 
 const app = createApp({ components: { WodinSession, AppHeader } });
 app.use(store);
-
-app.directive("tooltip", tooltip);
 
 app.mount("#app");
 

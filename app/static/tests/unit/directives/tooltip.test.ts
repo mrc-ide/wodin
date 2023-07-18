@@ -8,13 +8,15 @@ const expectTooltipConfig = (
     title: string,
     placement: bootstrap.Tooltip.PopoverPlacement,
     trigger: bootstrap.Tooltip.Options["trigger"],
-    customClass: string
+    customClass: string,
+    delayMs: number
 ) => {
     expect((Tooltip.getInstance(el) as any)._config.title).toBe(title);
     expect((Tooltip.getInstance(el) as any)._config.placement).toBe(placement);
     expect((Tooltip.getInstance(el) as any)._config.trigger).toBe(trigger);
     expect((Tooltip.getInstance(el) as any)._config.toggle).toBe("tooltip");
     expect((Tooltip.getInstance(el) as any)._config.customClass).toBe(customClass);
+    expect((Tooltip.getInstance(el) as any)._config.delay).toStrictEqual({ show: delayMs, hide: 0 });
 };
 
 describe("tooltip directive", () => {
@@ -57,7 +59,7 @@ describe("tooltip directive", () => {
         const div = wrapper.find("div");
 
         // checking tooltip props directly
-        expectTooltipConfig(div.element, "hello", "top", "hover", "");
+        expectTooltipConfig(div.element, "hello", "top", "hover", "", 0);
     });
 
     it("adds expected attributes (object)", async () => {
@@ -65,7 +67,7 @@ describe("tooltip directive", () => {
         const div = wrapper.find("div");
 
         // checking tooltip props directly
-        expectTooltipConfig(div.element, "", "top", "manual", "");
+        expectTooltipConfig(div.element, "", "top", "manual", "", 0);
     });
 
     it("adds expected attributes with variants and placement", async () => {
@@ -73,10 +75,11 @@ describe("tooltip directive", () => {
             content: "hello",
             placement: "right",
             variant: "warning",
-            trigger: "click"
+            trigger: "click",
+            delayMs: 50
         });
         const div = wrapper.find("div");
-        expectTooltipConfig(div.element, "hello", "right", "click", "tooltip-warning");
+        expectTooltipConfig(div.element, "hello", "right", "click", "tooltip-warning", 50);
     });
 
     it("updates title (string) when component is updated", async () => {
@@ -120,13 +123,13 @@ describe("tooltip directive", () => {
             content: ""
         });
         const div = wrapper.find("div");
-        expectTooltipConfig(div.element, "", "top", "hover", "");
+        expectTooltipConfig(div.element, "", "top", "hover", "", 0);
     });
 
     it("does not show if no content provided", async () => {
         const wrapper = mountTemplate("");
         const div = wrapper.find("div");
-        expectTooltipConfig(div.element, "", "top", "hover", "");
+        expectTooltipConfig(div.element, "", "top", "hover", "", 0);
     });
 
     it("disposes of tooltip on unmount", () => {
