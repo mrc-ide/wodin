@@ -282,9 +282,10 @@ describe("ParameterSetView", () => {
         expect(displayNameInput.element.value).toBe("Set 1");
         expect(displayNameText.isVisible()).toBe(false);
 
-        expect(mockTooltipDirective).toHaveBeenCalledTimes(10);
-        expect(mockTooltipDirective.mock.calls[6][0]).toBe(saveIcon.element);
-        expect(mockTooltipDirective.mock.calls[6][1].value).toBe("Save Parameter Set Name");
+        // 1 for onMount, 1 for ref saveButton update, 1 for editIcon click
+        expect(mockTooltipDirective).toHaveBeenCalledTimes(15);
+        expect(mockTooltipDirective.mock.calls[11][0]).toBe(saveIcon.element);
+        expect(mockTooltipDirective.mock.calls[11][1].value).toBe("Save Parameter Set Name");
     });
 
     it("commits save parameter display name mutation when save icon clicked", async () => {
@@ -316,6 +317,24 @@ describe("ParameterSetView", () => {
         expect(input.element.value).toBe("Set 1");
         const editIcon1 = wrapper.findAllComponents(VueFeather)[0];
         expect(editIcon1.props("type")).toBe("edit");
+    });
+
+    it("does not cancel rename when you blur input by clicking on save button", async () => {
+        const wrapper = getWrapper(false, 0, false, false);
+        const editIcon = wrapper.findAllComponents(VueFeather)[0];
+        await editIcon.trigger("click");
+        const input = wrapper.find("input");
+        await input.setValue("hey");
+        // cannot do event.relatedTarget testing by triggering DOM events so
+        // have to trigger this manually and put in saveButton as the relatedEvent
+        // and make sure the cancelEditDisplayName function does no updates
+        (wrapper.vm as any).cancelEditDisplayName({ relatedTarget: (wrapper.vm as any).saveButton.$el });
+        await nextTick();
+        const input1 = wrapper.find("input");
+        expect(input1.element.value).toBe("hey");
+        const saveIcon = wrapper.findAllComponents(VueFeather)[0];
+        expect(saveIcon.props("type")).toBe("save");
+        expect(mockTurnOffDisplayNameError).toHaveBeenCalledTimes(0);
     });
 
     it("commits display name error off mutation if there is error", async () => {

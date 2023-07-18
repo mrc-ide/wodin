@@ -24,6 +24,8 @@
         <vue-feather class="inline-icon clickable save-display-name param-set-icon"
                      v-else
                      type="save"
+                     ref="saveButton"
+                     tabindex="-1"
                      @click="saveDisplayName"
                      v-tooltip="'Save Parameter Set Name'"></vue-feather>
         <vue-feather class="inline-icon clickable hide-param-set ms-2 param-set-icon"
@@ -145,7 +147,9 @@ export default defineComponent({
                 editDisplayName.value = false;
             }
         };
-        const cancelEditDisplayName = () => {
+        const saveButton = ref<HTMLButtonElement | null>(null);
+        const cancelEditDisplayName = (event: any) => {
+            if (event.relatedTarget && event.relatedTarget === (saveButton.value as any).$el) return;
             store.commit(`run/${RunMutation.TurnOffDisplayNameError}`, props.parameterSet.name);
             newDisplayName.value = props.parameterSet.displayName;
             editDisplayName.value = false;
@@ -179,7 +183,8 @@ export default defineComponent({
             saveDisplayName,
             paramNameInput,
             turnOffDisplayNameError,
-            cancelEditDisplayName
+            cancelEditDisplayName,
+            saveButton
         };
     }
 });
