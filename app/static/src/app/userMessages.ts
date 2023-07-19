@@ -3,7 +3,8 @@ import settings from "./settings";
 export default {
     code: {
         isValid: "Code is valid",
-        isNotValid: "Code is not valid"
+        isNotValid: "Code is not valid",
+        isValidating: "Code is validating"
     },
     download: {
         invalidPoints: "Modelled points must be between 1 and 50,001"
@@ -26,6 +27,9 @@ export default {
             model: "Compile model"
         },
         columnToFitPrerequisites: "Please link at least one column in order to set target to fit."
+    },
+    help: {
+        resetCode: "Revert to default code - all your changes will be lost"
     },
     model: {
         noVariablesSelected: "No variables are selected.",

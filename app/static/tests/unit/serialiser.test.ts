@@ -21,7 +21,8 @@ import { Language } from "../../src/app/types/languageTypes";
 
 describe("serialise", () => {
     const codeState = {
-        currentCode: ["some code"]
+        currentCode: ["some code"],
+        loading: false
     };
 
     const modelState = {
@@ -272,7 +273,7 @@ describe("serialise", () => {
         language: langaugeState
     };
 
-    const expectedCode = { currentCode: ["some code"] };
+    const expectedCode = { currentCode: ["some code"], loading: false };
     const expectedModel = {
         compileRequired: true,
         odinModelResponse: modelState.odinModelResponse,

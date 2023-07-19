@@ -5,7 +5,8 @@ export interface ToolTipSettings {
     content?: string,
     trigger?: bootstrap.Tooltip.Options["trigger"],
     variant?: "text" | "error"| "warning" | "success",
-    placement?: bootstrap.Tooltip.PopoverPlacement
+    placement?: bootstrap.Tooltip.PopoverPlacement,
+    delayMs?: number
 }
 
 export default {
@@ -32,11 +33,12 @@ export default {
                 placement: value?.placement || "top",
                 trigger: value?.trigger || "hover",
                 customClass: (variant === "text") ? "" : `tooltip-${variant}`,
-                animation: false
+                animation: false,
+                delay: { show: value?.delayMs || 0, hide: 0 }
             });
         }
     },
-    beforeUpdate(el: HTMLElement, binding: DirectiveBinding<ToolTipSettings>) {
+    beforeUpdate(el: HTMLElement, binding: DirectiveBinding<string | ToolTipSettings>) {
         const { value } = binding;
 
         const tooltip = Tooltip.getInstance(el);

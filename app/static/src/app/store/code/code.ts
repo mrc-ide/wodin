@@ -3,7 +3,8 @@ import { mutations } from "./mutations";
 import { actions } from "./actions";
 
 export const defaultState: CodeState = {
-    currentCode: []
+    currentCode: [],
+    loading: false
 };
 
 export const code = {

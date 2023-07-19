@@ -94,6 +94,7 @@ export const mockRunState = (state: Partial<RunState> = {}): RunState => {
 export const mockCodeState = (state: Partial<CodeState> = {}): CodeState => {
     return {
         currentCode: [],
+        loading: false,
         ...state
     };
 };

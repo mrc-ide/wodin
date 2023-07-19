@@ -4,7 +4,7 @@ import VueFeather from "vue-feather";
 import CodeTab from "../../../../src/app/components/code/CodeTab.vue";
 import CodeEditor from "../../../../src/app/components/code/CodeEditor.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import { mockBasicState, mockModelState } from "../../../mocks";
+import { mockBasicState, mockCodeState, mockModelState } from "../../../mocks";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 import { ModelState } from "../../../../src/app/store/model/state";
 import VerticalCollapse from "../../../../src/app/components/VerticalCollapse.vue";
@@ -28,7 +28,7 @@ describe("CodeTab", () => {
 
     const mockCompileModel = jest.fn();
 
-    const getWrapper = (odinModelState: Partial<ModelState> = defaultModelState) => {
+    const getWrapper = (odinModelState: Partial<ModelState> = defaultModelState, loading = false) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
                 configured: true
@@ -40,6 +40,10 @@ describe("CodeTab", () => {
                     actions: {
                         CompileModel: mockCompileModel
                     }
+                },
+                code: {
+                    namespaced: true,
+                    state: mockCodeState({ loading })
                 }
             }
         });
@@ -76,6 +80,13 @@ describe("CodeTab", () => {
         const statusIcon = wrapper.find("#code-status").findComponent(VueFeather);
         expect(statusIcon.attributes("type")).toBe("x");
         expect(statusIcon.classes()).toContain("text-danger");
+    });
+
+    it("shows greyed out icon and greyed out message when code is validating", () => {
+        const wrapper = getWrapper(defaultModelState, true);
+        expect(wrapper.find("#code-status").classes()).toContain("code-validating-text");
+        const statusIcon = wrapper.find("#code-status").findComponent(VueFeather);
+        expect(statusIcon.classes()).toContain("code-validating-icon");
     });
 
     it("compile button dispatches compile action", () => {
