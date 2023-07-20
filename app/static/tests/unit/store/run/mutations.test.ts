@@ -474,6 +474,32 @@ describe("Run mutations", () => {
         }]);
     });
 
+    it("error if you try and name it nothing", () => {
+        const state = mockRunState({
+            parameterValues: { a: 1 },
+            parameterSets: [
+                {
+                    name: "Set1",
+                    displayName: "random name",
+                    displayNameErrorMsg: "",
+                    parameterValues: { a: 2 },
+                    hidden: false
+                }
+            ]
+        });
+        mutations.SaveParameterDisplayName(state, {
+            parameterSetName: "Set1",
+            newDisplayName: ""
+        });
+        expect(state.parameterSets).toStrictEqual([{
+            name: "Set1",
+            displayName: "random name",
+            displayNameErrorMsg: "Please enter a name",
+            parameterValues: { a: 2 },
+            hidden: false
+        }]);
+    });
+
     it("turns off display name error", () => {
         const state = mockRunState({
             parameterValues: { a: 1 },

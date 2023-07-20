@@ -140,7 +140,9 @@ export const mutations: MutationTree<RunState> = {
         if (paramSet) {
             const isParamSetName = payload.newDisplayName === paramSet.name;
             const isParamSetDisplayName = payload.newDisplayName === paramSet.displayName;
-            if (isDuplicateDisplayName && !isParamSetName && !isParamSetDisplayName) {
+            if (!payload.newDisplayName) {
+                paramSet.displayNameErrorMsg = "Please enter a name";
+            } else if (isDuplicateDisplayName && !isParamSetName && !isParamSetDisplayName) {
                 paramSet.displayNameErrorMsg = "Name already exists";
             } else if (isSpecialSetName && !isParamSetName) {
                 paramSet.displayNameErrorMsg = `${payload.newDisplayName} (or any Set [number] combination) is reserved
