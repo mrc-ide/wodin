@@ -2,10 +2,10 @@
 <div class="container parameter-set">
   <div class="card">
     <div class="card-header param-card-header">
-      <div v-show="!editDisplayName" class="ms-2 align-center" @click="editDisplayNameOn">
+      <div v-show="!editDisplayName" class="ms-2 align-center" @click="editDisplayNameOn" style="word-break: break-all;">
         {{parameterSet.displayName}}
       </div>
-      <span v-show="editDisplayName" style="width: 100%;">
+      <span v-show="editDisplayName" style="width: calc(100% - 2.5rem);">
         <input class="d-inline form-control param-name-input"
                ref="paramNameInput"
                v-model="newDisplayName"
@@ -252,14 +252,13 @@ export default defineComponent({
 
 .param-card-header {
   display: inline-flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  padding-top: 0;
-  padding-bottom: 0;
 }
 
 .param-name-input {
-  width: calc(100% - 1.2em);
+  width: 100%;
   height: 30px;
   padding-left: 7px;
   padding-top: 0;
