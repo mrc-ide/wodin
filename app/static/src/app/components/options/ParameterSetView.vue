@@ -5,7 +5,7 @@
       <div v-show="!editDisplayName" class="ms-2 align-center" @click="editDisplayNameOn">
         {{parameterSet.displayName}}
       </div>
-      <span v-show="editDisplayName">
+      <span v-show="editDisplayName" style="width: 100%;">
         <input class="d-inline form-control param-name-input"
                ref="paramNameInput"
                v-model="newDisplayName"
@@ -29,17 +29,18 @@
                      @click="saveDisplayName"
                      v-tooltip="'Save Parameter Set Name'"></vue-feather>
         <vue-feather class="inline-icon clickable hide-param-set ms-2 param-set-icon"
-                     v-if="!parameterSet.hidden"
+                     v-if="!parameterSet.hidden && !editDisplayName"
                      type="eye-off"
                      @click="toggleHidden"
                      v-tooltip="'Hide Parameter Set'"></vue-feather>
         <vue-feather class="inline-icon clickable show-param-set ms-2 param-set-icon"
-                     v-if="parameterSet.hidden"
+                     v-if="parameterSet.hidden  && !editDisplayName"
                      type="eye"
                      @click="toggleHidden"
                      v-tooltip="'Show Parameter Set'"></vue-feather>
         <vue-feather class="inline-icon clickable swap-param-set ms-2 param-set-icon"
                      type="shuffle"
+                     v-if="!editDisplayName"
                      :disabled="!canSwapParameterSet"
                      :stroke="canSwapParameterSet ? 'black' : 'lightgray'"
                      :style="{ cursor: canSwapParameterSet ? 'pointer' : 'default' }"
@@ -47,6 +48,7 @@
                      v-tooltip="'Swap Parameter Set with Current Parameter Values'"></vue-feather>
         <vue-feather class="inline-icon clickable delete-param-set ms-2 param-set-icon"
                      type="trash-2"
+                     v-if="!editDisplayName"
                      @click="deleteParameterSet"
                      v-tooltip="'Delete Parameter Set'"></vue-feather>
       </span>
@@ -241,5 +243,26 @@ export default defineComponent({
   .parameter {
     font-size: medium;
   }
+}
+
+.param-set-icon {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.param-card-header {
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.param-name-input {
+  width: calc(100% - 1.2em);
+  height: 30px;
+  padding-left: 7px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 </style>
