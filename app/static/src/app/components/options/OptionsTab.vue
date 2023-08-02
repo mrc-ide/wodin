@@ -62,14 +62,12 @@ export default {
 
         const sensitivityOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Sensitivity);
         const fitTabIsOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Fit);
-        const runTabIsOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Run);
 
         return {
             isFit,
             isStochastic,
             sensitivityOpen,
-            fitTabIsOpen,
-            runTabIsOpen
+            fitTabIsOpen
         };
     }
 };
