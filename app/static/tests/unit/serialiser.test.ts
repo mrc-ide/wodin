@@ -18,6 +18,7 @@ import {
 } from "../mocks";
 import { defaultState as defaultGraphSettingsState } from "../../src/app/store/graphSettings/graphSettings";
 import { Language } from "../../src/app/types/languageTypes";
+import { AdvancedOptions } from "../../src/app/store/run/state";
 
 describe("serialise", () => {
     const codeState = {
@@ -69,7 +70,8 @@ describe("serialise", () => {
             modelChanged: false,
             parameterValueChanged: false,
             endTimeChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         },
         parameterValues: { alpha: 1, beta: 1.1 },
         endTime: 20,
@@ -106,7 +108,14 @@ describe("serialise", () => {
         },
         userDownloadFileName: "",
         downloading: false,
-        numberOfReplicates: 5
+        numberOfReplicates: 5,
+        advancedSettings: {
+            [AdvancedOptions.tol]: { val: [null, null], defaults: [1, -6], standardForm: true as const },
+            [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, standardForm: false as const },
+            [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, standardForm: false as const },
+            [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], standardForm: true as const },
+            [AdvancedOptions.tcrit]: { val: null, defaults: Infinity, standardForm: false as const }
+        }
     };
 
     const sensitivityBatchPars = {
@@ -282,7 +291,8 @@ describe("serialise", () => {
             modelChanged: false,
             parameterValueChanged: false,
             endTimeChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         },
         parameterValues: runState.parameterValues,
         parameterSetsCreated: runState.parameterSetsCreated,

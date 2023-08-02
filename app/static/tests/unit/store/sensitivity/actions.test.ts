@@ -3,6 +3,7 @@ import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutat
 import { ModelGetter } from "../../../../src/app/store/model/getters";
 import { AppType } from "../../../../src/app/store/appState/state";
 import { RunAction } from "../../../../src/app/store/run/actions";
+import { AdvancedOptions } from "../../../../src/app/store/run/state";
 
 const mockBatch = {};
 const mockRunnerOde = {
@@ -25,7 +26,23 @@ const mockModelState = {
 };
 const mockRunState = {
     endTime: 99,
-    numberOfReplicates: 5
+    numberOfReplicates: 5,
+    advancedSettings: {
+        [AdvancedOptions.tol]: { val: [null, null], defaults: [1, -6], standardForm: true },
+        [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, standardForm: false },
+        [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, standardForm: false },
+        [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], standardForm: true },
+        [AdvancedOptions.tcrit]: { val: null, defaults: Infinity, standardForm: false }
+    }
+};
+
+const defaultAdvanced = {
+    atol: 0.000001,
+    maxSteps: 10000,
+    rtol: 0.000001,
+    stepSizeMax: Infinity,
+    stepSizeMin: 1e-8,
+    tcrit: Infinity
 };
 
 const mockBatchPars = {};
@@ -74,7 +91,13 @@ describe("Sensitivity actions", () => {
             numberOfReplicatesChanged: false
         });
 
-        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(rootState.model.odin, mockBatchPars, 0, 99, {});
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
+            rootState.model.odin,
+            mockBatchPars,
+            0,
+            99,
+            defaultAdvanced
+        );
 
         expect(dispatch).not.toHaveBeenCalled();
     });
@@ -136,9 +159,27 @@ describe("Sensitivity actions", () => {
         });
 
         expect(mockRunnerOde.batchRun).toHaveBeenCalledTimes(3);
-        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(rootState.model.odin, mockBatchPars, 0, 99, {});
-        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(rootState.model.odin, paramSet1BatchPars, 0, 99, {});
-        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(rootState.model.odin, paramSet2BatchPars, 0, 99, {});
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
+            rootState.model.odin,
+            mockBatchPars,
+            0,
+            99,
+            defaultAdvanced
+        );
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
+            rootState.model.odin,
+            paramSet1BatchPars,
+            0,
+            99,
+            defaultAdvanced
+        );
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
+            rootState.model.odin,
+            paramSet2BatchPars,
+            0,
+            99,
+            defaultAdvanced
+        );
 
         expect(dispatch).not.toHaveBeenCalled();
     });
@@ -343,7 +384,13 @@ describe("Sensitivity actions", () => {
         expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetResult);
         expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetUpdateRequired);
 
-        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(rootState.model.odin, mockBatchPars, 0, 99, {});
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
+            rootState.model.odin,
+            mockBatchPars,
+            0,
+            99,
+            defaultAdvanced
+        );
 
         expect(dispatch).toHaveBeenCalledWith("run/RunModel", null, { root: true });
     });
@@ -464,7 +511,13 @@ describe("Sensitivity actions", () => {
             numberOfReplicatesChanged: false
         });
 
-        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(rootState.model.odin, mockResultBatchPars, 0, 99, {});
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
+            rootState.model.odin,
+            mockBatchPars,
+            0,
+            99,
+            defaultAdvanced
+        );
 
         expect(dispatch).not.toHaveBeenCalled();
     });

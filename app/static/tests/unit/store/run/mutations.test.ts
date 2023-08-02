@@ -1,4 +1,5 @@
 import { mutations } from "../../../../src/app/store/run/mutations";
+import { AdvancedOptions } from "../../../../src/app/store/run/state";
 import { mockRunState } from "../../../mocks";
 
 describe("Run mutations", () => {
@@ -6,7 +7,8 @@ describe("Run mutations", () => {
         endTimeChanged: false,
         modelChanged: false,
         parameterValueChanged: false,
-        numberOfReplicatesChanged: false
+        numberOfReplicatesChanged: false,
+        advancedSettingsChanged: false
     };
 
     it("sets result ode", () => {
@@ -16,7 +18,8 @@ describe("Run mutations", () => {
                 endTimeChanged: false,
                 modelChanged: true,
                 parameterValueChanged: true,
-                numberOfReplicatesChanged: false
+                numberOfReplicatesChanged: false,
+                advancedSettingsChanged: false
             }
         });
         const result = {
@@ -31,7 +34,8 @@ describe("Run mutations", () => {
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
     });
 
@@ -42,7 +46,8 @@ describe("Run mutations", () => {
                 endTimeChanged: false,
                 modelChanged: true,
                 parameterValueChanged: true,
-                numberOfReplicatesChanged: false
+                numberOfReplicatesChanged: false,
+                advancedSettingsChanged: false
             }
         });
         const result = {
@@ -57,7 +62,8 @@ describe("Run mutations", () => {
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
     });
 
@@ -68,14 +74,16 @@ describe("Run mutations", () => {
             endTimeChanged: false,
             modelChanged: true,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
         mutations.SetRunRequired(state, { modelChanged: false });
         expect(state.runRequired).toStrictEqual({
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
     });
 
@@ -97,7 +105,36 @@ describe("Run mutations", () => {
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: true,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
+        });
+    });
+
+    it("updates advanced settings and sets runRequired to true", () => {
+        const state = mockRunState({
+            advancedSettings: {
+                [AdvancedOptions.tol]: { val: [null, null], defaults: [1, -6], standardForm: true },
+                [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, standardForm: false },
+                [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, standardForm: false },
+                [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], standardForm: true },
+                [AdvancedOptions.tcrit]: { val: null, defaults: Infinity, standardForm: false }
+            },
+            runRequired: noRunRequired
+        });
+        mutations.UpdateAdvancedSettings(state, { option: AdvancedOptions.tol, newVal: [1, 2] });
+        expect(state.advancedSettings).toStrictEqual({
+            [AdvancedOptions.tol]: { val: [1, 2], defaults: [1, -6], standardForm: true },
+            [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, standardForm: false },
+            [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, standardForm: false },
+            [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], standardForm: true },
+            [AdvancedOptions.tcrit]: { val: null, defaults: Infinity, standardForm: false }
+        });
+        expect(state.runRequired).toStrictEqual({
+            endTimeChanged: false,
+            modelChanged: false,
+            parameterValueChanged: false,
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: true
         });
     });
 
@@ -112,7 +149,8 @@ describe("Run mutations", () => {
             endTimeChanged: true,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
     });
 
@@ -133,7 +171,8 @@ describe("Run mutations", () => {
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
         // increasing, even right up to the original limit, is fine
         mutations.SetEndTime(state, 100);
@@ -142,7 +181,8 @@ describe("Run mutations", () => {
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
         // but any additional time requires a rerun
         mutations.SetEndTime(state, 101);
@@ -151,7 +191,8 @@ describe("Run mutations", () => {
             endTimeChanged: true,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
     });
 

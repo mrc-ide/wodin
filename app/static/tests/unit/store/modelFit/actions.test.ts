@@ -91,7 +91,14 @@ describe("ModelFit actions", () => {
             vary: ["p1"]
         });
         expect(mockWodinFit.mock.calls[0][3]).toBe("S");
-        expect(mockWodinFit.mock.calls[0][4]).toStrictEqual({});
+        expect(mockWodinFit.mock.calls[0][4]).toStrictEqual({
+            atol: 0.000001,
+            maxSteps: 10000,
+            rtol: 0.000001,
+            stepSizeMax: Infinity,
+            stepSizeMin: 1e-8,
+            tcrit: Infinity
+        });
         expect(mockWodinFit.mock.calls[0][5]).toStrictEqual({});
     });
 

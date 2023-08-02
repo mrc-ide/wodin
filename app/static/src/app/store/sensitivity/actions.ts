@@ -13,6 +13,8 @@ import {
 } from "../../types/responseTypes";
 import { ModelGetter } from "../model/getters";
 import { Dict } from "../../types/utilTypes";
+import { AdvancedSettings } from "../run/state";
+import { convertAdvancedSettingsToOdin } from "../../utils";
 
 export enum SensitivityAction {
     RunSensitivity = "RunSensitivity",
@@ -30,8 +32,10 @@ const runModelIfRequired = (rootState: AppState, dispatch: Dispatch) => {
 const batchRunOde = (runner: OdinRunnerOde,
     odin: Odin,
     pars: BatchPars,
-    endTime: number): Batch => {
-    const batch = runner.batchRun(odin, pars, 0, endTime, {});
+    endTime: number,
+    advancedSettings: AdvancedSettings): Batch => {
+    const advancedSettingsOdin = convertAdvancedSettingsToOdin(advancedSettings);
+    const batch = runner.batchRun(odin, pars, 0, endTime, advancedSettingsOdin);
     return batch;
 };
 
@@ -68,10 +72,13 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
             error: null
         };
         runModelIfRequired(rootState, dispatch);
+
+        const { advancedSettings } = rootState.run;
+
         try {
             const batch = isStochastic
                 ? batchRunDiscrete(odinRunnerDiscrete!, odin, batchPars, endTime, dt!, replicates, dispatch, commit)
-                : batchRunOde(odinRunnerOde!, odin, batchPars, endTime);
+                : batchRunOde(odinRunnerOde!, odin, batchPars, endTime, advancedSettings);
             payload.batch = batch;
         } catch (e: unknown) {
             payload.error = {
@@ -93,7 +100,7 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
                 };
                 const setBatchPars = parameterSetBatchPars[name];
                 try {
-                    setResult.batch = batchRunOde(odinRunnerOde!, odin, setBatchPars, endTime);
+                    setResult.batch = batchRunOde(odinRunnerOde!, odin, setBatchPars, endTime, advancedSettings);
                 } catch (e: unknown) {
                     setResult.error = {
                         error: userMessages.errors.wodinSensitivityError,

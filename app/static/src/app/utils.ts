@@ -11,6 +11,7 @@ import {
     SensitivityVariationType
 } from "./store/sensitivity/state";
 import { AppState } from "./store/appState/state";
+import { AdvancedOptions, AdvancedSettings, AdvancedSettingsOdin } from "./store/run/state";
 
 export const freezer = {
     /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -207,4 +208,30 @@ export const anyTrue = (x: Dict<boolean>): boolean => {
 export const runPlaceholderMessage = (selectedVariables: string[], sensitivity: boolean) => {
     const notRunYet = sensitivity ? userMessages.sensitivity.notRunYet : userMessages.run.notRunYet;
     return selectedVariables.length ? notRunYet : userMessages.model.noVariablesSelected;
+};
+
+export const convertAdvancedSettingsToOdin = (advancedSettings: AdvancedSettings) => {
+    const flattenedObject = Object.fromEntries(Object.entries(advancedSettings)
+        .map(([key, value]) => {
+            let numericVal: number | null;
+            if (value.standardForm) {
+                const firstValue = value.val[0] !== null ? value.val[0] : value.defaults[0];
+                const secondValue = value.val[1] !== null ? value.val[1] : value.defaults[1];
+                numericVal = firstValue * 10 ** secondValue;
+            } else {
+                numericVal = value.val !== null ? value.val : value.defaults;
+            }
+            return [key, numericVal];
+        })) as Record<AdvancedOptions, number>;
+
+    const advancedSettingsOdin: AdvancedSettingsOdin = {
+        atol: flattenedObject.Tolerance,
+        rtol: flattenedObject.Tolerance,
+        maxSteps: flattenedObject["Max Steps"],
+        stepSizeMax: flattenedObject["Max Step Size"],
+        stepSizeMin: flattenedObject["Min Step Size"],
+        tcrit: flattenedObject["Critical Time"]
+    };
+
+    return advancedSettingsOdin;
 };

@@ -7,7 +7,7 @@ import {
     BatchPars, OdinUserType, ResponseFailure, ResponseSuccess, WodinError
 } from "../src/app/types/responseTypes";
 import { ModelState } from "../src/app/store/model/state";
-import { RunState } from "../src/app/store/run/state";
+import { AdvancedOptions, RunState } from "../src/app/store/run/state";
 import { CodeState } from "../src/app/store/code/state";
 import { FitDataState } from "../src/app/store/fitData/state";
 import { AppType, VisualisationTab } from "../src/app/store/appState/state";
@@ -75,7 +75,8 @@ export const mockRunState = (state: Partial<RunState> = {}): RunState => {
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         },
         parameterValues: null,
         endTime: 100,
@@ -87,6 +88,13 @@ export const mockRunState = (state: Partial<RunState> = {}): RunState => {
         parameterSetsCreated: 0,
         parameterSets: [],
         parameterSetResults: {},
+        advancedSettings: {
+            [AdvancedOptions.tol]: { val: [null, null], defaults: [1, -6], standardForm: true as const },
+            [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, standardForm: false as const },
+            [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, standardForm: false as const },
+            [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], standardForm: true as const },
+            [AdvancedOptions.tcrit]: { val: null, defaults: Infinity, standardForm: false as const }
+        },
         ...state
     };
 };

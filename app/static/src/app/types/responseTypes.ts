@@ -22,7 +22,6 @@ export interface AppConfigBase {
     endTime: number,
     readOnlyCode: boolean,
     stateUploadIntervalMillis: number,
-    endTime: number,
     help?: {
         markdown?: string[],
         tabName?: string

@@ -1,8 +1,10 @@
 import { MutationTree } from "vuex";
-import { ParameterSet, RunState, RunUpdateRequiredReasons } from "./state";
+import {
+    ParameterSet, RunState, RunUpdateRequiredReasons
+} from "./state";
 import { OdinUserType } from "../../types/responseTypes";
 import { OdinRunResultDiscrete, OdinRunResultOde } from "../../types/wrapperTypes";
-import { SetParameterSetResultPayload } from "../../types/payloadTypes";
+import { SetAdvancedSettingPayload, SetParameterSetResultPayload } from "../../types/payloadTypes";
 
 export enum RunMutation {
     SetRunRequired = "SetRunRequired",
@@ -18,14 +20,16 @@ export enum RunMutation {
     AddParameterSet = "AddParameterSet",
     DeleteParameterSet = "DeleteParameterSet",
     SwapParameterSet = "SwapParameterSet",
-    ToggleParameterSetHidden = "ToggleParameterSetHidden"
+    ToggleParameterSetHidden = "ToggleParameterSetHidden",
+    UpdateAdvancedSettings = "UpdateAdvancedSettings"
 }
 
 const runRequiredNone = {
     modelChanged: false,
     parameterValueChanged: false,
     endTimeChanged: false,
-    numberOfReplicatesChanged: false
+    numberOfReplicatesChanged: false,
+    advancedSettingsChanged: false
 };
 
 export const mutations: MutationTree<RunState> = {
@@ -60,6 +64,14 @@ export const mutations: MutationTree<RunState> = {
                 parameterValueChanged: true
             };
         }
+    },
+
+    [RunMutation.UpdateAdvancedSettings](state: RunState, payload: SetAdvancedSettingPayload) {
+        state.advancedSettings[payload.option].val = payload.newVal;
+        state.runRequired = {
+            ...state.runRequired,
+            advancedSettingsChanged: true
+        };
     },
 
     [RunMutation.SetEndTime](state: RunState, payload: number) {

@@ -7,12 +7,46 @@ export interface RunUpdateRequiredReasons {
     parameterValueChanged: boolean;
     endTimeChanged: boolean;
     numberOfReplicatesChanged: boolean;
+    advancedSettingsChanged: boolean;
 }
 
 export interface ParameterSet {
     name: string,
     parameterValues: OdinUserType,
     hidden: boolean
+}
+
+export enum AdvancedOptions {
+    "tol" = "Tolerance",
+    "maxSteps" = "Max Steps",
+    "stepSizeMax" = "Max Step Size",
+    "stepSizeMin" = "Min Step Size",
+    "tcrit" = "Critical Time"
+}
+
+type AdConfStandardForm = {
+    val: (number | null)[],
+    defaults: number[],
+    standardForm: true
+}
+
+type AdConfNumeric = {
+    val: number | null,
+    defaults: number,
+    standardForm: false
+}
+
+export type AdvancedConfig = AdConfNumeric | AdConfStandardForm
+
+export type AdvancedSettings = Record<AdvancedOptions, AdvancedConfig>
+
+export type AdvancedSettingsOdin = {
+    atol: number | null,
+    rtol: number | null,
+    maxSteps: number | null,
+    stepSizeMax: number | null,
+    stepSizeMin: number | null,
+    tcrit: number | null
 }
 
 export interface RunState {
@@ -33,4 +67,5 @@ export interface RunState {
     parameterSetsCreated: number;
     parameterSets: ParameterSet[];
     parameterSetResults: Dict<OdinRunResultOde>;
+    advancedSettings: AdvancedSettings;
 }

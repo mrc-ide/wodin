@@ -26,13 +26,18 @@ export default defineComponent({
     name: "VerticalCollapse",
     props: {
         title: String,
-        collapseId: String
+        collapseId: String,
+        collapsedDefault: {
+            type: Boolean,
+            required: false,
+            default: false
+        }
     },
     components: {
         VueFeather
     },
-    setup() {
-        const collapsed = ref(false); // default to expanded view
+    setup(props) {
+        const collapsed = ref(props.collapsedDefault); // default to expanded view
 
         const toggleCollapse = () => {
             collapsed.value = !collapsed.value;
