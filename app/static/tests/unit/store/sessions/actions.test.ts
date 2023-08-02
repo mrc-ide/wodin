@@ -36,7 +36,8 @@ describe("SessionsActions", () => {
                 },
                 resultDiscrete: {
                     hasResult: runHasResultDiscrete
-                }
+                },
+                advancedSettings: {}
             },
             sensitivity: {
                 result: {
