@@ -546,7 +546,7 @@ describe("serialise", () => {
                     }
                 }
             } as any),
-            run: {...mockRunState(), advancedSettings: expectedRun.advancedSettings },
+            run: { ...mockRunState(), advancedSettings: expectedRun.advancedSettings },
             sensitivity: mockSensitivityState(),
             fitData: mockFitDataState(),
             modelFit: mockModelFitState(),
@@ -577,7 +577,7 @@ describe("serialise", () => {
             openVisualisationTab: VisualisationTab.Fit,
             code: mockCodeState(),
             model: mockModelState(),
-            run: {...mockRunState(), advancedSettings: expectedRun.advancedSettings },
+            run: { ...mockRunState(), advancedSettings: expectedRun.advancedSettings },
             sensitivity: mockSensitivityState(),
             fitData: mockFitDataState(),
             modelFit: mockModelFitState(),
