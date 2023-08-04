@@ -128,8 +128,10 @@ export default defineComponent({
                     });
                     result.push(...psPlotData);
                 });
+                store.commit(`sensitivity/${SensitivityMutation.SetLoading}`, false);
                 return result;
             }
+            store.commit(`sensitivity/${SensitivityMutation.SetLoading}`, false);
             return [];
         });
         const hasPlotData = computed(() => !!(plotData.value?.length));

@@ -1,10 +1,11 @@
 <template>
   <div class="sensitivity-tab">
     <div>
-      <button class="btn btn-primary"
+      <loading-button class="btn btn-primary"
               id="run-sens-btn"
-              :disabled="!canRunSensitivity"
-              @click="runSensitivity">Run sensitivity</button>
+              :loading="loading || running"
+              :is-disabled="!canRunSensitivity"
+              @click="runSensitivity">Run sensitivity</loading-button>
     </div>
     <action-required-message :message="updateMsg"></action-required-message>
     <sensitivity-traces-plot v-if="tracesPlot" :fade-plot="!!updateMsg"></sensitivity-traces-plot>
@@ -32,6 +33,8 @@ import { sensitivityUpdateRequiredExplanation } from "./support";
 import { anyTrue } from "../../utils";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import { ModelGetter } from "../../store/model/getters";
+import LoadingButton from "../LoadingButton.vue";
+import { SensitivityMutation } from "../../store/sensitivity/mutations";
 
 export default defineComponent({
     name: "SensitivityTab",
@@ -40,12 +43,14 @@ export default defineComponent({
         LoadingSpinner,
         SensitivitySummaryPlot,
         ActionRequiredMessage,
-        SensitivityTracesPlot
+        SensitivityTracesPlot,
+        LoadingButton
     },
     setup() {
         const store = useStore();
 
         const running = computed(() => store.state.sensitivity.running);
+        const loading = computed(() => store.state.sensitivity.loading);
 
         const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
 
@@ -56,7 +61,15 @@ export default defineComponent({
         });
 
         const runSensitivity = () => {
-            store.dispatch(`sensitivity/${SensitivityAction.RunSensitivity}`);
+            store.commit(`sensitivity/${SensitivityMutation.SetLoading}`, true);
+            // All of the code for sensitivity plot happens synchronously
+            // in RunSensitivity action. This means that the loading button's
+            // state doesn't get updated until after the calculations are
+            // finished so we include a break in our thread to give Vue time
+            // to react to loading being true
+            setTimeout(() => {
+                store.dispatch(`sensitivity/${SensitivityAction.RunSensitivity}`);
+            }, 100);
         };
 
         const sensitivityProgressMsg = computed(() => {
@@ -96,7 +109,8 @@ export default defineComponent({
             runSensitivity,
             updateMsg,
             tracesPlot,
-            error
+            error,
+            loading
         };
     }
 });

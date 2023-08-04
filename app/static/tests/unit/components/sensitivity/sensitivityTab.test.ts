@@ -1,4 +1,4 @@
-import { shallowMount } from "@vue/test-utils";
+import { mount, shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
 import { ModelState } from "../../../../src/app/store/model/state";
 import SensitivityTab from "../../../../src/app/components/sensitivity/SensitivityTab.vue";
@@ -12,11 +12,13 @@ import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 import { AppState, AppType } from "../../../../src/app/store/appState/state";
 import { ModelGetter } from "../../../../src/app/store/model/getters";
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
+import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 
 jest.mock("plotly.js-basic-dist-min", () => {});
 
 describe("SensitivityTab", () => {
     const mockRunSensitivity = jest.fn();
+    const mockSetLoading = jest.fn();
 
     const getWrapper = (appType = AppType.Basic, modelState: Partial<ModelState> = {},
         sensitivityState: Partial<SensitivityState> = {}, batchPars: any = {}, hasRunner = true) => {
@@ -67,13 +69,23 @@ describe("SensitivityTab", () => {
                     },
                     actions: {
                         [SensitivityAction.RunSensitivity]: mockRunSensitivity
+                    },
+                    mutations: {
+                        [SensitivityMutation.SetLoading]: mockSetLoading
                     }
                 }
             }
         });
-        return shallowMount(SensitivityTab, {
+        return mount(SensitivityTab, {
             global: {
-                plugins: [store]
+                plugins: [store],
+                stubs: [
+                    "action-required-message",
+                    "sensitivity-traces-plot",
+                    "sensitivity-summary-plot",
+                    "loading-spinner",
+                    "error-info"
+                ]
             }
         });
     };
@@ -158,6 +170,16 @@ describe("SensitivityTab", () => {
         expect(wrapper.find("button").element.disabled).toBe(true);
     });
 
+    it("disables run button when loading is true", () => {
+        const wrapper = getWrapper(AppType.Fit, {}, { loading: true });
+        expect(wrapper.find("button").element.disabled).toBe(true);
+    });
+
+    it("disables run button when running is true", () => {
+        const wrapper = getWrapper(AppType.Fit, {}, { running: true });
+        expect(wrapper.find("button").element.disabled).toBe(true);
+    });
+
     it("renders expected update message when required action is Compile", () => {
         const sensitivityState = {
             result: {
@@ -238,10 +260,13 @@ describe("SensitivityTab", () => {
         expect(runningMsg.findComponent(LoadingSpinner).props("size")).toBe("xs");
     });
 
-    it("dispatches sensitivity run when button is clicked", () => {
+    it("commits set loading and dispatches sensitivity run when button is clicked", async () => {
         const wrapper = getWrapper();
         expect(mockRunSensitivity).not.toHaveBeenCalled();
+        expect(mockSetLoading).not.toHaveBeenCalled();
         wrapper.find("button").trigger("click");
+        await new Promise((r) => setTimeout(r, 101));
         expect(mockRunSensitivity).toHaveBeenCalledTimes(1);
+        expect(mockSetLoading).toHaveBeenCalledTimes(1);
     });
 });

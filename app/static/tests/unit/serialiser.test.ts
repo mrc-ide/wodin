@@ -122,6 +122,7 @@ describe("serialise", () => {
     };
     const sensitivityState = {
         running: true,
+        loading: false,
         paramSettings: {
             parameterToVary: "alpha",
             scaleType: SensitivityScaleType.Arithmetic,

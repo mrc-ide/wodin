@@ -36,6 +36,7 @@ describe("SensitivitySummaryPlot", () => {
     (global.ResizeObserver as any) = mockResizeObserver;
 
     const mockSetPlotTime = jest.fn();
+    const mockSetLoading = jest.fn();
 
     const mockData = {
         x: [1, 1.1],
@@ -164,7 +165,8 @@ describe("SensitivitySummaryPlot", () => {
                         parameterSetResults
                     },
                     mutations: {
-                        [SensitivityMutation.SetPlotTime]: mockSetPlotTime
+                        [SensitivityMutation.SetPlotTime]: mockSetPlotTime,
+                        [SensitivityMutation.SetLoading]: mockSetLoading
                     }
                 },
                 graphSettings: {
@@ -499,5 +501,14 @@ describe("SensitivitySummaryPlot", () => {
         const plotSettings = { ...defaultPlotSettings, plotType: SensitivityPlotType.TimeAtExtreme };
         const wrapper = getWrapper(true, plotSettings, false, defaultParamSettings, true);
         expectDataToHaveBeenPlotted(wrapper);
+    });
+
+    it("commits set loading when plotData is computed", async () => {
+        const wrapper = getWrapper();
+        // drawPlot on mount
+        expect(mockSetLoading).toHaveBeenCalledTimes(1);
+        store!.state.sensitivity.plotSettings.time = 50;
+        await nextTick();
+        expect(mockSetLoading).toHaveBeenCalledTimes(2);
     });
 });

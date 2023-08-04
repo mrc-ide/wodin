@@ -138,6 +138,7 @@ export const mockFitDataState = (state:Partial<FitDataState> = {}): FitDataState
 export const mockSensitivityState = (state: Partial<SensitivityState> = {}): SensitivityState => {
     return {
         running: false,
+        loading: false,
         paramSettings: {
             parameterToVary: null,
             scaleType: SensitivityScaleType.Arithmetic,
