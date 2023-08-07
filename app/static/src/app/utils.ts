@@ -1,7 +1,12 @@
 import { uid } from "uid";
 import { Dict } from "./types/utilTypes";
 import {
-    BatchPars, OdinModelResponseError, OdinUserType, WodinError
+    AdvancedOptions,
+    AdvancedSettingsOdin,
+    BatchPars,
+    OdinModelResponseError,
+    OdinUserType,
+    WodinError
 } from "./types/responseTypes";
 import userMessages from "./userMessages";
 import settings from "./settings";
@@ -11,7 +16,7 @@ import {
     SensitivityVariationType
 } from "./store/sensitivity/state";
 import { AppState } from "./store/appState/state";
-import { AdvancedOptions, AdvancedSettings, AdvancedSettingsOdin } from "./store/run/state";
+import { AdvancedSettings } from "./store/run/state";
 
 export const freezer = {
     /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -227,10 +232,10 @@ export const convertAdvancedSettingsToOdin = (advancedSettings: AdvancedSettings
     const advancedSettingsOdin: AdvancedSettingsOdin = {
         atol: flattenedObject.Tolerance,
         rtol: flattenedObject.Tolerance,
-        maxSteps: flattenedObject["Max Steps"],
-        stepSizeMax: flattenedObject["Max Step Size"],
-        stepSizeMin: flattenedObject["Min Step Size"],
-        tcrit: flattenedObject["Critical Time"]
+        maxSteps: flattenedObject["Max steps"],
+        stepSizeMax: flattenedObject["Max step size"],
+        stepSizeMin: flattenedObject["Min step size"],
+        tcrit: flattenedObject["Critical time"]
     };
 
     return advancedSettingsOdin;

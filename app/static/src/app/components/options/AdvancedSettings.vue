@@ -22,8 +22,9 @@ import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import NumericInput from "./NumericInput.vue";
 import StandardFormInput from "./StandardFormInput.vue";
-import { AdvancedSettings, AdvancedOptions } from "../../store/run/state";
+import { AdvancedSettings } from "../../store/run/state";
 import { RunMutation } from "../../store/run/mutations";
+import { AdvancedOptions } from "../../types/responseTypes";
 
 export default defineComponent({
     components: {
@@ -35,7 +36,7 @@ export default defineComponent({
 
         const advancedSettings = computed(() => store.state.run.advancedSettings as AdvancedSettings);
 
-        const updateOption = (newVal: number | null | (number|null)[], option: AdvancedOptions) => {
+        const updateOption = (newVal: number | null | [number|null, number|null], option: AdvancedOptions) => {
             store.commit(`run/${RunMutation.UpdateAdvancedSettings}`, { option, newVal });
         };
 

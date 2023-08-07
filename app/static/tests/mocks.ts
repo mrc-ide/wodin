@@ -4,10 +4,11 @@ import { BasicState } from "../src/app/store/basic/state";
 import { FitState } from "../src/app/store/fit/state";
 import { StochasticState } from "../src/app/store/stochastic/state";
 import {
+    AdvancedOptions,
     BatchPars, OdinUserType, ResponseFailure, ResponseSuccess, WodinError
 } from "../src/app/types/responseTypes";
 import { ModelState } from "../src/app/store/model/state";
-import { AdvancedOptions, RunState } from "../src/app/store/run/state";
+import { RunState } from "../src/app/store/run/state";
 import { CodeState } from "../src/app/store/code/state";
 import { FitDataState } from "../src/app/store/fitData/state";
 import { AppType, VisualisationTab } from "../src/app/store/appState/state";

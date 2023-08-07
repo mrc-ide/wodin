@@ -45,7 +45,8 @@ export default {
             endTimeChanged: "end time has changed",
             numberOfReplicatesChanged: "number of replicates has changed",
             unknown: "unknown reasons, contact the administrator, as this is unexpected",
-            suffix: "Run model to update"
+            suffix: "Run model to update",
+            advancedSettingsChanged: "advanced settings have been changed"
         }
     },
     modelFit: {

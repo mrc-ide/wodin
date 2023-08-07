@@ -4,8 +4,8 @@ import AdvancedSettings from "../../../../src/app/components/options/AdvancedSet
 import { mockRunState } from "../../../mocks";
 import { RunMutation } from "../../../../src/app/store/run/mutations";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
-import { AdvancedOptions } from "../../../../src/app/store/run/state";
 import StandardFormInput from "../../../../src/app/components/options/StandardFormInput.vue";
+import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
 
 describe("Advanced Settings", () => {
     const mockUpdateAdvancedSettings = jest.fn();
@@ -54,13 +54,13 @@ describe("Advanced Settings", () => {
 
         expect(labels[0].text()).toBe("Tolerance");
         expectValueAndPlaceholder(standardFormInputs[0], [null, null], [1, -6]);
-        expect(labels[1].text()).toBe("Max Steps");
+        expect(labels[1].text()).toBe("Max steps");
         expectValueAndPlaceholder(inputs[0], null, 10000);
-        expect(labels[2].text()).toBe("Max Step Size");
+        expect(labels[2].text()).toBe("Max step size");
         expectValueAndPlaceholder(inputs[1], null, Infinity);
-        expect(labels[3].text()).toBe("Min Step Size");
+        expect(labels[3].text()).toBe("Min step size");
         expectValueAndPlaceholder(standardFormInputs[1], [null, null], [1, -8]);
-        expect(labels[4].text()).toBe("Critical Time");
+        expect(labels[4].text()).toBe("Critical time");
         expectValueAndPlaceholder(inputs[2], null, Infinity);
     });
 

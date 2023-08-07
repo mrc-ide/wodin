@@ -1,6 +1,11 @@
-import { OdinModelResponse, OdinUserType, WodinError } from "./responseTypes";
 import {
-    AdvancedOptions, ParameterSet, RunUpdateRequiredReasons
+    AdvancedOptions,
+    OdinModelResponse,
+    OdinUserType,
+    WodinError
+} from "./responseTypes";
+import {
+    ParameterSet, RunUpdateRequiredReasons
 } from "../store/run/state";
 import { OdinFitInputs, OdinRunInputs, OdinSensitivityInputs } from "./wrapperTypes";
 import {

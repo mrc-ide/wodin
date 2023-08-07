@@ -3,7 +3,7 @@ import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutat
 import { ModelGetter } from "../../../../src/app/store/model/getters";
 import { AppType } from "../../../../src/app/store/appState/state";
 import { RunAction } from "../../../../src/app/store/run/actions";
-import { AdvancedOptions } from "../../../../src/app/store/run/state";
+import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
 
 const mockBatch = {};
 const mockRunnerOde = {

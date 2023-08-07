@@ -1,7 +1,8 @@
-import { AdvancedOptions, RunState } from "./state";
+import { RunState } from "./state";
 import { mutations } from "./mutations";
 import { actions } from "./actions";
 import { getters } from "./getters";
+import { AdvancedOptions } from "../../types/responseTypes";
 
 export const defaultState: RunState = {
     runRequired: {

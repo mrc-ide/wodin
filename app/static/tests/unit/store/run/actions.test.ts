@@ -9,7 +9,7 @@ import { AppType } from "../../../../src/app/store/appState/state";
 import { ModelFitAction } from "../../../../src/app/store/modelFit/actions";
 import { RunGetter } from "../../../../src/app/store/run/getters";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
-import { AdvancedOptions } from "../../../../src/app/store/run/state";
+import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
 
 jest.mock("../../../../src/app/wodinExcelDownload");
 

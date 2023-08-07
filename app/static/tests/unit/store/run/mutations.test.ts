@@ -1,5 +1,5 @@
 import { mutations } from "../../../../src/app/store/run/mutations";
-import { AdvancedOptions } from "../../../../src/app/store/run/state";
+import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
 import { mockRunState } from "../../../mocks";
 
 describe("Run mutations", () => {

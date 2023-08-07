@@ -1,6 +1,6 @@
 import { OdinRunResultOde } from "./wrapperTypes";
 import { Language } from "./languageTypes";
-import { AdvancedOptions } from "../store/run/state";
+import { AdvancedOptions } from "./responseTypes";
 
 export interface SetAppPayload {
     appName: string

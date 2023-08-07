@@ -1,4 +1,4 @@
-import { OdinUserType } from "../../types/responseTypes";
+import { AdvancedOptions, OdinUserType } from "../../types/responseTypes";
 import { OdinRunResultOde, OdinRunResultDiscrete } from "../../types/wrapperTypes";
 import { Dict } from "../../types/utilTypes";
 
@@ -16,16 +16,8 @@ export interface ParameterSet {
     hidden: boolean
 }
 
-export enum AdvancedOptions {
-    "tol" = "Tolerance",
-    "maxSteps" = "Max Steps",
-    "stepSizeMax" = "Max Step Size",
-    "stepSizeMin" = "Min Step Size",
-    "tcrit" = "Critical Time"
-}
-
 type AdConfStandardForm = {
-    val: (number | null)[],
+    val: [number|null, number|null],
     defaults: number[],
     standardForm: true
 }
@@ -39,15 +31,6 @@ type AdConfNumeric = {
 export type AdvancedConfig = AdConfNumeric | AdConfStandardForm
 
 export type AdvancedSettings = Record<AdvancedOptions, AdvancedConfig>
-
-export type AdvancedSettingsOdin = {
-    atol: number | null,
-    rtol: number | null,
-    maxSteps: number | null,
-    stepSizeMax: number | null,
-    stepSizeMin: number | null,
-    tcrit: number | null
-}
 
 export interface RunState {
     // Contains reasons why the run might be out of date

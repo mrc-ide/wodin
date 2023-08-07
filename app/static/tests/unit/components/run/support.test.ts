@@ -24,7 +24,8 @@ describe("construct actionable fit update messages from fit state changes", () =
             advancedSettingsChanged: true
         };
         expect(runRequiredExplanation(everything))
-            .toBe("Plot is out of date: model code has been recompiled and number of replicates has changed. "
+            .toBe("Plot is out of date: model code has been recompiled, number of replicates has changed"
+                  + " and advanced settings have been changed. "
                   + "Run model to update.");
     });
 
@@ -39,5 +40,7 @@ describe("construct actionable fit update messages from fit state changes", () =
             .toBe(`${prefix}: end time has changed. ${suffix}`);
         expect(runRequiredExplanation({ ...base, numberOfReplicatesChanged: true }))
             .toBe(`${prefix}: number of replicates has changed. ${suffix}`);
+        expect(runRequiredExplanation({ ...base, advancedSettingsChanged: true }))
+            .toBe(`${prefix}: advanced settings have been changed. ${suffix}`);
     });
 });
