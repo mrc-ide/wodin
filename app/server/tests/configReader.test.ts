@@ -6,6 +6,12 @@ describe("configReader", () => {
         jest.resetAllMocks();
     });
 
+    it("copes with BOM markers", () => {
+        // This test needs to go before the mocks below
+        const res: any = new ConfigReader(__dirname).readConfigFile("examples/bom.json");
+        expect((res as any).title).toBe("Ebola Project");
+    });
+
     it("returns null when config not found", () => {
         const mockExistsSync = jest.spyOn(fs, "existsSync").mockReturnValue(false);
 
