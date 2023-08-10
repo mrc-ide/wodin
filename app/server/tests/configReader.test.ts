@@ -3,13 +3,7 @@ import { ConfigReader } from "../src/configReader";
 
 describe("configReader", () => {
     beforeEach(() => {
-        jest.resetAllMocks();
-    });
-
-    it("copes with BOM markers", () => {
-        // This test needs to go before the mocks below
-        const res: any = new ConfigReader(__dirname).readConfigFile("examples/bom.json");
-        expect((res as any).title).toBe("Ebola Project");
+        jest.restoreAllMocks();
     });
 
     it("returns null when config not found", () => {
@@ -36,5 +30,10 @@ describe("configReader", () => {
         expect(mockReadFileSync.mock.calls.length).toBe(1);
         expect(mockReadFileSync.mock.calls[0][0]).toBe("root/test.config");
         expect(mockReadFileSync.mock.calls[0][1]).toStrictEqual({ encoding: "utf-8" });
+    });
+
+    it("copes with BOM markers", () => {
+        const res: any = new ConfigReader(__dirname).readConfigFile("examples/bom.json");
+        expect((res as any).title).toBe("Ebola Project");
     });
 });
