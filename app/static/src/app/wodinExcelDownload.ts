@@ -7,20 +7,19 @@ import { OdinSeriesSet } from "./types/responseTypes";
 import { FitDataGetter } from "./store/fitData/getters";
 import { FitData } from "./store/fitData/state";
 import { ErrorsMutation } from "./store/errors/mutations";
-import {SensitivityPlotExtreme, SensitivityPlotExtremePrefix} from "./store/sensitivity/state";
+import { SensitivityPlotExtreme, SensitivityPlotExtremePrefix } from "./store/sensitivity/state";
 
-interface SummaryTabSettings {
+interface ExtremeSummarySheetSettings {
     name: string,
     extremePrefix: SensitivityPlotExtremePrefix
     extreme: SensitivityPlotExtreme
 }
 
-// TODO: rename!
-const allSummaryTabSettings = [
-    {name: "ValueAtMin", extremePrefix: SensitivityPlotExtremePrefix.value, extreme: SensitivityPlotExtreme.Min},
-    {name: "ValueAtMax", extremePrefix: SensitivityPlotExtremePrefix.value, extreme: SensitivityPlotExtreme.Max},
-    {name: "TimeAtMin", extremePrefix: SensitivityPlotExtremePrefix.time, extreme: SensitivityPlotExtreme.Min},
-    {name: "TimeAtMax", extremePrefix: SensitivityPlotExtremePrefix.time, extreme: SensitivityPlotExtreme.Max},
+const extremeSummarySheets: ExtremeSummarySheetSettings[] = [
+    { name: "ValueAtMin", extremePrefix: SensitivityPlotExtremePrefix.value, extreme: SensitivityPlotExtreme.Min },
+    { name: "ValueAtMax", extremePrefix: SensitivityPlotExtremePrefix.value, extreme: SensitivityPlotExtreme.Max },
+    { name: "TimeAtMin", extremePrefix: SensitivityPlotExtremePrefix.time, extreme: SensitivityPlotExtreme.Min },
+    { name: "TimeAtMax", extremePrefix: SensitivityPlotExtremePrefix.time, extreme: SensitivityPlotExtreme.Max }
 ];
 
 export class WodinExcelDownload {
@@ -120,14 +119,16 @@ export class WodinExcelDownload {
         }
     }
 
-    private static _odinSeriesSetToSummarySheet = (data: OdinSeriesSet, varyingParameter: string) => {
-        return data.x.map((x: number, index: number) => {
+    private _addSummarySheetFromOdinSeriesSet = (data: OdinSeriesSet, varyingParameter: string, sheetName: string) => {
+        const sheetData = data.x.map((x: number, index: number) => {
             const result = Object.fromEntries(
                 data.values.map((v) => [v.name, v.y[index]])
             );
             result[varyingParameter] = x;
             return result;
         });
+        const worksheet = XLSX.utils.json_to_sheet(sheetData);
+        XLSX.utils.book_append_sheet(this._workbook, worksheet, sheetName);
     };
 
     downloadModelOutput = () => {
@@ -140,13 +141,19 @@ export class WodinExcelDownload {
 
     downloadSensitivitySummary = () => {
         this._writeFile(() => {
-            const batch = this._state.sensitivity.result?.batch;
-            const varyingParameter = this._state.sensitivity.paramSettings.parameterToVary!;
-            allSummaryTabSettings.forEach((tab) => {
-                const data = batch!.extreme(`${tab.extremePrefix}${tab.extreme}`);
-                const sheetData = WodinExcelDownload._odinSeriesSetToSummarySheet(data, varyingParameter);
-                const worksheet = XLSX.utils.json_to_sheet(sheetData);
-                XLSX.utils.book_append_sheet(this._workbook, worksheet, tab.name);
+            const { sensitivity } = this._state;
+            const { batch } = sensitivity.result!;
+            const varyingParameter = sensitivity.paramSettings.parameterToVary!;
+            const time = sensitivity.plotSettings.time || 0; // TODO: this should default to max time if null - reuse verifyValidEndTime from summary plot
+
+            // Value at time summary
+            const valueAtTimeData = batch!.valueAtTime(time);
+            this._addSummarySheetFromOdinSeriesSet(valueAtTimeData, varyingParameter, `ValueAtTime${time}`);
+
+            // Extreme summaries
+            extremeSummarySheets.forEach((sheet) => {
+                const data = batch!.extreme(`${sheet.extremePrefix}${sheet.extreme}`);
+                this._addSummarySheetFromOdinSeriesSet(data, varyingParameter, sheet.name);
             });
             this._addParameters([varyingParameter]);
         });

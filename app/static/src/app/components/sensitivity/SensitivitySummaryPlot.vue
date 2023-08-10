@@ -12,20 +12,16 @@
 
 <script lang="ts">
 
-import {
-    computed, defineComponent, onMounted, onUnmounted, ref, watch
-} from "vue";
-import { AxisType, newPlot, Plots } from "plotly.js-basic-dist-min";
-import { useStore } from "vuex";
-import {
-    fadePlotStyle, margin, config, odinToPlotly, filterSeriesSet, updatePlotTraceName
-} from "../../plot";
-import { SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
-import { SensitivityMutation } from "../../store/sensitivity/mutations";
-import { Batch, OdinSeriesSet } from "../../types/responseTypes";
-import { runPlaceholderMessage } from "../../utils";
-import { RunGetter } from "../../store/run/getters";
-import { Dict } from "../../types/utilTypes";
+import {computed, defineComponent, onMounted, onUnmounted, ref, watch} from "vue";
+import {AxisType, newPlot, Plots} from "plotly.js-basic-dist-min";
+import {useStore} from "vuex";
+import {config, fadePlotStyle, filterSeriesSet, margin, odinToPlotly, updatePlotTraceName} from "../../plot";
+import {SensitivityPlotExtremePrefix, SensitivityPlotType, SensitivityScaleType} from "../../store/sensitivity/state";
+import {SensitivityMutation} from "../../store/sensitivity/mutations";
+import {Batch, OdinSeriesSet} from "../../types/responseTypes";
+import {runPlaceholderMessage} from "../../utils";
+import {RunGetter} from "../../store/run/getters";
+import {Dict} from "../../types/utilTypes";
 import WodinPlotDataSummary from "../WodinPlotDataSummary.vue";
 
 export default defineComponent({
@@ -102,8 +98,9 @@ export default defineComponent({
                         paramSetData[name] = paramSetBatches.value[name].valueAtTime(plotSettings.value.time);
                     });
                 } else {
-                    //TODO: use prefix enum
-                    const paramPrefix = plotSettings.value.plotType === SensitivityPlotType.TimeAtExtreme ? "t" : "y";
+                    const paramPrefix = plotSettings.value.plotType === SensitivityPlotType.TimeAtExtreme
+                        ? SensitivityPlotExtremePrefix.time
+                        : SensitivityPlotExtremePrefix.value;
                     const extremeParam = `${paramPrefix}${plotSettings.value.extreme}`;
                     data = batch.value.extreme(extremeParam);
                     Object.keys(paramSetBatches.value).forEach((paramSetName) => {
