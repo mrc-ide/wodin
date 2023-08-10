@@ -28,6 +28,11 @@ export enum SensitivityPlotType {
     TimeAtExtreme = "TimeAtExtreme"
 }
 
+export enum SensitivityPlotExtremePrefix {
+    time = "t",
+    value = "y"
+}
+
 export enum SensitivityPlotExtreme {
     Min = "Min",
     Max = "Max"

@@ -7,6 +7,21 @@ import { OdinSeriesSet } from "./types/responseTypes";
 import { FitDataGetter } from "./store/fitData/getters";
 import { FitData } from "./store/fitData/state";
 import { ErrorsMutation } from "./store/errors/mutations";
+import {SensitivityPlotExtreme, SensitivityPlotExtremePrefix} from "./store/sensitivity/state";
+
+interface SummaryTabSettings {
+    name: string,
+    extremePrefix: SensitivityPlotExtremePrefix
+    extreme: SensitivityPlotExtreme
+}
+
+// TODO: rename!
+const allSummaryTabSettings = [
+    {name: "ValueAtMin", extremePrefix: SensitivityPlotExtremePrefix.value, extreme: SensitivityPlotExtreme.Min},
+    {name: "ValueAtMax", extremePrefix: SensitivityPlotExtremePrefix.value, extreme: SensitivityPlotExtreme.Max},
+    {name: "TimeAtMin", extremePrefix: SensitivityPlotExtremePrefix.time, extreme: SensitivityPlotExtreme.Min},
+    {name: "TimeAtMax", extremePrefix: SensitivityPlotExtremePrefix.time, extreme: SensitivityPlotExtreme.Max},
+];
 
 export class WodinExcelDownload {
     private readonly _state: AppState;
@@ -82,12 +97,14 @@ export class WodinExcelDownload {
         }
     }
 
-    private _addParameters() {
+    private _addParameters(excludeParams: string[] = []) {
         const paramVals = this._state.run.parameterValues;
         if (paramVals) {
-            const paramData = Object.keys(paramVals).map((name: string) => {
-                return { name, value: paramVals[name] };
-            });
+            const paramData = Object.keys(paramVals)
+                .filter((name: string) => !excludeParams.includes(name))
+                .map((name: string) => {
+                    return { name, value: paramVals[name] };
+                });
             const worksheet = XLSX.utils.json_to_sheet(paramData);
             XLSX.utils.book_append_sheet(this._workbook, worksheet, "Parameters");
         }
@@ -103,6 +120,16 @@ export class WodinExcelDownload {
         }
     }
 
+    private static _odinSeriesSetToSummarySheet = (data: OdinSeriesSet, varyingParameter: string) => {
+        return data.x.map((x: number, index: number) => {
+            const result = Object.fromEntries(
+                data.values.map((v) => [v.name, v.y[index]])
+            );
+            result[varyingParameter] = x;
+            return result;
+        });
+    };
+
     downloadModelOutput = () => {
         this._writeFile(() => {
             this._addModelledValues();
@@ -113,22 +140,15 @@ export class WodinExcelDownload {
 
     downloadSensitivitySummary = () => {
         this._writeFile(() => {
-            // start with one example tab
             const batch = this._state.sensitivity.result?.batch;
             const varyingParameter = this._state.sensitivity.paramSettings.parameterToVary!;
-            const data = batch!.extreme("tMax");
-
-            // TODO: pull this out into util
-            const sheetData = data.x.map((x: number, index: number) => {
-                const result = Object.fromEntries(
-                    data.values.map((v) => [v.name, v.y[index]])
-                );
-                result[varyingParameter] = x;
-                return result
+            allSummaryTabSettings.forEach((tab) => {
+                const data = batch!.extreme(`${tab.extremePrefix}${tab.extreme}`);
+                const sheetData = WodinExcelDownload._odinSeriesSetToSummarySheet(data, varyingParameter);
+                const worksheet = XLSX.utils.json_to_sheet(sheetData);
+                XLSX.utils.book_append_sheet(this._workbook, worksheet, tab.name);
             });
-
-            const worksheet = XLSX.utils.json_to_sheet(sheetData);
-            XLSX.utils.book_append_sheet(this._workbook, worksheet, "Example");
+            this._addParameters([varyingParameter]);
         });
     };
 }
