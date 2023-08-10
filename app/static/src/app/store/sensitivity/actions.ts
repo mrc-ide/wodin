@@ -13,11 +13,14 @@ import {
 } from "../../types/responseTypes";
 import { ModelGetter } from "../model/getters";
 import { Dict } from "../../types/utilTypes";
+import {WodinExcelDownload} from "../../wodinExcelDownload";
+import {RunMutation} from "../run/mutations";
 
 export enum SensitivityAction {
     RunSensitivity = "RunSensitivity",
     RunSensitivityOnRehydrate = "RunSensitivityOnRehydrate",
-    ComputeNext = "ComputeNext"
+    ComputeNext = "ComputeNext",
+    DownloadSummary = "DownloadSummary"
 }
 
 const runModelIfRequired = (rootState: AppState, dispatch: Dispatch) => {
@@ -147,5 +150,14 @@ export const actions: ActionTree<SensitivityState, AppState> = {
                 dispatch(SensitivityAction.ComputeNext, batch);
             }, 0);
         }
+    },
+
+    [SensitivityAction.DownloadSummary](context, filename: string) {
+        // TODO: set and clear downloading state
+        setTimeout(() => {
+            new WodinExcelDownload(context, filename, 0)
+                .downloadSensitivitySummary();
+            //commit(RunMutation.SetDownloading, false);
+        }, 5);
     }
 };

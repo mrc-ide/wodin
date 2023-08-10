@@ -102,6 +102,7 @@ export default defineComponent({
                         paramSetData[name] = paramSetBatches.value[name].valueAtTime(plotSettings.value.time);
                     });
                 } else {
+                    //TODO: share this logic with the download part
                     const paramPrefix = plotSettings.value.plotType === SensitivityPlotType.TimeAtExtreme ? "t" : "y";
                     const extremeParam = `${paramPrefix}${plotSettings.value.extreme}`;
                     data = batch.value.extreme(extremeParam);

@@ -93,15 +93,42 @@ export class WodinExcelDownload {
         }
     }
 
-    downloadModelOutput = () => {
+    private _writeFile(buildWorkbook: () => void) {
         try {
-            this._addModelledValues();
-            this._addModelledWithDataValues();
-            this._addParameters();
+            buildWorkbook();
             XLSX.writeFile(this._workbook, this._fileName);
         } catch (e) {
             this._commit(`errors/${ErrorsMutation.AddError}`,
                 { detail: `Error downloading to ${this._fileName}: ${e}` }, { root: true });
         }
+    }
+
+    downloadModelOutput = () => {
+        this._writeFile(() => {
+            this._addModelledValues();
+            this._addModelledWithDataValues();
+            this._addParameters();
+        });
+    };
+
+    downloadSensitivitySummary = () => {
+        this._writeFile(() => {
+            // start with one example tab
+            const batch = this._state.sensitivity.result?.batch;
+            const varyingParameter = this._state.sensitivity.paramSettings.parameterToVary!;
+            const data = batch!.extreme("tMax");
+
+            // TODO: pull this out into util
+            const sheetData = data.x.map((x: number, index: number) => {
+                const result = Object.fromEntries(
+                    data.values.map((v) => [v.name, v.y[index]])
+                );
+                result[varyingParameter] = x;
+                return result
+            });
+
+            const worksheet = XLSX.utils.json_to_sheet(sheetData);
+            XLSX.utils.book_append_sheet(this._workbook, worksheet, "Example");
+        });
     };
 }

@@ -15,6 +15,10 @@
       <span class="ms-2">{{ sensitivityProgressMsg }}</span>
     </div>
     <error-info :error="error"></error-info>
+    <div>
+      Change this!
+      <button @click="downloadSummary">Download summary</button>
+    </div>
   </div>
 </template>
 
@@ -72,6 +76,8 @@ export default defineComponent({
             }, 100);
         };
 
+        const downloadSummary = (() => store.dispatch(`sensitivity/${SensitivityAction.DownloadSummary}`, "test.xlsx"));
+
         const sensitivityProgressMsg = computed(() => {
             const batch = store.state.sensitivity.result?.batch;
             const finished = batch ? batch.solutions.length + batch.errors.length : 0;
@@ -107,6 +113,7 @@ export default defineComponent({
             running,
             sensitivityProgressMsg,
             runSensitivity,
+            downloadSummary,
             updateMsg,
             tracesPlot,
             error,
