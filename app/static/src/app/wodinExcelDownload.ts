@@ -144,7 +144,7 @@ export class WodinExcelDownload {
             const { sensitivity } = this._state;
             const { batch } = sensitivity.result!;
             const varyingParameter = sensitivity.paramSettings.parameterToVary!;
-            const time = sensitivity.plotSettings.time || 0; // TODO: this should default to max time if null - reuse verifyValidEndTime from summary plot
+            const time = sensitivity.plotSettings.time!;
 
             // Value at time summary
             const valueAtTimeData = batch!.valueAtTime(time);

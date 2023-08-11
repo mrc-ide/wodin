@@ -1,6 +1,9 @@
 import { SensitivityUpdateRequiredReasons } from "../../store/sensitivity/state";
 import userMessages from "../../userMessages";
 import { appendIf, joinStringsSentence } from "../../utils";
+import {SensitivityMutation} from "../../store/sensitivity/mutations";
+import {AppState} from "../../store/appState/state";
+import {Commit} from "vuex";
 
 export const sensitivityUpdateRequiredExplanation = (reasons: SensitivityUpdateRequiredReasons): string => {
     const explanation: string[] = [];
@@ -13,4 +16,19 @@ export const sensitivityUpdateRequiredExplanation = (reasons: SensitivityUpdateR
     // Fallback reason if something unexpected has happened.
     appendIf(explanation, explanation.length === 0, help.unknown);
     return `${help.prefix} ${joinStringsSentence(explanation)}. ${help.suffix}.`;
+};
+
+export const verifyValidEndTime = (state: AppState, commit: Commit) => {
+    // update plot settings' end time to be valid before we use it
+    const { plotSettings } = state.sensitivity;
+    let endTime = plotSettings.time;
+    const modelEndTime = state.run.endTime;
+    if (endTime === null) {
+        endTime = modelEndTime;
+    } else {
+        endTime = Math.max(0, Math.min(modelEndTime, endTime));
+    }
+    if (endTime !== plotSettings.time) {
+        commit(`sensitivity/${SensitivityMutation.SetPlotTime}`, endTime);
+    }
 };

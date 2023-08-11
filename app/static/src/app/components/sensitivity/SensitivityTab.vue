@@ -33,7 +33,7 @@ import userMessages from "../../userMessages";
 import { SensitivityPlotType } from "../../store/sensitivity/state";
 import SensitivitySummaryPlot from "./SensitivitySummaryPlot.vue";
 import ErrorInfo from "../ErrorInfo.vue";
-import { sensitivityUpdateRequiredExplanation } from "./support";
+import {sensitivityUpdateRequiredExplanation, verifyValidEndTime} from "./support";
 import { anyTrue } from "../../utils";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import { ModelGetter } from "../../store/model/getters";
@@ -76,7 +76,10 @@ export default defineComponent({
             }, 100);
         };
 
-        const downloadSummary = (() => store.dispatch(`sensitivity/${SensitivityAction.DownloadSummary}`, "test.xlsx"));
+        const downloadSummary = (() => {
+            verifyValidEndTime(store.state, store.commit);
+            store.dispatch(`sensitivity/${SensitivityAction.DownloadSummary}`, "test.xlsx");
+        });
 
         const sensitivityProgressMsg = computed(() => {
             const batch = store.state.sensitivity.result?.batch;

@@ -23,6 +23,7 @@ import {runPlaceholderMessage} from "../../utils";
 import {RunGetter} from "../../store/run/getters";
 import {Dict} from "../../types/utilTypes";
 import WodinPlotDataSummary from "../WodinPlotDataSummary.vue";
+import {verifyValidEndTime} from "./support";
 
 export default defineComponent({
     name: "SensitivitySummaryPlot",
@@ -41,20 +42,6 @@ export default defineComponent({
         const palette = computed(() => store.state.model.paletteModel);
         const selectedVariables = computed(() => store.state.model.selectedVariables);
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, true));
-
-        const verifyValidEndTime = () => {
-            // update plot settings' end time to be valid before we use it
-            let endTime = plotSettings.value.time;
-            const modelEndTime = store.state.run.endTime;
-            if (endTime === null) {
-                endTime = modelEndTime;
-            } else {
-                endTime = Math.max(0, Math.min(modelEndTime, endTime));
-            }
-            if (endTime !== plotSettings.value.time) {
-                store.commit(`${namespace}/${SensitivityMutation.SetPlotTime}`, endTime);
-            }
-        };
 
         const xAxisSettings = computed(() => {
             const { paramSettings } = store.state.sensitivity;
@@ -92,7 +79,7 @@ export default defineComponent({
                 let data: null | OdinSeriesSet;
                 const paramSetData: Dict<OdinSeriesSet> = {};
                 if (plotSettings.value.plotType === SensitivityPlotType.ValueAtTime) {
-                    verifyValidEndTime();
+                    verifyValidEndTime(store.state, store.commit);
                     data = batch.value.valueAtTime(plotSettings.value.time);
                     Object.keys(paramSetBatches.value).forEach((name) => {
                         paramSetData[name] = paramSetBatches.value[name].valueAtTime(plotSettings.value.time);
