@@ -153,11 +153,12 @@ export const actions: ActionTree<SensitivityState, AppState> = {
     },
 
     [SensitivityAction.DownloadSummary](context, filename: string) {
-        // TODO: set and clear downloading state
+        const { commit } = context;
+        commit(SensitivityMutation.SetDownloading, true);
         setTimeout(() => {
             new WodinExcelDownload(context, filename, 0)
                 .downloadSensitivitySummary();
-            //commit(RunMutation.SetDownloading, false);
+            commit(SensitivityMutation.SetDownloading, false);
         }, 5);
     }
 };
