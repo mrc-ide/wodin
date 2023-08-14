@@ -247,7 +247,8 @@ test.describe("Code Tab tests", () => {
         );
         await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is not valid");
         await expect(await page.innerText(".wodin-left .wodin-content #error-info"))
-            .toBe("Code error: Error on line 1: Every line must contain an assignment");
+            .toBe("Code error: Error on line 1: Every line must contain an assignment"
+            + ", a compare statement or a debug statement");
     });
 
     test("can display model error message when running model", async ({ page }) => {

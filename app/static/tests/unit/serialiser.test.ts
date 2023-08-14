@@ -121,7 +121,7 @@ describe("serialise", () => {
             [AdvancedOptions.stepSizeMin]: {
                 val: [null, null] as [number|null, number|null],
                 defaults: [1, -8],
-                type: AdSettingCompType.stdf  as const
+                type: AdSettingCompType.stdf as const
             },
             [AdvancedOptions.tcrit]: { val: null, defaults: [], type: AdSettingCompType.tag as const }
         }

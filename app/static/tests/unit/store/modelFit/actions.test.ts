@@ -21,7 +21,8 @@ describe("ModelFit actions", () => {
     const mockOdin = {} as any;
     const parameterValues = { p1: 1.1, p2: 2.2 };
     const advancedSettings = {
-        [AdvancedOptions.tol]: { val: [null, null] as [number|null, number|null],
+        [AdvancedOptions.tol]: {
+            val: [null, null] as [number|null, number|null],
             defaults: [1, -6],
             type: AdSettingCompType.stdf as const
         },
@@ -33,7 +34,7 @@ describe("ModelFit actions", () => {
             type: AdSettingCompType.stdf as const
         },
         [AdvancedOptions.tcrit]: { val: [0, "p1", "p2"], defaults: [], type: AdSettingCompType.tag as const }
-    }
+    };
     const modelState = mockModelState({
         odin: mockOdin,
         odinRunnerOde: mockOdinRunner
