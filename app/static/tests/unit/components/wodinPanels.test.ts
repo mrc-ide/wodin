@@ -169,4 +169,22 @@ describe("WodinPanels", () => {
         await wrapper.find(".view-right").trigger("click");
         testBothMode(wrapper);
     });
+
+    it("drag overlay renders as expected", async () => {
+        const wrapper = getWrapper();
+        wrapper.vm.isDragging = false;
+        await nextTick();
+        const overlayHidden = wrapper.find(".drag-overlay-hidden");
+        expect(overlayHidden.exists()).toBe(true);
+        wrapper.vm.isDragging = true;
+        await nextTick();
+        const overlayShown = wrapper.find(".drag-overlay");
+        expect(overlayShown.exists()).toBe(true);
+
+        const verticalLines = overlayShown.findAll("div");
+        // overlayShown itself is a div + 2 lines
+        expect(verticalLines.length).toBe(3);
+        expect(verticalLines[1].classes()).toStrictEqual(["divider-line-left"]);
+        expect(verticalLines[2].classes()).toStrictEqual(["divider-line-right"]);
+    });
 });
