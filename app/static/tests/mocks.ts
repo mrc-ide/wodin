@@ -139,6 +139,8 @@ export const mockSensitivityState = (state: Partial<SensitivityState> = {}): Sen
     return {
         running: false,
         loading: false,
+        downloading: false,
+        userSummaryDownloadFileName: "",
         paramSettings: {
             parameterToVary: null,
             scaleType: SensitivityScaleType.Arithmetic,

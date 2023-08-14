@@ -54,8 +54,6 @@ import {
 } from "vue";
 import { useStore } from "vuex";
 import { utc } from "moment";
-import { RunAction } from "../store/run/actions";
-import { RunMutation } from "../store/run/mutations";
 import userMessages from "../userMessages";
 
 export default defineComponent({
@@ -88,7 +86,6 @@ export default defineComponent({
         const points = ref(501);
 
         const appName = computed(() => store.state.appName);
-        // const userFileName = computed(() => store.state.run.userDownloadFileName);
 
         const style = computed(() => {
             return { display: props.open ? "block" : "none" };
@@ -102,12 +99,6 @@ export default defineComponent({
             const type = props.downloadType.toLowerCase().replace(" ", "-");
             return `${appName.value}-${type}-${timestamp}`;
         };
-
-        /* const updateUserFileName = (event: InputEvent) => {
-            const newValue = (event.target as HTMLInputElement).value;
-            fileName.value = newValue;
-            store.commit(`run/${RunMutation.SetUserDownloadFileName}`, newValue);
-        }; */
 
         const updateUserFileName = (event: InputEvent) => {
             const newValue = (event.target as HTMLInputElement).value;
@@ -125,7 +116,6 @@ export default defineComponent({
             const fileNameWithSuffix = `${fileName.value}.xlsx`;
             const payload = { fileName: fileNameWithSuffix, points: points.value };
             emit("download", payload);
-            // await store.dispatch(`run/${RunAction.DownloadOutput}`, payload);
             closeModal();
         };
 
