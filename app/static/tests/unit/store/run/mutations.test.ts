@@ -149,13 +149,13 @@ describe("Run mutations", () => {
                 [AdvancedOptions.tcrit]: { val: null, defaults: [], type: AdSettingCompType.tag }
             }
         });
-        mutations.UpdateAdvancedSettings(state, { option: AdvancedOptions.tcrit, newVal: [2, 1, 0] });
+        mutations.UpdateAdvancedSettings(state, { option: AdvancedOptions.tcrit, newVal: [2, 1, 0, 0] });
         expect(state.advancedSettings).toStrictEqual({
             [AdvancedOptions.tol]: { val: [null, null], defaults: [1, -6], type: AdSettingCompType.stdf },
             [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, type: AdSettingCompType.num },
             [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, type: AdSettingCompType.num },
             [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], type: AdSettingCompType.stdf },
-            [AdvancedOptions.tcrit]: { val: [0, 1, 2], defaults: [], type: AdSettingCompType.tag }
+            [AdvancedOptions.tcrit]: { val: [0, 0, 1, 2], defaults: [], type: AdSettingCompType.tag }
         });
     });
 
