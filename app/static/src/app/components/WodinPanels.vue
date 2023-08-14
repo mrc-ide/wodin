@@ -50,9 +50,7 @@ export default defineComponent({
             [PanelsMode.Right]: "wodin-mode-right"
         };
 
-        const modeClass = computed(() => {
-            return modeClassMap[mode.value]
-        });
+        const modeClass = computed(() => modeClassMap[mode.value]);
 
         const panelWidth = ref<any>({});
         const plotWidth = ref<any>({});
