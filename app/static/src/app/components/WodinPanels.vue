@@ -7,7 +7,8 @@
         <div class="wodin-left" :style="panelWidth">
             <span class="wodin-collapse-controls">
                 <span @mousedown="handleDragStart" @mouseup="handleDragEnd" id="resize-panel-control">
-                    <vue-feather type="maximize-2" style="transform: rotate(45deg);"></vue-feather>
+                    <vue-feather type="maximize-2"
+                                 style="transform: rotate(45deg); color: grey;"></vue-feather>
                 </span>
             </span>
             <div class="view-left" @click="openCollapsedView">
