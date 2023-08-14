@@ -1,7 +1,7 @@
 <template>
     <vue-tags-input style="border-color: #d7dce1;"
                     :tags="computedTags"
-                    :placeholder="JSON.stringify(placeholder)"
+                    :placeholder="'...'"
                     :validate="validate"
                     @on-tags-changed="handleTagsChanged"/>
 </template>
@@ -18,8 +18,7 @@ export default defineComponent({
         VueTagsInput
     },
     props: {
-        tags: Array as PropType<Tag[] | null>,
-        placeholder: Array
+        tags: Array as PropType<Tag[] | null>
     },
     setup(props, { emit }) {
         const store = useStore();

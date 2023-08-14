@@ -17,8 +17,7 @@ describe("Tag Input", () => {
     };
 
     const defaultProps = {
-        tags: [1, 2, "p1", "p2", "p3"],
-        placeholder: []
+        tags: [1, 2, "p1", "p2", "p3"]
     };
 
     const mockValidate = jest.fn();
@@ -34,7 +33,7 @@ describe("Tag Input", () => {
         expect(tagsInput.exists()).toBe(true);
         expect(tagsInput.attributes("style")).toBe("border-color: #d7dce1;");
         expect(tagsInput.props("tags")).toStrictEqual(["1", "2", "p1: 1.1", "p2: 2.2"]);
-        expect(tagsInput.props("placeholder")).toBe("[]");
+        expect(tagsInput.props("placeholder")).toBe("...");
     });
 
     it("parses tags correctly when changed", () => {

@@ -65,7 +65,6 @@ describe("Advanced Settings", () => {
         expectValueAndPlaceholder(standardFormInputs[1], [null, null], [1, -8]);
         expect(labels[4].text()).toBe("Critical time");
         expect(tagsInput[0].props("tags")).toBe(null);
-        expect(tagsInput[0].props("placeholder")).toStrictEqual([]);
     });
 
     it("commits update advanced settings without standard form", () => {

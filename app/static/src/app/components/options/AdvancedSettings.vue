@@ -15,7 +15,6 @@
                                @update="(n) => updateOption(n, option)"/>
                 <tag-input v-if="config.type === AdSettingCompType.tag"
                                :tags="config.val"
-                               :placeholder="config.defaults"
                                @update="(n) => updateOption(n, option)"/>
             </div>
         </div>
