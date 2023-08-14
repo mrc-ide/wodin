@@ -201,4 +201,16 @@ describe("Sensitivity mutations", () => {
         expect(state.parameterSetResults).toStrictEqual({});
         expect(state.result).toStrictEqual({ solution: "another fake result" });
     });
+
+    it("sets downloading", () => {
+        const state = mockSensitivityState();
+        mutations.SetDownloading(state, true);
+        expect(state.downloading).toBe(true);
+    });
+
+    it("sets user summary download file name", () => {
+        const state = mockSensitivityState();
+        mutations.SetUserSummaryDownloadFileName(state, "newtest.xlsx");
+        expect(state.userSummaryDownloadFileName).toBe("newtest.xlsx");
+    });
 });

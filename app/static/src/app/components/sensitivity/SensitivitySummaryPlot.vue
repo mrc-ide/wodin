@@ -23,7 +23,7 @@ import {runPlaceholderMessage} from "../../utils";
 import {RunGetter} from "../../store/run/getters";
 import {Dict} from "../../types/utilTypes";
 import WodinPlotDataSummary from "../WodinPlotDataSummary.vue";
-import {verifyValidEndTime} from "./support";
+import {verifyValidPlotSettingsTime} from "./support";
 
 export default defineComponent({
     name: "SensitivitySummaryPlot",
@@ -79,7 +79,7 @@ export default defineComponent({
                 let data: null | OdinSeriesSet;
                 const paramSetData: Dict<OdinSeriesSet> = {};
                 if (plotSettings.value.plotType === SensitivityPlotType.ValueAtTime) {
-                    verifyValidEndTime(store.state, store.commit);
+                    verifyValidPlotSettingsTime(store.state, store.commit);
                     data = batch.value.valueAtTime(plotSettings.value.time);
                     Object.keys(paramSetBatches.value).forEach((name) => {
                         paramSetData[name] = paramSetBatches.value[name].valueAtTime(plotSettings.value.time);

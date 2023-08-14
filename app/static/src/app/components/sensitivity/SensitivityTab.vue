@@ -49,7 +49,7 @@ import userMessages from "../../userMessages";
 import { SensitivityPlotType } from "../../store/sensitivity/state";
 import SensitivitySummaryPlot from "./SensitivitySummaryPlot.vue";
 import ErrorInfo from "../ErrorInfo.vue";
-import { sensitivityUpdateRequiredExplanation, verifyValidEndTime } from "./support";
+import { sensitivityUpdateRequiredExplanation, verifyValidPlotSettingsTime } from "./support";
 import { anyTrue } from "../../utils";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import { ModelGetter } from "../../store/model/getters";
@@ -106,7 +106,7 @@ export default defineComponent({
             }
         });
         const downloadSummary = ((payload: { fileName: string }) => {
-            verifyValidEndTime(store.state, store.commit);
+            verifyValidPlotSettingsTime(store.state, store.commit);
             store.dispatch(`${namespace}/${SensitivityAction.DownloadSummary}`, payload.fileName);
         });
 

@@ -254,7 +254,7 @@ describe("RunTab", () => {
         await wrapper.find("button#download-btn").trigger("click");
         const download = wrapper.findComponent(DownloadOutput);
         expect(download.props().open).toBe(true);
-        await download.vm.$emit("close");
+        download.vm.$emit("close");
         expect(download.props().open).toBe(false);
     });
 
