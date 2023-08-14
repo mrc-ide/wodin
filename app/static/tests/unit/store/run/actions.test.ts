@@ -3,7 +3,7 @@ import { RunMutation } from "../../../../src/app/store/run/mutations";
 import {
     mockModelState, mockRunnerDiscrete, mockRunnerOde, mockRunState
 } from "../../../mocks";
-import { WodinExcelDownload } from "../../../../src/app/wodinExcelDownload";
+import { WodinExcelDownload } from "../../../../src/app/excel/wodinExcelDownload";
 import { actions, RunAction } from "../../../../src/app/store/run/actions";
 import { AppType } from "../../../../src/app/store/appState/state";
 import { ModelFitAction } from "../../../../src/app/store/modelFit/actions";

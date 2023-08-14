@@ -13,8 +13,7 @@ import {
 } from "../../types/responseTypes";
 import { ModelGetter } from "../model/getters";
 import { Dict } from "../../types/utilTypes";
-import {WodinExcelDownload} from "../../wodinExcelDownload";
-import {RunMutation} from "../run/mutations";
+import { WodinSensitivitySummaryDownload } from "../../excel/wodinSensitivitySummaryDownload";
 
 export enum SensitivityAction {
     RunSensitivity = "RunSensitivity",
@@ -156,8 +155,8 @@ export const actions: ActionTree<SensitivityState, AppState> = {
         const { commit } = context;
         commit(SensitivityMutation.SetDownloading, true);
         setTimeout(() => {
-            new WodinExcelDownload(context, filename, 0)
-                .downloadSensitivitySummary();
+            new WodinSensitivitySummaryDownload(context, filename)
+                .download();
             commit(SensitivityMutation.SetDownloading, false);
         }, 5);
     }

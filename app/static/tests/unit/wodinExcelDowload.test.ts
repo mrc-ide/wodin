@@ -22,7 +22,7 @@ jest.mock("xlsx", () => ({
 import {
     mockBasicState, mockFitDataState, mockFitState, mockModelState, mockRunState
 } from "../mocks";
-import { WodinExcelDownload } from "../../src/app/wodinExcelDownload";
+import { WodinExcelDownload } from "../../src/app/excel/wodinExcelDownload";
 
 const mockSolution = jest.fn().mockImplementation((options) => {
     const x = options.mode === "grid" ? [options.tStart, options.tEnd] : options.times;
