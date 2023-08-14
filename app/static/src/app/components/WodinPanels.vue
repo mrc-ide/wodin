@@ -1,4 +1,8 @@
 <template>
+    <div :class="isDragging ? 'drag-overlay' : 'drag-overlay-hidden'">
+        <div class="divider-line-left"></div>
+        <div class="divider-line-right"></div>
+    </div>
     <div :class="modeClass">
         <div class="wodin-left" :style="panelWidth">
             <span class="wodin-collapse-controls">
@@ -46,10 +50,13 @@ export default defineComponent({
             [PanelsMode.Right]: "wodin-mode-right"
         };
 
-        const modeClass = computed(() => modeClassMap[mode.value]);
+        const modeClass = computed(() => {
+            return modeClassMap[mode.value]
+        });
 
         const panelWidth = ref<any>({});
         const plotWidth = ref<any>({});
+        const isDragging = ref<boolean>(false);
 
         const getTouchEvent = (event: Event) => {
             return (event as TouchEvent).touches?.length > 0 ? (event as TouchEvent).touches[0] : event;
@@ -95,9 +102,11 @@ export default defineComponent({
         };
 
         const handleDragEnd = () => {
+            isDragging.value = false;
             removeDragListeners(handleDragMove, handleDragEnd);
         };
         const handleDragStart = () => {
+            isDragging.value = true;
             addDragListeners(handleDragMove, handleDragEnd);
         };
 
@@ -115,7 +124,8 @@ export default defineComponent({
             handleDragStart,
             handleDragEnd,
             openCollapsedView,
-            handleDragMove
+            handleDragMove,
+            isDragging
         };
     }
 });
@@ -130,6 +140,40 @@ export default defineComponent({
     $animationDuration: 0.5s;
 
     $dark-grey: #777;
+
+    $widthToleranceLeft: calc(100% / 8);
+    $widthToleranceRight: calc(100% - calc(100% / 4));
+
+    .drag-overlay {
+        position: fixed;
+        background-color: rgba($color: #000000, $alpha: 0.25);
+        z-index: 9999;
+        width: 100vw;
+        max-width: 100%;
+        height: 100vh;
+        left: 0;
+        top: 0;
+        margin-top: 3.5rem;
+    }
+
+    .drag-overlay-hidden {
+        position: fixed;
+        visibility: hidden;
+    }
+
+    .divider-line-left {
+        position: fixed;
+        border-left: 5px dashed #fff;
+        height: 100%;
+        left: $widthToleranceLeft
+    }
+
+    .divider-line-right {
+        position: fixed;
+        border-left: 5px dashed #fff;
+        height: 100%;
+        left: $widthToleranceRight
+    }
 
     .wodin-left, .wodin-right {
         float: left;
