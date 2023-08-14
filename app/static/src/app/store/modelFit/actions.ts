@@ -48,7 +48,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
             };
 
             const { advancedSettings } = rootState.run;
-            const advancedSettingsOdin = convertAdvancedSettingsToOdin(advancedSettings);
+            const advancedSettingsOdin = convertAdvancedSettingsToOdin(advancedSettings, pars.base);
 
             const simplex = odinRunnerOde!.wodinFit(
                 odin!,

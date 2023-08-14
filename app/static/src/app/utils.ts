@@ -215,17 +215,17 @@ export const runPlaceholderMessage = (selectedVariables: string[], sensitivity: 
     return selectedVariables.length ? notRunYet : userMessages.model.noVariablesSelected;
 };
 
-const extractValuesFromTags = (values: Tag[]) => {
-    return values.map((val) => {
+const extractValuesFromTags = (values: Tag[], paramValues: OdinUserType | null) => {
+    const extracted = values.map((val) => {
         if (typeof val === "number") {
-            return val
-        } else {
-            return val.value
+            return val;
         }
+        return paramValues ? paramValues[val] : undefined;
     });
+    return extracted.filter((x) => x !== undefined) as number[];
 };
 
-export const convertAdvancedSettingsToOdin = (advancedSettings: AdvancedSettings) => {
+export const convertAdvancedSettingsToOdin = (advancedSettings: AdvancedSettings, paramValues: OdinUserType | null) => {
     const flattenedObject = Object.fromEntries(Object.entries(advancedSettings)
         .map(([key, value]) => {
             let cleanVal: number | number[] | null;
@@ -236,7 +236,7 @@ export const convertAdvancedSettingsToOdin = (advancedSettings: AdvancedSettings
             } else if (value.type === AdSettingCompType.num) {
                 cleanVal = value.val !== null ? value.val : value.defaults;
             } else {
-                cleanVal = value.val !== null ? extractValuesFromTags(value.val) : value.defaults;
+                cleanVal = value.val !== null ? extractValuesFromTags(value.val, paramValues) : value.defaults;
             }
             return [key, cleanVal];
         })) as Record<AdvancedOptions, number>;

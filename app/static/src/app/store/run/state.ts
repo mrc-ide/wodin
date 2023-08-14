@@ -34,12 +34,7 @@ type AdConfNumeric = {
     type: AdSettingCompType.num
 }
 
-type VariableTag = {
-    id: string,
-    value: number
-}
-export type Tag = number | VariableTag
-
+export type Tag = number | string
 
 type AdConfTCrit = {
     val: Tag[] | null,

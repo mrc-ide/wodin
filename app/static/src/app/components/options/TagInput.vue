@@ -1,16 +1,17 @@
 <template>
     <vue-tags-input style="border-color: #d7dce1;"
-                    :v-model="value"
-                    :tags="tags"
-                    :add-tag-on-keys-when-select="true"
-                    :allow-duplicates="false"
-                    @on-remove="handleRemoveTag"
-                    @on-new-tag="handleNewTag"/>
+                    :tags="computedTags"
+                    :placeholder="JSON.stringify(placeholder)"
+                    :validate="validate"
+                    @on-tags-changed="handleTagsChanged"/>
 </template>
 <script lang="ts">
-import { PropType, computed, defineComponent, ref, watch } from 'vue';
+import {
+    PropType, computed, defineComponent
+} from "vue";
 import VueTagsInput from "vue3-tags-input";
-import { Tag } from "../../store/run/state"
+import { useStore } from "vuex";
+import { Tag } from "../../store/run/state";
 
 export default defineComponent({
     components: {
@@ -21,38 +22,70 @@ export default defineComponent({
         placeholder: Array
     },
     setup(props, { emit }) {
-        const value = ref("");
+        const store = useStore();
 
-        const tags = computed(() => {
+        const paramValues = computed(() => store.state.run.parameterValues);
+
+        const computedTags = computed(() => {
             if (props.tags?.length === 0 || !props.tags) {
                 return [];
-            } else {
-                return props.tags.map((tag) => {
-                    if (typeof tag === "number") {
-                        return `${tag}`
-                    } else {
-                        return `${tag.id}: ${tag.value}`
-                    }
-                });
             }
+            const parsedTags = props.tags.map((tag) => {
+                if (typeof tag === "number") {
+                    return `${tag}`;
+                }
+                const tagValue = paramValues.value[tag];
+                if (tagValue !== undefined) {
+                    return `${tag}: ${tagValue}`;
+                }
+                return undefined;
+            });
+            return parsedTags.filter((x) => x !== undefined);
         });
 
-        const handleNewTag = (newTag: string) => {
-            emit("select", newTag);
+        const isNumeric = (num: any) => {
+            return num.trim() !== "" && !Number.isNaN(Number(num));
         };
 
-        const handleRemoveTag = (index: number) => {
-            emit("deselect", index);
+        const handleTagsChanged = (tags: string[]) => {
+            const parsedTags = tags.map((tag) => {
+                if (isNumeric(tag)) {
+                    return parseFloat(tag);
+                } if (tag.includes(":")) {
+                    const variableTag = tag.split(":");
+                    const varId = variableTag[0];
+                    if (paramValues.value && varId in paramValues.value) {
+                        return varId;
+                    }
+                } else if (paramValues.value && tag in paramValues.value) {
+                    return tag;
+                }
+                return undefined;
+            });
+            const cleanTags = parsedTags.filter((x) => x !== undefined);
+            emit("update", cleanTags);
+        };
+
+        const validate = (tag: string) => {
+            let tagVal;
+            if (tag.includes(":")) {
+                [tagVal] = tag.split(":");
+            } else if (isNumeric(tag)) {
+                tagVal = parseFloat(tag);
+            } else {
+                tagVal = tag;
+            }
+
+            return !props.tags || (props.tags && !props.tags.includes(tagVal));
         };
 
         return {
-            value,
-            tags,
-            handleNewTag,
-            handleRemoveTag
-        }
-    },
-})
+            computedTags,
+            handleTagsChanged,
+            validate
+        };
+    }
+});
 </script>
 <style>
 .v3ti-tag {

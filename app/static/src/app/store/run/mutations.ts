@@ -69,16 +69,20 @@ export const mutations: MutationTree<RunState> = {
 
     [RunMutation.UpdateAdvancedSettings](state: RunState, payload: SetAdvancedSettingPayload) {
         if (state.advancedSettings[payload.option].type === AdSettingCompType.tag
-            && payload.newVal && typeof payload.newVal !== "number") {
+            && payload.newVal) {
             const sortedTags = (payload.newVal as Tag[]).sort((tag1, tag2) => {
-                const tag1Val = typeof tag1 === "number" ? tag1 : tag1.value;
-                const tag2Val = typeof tag2 === "number" ? tag2 : tag2.value;
-                return (tag1Val > tag2Val) ? 1 : (tag1Val < tag2Val) ? -1 : 0;
+                const tag1Val = typeof tag1 === "number" ? tag1 : state.parameterValues![tag1];
+                const tag2Val = typeof tag2 === "number" ? tag2 : state.parameterValues![tag2];
+                if (tag1Val > tag2Val) {
+                    return 1;
+                }
+                if (tag1Val < tag2Val) {
+                    return -1;
+                }
+                return 0;
             });
-            console.log(sortedTags)
             state.advancedSettings[payload.option].val = sortedTags;
         } else {
-            console.log(payload.newVal)
             state.advancedSettings[payload.option].val = payload.newVal;
         }
         state.runRequired = {

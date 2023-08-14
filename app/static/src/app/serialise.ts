@@ -160,7 +160,7 @@ export const serialiseState = (state: AppState) => {
 const deserialiseAdvancedSettings = (settings: SerialisedAdvancedSettings) => {
     Object.keys(settings).forEach((key) => {
         const entry = settings[key as AdvancedOptions] as any;
-        if (!entry.standardForm) {
+        if (entry.type === AdSettingCompType.num) {
             if (entry.defaults === "Infinity") {
                 entry.defaults = Infinity;
             }

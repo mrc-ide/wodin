@@ -6,6 +6,7 @@ import { RunMutation } from "../../../../src/app/store/run/mutations";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
 import StandardFormInput from "../../../../src/app/components/options/StandardFormInput.vue";
 import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
+import TagInput from "../../../../src/app/components/options/TagInput.vue";
 
 describe("Advanced Settings", () => {
     const mockUpdateAdvancedSettings = jest.fn();
@@ -46,9 +47,11 @@ describe("Advanced Settings", () => {
         const wrapper = getWrapper();
 
         const inputs = wrapper.findAllComponents(NumericInput);
-        expect(inputs.length).toBe(3);
+        expect(inputs.length).toBe(2);
         const standardFormInputs = wrapper.findAllComponents(StandardFormInput);
         expect(standardFormInputs.length).toBe(2);
+        const tagsInput = wrapper.findAllComponents(TagInput);
+        expect(tagsInput.length).toBe(1);
         const labels = wrapper.findAll("label");
         expect(labels.length).toBe(5);
 
@@ -61,7 +64,8 @@ describe("Advanced Settings", () => {
         expect(labels[3].text()).toBe("Min step size");
         expectValueAndPlaceholder(standardFormInputs[1], [null, null], [1, -8]);
         expect(labels[4].text()).toBe("Critical time");
-        expectValueAndPlaceholder(inputs[2], null, Infinity);
+        expect(tagsInput[0].props("tags")).toBe(null);
+        expect(tagsInput[0].props("placeholder")).toStrictEqual([]);
     });
 
     it("commits update advanced settings without standard form", () => {

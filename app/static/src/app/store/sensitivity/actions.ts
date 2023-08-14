@@ -9,7 +9,7 @@ import { RunAction } from "../run/actions";
 import userMessages from "../../userMessages";
 import { OdinSensitivityResult } from "../../types/wrapperTypes";
 import {
-    Batch, BatchPars, Odin, OdinRunnerDiscrete, OdinRunnerOde
+    Batch, BatchPars, Odin, OdinRunnerDiscrete, OdinRunnerOde, OdinUserType
 } from "../../types/responseTypes";
 import { ModelGetter } from "../model/getters";
 import { Dict } from "../../types/utilTypes";
@@ -33,8 +33,9 @@ const batchRunOde = (runner: OdinRunnerOde,
     odin: Odin,
     pars: BatchPars,
     endTime: number,
-    advancedSettings: AdvancedSettings): Batch => {
-    const advancedSettingsOdin = convertAdvancedSettingsToOdin(advancedSettings);
+    advancedSettings: AdvancedSettings,
+    paramValues: OdinUserType | null): Batch => {
+    const advancedSettingsOdin = convertAdvancedSettingsToOdin(advancedSettings, paramValues);
     const batch = runner.batchRun(odin, pars, 0, endTime, advancedSettingsOdin);
     return batch;
 };
@@ -73,12 +74,12 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
         };
         runModelIfRequired(rootState, dispatch);
 
-        const { advancedSettings } = rootState.run;
+        const { advancedSettings, parameterValues } = rootState.run;
 
         try {
             const batch = isStochastic
                 ? batchRunDiscrete(odinRunnerDiscrete!, odin, batchPars, endTime, dt!, replicates, dispatch, commit)
-                : batchRunOde(odinRunnerOde!, odin, batchPars, endTime, advancedSettings);
+                : batchRunOde(odinRunnerOde!, odin, batchPars, endTime, advancedSettings, parameterValues);
             payload.batch = batch;
         } catch (e: unknown) {
             payload.error = {
@@ -100,7 +101,14 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
                 };
                 const setBatchPars = parameterSetBatchPars[name];
                 try {
-                    setResult.batch = batchRunOde(odinRunnerOde!, odin, setBatchPars, endTime, advancedSettings);
+                    setResult.batch = batchRunOde(
+                        odinRunnerOde!,
+                        odin,
+                        setBatchPars,
+                        endTime,
+                        advancedSettings,
+                        parameterValues
+                    );
                 } catch (e: unknown) {
                     setResult.error = {
                         error: userMessages.errors.wodinSensitivityError,

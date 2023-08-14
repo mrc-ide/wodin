@@ -7,6 +7,8 @@ import { actions, ModelFitAction } from "../../../../src/app/store/modelFit/acti
 import { ModelMutation } from "../../../../src/app/store/model/mutations";
 import { RunMutation } from "../../../../src/app/store/run/mutations";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
+import { AdSettingCompType } from "../../../../src/app/store/run/state";
 
 describe("ModelFit actions", () => {
     const mockSimplex = {} as any;
@@ -18,11 +20,28 @@ describe("ModelFit actions", () => {
     } as any;
     const mockOdin = {} as any;
     const parameterValues = { p1: 1.1, p2: 2.2 };
+    const advancedSettings = {
+        [AdvancedOptions.tol]: { val: [null, null] as [number|null, number|null],
+            defaults: [1, -6],
+            type: AdSettingCompType.stdf as const
+        },
+        [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, type: AdSettingCompType.num as const },
+        [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, type: AdSettingCompType.num as const },
+        [AdvancedOptions.stepSizeMin]: {
+            val: [null, null] as [number|null, number|null],
+            defaults: [1, -8],
+            type: AdSettingCompType.stdf as const
+        },
+        [AdvancedOptions.tcrit]: { val: [0, "p1", "p2"], defaults: [], type: AdSettingCompType.tag as const }
+    }
     const modelState = mockModelState({
         odin: mockOdin,
         odinRunnerOde: mockOdinRunner
     });
-    const runState = mockRunState({ parameterValues });
+    const runState = mockRunState({
+        parameterValues,
+        advancedSettings
+    });
 
     const fitDataState = mockFitDataState({
         data: [
@@ -97,7 +116,7 @@ describe("ModelFit actions", () => {
             rtol: 0.000001,
             stepSizeMax: Infinity,
             stepSizeMin: 1e-8,
-            tcrit: Infinity
+            tcrit: [0, 1.1, 2.2]
         });
         expect(mockWodinFit.mock.calls[0][5]).toStrictEqual({});
     });
