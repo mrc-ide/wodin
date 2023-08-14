@@ -9,3 +9,4 @@ declare module "vue-monaco";
 declare module "csv-parse";
 declare module "markdown-it-mathjax";
 declare module "raw-loader!*";
+declare module "vue3-tags-input";

@@ -16,7 +16,7 @@ import {
     SensitivityVariationType
 } from "./store/sensitivity/state";
 import { AppState } from "./store/appState/state";
-import { AdvancedSettings } from "./store/run/state";
+import { AdSettingCompType, AdvancedSettings, Tag } from "./store/run/state";
 
 export const freezer = {
     /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -215,18 +215,30 @@ export const runPlaceholderMessage = (selectedVariables: string[], sensitivity: 
     return selectedVariables.length ? notRunYet : userMessages.model.noVariablesSelected;
 };
 
+const extractValuesFromTags = (values: Tag[]) => {
+    return values.map((val) => {
+        if (typeof val === "number") {
+            return val
+        } else {
+            return val.value
+        }
+    });
+};
+
 export const convertAdvancedSettingsToOdin = (advancedSettings: AdvancedSettings) => {
     const flattenedObject = Object.fromEntries(Object.entries(advancedSettings)
         .map(([key, value]) => {
-            let numericVal: number | null;
-            if (value.standardForm) {
+            let cleanVal: number | number[] | null;
+            if (value.type === AdSettingCompType.stdf) {
                 const firstValue = value.val[0] !== null ? value.val[0] : value.defaults[0];
                 const secondValue = value.val[1] !== null ? value.val[1] : value.defaults[1];
-                numericVal = firstValue * 10 ** secondValue;
+                cleanVal = firstValue * 10 ** secondValue;
+            } else if (value.type === AdSettingCompType.num) {
+                cleanVal = value.val !== null ? value.val : value.defaults;
             } else {
-                numericVal = value.val !== null ? value.val : value.defaults;
+                cleanVal = value.val !== null ? extractValuesFromTags(value.val) : value.defaults;
             }
-            return [key, numericVal];
+            return [key, cleanVal];
         })) as Record<AdvancedOptions, number>;
 
     const advancedSettingsOdin: AdvancedSettingsOdin = {

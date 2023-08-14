@@ -16,19 +16,38 @@ export interface ParameterSet {
     hidden: boolean
 }
 
+export enum AdSettingCompType {
+    num = "numeric",
+    stdf = "standard form",
+    tag = "tag input"
+}
+
 type AdConfStandardForm = {
     val: [number|null, number|null],
     defaults: number[],
-    standardForm: true
+    type: AdSettingCompType.stdf
 }
 
 type AdConfNumeric = {
     val: number | null,
     defaults: number,
-    standardForm: false
+    type: AdSettingCompType.num
 }
 
-export type AdvancedConfig = AdConfNumeric | AdConfStandardForm
+type VariableTag = {
+    id: string,
+    value: number
+}
+export type Tag = number | VariableTag
+
+
+type AdConfTCrit = {
+    val: Tag[] | null,
+    defaults: number[],
+    type: AdSettingCompType.tag
+}
+
+export type AdvancedConfig = AdConfNumeric | AdConfStandardForm | AdConfTCrit
 
 export type AdvancedSettings = Record<AdvancedOptions, AdvancedConfig>
 

@@ -2,7 +2,7 @@ import { AppState, AppType } from "./store/appState/state";
 import { FitState } from "./store/fit/state";
 import { CodeState } from "./store/code/state";
 import { ModelState } from "./store/model/state";
-import { AdvancedSettings, RunState } from "./store/run/state";
+import { AdSettingCompType, AdvancedSettings, RunState } from "./store/run/state";
 import { SensitivityState } from "./store/sensitivity/state";
 import { FitDataState } from "./store/fitData/state";
 import { ModelFitState } from "./store/modelFit/state";
@@ -55,7 +55,7 @@ function serialiseDiscreteResult(result: OdinRunResultDiscrete | null): Serialis
 const serialiseAdvancedSettings = (settings: AdvancedSettings) => {
     return Object.fromEntries(
         Object.entries(settings).map(([key, value]) => {
-            if (!value.standardForm) {
+            if (value.type === AdSettingCompType.num) {
                 if (!Number.isFinite(value.defaults)) {
                     const copy = { ...value } as any;
                     copy.defaults = "Infinity";
