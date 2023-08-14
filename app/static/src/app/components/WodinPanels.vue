@@ -4,7 +4,7 @@
         <div class="divider-line-right"></div>
     </div>
     <div :class="modeClass">
-        <div class="wodin-left" :style="panelWidth">
+        <div class="wodin-left" :style="optionsWidth">
             <span class="wodin-collapse-controls">
                 <span @mousedown="handleDragStart" @mouseup="handleDragEnd" id="resize-panel-control">
                     <vue-feather type="maximize-2"
@@ -18,7 +18,7 @@
                 <slot name="left"></slot>
             </div>
         </div>
-        <div class="wodin-right" :style="plotWidth">
+        <div class="wodin-right" :style="chartsWidth">
             <div class="view-right" @click="openCollapsedView">
                 View Charts
             </div>
@@ -38,6 +38,10 @@ export enum PanelsMode {
     Left, Right, Both
 }
 
+type WidthStyle = {
+    width?: string
+}
+
 export default defineComponent({
     name: "WodinPanels",
     components: {
@@ -53,8 +57,8 @@ export default defineComponent({
 
         const modeClass = computed(() => modeClassMap[mode.value]);
 
-        const panelWidth = ref<any>({});
-        const plotWidth = ref<any>({});
+        const optionsWidth = ref<WidthStyle>({});
+        const chartsWidth = ref<WidthStyle>({});
         const isDragging = ref<boolean>(false);
 
         const getTouchEvent = (event: Event) => {
@@ -95,8 +99,8 @@ export default defineComponent({
                 mode.value = PanelsMode.Both;
             }
 
-            panelWidth.value.width = `calc(${clientX}px + 1.4rem)`;
-            plotWidth.value.width = `calc(100vw - ${clientX}px - 5rem)`;
+            optionsWidth.value.width = `calc(${clientX}px + 1.4rem)`;
+            chartsWidth.value.width = `calc(100vw - ${clientX}px - 5rem)`;
             event.preventDefault();
         };
 
@@ -110,16 +114,16 @@ export default defineComponent({
         };
 
         const openCollapsedView = () => {
-            panelWidth.value.width = "30%";
-            plotWidth.value.width = "70%";
+            optionsWidth.value.width = "30%";
+            chartsWidth.value.width = "70%";
             mode.value = PanelsMode.Both;
         };
 
         return {
             mode,
             modeClass,
-            plotWidth,
-            panelWidth,
+            chartsWidth,
+            optionsWidth,
             handleDragStart,
             handleDragEnd,
             openCollapsedView,
