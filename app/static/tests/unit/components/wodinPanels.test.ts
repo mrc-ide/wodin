@@ -48,8 +48,8 @@ describe("WodinPanels", () => {
         const {
             mode,
             modeClass,
-            panelWidth,
-            plotWidth
+            optionsWidth,
+            chartsWidth
         } = (wrapper.vm as any);
         const modeClassMap: Record<PanelsMode, string> = {
             [PanelsMode.Both]: "wodin-mode-both",
@@ -59,8 +59,8 @@ describe("WodinPanels", () => {
         expect(mode).toBe(expectedMode);
         expect(modeClass).toBe(modeClassMap[expectedMode]);
         if (position) {
-            expect(panelWidth).toStrictEqual({ width: `calc(${position}px + 1.4rem)` });
-            expect(plotWidth).toStrictEqual({ width: `calc(100vw - ${position}px - 5rem)` });
+            expect(optionsWidth).toStrictEqual({ width: `calc(${position}px + 1.4rem)` });
+            expect(chartsWidth).toStrictEqual({ width: `calc(100vw - ${position}px - 5rem)` });
         }
         expect(mockPreventDefault).toBeCalledTimes(expectedPreventDefault);
     };

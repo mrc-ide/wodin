@@ -157,6 +157,7 @@ export default defineComponent({
         left: 0;
         top: 0;
         margin-top: 3.5rem;
+        cursor: col-resize;
     }
 
     .drag-overlay-hidden {
