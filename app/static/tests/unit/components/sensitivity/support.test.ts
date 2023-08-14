@@ -2,8 +2,8 @@ import {
     sensitivityUpdateRequiredExplanation,
     verifyValidPlotSettingsTime
 } from "../../../../src/app/components/sensitivity/support";
-import {mockBasicState, mockRunState, mockSensitivityState} from "../../../mocks";
-import {SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
+import { mockBasicState, mockRunState, mockSensitivityState } from "../../../mocks";
+import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 
 describe("construct actionable fit update messages from fit state changes", () => {
     const base = {

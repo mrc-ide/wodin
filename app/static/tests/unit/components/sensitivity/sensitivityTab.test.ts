@@ -1,20 +1,20 @@
-import {mount} from "@vue/test-utils";
+import { mount } from "@vue/test-utils";
 import Vuex from "vuex";
-import {ModelState} from "../../../../src/app/store/model/state";
+import { nextTick } from "vue";
+import { ModelState } from "../../../../src/app/store/model/state";
 import SensitivityTab from "../../../../src/app/components/sensitivity/SensitivityTab.vue";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
-import {SensitivityGetter} from "../../../../src/app/store/sensitivity/getters";
+import { SensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
 import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/SensitivityTracesPlot.vue";
-import {SensitivityPlotType, SensitivityState} from "../../../../src/app/store/sensitivity/state";
-import {SensitivityAction} from "../../../../src/app/store/sensitivity/actions";
+import { SensitivityPlotType, SensitivityState } from "../../../../src/app/store/sensitivity/state";
+import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
-import {AppState, AppType} from "../../../../src/app/store/appState/state";
-import {ModelGetter} from "../../../../src/app/store/model/getters";
+import { AppState, AppType } from "../../../../src/app/store/appState/state";
+import { ModelGetter } from "../../../../src/app/store/model/getters";
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
-import {SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
+import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import DownloadOutput from "../../../../src/app/components/DownloadOutput.vue";
-import {nextTick} from "vue";
 
 jest.mock("plotly.js-basic-dist-min", () => {});
 
@@ -169,7 +169,7 @@ describe("SensitivityTab", () => {
         const enabledResult = {
             inputs: {},
             batch: {
-                solutions: [ "test solution" ] as any,
+                solutions: ["test solution"] as any,
                 errors: []
             },
             error: null
@@ -187,13 +187,13 @@ describe("SensitivityTab", () => {
         // disabled if update required
         expectDownloadButtonEnabled({
             ...enabledState,
-            sensitivityUpdateRequired: { modelChanged: true}
+            sensitivityUpdateRequired: { modelChanged: true }
         }, false);
 
         // disabled if no batch result
         expectDownloadButtonEnabled({
             ...enabledState,
-            result: {...enabledResult, batch: null}
+            result: { ...enabledResult, batch: null }
         }, false);
     });
 

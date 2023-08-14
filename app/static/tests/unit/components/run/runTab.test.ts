@@ -6,6 +6,7 @@ jest.mock("plotly.js-basic-dist-min", () => {});
 /* eslint-disable import/first */
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
+import { nextTick } from "vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import {
     mockBasicState, mockModelState, mockRunState, mockStochasticState
@@ -119,7 +120,7 @@ describe("RunTab", () => {
     };
 
     it("renders as expected when can run model", () => {
-        const runState = {...defaultRunState, userDownloadFileName: "test.xlsx" }
+        const runState = { ...defaultRunState, userDownloadFileName: "test.xlsx" };
         const wrapper = getWrapper(defaultModelState, runState);
         expect(wrapper.find("button#run-btn").text()).toBe("Run model");
         expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(false);
@@ -255,6 +256,7 @@ describe("RunTab", () => {
         const download = wrapper.findComponent(DownloadOutput);
         expect(download.props().open).toBe(true);
         download.vm.$emit("close");
+        await nextTick();
         expect(download.props().open).toBe(false);
     });
 

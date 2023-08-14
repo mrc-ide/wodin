@@ -1,9 +1,9 @@
+import { Commit } from "vuex";
 import { SensitivityUpdateRequiredReasons } from "../../store/sensitivity/state";
 import userMessages from "../../userMessages";
 import { appendIf, joinStringsSentence } from "../../utils";
-import {SensitivityMutation} from "../../store/sensitivity/mutations";
-import {AppState} from "../../store/appState/state";
-import {Commit} from "vuex";
+import { SensitivityMutation } from "../../store/sensitivity/mutations";
+import { AppState } from "../../store/appState/state";
 
 export const sensitivityUpdateRequiredExplanation = (reasons: SensitivityUpdateRequiredReasons): string => {
     const explanation: string[] = [];

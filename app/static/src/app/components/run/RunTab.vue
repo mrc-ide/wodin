@@ -108,7 +108,9 @@ export default defineComponent({
         const canDownloadOutput = computed(() => !updateMsg.value && store.state.run.resultOde?.solution);
         const toggleShowDownloadOutput = (show: boolean) => { showDownloadOutput.value = show; };
 
-        const download = (payload: {fileName: string, points: number}) => store.dispatch(`run/${RunAction.DownloadOutput}`, payload);
+        const download = (payload: {fileName: string, points: number}) => store.dispatch(
+            `run/${RunAction.DownloadOutput}`, payload
+        );
 
         return {
             canRunModel,

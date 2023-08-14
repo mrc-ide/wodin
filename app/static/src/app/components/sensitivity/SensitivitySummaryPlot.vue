@@ -12,18 +12,22 @@
 
 <script lang="ts">
 
-import {computed, defineComponent, onMounted, onUnmounted, ref, watch} from "vue";
-import {AxisType, newPlot, Plots} from "plotly.js-basic-dist-min";
-import {useStore} from "vuex";
-import {config, fadePlotStyle, filterSeriesSet, margin, odinToPlotly, updatePlotTraceName} from "../../plot";
-import {SensitivityPlotExtremePrefix, SensitivityPlotType, SensitivityScaleType} from "../../store/sensitivity/state";
-import {SensitivityMutation} from "../../store/sensitivity/mutations";
-import {Batch, OdinSeriesSet} from "../../types/responseTypes";
-import {runPlaceholderMessage} from "../../utils";
-import {RunGetter} from "../../store/run/getters";
-import {Dict} from "../../types/utilTypes";
+import {
+    computed, defineComponent, onMounted, onUnmounted, ref, watch
+} from "vue";
+import { AxisType, newPlot, Plots } from "plotly.js-basic-dist-min";
+import { useStore } from "vuex";
+import {
+    config, fadePlotStyle, filterSeriesSet, margin, odinToPlotly, updatePlotTraceName
+} from "../../plot";
+import { SensitivityPlotExtremePrefix, SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
+import { SensitivityMutation } from "../../store/sensitivity/mutations";
+import { Batch, OdinSeriesSet } from "../../types/responseTypes";
+import { runPlaceholderMessage } from "../../utils";
+import { RunGetter } from "../../store/run/getters";
+import { Dict } from "../../types/utilTypes";
 import WodinPlotDataSummary from "../WodinPlotDataSummary.vue";
-import {verifyValidPlotSettingsTime} from "./support";
+import { verifyValidPlotSettingsTime } from "./support";
 
 export default defineComponent({
     name: "SensitivitySummaryPlot",
@@ -113,10 +117,10 @@ export default defineComponent({
                     });
                     result.push(...psPlotData);
                 });
-                store.commit(`sensitivity/${SensitivityMutation.SetLoading}`, false);
+                store.commit(`${namespace}/${SensitivityMutation.SetLoading}`, false);
                 return result;
             }
-            store.commit(`sensitivity/${SensitivityMutation.SetLoading}`, false);
+            store.commit(`${namespace}/${SensitivityMutation.SetLoading}`, false);
             return [];
         });
         const hasPlotData = computed(() => !!(plotData.value?.length));

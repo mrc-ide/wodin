@@ -43,7 +43,8 @@ export class WodinModelOutputDownload extends WodinExcelDownload {
             const { selectedVariables } = this._state.model;
 
             const worksheet = WodinModelOutputDownload._generateModelledOutput(
-                selectedVariables, solutionOutput, [], null);
+                selectedVariables, solutionOutput, [], null
+            );
             XLSX.utils.book_append_sheet(this._workbook, worksheet, "Modelled");
         }
     }
