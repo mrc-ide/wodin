@@ -63,7 +63,7 @@ describe("Advanced Settings", () => {
         expectValueAndPlaceholder(inputs[1], null, Infinity);
         expect(labels[3].text()).toBe("Min step size");
         expectValueAndPlaceholder(standardFormInputs[1], [null, null], [1, -8]);
-        expect(labels[4].text()).toBe("Critical time");
+        expect(labels[4].text()).toBe("Critical times");
         expect(tagsInput[0].props("tags")).toBe(null);
     });
 

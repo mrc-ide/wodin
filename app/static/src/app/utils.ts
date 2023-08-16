@@ -247,7 +247,7 @@ export const convertAdvancedSettingsToOdin = (advancedSettings: AdvancedSettings
         maxSteps: flattenedObject["Max steps"],
         stepSizeMax: flattenedObject["Max step size"],
         stepSizeMin: flattenedObject["Min step size"],
-        tcrit: flattenedObject["Critical time"]
+        tcrit: flattenedObject["Critical times"]
     };
 
     return advancedSettingsOdin;

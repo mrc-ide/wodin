@@ -180,7 +180,7 @@ export enum AdvancedOptions {
     "maxSteps" = "Max steps",
     "stepSizeMax" = "Max step size",
     "stepSizeMin" = "Min step size",
-    "tcrit" = "Critical time"
+    "tcrit" = "Critical times"
 }
 
 export interface OdinRunnerOde {

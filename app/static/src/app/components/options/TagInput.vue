@@ -3,11 +3,13 @@
                     :tags="computedTags"
                     :placeholder="'...'"
                     :validate="validate"
+                    :add-tag-on-blur="true"
+                    :add-tag-on-keys="[13, ',', 32, ':']"
                     @on-tags-changed="handleTagsChanged"/>
 </template>
 <script lang="ts">
 import {
-    PropType, computed, defineComponent
+    PropType, computed, defineComponent, watch
 } from "vue";
 import VueTagsInput from "vue3-tags-input";
 import { useStore } from "vuex";
@@ -25,38 +27,46 @@ export default defineComponent({
 
         const paramValues = computed(() => store.state.run.parameterValues);
 
+        watch(paramValues, () => {
+            if (props.tags) {
+                emit("update", [...props.tags]);
+            }
+        }, { deep: true });
+
         const computedTags = computed(() => {
             if (props.tags?.length === 0 || !props.tags) {
                 return [];
             }
-            const parsedTags = props.tags.map((tag) => {
-                if (typeof tag === "number") {
-                    return `${tag}`;
-                }
-                const tagValue = paramValues.value[tag];
-                if (tagValue !== undefined) {
-                    return `${tag}: ${tagValue}`;
-                }
-                return undefined;
+            const cleanTags = props.tags.filter((tag) => {
+                if (typeof tag === "number") return true;
+                return paramValues.value[tag] !== undefined;
             });
-            return parsedTags.filter((x) => x !== undefined);
+            return cleanTags.map((tag) => {
+                if (typeof tag === "number") return `${tag}`;
+                const tagValue = paramValues.value[tag];
+                return `${tag}: ${tagValue}`;
+            });
         });
 
-        const isNumeric = (num: any) => {
-            return num.trim() !== "" && !Number.isNaN(Number(num));
+        const isNumeric = (value: string) => {
+            return value.trim() !== "" && !Number.isNaN(Number(value));
+        };
+
+        const isParameterName = (tag: string) => {
+            return paramValues.value && tag in paramValues.value;
         };
 
         const handleTagsChanged = (tags: string[]) => {
             const parsedTags = tags.map((tag) => {
                 if (isNumeric(tag)) {
                     return parseFloat(tag);
-                } if (tag.includes(":")) {
+                } else if (tag.includes(":")) {
                     const variableTag = tag.split(":");
                     const varId = variableTag[0];
-                    if (paramValues.value && varId in paramValues.value) {
+                    if (isParameterName(varId)) {
                         return varId;
                     }
-                } else if (paramValues.value && tag in paramValues.value) {
+                } else if (isParameterName(tag)) {
                     return tag;
                 }
                 return undefined;
