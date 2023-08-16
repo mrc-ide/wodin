@@ -4,6 +4,7 @@ import { ModelGetter } from "../../../../src/app/store/model/getters";
 import { AppType } from "../../../../src/app/store/appState/state";
 import { RunAction } from "../../../../src/app/store/run/actions";
 import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
+import { AdSettingCompType } from "../../../../src/app/store/run/state";
 
 const mockBatch = {};
 const mockRunnerOde = {
@@ -28,12 +29,13 @@ const mockRunState = {
     endTime: 99,
     numberOfReplicates: 5,
     advancedSettings: {
-        [AdvancedOptions.tol]: { val: [null, null], defaults: [1, -6], standardForm: true },
-        [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, standardForm: false },
-        [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, standardForm: false },
-        [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], standardForm: true },
-        [AdvancedOptions.tcrit]: { val: null, defaults: Infinity, standardForm: false }
-    }
+        [AdvancedOptions.tol]: { val: [null, null], defaults: [1, -6], type: AdSettingCompType.stdf },
+        [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, type: AdSettingCompType.num },
+        [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, type: AdSettingCompType.num },
+        [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], type: AdSettingCompType.stdf },
+        [AdvancedOptions.tcrit]: { val: [0, "p1"], defaults: [], type: AdSettingCompType.tag }
+    },
+    parameterValues: { p1: 3.14 }
 };
 
 const defaultAdvanced = {
@@ -42,7 +44,7 @@ const defaultAdvanced = {
     rtol: 0.000001,
     stepSizeMax: Infinity,
     stepSizeMin: 1e-8,
-    tcrit: Infinity
+    tcrit: [0, 3.14]
 };
 
 const mockBatchPars = {};

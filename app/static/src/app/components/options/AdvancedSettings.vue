@@ -5,13 +5,16 @@
             <label class="col-form-label">{{ option }}</label>
             </div>
             <div class="col-6">
-                <standard-form-input v-if="config.standardForm"
+                <standard-form-input v-if="config.type === AdSettingCompType.stdf"
                                      :value="config.val"
                                      :placeholder="config.defaults"
                                      @update="(n) => updateOption(n, option)"/>
-                <numeric-input v-else
+                <numeric-input v-if="config.type === AdSettingCompType.num"
                                :value="config.val"
                                :placeholder="config.defaults"
+                               @update="(n) => updateOption(n, option)"/>
+                <tag-input v-if="config.type === AdSettingCompType.tag"
+                               :tags="config.val"
                                @update="(n) => updateOption(n, option)"/>
             </div>
         </div>
@@ -22,19 +25,22 @@ import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import NumericInput from "./NumericInput.vue";
 import StandardFormInput from "./StandardFormInput.vue";
-import { AdvancedSettings } from "../../store/run/state";
+import { AdSettingCompType } from "../../store/run/state";
 import { RunMutation } from "../../store/run/mutations";
 import { AdvancedOptions } from "../../types/responseTypes";
+import TagInput from "./TagInput.vue";
+import { AppState } from "../../store/appState/state";
 
 export default defineComponent({
     components: {
         NumericInput,
-        StandardFormInput
+        StandardFormInput,
+        TagInput
     },
     setup() {
-        const store = useStore();
+        const store = useStore<AppState>();
 
-        const advancedSettings = computed(() => store.state.run.advancedSettings as AdvancedSettings);
+        const advancedSettings = computed(() => store.state.run.advancedSettings);
 
         const updateOption = (newVal: number | null | [number|null, number|null], option: AdvancedOptions) => {
             store.commit(`run/${RunMutation.UpdateAdvancedSettings}`, { option, newVal });
@@ -42,7 +48,8 @@ export default defineComponent({
 
         return {
             advancedSettings,
-            updateOption
+            updateOption,
+            AdSettingCompType
         };
     }
 });

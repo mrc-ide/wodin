@@ -8,7 +8,7 @@ import {
     BatchPars, OdinUserType, ResponseFailure, ResponseSuccess, WodinError
 } from "../src/app/types/responseTypes";
 import { ModelState } from "../src/app/store/model/state";
-import { RunState } from "../src/app/store/run/state";
+import { AdSettingCompType, RunState } from "../src/app/store/run/state";
 import { CodeState } from "../src/app/store/code/state";
 import { FitDataState } from "../src/app/store/fitData/state";
 import { AppType, VisualisationTab } from "../src/app/store/appState/state";
@@ -90,11 +90,11 @@ export const mockRunState = (state: Partial<RunState> = {}): RunState => {
         parameterSets: [],
         parameterSetResults: {},
         advancedSettings: {
-            [AdvancedOptions.tol]: { val: [null, null], defaults: [1, -6], standardForm: true as const },
-            [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, standardForm: false as const },
-            [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, standardForm: false as const },
-            [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], standardForm: true as const },
-            [AdvancedOptions.tcrit]: { val: null, defaults: Infinity, standardForm: false as const }
+            [AdvancedOptions.tol]: { val: [null, null], defaults: [1, -6], type: AdSettingCompType.stdf },
+            [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, type: AdSettingCompType.num },
+            [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, type: AdSettingCompType.num },
+            [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], type: AdSettingCompType.stdf },
+            [AdvancedOptions.tcrit]: { val: null, defaults: [], type: AdSettingCompType.tag }
         },
         ...state
     };

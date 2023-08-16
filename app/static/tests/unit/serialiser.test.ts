@@ -19,6 +19,7 @@ import {
 import { defaultState as defaultGraphSettingsState } from "../../src/app/store/graphSettings/graphSettings";
 import { Language } from "../../src/app/types/languageTypes";
 import { AdvancedOptions } from "../../src/app/types/responseTypes";
+import { AdSettingCompType } from "../../src/app/store/run/state";
 
 describe("serialise", () => {
     const codeState = {
@@ -113,16 +114,16 @@ describe("serialise", () => {
             [AdvancedOptions.tol]: {
                 val: [null, null] as [number|null, number|null],
                 defaults: [1, -6],
-                standardForm: true as const
+                type: AdSettingCompType.stdf as const
             },
-            [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, standardForm: false as const },
-            [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, standardForm: false as const },
+            [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, type: AdSettingCompType.num as const },
+            [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, type: AdSettingCompType.num as const },
             [AdvancedOptions.stepSizeMin]: {
                 val: [null, null] as [number|null, number|null],
                 defaults: [1, -8],
-                standardForm: true as const
+                type: AdSettingCompType.stdf as const
             },
-            [AdvancedOptions.tcrit]: { val: null, defaults: Infinity, standardForm: false as const }
+            [AdvancedOptions.tcrit]: { val: null, defaults: [], type: AdSettingCompType.tag as const }
         }
     };
 
@@ -326,11 +327,11 @@ describe("serialise", () => {
         },
         // serialises Infinity to string because JSON serialises Infinity to null by default
         advancedSettings: {
-            [AdvancedOptions.tol]: { val: [null, null], defaults: [1, -6], standardForm: true as const },
-            [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, standardForm: false as const },
-            [AdvancedOptions.stepSizeMax]: { val: null, defaults: "Infinity", standardForm: false as const },
-            [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], standardForm: true as const },
-            [AdvancedOptions.tcrit]: { val: null, defaults: "Infinity", standardForm: false as const }
+            [AdvancedOptions.tol]: { val: [null, null], defaults: [1, -6], type: AdSettingCompType.stdf },
+            [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, type: AdSettingCompType.num },
+            [AdvancedOptions.stepSizeMax]: { val: null, defaults: "Infinity", type: AdSettingCompType.num },
+            [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], type: AdSettingCompType.stdf },
+            [AdvancedOptions.tcrit]: { val: null, defaults: [], type: AdSettingCompType.tag }
         }
     };
     const expectedSensitivity = {

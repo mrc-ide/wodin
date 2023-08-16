@@ -1,4 +1,5 @@
 import { mutations } from "../../../../src/app/store/run/mutations";
+import { AdSettingCompType } from "../../../../src/app/store/run/state";
 import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
 import { mockRunState } from "../../../mocks";
 
@@ -113,21 +114,21 @@ describe("Run mutations", () => {
     it("updates advanced settings and sets runRequired to true", () => {
         const state = mockRunState({
             advancedSettings: {
-                [AdvancedOptions.tol]: { val: [null, null], defaults: [1, -6], standardForm: true },
-                [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, standardForm: false },
-                [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, standardForm: false },
-                [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], standardForm: true },
-                [AdvancedOptions.tcrit]: { val: null, defaults: Infinity, standardForm: false }
+                [AdvancedOptions.tol]: { val: [null, null], defaults: [1, -6], type: AdSettingCompType.stdf },
+                [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, type: AdSettingCompType.num },
+                [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, type: AdSettingCompType.num },
+                [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], type: AdSettingCompType.stdf },
+                [AdvancedOptions.tcrit]: { val: null, defaults: [], type: AdSettingCompType.tag }
             },
             runRequired: noRunRequired
         });
         mutations.UpdateAdvancedSettings(state, { option: AdvancedOptions.tol, newVal: [1, 2] });
         expect(state.advancedSettings).toStrictEqual({
-            [AdvancedOptions.tol]: { val: [1, 2], defaults: [1, -6], standardForm: true },
-            [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, standardForm: false },
-            [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, standardForm: false },
-            [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], standardForm: true },
-            [AdvancedOptions.tcrit]: { val: null, defaults: Infinity, standardForm: false }
+            [AdvancedOptions.tol]: { val: [1, 2], defaults: [1, -6], type: AdSettingCompType.stdf },
+            [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, type: AdSettingCompType.num },
+            [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, type: AdSettingCompType.num },
+            [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], type: AdSettingCompType.stdf },
+            [AdvancedOptions.tcrit]: { val: null, defaults: [], type: AdSettingCompType.tag }
         });
         expect(state.runRequired).toStrictEqual({
             endTimeChanged: false,
@@ -135,6 +136,47 @@ describe("Run mutations", () => {
             parameterValueChanged: false,
             numberOfReplicatesChanged: false,
             advancedSettingsChanged: true
+        });
+    });
+
+    it("updates and sorts tcrit when updating advanced settings", () => {
+        const state = mockRunState({
+            advancedSettings: {
+                [AdvancedOptions.tol]: { val: [null, null], defaults: [1, -6], type: AdSettingCompType.stdf },
+                [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, type: AdSettingCompType.num },
+                [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, type: AdSettingCompType.num },
+                [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], type: AdSettingCompType.stdf },
+                [AdvancedOptions.tcrit]: { val: null, defaults: [], type: AdSettingCompType.tag }
+            }
+        });
+        mutations.UpdateAdvancedSettings(state, { option: AdvancedOptions.tcrit, newVal: [2, 1, 0, 0] });
+        expect(state.advancedSettings).toStrictEqual({
+            [AdvancedOptions.tol]: { val: [null, null], defaults: [1, -6], type: AdSettingCompType.stdf },
+            [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, type: AdSettingCompType.num },
+            [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, type: AdSettingCompType.num },
+            [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], type: AdSettingCompType.stdf },
+            [AdvancedOptions.tcrit]: { val: [0, 0, 1, 2], defaults: [], type: AdSettingCompType.tag }
+        });
+    });
+
+    it("updates and sorts tcrit when updating advanced settings with param values", () => {
+        const state = mockRunState({
+            advancedSettings: {
+                [AdvancedOptions.tol]: { val: [null, null], defaults: [1, -6], type: AdSettingCompType.stdf },
+                [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, type: AdSettingCompType.num },
+                [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, type: AdSettingCompType.num },
+                [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], type: AdSettingCompType.stdf },
+                [AdvancedOptions.tcrit]: { val: null, defaults: [], type: AdSettingCompType.tag }
+            },
+            parameterValues: { a: 2, b: 3 }
+        });
+        mutations.UpdateAdvancedSettings(state, { option: AdvancedOptions.tcrit, newVal: ["a", 0, "b", 1] });
+        expect(state.advancedSettings).toStrictEqual({
+            [AdvancedOptions.tol]: { val: [null, null], defaults: [1, -6], type: AdSettingCompType.stdf },
+            [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, type: AdSettingCompType.num },
+            [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, type: AdSettingCompType.num },
+            [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], type: AdSettingCompType.stdf },
+            [AdvancedOptions.tcrit]: { val: [0, 1, "a", "b"], defaults: [], type: AdSettingCompType.tag }
         });
     });
 

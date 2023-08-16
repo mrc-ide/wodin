@@ -30,7 +30,7 @@ const runOdeModel = (parameterValues: OdinUserType, startTime: number, endTime: 
         error: null
     };
 
-    const advancedSettingsOdin = convertAdvancedSettingsToOdin(advancedSettings);
+    const advancedSettingsOdin = convertAdvancedSettingsToOdin(advancedSettings, parameterValues);
 
     try {
         const solution = runner.wodinRun(odin, parameterValues, startTime, endTime, advancedSettingsOdin);

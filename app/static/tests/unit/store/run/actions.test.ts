@@ -10,6 +10,7 @@ import { ModelFitAction } from "../../../../src/app/store/modelFit/actions";
 import { RunGetter } from "../../../../src/app/store/run/getters";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
+import { AdSettingCompType } from "../../../../src/app/store/run/state";
 
 jest.mock("../../../../src/app/wodinExcelDownload");
 
@@ -119,7 +120,7 @@ describe("Run actions", () => {
             maxSteps: 10000,
             stepSizeMax: Infinity,
             stepSizeMin: 1e-8,
-            tcrit: Infinity
+            tcrit: []
         });
 
         expect(commit.mock.calls.length).toBe(1);
@@ -155,11 +156,11 @@ describe("Run actions", () => {
             endTime: 99,
             parameterSets,
             advancedSettings: {
-                [AdvancedOptions.tol]: { val: [0.6, -1], defaults: [1, -6], standardForm: true },
-                [AdvancedOptions.maxSteps]: { val: 1, defaults: 10000, standardForm: false },
-                [AdvancedOptions.stepSizeMax]: { val: 2, defaults: Infinity, standardForm: false },
-                [AdvancedOptions.stepSizeMin]: { val: [0.5, -2], defaults: [1, -8], standardForm: true },
-                [AdvancedOptions.tcrit]: { val: 3, defaults: Infinity, standardForm: false }
+                [AdvancedOptions.tol]: { val: [0.6, -1], defaults: [1, -6], type: AdSettingCompType.stdf },
+                [AdvancedOptions.maxSteps]: { val: 1, defaults: 10000, type: AdSettingCompType.num },
+                [AdvancedOptions.stepSizeMax]: { val: 2, defaults: Infinity, type: AdSettingCompType.num },
+                [AdvancedOptions.stepSizeMin]: { val: [0.5, -2], defaults: [1, -8], type: AdSettingCompType.stdf },
+                [AdvancedOptions.tcrit]: { val: [0, "p1", "p2"], defaults: [], type: AdSettingCompType.tag }
             }
         });
         const commit = jest.fn();
@@ -180,7 +181,7 @@ describe("Run actions", () => {
             maxSteps: 1,
             stepSizeMax: 2,
             stepSizeMin: 0.005,
-            tcrit: 3
+            tcrit: [0, 1, 2]
         });
 
         expect(commit.mock.calls.length).toBe(1);
