@@ -19,8 +19,8 @@
       <button class="btn btn-primary" id="download-summary-btn"
               :disabled="downloading || !canDownloadSummary"
               @click="toggleShowDownloadSummary(true)">
-        <vue-feather class="inline-icon" type="download"></vue-feather>
-        Download Summary
+        <vue-feather size="20" class="inline-icon" type="download"></vue-feather>
+        Download summary
       </button>
       <div v-if="downloading" id="downloading">
         <LoadingSpinner size="xs"></LoadingSpinner>

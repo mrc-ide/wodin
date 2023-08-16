@@ -16,7 +16,7 @@
                   class="btn btn-primary" id="download-btn"
                   :disabled="downloading || !canDownloadOutput"
                   @click="toggleShowDownloadOutput(true)">
-            <vue-feather class="inline-icon" type="download"></vue-feather>
+            <vue-feather size="20"  class="inline-icon" type="download"></vue-feather>
             Download
           </button>
           <div v-if="downloading" id="downloading">
