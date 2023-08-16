@@ -60,7 +60,8 @@ export default defineComponent({
             const parsedTags = tags.map((tag) => {
                 if (isNumeric(tag)) {
                     return parseFloat(tag);
-                } else if (tag.includes(":")) {
+                }
+                if (tag.includes(":")) {
                     const variableTag = tag.split(":");
                     const varId = variableTag[0];
                     if (isParameterName(varId)) {
