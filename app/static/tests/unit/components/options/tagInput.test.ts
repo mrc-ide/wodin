@@ -1,9 +1,9 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import VueTagsInput from "vue3-tags-input";
-import { nextTick } from "vue";
 import TagInput from "../../../../src/app/components/options/TagInput.vue";
 import { mockRunState } from "../../../mocks";
+import { nextTick } from "vue";
 
 describe("Tag Input", () => {
     const createStore = () => {
@@ -19,9 +19,6 @@ describe("Tag Input", () => {
     const defaultProps = {
         tags: [1, 2, "p1", "p2", "p3"]
     };
-
-    const mockValidate = jest.fn();
-    const mockHandleTagsChanged = jest.fn();
 
     const getWrapper = (props = defaultProps) => {
         return shallowMount(TagInput, { props, global: { plugins: [createStore()] } });
@@ -59,5 +56,21 @@ describe("Tag Input", () => {
         } as any);
         const tagsInput = wrapper.findComponent(VueTagsInput);
         expect(tagsInput.props("tags")).toStrictEqual([]);
+    });
+
+    it("emits update if paramValues change", async () => {
+        const store = createStore();
+        const wrapper = shallowMount(TagInput, {
+            global: {
+                plugins: [store]
+            },
+            props: {
+                tags: ["1", "hey"],
+                placeholder: []
+            }
+        });
+        store.state.run.parameterValues = { a: 2 };
+        await nextTick();
+        expect(wrapper.emitted("update")![0]).toStrictEqual([["1", "hey"]]);
     });
 });
