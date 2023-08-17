@@ -3,19 +3,19 @@ import { RunMutation } from "../../../../src/app/store/run/mutations";
 import {
     mockModelState, mockRunnerDiscrete, mockRunnerOde, mockRunState
 } from "../../../mocks";
-import { WodinExcelDownload } from "../../../../src/app/wodinExcelDownload";
+import { WodinModelOutputDownload } from "../../../../src/app/excel/wodinModelOutputDownload";
 import { actions, RunAction } from "../../../../src/app/store/run/actions";
 import { AppType } from "../../../../src/app/store/appState/state";
 import { ModelFitAction } from "../../../../src/app/store/modelFit/actions";
 import { RunGetter } from "../../../../src/app/store/run/getters";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 
-jest.mock("../../../../src/app/wodinExcelDownload");
+jest.mock("../../../../src/app/excel/wodinModelOutputDownload");
 
 describe("Run actions", () => {
     const mockDownloadModelOutput = jest.fn();
-    const mockWodinExcelDownload = WodinExcelDownload as any as Mock;
-    mockWodinExcelDownload.mockImplementation(() => ({ downloadModelOutput: mockDownloadModelOutput }));
+    const mockWodinModelOutputDownload = WodinModelOutputDownload as any as Mock;
+    mockWodinModelOutputDownload.mockImplementation(() => ({ download: mockDownloadModelOutput }));
 
     const runRequiredAll = {
         modelChanged: true,
@@ -435,10 +435,10 @@ describe("Run actions", () => {
         expect(commit.mock.calls[0][0]).toBe(RunMutation.SetDownloading);
         expect(commit.mock.calls[0][1]).toBe(true);
         setTimeout(() => {
-            expect(mockWodinExcelDownload).toHaveBeenCalledTimes(1); // expect WodinExcelDownload constructor
-            expect(mockWodinExcelDownload.mock.calls[0][0]).toBe(context);
-            expect(mockWodinExcelDownload.mock.calls[0][1]).toBe("myFile.xlsx");
-            expect(mockWodinExcelDownload.mock.calls[0][2]).toBe(101);
+            expect(mockWodinModelOutputDownload).toHaveBeenCalledTimes(1); // expect download constructor
+            expect(mockWodinModelOutputDownload.mock.calls[0][0]).toBe(context);
+            expect(mockWodinModelOutputDownload.mock.calls[0][1]).toBe("myFile.xlsx");
+            expect(mockWodinModelOutputDownload.mock.calls[0][2]).toBe(101);
             expect(mockDownloadModelOutput).toHaveBeenCalledTimes(1);
 
             expect(commit).toHaveBeenCalledTimes(2);

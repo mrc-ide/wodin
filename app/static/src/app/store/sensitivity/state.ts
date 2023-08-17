@@ -28,6 +28,11 @@ export enum SensitivityPlotType {
     TimeAtExtreme = "TimeAtExtreme"
 }
 
+export enum SensitivityPlotExtremePrefix {
+    time = "t",
+    value = "y"
+}
+
 export enum SensitivityPlotExtreme {
     Min = "Min",
     Max = "Max"
@@ -54,6 +59,8 @@ export interface SensitivityState {
     plotSettings: SensitivityPlotSettings,
     result: OdinSensitivityResult | null;
     parameterSetResults: Dict<OdinSensitivityResult>,
+    downloading: boolean,
+    userSummaryDownloadFileName: string,
 
     // true only in stochastic mode when odinWorker produces multiple sensitivity
     // traces sequentially. This toggle is required to show how many runs out of

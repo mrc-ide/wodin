@@ -6,6 +6,7 @@ jest.mock("plotly.js-basic-dist-min", () => {});
 /* eslint-disable import/first */
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
+import { nextTick } from "vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import {
     mockBasicState, mockModelState, mockRunState, mockStochasticState
@@ -24,6 +25,8 @@ import { DiscreteSeriesSet, OdinRunnerDiscrete } from "../../../../src/app/types
 import { OdinRunResultDiscrete } from "../../../../src/app/types/wrapperTypes";
 import { ModelGetter } from "../../../../src/app/store/model/getters";
 import { AppType } from "../../../../src/app/store/appState/state";
+import { RunMutation } from "../../../../src/app/store/run/mutations";
+import { RunAction } from "../../../../src/app/store/run/actions";
 
 describe("RunTab", () => {
     const defaultModelState = {
@@ -47,6 +50,8 @@ describe("RunTab", () => {
     });
 
     const mockRunModel = jest.fn();
+    const mockDownloadOutput = jest.fn();
+    const mockSetUserDownloadFileName = jest.fn();
 
     const getWrapper = (modelState: Partial<ModelState> = defaultModelState,
         runState: Partial<RunState> = defaultRunState, hasRunner = true, appType = AppType.Basic) => {
@@ -66,7 +71,11 @@ describe("RunTab", () => {
                     namespaced: true,
                     state: mockRunState(runState),
                     actions: {
-                        RunModel: mockRunModel
+                        [RunAction.RunModel]: mockRunModel,
+                        [RunAction.DownloadOutput]: mockDownloadOutput
+                    },
+                    mutations: {
+                        [RunMutation.SetUserDownloadFileName]: mockSetUserDownloadFileName
                     }
                 }
             }
@@ -111,7 +120,8 @@ describe("RunTab", () => {
     };
 
     it("renders as expected when can run model", () => {
-        const wrapper = getWrapper();
+        const runState = { ...defaultRunState, userDownloadFileName: "test.xlsx" };
+        const wrapper = getWrapper(defaultModelState, runState);
         expect(wrapper.find("button#run-btn").text()).toBe("Run model");
         expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
@@ -122,7 +132,11 @@ describe("RunTab", () => {
         expect(downloadBtn.text()).toBe("Download");
         expect((downloadBtn.element as HTMLButtonElement).disabled).toBe(true);
         expect(downloadBtn.findComponent(VueFeather).props("type")).toBe("download");
-        expect(wrapper.findComponent(DownloadOutput).props().open).toBe(false);
+        const downloadOutput = wrapper.findComponent(DownloadOutput);
+        expect(downloadOutput.props().open).toBe(false);
+        expect(downloadOutput.props().downloadType).toBe("Run");
+        expect(downloadOutput.props().includePoints).toBe(true);
+        expect(downloadOutput.props().userFileName).toBe("test.xlsx");
 
         expect(wrapper.find("#downloading").exists()).toBe(false);
         expect(wrapper.findComponent(RunStochasticPlot).exists()).toBe(false);
@@ -241,12 +255,30 @@ describe("RunTab", () => {
         await wrapper.find("button#download-btn").trigger("click");
         const download = wrapper.findComponent(DownloadOutput);
         expect(download.props().open).toBe(true);
-        await download.vm.$emit("close");
+        download.vm.$emit("close");
+        await nextTick();
         expect(download.props().open).toBe(false);
     });
 
     it("hides run button if app is stochastic", () => {
         const wrapper = getWrapper({}, {}, true, AppType.Stochastic);
         expect(wrapper.find("button#download-btn").exists()).toBe(false);
+    });
+
+    it("commits user download filename change", () => {
+        const wrapper = getWrapper();
+        const downloadOutput = wrapper.findComponent(DownloadOutput);
+        downloadOutput.vm.$emit("update:userFileName", "newFileName.xlsx");
+        expect(mockSetUserDownloadFileName).toHaveBeenCalledTimes(1);
+        expect(mockSetUserDownloadFileName.mock.calls[0][1]).toBe("newFileName.xlsx");
+    });
+
+    it("dispatches download output action", () => {
+        const wrapper = getWrapper();
+        const downloadOutput = wrapper.findComponent(DownloadOutput);
+        const payload = { fileName: "downlad.xlsx", points: 100 };
+        downloadOutput.vm.$emit("download", payload);
+        expect(mockDownloadOutput).toHaveBeenCalledTimes(1);
+        expect(mockDownloadOutput.mock.calls[0][1]).toBe(payload);
     });
 });

@@ -33,6 +33,8 @@ export const defaultState: SensitivityState = {
     },
     result: null,
     parameterSetResults: {},
+    downloading: false,
+    userSummaryDownloadFileName: "",
     running: false,
     loading: false
 };

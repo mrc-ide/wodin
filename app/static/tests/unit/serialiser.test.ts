@@ -123,6 +123,8 @@ describe("serialise", () => {
     const sensitivityState = {
         running: true,
         loading: false,
+        downloading: false,
+        userSummaryDownloadFileName: "",
         paramSettings: {
             parameterToVary: "alpha",
             scaleType: SensitivityScaleType.Arithmetic,

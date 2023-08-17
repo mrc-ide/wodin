@@ -18,15 +18,16 @@ import {
 import { AxisType, newPlot, Plots } from "plotly.js-basic-dist-min";
 import { useStore } from "vuex";
 import {
-    fadePlotStyle, margin, config, odinToPlotly, filterSeriesSet, updatePlotTraceName
+    config, fadePlotStyle, filterSeriesSet, margin, odinToPlotly, updatePlotTraceName
 } from "../../plot";
-import { SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
+import { SensitivityPlotExtremePrefix, SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { Batch, OdinSeriesSet } from "../../types/responseTypes";
 import { runPlaceholderMessage } from "../../utils";
 import { RunGetter } from "../../store/run/getters";
 import { Dict } from "../../types/utilTypes";
 import WodinPlotDataSummary from "../WodinPlotDataSummary.vue";
+import { verifyValidPlotSettingsTime } from "./support";
 
 export default defineComponent({
     name: "SensitivitySummaryPlot",
@@ -45,20 +46,6 @@ export default defineComponent({
         const palette = computed(() => store.state.model.paletteModel);
         const selectedVariables = computed(() => store.state.model.selectedVariables);
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, true));
-
-        const verifyValidEndTime = () => {
-            // update plot settings' end time to be valid before we use it
-            let endTime = plotSettings.value.time;
-            const modelEndTime = store.state.run.endTime;
-            if (endTime === null) {
-                endTime = modelEndTime;
-            } else {
-                endTime = Math.max(0, Math.min(modelEndTime, endTime));
-            }
-            if (endTime !== plotSettings.value.time) {
-                store.commit(`${namespace}/${SensitivityMutation.SetPlotTime}`, endTime);
-            }
-        };
 
         const xAxisSettings = computed(() => {
             const { paramSettings } = store.state.sensitivity;
@@ -93,7 +80,7 @@ export default defineComponent({
 
         const finishLoading = () => {
             if (store.state.sensitivity.loading) {
-                store.commit(`sensitivity/${SensitivityMutation.SetLoading}`, false);
+                store.commit(`${namespace}/${SensitivityMutation.SetLoading}`, false);
             }
         };
 
@@ -102,13 +89,15 @@ export default defineComponent({
                 let data: null | OdinSeriesSet;
                 const paramSetData: Dict<OdinSeriesSet> = {};
                 if (plotSettings.value.plotType === SensitivityPlotType.ValueAtTime) {
-                    verifyValidEndTime();
+                    verifyValidPlotSettingsTime(store.state, store.commit);
                     data = batch.value.valueAtTime(plotSettings.value.time);
                     Object.keys(paramSetBatches.value).forEach((name) => {
                         paramSetData[name] = paramSetBatches.value[name].valueAtTime(plotSettings.value.time);
                     });
                 } else {
-                    const paramPrefix = plotSettings.value.plotType === SensitivityPlotType.TimeAtExtreme ? "t" : "y";
+                    const paramPrefix = plotSettings.value.plotType === SensitivityPlotType.TimeAtExtreme
+                        ? SensitivityPlotExtremePrefix.time
+                        : SensitivityPlotExtremePrefix.value;
                     const extremeParam = `${paramPrefix}${plotSettings.value.extreme}`;
                     data = batch.value.extreme(extremeParam);
                     Object.keys(paramSetBatches.value).forEach((paramSetName) => {
