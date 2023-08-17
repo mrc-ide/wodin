@@ -36,6 +36,7 @@ describe("SensitivitySummaryPlot", () => {
     (global.ResizeObserver as any) = mockResizeObserver;
 
     const mockSetPlotTime = jest.fn();
+    const mockSetLoading = jest.fn();
 
     const mockData = {
         x: [1, 1.1],
@@ -112,7 +113,8 @@ describe("SensitivitySummaryPlot", () => {
 
     const getWrapper = (hasData = true, plotSettings: SensitivityPlotSettings = defaultPlotSettings,
         fadePlot = false, paramSettings: SensitivityParameterSettings = defaultParamSettings,
-        logScaleYAxis = false, selectedVariables = defaultSelectedVariables, includeParameterSets = false) => {
+        logScaleYAxis = false, selectedVariables = defaultSelectedVariables, includeParameterSets = false,
+        isLoading = false) => {
         const visibleParameterSetNames = includeParameterSets ? ["Set1", "Set2"] : [];
         const parameterSetResults = includeParameterSets ? {
             Set1: {
@@ -156,6 +158,7 @@ describe("SensitivitySummaryPlot", () => {
                 sensitivity: {
                     namespaced: true,
                     state: {
+                        loading: isLoading,
                         result: {
                             batch: hasData ? mockBatch : null
                         },
@@ -164,7 +167,8 @@ describe("SensitivitySummaryPlot", () => {
                         parameterSetResults
                     },
                     mutations: {
-                        [SensitivityMutation.SetPlotTime]: mockSetPlotTime
+                        [SensitivityMutation.SetPlotTime]: mockSetPlotTime,
+                        [SensitivityMutation.SetLoading]: mockSetLoading
                     }
                 },
                 graphSettings: {
@@ -499,5 +503,21 @@ describe("SensitivitySummaryPlot", () => {
         const plotSettings = { ...defaultPlotSettings, plotType: SensitivityPlotType.TimeAtExtreme };
         const wrapper = getWrapper(true, plotSettings, false, defaultParamSettings, true);
         expectDataToHaveBeenPlotted(wrapper);
+    });
+
+    it("commits set loading when plotData is computed, if loading is true", async () => {
+        const wrapper = getWrapper(true, defaultPlotSettings, false,
+            defaultParamSettings, false, defaultSelectedVariables, false, true);
+        // drawPlot on mount
+        expect(mockSetLoading).toHaveBeenCalledTimes(1);
+        store!.state.sensitivity.plotSettings.time = 50;
+        await nextTick();
+        expect(mockSetLoading).toHaveBeenCalledTimes(2);
+    });
+
+    it("does not commit set loading when plotData is computed, if loading is false", async () => {
+        const wrapper = getWrapper();
+        store!.state.sensitivity.plotSettings.time = 50;
+        expect(mockSetLoading).not.toHaveBeenCalled();
     });
 });

@@ -5,6 +5,10 @@ import { AppType } from "../../../../src/app/store/appState/state";
 import { RunAction } from "../../../../src/app/store/run/actions";
 import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
 import { AdvancedComponentType } from "../../../../src/app/store/run/state";
+import { WodinSensitivitySummaryDownload } from "../../../../src/app/excel/wodinSensitivitySummaryDownload";
+import Mock = jest.Mock;
+
+jest.mock("../../../../src/app/excel/wodinSensitivitySummaryDownload");
 
 const mockBatch = {};
 const mockRunnerOde = {
@@ -59,6 +63,10 @@ const rootGetters = {
 };
 
 describe("Sensitivity actions", () => {
+    const mockDownload = jest.fn();
+    const mockWodinSensitivitySummaryDownload = WodinSensitivitySummaryDownload as any as Mock;
+    mockWodinSensitivitySummaryDownload.mockImplementation(() => ({ download: mockDownload }));
+
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -584,5 +592,26 @@ describe("Sensitivity actions", () => {
             expect(dispatch).toHaveBeenCalledTimes(0);
             done();
         });
+    });
+
+    it("downloads sensitivity summary", (done) => {
+        const commit = jest.fn();
+        const context = { commit };
+        const payload = "myFile.xlsx";
+        (actions[SensitivityAction.DownloadSummary] as any)(context, payload);
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetDownloading);
+        expect(commit.mock.calls[0][1]).toBe(true);
+        setTimeout(() => {
+            expect(mockWodinSensitivitySummaryDownload).toHaveBeenCalledTimes(1); // expect download constructor
+            expect(mockWodinSensitivitySummaryDownload.mock.calls[0][0]).toBe(context);
+            expect(mockWodinSensitivitySummaryDownload.mock.calls[0][1]).toBe("myFile.xlsx");
+            expect(mockDownload).toHaveBeenCalledTimes(1);
+
+            expect(commit).toHaveBeenCalledTimes(2);
+            expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetDownloading);
+            expect(commit.mock.calls[1][1]).toBe(false);
+            done();
+        }, 20);
     });
 });

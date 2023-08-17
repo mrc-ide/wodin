@@ -120,6 +120,7 @@ test.describe("Sensitivity tests", () => {
 
         // re-run - message should be removed
         await page.click("#run-sens-btn");
+        await new Promise((r) => setTimeout(r, 101));
         await expect(await page.innerText(".action-required-msg")).toBe("");
 
         // switch to Value at Time - expect axes to change
@@ -204,6 +205,7 @@ test.describe("Sensitivity tests", () => {
         await page.fill(":nth-match(#model-params input, 3)", "1000000");
         await page.fill(":nth-match(#model-params input, 4)", "1.5");
         await page.click("#run-sens-btn");
+        await new Promise((r) => setTimeout(r, 101));
         await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(66, { timeout });
 
         // current parameters

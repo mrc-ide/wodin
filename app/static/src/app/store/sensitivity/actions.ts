@@ -15,11 +15,13 @@ import { ModelGetter } from "../model/getters";
 import { Dict } from "../../types/utilTypes";
 import { AdvancedSettings } from "../run/state";
 import { convertAdvancedSettingsToOdin } from "../../utils";
+import { WodinSensitivitySummaryDownload } from "../../excel/wodinSensitivitySummaryDownload";
 
 export enum SensitivityAction {
     RunSensitivity = "RunSensitivity",
     RunSensitivityOnRehydrate = "RunSensitivityOnRehydrate",
-    ComputeNext = "ComputeNext"
+    ComputeNext = "ComputeNext",
+    DownloadSummary = "DownloadSummary"
 }
 
 const runModelIfRequired = (rootState: AppState, dispatch: Dispatch) => {
@@ -162,5 +164,15 @@ export const actions: ActionTree<SensitivityState, AppState> = {
                 dispatch(SensitivityAction.ComputeNext, batch);
             }, 0);
         }
+    },
+
+    [SensitivityAction.DownloadSummary](context, filename: string) {
+        const { commit } = context;
+        commit(SensitivityMutation.SetDownloading, true);
+        setTimeout(() => {
+            new WodinSensitivitySummaryDownload(context, filename)
+                .download();
+            commit(SensitivityMutation.SetDownloading, false);
+        }, 5);
     }
 };

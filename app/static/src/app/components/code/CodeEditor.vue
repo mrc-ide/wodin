@@ -6,7 +6,7 @@
                 v-help="'resetCode'"
                 @click="resetCode">Reset
         </button>
-        <div class="editor-container mb-2">
+        <div class="editor-container mb-2" style="clear:both;">
             <div class="editor" ref="editor"></div>
         </div>
     </div>
