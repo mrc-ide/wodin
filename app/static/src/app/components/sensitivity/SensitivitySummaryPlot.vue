@@ -91,6 +91,12 @@ export default defineComponent({
         });
         const lineStylesForParamSets = computed(() => store.getters[`run/${RunGetter.lineStylesForParameterSets}`]);
 
+        const finishLoading = () => {
+            if (store.state.sensitivity.loading) {
+                store.commit(`sensitivity/${SensitivityMutation.SetLoading}`, false);
+            }
+        };
+
         const plotData = computed(() => {
             if (batch.value) {
                 let data: null | OdinSeriesSet;
@@ -128,10 +134,10 @@ export default defineComponent({
                     });
                     result.push(...psPlotData);
                 });
-                store.commit(`sensitivity/${SensitivityMutation.SetLoading}`, false);
+                finishLoading();
                 return result;
             }
-            store.commit(`sensitivity/${SensitivityMutation.SetLoading}`, false);
+            finishLoading();
             return [];
         });
         const hasPlotData = computed(() => !!(plotData.value?.length));
