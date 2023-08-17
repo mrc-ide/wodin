@@ -1,7 +1,7 @@
 <template>
   <vue-feather type="help-circle"
                v-tooltip="'Display help'"
-               class="generic-help-icon float-end clickable"
+               class="generic-help-icon float-end clickable mb-2"
                @click="toggleDialog(true)"></vue-feather>
   <draggable-dialog v-if="show"
                     :title = "title"
