@@ -80,7 +80,7 @@ export default defineComponent({
 
         const finishLoading = () => {
             if (store.state.sensitivity.loading) {
-                store.commit(`sensitivity/${SensitivityMutation.SetLoading}`, false);
+                store.commit(`${namespace}/${SensitivityMutation.SetLoading}`, false);
             }
         };
 
