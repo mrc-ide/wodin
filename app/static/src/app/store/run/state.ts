@@ -16,33 +16,33 @@ export interface ParameterSet {
     hidden: boolean
 }
 
-export enum AdSettingCompType {
+export enum AdvancedComponentType {
     num = "numeric",
     stdf = "standard form",
     tag = "tag input"
 }
 
-type AdConfStandardForm = {
+type AdvancedConfigStandardForm = {
     val: [number|null, number|null],
-    defaults: number[],
-    type: AdSettingCompType.stdf
+    default: [number, number],
+    type: AdvancedComponentType.stdf
 }
 
-type AdConfNumeric = {
+type AdvancedConfigNumeric = {
     val: number | null,
-    defaults: number,
-    type: AdSettingCompType.num
+    default?: number,
+    type: AdvancedComponentType.num
 }
 
 export type Tag = number | string
 
-type AdConfTCrit = {
+type AdvancedConfigTCrit = {
     val: Tag[] | null,
-    defaults: number[],
-    type: AdSettingCompType.tag
+    default: number[],
+    type: AdvancedComponentType.tag
 }
 
-export type AdvancedConfig = AdConfNumeric | AdConfStandardForm | AdConfTCrit
+export type AdvancedConfig = AdvancedConfigNumeric | AdvancedConfigStandardForm | AdvancedConfigTCrit
 
 export type AdvancedSettings = Record<AdvancedOptions, AdvancedConfig>
 

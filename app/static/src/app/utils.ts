@@ -16,7 +16,7 @@ import {
     SensitivityVariationType
 } from "./store/sensitivity/state";
 import { AppState } from "./store/appState/state";
-import { AdSettingCompType, AdvancedSettings, Tag } from "./store/run/state";
+import { AdvancedComponentType, AdvancedSettings, Tag } from "./store/run/state";
 
 export const freezer = {
     /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -228,26 +228,26 @@ const extractValuesFromTags = (values: Tag[], paramValues: OdinUserType | null) 
 export const convertAdvancedSettingsToOdin = (advancedSettings: AdvancedSettings, paramValues: OdinUserType | null) => {
     const flattenedObject = Object.fromEntries(Object.entries(advancedSettings)
         .map(([key, value]) => {
-            let cleanVal: number | number[] | null;
-            if (value.type === AdSettingCompType.stdf) {
-                const firstValue = value.val[0] !== null ? value.val[0] : value.defaults[0];
-                const secondValue = value.val[1] !== null ? value.val[1] : value.defaults[1];
+            let cleanVal: number | number[] | null | undefined;
+            if (value.type === AdvancedComponentType.stdf) {
+                const firstValue = value.val[0] !== null ? value.val[0] : value.default[0];
+                const secondValue = value.val[1] !== null ? value.val[1] : value.default[1];
                 cleanVal = firstValue * 10 ** secondValue;
-            } else if (value.type === AdSettingCompType.num) {
-                cleanVal = value.val !== null ? value.val : value.defaults;
+            } else if (value.type === AdvancedComponentType.num) {
+                cleanVal = value.val !== null ? value.val : value.default;
             } else {
-                cleanVal = value.val !== null ? extractValuesFromTags(value.val, paramValues) : value.defaults;
+                cleanVal = value.val !== null ? extractValuesFromTags(value.val, paramValues) : value.default;
             }
             return [key, cleanVal];
         })) as Record<AdvancedOptions, number>;
 
     const advancedSettingsOdin: AdvancedSettingsOdin = {
-        atol: flattenedObject.Tolerance,
-        rtol: flattenedObject.Tolerance,
-        maxSteps: flattenedObject["Max steps"],
-        stepSizeMax: flattenedObject["Max step size"],
-        stepSizeMin: flattenedObject["Min step size"],
-        tcrit: flattenedObject["Critical times"]
+        atol: flattenedObject[AdvancedOptions.tol],
+        rtol: flattenedObject[AdvancedOptions.tol],
+        maxSteps: flattenedObject[AdvancedOptions.maxSteps],
+        stepSizeMax: flattenedObject[AdvancedOptions.stepSizeMax],
+        stepSizeMin: flattenedObject[AdvancedOptions.stepSizeMin],
+        tcrit: flattenedObject[AdvancedOptions.tcrit]
     };
 
     return advancedSettingsOdin;

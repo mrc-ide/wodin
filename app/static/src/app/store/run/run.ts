@@ -1,4 +1,4 @@
-import { AdSettingCompType, RunState } from "./state";
+import { AdvancedComponentType, RunState } from "./state";
 import { mutations } from "./mutations";
 import { actions } from "./actions";
 import { getters } from "./getters";
@@ -23,11 +23,11 @@ export const defaultState: RunState = {
     parameterSets: [],
     parameterSetResults: {},
     advancedSettings: {
-        [AdvancedOptions.tol]: { val: [null, null], defaults: [1, -6], type: AdSettingCompType.stdf },
-        [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, type: AdSettingCompType.num },
-        [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, type: AdSettingCompType.num },
-        [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], type: AdSettingCompType.stdf },
-        [AdvancedOptions.tcrit]: { val: null, defaults: [], type: AdSettingCompType.tag }
+        [AdvancedOptions.tol]: { val: [null, null], default: [1, -6], type: AdvancedComponentType.stdf },
+        [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num },
+        [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num },
+        [AdvancedOptions.stepSizeMin]: { val: [null, null], default: [1, -8], type: AdvancedComponentType.stdf },
+        [AdvancedOptions.tcrit]: { val: null, default: [], type: AdvancedComponentType.tag }
     }
 };
 

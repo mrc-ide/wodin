@@ -5,15 +5,15 @@
             <label class="col-form-label">{{ option }}</label>
             </div>
             <div class="col-6">
-                <standard-form-input v-if="config.type === AdSettingCompType.stdf"
+                <standard-form-input v-if="config.type === AdvancedComponentType.stdf"
                                      :value="config.val"
-                                     :placeholder="config.defaults"
+                                     :placeholder="config.default"
                                      @update="(n) => updateOption(n, option)"/>
-                <numeric-input v-if="config.type === AdSettingCompType.num"
+                <numeric-input v-if="config.type === AdvancedComponentType.num"
                                :value="config.val"
-                               :placeholder="config.defaults"
+                               :placeholder="config.default"
                                @update="(n) => updateOption(n, option)"/>
-                <tag-input v-if="config.type === AdSettingCompType.tag"
+                <tag-input v-if="config.type === AdvancedComponentType.tag"
                                :tags="config.val"
                                @update="(n) => updateOption(n, option)"/>
             </div>
@@ -25,7 +25,7 @@ import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import NumericInput from "./NumericInput.vue";
 import StandardFormInput from "./StandardFormInput.vue";
-import { AdSettingCompType } from "../../store/run/state";
+import { AdvancedComponentType } from "../../store/run/state";
 import { RunMutation } from "../../store/run/mutations";
 import { AdvancedOptions } from "../../types/responseTypes";
 import TagInput from "./TagInput.vue";
@@ -49,7 +49,7 @@ export default defineComponent({
         return {
             advancedSettings,
             updateOption,
-            AdSettingCompType
+            AdvancedComponentType
         };
     }
 });

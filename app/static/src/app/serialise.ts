@@ -2,7 +2,7 @@ import { AppState, AppType } from "./store/appState/state";
 import { FitState } from "./store/fit/state";
 import { CodeState } from "./store/code/state";
 import { ModelState } from "./store/model/state";
-import { AdSettingCompType, AdvancedSettings, RunState } from "./store/run/state";
+import { RunState } from "./store/run/state";
 import { SensitivityState } from "./store/sensitivity/state";
 import { FitDataState } from "./store/fitData/state";
 import { ModelFitState } from "./store/modelFit/state";
@@ -11,11 +11,10 @@ import {
     SerialisedAppState, SerialisedModelState,
     SerialisedRunState,
     SerialisedSensitivityState,
-    SerialisedRunResult, SerialisedSensitivityResult, SerialisedAdvancedSettings
+    SerialisedRunResult, SerialisedSensitivityResult
 } from "./types/serialisationTypes";
 import { GraphSettingsState } from "./store/graphSettings/state";
 import { Dict } from "./types/utilTypes";
-import { AdvancedOptions } from "./types/responseTypes";
 
 function serialiseCode(code: CodeState) : CodeState {
     return {
@@ -52,21 +51,6 @@ function serialiseDiscreteResult(result: OdinRunResultDiscrete | null): Serialis
     } : null;
 }
 
-const serialiseAdvancedSettings = (settings: AdvancedSettings) => {
-    return Object.fromEntries(
-        Object.entries(settings).map(([key, value]) => {
-            if (value.type === AdSettingCompType.num) {
-                if (!Number.isFinite(value.defaults)) {
-                    const copy = { ...value } as any;
-                    copy.defaults = "Infinity";
-                    return [key, copy];
-                }
-            }
-            return [key, value];
-        })
-    ) as SerialisedAdvancedSettings;
-};
-
 function serialiseRun(run: RunState): SerialisedRunState {
     const serialisedParameterSetResults = {} as Dict<SerialisedRunResult | null>;
     Object.keys(run.parameterSetResults).forEach((name) => {
@@ -82,7 +66,7 @@ function serialiseRun(run: RunState): SerialisedRunState {
         resultOde: serialiseSolutionResult(run.resultOde),
         resultDiscrete: serialiseDiscreteResult(run.resultDiscrete),
         parameterSetResults: serialisedParameterSetResults,
-        advancedSettings: serialiseAdvancedSettings(run.advancedSettings)
+        advancedSettings: run.advancedSettings
     };
 }
 
@@ -157,20 +141,7 @@ export const serialiseState = (state: AppState) => {
     return JSON.stringify(result);
 };
 
-const deserialiseAdvancedSettings = (settings: SerialisedAdvancedSettings) => {
-    Object.keys(settings).forEach((key) => {
-        const entry = settings[key as AdvancedOptions] as any;
-        if (entry.type === AdSettingCompType.num) {
-            if (entry.defaults === "Infinity") {
-                entry.defaults = Infinity;
-            }
-        }
-    });
-};
-
 export const deserialiseState = (targetState: AppState, serialised: SerialisedAppState) => {
-    deserialiseAdvancedSettings(serialised.run.advancedSettings);
-
     Object.assign(targetState, {
         ...targetState,
         ...serialised

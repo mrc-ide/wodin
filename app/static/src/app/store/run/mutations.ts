@@ -1,6 +1,6 @@
 import { MutationTree } from "vuex";
 import {
-    AdSettingCompType,
+    AdvancedComponentType,
     ParameterSet, RunState, RunUpdateRequiredReasons, Tag
 } from "./state";
 import { OdinUserType } from "../../types/responseTypes";
@@ -68,7 +68,7 @@ export const mutations: MutationTree<RunState> = {
     },
 
     [RunMutation.UpdateAdvancedSettings](state: RunState, payload: SetAdvancedSettingPayload) {
-        if (state.advancedSettings[payload.option].type === AdSettingCompType.tag
+        if (state.advancedSettings[payload.option].type === AdvancedComponentType.tag
             && payload.newVal) {
             const sortedTags = (payload.newVal as Tag[]).sort((tag1, tag2) => {
                 const tag1Val = typeof tag1 === "number" ? tag1 : state.parameterValues![tag1];

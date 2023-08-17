@@ -37,7 +37,7 @@ export default defineComponent({
         VueFeather
     },
     setup(props) {
-        const collapsed = ref(props.collapsedDefault); // default to expanded view
+        const collapsed = ref(props.collapsedDefault);
 
         const toggleCollapse = () => {
             collapsed.value = !collapsed.value;

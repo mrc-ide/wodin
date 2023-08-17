@@ -37,7 +37,7 @@ describe("Advanced Settings", () => {
     const expectValueAndPlaceholder = (
         input: VueWrapper<any>,
         value: number | null | (number|null)[],
-        defaults: number | number[]
+        defaults: number | number[] | string
     ) => {
         expect(input.props("value")).toStrictEqual(value);
         expect(input.props("placeholder")).toStrictEqual(defaults);
@@ -60,7 +60,7 @@ describe("Advanced Settings", () => {
         expect(labels[1].text()).toBe("Max steps");
         expectValueAndPlaceholder(inputs[0], null, 10000);
         expect(labels[2].text()).toBe("Max step size");
-        expectValueAndPlaceholder(inputs[1], null, Infinity);
+        expectValueAndPlaceholder(inputs[1], null, "");
         expect(labels[3].text()).toBe("Min step size");
         expectValueAndPlaceholder(standardFormInputs[1], [null, null], [1, -8]);
         expect(labels[4].text()).toBe("Critical times");

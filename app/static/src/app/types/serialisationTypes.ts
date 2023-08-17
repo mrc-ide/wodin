@@ -1,11 +1,10 @@
 import {
-    AdvancedOptions,
     OdinModelResponse,
     OdinUserType,
     WodinError
 } from "./responseTypes";
 import {
-    AdSettingCompType,
+    AdvancedSettings,
     ParameterSet, RunUpdateRequiredReasons
 } from "../store/run/state";
 import { OdinFitInputs, OdinRunInputs, OdinSensitivityInputs } from "./wrapperTypes";
@@ -28,14 +27,6 @@ export interface SerialisedRunResult {
     error: WodinError | null
 }
 
-type SerialisedAdvancedConfig = {
-    val: number | null | (number|null)[],
-    defaults: number | string | (number|string)[],
-    type: AdSettingCompType
-}
-
-export type SerialisedAdvancedSettings = Record<AdvancedOptions, SerialisedAdvancedConfig>
-
 export interface SerialisedModelState {
     compileRequired: boolean,
     odinModelResponse: OdinModelResponse | null,
@@ -56,7 +47,7 @@ export interface SerialisedRunState {
     resultOde: SerialisedRunResult | null,
     resultDiscrete: SerialisedRunResult | null,
     parameterSetResults: Dict<SerialisedRunResult | null>,
-    advancedSettings: SerialisedAdvancedSettings
+    advancedSettings: AdvancedSettings
 }
 
 export interface SerialisedSensitivityResult {

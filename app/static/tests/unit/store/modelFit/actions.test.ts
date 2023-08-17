@@ -8,7 +8,7 @@ import { ModelMutation } from "../../../../src/app/store/model/mutations";
 import { RunMutation } from "../../../../src/app/store/run/mutations";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
-import { AdSettingCompType } from "../../../../src/app/store/run/state";
+import { AdvancedComponentType } from "../../../../src/app/store/run/state";
 
 describe("ModelFit actions", () => {
     const mockSimplex = {} as any;
@@ -23,17 +23,17 @@ describe("ModelFit actions", () => {
     const advancedSettings = {
         [AdvancedOptions.tol]: {
             val: [null, null] as [number|null, number|null],
-            defaults: [1, -6],
-            type: AdSettingCompType.stdf as const
+            default: [1, -6] as [number, number],
+            type: AdvancedComponentType.stdf as const
         },
-        [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, type: AdSettingCompType.num as const },
-        [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, type: AdSettingCompType.num as const },
+        [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num as const },
+        [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num as const },
         [AdvancedOptions.stepSizeMin]: {
             val: [null, null] as [number|null, number|null],
-            defaults: [1, -8],
-            type: AdSettingCompType.stdf as const
+            default: [1, -8] as [number, number],
+            type: AdvancedComponentType.stdf as const
         },
-        [AdvancedOptions.tcrit]: { val: [0, "p1", "p2"], defaults: [], type: AdSettingCompType.tag as const }
+        [AdvancedOptions.tcrit]: { val: [0, "p1", "p2"], default: [], type: AdvancedComponentType.tag as const }
     };
     const modelState = mockModelState({
         odin: mockOdin,
@@ -115,7 +115,7 @@ describe("ModelFit actions", () => {
             atol: 0.000001,
             maxSteps: 10000,
             rtol: 0.000001,
-            stepSizeMax: Infinity,
+            stepSizeMax: undefined,
             stepSizeMin: 1e-8,
             tcrit: [0, 1.1, 2.2]
         });

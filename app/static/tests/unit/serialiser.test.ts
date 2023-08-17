@@ -19,7 +19,7 @@ import {
 import { defaultState as defaultGraphSettingsState } from "../../src/app/store/graphSettings/graphSettings";
 import { Language } from "../../src/app/types/languageTypes";
 import { AdvancedOptions } from "../../src/app/types/responseTypes";
-import { AdSettingCompType } from "../../src/app/store/run/state";
+import { AdvancedComponentType } from "../../src/app/store/run/state";
 
 describe("serialise", () => {
     const codeState = {
@@ -113,17 +113,17 @@ describe("serialise", () => {
         advancedSettings: {
             [AdvancedOptions.tol]: {
                 val: [null, null] as [number|null, number|null],
-                defaults: [1, -6],
-                type: AdSettingCompType.stdf as const
+                default: [1, -6] as [number, number],
+                type: AdvancedComponentType.stdf as const
             },
-            [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, type: AdSettingCompType.num as const },
-            [AdvancedOptions.stepSizeMax]: { val: null, defaults: Infinity, type: AdSettingCompType.num as const },
+            [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num as const },
+            [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num as const },
             [AdvancedOptions.stepSizeMin]: {
                 val: [null, null] as [number|null, number|null],
-                defaults: [1, -8],
-                type: AdSettingCompType.stdf as const
+                default: [1, -8] as [number, number],
+                type: AdvancedComponentType.stdf as const
             },
-            [AdvancedOptions.tcrit]: { val: null, defaults: [], type: AdSettingCompType.tag as const }
+            [AdvancedOptions.tcrit]: { val: null, default: [], type: AdvancedComponentType.tag as const }
         }
     };
 
@@ -325,13 +325,12 @@ describe("serialise", () => {
                 error: runState.parameterSetResults["Set 1"].error
             }
         },
-        // serialises Infinity to string because JSON serialises Infinity to null by default
         advancedSettings: {
-            [AdvancedOptions.tol]: { val: [null, null], defaults: [1, -6], type: AdSettingCompType.stdf },
-            [AdvancedOptions.maxSteps]: { val: null, defaults: 10000, type: AdSettingCompType.num },
-            [AdvancedOptions.stepSizeMax]: { val: null, defaults: "Infinity", type: AdSettingCompType.num },
-            [AdvancedOptions.stepSizeMin]: { val: [null, null], defaults: [1, -8], type: AdSettingCompType.stdf },
-            [AdvancedOptions.tcrit]: { val: null, defaults: [], type: AdSettingCompType.tag }
+            [AdvancedOptions.tol]: { val: [null, null], default: [1, -6], type: AdvancedComponentType.stdf },
+            [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num },
+            [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num },
+            [AdvancedOptions.stepSizeMin]: { val: [null, null], default: [1, -8], type: AdvancedComponentType.stdf },
+            [AdvancedOptions.tcrit]: { val: null, default: [], type: AdvancedComponentType.tag }
         }
     };
     const expectedSensitivity = {
