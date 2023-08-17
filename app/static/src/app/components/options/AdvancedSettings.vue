@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container" id="advanced-settings-panel">
         <div class="row my-2" v-for="(config, option) in advancedSettings" :key="option">
             <div class="col-5">
             <label class="col-form-label">{{ option }}</label>
