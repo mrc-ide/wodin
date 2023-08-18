@@ -9,16 +9,18 @@ import { mutations } from "./mutations";
 import { actions } from "./actions";
 import { getters } from "./getters";
 
+export const defaultSensitivityParamSettings = () => ({
+    parameterToVary: null,
+    scaleType: SensitivityScaleType.Arithmetic,
+    variationType: SensitivityVariationType.Percentage,
+    variationPercentage: 10,
+    rangeFrom: 0,
+    rangeTo: 0,
+    numberOfRuns: 10
+});
+
 export const defaultState: SensitivityState = {
-    paramSettings: {
-        parameterToVary: null,
-        scaleType: SensitivityScaleType.Arithmetic,
-        variationType: SensitivityVariationType.Percentage,
-        variationPercentage: 10,
-        rangeFrom: 0,
-        rangeTo: 0,
-        numberOfRuns: 10
-    },
+    paramSettings: defaultSensitivityParamSettings(),
     plotSettings: {
         plotType: SensitivityPlotType.TraceOverTime,
         extreme: SensitivityPlotExtreme.Max,

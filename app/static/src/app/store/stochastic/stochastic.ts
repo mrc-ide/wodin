@@ -15,6 +15,7 @@ import { versions } from "../versions/versions";
 import { graphSettings } from "../graphSettings/graphSettings";
 import { getters } from "../appState/getters";
 import { getStoreModule } from "../../../../translationPackage";
+import {multiSensitivity} from "../multiSensitivity/multiSensitivity";
 
 const language = getStoreModule();
 
@@ -46,6 +47,7 @@ export const storeOptions: StoreOptions<StochasticState> = {
         model,
         run,
         sensitivity,
+        multiSensitivity,
         sessions,
         versions,
         graphSettings,
