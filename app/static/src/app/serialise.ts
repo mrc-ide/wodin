@@ -65,7 +65,8 @@ function serialiseRun(run: RunState): SerialisedRunState {
         parameterSets: run.parameterSets,
         resultOde: serialiseSolutionResult(run.resultOde),
         resultDiscrete: serialiseDiscreteResult(run.resultDiscrete),
-        parameterSetResults: serialisedParameterSetResults
+        parameterSetResults: serialisedParameterSetResults,
+        advancedSettings: run.advancedSettings
     };
 }
 

@@ -5,12 +5,18 @@ import NumericInput from "../../../../src/app/components/options/NumericInput.vu
 const mockTooltipDirective = jest.fn();
 
 describe("NumericInput", () => {
-    const getWrapper = (value: number, maxAllowed = Infinity, minAllowed = -Infinity) => {
+    const getWrapper = (
+        value: number | null,
+        maxAllowed = Infinity,
+        minAllowed = -Infinity,
+        placeholder: string | undefined = undefined
+    ) => {
         return mount(NumericInput, {
             props: {
                 value,
                 maxAllowed,
-                minAllowed
+                minAllowed,
+                placeholder
             },
             global: {
                 directives: { tooltip: mockTooltipDirective }
@@ -130,5 +136,19 @@ describe("NumericInput", () => {
         await wrapper.find("input").trigger("blur");
 
         expectInputToHaveValue(wrapper, "9,999.9");
+    });
+
+    it("renders as expected if value set to null", async () => {
+        const wrapper = getWrapper(10, Infinity, -Infinity, "test placeholder");
+        await nextTick();
+
+        const input = wrapper.find("input");
+        await wrapper.setProps({ value: null });
+        await input.setValue(null);
+
+        expect(input.attributes("placeholder")).toBe("test placeholder");
+        await input.trigger("blur");
+
+        expect((wrapper.vm as any).textValue).toBe("");
     });
 });

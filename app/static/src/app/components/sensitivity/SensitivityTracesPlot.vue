@@ -32,6 +32,7 @@ import { runPlaceholderMessage } from "../../utils";
 import { RunGetter } from "../../store/run/getters";
 import { Dict } from "../../types/utilTypes";
 import { ParameterSet } from "../../store/run/state";
+import { SensitivityMutation } from "../../store/sensitivity/mutations";
 
 export default defineComponent({
     name: "SensitivityTracesPlot",
@@ -175,6 +176,7 @@ export default defineComponent({
                 }
             }
 
+            store.commit(`sensitivity/${SensitivityMutation.SetLoading}`, false);
             return result;
         };
 

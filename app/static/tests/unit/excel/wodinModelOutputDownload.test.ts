@@ -1,28 +1,9 @@
-import { ErrorsMutation } from "../../src/app/store/errors/mutations";
-
-const mockAoaToSheet = jest.fn().mockImplementation((data) => ({ data, type: "aoa" }));
-const mockJsonToSheet = jest.fn().mockImplementation((data) => ({ data, type: "json" }));
-const mockBookNew = jest.fn().mockImplementation(() => ({ sheets: [] } as any));
-const mockBookAppendSheet = jest.fn().mockImplementation((workbook: any, worksheet: any, name: string) => {
-    (workbook as any).sheets.push({ ...worksheet, name });
-});
-const mockWriteFile = jest.fn();
-
-jest.mock("xlsx", () => ({
-    writeFile: (data: string, fileName: string) => mockWriteFile(data, fileName),
-    utils: {
-        aoa_to_sheet: (data: any) => mockAoaToSheet(data),
-        json_to_sheet: (data: any) => mockJsonToSheet(data),
-        book_new: () => mockBookNew(),
-        book_append_sheet: (wb: any, ws: any, name: string) => mockBookAppendSheet(wb, ws, name)
-    }
-}));
-
-/* eslint-disable import/first */
+import { ErrorsMutation } from "../../../src/app/store/errors/mutations";
+import { mockBookNew, mockWriteFile } from "./mocks";
 import {
     mockBasicState, mockFitDataState, mockFitState, mockModelState, mockRunState
-} from "../mocks";
-import { WodinExcelDownload } from "../../src/app/wodinExcelDownload";
+} from "../../mocks";
+import { WodinModelOutputDownload } from "../../../src/app/excel/wodinModelOutputDownload";
 
 const mockSolution = jest.fn().mockImplementation((options) => {
     const x = options.mode === "grid" ? [options.tStart, options.tEnd] : options.times;
@@ -34,7 +15,7 @@ const mockSolution = jest.fn().mockImplementation((options) => {
     return { x, values };
 });
 
-describe("WodinExcelDownload", () => {
+describe("WodinModelOutputDownload", () => {
     const runState = mockRunState({
         resultOde: { solution: mockSolution } as any,
         endTime: 10,
@@ -75,8 +56,8 @@ describe("WodinExcelDownload", () => {
         });
         const commit = jest.fn();
 
-        const sut = new WodinExcelDownload({ rootState, commit } as any, "myFile.xlsx", 101);
-        sut.downloadModelOutput();
+        const sut = new WodinModelOutputDownload({ rootState, commit } as any, "myFile.xlsx", 101);
+        sut.download();
 
         expect(commit).not.toHaveBeenCalled();
         expect(mockBookNew).toHaveBeenCalledTimes(1);
@@ -117,8 +98,8 @@ describe("WodinExcelDownload", () => {
 
         const commit = jest.fn();
 
-        const sut = new WodinExcelDownload({ rootState, commit, rootGetters } as any, "myFile.xlsx", 101);
-        sut.downloadModelOutput();
+        const sut = new WodinModelOutputDownload({ rootState, commit, rootGetters } as any, "myFile.xlsx", 101);
+        sut.download();
 
         expect(commit).not.toHaveBeenCalled();
         expect(mockBookNew).toHaveBeenCalledTimes(1);
@@ -166,8 +147,8 @@ describe("WodinExcelDownload", () => {
         });
         const commit = jest.fn();
 
-        const sut = new WodinExcelDownload({ rootState, commit } as any, "myFile.xlsx", 101);
-        sut.downloadModelOutput();
+        const sut = new WodinModelOutputDownload({ rootState, commit } as any, "myFile.xlsx", 101);
+        sut.download();
 
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(`errors/${ErrorsMutation.AddError}`);

@@ -4,10 +4,11 @@ import { BasicState } from "../src/app/store/basic/state";
 import { FitState } from "../src/app/store/fit/state";
 import { StochasticState } from "../src/app/store/stochastic/state";
 import {
+    AdvancedOptions,
     BatchPars, OdinUserType, ResponseFailure, ResponseSuccess, WodinError
 } from "../src/app/types/responseTypes";
 import { ModelState } from "../src/app/store/model/state";
-import { RunState } from "../src/app/store/run/state";
+import { AdvancedComponentType, RunState } from "../src/app/store/run/state";
 import { CodeState } from "../src/app/store/code/state";
 import { FitDataState } from "../src/app/store/fitData/state";
 import { AppType, VisualisationTab } from "../src/app/store/appState/state";
@@ -75,7 +76,8 @@ export const mockRunState = (state: Partial<RunState> = {}): RunState => {
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         },
         parameterValues: null,
         endTime: 100,
@@ -87,6 +89,13 @@ export const mockRunState = (state: Partial<RunState> = {}): RunState => {
         parameterSetsCreated: 0,
         parameterSets: [],
         parameterSetResults: {},
+        advancedSettings: {
+            [AdvancedOptions.tol]: { val: [null, null], default: [1, -6], type: AdvancedComponentType.stdf },
+            [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num },
+            [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num },
+            [AdvancedOptions.stepSizeMin]: { val: [null, null], default: [1, -8], type: AdvancedComponentType.stdf },
+            [AdvancedOptions.tcrit]: { val: null, default: [], type: AdvancedComponentType.tag }
+        },
         ...state
     };
 };
@@ -138,6 +147,9 @@ export const mockFitDataState = (state:Partial<FitDataState> = {}): FitDataState
 export const mockSensitivityState = (state: Partial<SensitivityState> = {}): SensitivityState => {
     return {
         running: false,
+        loading: false,
+        downloading: false,
+        userSummaryDownloadFileName: "",
         paramSettings: {
             parameterToVary: null,
             scaleType: SensitivityScaleType.Arithmetic,

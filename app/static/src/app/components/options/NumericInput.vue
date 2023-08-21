@@ -4,13 +4,14 @@
          :value="textValue"
          @input="updateValue"
          @blur="formatTextValue(true)"
-         v-tooltip="errorTooltipProps"/>
+         v-tooltip="errorTooltipProps"
+         :placeholder="`${placeholder}`"/>
 </template>
 
 <script lang="ts">
 import { formatLocale } from "d3-format";
 import {
-    defineComponent, ref, onMounted, watch
+    defineComponent, ref, onMounted, watch, PropType
 } from "vue";
 import { ToolTipSettings } from "../../directives/tooltip";
 
@@ -27,8 +28,13 @@ export default defineComponent({
     name: "NumericInput",
     props: {
         value: {
-            type: Number,
+            type: [Number, null] as PropType<number | null>,
             required: true
+        },
+        placeholder: {
+            type: [Number, String],
+            required: false,
+            default: ""
         },
         maxAllowed: {
             type: Number,
@@ -56,7 +62,12 @@ export default defineComponent({
 
         const formatTextValue = (blur?: boolean) => {
             // display value with thousands formats
-            textValue.value = d3Locale.format(",")(props.value);
+            if (props.value !== null) {
+                textValue.value = d3Locale.format(",")(props.value);
+            } else {
+                textValue.value = "";
+            }
+
             if (blur) {
                 errorTooltipProps.content = "";
             }
@@ -99,6 +110,9 @@ export default defineComponent({
 
                 lastNumericValueSet.value = validatedNumeric;
                 emit("update", validatedNumeric);
+            } else if (props.placeholder) {
+                lastNumericValueSet.value = null;
+                emit("update", null);
             }
         };
 

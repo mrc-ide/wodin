@@ -191,7 +191,6 @@ describe("processFitData", () => {
             { a: "9", b: "1" }
         ];
         const result = processFitData(data, "Error occurred");
-        console.log(result);
         expect(result.data).toBe(null);
         expect(result.error).toStrictEqual({
             error: "Error occurred",

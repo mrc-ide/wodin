@@ -2,28 +2,28 @@
   <div>
     <div v-if="open" class="modal-backdrop fade show"></div>
     <div class="modal" :class="{show: open}" :style="style">
-      <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content px-2">
           <div class="modal-header">
-            <h5 class="modal-title">Download Run</h5>
+            <h5 class="modal-title">Download {{ downloadType }}</h5>
           </div>
           <div class="modal-body">
             <div class="row" id="download-file-name">
-              <div class="col-4">
+              <div class="col-3">
                 <label class="col-form-label">File name</label>
               </div>
-              <div class="col-7 pe-0">
+              <div class="col-8 pe-0">
                 <input type="text" class="form-control" :value="fileName" @change="updateUserFileName">
               </div>
               <div class="col-1 ps-0">
                 <label class="col-form-label">.xlsx</label>
               </div>
             </div>
-            <div class="row mt-2" id="download-points">
-              <div class="col-4">
+            <div v-if="includePoints" class="row mt-2" id="download-points">
+              <div class="col-3">
                 <label class="col-form-label">Modelled points</label>
               </div>
-              <div class="col-7 pe-0">
+              <div class="col-8 pe-0">
                 <input type="number" class="form-control" v-model="points">
               </div>
             </div>
@@ -54,8 +54,6 @@ import {
 } from "vue";
 import { useStore } from "vuex";
 import { utc } from "moment";
-import { RunAction } from "../store/run/actions";
-import { RunMutation } from "../store/run/mutations";
 import userMessages from "../userMessages";
 
 export default defineComponent({
@@ -64,8 +62,21 @@ export default defineComponent({
         open: {
             type: Boolean,
             required: true
+        },
+        downloadType: {
+            type: String,
+            required: true
+        },
+        includePoints: {
+            type: Boolean,
+            required: true
+        },
+        userFileName: {
+            type: String,
+            required: true
         }
     },
+    emits: ["update:userFileName", "download", "close"],
     setup(props, { emit }) {
         const store = useStore();
 
@@ -75,24 +86,24 @@ export default defineComponent({
         const points = ref(501);
 
         const appName = computed(() => store.state.appName);
-        const userFileName = computed(() => store.state.run.userDownloadFileName);
 
         const style = computed(() => {
             return { display: props.open ? "block" : "none" };
         });
 
         // Do not allow number of excel rows outside these bounds
-        const canDownload = computed(() => points.value > 0 && points.value <= 50001);
+        const canDownload = computed(() => !props.includePoints || (points.value > 0 && points.value <= 50001));
 
         const generateDefaultFileName = () => {
             const timestamp = utc().local().format("YMMDD-HHmmss");
-            return `${appName.value}-run-${timestamp}`;
+            const type = props.downloadType.toLowerCase().replace(" ", "-");
+            return `${appName.value}-${type}-${timestamp}`;
         };
 
         const updateUserFileName = (event: InputEvent) => {
             const newValue = (event.target as HTMLInputElement).value;
             fileName.value = newValue;
-            store.commit(`run/${RunMutation.SetUserDownloadFileName}`, newValue);
+            emit("update:userFileName", newValue);
         };
 
         const closeModal = () => { emit("close"); };
@@ -104,13 +115,13 @@ export default defineComponent({
             }
             const fileNameWithSuffix = `${fileName.value}.xlsx`;
             const payload = { fileName: fileNameWithSuffix, points: points.value };
-            await store.dispatch(`run/${RunAction.DownloadOutput}`, payload);
+            emit("download", payload);
             closeModal();
         };
 
         watch(() => props.open, (newOpen) => {
             if (newOpen) {
-                fileName.value = userFileName.value || generateDefaultFileName();
+                fileName.value = props.userFileName || generateDefaultFileName();
             }
         });
 

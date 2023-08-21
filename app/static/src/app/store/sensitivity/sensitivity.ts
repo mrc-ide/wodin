@@ -33,7 +33,10 @@ export const defaultState: SensitivityState = {
     },
     result: null,
     parameterSetResults: {},
-    running: false
+    downloading: false,
+    userSummaryDownloadFileName: "",
+    running: false,
+    loading: false
 };
 
 export const sensitivity = {
