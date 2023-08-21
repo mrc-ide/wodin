@@ -13,7 +13,7 @@
     "copy-fonts-serve": "cp -r ../server/public/js/fonts/ ../server/public/",
     "copy-all": "concurrently \"npm run copy-js\" \"npm run copy-bootstrap\" && concurrently \"npm run copy-css \" \"npm run copy-js-map\" \"npm run copy-fonts\"",
     "build": "npm run build-wodin && npm run copy-all",
-    "test:unit": "vue-cli-service test:unit --maxWorkers=30%",
+    "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint --no-fix",
     "lint:fix": "vue-cli-service lint",
     "e2e-test": "npx playwright test",
