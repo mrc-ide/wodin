@@ -86,15 +86,15 @@ describe("Fit Tab", () => {
 
     it("renders as expected when fit is running", () => {
         const wrapper = getWrapper({}, false, false, 5, false, true, 123.45);
-        expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(false);
+        expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(true);
         expect((wrapper.find("#cancel-fit-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         const fitPlot = wrapper.findComponent(FitPlot);
         expect(fitPlot.props("fadePlot")).toBe(false);
         expect(fitPlot.findComponent(VueFeather).exists()).toBe(false);
         expect(fitPlot.findComponent(LoadingSpinner).props("size")).toBe("xs");
-        expect(fitPlot.findAll("span").at(0)!.text()).toBe("Iterations: 5");
-        expect(fitPlot.findAll("span").at(1)!.text()).toBe("Sum of squares: 123.45");
+        expect(fitPlot.findAll("span").at(1)!.text()).toBe("Iterations: 5");
+        expect(fitPlot.findAll("span").at(2)!.text()).toBe("Sum of squares: 123.45");
         expect(fitPlot.find("#fit-cancelled-msg").exists()).toBe(false);
     });
 

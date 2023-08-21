@@ -400,4 +400,61 @@ test.describe("Options Tab tests", () => {
             + "Please choose another set name or name this set back to its original name of 'Set 1'");
         await expect(await page.isVisible(".param-name-input")).toBe(true);
     });
+
+    const fillInAdvancedInputs = async (type: string, advancedSetting: any, index: number) => {
+        switch (type) {
+        case "num": {
+            const input = await advancedSetting.locator("input");
+            await input.fill((index).toString());
+            break;
+        }
+        case "stdf": {
+            const input1 = await advancedSetting.locator(":nth-match(input, 1)");
+            const input2 = await advancedSetting.locator(":nth-match(input, 2)");
+            await input1.fill(`${(index)}`);
+            await input2.fill(`${(-index)}`);
+            break;
+        }
+        case "tag": {
+            const tagInput = await advancedSetting.locator("input");
+            await tagInput.fill((index).toString());
+            await tagInput.press(",");
+            break;
+        }
+        default: break;
+        }
+    };
+
+    const advancedOptions = [
+        { label: "Tolerance", type: "stdf" },
+        { label: "Max steps", type: "num" },
+        { label: "Max step size", type: "num" },
+        { label: "Min step size", type: "stdf" },
+        { label: "Critical times", type: "tag" }
+    ] as const;
+
+    const expectAdvancedSetting = async (page: Page, index: number) => {
+        const advancedSettingPanel = await page.locator("#advanced-settings-panel");
+        await expect(await page.innerText(`:nth-match(#advanced-settings-panel label, ${index + 1})`))
+            .toBe(advancedOptions[index].label);
+        const advancedSetting = await advancedSettingPanel.locator(`:nth-match(.row, ${index + 1})`);
+        await fillInAdvancedInputs(advancedOptions[index].type, advancedSetting, index + 1);
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
+            "Plot is out of date: advanced settings have been changed. Run model to update.", {
+                timeout
+            }
+        );
+        await page.click("#run-btn");
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("");
+    };
+
+    test("can edit and run model with advanced settings", async ({ page }) => {
+        await page.click(":nth-match(.collapse-title, 4)");
+
+        await expectAdvancedSetting(page, 0);
+        await expectAdvancedSetting(page, 1);
+        await expectAdvancedSetting(page, 2);
+        await expectAdvancedSetting(page, 3);
+        await expectAdvancedSetting(page, 4);
+    });
 });

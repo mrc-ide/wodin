@@ -16,6 +16,12 @@
         <vertical-collapse title="Graph Settings" collapse-id="graph-settings">
           <graph-settings></graph-settings>
         </vertical-collapse>
+        <vertical-collapse v-if="!isStochastic"
+                           title="Advanced Settings"
+                           collapse-id="advanced-settings"
+                           :collapsed-default="true">
+          <advanced-settings></advanced-settings>
+        </vertical-collapse>
         <vertical-collapse v-if="!isStochastic" title="Saved Parameter Sets" collapse-id="parameter-sets">
           <parameter-sets></parameter-sets>
         </vertical-collapse>
@@ -34,6 +40,7 @@ import OptimisationOptions from "./OptimisationOptions.vue";
 import { AppType, VisualisationTab } from "../../store/appState/state";
 import GraphSettings from "./GraphSettings.vue";
 import ParameterSets from "./ParameterSets.vue";
+import AdvancedSettings from "./AdvancedSettings.vue";
 
 export default {
     name: "OptionsTab",
@@ -45,7 +52,8 @@ export default {
         RunOptions,
         SensitivityOptions,
         VerticalCollapse,
-        GraphSettings
+        GraphSettings,
+        AdvancedSettings
     },
     setup() {
         const store = useStore();

@@ -1,7 +1,11 @@
 <template>
   <div class="fit-tab">
     <div>
-      <button class="btn btn-primary me-2" id="fit-btn" :disabled="!canFitModel" @click="fitModel">Fit model</button>
+      <loading-button class="btn btn-primary me-2"
+                      id="fit-btn"
+                      :loading="fitting"
+                      :is-disabled="!canFitModel"
+                      @click="fitModel">Fit model</loading-button>
       <button class="btn btn-outline" id="cancel-fit-btn" :disabled="!fitting" @click="cancelFit">Cancel fit</button>
       <action-required-message :message="actionRequiredMessage"></action-required-message>
       <fit-plot :fade-plot="!!actionRequiredMessage" :model-fit="true">
@@ -34,6 +38,7 @@ import LoadingSpinner from "../LoadingSpinner.vue";
 import { ModelFitMutation } from "../../store/modelFit/mutations";
 import { fitRequirementsExplanation, fitUpdateRequiredExplanation } from "./support";
 import { allTrue, anyTrue } from "../../utils";
+import LoadingButton from "../LoadingButton.vue";
 
 export default {
     name: "FitTab",
@@ -41,7 +46,8 @@ export default {
         LoadingSpinner,
         FitPlot,
         ActionRequiredMessage,
-        VueFeather
+        VueFeather,
+        LoadingButton
     },
     setup() {
         const store = useStore();

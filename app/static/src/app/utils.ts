@@ -1,7 +1,12 @@
 import { uid } from "uid";
 import { Dict } from "./types/utilTypes";
 import {
-    BatchPars, OdinModelResponseError, OdinUserType, WodinError
+    AdvancedOptions,
+    AdvancedSettingsOdin,
+    BatchPars,
+    OdinModelResponseError,
+    OdinUserType,
+    WodinError
 } from "./types/responseTypes";
 import userMessages from "./userMessages";
 import settings from "./settings";
@@ -11,6 +16,7 @@ import {
     SensitivityVariationType
 } from "./store/sensitivity/state";
 import { AppState } from "./store/appState/state";
+import { AdvancedComponentType, AdvancedSettings, Tag } from "./store/run/state";
 
 export const freezer = {
     /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -207,4 +213,42 @@ export const anyTrue = (x: Dict<boolean>): boolean => {
 export const runPlaceholderMessage = (selectedVariables: string[], sensitivity: boolean) => {
     const notRunYet = sensitivity ? userMessages.sensitivity.notRunYet : userMessages.run.notRunYet;
     return selectedVariables.length ? notRunYet : userMessages.model.noVariablesSelected;
+};
+
+const extractValuesFromTags = (values: Tag[], paramValues: OdinUserType | null) => {
+    const extracted = values.map((val) => {
+        if (typeof val === "number") {
+            return val;
+        }
+        return paramValues ? paramValues[val] : undefined;
+    });
+    return extracted.filter((x) => x !== undefined) as number[];
+};
+
+export const convertAdvancedSettingsToOdin = (advancedSettings: AdvancedSettings, paramValues: OdinUserType | null) => {
+    const flattenedObject = Object.fromEntries(Object.entries(advancedSettings)
+        .map(([key, value]) => {
+            let cleanVal: number | number[] | null | undefined;
+            if (value.type === AdvancedComponentType.stdf) {
+                const firstValue = value.val[0] !== null ? value.val[0] : value.default[0];
+                const secondValue = value.val[1] !== null ? value.val[1] : value.default[1];
+                cleanVal = firstValue * 10 ** secondValue;
+            } else if (value.type === AdvancedComponentType.num) {
+                cleanVal = value.val !== null ? value.val : value.default;
+            } else {
+                cleanVal = value.val !== null ? extractValuesFromTags(value.val, paramValues) : value.default;
+            }
+            return [key, cleanVal];
+        })) as Record<AdvancedOptions, number>;
+
+    const advancedSettingsOdin: AdvancedSettingsOdin = {
+        atol: flattenedObject[AdvancedOptions.tol],
+        rtol: flattenedObject[AdvancedOptions.tol],
+        maxSteps: flattenedObject[AdvancedOptions.maxSteps],
+        stepSizeMax: flattenedObject[AdvancedOptions.stepSizeMax],
+        stepSizeMin: flattenedObject[AdvancedOptions.stepSizeMin],
+        tcrit: flattenedObject[AdvancedOptions.tcrit]
+    };
+
+    return advancedSettingsOdin;
 };

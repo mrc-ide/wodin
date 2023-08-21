@@ -16,7 +16,7 @@
                   class="btn btn-primary" id="download-btn"
                   :disabled="downloading || !canDownloadOutput"
                   @click="toggleShowDownloadOutput(true)">
-            <vue-feather class="inline-icon" type="download"></vue-feather>
+            <vue-feather size="20"  class="inline-icon" type="download"></vue-feather>
             Download
           </button>
           <div v-if="downloading" id="downloading">
@@ -24,7 +24,12 @@
             Downloading...
           </div>
         </div>
-        <DownloadOutput :open="showDownloadOutput" @close="toggleShowDownloadOutput(false)"></DownloadOutput>
+        <DownloadOutput :open="showDownloadOutput"
+                        :download-type="'Run'"
+                        :include-points="true"
+                        v-model:user-file-name="downloadUserFileName"
+                        @download="download"
+                        @close="toggleShowDownloadOutput(false)"></DownloadOutput>
     </div>
 </template>
 
@@ -32,6 +37,7 @@
 import { useStore } from "vuex";
 import { computed, defineComponent, ref } from "vue";
 import VueFeather from "vue-feather";
+import { RunMutation } from "../../store/run/mutations";
 import RunPlot from "./RunPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { RunAction } from "../../store/run/actions";
@@ -76,6 +82,13 @@ export default defineComponent({
             return hasRunner.value && !!store.state.model.odin && !store.state.model.compileRequired;
         });
 
+        const downloadUserFileName = computed({
+            get: () => store.state.run.userDownloadFileName,
+            set: (newVal) => {
+                store.commit(`run/${RunMutation.SetUserDownloadFileName}`, newVal);
+            }
+        });
+
         const runModel = () => store.dispatch(`run/${RunAction.RunModel}`);
         const updateMsg = computed(() => {
             if (store.state.model.compileRequired) {
@@ -95,6 +108,10 @@ export default defineComponent({
         const canDownloadOutput = computed(() => !updateMsg.value && store.state.run.resultOde?.solution);
         const toggleShowDownloadOutput = (show: boolean) => { showDownloadOutput.value = show; };
 
+        const download = (payload: {fileName: string, points: number}) => store.dispatch(
+            `run/${RunAction.DownloadOutput}`, payload
+        );
+
         return {
             canRunModel,
             isStochastic,
@@ -105,7 +122,9 @@ export default defineComponent({
             sumOfSquares,
             showDownloadOutput,
             canDownloadOutput,
-            toggleShowDownloadOutput
+            downloadUserFileName,
+            toggleShowDownloadOutput,
+            download
         };
     }
 });

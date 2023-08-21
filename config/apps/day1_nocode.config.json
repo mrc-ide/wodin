@@ -1,0 +1,7 @@
+{
+  "appType": "basic",
+  "title": "Day 1 - Basic Mode, no default code",
+  "basicProp": "day1 basic value",
+  "readOnlyCode": false,
+  "stateUploadIntervalMillis": 2000
+}

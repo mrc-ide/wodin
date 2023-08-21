@@ -9,15 +9,19 @@ import { RunAction } from "../run/actions";
 import userMessages from "../../userMessages";
 import { OdinSensitivityResult } from "../../types/wrapperTypes";
 import {
-    Batch, BatchPars, Odin, OdinRunnerDiscrete, OdinRunnerOde
+    Batch, BatchPars, Odin, OdinRunnerDiscrete, OdinRunnerOde, OdinUserType
 } from "../../types/responseTypes";
 import { ModelGetter } from "../model/getters";
 import { Dict } from "../../types/utilTypes";
+import { AdvancedSettings } from "../run/state";
+import { convertAdvancedSettingsToOdin } from "../../utils";
+import { WodinSensitivitySummaryDownload } from "../../excel/wodinSensitivitySummaryDownload";
 
 export enum SensitivityAction {
     RunSensitivity = "RunSensitivity",
     RunSensitivityOnRehydrate = "RunSensitivityOnRehydrate",
-    ComputeNext = "ComputeNext"
+    ComputeNext = "ComputeNext",
+    DownloadSummary = "DownloadSummary"
 }
 
 const runModelIfRequired = (rootState: AppState, dispatch: Dispatch) => {
@@ -30,8 +34,11 @@ const runModelIfRequired = (rootState: AppState, dispatch: Dispatch) => {
 const batchRunOde = (runner: OdinRunnerOde,
     odin: Odin,
     pars: BatchPars,
-    endTime: number): Batch => {
-    const batch = runner.batchRun(odin, pars, 0, endTime, {});
+    endTime: number,
+    advancedSettings: AdvancedSettings,
+    paramValues: OdinUserType | null): Batch => {
+    const advancedSettingsOdin = convertAdvancedSettingsToOdin(advancedSettings, paramValues);
+    const batch = runner.batchRun(odin, pars, 0, endTime, advancedSettingsOdin);
     return batch;
 };
 
@@ -68,10 +75,13 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
             error: null
         };
         runModelIfRequired(rootState, dispatch);
+
+        const { advancedSettings, parameterValues } = rootState.run;
+
         try {
             const batch = isStochastic
                 ? batchRunDiscrete(odinRunnerDiscrete!, odin, batchPars, endTime, dt!, replicates, dispatch, commit)
-                : batchRunOde(odinRunnerOde!, odin, batchPars, endTime);
+                : batchRunOde(odinRunnerOde!, odin, batchPars, endTime, advancedSettings, parameterValues);
             payload.batch = batch;
         } catch (e: unknown) {
             payload.error = {
@@ -93,7 +103,14 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
                 };
                 const setBatchPars = parameterSetBatchPars[name];
                 try {
-                    setResult.batch = batchRunOde(odinRunnerOde!, odin, setBatchPars, endTime);
+                    setResult.batch = batchRunOde(
+                        odinRunnerOde!,
+                        odin,
+                        setBatchPars,
+                        endTime,
+                        advancedSettings,
+                        parameterValues
+                    );
                 } catch (e: unknown) {
                     setResult.error = {
                         error: userMessages.errors.wodinSensitivityError,
@@ -147,5 +164,15 @@ export const actions: ActionTree<SensitivityState, AppState> = {
                 dispatch(SensitivityAction.ComputeNext, batch);
             }, 0);
         }
+    },
+
+    [SensitivityAction.DownloadSummary](context, filename: string) {
+        const { commit } = context;
+        commit(SensitivityMutation.SetDownloading, true);
+        setTimeout(() => {
+            new WodinSensitivitySummaryDownload(context, filename)
+                .download();
+            commit(SensitivityMutation.SetDownloading, false);
+        }, 5);
     }
 };

@@ -3,14 +3,15 @@ import VueFeather from "vue-feather";
 import VerticalCollapse from "../../../src/app/components/VerticalCollapse.vue";
 
 describe("VerticalCollapse", () => {
-    const getWrapper = () => {
+    const getWrapper = (collapsedDefault = false) => {
         return shallowMount(VerticalCollapse, {
             slots: {
                 default: "<h1>TEST SLOT CONTENT</h1>"
             },
             props: {
                 title: "Test Title",
-                collapseId: "test-collapse-id"
+                collapseId: "test-collapse-id",
+                collapsedDefault
             }
         });
     };
@@ -35,5 +36,10 @@ describe("VerticalCollapse", () => {
         expect(collapse.findComponent(VueFeather).props("type")).toBe("chevron-down");
         await collapse.trigger("click");
         expect(collapse.findComponent(VueFeather).props("type")).toBe("chevron-up");
+    });
+
+    it("initially renders as collapsed if prop set to true", () => {
+        const wrapper = getWrapper(true);
+        expect(wrapper.find("div.collapse").classes()).toStrictEqual(["collapse"]);
     });
 });
