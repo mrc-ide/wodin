@@ -1,8 +1,8 @@
 import { Store } from "vuex";
 import { computed } from "vue";
-import { AppState } from "../../store/appState/state";
+import {AppState, VisualisationTab} from "../../store/appState/state";
 
-export default (store: Store<AppState>, nonHelpTabNames: string[]) => {
+export default (store: Store<AppState>, fixedTabNames: string[]) => {
     const helpTabName = computed(() => {
         if (store.state.config?.help?.markdown?.length) {
             return store.state.config.help.tabName || "Explanation"; // default if markdown but no tab name
@@ -10,8 +10,14 @@ export default (store: Store<AppState>, nonHelpTabNames: string[]) => {
         // do not show tab if no markdown
         return null;
     });
+    const multiSensitivityTabName = computed(() => {
+        return store.state.config?.multiSensitivity ? VisualisationTab.MultiSensitivity : null;
+    });
     const rightTabNames = computed(() => {
-        const result = [...nonHelpTabNames];
+        const result = [...fixedTabNames];
+        if (multiSensitivityTabName.value) {
+            result.push(multiSensitivityTabName.value);
+        }
         if (helpTabName.value) {
             result.unshift(helpTabName.value);
         }
@@ -20,6 +26,7 @@ export default (store: Store<AppState>, nonHelpTabNames: string[]) => {
 
     return {
         helpTabName,
+        multiSensitivityTabName,
         rightTabNames
     };
 };

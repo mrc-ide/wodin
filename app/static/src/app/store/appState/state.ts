@@ -16,7 +16,8 @@ export enum AppType {
 export enum VisualisationTab {
     Run = "Run",
     Fit = "Fit",
-    Sensitivity = "Sensitivity"
+    Sensitivity = "Sensitivity",
+    MultiSensitivity = "Multi-sensitivity"
 }
 
 export interface AppState {

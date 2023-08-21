@@ -19,6 +19,14 @@ export const defaultSensitivityParamSettings = () => ({
     numberOfRuns: 10
 });
 
+export const noSensitivityUpdateRequired = () => ({
+    modelChanged: false,
+    parameterValueChanged: false,
+    endTimeChanged: false,
+    sensitivityOptionsChanged: false,
+    numberOfReplicatesChanged: false
+});
+
 export const defaultState: SensitivityState = {
     paramSettings: defaultSensitivityParamSettings(),
     plotSettings: {
@@ -26,13 +34,7 @@ export const defaultState: SensitivityState = {
         extreme: SensitivityPlotExtreme.Max,
         time: null
     },
-    sensitivityUpdateRequired: {
-        modelChanged: false,
-        parameterValueChanged: false,
-        endTimeChanged: false,
-        sensitivityOptionsChanged: false,
-        numberOfReplicatesChanged: false
-    },
+    sensitivityUpdateRequired: noSensitivityUpdateRequired(),
     result: null,
     parameterSetResults: {},
     downloading: false,
