@@ -27,7 +27,7 @@
       {{compileModelMessage}}
     </div>
   </vertical-collapse>
-  <!--<edit-param-settings :open="editOpen" @close="toggleEdit(false)"></edit-param-settings>-->
+  <sensitivity-param-settings-modal :open="editOpen" @close="toggleEdit(false)"></sensitivity-param-settings-modal>
 </template>
 
 <script lang="ts">
@@ -35,10 +35,10 @@ import { useStore } from "vuex";
 import { computed, defineComponent, ref } from "vue";
 import userMessages from "../../userMessages";
 import VerticalCollapse from "../VerticalCollapse.vue";
-import EditParamSettings from "./EditParamSettings.vue";
 import { SensitivityGetter } from "../../store/sensitivity/getters";
 import SensitivityParamValues from "./SensitivityParamValues.vue";
 import SensitivityPlotOptions from "./SensitivityPlotOptions.vue";
+import SensitivityParamSettingsModal from "./SensitivityParamSettingsModal.vue";
 
 export default defineComponent({
     name: "SensitivityOptions",
@@ -52,7 +52,7 @@ export default defineComponent({
         SensitivityParamValues,
         SensitivityPlotOptions,
         VerticalCollapse,
-        EditParamSettings
+        SensitivityParamSettingsModal
     },
     setup(props) {
         const store = useStore();

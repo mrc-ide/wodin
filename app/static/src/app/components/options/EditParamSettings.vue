@@ -1,5 +1,5 @@
 <template>
-  <div class="row" id="edit-param-to-vary">
+    <div class="row" id="edit-param-to-vary">
        <div class="col-6">
          <label class="col-form-label">Parameter to vary</label>
        </div>
@@ -9,7 +9,7 @@
          </select>
        </div>
      </div>
-     <div class="row mt-2" id="edit-scale-type">
+    <div class="row mt-2" id="edit-scale-type">
        <div class="col-6">
          <label class="col-form-label">Scale type</label>
        </div>
@@ -83,15 +83,13 @@
       </div>
     </div>
     <sensitivity-param-values :batch-pars="batchPars"></sensitivity-param-values>
-  </div>
 </template>
 
 <script lang="ts">
 import {
-  computed, defineComponent, PropType, reactive, watch
+  computed, defineComponent, PropType, reactive, watch, defineEmits
 } from "vue";
 import { useStore } from "vuex";
-import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import {
     SensitivityParameterSettings,
     SensitivityScaleType,
@@ -101,7 +99,6 @@ import NumericInput from "./NumericInput.vue";
 import SensitivityParamValues from "./SensitivityParamValues.vue";
 import { generateBatchPars } from "../../utils";
 import ErrorInfo from "../ErrorInfo.vue";
-import {WodinError} from "@/app/types/responseTypes";
 
 export default defineComponent({
     name: "EditParamSettings",
@@ -111,18 +108,15 @@ export default defineComponent({
           required: true
         }
     },
+    emits: ["update", "batchParsErrorChange"],
     components: {
         ErrorInfo,
         NumericInput,
         SensitivityParamValues
     },
     setup(props, { emit }) {
-        defineEmits<{
-          (e: "update", payload: SensitivityParameterSettings): void,
-          (e: "batchParsErrorChanged", payload: WodinError | null): void
-        }>();
         const store = useStore();
-        const settingsInternal = reactive({...props.settings} as SensitivityParameterSettings);
+        const settingsInternal = reactive({...props.settings});
 
         const paramNames = computed(() => {
             return store.state.run.parameterValues ? Object.keys(store.state.run.parameterValues) : [];
