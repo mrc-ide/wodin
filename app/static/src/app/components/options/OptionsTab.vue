@@ -1,6 +1,7 @@
 <template>
     <div>
-        <sensitivity-options v-if="sensitivityOpen"></sensitivity-options>
+        <sensitivity-options v-if="sensitivityOpen || multiSensitivityOpen"
+                             :multi-sensitivity="multiSensitivityOpen"></sensitivity-options>
         <vertical-collapse v-if="isFit" title="Link" collapse-id="link-data">
           <link-data></link-data>
         </vertical-collapse>
@@ -53,12 +54,14 @@ export default {
         const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
 
         const sensitivityOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Sensitivity);
+        const multiSensitivityOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.MultiSensitivity);
         const fitTabIsOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Fit);
 
         return {
             isFit,
             isStochastic,
             sensitivityOpen,
+            multiSensitivityOpen,
             fitTabIsOpen
         };
     }
