@@ -1,29 +1,40 @@
 <template>
-    <div :class="isDragging ? 'drag-overlay' : 'drag-overlay-hidden'">
-        <div class="divider-line-left"></div>
-        <div class="divider-line-right"></div>
-    </div>
-    <div :class="modeClass">
-        <div class="wodin-left" :style="optionsWidth">
-            <span class="wodin-collapse-controls">
-                <span @mousedown="handleDragStart" @mouseup="handleDragEnd" id="resize-panel-control">
-                    <vue-feather type="maximize-2"
-                                 style="transform: rotate(45deg); color: grey;"></vue-feather>
+    <div :class="dragStart !== null ? 'show-drag-cursor' : ''">
+        <div :class="modeClass">
+            <div class="wodin-left" :style="optionsWidth">
+                <span class="wodin-collapse-controls">
+                    <span @mousedown="handleDragStartIcon" @mouseup="handleDragEnd" id="resize-panel-control">
+                        <vue-feather type="maximize-2"
+                                    style="transform: rotate(45deg); color: grey;"></vue-feather>
+                    </span>
                 </span>
-            </span>
-            <div class="view-left" @click="openCollapsedView">
-                View Options
+                <div v-show="hidePanelMode === HidePanelContent.Left"
+                    @click="openCollapsedView"
+                    class="view-left"
+                    :class="mode === PanelsMode.Right ? 'view-left-collapsed' : 'view-left-expand'">
+                    View Options
+                </div>
+                <div v-show="hidePanelMode !== HidePanelContent.Left"
+                    class="wodin-content"
+                    id="wodin-content-left">
+                    <slot name="left"></slot>
+                </div>
             </div>
-            <div class="wodin-content" id="wodin-content-left">
-                <slot name="left"></slot>
-            </div>
-        </div>
-        <div class="wodin-right" :style="chartsWidth">
-            <div class="view-right" @click="openCollapsedView">
-                View Charts
-            </div>
-            <div class="wodin-content p-2" id="wodin-content-right">
-                <slot name="right"></slot>
+            <div class="wodin-right" :style="chartsWidth">
+                <div class="edge-resize"
+                    @mousedown="handleDragStartEdge"
+                    @mouseup="handleDragEnd"></div>
+                <div v-show="hidePanelMode === HidePanelContent.Right"
+                    @click="openCollapsedView"
+                    class="view-right"
+                    :class="mode === PanelsMode.Left ? 'view-right-collapsed' : 'view-right-expand'">
+                    View Charts
+                </div>
+                <div v-show="hidePanelMode !== HidePanelContent.Right"
+                    class="wodin-content p-2"
+                    id="wodin-content-right">
+                    <slot name="right"></slot>
+                </div>
             </div>
         </div>
     </div>
@@ -38,6 +49,14 @@ export enum PanelsMode {
     Left, Right, Both
 }
 
+export enum HidePanelContent {
+    Left, Right, None
+}
+
+enum DragStart {
+    Icon, Edge
+}
+
 type WidthStyle = {
     width?: string
 }
@@ -48,6 +67,16 @@ export default defineComponent({
         VueFeather
     },
     setup() {
+        const windowWidth = computed(() => window.innerWidth);
+        // different snap tolerance because the plot does not look
+        // good with width of windowWidth / 8
+        const widthToleranceLeft = windowWidth.value / 8;
+        const widthToleranceRight = windowWidth.value / 4;
+        const windowBoundaryLeft = widthToleranceLeft;
+        const windowBoundaryRight = windowWidth.value - widthToleranceRight;
+        const snapToleranceLeft = windowWidth.value / 25;
+        const snapToleranceRight = windowWidth.value - windowWidth.value / 13;
+
         const mode = ref<PanelsMode>(PanelsMode.Both);
         const modeClassMap: Record<PanelsMode, string> = {
             [PanelsMode.Both]: "wodin-mode-both",
@@ -59,7 +88,9 @@ export default defineComponent({
 
         const optionsWidth = ref<WidthStyle>({});
         const chartsWidth = ref<WidthStyle>({});
-        const isDragging = ref<boolean>(false);
+        const dragStart = ref<DragStart | null>(null);
+
+        const hidePanelMode = ref<HidePanelContent>(HidePanelContent.None);
 
         const getTouchEvent = (event: Event) => {
             return (event as TouchEvent).touches?.length > 0 ? (event as TouchEvent).touches[0] : event;
@@ -83,13 +114,31 @@ export default defineComponent({
 
         const handleDragMove = (event: Event) => {
             const { clientX } = getTouchEvent(event) as MouseEvent | Touch;
-            const windowWidth = window.innerWidth;
-            // different snap tolerance because the plot does not look
-            // good with width of windowWidth / 8
-            const widthToleranceLeft = windowWidth / 8;
-            const widthToleranceRight = windowWidth / 4;
-            const windowBoundaryLeft = widthToleranceLeft;
-            const windowBoundaryRight = windowWidth - widthToleranceRight;
+
+            if (clientX > snapToleranceRight) {
+                mode.value = PanelsMode.Left;
+            } else if (clientX < snapToleranceLeft) {
+                mode.value = PanelsMode.Right;
+            } else if (clientX > windowBoundaryRight) {
+                mode.value = PanelsMode.Both;
+                hidePanelMode.value = HidePanelContent.Right;
+            } else if (clientX < windowBoundaryLeft) {
+                mode.value = PanelsMode.Both;
+                hidePanelMode.value = HidePanelContent.Left;
+            } else {
+                mode.value = PanelsMode.Both;
+                hidePanelMode.value = HidePanelContent.None;
+            }
+
+            optionsWidth.value.width = `calc(${clientX}px + ${dragStart.value === DragStart.Icon ? 1.4 : -1}rem)`;
+            chartsWidth.value.width = `calc(100vw - ${clientX}px - ${dragStart.value === DragStart.Icon ? 5 : 7.4}rem)`;
+            event.preventDefault();
+        };
+
+        const handleDragEnd = (event: Event) => {
+            dragStart.value = null;
+
+            const { clientX } = getTouchEvent(event) as MouseEvent | Touch;
 
             if (clientX > windowBoundaryRight) {
                 mode.value = PanelsMode.Left;
@@ -99,24 +148,28 @@ export default defineComponent({
                 mode.value = PanelsMode.Both;
             }
 
-            optionsWidth.value.width = `calc(${clientX}px + 1.4rem)`;
-            chartsWidth.value.width = `calc(100vw - ${clientX}px - 5rem)`;
-            event.preventDefault();
-        };
-
-        const handleDragEnd = () => {
-            isDragging.value = false;
             removeDragListeners(handleDragMove, handleDragEnd);
         };
+
         const handleDragStart = () => {
-            isDragging.value = true;
             addDragListeners(handleDragMove, handleDragEnd);
+        };
+
+        const handleDragStartEdge = () => {
+            dragStart.value = DragStart.Edge;
+            handleDragStart();
+        };
+
+        const handleDragStartIcon = () => {
+            dragStart.value = DragStart.Icon;
+            handleDragStart();
         };
 
         const openCollapsedView = () => {
             optionsWidth.value.width = "30%";
             chartsWidth.value.width = "70%";
             mode.value = PanelsMode.Both;
+            hidePanelMode.value = HidePanelContent.None;
         };
 
         return {
@@ -128,7 +181,12 @@ export default defineComponent({
             handleDragEnd,
             openCollapsedView,
             handleDragMove,
-            isDragging
+            hidePanelMode,
+            HidePanelContent,
+            PanelsMode,
+            handleDragStartEdge,
+            handleDragStartIcon,
+            dragStart
         };
     }
 });
@@ -147,36 +205,18 @@ export default defineComponent({
     $widthToleranceLeft: calc(100% / 8);
     $widthToleranceRight: calc(100% - calc(100% / 4));
 
-    .drag-overlay {
-        position: fixed;
-        background-color: rgba($color: #000000, $alpha: 0.25);
-        z-index: 9999;
-        width: 100vw;
-        max-width: 100%;
-        height: 100vh;
+    .show-drag-cursor {
+        cursor: col-resize !important;
+    }
+
+    .edge-resize {
         left: 0;
-        top: 0;
-        margin-top: 3.5rem;
+        position: absolute;
+        height: 100%;
+        width: 6px;
+    }
+    .edge-resize:hover {
         cursor: col-resize;
-    }
-
-    .drag-overlay-hidden {
-        position: fixed;
-        visibility: hidden;
-    }
-
-    .divider-line-left {
-        position: fixed;
-        border-left: 5px dashed #fff;
-        height: 100%;
-        left: $widthToleranceLeft
-    }
-
-    .divider-line-right {
-        position: fixed;
-        border-left: 5px dashed #fff;
-        height: 100%;
-        left: $widthToleranceRight
     }
 
     .wodin-left, .wodin-right {
@@ -184,6 +224,7 @@ export default defineComponent({
         height: $fullHeight;
         overflow-y: auto;
         overflow-x: hidden;
+        position: relative;
     }
 
     .wodin-left {
@@ -197,14 +238,23 @@ export default defineComponent({
         cursor: pointer;
         width: 10rem;
         color: $dark-grey;
+        transform: rotate(90deg);
     }
 
-    .view-left {
-        transform: rotate(90deg) translate(6rem, 2.7rem);
+    .view-left-expand {
+        position: absolute;
+        right: -2.7rem;
+        top: 7rem
+    }
+
+    .view-left-collapsed {
+        position: absolute;
+        right: -2.7rem;
+        top: 7rem
     }
 
     .view-right {
-        transform: rotate(90deg) translate(6rem, 4rem);
+        translate: -4rem 7rem;
     }
 
     .wodin-mode-left {
@@ -218,10 +268,6 @@ export default defineComponent({
         .wodin-left {
             width: calc(100% - 3.5rem) !important;
         }
-
-        .view-left {
-            display: none;
-        }
     }
 
     .wodin-mode-both {
@@ -231,10 +277,6 @@ export default defineComponent({
 
         .wodin-right {
             width: $rightBothModeWidth
-        }
-
-        .view-left, .view-right {
-            display: none;
         }
     }
 
@@ -248,10 +290,6 @@ export default defineComponent({
 
         .wodin-right {
             width: calc(100% - 3.5rem) !important;
-        }
-
-        .view-right {
-            display: none;
         }
     }
 

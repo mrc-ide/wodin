@@ -12,8 +12,12 @@ test.describe("Wodin App panels tests", () => {
 
     // playwright default screen size is 1280x720
     const windowWidth = 1280;
-    const rightBoundary = windowWidth - windowWidth / 4;
-    const leftBoundary = windowWidth / 8;
+    const widthToleranceLeft = windowWidth / 8;
+    const widthToleranceRight = windowWidth / 4;
+    const leftBoundary = widthToleranceLeft;
+    const rightBoundary = windowWidth - widthToleranceRight;
+    const snapToleranceLeft = windowWidth / 25;
+    const snapToleranceRight = windowWidth - windowWidth / 13;
 
     const expectBothMode = async (page: Page) => {
         await expect(await page.innerText(".wodin-mode-both .wodin-left .wodin-content .nav-tabs .active"))
@@ -22,6 +26,31 @@ test.describe("Wodin App panels tests", () => {
         await expect(await page.locator(".wodin-collapse-controls #resize-panel-control")).toBeVisible();
         await expect(await page.locator(".wodin-left .view-left").isHidden()).toBe(true);
         await expect(await page.locator(".wodin-right .view-right").isHidden()).toBe(true);
+        await expect(await page.locator("#wodin-content-right").isHidden()).toBe(false);
+        await expect(await page.locator("#wodin-content-left").isHidden()).toBe(false);
+    };
+
+    const expectBothModeLeftHidden = async (page: Page) => {
+        await expect(await page.innerText(".wodin-mode-both .wodin-left .wodin-content .nav-tabs .active"))
+            .toBe("Code");
+        await expect(await page.locator(".wodin-mode-both .wodin-right .wodin-content .js-plotly-plot")).toBeVisible();
+        await expect(await page.locator(".wodin-collapse-controls #resize-panel-control")).toBeVisible();
+        await expect(await page.locator(".wodin-left .view-left").isHidden()).toBe(false);
+        await expect(await page.locator(".wodin-right .view-right").isHidden()).toBe(true);
+        await expect(await page.locator("#wodin-content-left").isHidden()).toBe(true);
+        await expect(await page.locator("#wodin-content-right").isHidden()).toBe(false);
+    };
+
+    const expectBothModeRightHidden = async (page: Page) => {
+        await expect(await page.innerText(".wodin-mode-both .wodin-left .wodin-content .nav-tabs .active"))
+            .toBe("Code");
+        await expect(await page.locator(".wodin-mode-both .wodin-right .wodin-content .js-plotly-plot").isHidden())
+            .toBe(true);
+        await expect(await page.locator(".wodin-collapse-controls #resize-panel-control")).toBeVisible();
+        await expect(await page.locator(".wodin-left .view-left").isHidden()).toBe(true);
+        await expect(await page.locator(".wodin-right .view-right").isHidden()).toBe(false);
+        await expect(await page.locator("#wodin-content-left").isHidden()).toBe(false);
+        await expect(await page.locator("#wodin-content-right").isHidden()).toBe(true);
     };
 
     const expectRightMode = async (page: Page) => {
@@ -45,7 +74,7 @@ test.describe("Wodin App panels tests", () => {
         y:number
     }
 
-    const dragTo = async (page: Page, locatorToDrag: Locator, locatorDragTarget: Point) => {
+    const dragTo = async (page: Page, locatorToDrag: Locator, locatorDragTarget: Point, mouseUp = true) => {
         const toDragBox = await locatorToDrag.boundingBox();
 
         await page.mouse.move(
@@ -57,7 +86,9 @@ test.describe("Wodin App panels tests", () => {
             locatorDragTarget.x,
             locatorDragTarget.y
         );
-        await page.mouse.up();
+        if (mouseUp) {
+            await page.mouse.up();
+        }
     };
 
     test("can collapse and expand left panel", async ({ page }) => {
@@ -66,6 +97,27 @@ test.describe("Wodin App panels tests", () => {
 
         await dragTo(page, panelResizer, { x: leftBoundary, y: 0 });
         await expectBothMode(page);
+
+        await dragTo(page, panelResizer, { x: leftBoundary - 1, y: 0 }, false);
+        await expectBothModeLeftHidden(page);
+
+        // beyond collapse boundary so panel should collapse
+        await dragTo(page, panelResizer, { x: leftBoundary - 1, y: 0 });
+        await expectRightMode(page);
+
+        await dragTo(page, panelResizer, { x: leftBoundary, y: 0 });
+        await expectBothMode(page);
+    });
+
+    test("can collapse and expand left panel using edge resizer", async ({ page }) => {
+        await expectBothMode(page);
+        const panelResizer = page.locator(".edge-resize");
+
+        await dragTo(page, panelResizer, { x: leftBoundary, y: 0 });
+        await expectBothMode(page);
+
+        await dragTo(page, panelResizer, { x: leftBoundary - 1, y: 0 }, false);
+        await expectBothModeLeftHidden(page);
 
         // beyond collapse boundary so panel should collapse
         await dragTo(page, panelResizer, { x: leftBoundary - 1, y: 0 });
@@ -81,6 +133,27 @@ test.describe("Wodin App panels tests", () => {
 
         await dragTo(page, panelResizer, { x: rightBoundary, y: 0 });
         await expectBothMode(page);
+
+        await dragTo(page, panelResizer, { x: rightBoundary + 1, y: 0 }, false);
+        await expectBothModeRightHidden(page);
+
+        // beyond collapse boundary so panel should collapse
+        await dragTo(page, panelResizer, { x: rightBoundary + 1, y: 0 });
+        await expectLeftMode(page);
+
+        await dragTo(page, panelResizer, { x: rightBoundary, y: 0 });
+        await expectBothMode(page);
+    });
+
+    test("can collapse and expand right panel using edge resizer", async ({ page }) => {
+        await expectBothMode(page);
+        const panelResizer = page.locator(".edge-resize");
+
+        await dragTo(page, panelResizer, { x: rightBoundary, y: 0 });
+        await expectBothMode(page);
+
+        await dragTo(page, panelResizer, { x: rightBoundary + 1, y: 0 }, false);
+        await expectBothModeRightHidden(page);
 
         // beyond collapse boundary so panel should collapse
         await dragTo(page, panelResizer, { x: rightBoundary + 1, y: 0 });

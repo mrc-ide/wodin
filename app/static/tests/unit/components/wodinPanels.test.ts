@@ -9,12 +9,28 @@ enum PanelsMode {
     Left, Right, Both
 }
 
+const modeClassMap: Record<PanelsMode, string> = {
+    [PanelsMode.Both]: "wodin-mode-both",
+    [PanelsMode.Left]: "wodin-mode-left",
+    [PanelsMode.Right]: "wodin-mode-right"
+};
+
+enum HidePanelContent {
+    Left, Right, None
+}
+
+enum DragStart {
+    Icon, Edge
+}
+
 // vue test utils window width
 const windowWidth = 1024;
 const widthToleranceLeft = windowWidth / 8;
 const widthToleranceRight = windowWidth / 4;
 const windowBoundaryLeft = widthToleranceLeft;
 const windowBoundaryRight = windowWidth - widthToleranceRight;
+const snapToleranceLeft = windowWidth / 25;
+const snapToleranceRight = windowWidth - windowWidth / 13;
 
 const mockPreventDefault = jest.fn();
 
@@ -42,32 +58,43 @@ describe("WodinPanels", () => {
     const expectDragMoveResult = (
         wrapper: VueWrapper,
         expectedMode: PanelsMode,
+        expectedHideContent: HidePanelContent,
         expectedPreventDefault: number,
+        dragStart: DragStart,
         position: number | null = null
     ) => {
         const {
             mode,
             modeClass,
             optionsWidth,
-            chartsWidth
+            chartsWidth,
+            hidePanelMode
         } = (wrapper.vm as any);
-        const modeClassMap: Record<PanelsMode, string> = {
-            [PanelsMode.Both]: "wodin-mode-both",
-            [PanelsMode.Left]: "wodin-mode-left",
-            [PanelsMode.Right]: "wodin-mode-right"
-        };
         expect(mode).toBe(expectedMode);
         expect(modeClass).toBe(modeClassMap[expectedMode]);
+        expect(hidePanelMode).toBe(expectedHideContent);
         if (position) {
-            expect(optionsWidth).toStrictEqual({ width: `calc(${position}px + 1.4rem)` });
-            expect(chartsWidth).toStrictEqual({ width: `calc(100vw - ${position}px - 5rem)` });
+            expect(optionsWidth)
+                .toStrictEqual({ width: `calc(${position}px + ${dragStart === DragStart.Icon ? 1.4 : -1}rem)` });
+            expect(chartsWidth)
+                .toStrictEqual({ width: `calc(100vw - ${position}px - ${dragStart === DragStart.Icon ? 5 : 7.4}rem)` });
         }
         expect(mockPreventDefault).toBeCalledTimes(expectedPreventDefault);
     };
 
-    beforeEach(() => {
-        jest.resetAllMocks();
-    });
+    const expectDragMoveEndResult = (
+        wrapper: VueWrapper,
+        expectedMode: PanelsMode
+    ) => {
+        const {
+            mode,
+            modeClass,
+            dragStart
+        } = (wrapper.vm as any);
+        expect(mode).toBe(expectedMode);
+        expect(modeClass).toBe(modeClassMap[expectedMode]);
+        expect(dragStart).toBe(null);
+    };
 
     const mouseMove = (wrapper: VueWrapper, position: number) => {
         (wrapper.vm as any).handleDragMove({
@@ -82,6 +109,58 @@ describe("WodinPanels", () => {
             preventDefault: mockPreventDefault
         });
     };
+
+    const mouseMoveEnd = (wrapper: VueWrapper, position: number) => {
+        (wrapper.vm as any).handleDragEnd({
+            clientX: position,
+            preventDefault: mockPreventDefault
+        });
+    };
+
+    const touchMoveEnd = (wrapper: VueWrapper, position: number) => {
+        (wrapper.vm as any).handleDragEnd({
+            touches: [{ clientX: position }],
+            preventDefault: mockPreventDefault
+        });
+    };
+
+    const expectResizeBoundaries = (dragStart: DragStart, moveType: typeof mouseMove | typeof touchMove) => {
+        const wrapper = getWrapper();
+        (wrapper.vm as any).dragStart = dragStart;
+        expectDragMoveResult(wrapper, PanelsMode.Both, HidePanelContent.None, 0, dragStart);
+        moveType(wrapper, windowBoundaryLeft);
+        expectDragMoveResult(wrapper, PanelsMode.Both, HidePanelContent.None, 1, dragStart, windowBoundaryLeft);
+        moveType(wrapper, windowBoundaryLeft - 1);
+        expectDragMoveResult(wrapper, PanelsMode.Both, HidePanelContent.Left, 2, dragStart, windowBoundaryLeft - 1);
+        moveType(wrapper, snapToleranceLeft - 1);
+        expectDragMoveResult(wrapper, PanelsMode.Right, HidePanelContent.Left, 3, dragStart, snapToleranceLeft - 1);
+        moveType(wrapper, windowBoundaryRight);
+        expectDragMoveResult(wrapper, PanelsMode.Both, HidePanelContent.None, 4, dragStart, windowBoundaryRight);
+        moveType(wrapper, windowBoundaryRight + 1);
+        expectDragMoveResult(wrapper, PanelsMode.Both, HidePanelContent.Right, 5, dragStart, windowBoundaryRight + 1);
+        moveType(wrapper, snapToleranceRight + 1);
+        expectDragMoveResult(wrapper, PanelsMode.Left, HidePanelContent.Right, 6, snapToleranceRight + 1);
+    };
+
+    const expectResizeBoundariesEnd = (moveType: typeof mouseMoveEnd | typeof touchMoveEnd) => {
+        const wrapper = getWrapper();
+        const dragStart = DragStart.Edge;
+        (wrapper.vm as any).dragStart = dragStart;
+        moveType(wrapper, windowWidth / 2);
+        expectDragMoveEndResult(wrapper, PanelsMode.Both);
+        moveType(wrapper, windowBoundaryLeft);
+        expectDragMoveEndResult(wrapper, PanelsMode.Both);
+        moveType(wrapper, windowBoundaryLeft - 1);
+        expectDragMoveEndResult(wrapper, PanelsMode.Right);
+        moveType(wrapper, windowBoundaryRight);
+        expectDragMoveEndResult(wrapper, PanelsMode.Both);
+        moveType(wrapper, windowBoundaryRight + 1);
+        expectDragMoveEndResult(wrapper, PanelsMode.Left);
+    };
+
+    beforeEach(() => {
+        jest.resetAllMocks();
+    });
 
     it("has expected slot content", () => {
         const wrapper = getWrapper();
@@ -114,7 +193,10 @@ describe("WodinPanels", () => {
 
     it("handleDragEnd removes correct listeners", () => {
         const wrapper = getWrapper();
-        (wrapper.vm as any).handleDragEnd();
+        (wrapper.vm as any).handleDragEnd({
+            clientX: windowWidth / 2,
+            preventDefault: mockPreventDefault
+        });
         const { handleDragMove, handleDragEnd } = (wrapper.vm as any);
         expect(docRemoveListenerSpy).toHaveBeenCalledTimes(4);
         expect(docRemoveListenerSpy.mock.calls[0][0]).toBe("mousemove");
@@ -128,30 +210,29 @@ describe("WodinPanels", () => {
         expect(docAddListenerSpy).toHaveBeenCalledTimes(0);
     });
 
-    it("handleDragMove works as expected with mouseevents", async () => {
-        const wrapper = getWrapper();
-        expectDragMoveResult(wrapper, PanelsMode.Both, 0);
-        mouseMove(wrapper, windowBoundaryLeft);
-        expectDragMoveResult(wrapper, PanelsMode.Both, 1, windowBoundaryLeft);
-        mouseMove(wrapper, windowBoundaryLeft - 1);
-        expectDragMoveResult(wrapper, PanelsMode.Right, 2, windowBoundaryLeft - 1);
-        mouseMove(wrapper, windowBoundaryRight);
-        expectDragMoveResult(wrapper, PanelsMode.Both, 3, windowBoundaryRight);
-        mouseMove(wrapper, windowBoundaryRight + 1);
-        expectDragMoveResult(wrapper, PanelsMode.Left, 4, windowBoundaryRight + 1);
+    it("handleDragMove works as expected", () => {
+        expectResizeBoundaries(DragStart.Icon, mouseMove);
+        mockPreventDefault.mockClear();
+        expectResizeBoundaries(DragStart.Icon, touchMove);
+        mockPreventDefault.mockClear();
+        expectResizeBoundaries(DragStart.Edge, mouseMove);
+        mockPreventDefault.mockClear();
+        expectResizeBoundaries(DragStart.Edge, touchMove);
     });
 
-    it("handleDragMove works as expected with touchevents", async () => {
+    it("handleDragEnd works as expected", async () => {
+        expectResizeBoundariesEnd(mouseMoveEnd);
+        expectResizeBoundariesEnd(touchMoveEnd);
+    });
+
+    it("handleDragStartEdge and handleDragStartIcon work as expected", () => {
         const wrapper = getWrapper();
-        expectDragMoveResult(wrapper, PanelsMode.Both, 0);
-        touchMove(wrapper, windowBoundaryLeft);
-        expectDragMoveResult(wrapper, PanelsMode.Both, 1, windowBoundaryLeft);
-        touchMove(wrapper, windowBoundaryLeft - 1);
-        expectDragMoveResult(wrapper, PanelsMode.Right, 2, windowBoundaryLeft - 1);
-        touchMove(wrapper, windowBoundaryRight);
-        expectDragMoveResult(wrapper, PanelsMode.Both, 3, windowBoundaryRight);
-        touchMove(wrapper, windowBoundaryRight + 1);
-        expectDragMoveResult(wrapper, PanelsMode.Left, 4, windowBoundaryRight + 1);
+        const vm = wrapper.vm as any;
+        expect(vm.dragStart).toBe(null);
+        wrapper.vm.handleDragStartEdge();
+        expect(vm.dragStart).toBe(DragStart.Edge);
+        wrapper.vm.handleDragStartIcon();
+        expect(vm.dragStart).toBe(DragStart.Icon);
     });
 
     it("clicking on 'View Options' switches mode as expected", async () => {
@@ -168,23 +249,5 @@ describe("WodinPanels", () => {
         await nextTick();
         await wrapper.find(".view-right").trigger("click");
         testBothMode(wrapper);
-    });
-
-    it("drag overlay renders as expected", async () => {
-        const wrapper = getWrapper();
-        wrapper.vm.isDragging = false;
-        await nextTick();
-        const overlayHidden = wrapper.find(".drag-overlay-hidden");
-        expect(overlayHidden.exists()).toBe(true);
-        wrapper.vm.isDragging = true;
-        await nextTick();
-        const overlayShown = wrapper.find(".drag-overlay");
-        expect(overlayShown.exists()).toBe(true);
-
-        const verticalLines = overlayShown.findAll("div");
-        // overlayShown itself is a div + 2 lines
-        expect(verticalLines.length).toBe(3);
-        expect(verticalLines[1].classes()).toStrictEqual(["divider-line-left"]);
-        expect(verticalLines[2].classes()).toStrictEqual(["divider-line-right"]);
     });
 });
