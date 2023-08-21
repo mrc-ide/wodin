@@ -1,4 +1,6 @@
 import { mutations } from "../../../../src/app/store/run/mutations";
+import { AdvancedComponentType } from "../../../../src/app/store/run/state";
+import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
 import { mockRunState } from "../../../mocks";
 
 describe("Run mutations", () => {
@@ -6,7 +8,8 @@ describe("Run mutations", () => {
         endTimeChanged: false,
         modelChanged: false,
         parameterValueChanged: false,
-        numberOfReplicatesChanged: false
+        numberOfReplicatesChanged: false,
+        advancedSettingsChanged: false
     };
 
     it("sets result ode", () => {
@@ -16,7 +19,8 @@ describe("Run mutations", () => {
                 endTimeChanged: false,
                 modelChanged: true,
                 parameterValueChanged: true,
-                numberOfReplicatesChanged: false
+                numberOfReplicatesChanged: false,
+                advancedSettingsChanged: false
             }
         });
         const result = {
@@ -31,7 +35,8 @@ describe("Run mutations", () => {
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
     });
 
@@ -42,7 +47,8 @@ describe("Run mutations", () => {
                 endTimeChanged: false,
                 modelChanged: true,
                 parameterValueChanged: true,
-                numberOfReplicatesChanged: false
+                numberOfReplicatesChanged: false,
+                advancedSettingsChanged: false
             }
         });
         const result = {
@@ -57,7 +63,8 @@ describe("Run mutations", () => {
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
     });
 
@@ -68,14 +75,16 @@ describe("Run mutations", () => {
             endTimeChanged: false,
             modelChanged: true,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
         mutations.SetRunRequired(state, { modelChanged: false });
         expect(state.runRequired).toStrictEqual({
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
     });
 
@@ -97,7 +106,89 @@ describe("Run mutations", () => {
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: true,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
+        });
+    });
+
+    it("updates advanced settings and sets runRequired to true", () => {
+        const state = mockRunState({
+            advancedSettings: {
+                [AdvancedOptions.tol]: { val: [null, null], default: [1, -6], type: AdvancedComponentType.stdf },
+                [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num },
+                [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num },
+                [AdvancedOptions.stepSizeMin]: {
+                    val: [null, null],
+                    default: [1, -8],
+                    type: AdvancedComponentType.stdf
+                },
+                [AdvancedOptions.tcrit]: { val: null, default: [], type: AdvancedComponentType.tag }
+            },
+            runRequired: noRunRequired
+        });
+        mutations.UpdateAdvancedSettings(state, { option: AdvancedOptions.tol, newVal: [1, 2] });
+        expect(state.advancedSettings).toStrictEqual({
+            [AdvancedOptions.tol]: { val: [1, 2], default: [1, -6], type: AdvancedComponentType.stdf },
+            [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num },
+            [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num },
+            [AdvancedOptions.stepSizeMin]: { val: [null, null], default: [1, -8], type: AdvancedComponentType.stdf },
+            [AdvancedOptions.tcrit]: { val: null, default: [], type: AdvancedComponentType.tag }
+        });
+        expect(state.runRequired).toStrictEqual({
+            endTimeChanged: false,
+            modelChanged: false,
+            parameterValueChanged: false,
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: true
+        });
+    });
+
+    it("updates and sorts tcrit when updating advanced settings", () => {
+        const state = mockRunState({
+            advancedSettings: {
+                [AdvancedOptions.tol]: { val: [null, null], default: [1, -6], type: AdvancedComponentType.stdf },
+                [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num },
+                [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num },
+                [AdvancedOptions.stepSizeMin]: {
+                    val: [null, null],
+                    default: [1, -8],
+                    type: AdvancedComponentType.stdf
+                },
+                [AdvancedOptions.tcrit]: { val: null, default: [], type: AdvancedComponentType.tag }
+            }
+        });
+        mutations.UpdateAdvancedSettings(state, { option: AdvancedOptions.tcrit, newVal: [2, 1, 0, 0] });
+        expect(state.advancedSettings).toStrictEqual({
+            [AdvancedOptions.tol]: { val: [null, null], default: [1, -6], type: AdvancedComponentType.stdf },
+            [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num },
+            [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num },
+            [AdvancedOptions.stepSizeMin]: { val: [null, null], default: [1, -8], type: AdvancedComponentType.stdf },
+            [AdvancedOptions.tcrit]: { val: [0, 0, 1, 2], default: [], type: AdvancedComponentType.tag }
+        });
+    });
+
+    it("updates and sorts tcrit when updating advanced settings with param values", () => {
+        const state = mockRunState({
+            advancedSettings: {
+                [AdvancedOptions.tol]: { val: [null, null], default: [1, -6], type: AdvancedComponentType.stdf },
+                [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num },
+                [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num },
+                [AdvancedOptions.stepSizeMin]: {
+                    val: [null, null],
+                    default: [1, -8],
+                    type: AdvancedComponentType.stdf
+                },
+                [AdvancedOptions.tcrit]: { val: null, default: [], type: AdvancedComponentType.tag }
+            },
+            parameterValues: { a: 2, b: 3 }
+        });
+        mutations.UpdateAdvancedSettings(state, { option: AdvancedOptions.tcrit, newVal: ["a", 0, "b", 1] });
+        expect(state.advancedSettings).toStrictEqual({
+            [AdvancedOptions.tol]: { val: [null, null], default: [1, -6], type: AdvancedComponentType.stdf },
+            [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num },
+            [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num },
+            [AdvancedOptions.stepSizeMin]: { val: [null, null], default: [1, -8], type: AdvancedComponentType.stdf },
+            [AdvancedOptions.tcrit]: { val: [0, 1, "a", "b"], default: [], type: AdvancedComponentType.tag }
         });
     });
 
@@ -112,7 +203,8 @@ describe("Run mutations", () => {
             endTimeChanged: true,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
     });
 
@@ -133,7 +225,8 @@ describe("Run mutations", () => {
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
         // increasing, even right up to the original limit, is fine
         mutations.SetEndTime(state, 100);
@@ -142,7 +235,8 @@ describe("Run mutations", () => {
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
         // but any additional time requires a rerun
         mutations.SetEndTime(state, 101);
@@ -151,7 +245,8 @@ describe("Run mutations", () => {
             endTimeChanged: true,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
     });
 

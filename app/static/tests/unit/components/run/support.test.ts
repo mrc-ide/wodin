@@ -5,7 +5,8 @@ describe("construct actionable fit update messages from fit state changes", () =
         modelChanged: false,
         parameterValueChanged: false,
         endTimeChanged: false,
-        numberOfReplicatesChanged: false
+        numberOfReplicatesChanged: false,
+        advancedSettingsChanged: false
     };
 
     it("shows fallback when no reason can be found", () => {
@@ -19,10 +20,12 @@ describe("construct actionable fit update messages from fit state changes", () =
             modelChanged: true,
             parameterValueChanged: true,
             endTimeChanged: true,
-            numberOfReplicatesChanged: true
+            numberOfReplicatesChanged: true,
+            advancedSettingsChanged: true
         };
         expect(runRequiredExplanation(everything))
-            .toBe("Plot is out of date: model code has been recompiled and number of replicates has changed. "
+            .toBe("Plot is out of date: model code has been recompiled, number of replicates has changed"
+                  + " and advanced settings have been changed. "
                   + "Run model to update.");
     });
 
@@ -37,5 +40,7 @@ describe("construct actionable fit update messages from fit state changes", () =
             .toBe(`${prefix}: end time has changed. ${suffix}`);
         expect(runRequiredExplanation({ ...base, numberOfReplicatesChanged: true }))
             .toBe(`${prefix}: number of replicates has changed. ${suffix}`);
+        expect(runRequiredExplanation({ ...base, advancedSettingsChanged: true }))
+            .toBe(`${prefix}: advanced settings have been changed. ${suffix}`);
     });
 });

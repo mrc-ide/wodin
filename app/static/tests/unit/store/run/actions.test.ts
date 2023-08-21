@@ -9,6 +9,8 @@ import { AppType } from "../../../../src/app/store/appState/state";
 import { ModelFitAction } from "../../../../src/app/store/modelFit/actions";
 import { RunGetter } from "../../../../src/app/store/run/getters";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
+import { AdvancedComponentType } from "../../../../src/app/store/run/state";
 
 jest.mock("../../../../src/app/excel/wodinModelOutputDownload");
 
@@ -21,7 +23,8 @@ describe("Run actions", () => {
         modelChanged: true,
         parameterValueChanged: true,
         endTimeChanged: true,
-        numberOfReplicatesChanged: true
+        numberOfReplicatesChanged: true,
+        advancedSettingsChanged: true
     };
 
     const getters = {
@@ -65,6 +68,121 @@ describe("Run actions", () => {
         expect(run.mock.calls[0][1]).toStrictEqual(parameterValues);
         expect(run.mock.calls[0][2]).toBe(0); // start
         expect(run.mock.calls[0][3]).toBe(99); // end time from state
+
+        expect(commit.mock.calls.length).toBe(1);
+        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultOde);
+        expect(commit.mock.calls[0][1]).toEqual({
+            inputs: { parameterValues, endTime: 99 },
+            solution: "test solution",
+            error: null
+        });
+    });
+
+    it("runs model with default advanced settings for ode app", () => {
+        const mockOdin = {} as any;
+
+        const parameterValues = { p1: 1, p2: 2 };
+        const parameterSets = [
+            { name: "Set 1", parameterValues: { p1: 3, p2: 4 }, hidden: false },
+            { name: "Set 2", parameterValues: { p1: 5, p2: 6 }, hidden: false }
+        ];
+        const runner = mockRunnerOde();
+        const modelState = mockModelState({
+            odinRunnerOde: runner,
+            odin: mockOdin,
+            compileRequired: false
+        });
+        const rootState = {
+            appType: AppType.Basic,
+            model: modelState
+        } as any;
+        const state = mockRunState({
+            runRequired: runRequiredAll,
+            parameterValues,
+            endTime: 99,
+            parameterSets
+        });
+        const commit = jest.fn();
+
+        (actions[RunAction.RunModel] as any)({
+            commit, state, rootState, getters
+        });
+
+        const run = runner.wodinRun;
+        expect(run).toHaveBeenCalledTimes(1);
+        expect(run.mock.calls[0][0]).toBe(mockOdin);
+        expect(run.mock.calls[0][1]).toStrictEqual(parameterValues);
+        expect(run.mock.calls[0][2]).toBe(0); // start
+        expect(run.mock.calls[0][3]).toBe(99); // end time from state
+        expect(run.mock.calls[0][4]).toStrictEqual({
+            atol: 1e-6,
+            rtol: 1e-6,
+            maxSteps: 10000,
+            stepSizeMax: undefined,
+            stepSizeMin: 1e-8,
+            tcrit: []
+        });
+
+        expect(commit.mock.calls.length).toBe(1);
+        expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultOde);
+        expect(commit.mock.calls[0][1]).toEqual({
+            inputs: { parameterValues, endTime: 99 },
+            solution: "test solution",
+            error: null
+        });
+    });
+
+    it("runs model with set advanced settings for ode app", () => {
+        const mockOdin = {} as any;
+
+        const parameterValues = { p1: 1, p2: 2 };
+        const parameterSets = [
+            { name: "Set 1", parameterValues: { p1: 3, p2: 4 }, hidden: false },
+            { name: "Set 2", parameterValues: { p1: 5, p2: 6 }, hidden: false }
+        ];
+        const runner = mockRunnerOde();
+        const modelState = mockModelState({
+            odinRunnerOde: runner,
+            odin: mockOdin,
+            compileRequired: false
+        });
+        const rootState = {
+            appType: AppType.Basic,
+            model: modelState
+        } as any;
+        const state = mockRunState({
+            runRequired: runRequiredAll,
+            parameterValues,
+            endTime: 99,
+            parameterSets,
+            advancedSettings: {
+                [AdvancedOptions.tol]: { val: [0.6, -1], default: [1, -6], type: AdvancedComponentType.stdf },
+                [AdvancedOptions.maxSteps]: { val: 1, default: 10000, type: AdvancedComponentType.num },
+                [AdvancedOptions.stepSizeMax]: { val: 2, type: AdvancedComponentType.num },
+                [AdvancedOptions.stepSizeMin]: { val: [0.5, -2], default: [1, -8], type: AdvancedComponentType.stdf },
+                [AdvancedOptions.tcrit]: { val: [0, "p1", "p2"], default: [], type: AdvancedComponentType.tag }
+            }
+        });
+        const commit = jest.fn();
+
+        (actions[RunAction.RunModel] as any)({
+            commit, state, rootState, getters
+        });
+
+        const run = runner.wodinRun;
+        expect(run).toHaveBeenCalledTimes(1);
+        expect(run.mock.calls[0][0]).toBe(mockOdin);
+        expect(run.mock.calls[0][1]).toStrictEqual(parameterValues);
+        expect(run.mock.calls[0][2]).toBe(0); // start
+        expect(run.mock.calls[0][3]).toBe(99); // end time from state
+        expect(run.mock.calls[0][4]).toStrictEqual({
+            atol: 0.06,
+            rtol: 0.06,
+            maxSteps: 1,
+            stepSizeMax: 2,
+            stepSizeMin: 0.005,
+            tcrit: [0, 1, 2]
+        });
 
         expect(commit.mock.calls.length).toBe(1);
         expect(commit.mock.calls[0][0]).toBe(RunMutation.SetResultOde);
@@ -363,7 +481,8 @@ describe("Run actions", () => {
                 modelChanged: true,
                 parameterValueChanged: true,
                 endTimeChanged: true,
-                numberOfReplicatesChanged: true
+                numberOfReplicatesChanged: true,
+                advancedSettingsChanged: true
             },
             parameterValues: { p1: 10, p2: 20 },
             endTime: 199,

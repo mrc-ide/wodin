@@ -20,7 +20,8 @@ describe("Run getters", () => {
         modelChanged: false,
         parameterValueChanged: false,
         endTimeChanged: false,
-        numberOfReplicatesChanged: false
+        numberOfReplicatesChanged: false,
+        advancedSettingsChanged: false
     };
 
     it("runIsRequired returns true if any required reason is true", () => {
@@ -38,7 +39,8 @@ describe("Run getters", () => {
                 parameterValueChanged: true,
                 modelChanged: true,
                 endTimeChanged: true,
-                numberOfReplicatesChanged: true
+                numberOfReplicatesChanged: true,
+                advancedSettingsChanged: true
             }
         });
         expect((getters[RunGetter.runParameterSetsIsRequired] as any)(state)).toBe(false);

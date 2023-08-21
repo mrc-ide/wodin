@@ -3,6 +3,8 @@ import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutat
 import { ModelGetter } from "../../../../src/app/store/model/getters";
 import { AppType } from "../../../../src/app/store/appState/state";
 import { RunAction } from "../../../../src/app/store/run/actions";
+import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
+import { AdvancedComponentType } from "../../../../src/app/store/run/state";
 import { WodinSensitivitySummaryDownload } from "../../../../src/app/excel/wodinSensitivitySummaryDownload";
 import Mock = jest.Mock;
 
@@ -29,7 +31,24 @@ const mockModelState = {
 };
 const mockRunState = {
     endTime: 99,
-    numberOfReplicates: 5
+    numberOfReplicates: 5,
+    advancedSettings: {
+        [AdvancedOptions.tol]: { val: [null, null], default: [1, -6], type: AdvancedComponentType.stdf },
+        [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num },
+        [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num },
+        [AdvancedOptions.stepSizeMin]: { val: [null, null], default: [1, -8], type: AdvancedComponentType.stdf },
+        [AdvancedOptions.tcrit]: { val: [0, "p1"], default: [], type: AdvancedComponentType.tag }
+    },
+    parameterValues: { p1: 3.14 }
+};
+
+const defaultAdvanced = {
+    atol: 0.000001,
+    maxSteps: 10000,
+    rtol: 0.000001,
+    stepSizeMax: undefined,
+    stepSizeMin: 1e-8,
+    tcrit: [0, 3.14]
 };
 
 const mockBatchPars = {};
@@ -82,7 +101,13 @@ describe("Sensitivity actions", () => {
             numberOfReplicatesChanged: false
         });
 
-        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(rootState.model.odin, mockBatchPars, 0, 99, {});
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
+            rootState.model.odin,
+            mockBatchPars,
+            0,
+            99,
+            defaultAdvanced
+        );
 
         expect(dispatch).not.toHaveBeenCalled();
     });
@@ -144,9 +169,27 @@ describe("Sensitivity actions", () => {
         });
 
         expect(mockRunnerOde.batchRun).toHaveBeenCalledTimes(3);
-        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(rootState.model.odin, mockBatchPars, 0, 99, {});
-        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(rootState.model.odin, paramSet1BatchPars, 0, 99, {});
-        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(rootState.model.odin, paramSet2BatchPars, 0, 99, {});
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
+            rootState.model.odin,
+            mockBatchPars,
+            0,
+            99,
+            defaultAdvanced
+        );
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
+            rootState.model.odin,
+            paramSet1BatchPars,
+            0,
+            99,
+            defaultAdvanced
+        );
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
+            rootState.model.odin,
+            paramSet2BatchPars,
+            0,
+            99,
+            defaultAdvanced
+        );
 
         expect(dispatch).not.toHaveBeenCalled();
     });
@@ -351,7 +394,13 @@ describe("Sensitivity actions", () => {
         expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetResult);
         expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetUpdateRequired);
 
-        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(rootState.model.odin, mockBatchPars, 0, 99, {});
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
+            rootState.model.odin,
+            mockBatchPars,
+            0,
+            99,
+            defaultAdvanced
+        );
 
         expect(dispatch).toHaveBeenCalledWith("run/RunModel", null, { root: true });
     });
@@ -472,7 +521,13 @@ describe("Sensitivity actions", () => {
             numberOfReplicatesChanged: false
         });
 
-        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(rootState.model.odin, mockResultBatchPars, 0, 99, {});
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
+            rootState.model.odin,
+            mockBatchPars,
+            0,
+            99,
+            defaultAdvanced
+        );
 
         expect(dispatch).not.toHaveBeenCalled();
     });

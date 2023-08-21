@@ -7,7 +7,7 @@ import { SensitivityMutation } from "../sensitivity/mutations";
 import { ModelFitGetter } from "./getters";
 import { FitDataGetter } from "../fitData/getters";
 import { FitData } from "../fitData/state";
-import { allTrue } from "../../utils";
+import { allTrue, convertAdvancedSettingsToOdin } from "../../utils";
 
 export enum ModelFitAction {
     FitModel = "FitModel",
@@ -47,7 +47,17 @@ export const actions: ActionTree<ModelFitState, FitState> = {
                 vary
             };
 
-            const simplex = odinRunnerOde!.wodinFit(odin!, data, pars, linkedVariable, {}, {});
+            const { advancedSettings } = rootState.run;
+            const advancedSettingsOdin = convertAdvancedSettingsToOdin(advancedSettings, pars.base);
+
+            const simplex = odinRunnerOde!.wodinFit(
+                odin!,
+                data,
+                pars,
+                linkedVariable,
+                advancedSettingsOdin,
+                {}
+            );
 
             const inputs = {
                 data,

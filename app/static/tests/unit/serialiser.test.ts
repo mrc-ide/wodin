@@ -18,6 +18,8 @@ import {
 } from "../mocks";
 import { defaultState as defaultGraphSettingsState } from "../../src/app/store/graphSettings/graphSettings";
 import { Language } from "../../src/app/types/languageTypes";
+import { AdvancedOptions } from "../../src/app/types/responseTypes";
+import { AdvancedComponentType } from "../../src/app/store/run/state";
 
 describe("serialise", () => {
     const codeState = {
@@ -69,7 +71,8 @@ describe("serialise", () => {
             modelChanged: false,
             parameterValueChanged: false,
             endTimeChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         },
         parameterValues: { alpha: 1, beta: 1.1 },
         endTime: 20,
@@ -106,7 +109,22 @@ describe("serialise", () => {
         },
         userDownloadFileName: "",
         downloading: false,
-        numberOfReplicates: 5
+        numberOfReplicates: 5,
+        advancedSettings: {
+            [AdvancedOptions.tol]: {
+                val: [null, null] as [number|null, number|null],
+                default: [1, -6] as [number, number],
+                type: AdvancedComponentType.stdf as const
+            },
+            [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num as const },
+            [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num as const },
+            [AdvancedOptions.stepSizeMin]: {
+                val: [null, null] as [number|null, number|null],
+                default: [1, -8] as [number, number],
+                type: AdvancedComponentType.stdf as const
+            },
+            [AdvancedOptions.tcrit]: { val: null, default: [], type: AdvancedComponentType.tag as const }
+        }
     };
 
     const sensitivityBatchPars = {
@@ -285,7 +303,8 @@ describe("serialise", () => {
             modelChanged: false,
             parameterValueChanged: false,
             endTimeChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         },
         parameterValues: runState.parameterValues,
         parameterSetsCreated: runState.parameterSetsCreated,
@@ -308,6 +327,13 @@ describe("serialise", () => {
                 hasResult: true,
                 error: runState.parameterSetResults["Set 1"].error
             }
+        },
+        advancedSettings: {
+            [AdvancedOptions.tol]: { val: [null, null], default: [1, -6], type: AdvancedComponentType.stdf },
+            [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num },
+            [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num },
+            [AdvancedOptions.stepSizeMin]: { val: [null, null], default: [1, -8], type: AdvancedComponentType.stdf },
+            [AdvancedOptions.tcrit]: { val: null, default: [], type: AdvancedComponentType.tag }
         }
     };
     const expectedSensitivity = {
@@ -478,7 +504,7 @@ describe("serialise", () => {
             openVisualisationTab: VisualisationTab.Fit,
             code: mockCodeState(),
             model: mockModelState(),
-            run: mockRunState(),
+            run: { ...mockRunState(), advancedSettings: expectedRun.advancedSettings },
             sensitivity: mockSensitivityState(),
             fitData: mockFitDataState(),
             modelFit: mockModelFitState(),
@@ -531,7 +557,7 @@ describe("serialise", () => {
                     }
                 }
             } as any),
-            run: mockRunState(),
+            run: { ...mockRunState(), advancedSettings: expectedRun.advancedSettings },
             sensitivity: mockSensitivityState(),
             fitData: mockFitDataState(),
             modelFit: mockModelFitState(),
@@ -562,7 +588,7 @@ describe("serialise", () => {
             openVisualisationTab: VisualisationTab.Fit,
             code: mockCodeState(),
             model: mockModelState(),
-            run: mockRunState(),
+            run: { ...mockRunState(), advancedSettings: expectedRun.advancedSettings },
             sensitivity: mockSensitivityState(),
             fitData: mockFitDataState(),
             modelFit: mockModelFitState(),
