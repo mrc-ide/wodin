@@ -27,7 +27,7 @@
       {{compileModelMessage}}
     </div>
   </vertical-collapse>
-  <edit-param-settings :open="editOpen" @close="toggleEdit(false)"></edit-param-settings>
+  <!--<edit-param-settings :open="editOpen" @close="toggleEdit(false)"></edit-param-settings>-->
 </template>
 
 <script lang="ts">
