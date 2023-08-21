@@ -41,7 +41,8 @@ describe("ParameterSetView", () => {
                             modelChanged,
                             parameterValueChanged: false,
                             endTimeChanged: false,
-                            numberOfReplicatesChanged: false
+                            numberOfReplicatesChanged: false,
+                            advancedSettingsChanged: false
                         }
                     }),
                     actions: {

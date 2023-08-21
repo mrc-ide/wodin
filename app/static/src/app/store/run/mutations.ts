@@ -1,8 +1,11 @@
 import { MutationTree } from "vuex";
-import { ParameterSet, RunState, RunUpdateRequiredReasons } from "./state";
+import {
+    AdvancedComponentType,
+    ParameterSet, RunState, RunUpdateRequiredReasons, Tag
+} from "./state";
 import { OdinUserType } from "../../types/responseTypes";
 import { OdinRunResultDiscrete, OdinRunResultOde } from "../../types/wrapperTypes";
-import { SetParameterSetResultPayload } from "../../types/payloadTypes";
+import { SetAdvancedSettingPayload, SetParameterSetResultPayload } from "../../types/payloadTypes";
 
 export enum RunMutation {
     SetRunRequired = "SetRunRequired",
@@ -20,14 +23,16 @@ export enum RunMutation {
     SwapParameterSet = "SwapParameterSet",
     ToggleParameterSetHidden = "ToggleParameterSetHidden",
     SaveParameterDisplayName = "SaveParameterDisplayName",
-    TurnOffDisplayNameError = "TurnOffDisplayNameError"
+    TurnOffDisplayNameError = "TurnOffDisplayNameError",
+    UpdateAdvancedSettings = "UpdateAdvancedSettings"
 }
 
 const runRequiredNone = {
     modelChanged: false,
     parameterValueChanged: false,
     endTimeChanged: false,
-    numberOfReplicatesChanged: false
+    numberOfReplicatesChanged: false,
+    advancedSettingsChanged: false
 };
 
 interface ParameterSetNames {
@@ -67,6 +72,30 @@ export const mutations: MutationTree<RunState> = {
                 parameterValueChanged: true
             };
         }
+    },
+
+    [RunMutation.UpdateAdvancedSettings](state: RunState, payload: SetAdvancedSettingPayload) {
+        if (state.advancedSettings[payload.option].type === AdvancedComponentType.tag
+            && payload.newVal) {
+            const sortedTags = (payload.newVal as Tag[]).sort((tag1, tag2) => {
+                const tag1Val = typeof tag1 === "number" ? tag1 : state.parameterValues![tag1];
+                const tag2Val = typeof tag2 === "number" ? tag2 : state.parameterValues![tag2];
+                if (tag1Val > tag2Val) {
+                    return 1;
+                }
+                if (tag1Val < tag2Val) {
+                    return -1;
+                }
+                return 0;
+            });
+            state.advancedSettings[payload.option].val = sortedTags;
+        } else {
+            state.advancedSettings[payload.option].val = payload.newVal;
+        }
+        state.runRequired = {
+            ...state.runRequired,
+            advancedSettingsChanged: true
+        };
     },
 
     [RunMutation.SetEndTime](state: RunState, payload: number) {

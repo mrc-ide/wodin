@@ -9,6 +9,7 @@ export const runRequiredExplanation = (reasons: RunUpdateRequiredReasons): strin
     appendIf(explanation, reasons.parameterValueChanged && !reasons.modelChanged, help.parameterValueChanged);
     appendIf(explanation, reasons.endTimeChanged && !reasons.modelChanged, help.endTimeChanged);
     appendIf(explanation, reasons.numberOfReplicatesChanged, help.numberOfReplicatesChanged);
+    appendIf(explanation, reasons.advancedSettingsChanged, help.advancedSettingsChanged);
     // Fallback reason if something unexpected has happened.
     appendIf(explanation, explanation.length === 0, help.unknown);
     return `${help.prefix} ${joinStringsSentence(explanation)}. ${help.suffix}.`;

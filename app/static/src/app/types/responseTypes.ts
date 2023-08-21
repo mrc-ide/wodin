@@ -22,7 +22,6 @@ export interface AppConfigBase {
     endTime: number,
     readOnlyCode: boolean,
     stateUploadIntervalMillis: number,
-    endTime: number,
     help?: {
         markdown?: string[],
         tabName?: string
@@ -153,8 +152,6 @@ export interface BatchPars {
     values: number[];
 }
 
-export type OdeControl = Dict<unknown>;
-
 export interface BatchError {
     value: number,
     error: string
@@ -169,18 +166,35 @@ export interface Batch {
     compute: () => boolean
 }
 
+export type AdvancedSettingsOdin = {
+    atol: number | null,
+    rtol: number | null,
+    maxSteps: number | null,
+    stepSizeMax: number | null,
+    stepSizeMin: number | null,
+    tcrit: number | null
+}
+
+export enum AdvancedOptions {
+    "tol" = "Tolerance",
+    "maxSteps" = "Max steps",
+    "stepSizeMax" = "Max step size",
+    "stepSizeMin" = "Min step size",
+    "tcrit" = "Critical times"
+}
+
 export interface OdinRunnerOde {
     wodinRun: (odin: Odin,
                pars: OdinUserType,
                tStart: number,
                tEnd: number,
-               control: OdeControl) => OdinSolution;
+               control: AdvancedSettingsOdin) => OdinSolution;
 
     wodinFit: (odin: Odin,
                data: OdinFitData,
                pars: OdinFitParameters,
                modelledSeries: string,
-               odeParams: OdeControl,
+               odeParams: AdvancedSettingsOdin,
                simplexParams: Dict<unknown>) => Simplex;
 
     wodinFitValue: (solution: OdinSolution,
@@ -203,7 +217,7 @@ export interface OdinRunnerOde {
                pars: BatchPars,
                tStart: number,
                tEnd: number,
-               control: OdeControl) => Batch;
+               control: AdvancedSettingsOdin) => Batch;
 }
 
 export interface DiscreteSeriesValues {

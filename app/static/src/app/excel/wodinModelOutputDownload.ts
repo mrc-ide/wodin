@@ -1,33 +1,18 @@
 import * as XLSX from "xlsx";
-import { Commit } from "vuex";
-import { AppState, AppType } from "./store/appState/state";
-import { FitState } from "./store/fit/state";
-import { AppCtx, Dict } from "./types/utilTypes";
-import { OdinSeriesSet } from "./types/responseTypes";
-import { FitDataGetter } from "./store/fitData/getters";
-import { FitData } from "./store/fitData/state";
-import { ErrorsMutation } from "./store/errors/mutations";
+import { WodinExcelDownload } from "./wodinExcelDownload";
+import { AppCtx, Dict } from "../types/utilTypes";
+import { OdinSeriesSet } from "../types/responseTypes";
+import { FitData } from "../store/fitData/state";
+import { AppType } from "../store/appState/state";
+import { FitState } from "../store/fit/state";
+import { FitDataGetter } from "../store/fitData/getters";
 
-export class WodinExcelDownload {
-    private readonly _state: AppState;
-
-    private readonly _rootGetters: any;
-
-    private readonly _commit: Commit;
-
-    private readonly _fileName: string;
-
+export class WodinModelOutputDownload extends WodinExcelDownload {
     private readonly _points: number;
 
-    private readonly _workbook: XLSX.WorkBook;
-
     constructor(context: AppCtx, fileName: string, points: number) {
-        this._state = context.rootState;
-        this._rootGetters = context.rootGetters;
-        this._commit = context.commit;
-        this._fileName = fileName;
+        super(context, fileName);
         this._points = points;
-        this._workbook = XLSX.utils.book_new();
     }
 
     // Shared method to generate both Modelled and Modelled with Data - provide empty nonTimeColumns param to omit data
@@ -57,7 +42,9 @@ export class WodinExcelDownload {
             });
             const { selectedVariables } = this._state.model;
 
-            const worksheet = WodinExcelDownload._generateModelledOutput(selectedVariables, solutionOutput, [], null);
+            const worksheet = WodinModelOutputDownload._generateModelledOutput(
+                selectedVariables, solutionOutput, [], null
+            );
             XLSX.utils.book_append_sheet(this._workbook, worksheet, "Modelled");
         }
     }
@@ -74,7 +61,7 @@ export class WodinExcelDownload {
                 const solutionOutput = solution({ mode: "given", times });
                 const { selectedVariables } = this._state.model;
 
-                const worksheet = WodinExcelDownload._generateModelledOutput(
+                const worksheet = WodinModelOutputDownload._generateModelledOutput(
                     selectedVariables, solutionOutput, nonTimeColumns, fitData
                 );
                 XLSX.utils.book_append_sheet(this._workbook, worksheet, "Modelled with Data");
@@ -82,26 +69,11 @@ export class WodinExcelDownload {
         }
     }
 
-    private _addParameters() {
-        const paramVals = this._state.run.parameterValues;
-        if (paramVals) {
-            const paramData = Object.keys(paramVals).map((name: string) => {
-                return { name, value: paramVals[name] };
-            });
-            const worksheet = XLSX.utils.json_to_sheet(paramData);
-            XLSX.utils.book_append_sheet(this._workbook, worksheet, "Parameters");
-        }
-    }
-
-    downloadModelOutput = () => {
-        try {
+    download = () => {
+        this._writeFile(() => {
             this._addModelledValues();
             this._addModelledWithDataValues();
             this._addParameters();
-            XLSX.writeFile(this._workbook, this._fileName);
-        } catch (e) {
-            this._commit(`errors/${ErrorsMutation.AddError}`,
-                { detail: `Error downloading to ${this._fileName}: ${e}` }, { root: true });
-        }
+        });
     };
 }

@@ -3,8 +3,6 @@ import { shallowMount } from "@vue/test-utils";
 import { mockBasicState, mockRunState } from "../../mocks";
 import { BasicState } from "../../../src/app/store/basic/state";
 import DownloadOutput from "../../../src/app/components/DownloadOutput.vue";
-import { RunMutation } from "../../../src/app/store/run/mutations";
-import { RunAction } from "../../../src/app/store/run/actions";
 
 // eslint-disable-next-line max-len
 const generatedFilenameRegex = /^test-run-([0-9]{4})?(1[0-2]|0[1-9])?(3[01]|0[1-9]|[12][0-9])-(2[0-3]|[0-1][0-9])?([0-5][0-9])?([0-5][0-9])?$/;
@@ -12,27 +10,10 @@ const generatedFilenameRegex = /^test-run-([0-9]{4})?(1[0-2]|0[1-9])?(3[01]|0[1-
 const generatedFilenameWithSuffixRegex = /^test-run-([0-9]{4})?(1[0-2]|0[1-9])?(3[01]|0[1-9]|[12][0-9])-(2[0-3]|[0-1][0-9])?([0-5][0-9])?([0-5][0-9])?.xlsx$/;
 
 describe("DownloadOutput", () => {
-    const mockSetUserOownloadFileName = jest.fn();
-    const mockDownloadOutput = jest.fn();
-
-    const getWrapper = (userDownloadFileName = "") => {
+    const getWrapper = (userFileName = "", downloadType = "Run", includePoints = true) => {
         const state = mockBasicState({ appName: "test" });
         const store = new Vuex.Store<BasicState>({
-            state,
-            modules: {
-                run: {
-                    namespaced: true,
-                    state: mockRunState({
-                        userDownloadFileName
-                    }),
-                    mutations: {
-                        [RunMutation.SetUserDownloadFileName]: mockSetUserOownloadFileName
-                    },
-                    actions: {
-                        [RunAction.DownloadOutput]: mockDownloadOutput
-                    }
-                }
-            }
+            state
         });
 
         const options = {
@@ -40,7 +21,10 @@ describe("DownloadOutput", () => {
                 plugins: [store]
             },
             props: {
-                open: false
+                open: false,
+                userFileName,
+                downloadType,
+                includePoints
             }
         };
 
@@ -81,6 +65,13 @@ describe("DownloadOutput", () => {
         expect(wrapper.find(".modal-footer button#cancel-download").text()).toBe("Cancel");
     });
 
+    it("does not render points if includePoints is false", () => {
+        const wrapper = getWrapper("myFile.xlsx", "Run", false);
+        const rows = wrapper.findAll(".modal-body .row");
+        expect(rows.length).toBe(2);
+        expect(wrapper.find("#download-points").exists()).toBe(false);
+    });
+
     it("renders generated default file name as expected", async () => {
         const wrapper = getWrapper();
         await wrapper.setProps({ open: true });
@@ -95,23 +86,23 @@ describe("DownloadOutput", () => {
         expect(wrapper.emitted().close.length).toBe(1);
     });
 
-    it("commits user download file name on input value change", async () => {
+    it("emits update:userFileName on input value change", async () => {
         const wrapper = getWrapper();
         await wrapper.find("#download-file-name input").setValue("myFile.xlsx");
-        expect(mockSetUserOownloadFileName).toHaveBeenCalledTimes(1);
-        expect(mockSetUserOownloadFileName.mock.calls[0][1]).toBe("myFile.xlsx");
+        expect(wrapper.emitted()["update:userFileName"].length).toBe(1);
+        expect(wrapper.emitted()["update:userFileName"][0]).toStrictEqual(["myFile.xlsx"]);
     });
 
-    it("dispatches download and emits close event on click OK", async () => {
+    it("emits download and close events on click OK", async () => {
         const wrapper = getWrapper();
         await wrapper.find("#download-file-name input").setValue("myFile");
         await wrapper.find("#download-points input").setValue("1001");
         await wrapper.find("#ok-download").trigger("click");
-        expect(mockDownloadOutput).toHaveBeenCalledTimes(1);
-        expect(mockDownloadOutput.mock.calls[0][1]).toStrictEqual({
+        expect(wrapper.emitted().download.length).toBe(1);
+        expect(wrapper.emitted().download[0]).toStrictEqual([{
             fileName: "myFile.xlsx",
             points: 1001
-        });
+        }]);
         expect(wrapper.emitted().close.length).toBe(1);
     });
 
@@ -119,7 +110,7 @@ describe("DownloadOutput", () => {
         const wrapper = getWrapper();
         await wrapper.find("#download-file-name input").setValue("");
         await wrapper.find("#ok-download").trigger("click");
-        const payload = mockDownloadOutput.mock.calls[0][1];
+        const payload = (wrapper.emitted().download[0] as any)[0];
         expect(payload.fileName).toMatch(generatedFilenameWithSuffixRegex);
         expect(payload.points).toBe(501);
     });
