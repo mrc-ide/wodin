@@ -2,7 +2,10 @@
 <div class="container parameter-set">
   <div class="card">
     <div class="card-header param-card-header">
-      <div v-show="!editDisplayName" class="ms-2 align-center" @click="editDisplayNameOn" style="word-break: break-all;">
+      <div v-show="!editDisplayName"
+           class="ms-2 align-center"
+           @click="editDisplayNameOn"
+           style="word-wrap: break-word;">
         {{parameterSet.displayName}}
       </div>
       <span v-show="editDisplayName" style="width: calc(100% - 2.5rem);">
@@ -54,6 +57,12 @@
       </span>
     </div>
     <div class="card-body" :class="parameterSet.hidden ? 'hidden-parameter-set' : ''">
+        <span class="trace-label mb-3">
+              <div class="me-3">
+                  Line Style
+              </div>
+          <div class="trace mt-2" :class="lineStyleClass"></div>
+        </span>
        <span v-for="(value, name) in parameterSet.parameterValues"
              :key="name"
              class="badge badge-light me-2 mb-2 parameter"
@@ -197,6 +206,12 @@ export default defineComponent({
 
   $trace-color: #333;
 
+  .trace-label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    font-weight: bold;
+  }
   .trace {
     border-top: $trace-color;
     border-top-width: 2px;

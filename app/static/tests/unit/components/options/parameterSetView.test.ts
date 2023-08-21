@@ -117,21 +117,22 @@ describe("ParameterSetView", () => {
         expect(wrapper.find(".card-body").classes()).not.toContain("hidden-parameter-set");
     });
 
-    // TODO literally next ticket so commenting this test for now temporarily
-    // TODO removed traces
-
-    // it("renders all trace line styles", () => {
-    //     const testExpectedTraceClassForIndex = (index: number, expectedClass: string) => {
-    //         const wrapper = getWrapper(false, index);
-    //         expect(wrapper.find("div.trace").classes()).toContain(expectedClass);
-    //     };
-    //     testExpectedTraceClassForIndex(0, "trace-dot");
-    //     testExpectedTraceClassForIndex(1, "trace-dash");
-    //     testExpectedTraceClassForIndex(2, "trace-longdash");
-    //     testExpectedTraceClassForIndex(3, "trace-dashdot");
-    //     testExpectedTraceClassForIndex(4, "trace-longdashdot");
-    //     testExpectedTraceClassForIndex(5, "trace-dot"); // back to start
-    // });
+    it("renders all trace line styles", () => {
+        const testExpectedTraceClassForIndex = (index: number, expectedClass: string) => {
+            const wrapper = getWrapper(false, index);
+            const cardBody = wrapper.find(".card-body");
+            const lineStyle = cardBody.find(".trace-label");
+            const traceLine = cardBody.find(".trace");
+            expect(lineStyle.text()).toBe("Line Style");
+            expect(traceLine.classes()).toContain(expectedClass);
+        };
+        testExpectedTraceClassForIndex(0, "trace-dot");
+        testExpectedTraceClassForIndex(1, "trace-dash");
+        testExpectedTraceClassForIndex(2, "trace-longdash");
+        testExpectedTraceClassForIndex(3, "trace-dashdot");
+        testExpectedTraceClassForIndex(4, "trace-longdashdot");
+        testExpectedTraceClassForIndex(5, "trace-dot"); // back to start
+    });
 
     it("uses tooltip directive", () => {
         const wrapper = getWrapper();
@@ -270,7 +271,7 @@ describe("ParameterSetView", () => {
         await editIcon.trigger("click");
 
         const newIcons = wrapper.findAllComponents(VueFeather);
-        expect(newIcons.length).toBe(4);
+        expect(newIcons.length).toBe(1);
         const saveIcon = newIcons.at(0)!;
         expect(saveIcon.classes()).toContain("save-display-name");
         expect(saveIcon.props("type")).toBe("save");
@@ -282,10 +283,10 @@ describe("ParameterSetView", () => {
         expect(displayNameInput.element.value).toBe("Set 1");
         expect(displayNameText.isVisible()).toBe(false);
 
-        // 1 for onMount, 1 for ref saveButton update, 1 for editIcon click
-        expect(mockTooltipDirective).toHaveBeenCalledTimes(15);
-        expect(mockTooltipDirective.mock.calls[11][0]).toBe(saveIcon.element);
-        expect(mockTooltipDirective.mock.calls[11][1].value).toBe("Save Parameter Set Name");
+        // 4 on mount + 1 input on mount + 4 after update
+        expect(mockTooltipDirective).toHaveBeenCalledTimes(9);
+        expect(mockTooltipDirective.mock.calls[6][0]).toBe(saveIcon.element);
+        expect(mockTooltipDirective.mock.calls[6][1].value).toBe("Save Parameter Set Name");
     });
 
     it("commits save parameter display name mutation when save icon clicked", async () => {
