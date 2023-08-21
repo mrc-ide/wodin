@@ -95,8 +95,20 @@ describe("Run actions", () => {
 
         const parameterValues = { p1: 1, p2: 2 };
         const parameterSets = [
-            { name: "Set 1", parameterValues: { p1: 3, p2: 4 }, hidden: false },
-            { name: "Set 2", parameterValues: { p1: 5, p2: 6 }, hidden: false }
+            {
+                name: "Set 1",
+                parameterValues: { p1: 3, p2: 4 },
+                hidden: false,
+                displayName: "Set 1",
+                displayNameErrorMsg: ""
+            },
+            {
+                name: "Set 2",
+                parameterValues: { p1: 5, p2: 6 },
+                hidden: false,
+                displayName: "Set 2",
+                displayNameErrorMsg: ""
+            }
         ];
         const runner = mockRunnerOde();
         const modelState = mockModelState({
@@ -149,8 +161,20 @@ describe("Run actions", () => {
 
         const parameterValues = { p1: 1, p2: 2 };
         const parameterSets = [
-            { name: "Set 1", parameterValues: { p1: 3, p2: 4 }, hidden: false },
-            { name: "Set 2", parameterValues: { p1: 5, p2: 6 }, hidden: false }
+            {
+                name: "Set 1",
+                parameterValues: { p1: 3, p2: 4 },
+                hidden: false,
+                displayName: "Set 1",
+                displayNameErrorMsg: ""
+            },
+            {
+                name: "Set 2",
+                parameterValues: { p1: 5, p2: 6 },
+                hidden: false,
+                displayName: "Set 2",
+                displayNameErrorMsg: ""
+            }
         ];
         const runner = mockRunnerOde();
         const modelState = mockModelState({
