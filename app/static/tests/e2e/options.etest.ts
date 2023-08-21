@@ -390,6 +390,13 @@ test.describe("Options Tab tests", () => {
             .toBe(advancedOptions[index].label);
         const advancedSetting = await advancedSettingPanel.locator(`:nth-match(.row, ${index + 1})`);
         await fillInAdvancedInputs(advancedOptions[index].type, advancedSetting, index + 1);
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
+            "Plot is out of date: advanced settings have been changed. Run model to update.", {
+                timeout
+            }
+        );
+        await page.click("#run-btn");
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("");
     };
 
     test("can edit and run model with advanced settings", async ({ page }) => {
@@ -400,14 +407,5 @@ test.describe("Options Tab tests", () => {
         await expectAdvancedSetting(page, 2);
         await expectAdvancedSetting(page, 3);
         await expectAdvancedSetting(page, 4);
-
-        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Plot is out of date: advanced settings have been changed. Run model to update.", {
-                timeout
-            }
-        );
-
-        await page.click("#run-btn");
-        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("");
     });
 });
