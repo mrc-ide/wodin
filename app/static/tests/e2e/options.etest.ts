@@ -401,6 +401,12 @@ test.describe("Options Tab tests", () => {
         await expectAdvancedSetting(page, 3);
         await expectAdvancedSetting(page, 4);
 
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
+            "Plot is out of date: advanced settings have been changed. Run model to update.", {
+                timeout
+            }
+        );
+
         await page.click("#run-btn");
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("");
     });
