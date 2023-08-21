@@ -87,3 +87,24 @@ $grey: #ccc;
   -webkit-user-select: none; /* Safari */
   user-select: none; /* Standard syntax */
 }
+
+.param-set-icon {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.param-card-header {
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.param-name-input {
+  width: 150px;
+  height: 30px;
+  padding-left: 7px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
