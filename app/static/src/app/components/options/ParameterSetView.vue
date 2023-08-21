@@ -15,7 +15,7 @@
                   trigger: 'manual',
                   variant: 'error' }"/>
       </span>
-      <span class="float-end">
+      <span class="param-set-icons">
         <vue-feather class="inline-icon clickable edit-display-name param-set-icon"
                      v-if="!editDisplayName"
                      type="edit"
@@ -248,6 +248,12 @@ export default defineComponent({
 .param-set-icon {
   margin-top: 8px;
   margin-bottom: 8px;
+}
+
+.param-set-icons {
+  display: flex;
+  flex-grow: 1;
+  justify-content: end;
 }
 
 .param-card-header {
