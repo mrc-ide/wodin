@@ -63,7 +63,7 @@ export default defineComponent({
         }
     },
     components: {
-      VueFeather,
+        VueFeather,
         EditParamSettings
     },
     setup(props, { emit }) {
@@ -80,12 +80,14 @@ export default defineComponent({
 
         watch(() => props.open, (newValue) => {
             if (newValue) {
-                settingsInternal.value = [...store.state.multiSensitivity.paramSettings ];
+                // take a deep copy
+                settingsInternal.value = store.state.multiSensitivity.paramSettings
+                    .map((p: SensitivityParameterSettings) => ({ ...p }));
             }
         });
 
         const updateSettings = (index: number, newSettings: SensitivityParameterSettings) => {
-            settingsInternal.value[index] = newSettings;
+            Object.assign(settingsInternal.value[index], newSettings);
         };
 
         const addSettings = () => {
