@@ -75,6 +75,7 @@ export default defineComponent({
             return { display: props.open ? "block" : "none" };
         });
 
+        // TODO: serialisation??
         // TODO: validation - do not allow save if same parameter specified more than once
         const hasErrors = computed(() => !!batchParsErrors.value.filter((e) => !!e).length);
 

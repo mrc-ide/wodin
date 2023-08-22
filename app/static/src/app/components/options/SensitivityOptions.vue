@@ -3,7 +3,7 @@
     <template v-if="showOptions">
       <div class="mt-2 clearfix">
         <button class="btn btn-primary mb-4 float-end" @click="toggleEdit(true)">Edit</button>
-        <template v-for="settings in allSettings">
+        <template v-for="(settings, idx) in allSettings" :key="idx">
           <ul>
             <li><strong>Parameter:</strong> {{settings.parameterToVary}}</li>
             <li><strong>Scale Type:</strong> {{ settings.scaleType }}</li>
@@ -17,7 +17,8 @@
             </template>
             <li><strong>Number of runs:</strong> {{ settings.numberOfRuns}}</li>
           </ul>
-          <sensitivity-param-values :batch-pars="batchPars"></sensitivity-param-values>
+          <sensitivity-param-values :batch-pars="allBatchPars[idx]"></sensitivity-param-values>
+          <hr v-if="idx < allSettings.length-1" />
         </template>
       </div>
       <hr/>
@@ -42,7 +43,8 @@ import { SensitivityGetter } from "../../store/sensitivity/getters";
 import SensitivityParamValues from "./SensitivityParamValues.vue";
 import SensitivityPlotOptions from "./SensitivityPlotOptions.vue";
 import SensitivityParamSettingsModal from "./SensitivityParamSettingsModal.vue";
-import MultiSensitivityParamSettingsModal from "@/app/components/options/MultiSensitivityParamSettingsModal.vue";
+import MultiSensitivityParamSettingsModal from "./MultiSensitivityParamSettingsModal.vue";
+import { MultiSensitivityGetter }  from "../../store/multiSensitivity/getters";
 
 export default defineComponent({
     name: "SensitivityOptions",
@@ -73,7 +75,9 @@ export default defineComponent({
             editOpen.value = value;
         };
 
-        const batchPars = computed(() => store.getters[`sensitivity/${SensitivityGetter.batchPars}`]);
+        const allBatchPars = computed(() => (props.multiSensitivity
+            ? store.getters[`multiSensitivity/${MultiSensitivityGetter.multiBatchPars}`]
+            : [store.getters[`sensitivity/${SensitivityGetter.batchPars}`]]));
 
         return {
             title,
@@ -82,7 +86,7 @@ export default defineComponent({
             compileModelMessage,
             toggleEdit,
             editOpen,
-            batchPars
+            allBatchPars
         };
     }
 });

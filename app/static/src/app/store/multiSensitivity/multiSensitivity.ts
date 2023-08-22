@@ -1,6 +1,7 @@
-import {MultiSensitivityState} from "./state";
-import {noSensitivityUpdateRequired} from "../sensitivity/sensitivity";
+import { MultiSensitivityState } from "./state";
+import { noSensitivityUpdateRequired } from "../sensitivity/sensitivity";
 import { mutations } from "./mutations";
+import { getters } from "./getters";
 
 export const defaultState: MultiSensitivityState = {
     result: null,
@@ -15,5 +16,6 @@ export const defaultState: MultiSensitivityState = {
 export const multiSensitivity = {
     namespaced: true,
     state: defaultState,
-    mutations
+    mutations,
+    getters
 };
