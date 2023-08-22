@@ -2,20 +2,30 @@
   <div id="edit-param">
     <div v-if="open" class="modal-backdrop fade show"></div>
     <div class="modal" :class="{show: open}" :style="style">
-      <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Vary Parameters</h5>
           </div>
           <div class="modal-body" style="min-height:26rem;">
             <template v-for="(settings, idx) in settingsInternal" :key="settings">
-              <button v-if="idx > 0" class="btn btn-primary" @click="() => removeSettings(idx)">Delete</button>
+              <div class="clearfix mb-2">
+                <vue-feather v-if="idx > 0"
+                             class="inline-icon clickable float-end"
+                             type="trash-2"
+                             @click="() => removeSettings(idx)"
+                             v-tooltip="`Remove ${settings.parameterToVary}`"></vue-feather>
+              </div>
               <edit-param-settings :settings="settings"
                                    @update="(s) => updateSettings(idx, s)"
                                    @batchParsErrorChange="(e) => batchParsErrorChange(idx, e)"></edit-param-settings>
               <hr/>
             </template>
-            <button class="btn btn-primary" @click="addSettings">Add</button>
+            <div class="text-center">
+              <button class="btn btn-outline"
+                           @click="addSettings"
+                           v-tooltip="'Add parameter'">Add</button>
+            </div>
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary"
@@ -42,6 +52,7 @@ import { SensitivityParameterSettings } from "../../store/sensitivity/state";
 import { WodinError } from "../../types/responseTypes";
 import { defaultSensitivityParamSettings } from "../../store/sensitivity/sensitivity";
 import { MultiSensitivityMutation } from "../../store/multiSensitivity/mutations";
+import VueFeather from "vue-feather";
 
 export default defineComponent({
     name: "MultiSensitivityParamSettingsModal",
@@ -52,6 +63,7 @@ export default defineComponent({
         }
     },
     components: {
+      VueFeather,
         EditParamSettings
     },
     setup(props, { emit }) {
@@ -63,6 +75,7 @@ export default defineComponent({
             return { display: props.open ? "block" : "none" };
         });
 
+        // TODO: validation - do not allow save if same parameter specified more than once
         const hasErrors = computed(() => !!batchParsErrors.value.filter((e) => !!e).length);
 
         watch(() => props.open, (newValue) => {
@@ -99,7 +112,7 @@ export default defineComponent({
             emit("close");
         };
         const saveSettings = () => {
-            store.commit(`multiSensitivity/${MultiSensitivityMutation.SetParamSettings}`, settingsInternal);
+            store.commit(`multiSensitivity/${MultiSensitivityMutation.SetParamSettings}`, [...settingsInternal.value]);
             close();
         };
 
