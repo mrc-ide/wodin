@@ -127,6 +127,26 @@ describe("SensitivitySummaryPlot", () => {
                 batch: mockBatchSet3
             }
         } : [];
+        const parameterSets = [
+            {
+                name: "Set1",
+                displayName: "Hey",
+                displayNameErrorMsg: "",
+                hidden: false
+            },
+            {
+                name: "Set2",
+                displayName: "Bye",
+                displayNameErrorMsg: "",
+                hidden: true
+            },
+            {
+                name: "Set3",
+                displayName: "Middle",
+                displayNameErrorMsg: "",
+                hidden: true
+            }
+        ];
         store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
@@ -144,7 +164,8 @@ describe("SensitivitySummaryPlot", () => {
                 run: {
                     namespaced: true,
                     state: {
-                        endTime: 100
+                        endTime: 100,
+                        parameterSets
                     },
                     getters: {
                         [RunGetter.visibleParameterSetNames]: () => visibleParameterSetNames,
@@ -237,7 +258,7 @@ describe("SensitivitySummaryPlot", () => {
                         width: 1,
                         dash: "dot"
                     },
-                    name: "S (Set1)",
+                    name: "S (Hey)",
                     x: [10, 10.1],
                     y: [100, 100.1],
                     hoverlabel: { namelength: -1 },
@@ -251,7 +272,7 @@ describe("SensitivitySummaryPlot", () => {
                         width: 1,
                         dash: "dot"
                     },
-                    name: "I (Set1)",
+                    name: "I (Hey)",
                     x: [10, 10.1],
                     y: [200, 190.9],
                     hoverlabel: { namelength: -1 },
@@ -266,7 +287,7 @@ describe("SensitivitySummaryPlot", () => {
                         width: 1,
                         dash: "dash"
                     },
-                    name: "S (Set2)",
+                    name: "S (Bye)",
                     x: [20, 20.1],
                     y: [101, 101.1],
                     hoverlabel: { namelength: -1 },
@@ -280,7 +301,7 @@ describe("SensitivitySummaryPlot", () => {
                         width: 1,
                         dash: "dash"
                     },
-                    name: "I (Set2)",
+                    name: "I (Bye)",
                     x: [20, 20.1],
                     y: [201, 191.9],
                     hoverlabel: { namelength: -1 },

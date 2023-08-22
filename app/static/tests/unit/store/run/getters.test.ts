@@ -5,8 +5,20 @@ describe("Run getters", () => {
     it("lineStylesForParameterSets returns expected results", () => {
         const state = mockRunState({
             parameterSets: [
-                { name: "Set 1", parameterValues: { p1: 1 }, hidden: false },
-                { name: "Set 2", parameterValues: { p1: 2 }, hidden: false }
+                {
+                    name: "Set 1",
+                    displayName: "Set 1",
+                    displayNameErrorMsg: "",
+                    parameterValues: { p1: 1 },
+                    hidden: false
+                },
+                {
+                    name: "Set 2",
+                    displayName: "Set 2",
+                    displayNameErrorMsg: "",
+                    parameterValues: { p1: 2 },
+                    hidden: false
+                }
             ]
         });
         const result = (getters[RunGetter.lineStylesForParameterSets] as any)(state);
@@ -49,7 +61,13 @@ describe("Run getters", () => {
     it("runParameterSetIsRequired returns true if any required reason except parameterValueChanged is true", () => {
         const runParameterSetIsRequired = getters[RunGetter.runParameterSetsIsRequired] as any;
         const state = mockRunState({
-            parameterSets: [{ name: "Set 1", parameterValues: { p1: 1 }, hidden: false }],
+            parameterSets: [{
+                name: "Set 1",
+                displayName: "Set 1",
+                displayNameErrorMsg: "",
+                parameterValues: { p1: 1 },
+                hidden: false
+            }],
             parameterSetResults: { "Set 1": { solution: "fake solution" } as any }
         });
         expect(runParameterSetIsRequired(state)).toBe(false);
@@ -74,7 +92,13 @@ describe("Run getters", () => {
 
     it("runParameterSetIsRequired returns true if there are missing parameter set results", () => {
         const state = mockRunState({
-            parameterSets: [{ name: "Set 1", parameterValues: { p1: 1 }, hidden: false }],
+            parameterSets: [{
+                name: "Set 1",
+                displayName: "Set 1",
+                displayNameErrorMsg: "",
+                parameterValues: { p1: 1 },
+                hidden: false
+            }],
             parameterSetResults: {}
         });
         expect((getters[RunGetter.runParameterSetsIsRequired] as any)(state)).toBe(true);
@@ -82,7 +106,13 @@ describe("Run getters", () => {
 
     it("runParameterSetIsRequired returns true if parameter set result has no solution", () => {
         const state = mockRunState({
-            parameterSets: [{ name: "Set 1", parameterValues: { p1: 1 }, hidden: false }],
+            parameterSets: [{
+                name: "Set 1",
+                displayName: "Set 1",
+                displayNameErrorMsg: "",
+                parameterValues: { p1: 1 },
+                hidden: false
+            }],
             parameterSetResults: { "Set 1": { solution: null } as any }
         });
         expect((getters[RunGetter.runParameterSetsIsRequired] as any)(state)).toBe(true);
@@ -91,9 +121,27 @@ describe("Run getters", () => {
     it("gets visibleParameterSetNames", () => {
         const state = mockRunState({
             parameterSets: [
-                { name: "Set 1", parameterValues: { alpha: 1 }, hidden: false },
-                { name: "Set 2", parameterValues: { alpha: 1 }, hidden: true },
-                { name: "Set 3", parameterValues: { alpha: 1 }, hidden: false }
+                {
+                    name: "Set 1",
+                    displayName: "Set 1",
+                    displayNameErrorMsg: "",
+                    parameterValues: { alpha: 1 },
+                    hidden: false
+                },
+                {
+                    name: "Set 2",
+                    displayName: "Set 2",
+                    displayNameErrorMsg: "",
+                    parameterValues: { alpha: 1 },
+                    hidden: true
+                },
+                {
+                    name: "Set 3",
+                    displayName: "Set 3",
+                    displayNameErrorMsg: "",
+                    parameterValues: { alpha: 1 },
+                    hidden: false
+                }
             ]
         });
         expect((getters[RunGetter.visibleParameterSetNames] as any)(state)).toStrictEqual(["Set 1", "Set 3"]);

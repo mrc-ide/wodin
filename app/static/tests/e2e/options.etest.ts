@@ -224,6 +224,18 @@ test.describe("Options Tab tests", () => {
         await page.click(`:nth-match(.swap-param-set, ${index})`);
     };
 
+    const editDisplayName = async (index: number, page: Page) => {
+        await page.click(`:nth-match(.edit-display-name, ${index})`);
+    };
+
+    const saveDisplayName = async (index: number, page: Page) => {
+        await page.click(`:nth-match(.save-display-name, ${index})`);
+    };
+
+    const inputDisplayName = async (index: number, page: Page, name: string) => {
+        await page.fill(`:nth-match(.param-name-input, ${index})`, name);
+    };
+
     const updateBetaParamAndRun = async (value: number, page: Page) => {
         await page.fill(":nth-match(.parameter-input, 1)", value.toString());
         await page.click("#run-btn");
@@ -348,8 +360,45 @@ test.describe("Options Tab tests", () => {
         await updateBetaParamAndRun(2, page);
         await createParameterSet(page);
         await expect(await page.locator(".parameter-set").count()).toBe(2);
-        await expect((await page.innerText(":nth-match(.parameter-set  .card-header, 1)")).trim()).toBe("Set 1");
-        await expect((await page.innerText(":nth-match(.parameter-set  .card-header, 2)")).trim()).toBe("Set 3");
+        await expect((await page.innerText(":nth-match(.parameter-set .card-header, 1)")).trim()).toBe("Set 1");
+        await expect((await page.innerText(":nth-match(.parameter-set .card-header, 2)")).trim()).toBe("Set 3");
+    });
+
+    test("can rename parameter set", async ({ page }) => {
+        await createParameterSet(page);
+        await expect((await page.innerText(":nth-match(.parameter-set .card-header, 1)")).trim()).toBe("Set 1");
+        await editDisplayName(1, page);
+        await inputDisplayName(1, page, "random name 1");
+        await saveDisplayName(1, page);
+        await expect((await page.innerText(":nth-match(.parameter-set .card-header, 1)")).trim()).toBe("random name 1");
+    });
+
+    test("error tooltip and doesn't change name if same name exists", async ({ page }) => {
+        await createParameterSet(page);
+        await editDisplayName(1, page);
+        await inputDisplayName(1, page, "random name 1");
+        await saveDisplayName(1, page);
+        await expect((await page.innerText(":nth-match(.parameter-set .card-header, 1)")).trim()).toBe("random name 1");
+
+        await updateBetaParamAndRun(1, page);
+
+        await createParameterSet(page);
+        await editDisplayName(2, page);
+        await inputDisplayName(2, page, "random name 1");
+        await saveDisplayName(1, page);
+        await expect((await page.innerText(":nth-match(.tooltip-inner, 2)")).trim()).toBe("Name already exists");
+        await expect(await page.isVisible(":nth-match(.param-name-input, 2)")).toBe(true);
+    });
+
+    test("error tooltip and doesn't change name if Set [number] format used", async ({ page }) => {
+        await createParameterSet(page);
+        await editDisplayName(1, page);
+        await inputDisplayName(1, page, "Set 10");
+        await saveDisplayName(1, page);
+        await expect((await page.innerText(":nth-match(.tooltip-inner, 2)")).trim())
+            .toBe("Set 10 (or any Set [number] combination) is reserved for default set names. "
+            + "Please choose another set name or name this set back to its original name of 'Set 1'");
+        await expect(await page.isVisible(".param-name-input")).toBe(true);
     });
 
     const fillInAdvancedInputs = async (type: string, advancedSetting: any, index: number) => {

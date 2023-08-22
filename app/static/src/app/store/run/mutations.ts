@@ -22,6 +22,8 @@ export enum RunMutation {
     DeleteParameterSet = "DeleteParameterSet",
     SwapParameterSet = "SwapParameterSet",
     ToggleParameterSetHidden = "ToggleParameterSetHidden",
+    SaveParameterDisplayName = "SaveParameterDisplayName",
+    TurnOffDisplayNameError = "TurnOffDisplayNameError",
     UpdateAdvancedSettings = "UpdateAdvancedSettings"
 }
 
@@ -32,6 +34,11 @@ const runRequiredNone = {
     numberOfReplicatesChanged: false,
     advancedSettingsChanged: false
 };
+
+interface ParameterSetNames {
+    parameterSetName: string
+    newDisplayName: string
+}
 
 export const mutations: MutationTree<RunState> = {
     [RunMutation.SetResultOde](state: RunState, payload: OdinRunResultOde) {
@@ -150,6 +157,37 @@ export const mutations: MutationTree<RunState> = {
         const paramSet = state.parameterSets.find((set: ParameterSet) => set.name === parameterSetName);
         if (paramSet) {
             paramSet.hidden = !paramSet.hidden;
+        }
+    },
+
+    [RunMutation.SaveParameterDisplayName](state: RunState, payload: ParameterSetNames) {
+        const isDuplicateDisplayName = state.parameterSets.find((set: ParameterSet) => {
+            return set.displayName === payload.newDisplayName;
+        });
+        const isSpecialSetName = payload.newDisplayName.match(/^ *set \d+ *$/gi);
+        const paramSet = state.parameterSets.find((set: ParameterSet) => set.name === payload.parameterSetName);
+        if (paramSet) {
+            const isParamSetName = payload.newDisplayName === paramSet.name;
+            const isParamSetDisplayName = payload.newDisplayName === paramSet.displayName;
+            if (!payload.newDisplayName) {
+                paramSet.displayNameErrorMsg = "Please enter a name";
+            } else if (isDuplicateDisplayName && !isParamSetName && !isParamSetDisplayName) {
+                paramSet.displayNameErrorMsg = "Name already exists";
+            } else if (isSpecialSetName && !isParamSetName) {
+                paramSet.displayNameErrorMsg = `${payload.newDisplayName} (or any Set [number] combination) is reserved
+                for default set names. Please choose another set name or name this set back to
+                its original name of '${paramSet.name}'`;
+            } else {
+                paramSet.displayName = payload.newDisplayName;
+                paramSet.displayNameErrorMsg = "";
+            }
+        }
+    },
+
+    [RunMutation.TurnOffDisplayNameError](state: RunState, parameterSetName: string) {
+        const paramSet = state.parameterSets.find((set: ParameterSet) => set.name === parameterSetName);
+        if (paramSet) {
+            paramSet.displayNameErrorMsg = "";
         }
     }
 };
