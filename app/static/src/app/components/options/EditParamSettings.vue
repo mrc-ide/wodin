@@ -87,7 +87,7 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, PropType, reactive, watch, defineEmits
+  computed, defineComponent, PropType, reactive, watch
 } from "vue";
 import { useStore } from "vuex";
 import {

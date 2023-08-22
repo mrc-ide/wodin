@@ -27,7 +27,10 @@
       {{compileModelMessage}}
     </div>
   </vertical-collapse>
-  <sensitivity-param-settings-modal :open="editOpen" @close="toggleEdit(false)"></sensitivity-param-settings-modal>
+  <multi-sensitivity-param-settings-modal v-if="multiSensitivity" :open="editOpen" @close="toggleEdit(false)">
+  </multi-sensitivity-param-settings-modal>
+  <sensitivity-param-settings-modal v-else :open="editOpen" @close="toggleEdit(false)">
+  </sensitivity-param-settings-modal>
 </template>
 
 <script lang="ts">
@@ -39,6 +42,7 @@ import { SensitivityGetter } from "../../store/sensitivity/getters";
 import SensitivityParamValues from "./SensitivityParamValues.vue";
 import SensitivityPlotOptions from "./SensitivityPlotOptions.vue";
 import SensitivityParamSettingsModal from "./SensitivityParamSettingsModal.vue";
+import MultiSensitivityParamSettingsModal from "@/app/components/options/MultiSensitivityParamSettingsModal.vue";
 
 export default defineComponent({
     name: "SensitivityOptions",
@@ -49,6 +53,7 @@ export default defineComponent({
         }
     },
     components: {
+      MultiSensitivityParamSettingsModal,
         SensitivityParamValues,
         SensitivityPlotOptions,
         VerticalCollapse,

@@ -29,12 +29,12 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, ref, watch} from "vue";
-import EditParamSettings from "@/app/components/options/EditParamSettings.vue";
+import { computed, defineComponent, ref, watch} from "vue";
 import { useStore } from "vuex";
-import {SensitivityParameterSettings} from "@/app/store/sensitivity/state";
-import {SensitivityMutation} from "@/app/store/sensitivity/mutations";
-import {WodinError} from "@/app/types/responseTypes";
+import EditParamSettings from "./EditParamSettings.vue";
+import { SensitivityParameterSettings } from "../../store/sensitivity/state";
+import { SensitivityMutation } from "../../store/sensitivity/mutations";
+import { WodinError } from "../../types/responseTypes";
 
 export default defineComponent({
     name: "SensitivityParamSettingsModal",
