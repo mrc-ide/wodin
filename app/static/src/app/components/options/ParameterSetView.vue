@@ -8,7 +8,7 @@
            style="word-wrap: break-word;">
         {{parameterSet.displayName}}
       </div>
-      <span v-show="editDisplayName" style="width: calc(100% - 2.5rem);">
+      <span v-show="editDisplayName" class="edit-mode-span">
         <input class="d-inline form-control param-name-input"
                ref="paramNameInput"
                v-model="newDisplayName"
@@ -210,7 +210,6 @@ export default defineComponent({
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    font-weight: bold;
   }
   .trace {
     border-top: $trace-color;
@@ -284,5 +283,9 @@ export default defineComponent({
   padding-left: 7px;
   padding-top: 0;
   padding-bottom: 0;
+}
+
+.edit-mode-span {
+  width: calc(100% - 2.5rem);
 }
 </style>
