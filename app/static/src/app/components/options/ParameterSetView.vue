@@ -2,10 +2,13 @@
 <div class="container parameter-set">
   <div class="card">
     <div class="card-header param-card-header">
-      <div v-show="!editDisplayName" class="ms-2 align-center" @click="editDisplayNameOn">
+      <div v-show="!editDisplayName"
+           class="ms-2 align-center"
+           @click="editDisplayNameOn"
+           style="word-wrap: break-word;">
         {{parameterSet.displayName}}
       </div>
-      <span v-show="editDisplayName">
+      <span v-show="editDisplayName" class="edit-mode-span">
         <input class="d-inline form-control param-name-input"
                ref="paramNameInput"
                v-model="newDisplayName"
@@ -15,7 +18,7 @@
                   trigger: 'manual',
                   variant: 'error' }"/>
       </span>
-      <span class="float-end">
+      <span class="param-set-icons">
         <vue-feather class="inline-icon clickable edit-display-name param-set-icon"
                      v-if="!editDisplayName"
                      type="edit"
@@ -29,17 +32,18 @@
                      @click="saveDisplayName"
                      v-tooltip="'Save Parameter Set Name'"></vue-feather>
         <vue-feather class="inline-icon clickable hide-param-set ms-2 param-set-icon"
-                     v-if="!parameterSet.hidden"
+                     v-if="!parameterSet.hidden && !editDisplayName"
                      type="eye-off"
                      @click="toggleHidden"
                      v-tooltip="'Hide Parameter Set'"></vue-feather>
         <vue-feather class="inline-icon clickable show-param-set ms-2 param-set-icon"
-                     v-if="parameterSet.hidden"
+                     v-if="parameterSet.hidden  && !editDisplayName"
                      type="eye"
                      @click="toggleHidden"
                      v-tooltip="'Show Parameter Set'"></vue-feather>
         <vue-feather class="inline-icon clickable swap-param-set ms-2 param-set-icon"
                      type="shuffle"
+                     v-if="!editDisplayName"
                      :disabled="!canSwapParameterSet"
                      :stroke="canSwapParameterSet ? 'black' : 'lightgray'"
                      :style="{ cursor: canSwapParameterSet ? 'pointer' : 'default' }"
@@ -47,11 +51,18 @@
                      v-tooltip="'Swap Parameter Set with Current Parameter Values'"></vue-feather>
         <vue-feather class="inline-icon clickable delete-param-set ms-2 param-set-icon"
                      type="trash-2"
+                     v-if="!editDisplayName"
                      @click="deleteParameterSet"
                      v-tooltip="'Delete Parameter Set'"></vue-feather>
       </span>
     </div>
     <div class="card-body" :class="parameterSet.hidden ? 'hidden-parameter-set' : ''">
+        <span class="trace-label mb-3">
+              <div class="me-3">
+                  Line Style
+              </div>
+          <div class="trace mt-2" :class="lineStyleClass"></div>
+        </span>
        <span v-for="(value, name) in parameterSet.parameterValues"
              :key="name"
              class="badge badge-light me-2 mb-2 parameter"
@@ -195,6 +206,11 @@ export default defineComponent({
 
   $trace-color: #333;
 
+  .trace-label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
   .trace {
     border-top: $trace-color;
     border-top-width: 2px;
@@ -241,5 +257,35 @@ export default defineComponent({
   .parameter {
     font-size: medium;
   }
+}
+
+.param-set-icon {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.param-set-icons {
+  display: flex;
+  flex-grow: 1;
+  justify-content: end;
+}
+
+.param-card-header {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.param-name-input {
+  width: 100%;
+  height: 30px;
+  padding-left: 7px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.edit-mode-span {
+  width: calc(100% - 2.5rem);
 }
 </style>
