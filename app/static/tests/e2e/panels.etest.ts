@@ -12,12 +12,10 @@ test.describe("Wodin App panels tests", () => {
 
     // playwright default screen size is 1280x720
     const windowWidth = 1280;
-    const widthToleranceLeft = windowWidth / 8;
-    const widthToleranceRight = windowWidth / 4;
+    const widthToleranceLeft = Math.max(windowWidth / 8, 200);
+    const widthToleranceRight = Math.max(windowWidth / 4, 400);
     const leftBoundary = widthToleranceLeft;
     const rightBoundary = windowWidth - widthToleranceRight;
-    const snapToleranceLeft = windowWidth / 25;
-    const snapToleranceRight = windowWidth - windowWidth / 13;
 
     const expectBothMode = async (page: Page) => {
         await expect(await page.innerText(".wodin-mode-both .wodin-left .wodin-content .nav-tabs .active"))
