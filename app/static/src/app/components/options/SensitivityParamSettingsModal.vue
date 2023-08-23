@@ -29,7 +29,9 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch} from "vue";
+import {
+    computed, defineComponent, ref, watch
+} from "vue";
 import { useStore } from "vuex";
 import EditParamSettings from "./EditParamSettings.vue";
 import { SensitivityParameterSettings } from "../../store/sensitivity/state";
@@ -53,37 +55,37 @@ export default defineComponent({
         const batchParsError = ref(null as WodinError | null);
 
         const style = computed(() => {
-          return { display: props.open ? "block" : "none" };
+            return { display: props.open ? "block" : "none" };
         });
 
         watch(() => props.open, (newValue) => {
-          if (newValue) {
-            settingsInternal.value = { ...store.state.sensitivity.paramSettings };
-          }
+            if (newValue) {
+                settingsInternal.value = { ...store.state.sensitivity.paramSettings };
+            }
         });
 
         const updateSettings = (newSettings: SensitivityParameterSettings) => {
-          settingsInternal.value = newSettings;
+            settingsInternal.value = newSettings;
         };
 
         const batchParsErrorChange = (newError: WodinError | null) => {
-          batchParsError.value = newError;
+            batchParsError.value = newError;
         };
 
         const close = () => { emit("close"); };
         const saveSettings = () => {
-          store.commit(`sensitivity/${SensitivityMutation.SetParamSettings}`, settingsInternal);
-          close();
+            store.commit(`sensitivity/${SensitivityMutation.SetParamSettings}`, settingsInternal.value);
+            close();
         };
 
         return {
-          style,
-          settingsInternal,
-          updateSettings,
-          batchParsError,
-          batchParsErrorChange,
-          saveSettings,
-          close
+            style,
+            settingsInternal,
+            updateSettings,
+            batchParsError,
+            batchParsErrorChange,
+            saveSettings,
+            close
         };
     }
 });

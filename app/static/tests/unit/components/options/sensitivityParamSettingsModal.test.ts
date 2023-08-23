@@ -1,13 +1,13 @@
+import Vuex from "vuex";
+import { nextTick } from "vue";
+import { shallowMount } from "@vue/test-utils";
 import {
-    SensitivityParameterSettings,
     SensitivityScaleType,
     SensitivityVariationType
 } from "../../../../src/app/store/sensitivity/state";
-import Vuex from "vuex";
-import {BasicState} from "../../../../src/app/store/basic/state";
-import {mockBasicState, mockModelState, mockRunState} from "../../../mocks";
-import {SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
-import {mount, shallowMount} from "@vue/test-utils";
+import { BasicState } from "../../../../src/app/store/basic/state";
+import { mockBasicState } from "../../../mocks";
+import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import SensitivityParamSettingsModal from "../../../../src/app/components/options/SensitivityParamSettingsModal.vue";
 import EditParamSettings from "../../../../src/app/components/options/EditParamSettings.vue";
 
@@ -60,7 +60,7 @@ describe("SensitivityParamSettingsModal", () => {
         jest.clearAllMocks();
     });
 
-    it("renders as expected", () => {
+    it("renders as expected", async () => {
         const wrapper = await getWrapper();
         expect(wrapper.find(".modal").classes()).toContain("show");
         expect((wrapper.find(".modal").element as HTMLElement).style.display).toBe("block");
@@ -88,23 +88,30 @@ describe("SensitivityParamSettingsModal", () => {
         expect(wrapper.emitted("close")?.length).toBe(1);
     });
 
-    it("handles update from EditParamSettings, and saves to store on OK", () => {
-        const updatedSettings = {...paramSettings, parameterToVary: "C", numberOfRuns: 10};
+    it("handles update from EditParamSettings, and saves to store on OK", async () => {
+        const updatedSettings = {
+            ...paramSettings,
+            parameterToVary: "C",
+            numberOfRuns: 10
+        };
         const wrapper = await getWrapper();
         const editParams = wrapper.findComponent(EditParamSettings);
         editParams.vm.$emit("update", updatedSettings);
+        expect(mockSetParamSettings).toHaveBeenCalledTimes(0);
         await wrapper.find("#ok-settings").trigger("click");
         expect(mockSetParamSettings).toHaveBeenCalledTimes(1);
-        expect(mockSetParamSettings).toHaveBeenCalledWith(updatedSettings);
+        expect(mockSetParamSettings.mock.calls[0][1]).toStrictEqual(updatedSettings);
         expect(wrapper.emitted("close")?.length).toBe(1);
     });
 
-    it("disables and enables button as expected when batchParsError changes", () => {
+    it("disables and enables button as expected when batchParsError changes", async () => {
         const wrapper = await getWrapper();
         const editParams = wrapper.findComponent(EditParamSettings);
-        editParams.vm.$emit("batchParsErrorChange", {error: "test error"});
+        editParams.vm.$emit("batchParsErrorChange", { error: "test error" });
+        await nextTick();
         expect((wrapper.find("#ok-settings").element as HTMLButtonElement).disabled).toBe(true);
         editParams.vm.$emit("batchParsErrorChange", null);
+        await nextTick();
         expect((wrapper.find("#ok-settings").element as HTMLButtonElement).disabled).toBe(false);
     });
 });

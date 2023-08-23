@@ -1,18 +1,23 @@
 import Vuex from "vuex";
-import {mount, VueWrapper} from "@vue/test-utils";
+import { shallowMount, VueWrapper } from "@vue/test-utils";
 import {
     SensitivityParameterSettings,
     SensitivityScaleType,
     SensitivityVariationType
 } from "../../../../src/app/store/sensitivity/state";
-import {mockBasicState, mockBatchParsDisplace, mockBatchParsRange, mockModelState, mockRunState} from "../../../mocks";
+import {
+    mockBasicState,
+    mockBatchParsDisplace,
+    mockBatchParsRange,
+    mockModelState,
+    mockRunState
+} from "../../../mocks";
 import EditParamSettings from "../../../../src/app/components/options/EditParamSettings.vue";
-import {BasicState} from "../../../../src/app/store/basic/state";
+import { BasicState } from "../../../../src/app/store/basic/state";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
 import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
-import {expectCloseNumericArray} from "../../../testUtils";
-
-//const mockTooltipDirective = jest.fn();
+import { expectCloseNumericArray } from "../../../testUtils";
+import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 
 describe("EditParamSettings", () => {
     const percentSettings = {
@@ -60,10 +65,9 @@ describe("EditParamSettings", () => {
                 }
             }
         });
-        const wrapper = mount(EditParamSettings, {
+        const wrapper = shallowMount(EditParamSettings, {
             global: {
-                plugins: [store],
-                //directives: { tooltip: mockTooltipDirective }
+                plugins: [store]
             },
             props: {
                 settings
@@ -146,8 +150,8 @@ describe("EditParamSettings", () => {
         const settings = { ...rangeSettings, rangeFrom: 10, rangeTo: 5 };
         const wrapper = getWrapper(settings);
 
-        expect(wrapper.find("#invalid-msg").text())
-            .toBe("Invalid settings: Mock error: min must be less than max");
+        expect(wrapper.find("#invalid-msg").findComponent(ErrorInfo).props().error)
+            .toStrictEqual({ error: "Invalid settings", detail: "Mock error: min must be less than max" });
     });
 
     const updateSelect = async (wrapper: VueWrapper<any>, rowId: string, newVal: string) => {
@@ -164,27 +168,27 @@ describe("EditParamSettings", () => {
         expect((wrapper.emitted() as any).update[0][0]).toStrictEqual(expectedParams);
 
         await updateSelect(wrapper, "edit-scale-type", SensitivityScaleType.Logarithmic);
-        expectedParams = {...expectedParams, scaleType: SensitivityScaleType.Logarithmic};
+        expectedParams = { ...expectedParams, scaleType: SensitivityScaleType.Logarithmic };
         expect((wrapper.emitted() as any).update[1][0]).toStrictEqual(expectedParams);
 
         await wrapper.find("#edit-percent").findComponent(NumericInput).vm.$emit("update", 15);
-        expectedParams = {...expectedParams, variationPercentage: 15};
+        expectedParams = { ...expectedParams, variationPercentage: 15 };
         expect((wrapper.emitted() as any).update[2][0]).toStrictEqual(expectedParams);
 
         await updateSelect(wrapper, "edit-variation-type", SensitivityVariationType.Range);
-        expectedParams = {...expectedParams, variationType: SensitivityVariationType.Range};
+        expectedParams = { ...expectedParams, variationType: SensitivityVariationType.Range };
         expect((wrapper.emitted() as any).update[3][0]).toStrictEqual(expectedParams);
 
         await wrapper.find("#edit-from").findComponent(NumericInput).vm.$emit("update", 1);
-        expectedParams = {...expectedParams, rangeFrom: 1};
+        expectedParams = { ...expectedParams, rangeFrom: 1 };
         expect((wrapper.emitted() as any).update[4][0]).toStrictEqual(expectedParams);
 
         await wrapper.find("#edit-to").findComponent(NumericInput).vm.$emit("update", 3);
-        expectedParams = {...expectedParams, rangeTo: 3};
+        expectedParams = { ...expectedParams, rangeTo: 3 };
         expect((wrapper.emitted() as any).update[5][0]).toStrictEqual(expectedParams);
 
         await wrapper.find("#edit-runs").findComponent(NumericInput).vm.$emit("update", 11);
-        expectedParams = {...expectedParams, numberOfRuns: 11};
+        expectedParams = { ...expectedParams, numberOfRuns: 11 };
         expect((wrapper.emitted() as any).update[6][0]).toStrictEqual(expectedParams);
     });
 
@@ -219,7 +223,8 @@ describe("EditParamSettings", () => {
         const wrapper = getWrapper(rangeSettings);
         await wrapper.find("#edit-to").findComponent(NumericInput).vm.$emit("update", 1);
         expect((wrapper.emitted() as any).batchParsErrorChange.length).toBe(1);
-        expect((wrapper.emitted() as any).batchParsErrorChange[0][0]).toStrictEqual({errir: "to must be greater than from"});
+        expect((wrapper.emitted() as any).batchParsErrorChange[0][0])
+            .toStrictEqual({ error: "Invalid settings", detail: "Mock error: min must be less than max" });
 
         // emits with null when correct error
         await wrapper.find("#edit-to").findComponent(NumericInput).vm.$emit("update", 10);
