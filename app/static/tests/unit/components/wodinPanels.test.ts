@@ -266,7 +266,7 @@ describe("WodinPanels", () => {
 
     it("resize function resets the panel split", async () => {
         const wrapper = getWrapper();
-        const vm = wrapper.vm;
+        const { vm } = wrapper;
         window.innerWidth = 1000;
         vm.windowWidth = 2000;
         vm.mode = PanelsMode.Left;

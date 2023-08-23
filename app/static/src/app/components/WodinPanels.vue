@@ -40,7 +40,9 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, onUnmounted, ref } from "vue";
+import {
+    computed, defineComponent, onMounted, onUnmounted, ref
+} from "vue";
 import VueFeather from "vue-feather";
 
 export enum PanelsMode {
@@ -65,8 +67,8 @@ export default defineComponent({
         VueFeather
     },
     setup() {
-        let windowWidth = ref(window.innerWidth);
-        let panelsWindow = ref<null | HTMLElement>(null);
+        const windowWidth = ref(window.innerWidth);
+        const panelsWindow = ref<null | HTMLElement>(null);
         /*
             Window boundary variables are the points on either side at which the the
             panel doesn't display content anymore and if they mouseup at that region
@@ -76,12 +78,25 @@ export default defineComponent({
             Snap tolerance variables are points on either side at which the panel snaps
             even if they haven't emitted a mouseup event (let go of the drag). In general,
             we divide by a factor of 3 to get the snap tolerance from the boundary
-        */ 
+        */
         const windowBoundaryLeft = computed(() => Math.max(windowWidth.value / 8, 200));
         const windowMinRightPanelWidth = computed(() => Math.max(windowWidth.value / 4, 400));
         const windowBoundaryRight = computed(() => windowWidth.value - windowMinRightPanelWidth.value);
         const snapToleranceLeft = computed(() => windowBoundaryLeft.value / 3);
         const snapToleranceRight = computed(() => windowWidth.value - windowMinRightPanelWidth.value / 3);
+
+        const optionsWidth = ref<WidthStyle>({});
+        const chartsWidth = ref<WidthStyle>({});
+
+        const mode = ref<PanelsMode>(PanelsMode.Both);
+        const modeClassMap: Record<PanelsMode, string> = {
+            [PanelsMode.Both]: "wodin-mode-both",
+            [PanelsMode.Left]: "wodin-mode-left",
+            [PanelsMode.Right]: "wodin-mode-right"
+        };
+        const modeClass = computed(() => modeClassMap[mode.value]);
+        const dragStart = ref<DragStart | null>(null);
+        const hidePanelMode = ref<HidePanelContent>(HidePanelContent.None);
 
         const resize = () => {
             // complete reset to avoid the panel being across
@@ -93,7 +108,7 @@ export default defineComponent({
             chartsWidth.value.width = `calc(100% - ${optionsWidth.value.width})`;
         };
 
-        let resizeObserver = new ResizeObserver(resize);
+        const resizeObserver = new ResizeObserver(resize);
         onMounted(() => {
             if (panelsWindow.value) {
                 resizeObserver.observe(panelsWindow.value);
@@ -104,21 +119,6 @@ export default defineComponent({
                 resizeObserver.disconnect();
             }
         });
-
-        const mode = ref<PanelsMode>(PanelsMode.Both);
-        const modeClassMap: Record<PanelsMode, string> = {
-            [PanelsMode.Both]: "wodin-mode-both",
-            [PanelsMode.Left]: "wodin-mode-left",
-            [PanelsMode.Right]: "wodin-mode-right"
-        };
-
-        const modeClass = computed(() => modeClassMap[mode.value]);
-
-        const optionsWidth = ref<WidthStyle>({});
-        const chartsWidth = ref<WidthStyle>({});
-        const dragStart = ref<DragStart | null>(null);
-
-        const hidePanelMode = ref<HidePanelContent>(HidePanelContent.None);
 
         const getTouchEvent = (event: Event) => {
             return (event as TouchEvent).touches?.length > 0 ? (event as TouchEvent).touches[0] : event;
