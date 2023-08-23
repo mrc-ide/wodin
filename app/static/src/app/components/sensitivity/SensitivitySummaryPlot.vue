@@ -27,8 +27,8 @@ import { runPlaceholderMessage } from "../../utils";
 import { RunGetter } from "../../store/run/getters";
 import { Dict } from "../../types/utilTypes";
 import WodinPlotDataSummary from "../WodinPlotDataSummary.vue";
-import { verifyValidPlotSettingsTime } from "./support";
 import { ParameterSet } from "../../store/run/state";
+import { verifyValidPlotSettingsTime } from "./support";
 
 export default defineComponent({
     name: "SensitivitySummaryPlot",

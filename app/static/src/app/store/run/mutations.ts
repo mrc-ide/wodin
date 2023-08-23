@@ -22,9 +22,9 @@ export enum RunMutation {
     DeleteParameterSet = "DeleteParameterSet",
     SwapParameterSet = "SwapParameterSet",
     ToggleParameterSetHidden = "ToggleParameterSetHidden",
-    UpdateAdvancedSettings = "UpdateAdvancedSettings",
     SaveParameterDisplayName = "SaveParameterDisplayName",
-    TurnOffDisplayNameError = "TurnOffDisplayNameError"
+    TurnOffDisplayNameError = "TurnOffDisplayNameError",
+    UpdateAdvancedSettings = "UpdateAdvancedSettings"
 }
 
 const runRequiredNone = {
