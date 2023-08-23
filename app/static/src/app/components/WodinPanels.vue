@@ -1,5 +1,5 @@
 <template>
-    <div :class="dragStart !== null ? 'show-drag-cursor' : ''">
+    <div :class="dragStart !== null ? 'show-drag-cursor' : ''" ref="panelsWindow">
         <div :class="modeClass">
             <div class="wodin-left" :style="optionsWidth">
                 <span class="wodin-collapse-controls">
@@ -10,8 +10,7 @@
                 </span>
                 <div v-show="hidePanelMode === HidePanelContent.Left"
                     @click="openCollapsedView"
-                    class="view-left"
-                    :class="mode === PanelsMode.Right ? 'view-left-collapsed' : 'view-left-expand'">
+                    class="view-left">
                     View Options
                 </div>
                 <div v-show="hidePanelMode !== HidePanelContent.Left"
@@ -26,8 +25,7 @@
                     @mouseup="handleDragEnd"></div>
                 <div v-show="hidePanelMode === HidePanelContent.Right"
                     @click="openCollapsedView"
-                    class="view-right"
-                    :class="mode === PanelsMode.Left ? 'view-right-collapsed' : 'view-right-expand'">
+                    class="view-right">
                     View Charts
                 </div>
                 <div v-show="hidePanelMode !== HidePanelContent.Right"
@@ -42,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, onMounted, onUnmounted, ref } from "vue";
 import VueFeather from "vue-feather";
 
 export enum PanelsMode {
@@ -67,15 +65,45 @@ export default defineComponent({
         VueFeather
     },
     setup() {
-        const windowWidth = computed(() => window.innerWidth);
-        // different snap tolerance because the plot does not look
-        // good with width of windowWidth / 8
-        const widthToleranceLeft = windowWidth.value / 8;
-        const widthToleranceRight = windowWidth.value / 4;
-        const windowBoundaryLeft = widthToleranceLeft;
-        const windowBoundaryRight = windowWidth.value - widthToleranceRight;
-        const snapToleranceLeft = windowWidth.value / 25;
-        const snapToleranceRight = windowWidth.value - windowWidth.value / 13;
+        let windowWidth = ref(window.innerWidth);
+        let panelsWindow = ref<null | HTMLElement>(null);
+        /*
+            Window boundary variables are the points on either side at which the the
+            panel doesn't display content anymore and if they mouseup at that region
+            the panel will snap and collapse to that side. They also enforce that the
+            options panel is at least 200px wide and the charts at least 400px
+
+            Snap tolerance variables are points on either side at which the panel snaps
+            even if they haven't emitted a mouseup event (let go of the drag). In general,
+            we divide by a factor of 3 to get the snap tolerance from the boundary
+        */ 
+        const windowBoundaryLeft = computed(() => Math.max(windowWidth.value / 8, 200));
+        const windowMinRightPanelWidth = computed(() => Math.max(windowWidth.value / 4, 400));
+        const windowBoundaryRight = computed(() => windowWidth.value - windowMinRightPanelWidth.value);
+        const snapToleranceLeft = computed(() => windowBoundaryLeft.value / 3);
+        const snapToleranceRight = computed(() => windowWidth.value - windowMinRightPanelWidth.value / 3);
+
+        const resize = () => {
+            // complete reset to avoid the panel being across
+            // boundary off the browser window
+            windowWidth.value = window.innerWidth;
+            hidePanelMode.value = HidePanelContent.None;
+            mode.value = PanelsMode.Both;
+            optionsWidth.value.width = `max(${windowBoundaryLeft.value}px, 30%)`;
+            chartsWidth.value.width = `calc(100% - ${optionsWidth.value.width})`;
+        };
+
+        let resizeObserver = new ResizeObserver(resize);
+        onMounted(() => {
+            if (panelsWindow.value) {
+                resizeObserver.observe(panelsWindow.value);
+            }
+        });
+        onUnmounted(() => {
+            if (resizeObserver) {
+                resizeObserver.disconnect();
+            }
+        });
 
         const mode = ref<PanelsMode>(PanelsMode.Both);
         const modeClassMap: Record<PanelsMode, string> = {
@@ -113,16 +141,17 @@ export default defineComponent({
         };
 
         const handleDragMove = (event: Event) => {
+            event.preventDefault();
             const { clientX } = getTouchEvent(event) as MouseEvent | Touch;
 
-            if (clientX > snapToleranceRight) {
+            if (clientX > snapToleranceRight.value) {
                 mode.value = PanelsMode.Left;
-            } else if (clientX < snapToleranceLeft) {
+            } else if (clientX < snapToleranceLeft.value) {
                 mode.value = PanelsMode.Right;
-            } else if (clientX > windowBoundaryRight) {
+            } else if (clientX > windowBoundaryRight.value) {
                 mode.value = PanelsMode.Both;
                 hidePanelMode.value = HidePanelContent.Right;
-            } else if (clientX < windowBoundaryLeft) {
+            } else if (clientX < windowBoundaryLeft.value) {
                 mode.value = PanelsMode.Both;
                 hidePanelMode.value = HidePanelContent.Left;
             } else {
@@ -131,8 +160,7 @@ export default defineComponent({
             }
 
             optionsWidth.value.width = `calc(${clientX}px + ${dragStart.value === DragStart.Icon ? 1.4 : -1}rem)`;
-            chartsWidth.value.width = `calc(100vw - ${clientX}px - ${dragStart.value === DragStart.Icon ? 5 : 7.4}rem)`;
-            event.preventDefault();
+            chartsWidth.value.width = `calc(100% - ${optionsWidth.value.width})`;
         };
 
         const handleDragEnd = (event: Event) => {
@@ -140,9 +168,9 @@ export default defineComponent({
 
             const { clientX } = getTouchEvent(event) as MouseEvent | Touch;
 
-            if (clientX > windowBoundaryRight) {
+            if (clientX > windowBoundaryRight.value) {
                 mode.value = PanelsMode.Left;
-            } else if (clientX < windowBoundaryLeft) {
+            } else if (clientX < windowBoundaryLeft.value) {
                 mode.value = PanelsMode.Right;
             } else {
                 mode.value = PanelsMode.Both;
@@ -151,18 +179,19 @@ export default defineComponent({
             removeDragListeners(handleDragMove, handleDragEnd);
         };
 
-        const handleDragStart = () => {
+        const handleDragStart = (event: Event) => {
+            event.preventDefault();
             addDragListeners(handleDragMove, handleDragEnd);
         };
 
-        const handleDragStartEdge = () => {
+        const handleDragStartEdge = (event: Event) => {
             dragStart.value = DragStart.Edge;
-            handleDragStart();
+            handleDragStart(event);
         };
 
-        const handleDragStartIcon = () => {
+        const handleDragStartIcon = (event: Event) => {
             dragStart.value = DragStart.Icon;
-            handleDragStart();
+            handleDragStart(event);
         };
 
         const openCollapsedView = () => {
@@ -186,7 +215,10 @@ export default defineComponent({
             PanelsMode,
             handleDragStartEdge,
             handleDragStartIcon,
-            dragStart
+            dragStart,
+            panelsWindow,
+            resize,
+            windowWidth
         };
     }
 });
@@ -213,7 +245,7 @@ export default defineComponent({
         left: 0;
         position: absolute;
         height: 100%;
-        width: 6px;
+        width: 10px;
     }
     .edge-resize:hover {
         cursor: col-resize;
@@ -241,19 +273,14 @@ export default defineComponent({
         transform: rotate(90deg);
     }
 
-    .view-left-expand {
-        position: absolute;
-        right: -2.7rem;
-        top: 7rem
-    }
-
-    .view-left-collapsed {
+    .view-left {
         position: absolute;
         right: -2.7rem;
         top: 7rem
     }
 
     .view-right {
+        position: absolute;
         translate: -4rem 7rem;
     }
 

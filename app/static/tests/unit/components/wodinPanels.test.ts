@@ -23,14 +23,22 @@ enum DragStart {
     Icon, Edge
 }
 
+const mockObserve = jest.fn();
+const mockDisconnect = jest.fn();
+function mockResizeObserver(this: any) {
+    this.observe = mockObserve;
+    this.disconnect = mockDisconnect;
+}
+(global.ResizeObserver as any) = mockResizeObserver;
+
 // vue test utils window width
 const windowWidth = 1024;
-const widthToleranceLeft = windowWidth / 8;
-const widthToleranceRight = windowWidth / 4;
+const widthToleranceLeft = Math.max(windowWidth / 8, 200);
+const widthToleranceRight = Math.max(windowWidth / 4, 400);
 const windowBoundaryLeft = widthToleranceLeft;
 const windowBoundaryRight = windowWidth - widthToleranceRight;
-const snapToleranceLeft = windowWidth / 25;
-const snapToleranceRight = windowWidth - windowWidth / 13;
+const snapToleranceLeft = windowBoundaryLeft / 3;
+const snapToleranceRight = windowWidth - widthToleranceRight / 3;
 
 const mockPreventDefault = jest.fn();
 
@@ -77,7 +85,7 @@ describe("WodinPanels", () => {
             expect(optionsWidth)
                 .toStrictEqual({ width: `calc(${position}px + ${dragStart === DragStart.Icon ? 1.4 : -1}rem)` });
             expect(chartsWidth)
-                .toStrictEqual({ width: `calc(100vw - ${position}px - ${dragStart === DragStart.Icon ? 5 : 7.4}rem)` });
+                .toStrictEqual({ width: `calc(100% - ${optionsWidth.width})` });
         }
         expect(mockPreventDefault).toBeCalledTimes(expectedPreventDefault);
     };
@@ -177,7 +185,7 @@ describe("WodinPanels", () => {
 
     it("handleDragStart adds correct listeners", () => {
         const wrapper = getWrapper();
-        (wrapper.vm as any).handleDragStart();
+        (wrapper.vm as any).handleDragStart({ preventDefault: mockPreventDefault });
         const { handleDragMove, handleDragEnd } = (wrapper.vm as any);
         expect(docAddListenerSpy).toHaveBeenCalledTimes(4);
         expect(docAddListenerSpy.mock.calls[0][0]).toBe("mousemove");
@@ -229,9 +237,9 @@ describe("WodinPanels", () => {
         const wrapper = getWrapper();
         const vm = wrapper.vm as any;
         expect(vm.dragStart).toBe(null);
-        wrapper.vm.handleDragStartEdge();
+        wrapper.vm.handleDragStartEdge({ preventDefault: mockPreventDefault } as any);
         expect(vm.dragStart).toBe(DragStart.Edge);
-        wrapper.vm.handleDragStartIcon();
+        wrapper.vm.handleDragStartIcon({ preventDefault: mockPreventDefault } as any);
         expect(vm.dragStart).toBe(DragStart.Icon);
     });
 
@@ -249,5 +257,35 @@ describe("WodinPanels", () => {
         await nextTick();
         await wrapper.find(".view-right").trigger("click");
         testBothMode(wrapper);
+    });
+
+    it("initialises resizeObserver", () => {
+        getWrapper();
+        expect(mockObserve).toBeCalledTimes(1);
+    });
+
+    it("resize function resets the panel split", async () => {
+        const wrapper = getWrapper();
+        const vm = wrapper.vm;
+        window.innerWidth = 1000;
+        vm.windowWidth = 2000;
+        vm.mode = PanelsMode.Left;
+        vm.hidePanelMode = HidePanelContent.Left;
+        vm.optionsWidth.width = "10%";
+        vm.chartsWidth.width = "90%";
+        await nextTick();
+        vm.resize();
+        expect(vm.windowWidth).toBe(1000);
+        expect(vm.mode).toBe(PanelsMode.Both);
+        expect(vm.hidePanelMode).toBe(HidePanelContent.None);
+        expect(vm.optionsWidth.width).toBe("max(200px, 30%)");
+        expect(vm.chartsWidth.width).toBe("calc(100% - max(200px, 30%))");
+    });
+
+    it("disconnects resizeObserver on unmount", () => {
+        const wrapper = getWrapper();
+        expect(mockDisconnect).toBeCalledTimes(0);
+        wrapper.unmount();
+        expect(mockDisconnect).toBeCalledTimes(1);
     });
 });

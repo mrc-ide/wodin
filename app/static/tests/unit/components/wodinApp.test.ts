@@ -7,6 +7,12 @@ import WodinPanels from "../../../src/app/components/WodinPanels.vue";
 import ErrorsAlert from "../../../src/app/components/ErrorsAlert.vue";
 import WodinApp from "../../../src/app/components/WodinApp.vue";
 
+function mockResizeObserver(this: any) {
+    this.observe = jest.fn();
+    this.disconnect = jest.fn();
+}
+(global.ResizeObserver as any) = mockResizeObserver;
+
 describe("WodinApp", () => {
     const getWrapper = (includeConfig = true) => {
         const config = includeConfig ? { basicProp: "Test basic prop value" } : null;
