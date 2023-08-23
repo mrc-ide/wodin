@@ -8,10 +8,10 @@
             <h5 class="modal-title">Vary Parameters</h5>
           </div>
           <div class="modal-body" style="min-height:26rem;">
-            <template v-for="(settings, idx) in settingsInternal" :key="settings">
+            <div v-for="(settings, idx) in settingsInternal" :key="settings" class="multi-sens-edit">
               <div class="clearfix mb-2">
                 <vue-feather v-if="idx > 0"
-                             class="inline-icon clickable float-end"
+                             class="inline-icon clickable float-end delete-param-to-vary"
                              type="trash-2"
                              @click="() => removeSettings(idx)"
                              v-tooltip="`Remove ${settings.parameterToVary}`"></vue-feather>
@@ -20,11 +20,12 @@
                                    @update="(s) => updateSettings(idx, s)"
                                    @batchParsErrorChange="(e) => batchParsErrorChange(idx, e)"></edit-param-settings>
               <hr/>
-            </template>
+            </div>
             <div class="text-center">
               <button class="btn btn-outline"
-                           @click="addSettings"
-                           v-tooltip="'Add parameter'">Add</button>
+                      id="add-param-to-vary"
+                      @click="addSettings"
+                      v-tooltip="'Add parameter'">Add</button>
             </div>
           </div>
           <div class="modal-footer">

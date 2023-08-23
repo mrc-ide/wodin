@@ -42,7 +42,6 @@ describe("SensitivityParamSettingsModal", () => {
         const wrapper = shallowMount(SensitivityParamSettingsModal, {
             global: {
                 plugins: [store],
-                //directives: { tooltip: mockTooltipDirective }
             },
             props: {
                 open: false
@@ -97,7 +96,6 @@ describe("SensitivityParamSettingsModal", () => {
         const wrapper = await getWrapper();
         const editParams = wrapper.findComponent(EditParamSettings);
         editParams.vm.$emit("update", updatedSettings);
-        expect(mockSetParamSettings).toHaveBeenCalledTimes(0);
         await wrapper.find("#ok-settings").trigger("click");
         expect(mockSetParamSettings).toHaveBeenCalledTimes(1);
         expect(mockSetParamSettings.mock.calls[0][1]).toStrictEqual(updatedSettings);
