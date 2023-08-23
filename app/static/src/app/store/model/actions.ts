@@ -90,7 +90,7 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
             commit(`sensitivity/${SensitivityMutation.SetParameterToVary}`, newParamToVary, { root: true });
         }
         if (rootState.config?.multiSensitivity) {
-            // multi-sensitivity: remove any param settings without valid param, but make sure at least one remains
+            // multi-sensitivity: remove any param settings without valid param, include placeholder if all removed
             const newMultiSettings = rootState.multiSensitivity.paramSettings
                 .filter((p) => p.parameterToVary && paramNames.includes(p.parameterToVary));
             if (!newMultiSettings.length) {

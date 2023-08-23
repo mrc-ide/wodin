@@ -1,21 +1,18 @@
 import Vuex from "vuex";
-import { mount, VueWrapper } from "@vue/test-utils";
+import {mount, VueWrapper} from "@vue/test-utils";
 import {
     SensitivityParameterSettings,
     SensitivityScaleType,
     SensitivityVariationType
 } from "../../../../src/app/store/sensitivity/state";
-import {
-    mockBasicState, mockBatchParsDisplace, mockBatchParsRange, mockModelState, mockRunState
-} from "../../../mocks";
+import {mockBasicState, mockBatchParsDisplace, mockBatchParsRange, mockModelState, mockRunState} from "../../../mocks";
 import EditParamSettings from "../../../../src/app/components/options/EditParamSettings.vue";
-import { BasicState } from "../../../../src/app/store/basic/state";
+import {BasicState} from "../../../../src/app/store/basic/state";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
-import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
-import { expectCloseNumericArray } from "../../../testUtils";
+import {expectCloseNumericArray} from "../../../testUtils";
 
-const mockTooltipDirective = jest.fn();
+//const mockTooltipDirective = jest.fn();
 
 describe("EditParamSettings", () => {
     const percentSettings = {
@@ -45,8 +42,7 @@ describe("EditParamSettings", () => {
 
     const parameterValues = { A: 1, B: 2 };
 
-    const getWrapper = async (paramSettings: SensitivityParameterSettings, open = true,
-        mockSetParamSettings = jest.fn()) => {
+    const getWrapper = (settings: SensitivityParameterSettings) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
@@ -61,32 +57,19 @@ describe("EditParamSettings", () => {
                     state: mockRunState({
                         parameterValues
                     })
-                },
-                sensitivity: {
-                    namespaced: true,
-                    state: {
-                        paramSettings
-                    },
-                    mutations: {
-                        [SensitivityMutation.SetParamSettings]: mockSetParamSettings
-                    }
                 }
             }
         });
         const wrapper = mount(EditParamSettings, {
             global: {
                 plugins: [store],
-                directives: { tooltip: mockTooltipDirective }
+                //directives: { tooltip: mockTooltipDirective }
             },
             props: {
-                open: false
+                settings
             }
         });
 
-        // We open after mounting to trigger the component to take an internal copy of store settings to edit
-        if (open) {
-            await wrapper.setProps({ open: true });
-        }
         return wrapper;
     };
 
@@ -94,14 +77,8 @@ describe("EditParamSettings", () => {
         jest.clearAllMocks();
     });
 
-    it("renders as expected when variation type is Percentage", async () => {
-        const wrapper = await getWrapper(percentSettings);
-
-        expect(wrapper.find(".modal").classes()).toContain("show");
-        expect((wrapper.find(".modal").element as HTMLElement).style.display).toBe("block");
-        expect(wrapper.find(".modal-backdrop").exists()).toBe(true);
-
-        expect(wrapper.find(".modal-header").text()).toBe("Vary Parameter");
+    it("renders as expected when variation type is Percentage", () => {
+        const wrapper = getWrapper(percentSettings);
 
         expect(wrapper.find("#edit-param-to-vary label").text()).toBe("Parameter to vary");
         const paramSelect = wrapper.find("#edit-param-to-vary select");
@@ -137,15 +114,11 @@ describe("EditParamSettings", () => {
         expect(wrapper.find("#edit-runs label").text()).toBe("Number of runs");
         expect(wrapper.find("#edit-runs").findComponent(NumericInput).props("value")).toBe(5);
 
-        expect(wrapper.find(".modal-footer button.btn-primary").text()).toBe("OK");
-        expect(wrapper.find(".modal-footer button.btn-primary").attributes("disabled")).toBe(undefined);
-        expect(wrapper.find(".modal-footer button.btn-outline").text()).toBe("Cancel");
-
         expect(wrapper.find("#invalid-msg").exists()).toBe(false);
     });
 
-    it("renders as expected when variation type is Range", async () => {
-        const wrapper = await getWrapper(rangeSettings);
+    it("renders as expected when variation type is Range", () => {
+        const wrapper = getWrapper(rangeSettings);
 
         const paramSelect = wrapper.find("#edit-param-to-vary select");
         expect((paramSelect.element as HTMLSelectElement).value).toBe("A");
@@ -166,30 +139,15 @@ describe("EditParamSettings", () => {
 
         expect(wrapper.find("#edit-runs").findComponent(NumericInput).props("value")).toBe(5);
 
-        expect(wrapper.find(".modal-footer button.btn-primary").attributes("disabled")).toBe(undefined);
         expect(wrapper.find("#invalid-msg").exists()).toBe(false);
     });
 
-    it("disables OK and renders message when settings are invalid", async () => {
+    it("renders message when settings are invalid", async () => {
         const settings = { ...rangeSettings, rangeFrom: 10, rangeTo: 5 };
-        const wrapper = await getWrapper(settings);
+        const wrapper = getWrapper(settings);
 
-        expect(wrapper.find(".modal-footer button.btn-primary").attributes("disabled")).not.toBe(undefined);
         expect(wrapper.find("#invalid-msg").text())
             .toBe("Invalid settings: Mock error: min must be less than max");
-    });
-
-    it("hides modal if not open", async () => {
-        const wrapper = await getWrapper(percentSettings, false);
-        expect(wrapper.find(".modal").classes()).not.toContain("show");
-        expect((wrapper.find(".modal").element as HTMLElement).style.display).toBe("none");
-        expect(wrapper.find(".modal-backdrop").exists()).toBe(false);
-    });
-
-    it("closes on cancel click", async () => {
-        const wrapper = await getWrapper(percentSettings);
-        await wrapper.find("#cancel-settings").trigger("click");
-        expect(wrapper.emitted("close")?.length).toBe(1);
     });
 
     const updateSelect = async (wrapper: VueWrapper<any>, rowId: string, newVal: string) => {
@@ -198,36 +156,42 @@ describe("EditParamSettings", () => {
         await select.trigger("change");
     };
 
-    it("updates param settings and closes on OK click", async () => {
-        const mockSetParamSettings = jest.fn();
-        const wrapper = await getWrapper(percentSettings, true, mockSetParamSettings);
+    it("emits update when values changes", async () => {
+        const wrapper = getWrapper(percentSettings);
 
         await updateSelect(wrapper, "edit-param-to-vary", "A");
-        await updateSelect(wrapper, "edit-scale-type", SensitivityScaleType.Logarithmic);
-        await wrapper.find("#edit-percent").findComponent(NumericInput).vm.$emit("update", 15);
-        await updateSelect(wrapper, "edit-variation-type", SensitivityVariationType.Range);
-        await wrapper.find("#edit-from").findComponent(NumericInput).vm.$emit("update", 1);
-        await wrapper.find("#edit-to").findComponent(NumericInput).vm.$emit("update", 3);
-        await wrapper.find("#edit-runs").findComponent(NumericInput).vm.$emit("update", 11);
+        let expectedParams = {...percentSettings, parameterToVary: "A"};
+        expect((wrapper.emitted() as any).update[0][0]).toStrictEqual(expectedParams);
 
-        await wrapper.find("#ok-settings").trigger("click");
-        expect(wrapper.emitted("close")?.length).toBe(1);
-        expect(mockSetParamSettings).toHaveBeenCalledTimes(1);
-        expect(mockSetParamSettings.mock.calls[0][1]).toStrictEqual({
-            parameterToVary: "A",
-            scaleType: SensitivityScaleType.Logarithmic,
-            variationType: SensitivityVariationType.Range,
-            variationPercentage: 15,
-            rangeFrom: 1,
-            rangeTo: 3,
-            numberOfRuns: 11
-        });
+        await updateSelect(wrapper, "edit-scale-type", SensitivityScaleType.Logarithmic);
+        expectedParams = {...expectedParams, scaleType: SensitivityScaleType.Logarithmic};
+        expect((wrapper.emitted() as any).update[1][0]).toStrictEqual(expectedParams);
+
+        await wrapper.find("#edit-percent").findComponent(NumericInput).vm.$emit("update", 15);
+        expectedParams = {...expectedParams, variationPercentage: 15};
+        expect((wrapper.emitted() as any).update[2][0]).toStrictEqual(expectedParams);
+
+        await updateSelect(wrapper, "edit-variation-type", SensitivityVariationType.Range);
+        expectedParams = {...expectedParams, variationType: SensitivityVariationType.Range};
+        expect((wrapper.emitted() as any).update[3][0]).toStrictEqual(expectedParams);
+
+        await wrapper.find("#edit-from").findComponent(NumericInput).vm.$emit("update", 1);
+        expectedParams = {...expectedParams, rangeFrom: 1};
+        expect((wrapper.emitted() as any).update[4][0]).toStrictEqual(expectedParams);
+
+        await wrapper.find("#edit-to").findComponent(NumericInput).vm.$emit("update", 3);
+        expectedParams = {...expectedParams, rangeTo: 3};
+        expect((wrapper.emitted() as any).update[5][0]).toStrictEqual(expectedParams);
+
+        await wrapper.find("#edit-runs").findComponent(NumericInput).vm.$emit("update", 11);
+        expectedParams = {...expectedParams, numberOfRuns: 11};
+        expect((wrapper.emitted() as any).update[6][0]).toStrictEqual(expectedParams);
     });
 
     it("renders and updates sensitivity param values", async () => {
         const percentSpy = jest.spyOn(mockRunner, "batchParsDisplace");
         const rangeSpy = jest.spyOn(mockRunner, "batchParsRange");
-        const wrapper = await getWrapper(percentSettings);
+        const wrapper = getWrapper(percentSettings);
         const sensitivityValues = wrapper.findComponent(SensitivityParamValues);
         expectCloseNumericArray(sensitivityValues.props("batchPars").values, [1.8, 1.9, 2, 2.1, 2.2]);
         expect(sensitivityValues.props("batchPars").name).toBe("B");
@@ -249,5 +213,17 @@ describe("EditParamSettings", () => {
         expect(rangeSpy.mock.calls[2][3]).toBe(false);
         expect(rangeSpy.mock.calls[2][4]).toBe(1);
         expect(rangeSpy.mock.calls[2][5]).toBe(3);
+    });
+
+    it("emits batchParsErrorChange", async () => {
+        const wrapper = getWrapper(rangeSettings);
+        await wrapper.find("#edit-to").findComponent(NumericInput).vm.$emit("update", 1);
+        expect((wrapper.emitted() as any).batchParsErrorChange.length).toBe(1);
+        expect((wrapper.emitted() as any).batchParsErrorChange[0][0]).toStrictEqual({errir: "to must be greater than from"});
+
+        // emits with null when correct error
+        await wrapper.find("#edit-to").findComponent(NumericInput).vm.$emit("update", 10);
+        expect((wrapper.emitted() as any).batchParsErrorChange.length).toBe(2);
+        expect((wrapper.emitted() as any).batchParsErrorChange[1][0]).toBe(null);
     });
 });

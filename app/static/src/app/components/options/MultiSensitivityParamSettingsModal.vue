@@ -75,8 +75,6 @@ export default defineComponent({
             return { display: props.open ? "block" : "none" };
         });
 
-        // TODO: serialisation??
-        // TODO: validation - do not allow save if same parameter specified more than once
         const hasErrors = computed(() => !!batchParsErrors.value.filter((e) => !!e).length);
 
         watch(() => props.open, (newValue) => {
@@ -99,7 +97,6 @@ export default defineComponent({
                 settingsInternal.value.push({ ...defaultSensitivityParamSettings(), parameterToVary: unused[0] });
                 batchParsErrors.value.push(null);
             }
-            // TODO: show message if cannot add any more parameters
         };
 
         const removeSettings = (index: number) => {

@@ -71,5 +71,5 @@ export interface BaseSensitivityState {
 export interface SensitivityState extends BaseSensitivityState {
     paramSettings: SensitivityParameterSettings,
     plotSettings: SensitivityPlotSettings,
-    parameterSetResults: Dict<OdinSensitivityResult>, // TODO: is this relevant for multi??
+    parameterSetResults: Dict<OdinSensitivityResult>,
 }
