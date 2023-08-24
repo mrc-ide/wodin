@@ -10,7 +10,8 @@ describe("Sensitivity getters", () => {
         variationPercentage: 50,
         rangeFrom: 0,
         rangeTo: 0,
-        numberOfRuns: 3
+        numberOfRuns: 3,
+        userValues: []
     };
 
     it("generates batchPars", () => {
