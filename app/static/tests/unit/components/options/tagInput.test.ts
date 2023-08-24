@@ -76,7 +76,7 @@ describe("Tag Input", () => {
     });
 
     it("renders as expected when numeric only is true", () => {
-        const wrapper = getWrapper({ ...defaultProps, numericOnly: true});
+        const wrapper = getWrapper({ ...defaultProps, numericOnly: true });
         const tagsInput = wrapper.findComponent(VueTagsInput);
         // should filter out non-numeric tags
         expect(tagsInput.props("tags")).toStrictEqual(["1", "2"]);

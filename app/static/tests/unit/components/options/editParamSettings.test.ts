@@ -1,5 +1,6 @@
 import Vuex from "vuex";
 import { mount, VueWrapper } from "@vue/test-utils";
+import { nextTick } from "vue";
 import {
     SensitivityParameterSettings,
     SensitivityScaleType,
@@ -16,7 +17,6 @@ import SensitivityParamValues from "../../../../src/app/components/options/Sensi
 import { expectCloseNumericArray } from "../../../testUtils";
 import TagInput from "../../../../src/app/components/options/TagInput.vue";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
-import {nextTick} from "vue";
 
 const mockTooltipDirective = jest.fn();
 
@@ -314,7 +314,7 @@ describe("EditParamSettings", () => {
     });
 
     it("test set", () => {
-        const cleaned = [...new Set([1, 2, 1])].sort()
-        expect(cleaned).toStrictEqual([1, 2])
+        const cleaned = [...new Set([1, 2, 1])].sort();
+        expect(cleaned).toStrictEqual([1, 2]);
     });
 });

@@ -1,5 +1,5 @@
-import {uid} from "uid";
-import {Dict} from "./types/utilTypes";
+import { uid } from "uid";
+import { Dict } from "./types/utilTypes";
 import {
     AdvancedOptions,
     AdvancedSettingsOdin,
@@ -10,9 +10,10 @@ import {
 } from "./types/responseTypes";
 import userMessages from "./userMessages";
 import settings from "./settings";
-import {SensitivityParameterSettings, SensitivityScaleType, SensitivityVariationType} from "./store/sensitivity/state";
-import {AppState} from "./store/appState/state";
-import {AdvancedComponentType, AdvancedSettings, Tag} from "./store/run/state";
+import { SensitivityParameterSettings, SensitivityScaleType, SensitivityVariationType }
+    from "./store/sensitivity/state";
+import { AppState } from "./store/appState/state";
+import { AdvancedComponentType, AdvancedSettings, Tag } from "./store/run/state";
 
 export const freezer = {
     /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -184,8 +185,7 @@ export function generateBatchPars(
     let errorDetail = null;
     if (!paramSettings.parameterToVary) {
         errorDetail = "Parameter to vary is not set";
-    }
-    else if (!rootState.model.odinRunnerOde || !paramValues) {
+    } else if (!rootState.model.odinRunnerOde || !paramValues) {
         errorDetail = "Model is not initialised";
     }
     if (errorDetail) {
@@ -205,9 +205,8 @@ export function generateBatchPars(
             batchPars,
             error: null
         };
-    } else {
-        return generateBatchParsFromOdin(rootState, paramSettings, paramValues!);
     }
+    return generateBatchParsFromOdin(rootState, paramSettings, paramValues!);
 }
 
 export const newSessionId = (): string => uid(32);
