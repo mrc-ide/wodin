@@ -18,7 +18,7 @@
                  </select>
                </div>
              </div>
-             <div class="row mt-2" id="edit-scale-type">
+             <div v-if="settingsInternal.variationType !== 'User'"  class="row mt-2" id="edit-scale-type">
                <div class="col-6">
                  <label class="col-form-label">Scale type</label>
                </div>

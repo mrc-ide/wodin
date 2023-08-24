@@ -25,7 +25,8 @@ describe("EditParamSettings", () => {
         variationPercentage: 10,
         rangeFrom: 0,
         rangeTo: 0,
-        numberOfRuns: 5
+        numberOfRuns: 5,
+        userValues: []
     };
 
     const rangeSettings = {
@@ -35,7 +36,19 @@ describe("EditParamSettings", () => {
         variationPercentage: 0,
         rangeFrom: 2,
         rangeTo: 6,
-        numberOfRuns: 5
+        numberOfRuns: 5,
+        userValues: []
+    };
+
+    const userSettings = {
+        parameterToVary: "B",
+        scaleType: SensitivityScaleType.Arithmetic,
+        variationType: SensitivityVariationType.User,
+        variationPercentage: 10,
+        rangeFrom: 0,
+        rangeTo: 0,
+        numberOfRuns: 5,
+        userValues: [1,2,3]
     };
 
     const mockRunner = {
@@ -168,6 +181,10 @@ describe("EditParamSettings", () => {
 
         expect(wrapper.find(".modal-footer button.btn-primary").attributes("disabled")).toBe(undefined);
         expect(wrapper.find("#invalid-msg").exists()).toBe(false);
+    });
+
+    it("renders as expected when variation type is User", () => {
+
     });
 
     it("disables OK and renders message when settings are invalid", async () => {
