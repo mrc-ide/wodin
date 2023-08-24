@@ -15,7 +15,6 @@ import { RunMutation } from "../../../../src/app/store/run/mutations";
 import GraphSettings from "../../../../src/app/components/options/GraphSettings.vue";
 import ParameterSets from "../../../../src/app/components/options/ParameterSets.vue";
 import { getters as runGetters } from "../../../../src/app/store/run/getters";
-import fitApp from "../../../../src/app/components/fit/FitApp.vue";
 
 describe("OptionsTab", () => {
     const mockTooltipDirective = jest.fn();
@@ -253,5 +252,30 @@ describe("OptionsTab", () => {
         expect(wrapper.findComponent(SensitivityOptions).exists()).toBe(true);
         expect(wrapper.find("#reset-params-btn").exists()).toBe(true);
         expect(wrapper.find("#reset-params-btn").text()).toBe("Reset");
+    });
+
+    it("renders as expected when multi-sensitivity tab is open", () => {
+        const store = new Vuex.Store<BasicState>({
+            state: {
+                ...fitAppState,
+                openVisualisationTab: VisualisationTab.MultiSensitivity
+            },
+            modules: {
+                run: {
+                    namespaced: true,
+                    state: mockRunState({
+                        parameterValues: { param1: 1, param2: 2.2 }
+                    }),
+                    getters: runGetters
+                }
+            }
+        });
+        const wrapper = shallowMount(OptionsTab, {
+            global: {
+                plugins: [store],
+                directives: { tooltip: mockTooltipDirective }
+            }
+        });
+        expect(wrapper.findComponent(SensitivityOptions).exists()).toBe(true);
     });
 });

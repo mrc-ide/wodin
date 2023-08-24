@@ -3,7 +3,7 @@
     <template v-if="showOptions">
       <div class="mt-2 clearfix">
         <button class="btn btn-primary mb-4 float-end" @click="toggleEdit(true)">Edit</button>
-        <template v-for="(settings, idx) in allSettings" :key="idx">
+        <div v-for="(settings, idx) in allSettings" :key="idx" class="sensitivity-options-settings">
           <ul>
             <li><strong>Parameter:</strong> {{settings.parameterToVary}}</li>
             <li><strong>Scale Type:</strong> {{ settings.scaleType }}</li>
@@ -19,7 +19,7 @@
           </ul>
           <sensitivity-param-values :batch-pars="allBatchPars[idx]"></sensitivity-param-values>
           <hr v-if="idx < allSettings.length-1" />
-        </template>
+        </div>
       </div>
       <hr/>
       <sensitivity-plot-options></sensitivity-plot-options>
