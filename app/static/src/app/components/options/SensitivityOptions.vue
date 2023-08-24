@@ -11,13 +11,19 @@
             <li v-if="settings.variationType === 'Percentage'">
               <strong>Variation (%):</strong> {{ settings.variationPercentage }}
             </li>
-            <template v-else>
+            <template v-if="settings.variationType === 'Range'">
               <li><strong>From:</strong> {{ settings.rangeFrom }}</li>
               <li><strong>To:</strong> {{ settings.rangeTo }}</li>
             </template>
-            <li><strong>Number of runs:</strong> {{ settings.numberOfRuns}}</li>
+            <li> v-if="settings.variationType === 'User'"<strong>Values:</strong>
+              {{ settings.userValues.join(", ") }}
+            </li>
+            <li v-if="settings.variationType !== 'User'">
+              <strong>Number of runs:</strong> {{ settings.numberOfRuns}}
+            </li>
           </ul>
-          <sensitivity-param-values :batch-pars="allBatchPars[idx]"></sensitivity-param-values>
+          <sensitivity-param-values v-if="settings.variationType !== 'User'" :batch-pars="allBatchPars[idx]">
+          </sensitivity-param-values>
           <hr v-if="idx < allSettings.length-1" />
         </div>
       </div>

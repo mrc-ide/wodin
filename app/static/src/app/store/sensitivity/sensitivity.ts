@@ -16,7 +16,8 @@ export const defaultSensitivityParamSettings = () => ({
     variationPercentage: 10,
     rangeFrom: 0,
     rangeTo: 0,
-    numberOfRuns: 10
+    numberOfRuns: 10,
+    userValues: []
 });
 
 export const noSensitivityUpdateRequired = () => ({

@@ -40,7 +40,7 @@
                        @update="(n) => settingsInternal.variationPercentage = n"></numeric-input>
       </div>
     </div>
-    <template v-else>
+    <template v-if="settingsInternal.variationType === 'Range'">
       <div class="row mt-2 edit-from">
         <div class="col-6">
           <label class="col-form-label">From</label>
@@ -68,7 +68,17 @@
         </div>
       </div>
     </template>
-    <div class="row mt-2 edit-runs">
+    <template v-if="settingsInternal.variationType === 'User'">
+      <div class="row mt-2 edit-from">
+        <div class="col-6">
+          <label class="col-form-label">Values</label>
+        </div>
+        <div class="col-6">
+          <tag-input tags="settingsInternal.userValues" @update="updateUserValues"></tag-input>
+        </div>
+      </div>
+    </template>
+    <div v-if="settingsInternal.variationType !== 'User'" class="row mt-2 edit-runs">
       <div class="col-6">
         <label class="col-form-label">Number of runs</label>
       </div>
@@ -82,7 +92,8 @@
         <error-info :error="batchParsError"></error-info>
       </div>
     </div>
-    <sensitivity-param-values :batch-pars="batchPars"></sensitivity-param-values>
+    <sensitivity-param-values v-if="settingsInternal.variationType !== 'User'" :batch-pars="batchPars">
+    </sensitivity-param-values>
 </template>
 
 <script lang="ts">
@@ -90,6 +101,7 @@ import {
     computed, defineComponent, PropType, reactive, watch
 } from "vue";
 import { useStore } from "vuex";
+import TagInput from "@/app/components/options/TagInput.vue";
 import {
     SensitivityParameterSettings,
     SensitivityScaleType,
@@ -110,6 +122,7 @@ export default defineComponent({
     },
     emits: ["update", "batchParsErrorChange"],
     components: {
+        TagInput,
         ErrorInfo,
         NumericInput,
         SensitivityParamValues
@@ -128,9 +141,21 @@ export default defineComponent({
         const centralValue = computed(() => store.state.run.parameterValues[settingsInternal.parameterToVary!]);
 
         const paramValues = computed(() => store.state.run.parameterValues);
-        const batchParsResult = computed(() => generateBatchPars(store.state, settingsInternal, paramValues.value));
-        const batchPars = computed(() => batchParsResult.value.batchPars);
-        const batchParsError = computed(() => batchParsResult.value.error);
+        const batchParsResult = computed(() => {
+            if (settingsInternal.variationType === SensitivityVariationType.User) {
+                return null;
+            }
+            generateBatchPars(store.state, settingsInternal, paramValues.value);
+        });
+        const batchPars = computed(() => batchParsResult.value?.batchPars);
+        const batchParsError = computed(() => batchParsResult.value?.error); // TODO: roll our own error for User type
+
+        const updateUserValues = (newValues: number[]) => {
+            console.log(`updating to: ${JSON.stringify(newValues)}`);
+            // sort and remove duplicates
+            const cleaned = [...new Set(newValues)];
+            settingsInternal.userValues = cleaned;
+        };
 
         watch(settingsInternal, (newVal) => emit("update", newVal));
         watch(batchParsError, (newVal) => emit("batchParsErrorChange", newVal));
@@ -142,7 +167,8 @@ export default defineComponent({
             settingsInternal,
             centralValue,
             batchPars,
-            batchParsError
+            batchParsError,
+            updateUserValues
         };
     }
 });
