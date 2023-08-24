@@ -20,7 +20,12 @@ export default defineComponent({
         VueTagsInput
     },
     props: {
-        tags: Array as PropType<Tag[] | null>
+        tags: Array as PropType<Tag[] | null>,
+        numericOnly: {
+            type: Boolean,
+            required: false,
+            default: false
+        }
     },
     setup(props, { emit }) {
         const store = useStore();
@@ -39,7 +44,7 @@ export default defineComponent({
             }
             const cleanTags = props.tags.filter((tag) => {
                 if (typeof tag === "number") return true;
-                return paramValues.value[tag] !== undefined;
+                return !props.numericOnly && paramValues.value[tag] !== undefined;
             });
             return cleanTags.map((tag) => {
                 if (typeof tag === "number") return `${tag}`;
@@ -61,14 +66,16 @@ export default defineComponent({
                 if (isNumeric(tag)) {
                     return parseFloat(tag);
                 }
-                if (tag.includes(":")) {
-                    const variableTag = tag.split(":");
-                    const varId = variableTag[0];
-                    if (isParameterName(varId)) {
-                        return varId;
+                if (!props.numericOnly) {
+                    if (tag.includes(":")) {
+                        const variableTag = tag.split(":");
+                        const varId = variableTag[0];
+                        if (isParameterName(varId)) {
+                            return varId;
+                        }
+                    } else if (isParameterName(tag)) {
+                        return tag;
                     }
-                } else if (isParameterName(tag)) {
-                    return tag;
                 }
                 return undefined;
             });

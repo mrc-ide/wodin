@@ -83,7 +83,8 @@
                   <label class="col-form-label">Values</label>
                 </div>
                 <div class="col-6">
-                  <tag-input :tags="settingsInternal.userValues" @update="updateUserValues"></tag-input>
+                  <tag-input :tags="[...settingsInternal.userValues]" :numeric-only="true" @update="updateUserValues">
+                  </tag-input>
                 </div>
               </div>
             </template>
@@ -185,7 +186,7 @@ export default defineComponent({
         const updateUserValues = (newValues: number[]) => {
             console.log(`updating to: ${JSON.stringify(newValues)}`);
             // sort and remove duplicates
-            const cleaned = [...new Set(newValues)].sort();
+            const cleaned = [...new Set(newValues)].sort((a, b) => a - b);
             settingsInternal.userValues = cleaned;
         };
 
