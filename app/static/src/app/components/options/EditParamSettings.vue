@@ -192,12 +192,13 @@ export default defineComponent({
         });
         const updateUserValues = (newValues: number[]) => {
             // sort and remove duplicates
-            const cleaned = [...new Set(newValues)].sort((a, b) => a - b);
+            const cleaned = Array.from(new Set(newValues)).sort((a, b) => a - b);
             settingsInternal.userValues = cleaned;
         };
 
         const close = () => { emit("close"); };
         const updateSettings = () => {
+            console.log("updating settings")
             store.commit(`sensitivity/${SensitivityMutation.SetParamSettings}`, { ...settingsInternal });
             close();
         };

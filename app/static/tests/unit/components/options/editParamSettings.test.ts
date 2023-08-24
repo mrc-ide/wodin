@@ -15,6 +15,8 @@ import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutat
 import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
 import { expectCloseNumericArray } from "../../../testUtils";
 import TagInput from "../../../../src/app/components/options/TagInput.vue";
+import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
+import {nextTick} from "vue";
 
 const mockTooltipDirective = jest.fn();
 
@@ -280,5 +282,36 @@ describe("EditParamSettings", () => {
         expect(rangeSpy.mock.calls[2][3]).toBe(false);
         expect(rangeSpy.mock.calls[2][4]).toBe(1);
         expect(rangeSpy.mock.calls[2][5]).toBe(3);
+    });
+
+    it("displays error when User variation type, and there are less than 2 values", async () => {
+        const expectError = (wrapper: VueWrapper<any>) => {
+            expect(wrapper.findComponent(ErrorInfo).props().error).toStrictEqual({
+                error: "Invalid settings", detail: "Must include at least 2 traces in the batch"
+            });
+        };
+        expectError(await getWrapper({ ...userSettings, userValues: [] }));
+        expectError(await getWrapper({ ...userSettings, userValues: [1] }));
+
+        const wrapper = await getWrapper({ ...userSettings, userValues: [1, 2] });
+        expect(wrapper.findComponent(ErrorInfo).exists()).toBe(false);
+    });
+
+    it("updates values from TagInput, dedupes and sorts", async () => {
+        const mockSetParamSettings = jest.fn();
+        const wrapper = await getWrapper(userSettings, true, mockSetParamSettings);
+        wrapper.findComponent(TagInput).vm.$emit("update", [5, 1, 5, 0, -1, -2, 1]);
+        const expectedValues = [-2, -1, 0, 1, 5];
+        await nextTick();
+        expect((wrapper.vm as any).settingsInternal.userValues).toStrictEqual(expectedValues);
+        await wrapper.find("#ok-settings").trigger("click");
+        expect(mockSetParamSettings).toHaveBeenCalledTimes(1);
+        const committed = mockSetParamSettings.mock.calls[0][1];
+        expect(committed.userValues).toStrictEqual(expectedValues);
+    });
+
+    it("test set", () => {
+        const cleaned = [...new Set([1, 2, 1])].sort()
+        expect(cleaned).toStrictEqual([1, 2])
     });
 });

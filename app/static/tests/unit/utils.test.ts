@@ -302,7 +302,7 @@ describe("processFitData", () => {
 });
 
 describe("generateBatchPars", () => {
-    const parameterValues = { A: 1, B: 2 };
+    const parameterValues = { A: 1, B: 2, C: 3 };
 
     const rootState = {
         model: {
@@ -330,7 +330,8 @@ describe("generateBatchPars", () => {
         variationPercentage: 50,
         rangeFrom: 0,
         rangeTo: 0,
-        numberOfRuns: 5
+        numberOfRuns: 5,
+        userValues: []
     };
 
     const rangeSettings = {
@@ -340,7 +341,19 @@ describe("generateBatchPars", () => {
         variationPercentage: 50,
         rangeFrom: 2,
         rangeTo: 6,
-        numberOfRuns: 9
+        numberOfRuns: 9,
+        userValues: []
+    };
+
+    const userSettings = {
+        parameterToVary: "C",
+        scaleType: SensitivityScaleType.Arithmetic,
+        variationType: SensitivityVariationType.User,
+        variationPercentage: 50,
+        rangeFrom: 2,
+        rangeTo: 6,
+        numberOfRuns: 9,
+        userValues: [1, 2, 3]
     };
 
     it("generates BatchPars for Percentage variation type", () => {
@@ -371,6 +384,16 @@ describe("generateBatchPars", () => {
         expect(spyBatchParsRange.mock.calls[0][3]).toStrictEqual(false);
         expect(spyBatchParsRange.mock.calls[0][4]).toStrictEqual(2);
         expect(spyBatchParsRange.mock.calls[0][5]).toStrictEqual(6);
+    });
+
+    it("generates BatchPars for User variation type", () => {
+        const result = generateBatchPars(rootState, userSettings, parameterValues)!;
+        expect(result.error).toBe(null);
+        expect(result.batchPars!.name).toBe("C");
+        expect(result.batchPars!.base).toBe(parameterValues);
+        expect(result.batchPars!.values).toStrictEqual([1, 2, 3]);
+        expect(spyBatchParsDisplace).not.toHaveBeenCalled();
+        expect(spyBatchParsRange).not.toHaveBeenCalled();
     });
 
     const expectedNotInitialisedError = { error: "Invalid settings", detail: "Model is not initialised" };

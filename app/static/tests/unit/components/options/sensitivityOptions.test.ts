@@ -60,7 +60,8 @@ describe("SensitivityOptions", () => {
         variationPercentage: 10,
         rangeFrom: 0,
         rangeTo: 0,
-        numberOfRuns: 5
+        numberOfRuns: 5,
+        userValues: []
     };
 
     it("displays percentage variance as expected", () => {
@@ -96,7 +97,8 @@ describe("SensitivityOptions", () => {
             variationPercentage: 10,
             rangeFrom: 1,
             rangeTo: 3,
-            numberOfRuns: 5
+            numberOfRuns: 5,
+            userValues: []
         });
 
         const listItems = wrapper.findAll("ul li");
@@ -107,6 +109,25 @@ describe("SensitivityOptions", () => {
         expect(listItems.at(3)!.text()).toBe("From: 1");
         expect(listItems.at(4)!.text()).toBe("To: 3");
         expect(listItems.at(5)!.text()).toBe("Number of runs: 5");
+    });
+
+    it("displays user-specified values as expected", () => {
+        const wrapper = getWrapper({
+            parameterToVary: "C",
+            scaleType: SensitivityScaleType.Logarithmic,
+            variationType: SensitivityVariationType.User,
+            variationPercentage: 10,
+            rangeFrom: 1,
+            rangeTo: 3,
+            numberOfRuns: 5,
+            userValues: [1, 2, 3]
+        });
+
+        const listItems = wrapper.findAll("ul li");
+        expect(listItems.length).toBe(3);
+        expect(listItems.at(0)!.text()).toBe("Parameter: C");
+        expect(listItems.at(1)!.text()).toBe("Variation Type: User");
+        expect(listItems.at(2)!.text()).toBe("Values: 1, 2, 3");
     });
 
     it("opens and closes edit dialog", async () => {
