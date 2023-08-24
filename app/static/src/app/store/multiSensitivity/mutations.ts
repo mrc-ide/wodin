@@ -1,6 +1,6 @@
-import {MutationTree} from "vuex";
-import {MultiSensitivityState} from "./state";
-import {SensitivityParameterSettings} from "../sensitivity/state";
+import { MutationTree } from "vuex";
+import { MultiSensitivityState } from "./state";
+import { SensitivityParameterSettings } from "../sensitivity/state";
 
 export enum MultiSensitivityMutation {
     SetParamSettings = "SetParamSettings"

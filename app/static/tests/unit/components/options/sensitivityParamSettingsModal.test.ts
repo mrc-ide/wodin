@@ -41,7 +41,7 @@ describe("SensitivityParamSettingsModal", () => {
         });
         const wrapper = shallowMount(SensitivityParamSettingsModal, {
             global: {
-                plugins: [store],
+                plugins: [store]
             },
             props: {
                 open: false

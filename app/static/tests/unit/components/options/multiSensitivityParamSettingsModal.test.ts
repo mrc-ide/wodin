@@ -9,7 +9,8 @@ import {
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState } from "../../../mocks";
 import { MultiSensitivityMutation } from "../../../../src/app/store/multiSensitivity/mutations";
-import MultiSensitivityParamSettingsModal from "../../../../src/app/components/options/MultiSensitivityParamSettingsModal.vue";
+import MultiSensitivityParamSettingsModal from
+    "../../../../src/app/components/options/MultiSensitivityParamSettingsModal.vue";
 import EditParamSettings from "../../../../src/app/components/options/EditParamSettings.vue";
 
 const mockTooltipDirective = jest.fn();
@@ -211,7 +212,7 @@ describe("SensitivityParamSettingsModal", () => {
         const wrapper = await getWrapper();
         const editContainers = wrapper.findAll(".multi-sens-edit");
         const editParams = editContainers[1].findComponent(EditParamSettings);
-        editParams.vm.$emit("batchParsErrorChange", {error: "test error"});
+        editParams.vm.$emit("batchParsErrorChange", { error: "test error" });
         await nextTick();
         expect((wrapper.find("#ok-settings").element as HTMLButtonElement).disabled).toBe(true);
         await wrapper.find(".delete-param-to-vary").trigger("click");

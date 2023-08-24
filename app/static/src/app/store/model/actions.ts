@@ -15,8 +15,8 @@ import { RunMutation } from "../run/mutations";
 import { ModelFitMutation } from "../modelFit/mutations";
 import { ErrorsMutation } from "../errors/mutations";
 import { SensitivityMutation } from "../sensitivity/mutations";
-import {defaultSensitivityParamSettings} from "../sensitivity/sensitivity";
-import {MultiSensitivityMutation} from "../multiSensitivity/mutations";
+import { defaultSensitivityParamSettings } from "../sensitivity/sensitivity";
+import { MultiSensitivityMutation } from "../multiSensitivity/mutations";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
@@ -94,7 +94,7 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
             const newMultiSettings = rootState.multiSensitivity.paramSettings
                 .filter((p) => p.parameterToVary && paramNames.includes(p.parameterToVary));
             if (!newMultiSettings.length) {
-                newMultiSettings.push({...defaultSensitivityParamSettings(), parameterToVary: newParamToVary});
+                newMultiSettings.push({ ...defaultSensitivityParamSettings(), parameterToVary: newParamToVary });
             }
             commit(`multiSensitivity/${MultiSensitivityMutation.SetParamSettings}`, newMultiSettings, { root: true });
         }

@@ -54,7 +54,9 @@ export default {
         const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
 
         const sensitivityOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Sensitivity);
-        const multiSensitivityOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.MultiSensitivity);
+        const multiSensitivityOpen = computed(() => {
+            return store.state.openVisualisationTab === VisualisationTab.MultiSensitivity;
+        });
         const fitTabIsOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Fit);
 
         return {

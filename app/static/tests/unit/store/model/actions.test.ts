@@ -20,8 +20,8 @@ import { ModelFitAction } from "../../../../src/app/store/modelFit/actions";
 import { RunMutation, mutations as runMutations } from "../../../../src/app/store/run/mutations";
 import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
-import {MultiSensitivityMutation} from "../../../../src/app/store/multiSensitivity/mutations";
-import {defaultSensitivityParamSettings} from "../../../../src/app/store/sensitivity/sensitivity";
+import { MultiSensitivityMutation } from "../../../../src/app/store/multiSensitivity/mutations";
+import { defaultSensitivityParamSettings } from "../../../../src/app/store/sensitivity/sensitivity";
 
 describe("Model actions", () => {
     beforeEach(() => {
@@ -175,7 +175,9 @@ describe("Model actions", () => {
     it("compiles model, sets parameter values and updates required action", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
-        (actions[ModelAction.CompileModel] as any)({ commit, dispatch, state: updatedParamState, rootState });
+        (actions[ModelAction.CompileModel] as any)({
+            commit, dispatch, state: updatedParamState, rootState
+        });
         expect(commit.mock.calls.length).toBe(9);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[0][1]).toBe(3);
@@ -216,7 +218,9 @@ describe("Model actions", () => {
         };
         const commit = jest.fn();
         const dispatch = jest.fn();
-        (actions[ModelAction.CompileModel] as any)({ commit, dispatch, state: updatedParamState, rootState: noMultiSensRootState });
+        (actions[ModelAction.CompileModel] as any)({
+            commit, dispatch, state: updatedParamState, rootState: noMultiSensRootState
+        });
         expect(commit.mock.calls.length).toBe(8);
         expect(commit.mock.calls[7][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
         expect(dispatch).not.toHaveBeenCalled();
@@ -232,10 +236,15 @@ describe("Model actions", () => {
             }
         };
         const commit = jest.fn();
-        (actions[ModelAction.CompileModel] as any)({ commit, state: updatedParamState, rootState: oldMultiSensRootState });
+        (actions[ModelAction.CompileModel] as any)({
+            commit,
+            state: updatedParamState,
+            rootState: oldMultiSensRootState
+        });
         expect(commit.mock.calls.length).toBe(9);
         expect(commit.mock.calls[8][0]).toBe(`multiSensitivity/${MultiSensitivityMutation.SetParamSettings}`);
-        expect(commit.mock.calls[8][1]).toStrictEqual([{ ...defaultSensitivityParamSettings(), parameterToVary: "p2" }]);
+        expect(commit.mock.calls[8][1])
+            .toStrictEqual([{ ...defaultSensitivityParamSettings(), parameterToVary: "p2" }]);
         expect(commit.mock.calls[8][2]).toStrictEqual({ root: true });
     });
 

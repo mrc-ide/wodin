@@ -1,4 +1,4 @@
-import {shallowMount} from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
 import MultiSensitivityTab from "../../../../src/app/components/multiSensitivity/MultiSensitivityTab.vue";
 
 describe("MultiSensitivityTab", () => {

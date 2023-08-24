@@ -164,7 +164,7 @@ describe("EditParamSettings", () => {
         const wrapper = getWrapper(percentSettings);
 
         await updateSelect(wrapper, "edit-param-to-vary", "A");
-        let expectedParams = {...percentSettings, parameterToVary: "A"};
+        let expectedParams = { ...percentSettings, parameterToVary: "A" };
         expect((wrapper.emitted() as any).update[0][0]).toStrictEqual(expectedParams);
 
         await updateSelect(wrapper, "edit-scale-type", SensitivityScaleType.Logarithmic);

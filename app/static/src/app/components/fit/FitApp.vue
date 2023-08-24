@@ -38,6 +38,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
+import MultiSensitivityTab from "@/app/components/multiSensitivity/MultiSensitivityTab.vue";
 import WodinApp from "../WodinApp.vue";
 import WodinTabs from "../WodinTabs.vue";
 import CodeTab from "../code/CodeTab.vue";
@@ -50,12 +51,11 @@ import SensitivityTab from "../sensitivity/SensitivityTab.vue";
 import { VisualisationTab } from "../../store/appState/state";
 import { AppStateMutation } from "../../store/appState/mutations";
 import includeConfiguredTabs from "../mixins/includeConfiguredTabs";
-import MultiSensitivityTab from "@/app/components/multiSensitivity/MultiSensitivityTab.vue";
 
 export default defineComponent({
     name: "FitApp",
     components: {
-      MultiSensitivityTab,
+        MultiSensitivityTab,
         CodeTab,
         DataTab,
         FitTab,

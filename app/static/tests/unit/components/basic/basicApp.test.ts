@@ -1,6 +1,4 @@
 // Mock the import of third party packages to prevent errors
-import MultiSensitivityTab from "../../../../src/app/components/multiSensitivity/MultiSensitivityTab.vue";
-
 jest.mock("plotly.js-basic-dist-min", () => ({}));
 jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
     return function () {
@@ -25,6 +23,7 @@ import {
 import WodinApp from "../../../../src/app/components/WodinApp.vue";
 import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
+import MultiSensitivityTab from "../../../../src/app/components/multiSensitivity/MultiSensitivityTab.vue";
 import { ModelAction } from "../../../../src/app/store/model/actions";
 import { AppStateAction } from "../../../../src/app/store/appState/actions";
 import { VisualisationTab } from "../../../../src/app/store/appState/state";

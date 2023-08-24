@@ -44,7 +44,7 @@ import SensitivityParamValues from "./SensitivityParamValues.vue";
 import SensitivityPlotOptions from "./SensitivityPlotOptions.vue";
 import SensitivityParamSettingsModal from "./SensitivityParamSettingsModal.vue";
 import MultiSensitivityParamSettingsModal from "./MultiSensitivityParamSettingsModal.vue";
-import { MultiSensitivityGetter }  from "../../store/multiSensitivity/getters";
+import { MultiSensitivityGetter } from "../../store/multiSensitivity/getters";
 
 export default defineComponent({
     name: "SensitivityOptions",
@@ -55,7 +55,7 @@ export default defineComponent({
         }
     },
     components: {
-      MultiSensitivityParamSettingsModal,
+        MultiSensitivityParamSettingsModal,
         SensitivityParamValues,
         SensitivityPlotOptions,
         VerticalCollapse,
@@ -70,7 +70,7 @@ export default defineComponent({
         const compileModelMessage = userMessages.sensitivity.compileRequiredForOptions;
         const editOpen = ref(false);
 
-        const title = computed(() => props.multiSensitivity ? "Multi-sensitivity Options" : "Sensitivity Options");
+        const title = computed(() => (props.multiSensitivity ? "Multi-sensitivity Options" : "Sensitivity Options"));
         const toggleEdit = (value: boolean) => {
             editOpen.value = value;
         };

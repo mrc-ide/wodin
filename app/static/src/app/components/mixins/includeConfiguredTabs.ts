@@ -1,6 +1,6 @@
 import { Store } from "vuex";
 import { computed } from "vue";
-import {AppState, VisualisationTab} from "../../store/appState/state";
+import { AppState, VisualisationTab } from "../../store/appState/state";
 
 export default (store: Store<AppState>, fixedTabNames: string[]) => {
     const helpTabName = computed(() => {

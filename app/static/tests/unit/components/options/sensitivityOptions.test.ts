@@ -11,7 +11,7 @@ import VerticalCollapse from "../../../../src/app/components/VerticalCollapse.vu
 import { SensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
 import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
 import SensitivityPlotOptions from "../../../../src/app/components/options/SensitivityPlotOptions.vue";
-import {MultiSensitivityGetter} from "../../../../src/app/store/multiSensitivity/getters";
+import { MultiSensitivityGetter } from "../../../../src/app/store/multiSensitivity/getters";
 import SensitivityParamSettingsModal from "../../../../src/app/components/options/SensitivityParamSettingsModal.vue";
 import MultiSensitivityParamSettingsModal
     from "../../../../src/app/components/options/MultiSensitivityParamSettingsModal.vue";

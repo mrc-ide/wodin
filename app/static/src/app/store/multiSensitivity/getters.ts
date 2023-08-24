@@ -12,7 +12,7 @@ export interface MultiSensitivityGetters {
 }
 
 export const getters: MultiSensitivityGetters & GetterTree<MultiSensitivityState, AppState> = {
-    [MultiSensitivityGetter.multiBatchPars]: (state: MultiSensitivityState, multiSensitivityGetters: MultiSensitivityGetters,
+    [MultiSensitivityGetter.multiBatchPars]: (state: MultiSensitivityState, _: MultiSensitivityGetters,
         rootState: AppState) => {
         return state.paramSettings.map((settings) => {
             return generateBatchPars(rootState, settings, rootState.run.parameterValues).batchPars;

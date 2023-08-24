@@ -1,6 +1,4 @@
 // Mock the import of third party packages to prevent errors
-import MultiSensitivityTab from "../../../../src/app/components/multiSensitivity/MultiSensitivityTab.vue";
-
 jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
     return function () {
         return {
@@ -24,6 +22,7 @@ import CodeTab from "../../../../src/app/components/code/CodeTab.vue";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
 import SensitivityTab from "../../../../src/app/components/sensitivity/SensitivityTab.vue";
+import MultiSensitivityTab from "../../../../src/app/components/multiSensitivity/MultiSensitivityTab.vue";
 import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
 import { ModelAction } from "../../../../src/app/store/model/actions";
 import { AppStateAction } from "../../../../src/app/store/appState/actions";

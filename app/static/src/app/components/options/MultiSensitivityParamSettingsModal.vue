@@ -47,13 +47,13 @@
 import {
     computed, defineComponent, ref, watch
 } from "vue";
-import EditParamSettings from "./EditParamSettings.vue";
 import { useStore } from "vuex";
+import VueFeather from "vue-feather";
+import EditParamSettings from "./EditParamSettings.vue";
 import { SensitivityParameterSettings } from "../../store/sensitivity/state";
 import { WodinError } from "../../types/responseTypes";
 import { defaultSensitivityParamSettings } from "../../store/sensitivity/sensitivity";
 import { MultiSensitivityMutation } from "../../store/multiSensitivity/mutations";
-import VueFeather from "vue-feather";
 
 export default defineComponent({
     name: "MultiSensitivityParamSettingsModal",

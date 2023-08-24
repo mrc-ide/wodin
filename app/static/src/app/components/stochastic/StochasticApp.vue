@@ -32,6 +32,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
+import MultiSensitivityTab from "@/app/components/multiSensitivity/MultiSensitivityTab.vue";
 import { VisualisationTab } from "../../store/appState/state";
 import { AppStateMutation } from "../../store/appState/mutations";
 import WodinTabs from "../WodinTabs.vue";
@@ -42,12 +43,11 @@ import OptionsTab from "../options/OptionsTab.vue";
 import SensitivityTab from "../sensitivity/SensitivityTab.vue";
 import includeConfiguredTabs from "../mixins/includeConfiguredTabs";
 import HelpTab from "../help/HelpTab.vue";
-import MultiSensitivityTab from "@/app/components/multiSensitivity/MultiSensitivityTab.vue";
 
 export default defineComponent({
     name: "StochasticApp",
     components: {
-      MultiSensitivityTab,
+        MultiSensitivityTab,
         CodeTab,
         HelpTab,
         RunTab,

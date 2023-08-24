@@ -29,7 +29,7 @@ describe("includeConfiguredTabs mixin", () => {
 
     it("returns default help tab name", () => {
         const store = getStore({
-            markdown: ["test md"],
+            markdown: ["test md"]
         }, false);
 
         const result = includeConfiguredTabs(store, ["Run", "Sensitivity"]);

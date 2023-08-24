@@ -17,7 +17,7 @@ import { versions } from "../versions/versions";
 import { graphSettings } from "../graphSettings/graphSettings";
 import { getters } from "../appState/getters";
 import { getStoreModule } from "../../../../translationPackage";
-import {multiSensitivity} from "../multiSensitivity/multiSensitivity";
+import { multiSensitivity } from "../multiSensitivity/multiSensitivity";
 
 const language = getStoreModule();
 

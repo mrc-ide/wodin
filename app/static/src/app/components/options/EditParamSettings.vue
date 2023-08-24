@@ -87,7 +87,7 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, PropType, reactive, watch
+    computed, defineComponent, PropType, reactive, watch
 } from "vue";
 import { useStore } from "vuex";
 import {
@@ -104,8 +104,8 @@ export default defineComponent({
     name: "EditParamSettings",
     props: {
         settings: {
-          type: Object as PropType<SensitivityParameterSettings>,
-          required: true
+            type: Object as PropType<SensitivityParameterSettings>,
+            required: true
         }
     },
     emits: ["update", "batchParsErrorChange"],
@@ -116,7 +116,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore();
-        const settingsInternal = reactive({...props.settings});
+        const settingsInternal = reactive({ ...props.settings });
 
         const paramNames = computed(() => {
             return store.state.run.parameterValues ? Object.keys(store.state.run.parameterValues) : [];
