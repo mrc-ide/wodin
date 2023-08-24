@@ -49,7 +49,7 @@
                                @update="(n) => settingsInternal.variationPercentage = n"></numeric-input>
               </div>
             </div>
-            <template v-else>
+            <template v-if="settingsInternal.variationType === 'Range'">
               <div class="row mt-2" id="edit-from">
                 <div class="col-6">
                   <label class="col-form-label">From</label>
@@ -77,7 +77,17 @@
                 </div>
               </div>
             </template>
-            <div class="row mt-2" id="edit-runs">
+            <template v-if="settingsInternal.variationType === 'User'">
+              <div class="row mt-2 edit-from">
+                <div class="col-6">
+                  <label class="col-form-label">Values</label>
+                </div>
+                <div class="col-6">
+                  <tag-input :tags="settingsInternal.userValues" @update="updateUserValues"></tag-input>
+                </div>
+              </div>
+            </template>
+            <div v-if="settingsInternal.variationType !== 'User'" class="row mt-2 edit-runs">
               <div class="col-6">
                 <label class="col-form-label">Number of runs</label>
               </div>
@@ -91,7 +101,8 @@
                 <error-info :error="batchParsError"></error-info>
               </div>
             </div>
-            <sensitivity-param-values :batch-pars="batchPars"></sensitivity-param-values>
+            <sensitivity-param-values v-if="settingsInternal.variationType !== 'User'" :batch-pars="batchPars">
+            </sensitivity-param-values>
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary"
@@ -123,6 +134,7 @@ import NumericInput from "./NumericInput.vue";
 import SensitivityParamValues from "./SensitivityParamValues.vue";
 import { generateBatchPars } from "../../utils";
 import ErrorInfo from "../ErrorInfo.vue";
+import TagInput from "./TagInput.vue";
 
 export default defineComponent({
     name: "EditParamSettings.vue",
@@ -135,7 +147,8 @@ export default defineComponent({
     components: {
         ErrorInfo,
         NumericInput,
-        SensitivityParamValues
+        SensitivityParamValues,
+        TagInput
     },
     setup(props, { emit }) {
         const store = useStore();
@@ -161,9 +174,20 @@ export default defineComponent({
         const centralValue = computed(() => store.state.run.parameterValues[settingsInternal.parameterToVary!]);
 
         const paramValues = computed(() => store.state.run.parameterValues);
-        const batchParsResult = computed(() => generateBatchPars(store.state, settingsInternal, paramValues.value));
-        const batchPars = computed(() => batchParsResult.value.batchPars);
-        const batchParsError = computed(() => batchParsResult.value.error);
+        const batchParsResult = computed(() => {
+            if (settingsInternal.variationType === SensitivityVariationType.User) {
+                return null;
+            }
+            return generateBatchPars(store.state, settingsInternal, paramValues.value);
+        });
+        const batchPars = computed(() => batchParsResult.value?.batchPars);
+        const batchParsError = computed(() => batchParsResult.value?.error); // TODO: roll our own error for User type
+        const updateUserValues = (newValues: number[]) => {
+            console.log(`updating to: ${JSON.stringify(newValues)}`);
+            // sort and remove duplicates
+            const cleaned = [...new Set(newValues)].sort();
+            settingsInternal.userValues = cleaned;
+        };
 
         const close = () => { emit("close"); };
         const updateSettings = () => {
@@ -180,6 +204,7 @@ export default defineComponent({
             centralValue,
             batchPars,
             batchParsError,
+            updateUserValues,
             close,
             updateSettings
         };
