@@ -182,9 +182,15 @@ export default defineComponent({
             return generateBatchPars(store.state, settingsInternal, paramValues.value);
         });
         const batchPars = computed(() => batchParsResult.value?.batchPars);
-        const batchParsError = computed(() => batchParsResult.value?.error); // TODO: roll our own error for User type
+        const batchParsError = computed(() => {
+            if (settingsInternal.variationType === SensitivityVariationType.User) {
+                // Minimum of two user values
+                return settingsInternal.userValues.length < 2
+                    ? { error: "Invalid settings", detail: "Must include at least 2 traces in the batch" } : null;
+            }
+            return batchParsResult.value?.error;
+        });
         const updateUserValues = (newValues: number[]) => {
-            console.log(`updating to: ${JSON.stringify(newValues)}`);
             // sort and remove duplicates
             const cleaned = [...new Set(newValues)].sort((a, b) => a - b);
             settingsInternal.userValues = cleaned;
