@@ -1,5 +1,5 @@
 <template>
-    <div class="row" id="edit-param-to-vary">
+    <div class="row edit-param-to-vary">
        <div class="col-6">
          <label class="col-form-label">Parameter to vary</label>
        </div>
@@ -9,7 +9,7 @@
          </select>
        </div>
      </div>
-    <div class="row mt-2" id="edit-scale-type">
+    <div class="row mt-2 edit-scale-type">
        <div class="col-6">
          <label class="col-form-label">Scale type</label>
        </div>
@@ -21,7 +21,7 @@
        <div class="col-6">
      </div>
      </div>
-    <div class="row mt-2" id="edit-variation-type">
+    <div class="row mt-2 edit-variation-type">
       <div class="col-6">
         <label class="col-form-label">Variation type</label>
       </div>
@@ -31,7 +31,7 @@
         </select>
       </div>
     </div>
-    <div v-if="settingsInternal.variationType === 'Percentage'" class="row mt-2" id="edit-percent">
+    <div v-if="settingsInternal.variationType === 'Percentage'" class="row mt-2 edit-percent">
       <div class="col-6">
         <label class="col-form-label">Variation (%)</label>
       </div>
@@ -41,7 +41,7 @@
       </div>
     </div>
     <template v-else>
-      <div class="row mt-2" id="edit-from">
+      <div class="row mt-2 edit-from">
         <div class="col-6">
           <label class="col-form-label">From</label>
         </div>
@@ -50,15 +50,15 @@
                          @update="(n) => settingsInternal.rangeFrom = n"></numeric-input>
         </div>
       </div>
-      <div class="row mt-2 text-muted" id="param-central">
+      <div class="row mt-2 text-muted param-central">
         <div class="col-6">
           Central value
         </div>
-        <div class="col-6">
+        <div class="col-6 param-central-value">
           {{ centralValue }}
         </div>
       </div>
-      <div class="row mt-2" id="edit-to">
+      <div class="row mt-2 edit-to">
         <div class="col-6">
           <label class="col-form-label">To</label>
         </div>
@@ -68,7 +68,7 @@
         </div>
       </div>
     </template>
-    <div class="row mt-2" id="edit-runs">
+    <div class="row mt-2 edit-runs">
       <div class="col-6">
         <label class="col-form-label">Number of runs</label>
       </div>
@@ -77,7 +77,7 @@
                        @update="(n) => settingsInternal.numberOfRuns = n"></numeric-input>
       </div>
     </div>
-    <div v-if="batchParsError" class="row mt-2 small text-danger" id="invalid-msg">
+    <div v-if="batchParsError" class="row mt-2 small text-danger invalid-msg">
       <div class="col-12">
         <error-info :error="batchParsError"></error-info>
       </div>
