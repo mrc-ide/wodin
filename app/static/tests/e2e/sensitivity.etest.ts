@@ -28,25 +28,25 @@ test.describe("Sensitivity tests", () => {
         await page.click("#sensitivity-options .btn-primary");
         await expect(await page.locator("#edit-param .modal")).toBeVisible();
         await expect(await page.innerText("#edit-param .modal-title")).toBe("Vary Parameter");
-        await expect(await page.locator("#invalid-msg").count()).toBe(0);
+        await expect(await page.locator(".invalid-msg").count()).toBe(0);
         await expect(await page.innerText("#edit-param .modal .alert-success"))
             .toBe(" 3.600, 3.689, 3.778, ..., 4.400");
 
-        const paramSelect = await page.locator("#edit-param-to-vary select");
+        const paramSelect = await page.locator(".edit-param-to-vary select");
         await paramSelect.selectOption("sigma");
-        const scaleSelect = await page.locator("#edit-scale-type select");
+        const scaleSelect = await page.locator(".edit-scale-type select");
         await scaleSelect.selectOption("Logarithmic");
-        const varSelect = await page.locator("#edit-variation-type select");
+        const varSelect = await page.locator(".edit-variation-type select");
         await varSelect.selectOption("Range");
-        await expect(await page.innerText("#invalid-msg"))
+        await expect(await page.innerText(".invalid-msg"))
             .toBe("Invalid settings: Expected upper bound to be no less than 2");
-        await expect(await page.innerText(":nth-match(.modal #param-central div, 1)")).toBe("Central value");
-        await expect(await page.innerText(":nth-match(.modal #param-central div, 2)")).toBe("2");
+        await expect(await page.innerText(":nth-match(.modal .param-central div, 1)")).toBe("Central value");
+        await expect(await page.innerText(":nth-match(.modal .param-central div, 2)")).toBe("2");
 
-        await page.fill("#edit-from input", "1");
-        await page.fill("#edit-to input", "5");
-        await expect(await page.locator("#invalid-msg").count()).toBe(0);
-        await page.fill("#edit-runs input", "12");
+        await page.fill(".edit-from input", "1");
+        await page.fill(".edit-to input", "5");
+        await expect(await page.locator(".invalid-msg").count()).toBe(0);
+        await page.fill(".edit-runs input", "12");
         await expect(await page.innerText(".modal .alert-success")).toBe(" 1.000, 1.158, 1.340, ..., 5.000");
 
         await page.click("#ok-settings");

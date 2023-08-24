@@ -318,12 +318,18 @@ describe("Model actions", () => {
                 paramSettings: {
                     parameterToVary: "p2"
                 }
+            },
+            multiSensitivity: {
+                paramSettings: [
+                    { parameterToVary: "p2" },
+                    { parameterToVary: "p3" }
+                ]
             }
         } as any;
         (actions[ModelAction.CompileModel] as any)({
             commit, dispatch, state, rootState: testRootState
         });
-        expect(commit.mock.calls.length).toBe(7);
+        expect(commit.mock.calls.length).toBe(8);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
         expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetPaletteModel);
@@ -332,6 +338,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[4][0]).toBe(ModelMutation.SetCompileRequired);
         expect(commit.mock.calls[5][0]).toBe(`run/${RunMutation.SetRunRequired}`);
         expect(commit.mock.calls[6][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
+        expect(commit.mock.calls[7][0]).toBe(`multiSensitivity/${MultiSensitivityMutation.SetParamSettings}`);
     });
 
     it("compile model does not update runRequired or compileRequired if compileRequired was false", () => {
@@ -349,7 +356,7 @@ describe("Model actions", () => {
         });
         const commit = jest.fn();
         (actions[ModelAction.CompileModel] as any)({ commit, state, rootState });
-        expect(commit.mock.calls.length).toBe(5);
+        expect(commit.mock.calls.length).toBe(6);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[0][1]).toBe(3);
         expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
@@ -359,6 +366,8 @@ describe("Model actions", () => {
         expect(commit.mock.calls[3][1]).toStrictEqual(["x", "y"]);
         expect(commit.mock.calls[4][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
         expect(commit.mock.calls[4][1]).toBe(null);
+        expect(commit.mock.calls[5][0]).toBe(`multiSensitivity/${MultiSensitivityMutation.SetParamSettings}`);
+        expect(commit.mock.calls[5][1]).toStrictEqual([defaultSensitivityParamSettings()]);
     });
 
     it("compile model does nothing if no odin response", () => {
