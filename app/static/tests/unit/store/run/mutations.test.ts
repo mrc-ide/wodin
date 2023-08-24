@@ -1,4 +1,6 @@
 import { mutations } from "../../../../src/app/store/run/mutations";
+import { AdvancedComponentType } from "../../../../src/app/store/run/state";
+import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
 import { mockRunState } from "../../../mocks";
 
 describe("Run mutations", () => {
@@ -6,7 +8,8 @@ describe("Run mutations", () => {
         endTimeChanged: false,
         modelChanged: false,
         parameterValueChanged: false,
-        numberOfReplicatesChanged: false
+        numberOfReplicatesChanged: false,
+        advancedSettingsChanged: false
     };
 
     it("sets result ode", () => {
@@ -16,7 +19,8 @@ describe("Run mutations", () => {
                 endTimeChanged: false,
                 modelChanged: true,
                 parameterValueChanged: true,
-                numberOfReplicatesChanged: false
+                numberOfReplicatesChanged: false,
+                advancedSettingsChanged: false
             }
         });
         const result = {
@@ -31,7 +35,8 @@ describe("Run mutations", () => {
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
     });
 
@@ -42,7 +47,8 @@ describe("Run mutations", () => {
                 endTimeChanged: false,
                 modelChanged: true,
                 parameterValueChanged: true,
-                numberOfReplicatesChanged: false
+                numberOfReplicatesChanged: false,
+                advancedSettingsChanged: false
             }
         });
         const result = {
@@ -57,7 +63,8 @@ describe("Run mutations", () => {
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
     });
 
@@ -68,14 +75,16 @@ describe("Run mutations", () => {
             endTimeChanged: false,
             modelChanged: true,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
         mutations.SetRunRequired(state, { modelChanged: false });
         expect(state.runRequired).toStrictEqual({
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
     });
 
@@ -97,7 +106,89 @@ describe("Run mutations", () => {
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: true,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
+        });
+    });
+
+    it("updates advanced settings and sets runRequired to true", () => {
+        const state = mockRunState({
+            advancedSettings: {
+                [AdvancedOptions.tol]: { val: [null, null], default: [1, -6], type: AdvancedComponentType.stdf },
+                [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num },
+                [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num },
+                [AdvancedOptions.stepSizeMin]: {
+                    val: [null, null],
+                    default: [1, -8],
+                    type: AdvancedComponentType.stdf
+                },
+                [AdvancedOptions.tcrit]: { val: null, default: [], type: AdvancedComponentType.tag }
+            },
+            runRequired: noRunRequired
+        });
+        mutations.UpdateAdvancedSettings(state, { option: AdvancedOptions.tol, newVal: [1, 2] });
+        expect(state.advancedSettings).toStrictEqual({
+            [AdvancedOptions.tol]: { val: [1, 2], default: [1, -6], type: AdvancedComponentType.stdf },
+            [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num },
+            [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num },
+            [AdvancedOptions.stepSizeMin]: { val: [null, null], default: [1, -8], type: AdvancedComponentType.stdf },
+            [AdvancedOptions.tcrit]: { val: null, default: [], type: AdvancedComponentType.tag }
+        });
+        expect(state.runRequired).toStrictEqual({
+            endTimeChanged: false,
+            modelChanged: false,
+            parameterValueChanged: false,
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: true
+        });
+    });
+
+    it("updates and sorts tcrit when updating advanced settings", () => {
+        const state = mockRunState({
+            advancedSettings: {
+                [AdvancedOptions.tol]: { val: [null, null], default: [1, -6], type: AdvancedComponentType.stdf },
+                [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num },
+                [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num },
+                [AdvancedOptions.stepSizeMin]: {
+                    val: [null, null],
+                    default: [1, -8],
+                    type: AdvancedComponentType.stdf
+                },
+                [AdvancedOptions.tcrit]: { val: null, default: [], type: AdvancedComponentType.tag }
+            }
+        });
+        mutations.UpdateAdvancedSettings(state, { option: AdvancedOptions.tcrit, newVal: [2, 1, 0, 0] });
+        expect(state.advancedSettings).toStrictEqual({
+            [AdvancedOptions.tol]: { val: [null, null], default: [1, -6], type: AdvancedComponentType.stdf },
+            [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num },
+            [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num },
+            [AdvancedOptions.stepSizeMin]: { val: [null, null], default: [1, -8], type: AdvancedComponentType.stdf },
+            [AdvancedOptions.tcrit]: { val: [0, 0, 1, 2], default: [], type: AdvancedComponentType.tag }
+        });
+    });
+
+    it("updates and sorts tcrit when updating advanced settings with param values", () => {
+        const state = mockRunState({
+            advancedSettings: {
+                [AdvancedOptions.tol]: { val: [null, null], default: [1, -6], type: AdvancedComponentType.stdf },
+                [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num },
+                [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num },
+                [AdvancedOptions.stepSizeMin]: {
+                    val: [null, null],
+                    default: [1, -8],
+                    type: AdvancedComponentType.stdf
+                },
+                [AdvancedOptions.tcrit]: { val: null, default: [], type: AdvancedComponentType.tag }
+            },
+            parameterValues: { a: 2, b: 3 }
+        });
+        mutations.UpdateAdvancedSettings(state, { option: AdvancedOptions.tcrit, newVal: ["a", 0, "b", 1] });
+        expect(state.advancedSettings).toStrictEqual({
+            [AdvancedOptions.tol]: { val: [null, null], default: [1, -6], type: AdvancedComponentType.stdf },
+            [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num },
+            [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num },
+            [AdvancedOptions.stepSizeMin]: { val: [null, null], default: [1, -8], type: AdvancedComponentType.stdf },
+            [AdvancedOptions.tcrit]: { val: [0, 1, "a", "b"], default: [], type: AdvancedComponentType.tag }
         });
     });
 
@@ -112,7 +203,8 @@ describe("Run mutations", () => {
             endTimeChanged: true,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
     });
 
@@ -133,7 +225,8 @@ describe("Run mutations", () => {
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
         // increasing, even right up to the original limit, is fine
         mutations.SetEndTime(state, 100);
@@ -142,7 +235,8 @@ describe("Run mutations", () => {
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
         // but any additional time requires a rerun
         mutations.SetEndTime(state, 101);
@@ -151,7 +245,8 @@ describe("Run mutations", () => {
             endTimeChanged: true,
             modelChanged: false,
             parameterValueChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
     });
 
@@ -192,13 +287,31 @@ describe("Run mutations", () => {
     it("deletes parameter set", () => {
         const state = mockRunState({
             parameterSets: [
-                { name: "Set1", parameterValues: { a: 1 }, hidden: false },
-                { name: "Set2", parameterValues: { a: 2 }, hidden: false }
+                {
+                    name: "Set1",
+                    displayName: "Set1",
+                    displayNameErrorMsg: "",
+                    parameterValues: { a: 1 },
+                    hidden: false
+                },
+                {
+                    name: "Set2",
+                    displayName: "Set2",
+                    displayNameErrorMsg: "",
+                    parameterValues: { a: 2 },
+                    hidden: false
+                }
             ],
             parameterSetResults: { Set1: { value: "test 1" }, Set2: { value: "test 2" } } as any
         });
         mutations.DeleteParameterSet(state, "Set1");
-        expect(state.parameterSets).toStrictEqual([{ name: "Set2", parameterValues: { a: 2 }, hidden: false }]);
+        expect(state.parameterSets).toStrictEqual([{
+            name: "Set2",
+            displayName: "Set2",
+            displayNameErrorMsg: "",
+            parameterValues: { a: 2 },
+            hidden: false
+        }]);
         expect(state.parameterSetResults).toStrictEqual({ Set2: { value: "test 2" } });
     });
 
@@ -206,14 +319,26 @@ describe("Run mutations", () => {
         const state = mockRunState({
             parameterValues: { a: 1 },
             parameterSets: [
-                { name: "Set1", parameterValues: { a: 2 }, hidden: false }
+                {
+                    name: "Set1",
+                    displayName: "Set1",
+                    displayNameErrorMsg: "",
+                    parameterValues: { a: 2 },
+                    hidden: false
+                }
             ],
             parameterSetResults: { Set1: { solution: "another fake result" } } as any,
             resultOde: { solution: "fake result" } as any
         });
         mutations.SwapParameterSet(state, "Set1");
         expect(state.parameterValues).toStrictEqual({ a: 2 });
-        expect(state.parameterSets).toStrictEqual([{ name: "Set1", parameterValues: { a: 1 }, hidden: false }]);
+        expect(state.parameterSets).toStrictEqual([{
+            name: "Set1",
+            displayName: "Set1",
+            displayNameErrorMsg: "",
+            parameterValues: { a: 1 },
+            hidden: false
+        }]);
         expect(state.parameterSetResults).toStrictEqual({ Set1: { solution: "fake result" } });
         expect(state.resultOde).toStrictEqual({ solution: "another fake result" });
     });
@@ -222,14 +347,26 @@ describe("Run mutations", () => {
         const state = mockRunState({
             parameterValues: { a: 1 },
             parameterSets: [
-                { name: "Set1", parameterValues: { a: 2 }, hidden: false }
+                {
+                    name: "Set1",
+                    displayName: "Set1",
+                    displayNameErrorMsg: "",
+                    parameterValues: { a: 2 },
+                    hidden: false
+                }
             ],
             parameterSetResults: { Set1: { solution: "another fake result" } } as any,
             resultOde: { solution: "fake result" } as any
         });
         mutations.SwapParameterSet(state, "Set2");
         expect(state.parameterValues).toStrictEqual({ a: 1 });
-        expect(state.parameterSets).toStrictEqual([{ name: "Set1", parameterValues: { a: 2 }, hidden: false }]);
+        expect(state.parameterSets).toStrictEqual([{
+            name: "Set1",
+            displayName: "Set1",
+            displayNameErrorMsg: "",
+            parameterValues: { a: 2 },
+            hidden: false
+        }]);
         expect(state.parameterSetResults).toStrictEqual({ Set1: { solution: "another fake result" } });
         expect(state.resultOde).toStrictEqual({ solution: "fake result" });
     });
@@ -238,14 +375,26 @@ describe("Run mutations", () => {
         const state = mockRunState({
             parameterValues: null,
             parameterSets: [
-                { name: "Set1", parameterValues: { a: 2 }, hidden: false }
+                {
+                    name: "Set1",
+                    displayName: "Set1",
+                    displayNameErrorMsg: "",
+                    parameterValues: { a: 2 },
+                    hidden: false
+                }
             ],
             parameterSetResults: { Set1: { solution: "another fake result" } } as any,
             resultOde: { solution: "fake result" } as any
         });
         mutations.SwapParameterSet(state, "Set2");
         expect(state.parameterValues).toStrictEqual(null);
-        expect(state.parameterSets).toStrictEqual([{ name: "Set1", parameterValues: { a: 2 }, hidden: false }]);
+        expect(state.parameterSets).toStrictEqual([{
+            name: "Set1",
+            displayName: "Set1",
+            displayNameErrorMsg: "",
+            parameterValues: { a: 2 },
+            hidden: false
+        }]);
         expect(state.parameterSetResults).toStrictEqual({ Set1: { solution: "another fake result" } });
         expect(state.resultOde).toStrictEqual({ solution: "fake result" });
     });
@@ -254,14 +403,26 @@ describe("Run mutations", () => {
         const state = mockRunState({
             parameterValues: { a: 1 },
             parameterSets: [
-                { name: "Set1", parameterValues: { a: 2 }, hidden: false }
+                {
+                    name: "Set1",
+                    displayName: "Set1",
+                    displayNameErrorMsg: "",
+                    parameterValues: { a: 2 },
+                    hidden: false
+                }
             ],
             parameterSetResults: { Set1: { solution: "another fake result" } } as any,
             resultOde: null
         });
         mutations.SwapParameterSet(state, "Set2");
         expect(state.parameterValues).toStrictEqual({ a: 1 });
-        expect(state.parameterSets).toStrictEqual([{ name: "Set1", parameterValues: { a: 2 }, hidden: false }]);
+        expect(state.parameterSets).toStrictEqual([{
+            name: "Set1",
+            displayName: "Set1",
+            displayNameErrorMsg: "",
+            parameterValues: { a: 2 },
+            hidden: false
+        }]);
         expect(state.parameterSetResults).toStrictEqual({ Set1: { solution: "another fake result" } });
         expect(state.resultOde).toStrictEqual(null);
     });
@@ -269,19 +430,191 @@ describe("Run mutations", () => {
     it("toggles parameter set hidden", () => {
         const state = mockRunState({
             parameterSets: [
-                { name: "Set1", parameterValues: { a: 1 }, hidden: false },
-                { name: "Set2", parameterValues: { a: 2 }, hidden: false }
+                {
+                    name: "Set1",
+                    displayName: "Set1",
+                    displayNameErrorMsg: "",
+                    parameterValues: { a: 1 },
+                    hidden: false
+                },
+                {
+                    name: "Set2",
+                    displayName: "Set2",
+                    displayNameErrorMsg: "",
+                    parameterValues: { a: 2 },
+                    hidden: false
+                }
             ]
         });
         mutations.ToggleParameterSetHidden(state, "Set2");
         expect(state.parameterSets).toStrictEqual([
-            { name: "Set1", parameterValues: { a: 1 }, hidden: false },
-            { name: "Set2", parameterValues: { a: 2 }, hidden: true }
+            {
+                name: "Set1",
+                displayName: "Set1",
+                displayNameErrorMsg: "",
+                parameterValues: { a: 1 },
+                hidden: false
+            },
+            {
+                name: "Set2",
+                displayName: "Set2",
+                displayNameErrorMsg: "",
+                parameterValues: { a: 2 },
+                hidden: true
+            }
         ]);
         mutations.ToggleParameterSetHidden(state, "Set2");
         expect(state.parameterSets).toStrictEqual([
-            { name: "Set1", parameterValues: { a: 1 }, hidden: false },
-            { name: "Set2", parameterValues: { a: 2 }, hidden: false }
+            {
+                name: "Set1",
+                displayName: "Set1",
+                displayNameErrorMsg: "",
+                parameterValues: { a: 1 },
+                hidden: false
+            },
+            {
+                name: "Set2",
+                displayName: "Set2",
+                displayNameErrorMsg: "",
+                parameterValues: { a: 2 },
+                hidden: false
+            }
         ]);
+    });
+
+    it("can change parameter display name", () => {
+        const state = mockRunState({
+            parameterValues: { a: 1 },
+            parameterSets: [
+                {
+                    name: "Set1",
+                    displayName: "Set1",
+                    displayNameErrorMsg: "",
+                    parameterValues: { a: 2 },
+                    hidden: false
+                }
+            ]
+        });
+        mutations.SaveParameterDisplayName(state, {
+            parameterSetName: "Set1",
+            newDisplayName: "random name"
+        });
+        expect(state.parameterSets).toStrictEqual([{
+            name: "Set1",
+            displayName: "random name",
+            displayNameErrorMsg: "",
+            parameterValues: { a: 2 },
+            hidden: false
+        }]);
+    });
+
+    it("error if two names are the same", () => {
+        const state = mockRunState({
+            parameterValues: { a: 1 },
+            parameterSets: [
+                {
+                    name: "Set1",
+                    displayName: "random name",
+                    displayNameErrorMsg: "",
+                    parameterValues: { a: 2 },
+                    hidden: false
+                },
+                {
+                    name: "Set2",
+                    displayName: "Set2",
+                    displayNameErrorMsg: "",
+                    parameterValues: { a: 2 },
+                    hidden: false
+                }
+            ]
+        });
+        mutations.SaveParameterDisplayName(state, {
+            parameterSetName: "Set2",
+            newDisplayName: "random name"
+        });
+        expect(state.parameterSets[1]).toStrictEqual({
+            name: "Set2",
+            displayName: "Set2",
+            displayNameErrorMsg: "Name already exists",
+            parameterValues: { a: 2 },
+            hidden: false
+        });
+    });
+
+    it("error if you try and name it Set [number]", () => {
+        const state = mockRunState({
+            parameterValues: { a: 1 },
+            parameterSets: [
+                {
+                    name: "Set1",
+                    displayName: "random name",
+                    displayNameErrorMsg: "",
+                    parameterValues: { a: 2 },
+                    hidden: false
+                }
+            ]
+        });
+        mutations.SaveParameterDisplayName(state, {
+            parameterSetName: "Set1",
+            newDisplayName: "Set 123"
+        });
+        expect(state.parameterSets).toStrictEqual([{
+            name: "Set1",
+            displayName: "random name",
+            displayNameErrorMsg: `Set 123 (or any Set [number] combination) is reserved
+                for default set names. Please choose another set name or name this set back to
+                its original name of 'Set1'`,
+            parameterValues: { a: 2 },
+            hidden: false
+        }]);
+    });
+
+    it("error if you try and name it nothing", () => {
+        const state = mockRunState({
+            parameterValues: { a: 1 },
+            parameterSets: [
+                {
+                    name: "Set1",
+                    displayName: "random name",
+                    displayNameErrorMsg: "",
+                    parameterValues: { a: 2 },
+                    hidden: false
+                }
+            ]
+        });
+        mutations.SaveParameterDisplayName(state, {
+            parameterSetName: "Set1",
+            newDisplayName: ""
+        });
+        expect(state.parameterSets).toStrictEqual([{
+            name: "Set1",
+            displayName: "random name",
+            displayNameErrorMsg: "Please enter a name",
+            parameterValues: { a: 2 },
+            hidden: false
+        }]);
+    });
+
+    it("turns off display name error", () => {
+        const state = mockRunState({
+            parameterValues: { a: 1 },
+            parameterSets: [
+                {
+                    name: "Set1",
+                    displayName: "Set1",
+                    displayNameErrorMsg: "Name already exists",
+                    parameterValues: { a: 2 },
+                    hidden: false
+                }
+            ]
+        });
+        mutations.TurnOffDisplayNameError(state, "Set1");
+        expect(state.parameterSets).toStrictEqual([{
+            name: "Set1",
+            displayName: "Set1",
+            displayNameErrorMsg: "",
+            parameterValues: { a: 2 },
+            hidden: false
+        }]);
     });
 });

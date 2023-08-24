@@ -1,5 +1,7 @@
 import { OdinRunResultOde } from "./wrapperTypes";
 import { Language } from "./languageTypes";
+import { AdvancedOptions } from "./responseTypes";
+import { Tag } from "../store/run/state";
 
 export interface SetAppPayload {
     appName: string
@@ -16,4 +18,9 @@ export interface InitialisePayload extends SetAppPayload{
 export interface SetParameterSetResultPayload {
     name: string,
     result: OdinRunResultOde
+}
+
+export interface SetAdvancedSettingPayload {
+    option: AdvancedOptions,
+    newVal: number | null | Tag[]
 }

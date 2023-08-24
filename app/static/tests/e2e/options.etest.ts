@@ -224,6 +224,18 @@ test.describe("Options Tab tests", () => {
         await page.click(`:nth-match(.swap-param-set, ${index})`);
     };
 
+    const editDisplayName = async (index: number, page: Page) => {
+        await page.click(`:nth-match(.edit-display-name, ${index})`);
+    };
+
+    const saveDisplayName = async (index: number, page: Page) => {
+        await page.click(`:nth-match(.save-display-name, ${index})`);
+    };
+
+    const inputDisplayName = async (index: number, page: Page, name: string) => {
+        await page.fill(`:nth-match(.param-name-input, ${index})`, name);
+    };
+
     const updateBetaParamAndRun = async (value: number, page: Page) => {
         await page.fill(":nth-match(.parameter-input, 1)", value.toString());
         await page.click("#run-btn");
@@ -348,7 +360,101 @@ test.describe("Options Tab tests", () => {
         await updateBetaParamAndRun(2, page);
         await createParameterSet(page);
         await expect(await page.locator(".parameter-set").count()).toBe(2);
-        await expect((await page.innerText(":nth-match(.parameter-set  .card-header, 1)")).trim()).toBe("Set 1");
-        await expect((await page.innerText(":nth-match(.parameter-set  .card-header, 2)")).trim()).toBe("Set 3");
+        await expect((await page.innerText(":nth-match(.parameter-set .card-header, 1)")).trim()).toBe("Set 1");
+        await expect((await page.innerText(":nth-match(.parameter-set .card-header, 2)")).trim()).toBe("Set 3");
+    });
+
+    test("can rename parameter set", async ({ page }) => {
+        await createParameterSet(page);
+        await expect((await page.innerText(":nth-match(.parameter-set .card-header, 1)")).trim()).toBe("Set 1");
+        await editDisplayName(1, page);
+        await inputDisplayName(1, page, "random name 1");
+        await saveDisplayName(1, page);
+        await expect((await page.innerText(":nth-match(.parameter-set .card-header, 1)")).trim()).toBe("random name 1");
+    });
+
+    test("error tooltip and doesn't change name if same name exists", async ({ page }) => {
+        await createParameterSet(page);
+        await editDisplayName(1, page);
+        await inputDisplayName(1, page, "random name 1");
+        await saveDisplayName(1, page);
+        await expect((await page.innerText(":nth-match(.parameter-set .card-header, 1)")).trim()).toBe("random name 1");
+
+        await updateBetaParamAndRun(1, page);
+
+        await createParameterSet(page);
+        await editDisplayName(2, page);
+        await inputDisplayName(2, page, "random name 1");
+        await saveDisplayName(1, page);
+        await expect((await page.innerText(":nth-match(.tooltip-inner, 2)")).trim()).toBe("Name already exists");
+        await expect(await page.isVisible(":nth-match(.param-name-input, 2)")).toBe(true);
+    });
+
+    test("error tooltip and doesn't change name if Set [number] format used", async ({ page }) => {
+        await createParameterSet(page);
+        await editDisplayName(1, page);
+        await inputDisplayName(1, page, "Set 10");
+        await saveDisplayName(1, page);
+        await expect((await page.innerText(":nth-match(.tooltip-inner, 2)")).trim())
+            .toBe("Set 10 (or any Set [number] combination) is reserved for default set names. "
+            + "Please choose another set name or name this set back to its original name of 'Set 1'");
+        await expect(await page.isVisible(".param-name-input")).toBe(true);
+    });
+
+    const fillInAdvancedInputs = async (type: string, advancedSetting: any, index: number) => {
+        switch (type) {
+        case "num": {
+            const input = await advancedSetting.locator("input");
+            await input.fill((index).toString());
+            break;
+        }
+        case "stdf": {
+            const input1 = await advancedSetting.locator(":nth-match(input, 1)");
+            const input2 = await advancedSetting.locator(":nth-match(input, 2)");
+            await input1.fill(`${(index)}`);
+            await input2.fill(`${(-index)}`);
+            break;
+        }
+        case "tag": {
+            const tagInput = await advancedSetting.locator("input");
+            await tagInput.fill((index).toString());
+            await tagInput.press(",");
+            break;
+        }
+        default: break;
+        }
+    };
+
+    const advancedOptions = [
+        { label: "Tolerance", type: "stdf" },
+        { label: "Max steps", type: "num" },
+        { label: "Max step size", type: "num" },
+        { label: "Min step size", type: "stdf" },
+        { label: "Critical times", type: "tag" }
+    ] as const;
+
+    const expectAdvancedSetting = async (page: Page, index: number) => {
+        const advancedSettingPanel = await page.locator("#advanced-settings-panel");
+        await expect(await page.innerText(`:nth-match(#advanced-settings-panel label, ${index + 1})`))
+            .toBe(advancedOptions[index].label);
+        const advancedSetting = await advancedSettingPanel.locator(`:nth-match(.row, ${index + 1})`);
+        await fillInAdvancedInputs(advancedOptions[index].type, advancedSetting, index + 1);
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
+            "Plot is out of date: advanced settings have been changed. Run model to update.", {
+                timeout
+            }
+        );
+        await page.click("#run-btn");
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("");
+    };
+
+    test("can edit and run model with advanced settings", async ({ page }) => {
+        await page.click(":nth-match(.collapse-title, 4)");
+
+        await expectAdvancedSetting(page, 0);
+        await expectAdvancedSetting(page, 1);
+        await expectAdvancedSetting(page, 2);
+        await expectAdvancedSetting(page, 3);
+        await expectAdvancedSetting(page, 4);
     });
 });

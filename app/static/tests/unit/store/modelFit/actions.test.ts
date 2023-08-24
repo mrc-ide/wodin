@@ -7,6 +7,8 @@ import { actions, ModelFitAction } from "../../../../src/app/store/modelFit/acti
 import { ModelMutation } from "../../../../src/app/store/model/mutations";
 import { RunMutation } from "../../../../src/app/store/run/mutations";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
+import { AdvancedComponentType } from "../../../../src/app/store/run/state";
 
 describe("ModelFit actions", () => {
     const mockSimplex = {} as any;
@@ -18,11 +20,29 @@ describe("ModelFit actions", () => {
     } as any;
     const mockOdin = {} as any;
     const parameterValues = { p1: 1.1, p2: 2.2 };
+    const advancedSettings = {
+        [AdvancedOptions.tol]: {
+            val: [null, null] as [number|null, number|null],
+            default: [1, -6] as [number, number],
+            type: AdvancedComponentType.stdf as const
+        },
+        [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num as const },
+        [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num as const },
+        [AdvancedOptions.stepSizeMin]: {
+            val: [null, null] as [number|null, number|null],
+            default: [1, -8] as [number, number],
+            type: AdvancedComponentType.stdf as const
+        },
+        [AdvancedOptions.tcrit]: { val: [0, "p1", "p2"], default: [], type: AdvancedComponentType.tag as const }
+    };
     const modelState = mockModelState({
         odin: mockOdin,
         odinRunnerOde: mockOdinRunner
     });
-    const runState = mockRunState({ parameterValues });
+    const runState = mockRunState({
+        parameterValues,
+        advancedSettings
+    });
 
     const fitDataState = mockFitDataState({
         data: [
@@ -91,7 +111,14 @@ describe("ModelFit actions", () => {
             vary: ["p1"]
         });
         expect(mockWodinFit.mock.calls[0][3]).toBe("S");
-        expect(mockWodinFit.mock.calls[0][4]).toStrictEqual({});
+        expect(mockWodinFit.mock.calls[0][4]).toStrictEqual({
+            atol: 0.000001,
+            maxSteps: 10000,
+            rtol: 0.000001,
+            stepSizeMax: undefined,
+            stepSizeMin: 1e-8,
+            tcrit: [0, 1.1, 2.2]
+        });
         expect(mockWodinFit.mock.calls[0][5]).toStrictEqual({});
     });
 

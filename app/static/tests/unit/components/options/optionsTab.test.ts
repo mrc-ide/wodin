@@ -15,6 +15,7 @@ import { RunMutation } from "../../../../src/app/store/run/mutations";
 import GraphSettings from "../../../../src/app/components/options/GraphSettings.vue";
 import ParameterSets from "../../../../src/app/components/options/ParameterSets.vue";
 import { getters as runGetters } from "../../../../src/app/store/run/getters";
+import AdvancedSettings from "../../../../src/app/components/options/AdvancedSettings.vue";
 
 describe("OptionsTab", () => {
     const mockTooltipDirective = jest.fn();
@@ -69,7 +70,7 @@ describe("OptionsTab", () => {
         });
         const wrapper = getWrapper(store);
         const collapses = wrapper.findAllComponents(VerticalCollapse);
-        expect(collapses.length).toBe(4);
+        expect(collapses.length).toBe(5);
         expect(collapses.at(0)!.props("title")).toBe("Model Parameters");
         expect(collapses.at(0)!.props("collapseId")).toBe("model-params");
         const paramValues = collapses.at(0)!.findComponent(ParameterValues);
@@ -80,9 +81,13 @@ describe("OptionsTab", () => {
         expect(collapses.at(2)!.props("title")).toBe("Graph Settings");
         expect(collapses.at(2)!.props("collapseId")).toBe("graph-settings");
         expect(collapses.at(2)!.findComponent(GraphSettings).exists()).toBe(true);
-        expect(collapses.at(3)!.props("title")).toBe("Saved Parameter Sets");
-        expect(collapses.at(3)!.props("collapseId")).toBe("parameter-sets");
-        expect(collapses.at(3)!.findComponent(ParameterSets).exists()).toBe(true);
+        expect(collapses.at(3)!.props("title")).toBe("Advanced Settings");
+        expect(collapses.at(3)!.props("collapseId")).toBe("advanced-settings");
+        expect(collapses.at(3)!.props("collapsedDefault")).toBe(true);
+        expect(collapses.at(3)!.findComponent(AdvancedSettings).exists()).toBe(true);
+        expect(collapses.at(4)!.props("title")).toBe("Saved Parameter Sets");
+        expect(collapses.at(4)!.props("collapseId")).toBe("parameter-sets");
+        expect(collapses.at(4)!.findComponent(ParameterSets).exists()).toBe(true);
         expect(wrapper.find("#reset-params-btn").exists()).toBe(true);
         expect(wrapper.find("#reset-params-btn").text()).toBe("Reset");
     });
@@ -162,7 +167,7 @@ describe("OptionsTab", () => {
         const wrapper = getWrapper(store);
 
         const collapses = wrapper.findAllComponents(VerticalCollapse);
-        expect(collapses.length).toBe(6);
+        expect(collapses.length).toBe(7);
         expect(collapses.at(0)!.props("title")).toBe("Link");
         expect(collapses.at(0)!.props("collapseId")).toBe("link-data");
         expect(collapses.at(0)!.findComponent(LinkData).exists()).toBe(true);
@@ -179,9 +184,13 @@ describe("OptionsTab", () => {
         expect(collapses.at(4)!.props("title")).toBe("Graph Settings");
         expect(collapses.at(4)!.props("collapseId")).toBe("graph-settings");
         expect(collapses.at(4)!.findComponent(GraphSettings).exists()).toBe(true);
-        expect(collapses.at(5)!.props("title")).toBe("Saved Parameter Sets");
-        expect(collapses.at(5)!.props("collapseId")).toBe("parameter-sets");
-        expect(collapses.at(5)!.findComponent(ParameterSets).exists()).toBe(true);
+        expect(collapses.at(5)!.props("title")).toBe("Advanced Settings");
+        expect(collapses.at(5)!.props("collapseId")).toBe("advanced-settings");
+        expect(collapses.at(5)!.props("collapsedDefault")).toBe(true);
+        expect(collapses.at(5)!.findComponent(AdvancedSettings).exists()).toBe(true);
+        expect(collapses.at(6)!.props("title")).toBe("Saved Parameter Sets");
+        expect(collapses.at(6)!.props("collapseId")).toBe("parameter-sets");
+        expect(collapses.at(6)!.findComponent(ParameterSets).exists()).toBe(true);
         expect(wrapper.find("#reset-params-btn").exists()).toBe(true);
         expect(wrapper.find("#reset-params-btn").text()).toBe("Reset");
     });

@@ -22,7 +22,8 @@ export default {
             new Tooltip(el, {
                 title: value,
                 placement: "top",
-                trigger: "hover"
+                trigger: "hover",
+                animation: false
             });
         } else {
             const variant = value?.variant || "text";
@@ -32,6 +33,7 @@ export default {
                 placement: value?.placement || "top",
                 trigger: value?.trigger || "hover",
                 customClass: (variant === "text") ? "" : `tooltip-${variant}`,
+                animation: false,
                 delay: { show: value?.delayMs || 0, hide: 0 }
             });
         }

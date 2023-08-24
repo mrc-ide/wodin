@@ -4,7 +4,7 @@
       :placeholder-message="placeholderMessage"
       :end-time="endTime"
       :plot-data="allPlotData"
-      :redrawWatches="solution ? [solution, allFitData, selectedVariables, parameterSetSolutions] : []">
+      :redrawWatches="solution ? [solution, allFitData, selectedVariables, parameterSetSolutions, displayNames] : []">
     <slot></slot>
   </wodin-plot>
 </template>
@@ -22,6 +22,7 @@ import { RunGetter } from "../../store/run/getters";
 import { OdinSolution } from "../../types/responseTypes";
 import { Dict } from "../../types/utilTypes";
 import { runPlaceholderMessage } from "../../utils";
+import { ParameterSet } from "../../store/run/state";
 
 export default defineComponent({
     name: "RunPlot",
@@ -36,6 +37,10 @@ export default defineComponent({
 
         const solution = computed(() => (store.state.run.resultOde?.solution));
         const visibleParameterSetNames = computed(() => store.getters[`run/${RunGetter.visibleParameterSetNames}`]);
+        const parameterSets = computed(() => store.state.run.parameterSets as ParameterSet[]);
+        const displayNames = computed(() => {
+            return parameterSets.value.map((paramSet) => paramSet.displayName);
+        });
 
         const parameterSetSolutions = computed(() => {
             const result = {} as Dict<OdinSolution>;
@@ -90,8 +95,9 @@ export default defineComponent({
                     const filteredSetData = filterSeriesSet(paramSetResult, selectedVariables.value);
                     const paramSetOptions = { dash, showLegend: false, includeLegendGroup: true };
                     const plotData = odinToPlotly(filteredSetData, palette.value, paramSetOptions);
+                    const currentParamSet = parameterSets.value.find((paramSet) => paramSet.name === name);
                     plotData.forEach((plotTrace) => {
-                        updatePlotTraceNameWithParameterSetName(plotTrace, name);
+                        updatePlotTraceNameWithParameterSetName(plotTrace, currentParamSet!.displayName);
                     });
                     allData.push(...plotData);
                 }
@@ -106,7 +112,8 @@ export default defineComponent({
             allFitData,
             allPlotData,
             selectedVariables,
-            parameterSetSolutions
+            parameterSetSolutions,
+            displayNames
         };
     }
 });
