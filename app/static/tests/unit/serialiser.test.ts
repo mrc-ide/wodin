@@ -156,7 +156,8 @@ describe("serialise", () => {
             variationPercentage: 50,
             rangeFrom: 0,
             rangeTo: 1,
-            numberOfRuns: 5
+            numberOfRuns: 5,
+            userValues: []
         },
         sensitivityUpdateRequired: {
             modelChanged: false,

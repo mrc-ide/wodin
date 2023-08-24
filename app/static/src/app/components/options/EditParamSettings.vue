@@ -88,7 +88,7 @@
                 </div>
               </div>
             </template>
-            <div v-if="settingsInternal.variationType !== 'User'" class="row mt-2 edit-runs">
+            <div v-if="settingsInternal.variationType !== 'User'" id="edit-runs" class="row mt-2">
               <div class="col-6">
                 <label class="col-form-label">Number of runs</label>
               </div>
@@ -198,7 +198,6 @@ export default defineComponent({
 
         const close = () => { emit("close"); };
         const updateSettings = () => {
-            console.log("updating settings")
             store.commit(`sensitivity/${SensitivityMutation.SetParamSettings}`, { ...settingsInternal });
             close();
         };

@@ -123,9 +123,10 @@ describe("EditParamSettings", () => {
         const paramSelect = wrapper.find("#edit-param-to-vary select");
         expect((paramSelect.element as HTMLSelectElement).value).toBe("B");
         const paramOptions = paramSelect.findAll("option");
-        expect(paramOptions.length).toBe(2);
+        expect(paramOptions.length).toBe(3);
         expect(paramOptions.at(0)!.text()).toBe("A");
         expect(paramOptions.at(1)!.text()).toBe("B");
+        expect(paramOptions.at(2)!.text()).toBe("C");
 
         expect(wrapper.find("#edit-scale-type label").text()).toBe("Scale type");
         const scaleSelect = wrapper.find("#edit-scale-type select");
@@ -139,9 +140,10 @@ describe("EditParamSettings", () => {
         const varSelect = wrapper.find("#edit-variation-type select");
         expect((varSelect.element as HTMLSelectElement).value).toBe(SensitivityVariationType.Percentage);
         const varOptions = varSelect.findAll("option");
-        expect(varOptions.length).toBe(2);
+        expect(varOptions.length).toBe(3);
         expect(varOptions.at(0)!.text()).toBe(SensitivityVariationType.Percentage);
         expect(varOptions.at(1)!.text()).toBe(SensitivityVariationType.Range);
+        expect(varOptions.at(2)!.text()).toBe(SensitivityVariationType.User);
 
         expect(wrapper.find("#edit-percent label").text()).toBe("Variation (%)");
         expect(wrapper.find("#edit-percent").findComponent(NumericInput).props("value")).toBe(10);
@@ -253,7 +255,8 @@ describe("EditParamSettings", () => {
             variationPercentage: 15,
             rangeFrom: 1,
             rangeTo: 3,
-            numberOfRuns: 11
+            numberOfRuns: 11,
+            userValues: []
         });
     });
 
