@@ -157,7 +157,8 @@ export const mockSensitivityState = (state: Partial<SensitivityState> = {}): Sen
             variationPercentage: 10,
             rangeFrom: 0,
             rangeTo: 0,
-            numberOfRuns: 10
+            numberOfRuns: 10,
+            userValues: []
         },
         plotSettings: {
             plotType: SensitivityPlotType.TraceOverTime,

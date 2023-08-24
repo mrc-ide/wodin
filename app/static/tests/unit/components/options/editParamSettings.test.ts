@@ -14,6 +14,7 @@ import NumericInput from "../../../../src/app/components/options/NumericInput.vu
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
 import { expectCloseNumericArray } from "../../../testUtils";
+import TagInput from "../../../../src/app/components/options/TagInput.vue";
 
 const mockTooltipDirective = jest.fn();
 
@@ -41,14 +42,14 @@ describe("EditParamSettings", () => {
     };
 
     const userSettings = {
-        parameterToVary: "B",
+        parameterToVary: "C",
         scaleType: SensitivityScaleType.Arithmetic,
         variationType: SensitivityVariationType.User,
         variationPercentage: 10,
         rangeFrom: 0,
         rangeTo: 0,
         numberOfRuns: 5,
-        userValues: [1,2,3]
+        userValues: [1, 2, 3]
     };
 
     const mockRunner = {
@@ -56,7 +57,7 @@ describe("EditParamSettings", () => {
         batchParsRange: mockBatchParsRange
     } as any;
 
-    const parameterValues = { A: 1, B: 2 };
+    const parameterValues = { A: 1, B: 2, C: 3 };
 
     const getWrapper = async (paramSettings: SensitivityParameterSettings, open = true,
         mockSetParamSettings = jest.fn()) => {
@@ -183,8 +184,21 @@ describe("EditParamSettings", () => {
         expect(wrapper.find("#invalid-msg").exists()).toBe(false);
     });
 
-    it("renders as expected when variation type is User", () => {
-
+    it("renders as expected when variation type is User", async () => {
+        const wrapper = await getWrapper(userSettings);
+        const paramSelect = wrapper.find("#edit-param-to-vary select");
+        expect((paramSelect.element as HTMLSelectElement).value).toBe("C");
+        const varSelect = wrapper.find("#edit-variation-type select");
+        expect((varSelect.element as HTMLSelectElement).value).toBe(SensitivityVariationType.User);
+        const tagInput = wrapper.find("#edit-values").findComponent(TagInput);
+        expect(tagInput.props().tags).toStrictEqual([1, 2, 3]);
+        expect(tagInput.props().numericOnly).toBe(true);
+        expect(wrapper.find("#edit-scale-type").exists()).toBe(false);
+        expect(wrapper.find("#edit-percent").exists()).toBe(false);
+        expect(wrapper.find("#edit-from").exists()).toBe(false);
+        expect(wrapper.find("#edit-to").exists()).toBe(false);
+        expect(wrapper.find("#edit-runs").exists()).toBe(false);
+        expect(wrapper.findComponent(SensitivityParamValues).exists()).toBe(false);
     });
 
     it("disables OK and renders message when settings are invalid", async () => {

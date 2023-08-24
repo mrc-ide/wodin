@@ -78,12 +78,12 @@
               </div>
             </template>
             <template v-if="settingsInternal.variationType === 'User'">
-              <div class="row mt-2 edit-from">
+              <div id="edit-values" class="row mt-2">
                 <div class="col-6">
                   <label class="col-form-label">Values</label>
                 </div>
                 <div class="col-6">
-                  <tag-input :tags="[...settingsInternal.userValues]" :numeric-only="true" @update="updateUserValues">
+                  <tag-input :tags="settingsInternal.userValues" :numeric-only="true" @update="updateUserValues">
                   </tag-input>
                 </div>
               </div>
