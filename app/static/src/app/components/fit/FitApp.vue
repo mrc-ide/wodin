@@ -27,6 +27,9 @@
         <template v-slot:Sensitivity>
           <sensitivity-tab></sensitivity-tab>
         </template>
+        <template v-slot:Multi-sensitivity>
+          <multi-sensitivity-tab></multi-sensitivity-tab>
+        </template>
       </wodin-tabs>
     </template>
   </wodin-app>
@@ -35,6 +38,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useStore } from "vuex";
+import MultiSensitivityTab from "@/app/components/multiSensitivity/MultiSensitivityTab.vue";
 import WodinApp from "../WodinApp.vue";
 import WodinTabs from "../WodinTabs.vue";
 import CodeTab from "../code/CodeTab.vue";
@@ -46,35 +50,36 @@ import OptionsTab from "../options/OptionsTab.vue";
 import SensitivityTab from "../sensitivity/SensitivityTab.vue";
 import { VisualisationTab } from "../../store/appState/state";
 import { AppStateMutation } from "../../store/appState/mutations";
-import includeHelpTab from "../mixins/includeHelpTab";
+import includeConfiguredTabs from "../mixins/includeConfiguredTabs";
 
 export default defineComponent({
-    name: "FitApp",
-    components: {
-        CodeTab,
-        DataTab,
-        FitTab,
-        HelpTab,
-        RunTab,
-        OptionsTab,
-        SensitivityTab,
-        WodinApp,
-        WodinTabs
-    },
-    setup() {
-        const store = useStore();
+  name: "FitApp",
+  components: {
+    MultiSensitivityTab,
+    CodeTab,
+    DataTab,
+    FitTab,
+    HelpTab,
+    RunTab,
+    OptionsTab,
+    SensitivityTab,
+    WodinApp,
+    WodinTabs
+  },
+  setup() {
+    const store = useStore();
 
-        const rightTabSelected = (tab: string) => {
-            store.commit(AppStateMutation.SetOpenVisualisationTab, tab);
-        };
-        const { helpTabName, rightTabNames } = includeHelpTab(store,
-            [VisualisationTab.Run, VisualisationTab.Fit, VisualisationTab.Sensitivity]);
+    const rightTabSelected = (tab: string) => {
+      store.commit(AppStateMutation.SetOpenVisualisationTab, tab);
+    };
+    const { helpTabName, rightTabNames } = includeConfiguredTabs(store,
+        [VisualisationTab.Run, VisualisationTab.Fit, VisualisationTab.Sensitivity]);
 
-        return {
-            helpTabName,
-            rightTabNames,
-            rightTabSelected
-        };
-    }
+    return {
+      helpTabName,
+      rightTabNames,
+      rightTabSelected
+    };
+  }
 });
 </script>

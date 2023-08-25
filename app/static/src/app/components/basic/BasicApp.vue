@@ -21,6 +21,9 @@
         <template v-slot:Sensitivity>
           <sensitivity-tab></sensitivity-tab>
         </template>
+        <template v-slot:Multi-sensitivity>
+          <multi-sensitivity-tab></multi-sensitivity-tab>
+        </template>
       </wodin-tabs>
     </template>
   </wodin-app>
@@ -35,10 +38,11 @@ import CodeTab from "../code/CodeTab.vue";
 import RunTab from "../run/RunTab.vue";
 import OptionsTab from "../options/OptionsTab.vue";
 import SensitivityTab from "../sensitivity/SensitivityTab.vue";
+import MultiSensitivityTab from "../multiSensitivity/MultiSensitivityTab.vue";
 import { AppStateMutation } from "../../store/appState/mutations";
 import { VisualisationTab } from "../../store/appState/state";
 import HelpTab from "../help/HelpTab.vue";
-import includeHelpTab from "../mixins/includeHelpTab";
+import includeConfiguredTabs from "../mixins/includeConfiguredTabs";
 
 export default defineComponent({
     name: "BasicApp",
@@ -48,18 +52,20 @@ export default defineComponent({
         RunTab,
         OptionsTab,
         SensitivityTab,
+        MultiSensitivityTab,
         WodinApp,
         WodinTabs
     },
     setup() {
         const store = useStore();
         const rightTabSelected = (tab: string) => { store.commit(AppStateMutation.SetOpenVisualisationTab, tab); };
-        const { helpTabName, rightTabNames } = includeHelpTab(store,
-            [VisualisationTab.Run, VisualisationTab.Sensitivity]);
+      const { helpTabName, multiSensitivityTabName, rightTabNames } = includeConfiguredTabs(store,
+          [VisualisationTab.Run, VisualisationTab.Sensitivity]);
 
         return {
             rightTabSelected,
             helpTabName,
+            multiSensitivityTabName,
             rightTabNames
         };
     }
