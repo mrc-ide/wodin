@@ -246,7 +246,7 @@ test.describe("Sensitivity tests", () => {
         await tagInput.press("3");
         await tagInput.press(",");
 
-        await page.waitForTimeout(100)
+        await page.waitForTimeout(100);
         await expect(await page.locator("#invalid-msg").count()).toBe(0);
         await expect(await page.locator(".modal .alert-success").count()).toBe(0);
 
@@ -263,6 +263,5 @@ test.describe("Sensitivity tests", () => {
         await expectSummaryValues(page, 7, "S (beta=3.000)", 1000, "#2e5cb8");
         await expectSummaryValues(page, 8, "I (beta=3.000)", 1000, "#cccc00");
         await expectSummaryValues(page, 9, "R (beta=3.000)", 1000, "#cc0044");
-
     });
 });
