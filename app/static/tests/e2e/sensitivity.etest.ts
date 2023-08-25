@@ -230,11 +230,11 @@ test.describe("Sensitivity tests", () => {
         await expectSummaryValues(page, 66, "R (Set 1)", 1000, "#cc0044", "dot", "0", "100", "0", "0");
     });
 
-    test("can change sensitivity settings to User variation, and see values in Sensitivity plot", async ({ page }) => {
+    test("can change sensitivity settings to Custom variation, and see values in plot", async ({ page }) => {
         await page.click("#sensitivity-options .btn-primary");
         await expect(await page.locator("#edit-param .modal")).toBeVisible();
         const varSelect = await page.locator("#edit-variation-type select");
-        await varSelect.selectOption("User");
+        await varSelect.selectOption("Custom");
         await expect(await page.innerText("#invalid-msg"))
             .toBe("Invalid settings: Must include at least 2 traces in the batch");
 

@@ -331,7 +331,7 @@ describe("generateBatchPars", () => {
         rangeFrom: 0,
         rangeTo: 0,
         numberOfRuns: 5,
-        userValues: []
+        customValues: []
     };
 
     const rangeSettings = {
@@ -342,18 +342,18 @@ describe("generateBatchPars", () => {
         rangeFrom: 2,
         rangeTo: 6,
         numberOfRuns: 9,
-        userValues: []
+        customValues: []
     };
 
-    const userSettings = {
+    const customSettings = {
         parameterToVary: "C",
         scaleType: SensitivityScaleType.Arithmetic,
-        variationType: SensitivityVariationType.User,
+        variationType: SensitivityVariationType.Custom,
         variationPercentage: 50,
         rangeFrom: 2,
         rangeTo: 6,
         numberOfRuns: 9,
-        userValues: [1, 2, 3]
+        customValues: [1, 2, 3]
     };
 
     it("generates BatchPars for Percentage variation type", () => {
@@ -386,8 +386,8 @@ describe("generateBatchPars", () => {
         expect(spyBatchParsRange.mock.calls[0][5]).toStrictEqual(6);
     });
 
-    it("generates BatchPars for User variation type", () => {
-        const result = generateBatchPars(rootState, userSettings, parameterValues)!;
+    it("generates BatchPars for Custom variation type", () => {
+        const result = generateBatchPars(rootState, customSettings, parameterValues)!;
         expect(result.error).toBe(null);
         expect(result.batchPars!.name).toBe("C");
         expect(result.batchPars!.base).toBe(parameterValues);

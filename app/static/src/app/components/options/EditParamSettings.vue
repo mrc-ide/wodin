@@ -18,7 +18,7 @@
                  </select>
                </div>
              </div>
-             <div v-if="settingsInternal.variationType !== 'User'"  class="row mt-2" id="edit-scale-type">
+             <div v-if="settingsInternal.variationType !== 'Custom'"  class="row mt-2" id="edit-scale-type">
                <div class="col-6">
                  <label class="col-form-label">Scale type</label>
                </div>
@@ -77,18 +77,18 @@
                 </div>
               </div>
             </template>
-            <template v-if="settingsInternal.variationType === 'User'">
+            <template v-if="settingsInternal.variationType === 'Custom'">
               <div id="edit-values" class="row mt-2">
                 <div class="col-6">
                   <label class="col-form-label">Values</label>
                 </div>
                 <div class="col-6">
-                  <tag-input :tags="settingsInternal.userValues" :numeric-only="true" @update="updateUserValues">
+                  <tag-input :tags="settingsInternal.customValues" :numeric-only="true" @update="updateUserValues">
                   </tag-input>
                 </div>
               </div>
             </template>
-            <div v-if="settingsInternal.variationType !== 'User'" id="edit-runs" class="row mt-2">
+            <div v-if="settingsInternal.variationType !== 'Custom'" id="edit-runs" class="row mt-2">
               <div class="col-6">
                 <label class="col-form-label">Number of runs</label>
               </div>
@@ -102,7 +102,7 @@
                 <error-info :error="batchParsError"></error-info>
               </div>
             </div>
-            <sensitivity-param-values v-if="settingsInternal.variationType !== 'User'" :batch-pars="batchPars">
+            <sensitivity-param-values v-if="settingsInternal.variationType !== 'Custom'" :batch-pars="batchPars">
             </sensitivity-param-values>
           </div>
           <div class="modal-footer">
@@ -176,16 +176,16 @@ export default defineComponent({
 
         const paramValues = computed(() => store.state.run.parameterValues);
         const batchParsResult = computed(() => {
-            if (settingsInternal.variationType === SensitivityVariationType.User) {
+            if (settingsInternal.variationType === SensitivityVariationType.Custom) {
                 return null;
             }
             return generateBatchPars(store.state, settingsInternal, paramValues.value);
         });
         const batchPars = computed(() => batchParsResult.value?.batchPars);
         const batchParsError = computed(() => {
-            if (settingsInternal.variationType === SensitivityVariationType.User) {
-                // Minimum of two user values
-                return settingsInternal.userValues.length < 2
+            if (settingsInternal.variationType === SensitivityVariationType.Custom) {
+                // Minimum of two custom values
+                return settingsInternal.customValues.length < 2
                     ? { error: "Invalid settings", detail: "Must include at least 2 traces in the batch" } : null;
             }
             return batchParsResult.value?.error;
@@ -193,7 +193,7 @@ export default defineComponent({
         const updateUserValues = (newValues: number[]) => {
             // sort and remove duplicates
             const cleaned = Array.from(new Set(newValues)).sort((a, b) => a - b);
-            settingsInternal.userValues = cleaned;
+            settingsInternal.customValues = cleaned;
         };
 
         const close = () => { emit("close"); };

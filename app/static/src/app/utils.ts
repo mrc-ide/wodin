@@ -195,11 +195,11 @@ export function generateBatchPars(
         };
     }
 
-    if (paramSettings.variationType === SensitivityVariationType.User) {
+    if (paramSettings.variationType === SensitivityVariationType.Custom) {
         const batchPars: BatchPars = {
             base: paramValues!,
             name: paramSettings.parameterToVary!,
-            values: paramSettings.userValues
+            values: paramSettings.customValues
         };
         return {
             batchPars,

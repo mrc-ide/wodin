@@ -18,7 +18,7 @@ export const defaultState: SensitivityState = {
         rangeFrom: 0,
         rangeTo: 0,
         numberOfRuns: 10,
-        userValues: []
+        customValues: []
     },
     plotSettings: {
         plotType: SensitivityPlotType.TraceOverTime,

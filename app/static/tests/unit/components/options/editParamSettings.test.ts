@@ -29,7 +29,7 @@ describe("EditParamSettings", () => {
         rangeFrom: 0,
         rangeTo: 0,
         numberOfRuns: 5,
-        userValues: []
+        customValues: []
     };
 
     const rangeSettings = {
@@ -40,18 +40,18 @@ describe("EditParamSettings", () => {
         rangeFrom: 2,
         rangeTo: 6,
         numberOfRuns: 5,
-        userValues: []
+        customValues: []
     };
 
-    const userSettings = {
+    const customSettings = {
         parameterToVary: "C",
         scaleType: SensitivityScaleType.Arithmetic,
-        variationType: SensitivityVariationType.User,
+        variationType: SensitivityVariationType.Custom,
         variationPercentage: 10,
         rangeFrom: 0,
         rangeTo: 0,
         numberOfRuns: 5,
-        userValues: [1, 2, 3]
+        customValues: [1, 2, 3]
     };
 
     const mockRunner = {
@@ -143,7 +143,7 @@ describe("EditParamSettings", () => {
         expect(varOptions.length).toBe(3);
         expect(varOptions.at(0)!.text()).toBe(SensitivityVariationType.Percentage);
         expect(varOptions.at(1)!.text()).toBe(SensitivityVariationType.Range);
-        expect(varOptions.at(2)!.text()).toBe(SensitivityVariationType.User);
+        expect(varOptions.at(2)!.text()).toBe(SensitivityVariationType.Custom);
 
         expect(wrapper.find("#edit-percent label").text()).toBe("Variation (%)");
         expect(wrapper.find("#edit-percent").findComponent(NumericInput).props("value")).toBe(10);
@@ -188,12 +188,12 @@ describe("EditParamSettings", () => {
         expect(wrapper.find("#invalid-msg").exists()).toBe(false);
     });
 
-    it("renders as expected when variation type is User", async () => {
-        const wrapper = await getWrapper(userSettings);
+    it("renders as expected when variation type is Custom", async () => {
+        const wrapper = await getWrapper(customSettings);
         const paramSelect = wrapper.find("#edit-param-to-vary select");
         expect((paramSelect.element as HTMLSelectElement).value).toBe("C");
         const varSelect = wrapper.find("#edit-variation-type select");
-        expect((varSelect.element as HTMLSelectElement).value).toBe(SensitivityVariationType.User);
+        expect((varSelect.element as HTMLSelectElement).value).toBe(SensitivityVariationType.Custom);
         const tagInput = wrapper.find("#edit-values").findComponent(TagInput);
         expect(tagInput.props().tags).toStrictEqual([1, 2, 3]);
         expect(tagInput.props().numericOnly).toBe(true);
@@ -256,7 +256,7 @@ describe("EditParamSettings", () => {
             rangeFrom: 1,
             rangeTo: 3,
             numberOfRuns: 11,
-            userValues: []
+            customValues: []
         });
     });
 
@@ -287,30 +287,30 @@ describe("EditParamSettings", () => {
         expect(rangeSpy.mock.calls[2][5]).toBe(3);
     });
 
-    it("displays error when User variation type, and there are less than 2 values", async () => {
+    it("displays error when Custom variation type, and there are less than 2 values", async () => {
         const expectError = (wrapper: VueWrapper<any>) => {
             expect(wrapper.findComponent(ErrorInfo).props().error).toStrictEqual({
                 error: "Invalid settings", detail: "Must include at least 2 traces in the batch"
             });
         };
-        expectError(await getWrapper({ ...userSettings, userValues: [] }));
-        expectError(await getWrapper({ ...userSettings, userValues: [1] }));
+        expectError(await getWrapper({ ...customSettings, customValues: [] }));
+        expectError(await getWrapper({ ...customSettings, customValues: [1] }));
 
-        const wrapper = await getWrapper({ ...userSettings, userValues: [1, 2] });
+        const wrapper = await getWrapper({ ...customSettings, customValues: [1, 2] });
         expect(wrapper.findComponent(ErrorInfo).exists()).toBe(false);
     });
 
     it("updates values from TagInput, dedupes and sorts", async () => {
         const mockSetParamSettings = jest.fn();
-        const wrapper = await getWrapper(userSettings, true, mockSetParamSettings);
+        const wrapper = await getWrapper(customSettings, true, mockSetParamSettings);
         wrapper.findComponent(TagInput).vm.$emit("update", [5, 1, 5, 0, -1, -2, 1]);
         const expectedValues = [-2, -1, 0, 1, 5];
         await nextTick();
-        expect((wrapper.vm as any).settingsInternal.userValues).toStrictEqual(expectedValues);
+        expect((wrapper.vm as any).settingsInternal.customValues).toStrictEqual(expectedValues);
         await wrapper.find("#ok-settings").trigger("click");
         expect(mockSetParamSettings).toHaveBeenCalledTimes(1);
         const committed = mockSetParamSettings.mock.calls[0][1];
-        expect(committed.userValues).toStrictEqual(expectedValues);
+        expect(committed.customValues).toStrictEqual(expectedValues);
     });
 
     it("test set", () => {

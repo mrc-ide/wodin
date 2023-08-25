@@ -5,7 +5,7 @@
         <button class="btn btn-primary mb-4 float-end" @click="toggleEdit(true)">Edit</button>
         <ul>
           <li><strong>Parameter:</strong> {{settings.parameterToVary}}</li>
-          <li v-if="settings.variationType !== 'User'"><strong>Scale Type:</strong> {{ settings.scaleType }}</li>
+          <li v-if="settings.variationType !== 'Custom'"><strong>Scale Type:</strong> {{ settings.scaleType }}</li>
           <li><strong>Variation Type:</strong> {{ settings.variationType }}</li>
           <li v-if="settings.variationType === 'Percentage'">
             <strong>Variation (%):</strong> {{ settings.variationPercentage }}
@@ -14,15 +14,15 @@
             <li><strong>From:</strong> {{ settings.rangeFrom }}</li>
             <li><strong>To:</strong> {{ settings.rangeTo }}</li>
           </template>
-          <li v-if="settings.variationType === 'User'">
+          <li v-if="settings.variationType === 'Custom'">
             <strong>Values:</strong>
-            {{ settings.userValues.join(", ") }}
+            {{ settings.customValues.join(", ") }}
           </li>
-          <li v-if="settings.variationType !== 'User'">
+          <li v-if="settings.variationType !== 'Custom'">
             <strong>Number of runs:</strong> {{ settings.numberOfRuns}}
           </li>
         </ul>
-        <sensitivity-param-values v-if="settings.variationType !== 'User'" :batch-pars="batchPars">
+        <sensitivity-param-values v-if="settings.variationType !== 'Custom'" :batch-pars="batchPars">
         </sensitivity-param-values>
       </div>
       <hr/>
