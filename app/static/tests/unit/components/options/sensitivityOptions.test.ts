@@ -73,8 +73,8 @@ describe("SensitivityOptions", () => {
         const listItems = wrapper.findAll("ul li");
         expect(listItems.length).toBe(5);
         expect(listItems.at(0)!.text()).toBe("Parameter: B");
-        expect(listItems.at(1)!.text()).toBe("Scale Type: Arithmetic");
-        expect(listItems.at(2)!.text()).toBe("Variation Type: Percentage");
+        expect(listItems.at(1)!.text()).toBe("Variation Type: Percentage");
+        expect(listItems.at(2)!.text()).toBe("Scale Type: Arithmetic");
         expect(listItems.at(3)!.text()).toBe("Variation (%): 10");
         expect(listItems.at(4)!.text()).toBe("Number of runs: 5");
 
@@ -104,8 +104,8 @@ describe("SensitivityOptions", () => {
         const listItems = wrapper.findAll("ul li");
         expect(listItems.length).toBe(6);
         expect(listItems.at(0)!.text()).toBe("Parameter: B");
-        expect(listItems.at(1)!.text()).toBe("Scale Type: Logarithmic");
-        expect(listItems.at(2)!.text()).toBe("Variation Type: Range");
+        expect(listItems.at(1)!.text()).toBe("Variation Type: Range");
+        expect(listItems.at(2)!.text()).toBe("Scale Type: Logarithmic");
         expect(listItems.at(3)!.text()).toBe("From: 1");
         expect(listItems.at(4)!.text()).toBe("To: 3");
         expect(listItems.at(5)!.text()).toBe("Number of runs: 5");

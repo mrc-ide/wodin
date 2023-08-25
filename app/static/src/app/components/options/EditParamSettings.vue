@@ -18,18 +18,6 @@
                  </select>
                </div>
              </div>
-             <div v-if="settingsInternal.variationType !== 'Custom'"  class="row mt-2" id="edit-scale-type">
-               <div class="col-6">
-                 <label class="col-form-label">Scale type</label>
-               </div>
-               <div class="col-6">
-                 <select class="form-select" v-model="settingsInternal.scaleType">
-                   <option v-for="scale in scaleValues" :key="scale">{{scale}}</option>
-                 </select>
-               </div>
-               <div class="col-6">
-             </div>
-             </div>
             <div class="row mt-2" id="edit-variation-type">
               <div class="col-6">
                 <label class="col-form-label">Variation type</label>
@@ -38,6 +26,18 @@
                 <select class="form-select" v-model="settingsInternal.variationType">
                   <option v-for="variation in variationTypeValues" :key="variation">{{variation}}</option>
                 </select>
+              </div>
+            </div>
+            <div v-if="settingsInternal.variationType !== 'Custom'"  class="row mt-2" id="edit-scale-type">
+              <div class="col-6">
+                <label class="col-form-label">Scale type</label>
+              </div>
+              <div class="col-6">
+                <select class="form-select" v-model="settingsInternal.scaleType">
+                  <option v-for="scale in scaleValues" :key="scale">{{scale}}</option>
+                </select>
+              </div>
+              <div class="col-6">
               </div>
             </div>
             <div v-if="settingsInternal.variationType === 'Percentage'" class="row mt-2" id="edit-percent">

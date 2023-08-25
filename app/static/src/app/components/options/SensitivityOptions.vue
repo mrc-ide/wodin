@@ -5,8 +5,8 @@
         <button class="btn btn-primary mb-4 float-end" @click="toggleEdit(true)">Edit</button>
         <ul>
           <li><strong>Parameter:</strong> {{settings.parameterToVary}}</li>
-          <li v-if="settings.variationType !== 'Custom'"><strong>Scale Type:</strong> {{ settings.scaleType }}</li>
           <li><strong>Variation Type:</strong> {{ settings.variationType }}</li>
+          <li v-if="settings.variationType !== 'Custom'"><strong>Scale Type:</strong> {{ settings.scaleType }}</li>
           <li v-if="settings.variationType === 'Percentage'">
             <strong>Variation (%):</strong> {{ settings.variationPercentage }}
           </li>
