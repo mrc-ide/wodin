@@ -31,6 +31,12 @@ import { AppConfig } from "../../../../src/app/types/responseTypes";
 
 const mockTooltipDirective = jest.fn();
 
+function mockResizeObserver(this: any) {
+    this.observe = jest.fn();
+    this.disconnect = jest.fn();
+}
+(global.ResizeObserver as any) = mockResizeObserver;
+
 describe("BasicApp", () => {
     const getWrapper = (mockSetOpenVisualisationTab = jest.fn(), config: Partial<AppConfig> = {}) => {
         const state = mockBasicState({ config: config as any, configured: true });

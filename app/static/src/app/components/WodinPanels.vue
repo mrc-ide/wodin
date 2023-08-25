@@ -1,27 +1,38 @@
 <template>
-    <div :class="modeClass">
-        <div class="wodin-left" :class="leftAnimateClass">
-            <span class="wodin-collapse-controls">
-                <span v-if="canCollapseLeft" @click="collapseLeft()" class="collapse-control" id="collapse-left">
-                    <vue-feather type="chevron-left"></vue-feather>
+    <div :class="dragStart !== null ? 'show-drag-cursor' : ''" ref="panelsWindow">
+        <div :class="modeClass">
+            <div class="wodin-left" :style="optionsWidth">
+                <span class="wodin-collapse-controls">
+                    <span @mousedown="handleDragStartIcon" @mouseup="handleDragEnd" id="resize-panel-control">
+                        <vue-feather type="maximize-2"
+                                    style="transform: rotate(45deg); color: grey;"></vue-feather>
+                    </span>
                 </span>
-                <span v-if="canCollapseRight" @click="collapseRight()" class="collapse-control" id="collapse-right">
-                    <vue-feather type="chevron-right"></vue-feather>
-                </span>
-            </span>
-            <div class="view-left" @click="collapseRight()">
-                View Options
+                <div v-show="hidePanelMode === HidePanelContent.Left"
+                    @click="openCollapsedView"
+                    class="view-left">
+                    View Options
+                </div>
+                <div v-show="hidePanelMode !== HidePanelContent.Left"
+                    class="wodin-content"
+                    id="wodin-content-left">
+                    <slot name="left"></slot>
+                </div>
             </div>
-            <div class="wodin-content" id="wodin-content-left">
-                <slot name="left"></slot>
-            </div>
-        </div>
-        <div class="wodin-right" :class="rightAnimateClass">
-            <div class="view-right" @click="collapseLeft()">
-                View Charts
-            </div>
-            <div class="wodin-content p-2" id="wodin-content-right">
-                <slot name="right"></slot>
+            <div class="wodin-right" :style="chartsWidth">
+                <div class="edge-resize"
+                    @mousedown="handleDragStartEdge"
+                    @mouseup="handleDragEnd"></div>
+                <div v-show="hidePanelMode === HidePanelContent.Right"
+                    @click="openCollapsedView"
+                    class="view-right">
+                    View Charts
+                </div>
+                <div v-show="hidePanelMode !== HidePanelContent.Right"
+                    class="wodin-content p-2"
+                    id="wodin-content-right">
+                    <slot name="right"></slot>
+                </div>
             </div>
         </div>
     </div>
@@ -29,12 +40,26 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import {
+    computed, defineComponent, onMounted, onUnmounted, ref
+} from "vue";
 import VueFeather from "vue-feather";
 
 export enum PanelsMode {
-        Left, Right, Both
-    }
+    Left, Right, Both
+}
+
+export enum HidePanelContent {
+    Left, Right, None
+}
+
+enum DragStart {
+    Icon, Edge
+}
+
+type WidthStyle = {
+    width?: string
+}
 
 export default defineComponent({
     name: "WodinPanels",
@@ -42,65 +67,164 @@ export default defineComponent({
         VueFeather
     },
     setup() {
-        const mode = ref<PanelsMode>(PanelsMode.Both);
-        const leftAnimateClass = ref("");
-        const rightAnimateClass = ref("");
+        const windowWidth = ref(window.innerWidth);
+        const panelsWindow = ref<null | HTMLElement>(null);
+        /*
+            Window boundary variables are the points on either side at which the the
+            panel doesn't display content anymore and if they mouseup at that region
+            the panel will snap and collapse to that side. They also enforce that the
+            options panel is at least 200px wide and the charts at least 400px
 
+            Snap tolerance variables are points on either side at which the panel snaps
+            even if they haven't emitted a mouseup event (let go of the drag). In general,
+            we divide by a factor of 3 to get the snap tolerance from the boundary
+        */
+        const windowBoundaryLeft = computed(() => Math.max(windowWidth.value / 8, 200));
+        const windowMinRightPanelWidth = computed(() => Math.max(windowWidth.value / 4, 400));
+        const windowBoundaryRight = computed(() => windowWidth.value - windowMinRightPanelWidth.value);
+        const snapToleranceLeft = computed(() => windowBoundaryLeft.value / 3);
+        const snapToleranceRight = computed(() => windowWidth.value - windowMinRightPanelWidth.value / 3);
+
+        const optionsWidth = ref<WidthStyle>({});
+        const chartsWidth = ref<WidthStyle>({});
+
+        const mode = ref<PanelsMode>(PanelsMode.Both);
         const modeClassMap: Record<PanelsMode, string> = {
             [PanelsMode.Both]: "wodin-mode-both",
             [PanelsMode.Left]: "wodin-mode-left",
             [PanelsMode.Right]: "wodin-mode-right"
         };
-
         const modeClass = computed(() => modeClassMap[mode.value]);
+        const dragStart = ref<DragStart | null>(null);
+        const hidePanelMode = ref<HidePanelContent>(HidePanelContent.None);
 
-        const canCollapseLeft = computed(() => mode.value !== PanelsMode.Right);
-        const canCollapseRight = computed(() => mode.value !== PanelsMode.Left);
+        const resize = () => {
+            // complete reset to avoid the panel being across
+            // boundary off the browser window
+            windowWidth.value = window.innerWidth;
+            hidePanelMode.value = HidePanelContent.None;
+            mode.value = PanelsMode.Both;
+            optionsWidth.value.width = `max(${windowBoundaryLeft.value}px, 30%)`;
+            chartsWidth.value.width = `calc(100% - ${optionsWidth.value.width})`;
+        };
 
-        const collapse = (expandedMode: PanelsMode, collapsedMode: PanelsMode) => {
-            if (mode.value === expandedMode) {
-                mode.value = PanelsMode.Both;
-            } else if (mode.value === PanelsMode.Both) {
-                mode.value = collapsedMode;
+        const resizeObserver = new ResizeObserver(resize);
+        onMounted(() => {
+            if (panelsWindow.value) {
+                resizeObserver.observe(panelsWindow.value);
             }
+        });
+        onUnmounted(() => {
+            if (resizeObserver) {
+                resizeObserver.disconnect();
+            }
+        });
+
+        const getTouchEvent = (event: Event) => {
+            return (event as TouchEvent).touches?.length > 0 ? (event as TouchEvent).touches[0] : event;
         };
 
-        const getAnimateClass = (left: boolean, leftward: boolean) => {
-            const panel = left ? "l" : "r";
-            const movement = (left && leftward) || (!left && !leftward) ? "collapse" : "expand";
-            const amount = mode.value === PanelsMode.Both ? "partial" : "full";
-            return `slide-${panel}-panel-${movement}-${amount}`;
+        type DragHandler = (event: Event) => void;
+
+        const addDragListeners = (move: DragHandler, end: DragHandler) => {
+            document.addEventListener("mousemove", move);
+            document.addEventListener("touchmove", move);
+            document.addEventListener("mouseup", end);
+            document.addEventListener("touchend", end);
         };
 
-        const collapseLeft = () => {
-            collapse(PanelsMode.Left, PanelsMode.Right);
-            leftAnimateClass.value = getAnimateClass(true, true);
-            rightAnimateClass.value = getAnimateClass(false, true);
+        const removeDragListeners = (move: DragHandler, end: DragHandler) => {
+            document.removeEventListener("mousemove", move);
+            document.removeEventListener("touchmove", move);
+            document.removeEventListener("mouseup", end);
+            document.removeEventListener("touchend", end);
         };
 
-        const collapseRight = () => {
-            collapse(PanelsMode.Right, PanelsMode.Left);
-            leftAnimateClass.value = getAnimateClass(true, false);
-            rightAnimateClass.value = getAnimateClass(false, false);
+        const handleDragMove = (event: Event) => {
+            event.preventDefault();
+            const { clientX } = getTouchEvent(event) as MouseEvent | Touch;
+
+            if (clientX > snapToleranceRight.value) {
+                mode.value = PanelsMode.Left;
+            } else if (clientX < snapToleranceLeft.value) {
+                mode.value = PanelsMode.Right;
+            } else if (clientX > windowBoundaryRight.value) {
+                mode.value = PanelsMode.Both;
+                hidePanelMode.value = HidePanelContent.Right;
+            } else if (clientX < windowBoundaryLeft.value) {
+                mode.value = PanelsMode.Both;
+                hidePanelMode.value = HidePanelContent.Left;
+            } else {
+                mode.value = PanelsMode.Both;
+                hidePanelMode.value = HidePanelContent.None;
+            }
+
+            optionsWidth.value.width = `calc(${clientX}px + ${dragStart.value === DragStart.Icon ? 1.4 : -1}rem)`;
+            chartsWidth.value.width = `calc(100% - ${optionsWidth.value.width})`;
+        };
+
+        const handleDragEnd = (event: Event) => {
+            dragStart.value = null;
+
+            const { clientX } = getTouchEvent(event) as MouseEvent | Touch;
+
+            if (clientX > windowBoundaryRight.value) {
+                mode.value = PanelsMode.Left;
+            } else if (clientX < windowBoundaryLeft.value) {
+                mode.value = PanelsMode.Right;
+            } else {
+                mode.value = PanelsMode.Both;
+            }
+
+            removeDragListeners(handleDragMove, handleDragEnd);
+        };
+
+        const handleDragStart = (event: Event) => {
+            event.preventDefault();
+            addDragListeners(handleDragMove, handleDragEnd);
+        };
+
+        const handleDragStartEdge = (event: Event) => {
+            dragStart.value = DragStart.Edge;
+            handleDragStart(event);
+        };
+
+        const handleDragStartIcon = (event: Event) => {
+            dragStart.value = DragStart.Icon;
+            handleDragStart(event);
+        };
+
+        const openCollapsedView = () => {
+            optionsWidth.value.width = "30%";
+            chartsWidth.value.width = "70%";
+            mode.value = PanelsMode.Both;
+            hidePanelMode.value = HidePanelContent.None;
         };
 
         return {
             mode,
             modeClass,
-            canCollapseLeft,
-            canCollapseRight,
-            collapseLeft,
-            collapseRight,
-            leftAnimateClass,
-            rightAnimateClass
+            chartsWidth,
+            optionsWidth,
+            handleDragStart,
+            handleDragEnd,
+            openCollapsedView,
+            handleDragMove,
+            hidePanelMode,
+            HidePanelContent,
+            PanelsMode,
+            handleDragStartEdge,
+            handleDragStartIcon,
+            dragStart,
+            panelsWindow,
+            resize,
+            windowWidth
         };
     }
 });
 </script>
 
 <style scoped lang="scss">
-    $handleWidth: 3rem;
-    $fullWidth: calc(100% - 4rem);
     $fullHeight: calc(100vh - 5rem);
 
     $leftBothModeWidth: 30%;
@@ -110,11 +234,29 @@ export default defineComponent({
 
     $dark-grey: #777;
 
+    $widthToleranceLeft: calc(100% / 8);
+    $widthToleranceRight: calc(100% - calc(100% / 4));
+
+    .show-drag-cursor {
+        cursor: col-resize !important;
+    }
+
+    .edge-resize {
+        left: 0;
+        position: absolute;
+        height: 100%;
+        width: 10px;
+    }
+    .edge-resize:hover {
+        cursor: col-resize;
+    }
+
     .wodin-left, .wodin-right {
         float: left;
         height: $fullHeight;
         overflow-y: auto;
         overflow-x: hidden;
+        position: relative;
     }
 
     .wodin-left {
@@ -128,31 +270,30 @@ export default defineComponent({
         cursor: pointer;
         width: 10rem;
         color: $dark-grey;
+        transform: rotate(90deg);
     }
 
     .view-left {
-        transform: rotate(90deg) translate(6rem, 2.7rem);
+        position: absolute;
+        right: -2.7rem;
+        top: 7rem
     }
 
     .view-right {
-        transform: rotate(90deg) translate(6rem, 4rem);
+        position: absolute;
+        translate: -4rem 7rem;
     }
 
     .wodin-mode-left {
-        .wodin-left {
-            width: $fullWidth;
-        }
-
         .wodin-right {
-            width: $handleWidth;
-
+            width: 3.5rem !important;
             .wodin-content {
                 display: none;
             }
         }
 
-        .view-left {
-            display: none;
+        .wodin-left {
+            width: calc(100% - 3.5rem) !important;
         }
     }
 
@@ -162,140 +303,31 @@ export default defineComponent({
         }
 
         .wodin-right {
-            width: $rightBothModeWidth;
-        }
-
-        .view-left, .view-right {
-            display: none;
+            width: $rightBothModeWidth
         }
     }
 
     .wodin-mode-right {
         .wodin-left {
-            width: $handleWidth;
-
+            width: 3.5rem !important;
             .wodin-content {
                 display: none;
             }
         }
 
         .wodin-right {
-            width: $fullWidth;
-        }
-
-        .view-right {
-            display: none;
-        }
-    }
-
-    @keyframes show-content-after-anim {
-        0% { opacity: 0; }
-        99% { opacity: 0; }
-        100% { opacity: 1; }
-    }
-
-    @keyframes l-panel-collapse-full {
-        from { width: $leftBothModeWidth }
-        to { width: $handleWidth }
-    }
-    .slide-l-panel-collapse-full {
-        animation: l-panel-collapse-full;
-        animation-duration: $animationDuration;
-
-        .view-left {
-            animation: show-content-after-anim;
-            animation-duration: $animationDuration;
-        }
-    }
-
-    @keyframes l-panel-collapse-partial {
-        from { width: $fullWidth }
-        to { width: $leftBothModeWidth }
-    }
-    .slide-l-panel-collapse-partial {
-        animation: l-panel-collapse-partial;
-        animation-duration: $animationDuration;
-    }
-
-    @keyframes l-panel-expand-full {
-        from { width: $leftBothModeWidth }
-        to { width: $fullWidth }
-    }
-    .slide-l-panel-expand-full {
-        animation: l-panel-expand-full;
-        animation-duration: $animationDuration;
-    }
-
-    @keyframes l-panel-expand-partial {
-        from { width: $handleWidth }
-        to { width: $leftBothModeWidth }
-    }
-    .slide-l-panel-expand-partial {
-        animation: l-panel-expand-partial;
-        animation-duration: $animationDuration;
-
-        .wodin-content {
-            animation: show-content-after-anim;
-            animation-duration: $animationDuration;
-        }
-    }
-
-    @keyframes r-panel-collapse-full {
-        from { width: $rightBothModeWidth }
-        to { width: $handleWidth }
-    }
-    .slide-r-panel-collapse-full {
-        animation: r-panel-collapse-full;
-        animation-duration: $animationDuration;
-
-        .view-right {
-            animation: show-content-after-anim;
-            animation-duration: $animationDuration;
-        }
-    }
-
-    @keyframes r-panel-collapse-partial {
-        from { width: $fullWidth }
-        to { width: $rightBothModeWidth }
-    }
-    .slide-r-panel-collapse-partial {
-        animation: r-panel-collapse-partial;
-        animation-duration: $animationDuration;
-    }
-
-    @keyframes r-panel-expand-full {
-        from { width: $rightBothModeWidth }
-        to { width: $fullWidth }
-    }
-    .slide-r-panel-expand-full {
-        animation: r-panel-expand-full;
-        animation-duration: $animationDuration;
-    }
-
-    @keyframes r-panel-expand-partial {
-        from { width: $handleWidth }
-        to { width: $rightBothModeWidth }
-    }
-    .slide-r-panel-expand-partial {
-        animation: r-panel-expand-partial;
-        animation-duration: $animationDuration;
-
-        .wodin-content {
-            animation: show-content-after-anim;
-            animation-duration: $animationDuration;
+            width: calc(100% - 3.5rem) !important;
         }
     }
 
     .wodin-collapse-controls {
         float: right;
         margin-top: 0.5rem;
-        margin-right: 1rem;
-        overflow: hidden;
+        margin-right: 1.5rem;
         white-space: nowrap;
 
-        .collapse-control {
-            cursor: pointer;
-            color: $dark-grey;
+        :hover {
+            cursor: col-resize;
         }
     }
 </style>

@@ -34,6 +34,12 @@ import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
 import { ModelFitGetter } from "../../../../src/app/store/modelFit/getters";
 import { AppConfig } from "../../../../src/app/types/responseTypes";
 
+function mockResizeObserver(this: any) {
+    this.observe = jest.fn();
+    this.disconnect = jest.fn();
+}
+(global.ResizeObserver as any) = mockResizeObserver;
+
 describe("FitApp", () => {
     const mockTooltipDirective = jest.fn();
 
