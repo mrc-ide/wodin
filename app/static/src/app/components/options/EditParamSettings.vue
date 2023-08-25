@@ -122,10 +122,9 @@
 
 <script lang="ts">
 import {
-    computed, defineComponent, reactive, watch
+  computed, defineComponent, PropType, reactive, watch
 } from "vue";
 import { useStore } from "vuex";
-import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import {
     SensitivityParameterSettings,
     SensitivityScaleType,
@@ -143,6 +142,10 @@ export default defineComponent({
         open: {
             type: Boolean,
             required: true
+        },
+        paramSettings: {
+            type: Object as PropType<SensitivityParameterSettings>,
+            required: false
         }
     },
     components: {
@@ -168,7 +171,7 @@ export default defineComponent({
 
         watch(() => props.open, (newValue) => {
             if (newValue) {
-                Object.assign(settingsInternal, { ...store.state.sensitivity.paramSettings });
+                Object.assign(settingsInternal, { ...props.paramSettings });
             }
         });
 
@@ -198,7 +201,6 @@ export default defineComponent({
 
         const close = () => { emit("close"); };
         const updateSettings = () => {
-            //store.commit(`sensitivity/${SensitivityMutation.SetParamSettings}`, { ...settingsInternal });
             emit("update", { ...settingsInternal });
             close();
         };
