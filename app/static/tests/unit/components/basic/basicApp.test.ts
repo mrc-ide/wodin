@@ -23,6 +23,7 @@ import {
 import WodinApp from "../../../../src/app/components/WodinApp.vue";
 import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
+import MultiSensitivityTab from "../../../../src/app/components/multiSensitivity/MultiSensitivityTab.vue";
 import { ModelAction } from "../../../../src/app/store/model/actions";
 import { AppStateAction } from "../../../../src/app/store/appState/actions";
 import { VisualisationTab } from "../../../../src/app/store/appState/state";
@@ -148,5 +149,43 @@ describe("BasicApp", () => {
         expect(rightTabLinks.at(1)!.text()).toBe("Run");
         expect(rightTabLinks.at(2)!.text()).toBe("Sensitivity");
         expect(rightTabs.findComponent(HelpTab).exists()).toBe(true);
+    });
+
+    it("renders Multi-sensitivity tab if configured", async () => {
+        const multiSensConfig = {
+            multiSensitivity: true
+        };
+        const wrapper = getWrapper(jest.fn(), multiSensConfig);
+        const wodinPanels = wrapper.findComponent(WodinPanels);
+        const rightPanel = wodinPanels.find(".wodin-right");
+        const rightTabs = rightPanel.find("#right-tabs");
+        const rightTabLinks = rightTabs.findAll("ul li a");
+        expect(rightTabLinks.length).toBe(3);
+        expect(rightTabLinks.at(0)!.text()).toBe("Run");
+        expect(rightTabLinks.at(1)!.text()).toBe("Sensitivity");
+        expect(rightTabLinks.at(2)!.text()).toBe("Multi-sensitivity");
+        // Change to Options tab
+        await rightTabLinks.at(2)!.trigger("click");
+        expect(rightTabs.findComponent(MultiSensitivityTab).exists()).toBe(true);
+    });
+
+    it("renders both Help and MultiSensitivity if configured", () => {
+        const bothConfig = {
+            help: {
+                markdown: ["test md"],
+                tabName: "Help"
+            },
+            multiSensitivity: true
+        };
+        const wrapper = getWrapper(jest.fn(), bothConfig);
+        const wodinPanels = wrapper.findComponent(WodinPanels);
+        const rightPanel = wodinPanels.find(".wodin-right");
+        const rightTabs = rightPanel.find("#right-tabs");
+        const rightTabLinks = rightTabs.findAll("ul li a");
+        expect(rightTabLinks.length).toBe(4);
+        expect(rightTabLinks.at(0)!.text()).toBe("Help");
+        expect(rightTabLinks.at(1)!.text()).toBe("Run");
+        expect(rightTabLinks.at(2)!.text()).toBe("Sensitivity");
+        expect(rightTabLinks.at(3)!.text()).toBe("Multi-sensitivity");
     });
 });
