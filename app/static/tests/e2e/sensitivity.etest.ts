@@ -238,6 +238,8 @@ test.describe("Sensitivity tests", () => {
         await expect(await page.innerText("#invalid-msg"))
             .toBe("Invalid settings: Must include at least 2 traces in the batch");
 
+        await expect(await page.innerText(":nth-match(.modal #param-central div, 1)")).toBe("Central value");
+        await expect(await page.innerText(":nth-match(.modal #param-central div, 2)")).toBe("4");
         const tagInput = await page.locator("#edit-values input");
         await tagInput.press("1");
         await tagInput.press(",");

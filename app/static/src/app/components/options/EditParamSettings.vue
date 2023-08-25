@@ -49,34 +49,33 @@
                                @update="(n) => settingsInternal.variationPercentage = n"></numeric-input>
               </div>
             </div>
-            <template v-if="settingsInternal.variationType === 'Range'">
-              <div class="row mt-2" id="edit-from">
-                <div class="col-6">
-                  <label class="col-form-label">From</label>
-                </div>
-                <div class="col-6">
-                  <numeric-input :value="settingsInternal.rangeFrom"
-                                 @update="(n) => settingsInternal.rangeFrom = n"></numeric-input>
-                </div>
+            <div v-if="settingsInternal.variationType === 'Range'" class="row mt-2" id="edit-from">
+              <div class="col-6">
+                <label class="col-form-label">From</label>
               </div>
-              <div class="row mt-2 text-muted" id="param-central">
-                <div class="col-6">
-                  Central value
-                </div>
-                <div class="col-6">
-                  {{ centralValue }}
-                </div>
+              <div class="col-6">
+                <numeric-input :value="settingsInternal.rangeFrom"
+                               @update="(n) => settingsInternal.rangeFrom = n"></numeric-input>
               </div>
-              <div class="row mt-2" id="edit-to">
-                <div class="col-6">
-                  <label class="col-form-label">To</label>
-                </div>
-                <div class="col-6">
-                  <numeric-input :value="settingsInternal.rangeTo"
-                                 @update="(n) => settingsInternal.rangeTo = n"></numeric-input>
-                </div>
+            </div>
+            <div v-if="['Range', 'Custom'].includes(settingsInternal.variationType)"
+                 class="row mt-2 text-muted" id="param-central">
+              <div class="col-6">
+                Central value
               </div>
-            </template>
+              <div class="col-6">
+                {{ centralValue }}
+              </div>
+            </div>
+            <div v-if="settingsInternal.variationType === 'Range'" class="row mt-2" id="edit-to">
+              <div class="col-6">
+                <label class="col-form-label">To</label>
+              </div>
+              <div class="col-6">
+                <numeric-input :value="settingsInternal.rangeTo"
+                               @update="(n) => settingsInternal.rangeTo = n"></numeric-input>
+              </div>
+            </div>
             <template v-if="settingsInternal.variationType === 'Custom'">
               <div id="edit-values" class="row mt-2">
                 <div class="col-6">

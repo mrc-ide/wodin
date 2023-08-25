@@ -194,6 +194,7 @@ describe("EditParamSettings", () => {
         expect((paramSelect.element as HTMLSelectElement).value).toBe("C");
         const varSelect = wrapper.find("#edit-variation-type select");
         expect((varSelect.element as HTMLSelectElement).value).toBe(SensitivityVariationType.Custom);
+        expect(wrapper.find("#param-central").text()).toBe("Central value 3");
         const tagInput = wrapper.find("#edit-values").findComponent(TagInput);
         expect(tagInput.props().tags).toStrictEqual([1, 2, 3]);
         expect(tagInput.props().numericOnly).toBe(true);
