@@ -229,4 +229,40 @@ test.describe("Sensitivity tests", () => {
         await expectSummaryValues(page, 65, "I (Set 1)", 1000, "#cccc00", "dot", "0", "100", "0", "0");
         await expectSummaryValues(page, 66, "R (Set 1)", 1000, "#cc0044", "dot", "0", "100", "0", "0");
     });
+
+    test("can change sensitivity settings to User variation, and see values in Sensitivity plot", async ({ page }) => {
+        await page.click("#sensitivity-options .btn-primary");
+        await expect(await page.locator("#edit-param .modal")).toBeVisible();
+        const varSelect = await page.locator("#edit-variation-type select");
+        await varSelect.selectOption("User");
+        await expect(await page.innerText("#invalid-msg"))
+            .toBe("Invalid settings: Must include at least 2 traces in the batch");
+
+        const tagInput = await page.locator("#edit-values input");
+        await tagInput.press("1");
+        await tagInput.press(",");
+        await tagInput.press("2");
+        await tagInput.press(",");
+        await tagInput.press("3");
+        await tagInput.press(",");
+
+        await page.waitForTimeout(100)
+        await expect(await page.locator("#invalid-msg").count()).toBe(0);
+        await expect(await page.locator(".modal .alert-success").count()).toBe(0);
+
+        await page.click("#ok-settings");
+
+        // run and see traces summary
+        await page.click("#run-sens-btn");
+        await expectSummaryValues(page, 1, "S (beta=1.000)", 1000, "#2e5cb8");
+        await expectSummaryValues(page, 2, "I (beta=1.000)", 1000, "#cccc00");
+        await expectSummaryValues(page, 3, "R (beta=1.000)", 1000, "#cc0044");
+        await expectSummaryValues(page, 4, "S (beta=2.000)", 1000, "#2e5cb8");
+        await expectSummaryValues(page, 5, "I (beta=2.000)", 1000, "#cccc00");
+        await expectSummaryValues(page, 6, "R (beta=2.000)", 1000, "#cc0044");
+        await expectSummaryValues(page, 7, "S (beta=3.000)", 1000, "#2e5cb8");
+        await expectSummaryValues(page, 8, "I (beta=3.000)", 1000, "#cccc00");
+        await expectSummaryValues(page, 9, "R (beta=3.000)", 1000, "#cc0044");
+
+    });
 });
