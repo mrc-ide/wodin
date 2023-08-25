@@ -2,8 +2,18 @@
   <vertical-collapse :title="title" collapse-id="sensitivity-options">
     <template v-if="showOptions">
       <div class="mt-2 clearfix">
-        <button class="btn btn-primary mb-4 float-end" @click="toggleEdit(true)">Edit</button>
         <div v-for="(settings, idx) in allSettings" :key="idx" class="sensitivity-options-settings">
+          <div class="mb-2">
+            <vue-feather v-if="canDeleteSettings"
+                         class="inline-icon clickable float-end delete-param-settings ms-2"
+                         type="trash-2"
+                         @click="() => deleteSettings(idx)"
+                         v-tooltip="`Remove ${settings.parameterToVary} Settings`"></vue-feather>
+            <vue-feather class="inline-icon clickable float-end edit-param-settings"
+                         type="edit"
+                         @click="() => openEdit(idx)"
+                         v-tooltip="`Edit ${settings.parameterToVary} Settings`"></vue-feather>
+          </div>
           <ul>
             <li><strong>Parameter:</strong> {{settings.parameterToVary}}</li>
             <li v-if="settings.variationType !== 'Custom'"><strong>Scale Type:</strong> {{ settings.scaleType }}</li>
@@ -27,6 +37,13 @@
           </sensitivity-param-values>
           <hr v-if="idx < allSettings.length-1" />
         </div>
+        <div v-if="multiSensitivity" class="text-center">
+          <button class="btn btn-outline"
+                  v-if="paramsWithoutSettings.length"
+                  id="add-param-settings"
+                  @click="addSettings"
+                  v-tooltip="'Add parameter'">Add</button>
+        </div>
       </div>
       <hr/>
       <sensitivity-plot-options></sensitivity-plot-options>
@@ -35,12 +52,17 @@
       {{compileModelMessage}}
     </div>
   </vertical-collapse>
-  <edit-param-settings :open="editOpen" @close="toggleEdit(false)"></edit-param-settings>
+  <edit-param-settings :open="editOpen"
+                       :param-settings="settingsToEdit"
+                       @close="closeEdit"
+                       @update="editSettings"></edit-param-settings>
 </template>
 
 <script lang="ts">
 import { useStore } from "vuex";
 import { computed, defineComponent, ref } from "vue";
+import VueFeather from "vue-feather";
+import { defaultSensitivityParamSettings } from "../../store/sensitivity/sensitivity";
 import { MultiSensitivityGetter } from "../../store/multiSensitivity/getters";
 import userMessages from "../../userMessages";
 import VerticalCollapse from "../VerticalCollapse.vue";
@@ -48,6 +70,9 @@ import EditParamSettings from "./EditParamSettings.vue";
 import { SensitivityGetter } from "../../store/sensitivity/getters";
 import SensitivityParamValues from "./SensitivityParamValues.vue";
 import SensitivityPlotOptions from "./SensitivityPlotOptions.vue";
+import { SensitivityParameterSettings } from "../../store/sensitivity/state";
+import { SensitivityMutation } from "../../store/sensitivity/mutations";
+import { MultiSensitivityMutation } from "../../store/multiSensitivity/mutations";
 
 export default defineComponent({
     name: "SensitivityOptions",
@@ -58,6 +83,7 @@ export default defineComponent({
         }
     },
     components: {
+        VueFeather,
         SensitivityParamValues,
         SensitivityPlotOptions,
         VerticalCollapse,
@@ -65,16 +91,62 @@ export default defineComponent({
     },
     setup(props) {
         const store = useStore();
-        const allSettings = computed(() => (props.multiSensitivity ? store.state.multiSensitivity.paramSettings
+        const multiSensitivitySettings = computed(() => store.state.multiSensitivity.paramSettings);
+
+        const allSettings = computed(() => (props.multiSensitivity ? multiSensitivitySettings.value
             : [store.state.sensitivity.paramSettings]));
 
         const showOptions = computed(() => allSettings.value.length && !!allSettings.value[0].parameterToVary);
         const compileModelMessage = userMessages.sensitivity.compileRequiredForOptions;
         const editOpen = ref(false);
+        const editSettingsIdx = ref<number | null>(0);
 
-        const title = computed(() => (props.multiSensitivity ? "Multi-sensitivity Options" : "Sensitivity Options"));
-        const toggleEdit = (value: boolean) => {
-            editOpen.value = value;
+        const title = computed(() => (`${props.multiSensitivity ? "Multi-sensitivity" : "Sensitivity"} Options`));
+        const settingsToEdit = computed(() => (editSettingsIdx.value === null ? null : allSettings.value[editSettingsIdx.value]));
+
+        const openEdit = (settingsIdx: number) => {
+            editSettingsIdx.value = settingsIdx;
+            editOpen.value = true;
+        };
+
+        const closeEdit = () => {
+            editSettingsIdx.value = null;
+            editOpen.value = false;
+        };
+
+        const updateMultiSensitivitySettings = (newSettings: SensitivityParameterSettings[]) => {
+            store.commit(`multiSensitivity/${MultiSensitivityMutation.SetParamSettings}`, newSettings);
+        };
+        const editSettings = (settings: SensitivityParameterSettings) => {
+            if (!props.multiSensitivity) {
+                store.commit(`sensitivity/${SensitivityMutation.SetParamSettings}`, settings);
+            } else {
+                const newSettings = [...multiSensitivitySettings.value];
+                newSettings[editSettingsIdx.value!] = settings;
+                updateMultiSensitivitySettings(newSettings);
+            }
+        };
+
+        const paramsWithoutSettings = computed(() => {
+            const used = multiSensitivitySettings.value.map((p: SensitivityParameterSettings) => p.parameterToVary);
+            return Object.keys(store.state.run.parameterValues).filter((p) => !used.includes(p));
+        });
+
+        const canDeleteSettings = computed(() => props.multiSensitivity && multiSensitivitySettings.value.length > 1);
+
+        const addSettings = () => {
+            // Add settings for the first parameter which is not already in the list
+            const unused = paramsWithoutSettings.value;
+            if (unused.length) {
+                const newSettings = [...multiSensitivitySettings.value, { ...defaultSensitivityParamSettings(), parameterToVary: unused[0] }];
+                updateMultiSensitivitySettings(newSettings);
+            }
+        };
+
+        const deleteSettings = (idx: number) => {
+            const newSettings = [...multiSensitivitySettings.value];
+            newSettings.splice(idx, 1);
+            updateMultiSensitivitySettings(newSettings);
         };
 
         const allBatchPars = computed(() => (props.multiSensitivity
@@ -84,9 +156,16 @@ export default defineComponent({
         return {
             title,
             allSettings,
+            settingsToEdit,
+            paramsWithoutSettings,
+            canDeleteSettings,
             showOptions,
             compileModelMessage,
-            toggleEdit,
+            closeEdit,
+            openEdit,
+            editSettings,
+            addSettings,
+            deleteSettings,
             editOpen,
             allBatchPars
         };
