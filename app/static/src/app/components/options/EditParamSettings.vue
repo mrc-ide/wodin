@@ -191,13 +191,15 @@ export default defineComponent({
         });
         const updateUserValues = (newValues: number[]) => {
             // sort and remove duplicates
-            const cleaned = Array.from(new Set(newValues)).sort((a, b) => a - b);
-            settingsInternal.customValues = cleaned;
+            settingsInternal.customValues = newValues;
         };
 
         const close = () => { emit("close"); };
         const updateSettings = () => {
-            store.commit(`sensitivity/${SensitivityMutation.SetParamSettings}`, { ...settingsInternal });
+            // sort custom values
+            const customValues = settingsInternal.customValues.sort((a, b) => a - b);
+            store.commit(`sensitivity/${SensitivityMutation.SetParamSettings}`,
+                { ...settingsInternal, customValues });
             close();
         };
 

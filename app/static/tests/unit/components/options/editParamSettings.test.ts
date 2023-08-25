@@ -301,11 +301,11 @@ describe("EditParamSettings", () => {
         expect(wrapper.findComponent(ErrorInfo).exists()).toBe(false);
     });
 
-    it("updates values from TagInput, dedupes and sorts", async () => {
+    it("updates values from TagInput", async () => {
         const mockSetParamSettings = jest.fn();
         const wrapper = await getWrapper(customSettings, true, mockSetParamSettings);
-        wrapper.findComponent(TagInput).vm.$emit("update", [5, 1, 5, 0, -1, -2, 1]);
-        const expectedValues = [-2, -1, 0, 1, 5];
+        const expectedValues = [-1, 0, 1];
+        wrapper.findComponent(TagInput).vm.$emit("update", expectedValues);
         await nextTick();
         expect((wrapper.vm as any).settingsInternal.customValues).toStrictEqual(expectedValues);
         await wrapper.find("#ok-settings").trigger("click");
@@ -314,8 +314,14 @@ describe("EditParamSettings", () => {
         expect(committed.customValues).toStrictEqual(expectedValues);
     });
 
-    it("test set", () => {
-        const cleaned = [...new Set([1, 2, 1])].sort();
-        expect(cleaned).toStrictEqual([1, 2]);
+    it("sorts custom values on commit", async () => {
+        const mockSetParamSettings = jest.fn();
+        const wrapper = await getWrapper(customSettings, true, mockSetParamSettings);
+        wrapper.findComponent(TagInput).vm.$emit("update", [5, 1, 0, -2, -1]);
+        await wrapper.find("#ok-settings").trigger("click");
+        expect(mockSetParamSettings.mock.calls[0][1]).toStrictEqual({
+            ...customSettings,
+            customValues: [-2, -1, 0, 1, 5]
+        });
     });
 });
