@@ -263,4 +263,29 @@ describe("OptionsTab", () => {
         expect(wrapper.find("#reset-params-btn").exists()).toBe(true);
         expect(wrapper.find("#reset-params-btn").text()).toBe("Reset");
     });
+
+    it("renders as expected when multi-sensitivity tab is open", () => {
+        const store = new Vuex.Store<BasicState>({
+            state: {
+                ...fitAppState,
+                openVisualisationTab: VisualisationTab.MultiSensitivity
+            },
+            modules: {
+                run: {
+                    namespaced: true,
+                    state: mockRunState({
+                        parameterValues: { param1: 1, param2: 2.2 }
+                    }),
+                    getters: runGetters
+                }
+            }
+        });
+        const wrapper = shallowMount(OptionsTab, {
+            global: {
+                plugins: [store],
+                directives: { tooltip: mockTooltipDirective }
+            }
+        });
+        expect(wrapper.findComponent(SensitivityOptions).exists()).toBe(true);
+    });
 });

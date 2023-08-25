@@ -20,6 +20,8 @@ import { ModelFitAction } from "../../../../src/app/store/modelFit/actions";
 import { RunMutation, mutations as runMutations } from "../../../../src/app/store/run/mutations";
 import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import { MultiSensitivityMutation } from "../../../../src/app/store/multiSensitivity/mutations";
+import { defaultSensitivityParamSettings } from "../../../../src/app/store/sensitivity/sensitivity";
 
 describe("Model actions", () => {
     beforeEach(() => {
@@ -29,6 +31,9 @@ describe("Model actions", () => {
     const rootState = {
         appType: AppType.Basic,
         baseUrl: "",
+        config: {
+            multiSensitivity: true
+        },
         code: {
             currentCode: ["line1", "line2"]
         },
@@ -36,6 +41,12 @@ describe("Model actions", () => {
             paramSettings: {
                 parameterToVary: null
             }
+        },
+        multiSensitivity: {
+            paramSettings: [
+                { parameterToVary: "p1" },
+                { parameterToVary: "p2" }
+            ]
         },
         run: {
             runRequired: {
@@ -144,27 +155,30 @@ describe("Model actions", () => {
         expect(commit.mock.calls[0][1].detail).toBe("server error");
     });
 
+    const updatedParamState = {
+        odinModelResponse: {
+            model: "1+2",
+            metadata: {
+                parameters: [
+                    { name: "p2", default: 20 },
+                    { name: "p3", default: 30 },
+                    { name: "p4", default: 40 }
+                ],
+                variables: ["x", "y", "z"]
+            }
+        },
+        selectedVariables: ["x", "a"],
+        unselectedVariables: ["y", "b"],
+        compileRequired: true
+    };
+
     it("compiles model, sets parameter values and updates required action", () => {
-        const state = {
-            odinModelResponse: {
-                model: "1+2",
-                metadata: {
-                    parameters: [
-                        { name: "p2", default: 20 },
-                        { name: "p3", default: 30 },
-                        { name: "p4", default: 40 }
-                    ],
-                    variables: ["x", "y", "z"]
-                }
-            },
-            selectedVariables: ["x", "a"],
-            unselectedVariables: ["y", "b"],
-            compileRequired: true
-        };
         const commit = jest.fn();
         const dispatch = jest.fn();
-        (actions[ModelAction.CompileModel] as any)({ commit, state, rootState });
-        expect(commit.mock.calls.length).toBe(8);
+        (actions[ModelAction.CompileModel] as any)({
+            commit, dispatch, state: updatedParamState, rootState
+        });
+        expect(commit.mock.calls.length).toBe(9);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[0][1]).toBe(3);
         expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
@@ -186,9 +200,52 @@ describe("Model actions", () => {
         expect(commit.mock.calls[7][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
         expect(commit.mock.calls[7][1]).toBe("p2");
         expect(commit.mock.calls[7][2]).toStrictEqual({ root: true });
+        // Should remove old parameter from multiSensitivity array, but leave the remaining parameter
+        expect(commit.mock.calls[8][0]).toBe(`multiSensitivity/${MultiSensitivityMutation.SetParamSettings}`);
+        expect(commit.mock.calls[8][1]).toStrictEqual([{ parameterToVary: "p2" }]);
+        expect(commit.mock.calls[8][2]).toStrictEqual({ root: true });
 
         // does not dispatch updated linked variables or update params to vary if app type is not Fit
         expect(dispatch).not.toHaveBeenCalled();
+    });
+
+    it("compile does not update multiSensitivity param settings if multisensitivity is not configured", () => {
+        const noMultiSensRootState = {
+            ...rootState,
+            config: {
+                multiSensitivity: undefined
+            }
+        };
+        const commit = jest.fn();
+        const dispatch = jest.fn();
+        (actions[ModelAction.CompileModel] as any)({
+            commit, dispatch, state: updatedParamState, rootState: noMultiSensRootState
+        });
+        expect(commit.mock.calls.length).toBe(8);
+        expect(commit.mock.calls[7][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
+        expect(dispatch).not.toHaveBeenCalled();
+    });
+
+    it("compile updates multiSensitivity with default param settings if all previous settings are removed", () => {
+        const oldMultiSensRootState = {
+            ...rootState,
+            multiSensitivity: {
+                paramSettings: [
+                    { parameterToVary: "p1" }
+                ]
+            }
+        };
+        const commit = jest.fn();
+        (actions[ModelAction.CompileModel] as any)({
+            commit,
+            state: updatedParamState,
+            rootState: oldMultiSensRootState
+        });
+        expect(commit.mock.calls.length).toBe(9);
+        expect(commit.mock.calls[8][0]).toBe(`multiSensitivity/${MultiSensitivityMutation.SetParamSettings}`);
+        expect(commit.mock.calls[8][1])
+            .toStrictEqual([{ ...defaultSensitivityParamSettings(), parameterToVary: "p2" }]);
+        expect(commit.mock.calls[8][2]).toStrictEqual({ root: true });
     });
 
     it("compile model dispatches update linked variables and update params to vary for Fit apps", () => {
@@ -270,12 +327,18 @@ describe("Model actions", () => {
                 paramSettings: {
                     parameterToVary: "p2"
                 }
+            },
+            multiSensitivity: {
+                paramSettings: [
+                    { parameterToVary: "p2" },
+                    { parameterToVary: "p3" }
+                ]
             }
         } as any;
         (actions[ModelAction.CompileModel] as any)({
             commit, dispatch, state, rootState: testRootState
         });
-        expect(commit.mock.calls.length).toBe(7);
+        expect(commit.mock.calls.length).toBe(8);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
         expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetPaletteModel);
@@ -284,6 +347,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[4][0]).toBe(ModelMutation.SetCompileRequired);
         expect(commit.mock.calls[5][0]).toBe(`run/${RunMutation.SetRunRequired}`);
         expect(commit.mock.calls[6][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
+        expect(commit.mock.calls[7][0]).toBe(`multiSensitivity/${MultiSensitivityMutation.SetParamSettings}`);
     });
 
     it("compile model does not update runRequired or compileRequired if compileRequired was false", () => {
@@ -301,7 +365,7 @@ describe("Model actions", () => {
         });
         const commit = jest.fn();
         (actions[ModelAction.CompileModel] as any)({ commit, state, rootState });
-        expect(commit.mock.calls.length).toBe(5);
+        expect(commit.mock.calls.length).toBe(6);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[0][1]).toBe(3);
         expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
@@ -311,6 +375,8 @@ describe("Model actions", () => {
         expect(commit.mock.calls[3][1]).toStrictEqual(["x", "y"]);
         expect(commit.mock.calls[4][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
         expect(commit.mock.calls[4][1]).toBe(null);
+        expect(commit.mock.calls[5][0]).toBe(`multiSensitivity/${MultiSensitivityMutation.SetParamSettings}`);
+        expect(commit.mock.calls[5][1]).toStrictEqual([defaultSensitivityParamSettings()]);
     });
 
     it("compile model does nothing if no odin response", () => {
