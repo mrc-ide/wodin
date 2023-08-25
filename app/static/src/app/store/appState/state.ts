@@ -6,6 +6,7 @@ import { SensitivityState } from "../sensitivity/state";
 import { VersionsState } from "../versions/state";
 import { GraphSettingsState } from "../graphSettings/state";
 import { LanguageState } from "../../../../translationPackage/store/state";
+import { MultiSensitivityState } from "../multiSensitivity/state";
 
 export enum AppType {
     Basic = "basic",
@@ -16,7 +17,8 @@ export enum AppType {
 export enum VisualisationTab {
     Run = "Run",
     Fit = "Fit",
-    Sensitivity = "Sensitivity"
+    Sensitivity = "Sensitivity",
+    MultiSensitivity = "Multi-sensitivity"
 }
 
 export interface AppState {
@@ -34,6 +36,7 @@ export interface AppState {
     model: ModelState
     run: RunState
     sensitivity: SensitivityState,
+    multiSensitivity: MultiSensitivityState,
     graphSettings: GraphSettingsState,
     versions: VersionsState,
     configured: boolean, // true if configuration has been loaded or rehydrated and defaults set

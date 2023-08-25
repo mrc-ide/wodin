@@ -198,7 +198,8 @@ export default defineComponent({
 
         const close = () => { emit("close"); };
         const updateSettings = () => {
-            store.commit(`sensitivity/${SensitivityMutation.SetParamSettings}`, { ...settingsInternal });
+            //store.commit(`sensitivity/${SensitivityMutation.SetParamSettings}`, { ...settingsInternal });
+            emit("update", { ...settingsInternal });
             close();
         };
 

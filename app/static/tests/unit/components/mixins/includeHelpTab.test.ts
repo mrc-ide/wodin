@@ -1,7 +1,7 @@
 import Vuex from "vuex";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState } from "../../../mocks";
-import includeHelpTab from "../../../../src/app/components/mixins/includeHelpTab";
+import includeHelpTab from "../../../../src/app/components/mixins/includeConfiguredTabs";
 
 describe("includeHelpTab mixin", () => {
     const getStore = (helpConfig: any) => {
