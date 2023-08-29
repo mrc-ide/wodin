@@ -255,6 +255,18 @@ describe("OptionsTab", () => {
                         parameterValues: { param1: 1, param2: 2.2 }
                     }),
                     getters: runGetters
+                },
+                multiSensitivity: {
+                    namespaced: true,
+                    state: {
+                        paramSettings: []
+                    }
+                },
+                sensitivity: {
+                    namespaced: true,
+                    state: {
+                        paramSettings: []
+                    }
                 }
             }
         });

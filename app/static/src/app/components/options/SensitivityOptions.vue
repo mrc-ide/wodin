@@ -102,7 +102,8 @@ export default defineComponent({
         const editSettingsIdx = ref<number | null>(0);
 
         const title = computed(() => (`${props.multiSensitivity ? "Multi-sensitivity" : "Sensitivity"} Options`));
-        const settingsToEdit = computed(() => (editSettingsIdx.value === null ? null : allSettings.value[editSettingsIdx.value]));
+        const settingsToEdit = computed(() => (editSettingsIdx.value === null ? null
+            : allSettings.value[editSettingsIdx.value]));
 
         const openEdit = (settingsIdx: number) => {
             editSettingsIdx.value = settingsIdx;
@@ -138,7 +139,10 @@ export default defineComponent({
             // Add settings for the first parameter which is not already in the list
             const unused = paramsWithoutSettings.value;
             if (unused.length) {
-                const newSettings = [...multiSensitivitySettings.value, { ...defaultSensitivityParamSettings(), parameterToVary: unused[0] }];
+                const newSettings = [
+                    ...multiSensitivitySettings.value,
+                    { ...defaultSensitivityParamSettings(), parameterToVary: unused[0] }
+                ];
                 updateMultiSensitivitySettings(newSettings);
             }
         };

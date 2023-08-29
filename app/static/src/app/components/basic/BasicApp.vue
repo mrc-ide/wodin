@@ -59,8 +59,8 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const rightTabSelected = (tab: string) => { store.commit(AppStateMutation.SetOpenVisualisationTab, tab); };
-      const { helpTabName, multiSensitivityTabName, rightTabNames } = includeConfiguredTabs(store,
-          [VisualisationTab.Run, VisualisationTab.Sensitivity]);
+        const { helpTabName, multiSensitivityTabName, rightTabNames } = includeConfiguredTabs(store,
+            [VisualisationTab.Run, VisualisationTab.Sensitivity]);
 
         return {
             rightTabSelected,

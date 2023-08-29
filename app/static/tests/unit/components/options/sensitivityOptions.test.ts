@@ -355,7 +355,7 @@ describe("SensitivityOptions", () => {
             percentSettings, // param A
             rangeSettings, // param B
             customSettings, // param C
-            {...rangeSettings, parameterToVary: "D"}
+            { ...rangeSettings, parameterToVary: "D" }
         ]);
         expect(wrapper.find("#add-param-settings").exists()).toBe(false);
     });

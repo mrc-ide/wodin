@@ -24,8 +24,8 @@ import { VersionsState } from "../src/app/store/versions/state";
 import { GraphSettingsState } from "../src/app/store/graphSettings/state";
 import { LanguageState } from "../translationPackage/store/state";
 import { Language } from "../src/app/types/languageTypes";
-import {noSensitivityUpdateRequired} from "../src/app/store/sensitivity/sensitivity";
-import {MultiSensitivityState} from "../src/app/store/multiSensitivity/state";
+import { noSensitivityUpdateRequired } from "../src/app/store/sensitivity/sensitivity";
+import { MultiSensitivityState } from "../src/app/store/multiSensitivity/state";
 
 export const mockAxios = new MockAdapter(axios);
 

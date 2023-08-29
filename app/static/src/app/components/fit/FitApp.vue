@@ -53,33 +53,33 @@ import { AppStateMutation } from "../../store/appState/mutations";
 import includeConfiguredTabs from "../mixins/includeConfiguredTabs";
 
 export default defineComponent({
-  name: "FitApp",
-  components: {
-    MultiSensitivityTab,
-    CodeTab,
-    DataTab,
-    FitTab,
-    HelpTab,
-    RunTab,
-    OptionsTab,
-    SensitivityTab,
-    WodinApp,
-    WodinTabs
-  },
-  setup() {
-    const store = useStore();
+    name: "FitApp",
+    components: {
+        MultiSensitivityTab,
+        CodeTab,
+        DataTab,
+        FitTab,
+        HelpTab,
+        RunTab,
+        OptionsTab,
+        SensitivityTab,
+        WodinApp,
+        WodinTabs
+    },
+    setup() {
+        const store = useStore();
 
-    const rightTabSelected = (tab: string) => {
-      store.commit(AppStateMutation.SetOpenVisualisationTab, tab);
-    };
-    const { helpTabName, rightTabNames } = includeConfiguredTabs(store,
-        [VisualisationTab.Run, VisualisationTab.Fit, VisualisationTab.Sensitivity]);
+        const rightTabSelected = (tab: string) => {
+            store.commit(AppStateMutation.SetOpenVisualisationTab, tab);
+        };
+        const { helpTabName, rightTabNames } = includeConfiguredTabs(store,
+            [VisualisationTab.Run, VisualisationTab.Fit, VisualisationTab.Sensitivity]);
 
-    return {
-      helpTabName,
-      rightTabNames,
-      rightTabSelected
-    };
-  }
+        return {
+            helpTabName,
+            rightTabNames,
+            rightTabSelected
+        };
+    }
 });
 </script>

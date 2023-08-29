@@ -15,7 +15,8 @@ describe("MultiSensitivity getters", () => {
             variationPercentage: 50,
             rangeFrom: 0,
             rangeTo: 0,
-            numberOfRuns: 3
+            numberOfRuns: 3,
+            customValues: []
         },
         {
             parameterToVary: "B",
@@ -24,7 +25,8 @@ describe("MultiSensitivity getters", () => {
             variationPercentage: 50,
             rangeFrom: 1,
             rangeTo: 5,
-            numberOfRuns: 5
+            numberOfRuns: 5,
+            customValues: []
         }
     ];
 

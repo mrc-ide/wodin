@@ -11,8 +11,8 @@ test.describe("Multi-sensitivity tests", () => {
     });
 
     const expectOptionsTabParamSettings = async (page: Page, index: number, param: string, scale: SensitivityScaleType,
-                                                 variation: SensitivityVariationType, percentage: number | null, from: number | null, to: number | null,
-                                                 runs: number, values: string) => {
+        variation: SensitivityVariationType, percentage: number | null, from: number | null, to: number | null,
+        runs: number, values: string) => {
         const section = await page.locator(`:nth-match(.sensitivity-options-settings, ${index})`);
         const listItems = await section.locator("ul li");
         await expect(await listItems.nth(0).innerText()).toBe(`Parameter: ${param}`);
@@ -30,30 +30,22 @@ test.describe("Multi-sensitivity tests", () => {
         await expect(await section.locator(".alert-success").innerText()).toBe(` ${values}`);
     };
 
-    // TODO: This will all need to change, but keep the flow of actions
-    const expectModalParamSettings = async (page: Page, index: number, param: string, scale: SensitivityScaleType,
-                                            variation: SensitivityVariationType, percentage: number | null, from: number | null, central: number | null,
-                                            to: number | null, runs: number, values: string) => {
-        await expect(await page.inputValue(`:nth-match(.multi-sens-edit .edit-param-to-vary select, ${index})`))
-            .toBe(param);
-        await expect(await page.inputValue(`:nth-match(.multi-sens-edit .edit-scale-type select, ${index})`))
-            .toBe(scale);
-        await expect(await page.inputValue(`:nth-match(.multi-sens-edit .edit-variation-type select, ${index})`))
-            .toBe(variation);
-        // We cant index directly to controls which aren't present in all settings sections, so get to the section first
-        const section = await page.locator(`:nth-match(.multi-sens-edit, ${index})`);
+    const expectModalParamSettings = async (page: Page, param: string, scale: SensitivityScaleType,
+        variation: SensitivityVariationType, percentage: number | null, from: number | null, central: number | null,
+        to: number | null, runs: number, values: string) => {
+        await expect(await page.inputValue("#edit-param-to-vary select")).toBe(param);
+        await expect(await page.inputValue("#edit-scale-type select")).toBe(scale);
+        await expect(await page.inputValue("#edit-variation-type select")).toBe(variation);
         if (variation === SensitivityVariationType.Percentage) {
-            await expect(await section.locator(".edit-percent input").inputValue()).toBe(percentage!.toString());
+            await expect(await page.inputValue("#edit-percent input")).toBe(percentage!.toString());
         } else {
-            await expect(await section.locator(".edit-from input").inputValue()).toBe(from!.toString());
-            await expect(await section.locator(".param-central-value").innerText()).toBe(central!.toString());
-            await expect(await section.locator(".edit-to input").inputValue()).toBe(to!.toString());
+            await expect(await page.inputValue("#edit-from input")).toBe(from!.toString());
+            await expect(await page.innerText("#param-central-value")).toBe(central!.toString());
+            await expect(await page.inputValue("#edit-to input")).toBe(to!.toString());
         }
 
-        await expect(await page.inputValue(`:nth-match(.multi-sens-edit .edit-runs input, ${index})`))
-            .toBe(runs.toString());
-
-        await expect(await page.innerText(`:nth-match(.multi-sens-edit .alert-success, ${index})`)).toBe(` ${values}`);
+        await expect(await page.inputValue("#edit-runs input")).toBe(runs.toString());
+        await expect(await page.innerText("#edit-param .alert-success")).toBe(` ${values}`);
     };
 
     test("can edit Multi-sensitivity options", async ({ page }) => {
@@ -62,54 +54,60 @@ test.describe("Multi-sensitivity tests", () => {
         await expectOptionsTabParamSettings(page, 1, "beta", SensitivityScaleType.Arithmetic,
             SensitivityVariationType.Percentage, 10, null, null, 10, "3.600, 3.689, 3.778, ..., 4.400");
 
-        // open edit param settings dialog and check values
-        await page.click("#sensitivity-options .btn-primary");
-        await expect(await page.locator(".multi-sens-edit").count()).toBe(1);
-        await expectModalParamSettings(page, 1, "beta", SensitivityScaleType.Arithmetic,
-            SensitivityVariationType.Percentage, 10, null, null, null, 10, "3.600, 3.689, 3.778, ..., 4.400");
-
         // should be no delete button on first param settings
         await expect(await page.locator(".delete-param-to-vary").count()).toBe(0);
 
+        // open edit param settings dialog and check values
+        await page.click(":nth-match(.edit-param-settings, 1)");
+        await expect(await page.locator("#edit-param").count()).toBe(1);
+        await expectModalParamSettings(page, "beta", SensitivityScaleType.Arithmetic,
+            SensitivityVariationType.Percentage, 10, null, null, null, 10, "3.600, 3.689, 3.778, ..., 4.400");
+
         // edit default params settings
-        await page.selectOption(".edit-variation-type select", "Range");
+        await page.selectOption("#edit-variation-type select", "Range");
         await expect(await page.isDisabled("#ok-settings")).toBe(true); // default range is invalid
-        await page.fill(".edit-to input", "9");
+        await page.fill("#edit-to input", "9");
         await expect(await page.isEnabled("#ok-settings")).toBe(true);
+        await page.click("#ok-settings");
+
+        // checked edited settings saved correctly
+        await expectOptionsTabParamSettings(page, 1, "beta", SensitivityScaleType.Arithmetic,
+            SensitivityVariationType.Range, null, 0, 9, 10, "0.000, 1.000, 2.000, ..., 9.000");
 
         // Add two new settings, and edit one of them
-        await page.click("#add-param-to-vary");
-        await expect(await page.locator(".multi-sens-edit").count()).toBe(2);
-        await expectModalParamSettings(page, 2, "I0", SensitivityScaleType.Arithmetic,
-            SensitivityVariationType.Percentage, 10, null, null, null, 10, "0.900, 0.922, 0.944, ..., 1.100");
+        await page.click("#add-param-settings");
+        await expect(await page.locator(".sensitivity-options-settings").count()).toBe(2);
+        await expectOptionsTabParamSettings(page, 2, "I0", SensitivityScaleType.Arithmetic,
+            SensitivityVariationType.Percentage, 10, null, null, 10, "0.900, 0.922, 0.944, ..., 1.100");
 
-        await page.click("#add-param-to-vary");
-        await expect(await page.locator(".multi-sens-edit").count()).toBe(3);
-        await expectModalParamSettings(page, 3, "N", SensitivityScaleType.Arithmetic,
-            SensitivityVariationType.Percentage, 10, null, null, null, 10,
+        await page.click("#add-param-settings");
+        await expect(await page.locator(".sensitivity-options-settings").count()).toBe(3);
+        await expectOptionsTabParamSettings(page, 3, "N", SensitivityScaleType.Arithmetic,
+            SensitivityVariationType.Percentage, 10, null, null, 10,
             "900000.000, 922222.222, 944444.444, ..., 1100000.000");
-        // change parameter
-        await page.selectOption(":nth-match(.multi-sens-edit .edit-param-to-vary select, 3)", "sigma");
-        await expectModalParamSettings(page, 3, "sigma", SensitivityScaleType.Arithmetic,
+
+        // change a parameter
+        await page.click(":nth-match(.edit-param-settings, 3)");
+        await page.selectOption("#edit-param-to-vary select", "sigma");
+        await expectModalParamSettings(page, "sigma", SensitivityScaleType.Arithmetic,
             SensitivityVariationType.Percentage, 10, null, null, null, 10, "1.800, 1.844, 1.889, ..., 2.200");
         // change percent
-        const section = page.locator(":nth-match(.multi-sens-edit, 3)");
-        await section.locator(".edit-percent input").fill("5");
-        await expectModalParamSettings(page, 3, "sigma", SensitivityScaleType.Arithmetic,
-            SensitivityVariationType.Percentage, 5, null, null, null, 10, "1.900, 1.922, 1.944, ..., 2.100");
-
-        // Delete one settings
-        await page.click(":nth-match(.delete-param-to-vary, 1)");
-        await expect(await page.locator(".multi-sens-edit").count()).toBe(2);
-        await expectModalParamSettings(page, 1, "beta", SensitivityScaleType.Arithmetic,
-            SensitivityVariationType.Range, null, 0, 4, 9, 10, "0.000, 1.000, 2.000, ..., 9.000");
-        await expectModalParamSettings(page, 2, "sigma", SensitivityScaleType.Arithmetic,
+        await page.fill("#edit-percent input", "5");
+        await expectModalParamSettings(page, "sigma", SensitivityScaleType.Arithmetic,
             SensitivityVariationType.Percentage, 5, null, null, null, 10, "1.900, 1.922, 1.944, ..., 2.100");
 
         // Save
         await page.click("#ok-settings");
+        await expectOptionsTabParamSettings(page, 1, "beta", SensitivityScaleType.Arithmetic,
+            SensitivityVariationType.Range, null, 0, 9, 10, "0.000, 1.000, 2.000, ..., 9.000");
+        await expectOptionsTabParamSettings(page, 2, "I0", SensitivityScaleType.Arithmetic,
+            SensitivityVariationType.Percentage, 10, null, null, 10, "0.900, 0.922, 0.944, ..., 1.100");
+        await expectOptionsTabParamSettings(page, 3, "sigma", SensitivityScaleType.Arithmetic,
+            SensitivityVariationType.Percentage, 5, null, null, 10, "1.900, 1.922, 1.944, ..., 2.100");
 
-        // check param settings visible on tab
+        // Delete one settings
+        await page.click(":nth-match(.delete-param-settings, 2)");
+
         await expect(await page.locator(".sensitivity-options-settings").count()).toBe(2);
         await expectOptionsTabParamSettings(page, 1, "beta", SensitivityScaleType.Arithmetic,
             SensitivityVariationType.Range, null, 0, 9, 10, "0.000, 1.000, 2.000, ..., 9.000");

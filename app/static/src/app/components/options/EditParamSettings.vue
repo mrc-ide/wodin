@@ -122,7 +122,7 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, PropType, reactive, watch
+    computed, defineComponent, PropType, reactive, watch
 } from "vue";
 import { useStore } from "vuex";
 import {
@@ -137,7 +137,7 @@ import ErrorInfo from "../ErrorInfo.vue";
 import TagInput from "./TagInput.vue";
 
 export default defineComponent({
-    name: "EditParamSettings.vue",
+    name: "EditParamSettings",
     props: {
         open: {
             type: Boolean,

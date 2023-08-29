@@ -44,36 +44,36 @@ import ParameterSets from "./ParameterSets.vue";
 import AdvancedSettings from "./AdvancedSettings.vue";
 
 export default {
-  name: "OptionsTab",
-  components: {
-    ParameterSets,
-    LinkData,
-    OptimisationOptions,
-    ParameterValues,
-    RunOptions,
-    SensitivityOptions,
-    VerticalCollapse,
-    GraphSettings,
-    AdvancedSettings
-  },
-  setup() {
-    const store = useStore();
-    const isFit = computed(() => store.state.appType === AppType.Fit);
-    const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
+    name: "OptionsTab",
+    components: {
+        ParameterSets,
+        LinkData,
+        OptimisationOptions,
+        ParameterValues,
+        RunOptions,
+        SensitivityOptions,
+        VerticalCollapse,
+        GraphSettings,
+        AdvancedSettings
+    },
+    setup() {
+        const store = useStore();
+        const isFit = computed(() => store.state.appType === AppType.Fit);
+        const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
 
-    const sensitivityOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Sensitivity);
-    const multiSensitivityOpen = computed(() => {
-      return store.state.openVisualisationTab === VisualisationTab.MultiSensitivity;
-    });
-    const fitTabIsOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Fit);
+        const sensitivityOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Sensitivity);
+        const multiSensitivityOpen = computed(() => {
+            return store.state.openVisualisationTab === VisualisationTab.MultiSensitivity;
+        });
+        const fitTabIsOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Fit);
 
-    return {
-      isFit,
-      isStochastic,
-      sensitivityOpen,
-      multiSensitivityOpen,
-      fitTabIsOpen
-    };
-  }
+        return {
+            isFit,
+            isStochastic,
+            sensitivityOpen,
+            multiSensitivityOpen,
+            fitTabIsOpen
+        };
+    }
 };
 </script>

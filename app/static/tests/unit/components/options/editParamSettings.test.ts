@@ -61,8 +61,7 @@ describe("EditParamSettings", () => {
 
     const parameterValues = { A: 1, B: 2, C: 3 };
 
-    const getWrapper = async (paramSettings: SensitivityParameterSettings, open = true,
-        mockSetParamSettings = jest.fn()) => {
+    const getWrapper = async (paramSettings: SensitivityParameterSettings, open = true) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
@@ -77,15 +76,6 @@ describe("EditParamSettings", () => {
                     state: mockRunState({
                         parameterValues
                     })
-                },
-                sensitivity: {
-                    namespaced: true,
-                    state: {
-                        paramSettings
-                    },
-                    mutations: {
-                        [SensitivityMutation.SetParamSettings]: mockSetParamSettings
-                    }
                 }
             }
         });
@@ -95,7 +85,8 @@ describe("EditParamSettings", () => {
                 directives: { tooltip: mockTooltipDirective }
             },
             props: {
-                open: false
+                open: false,
+                paramSettings
             }
         });
 
@@ -233,7 +224,7 @@ describe("EditParamSettings", () => {
         await select.trigger("change");
     };
 
-    it("updates param settings and closes on OK click", async () => {
+    it("emits update and closes on OK click", async () => {
         const mockSetParamSettings = jest.fn();
         const wrapper = await getWrapper(percentSettings, true, mockSetParamSettings);
 
@@ -247,8 +238,8 @@ describe("EditParamSettings", () => {
 
         await wrapper.find("#ok-settings").trigger("click");
         expect(wrapper.emitted("close")?.length).toBe(1);
-        expect(mockSetParamSettings).toHaveBeenCalledTimes(1);
-        expect(mockSetParamSettings.mock.calls[0][1]).toStrictEqual({
+        expect(wrapper.emitted("update")?.length).toBe(1);
+        expect(wrapper.emitted("update")![0]).toStrictEqual([{
             parameterToVary: "A",
             scaleType: SensitivityScaleType.Logarithmic,
             variationType: SensitivityVariationType.Range,
@@ -257,7 +248,7 @@ describe("EditParamSettings", () => {
             rangeTo: 3,
             numberOfRuns: 11,
             customValues: []
-        });
+        }]);
     });
 
     it("renders and updates sensitivity param values", async () => {
