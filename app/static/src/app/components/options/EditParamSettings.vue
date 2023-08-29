@@ -83,7 +83,7 @@
                   <label class="col-form-label">Values</label>
                 </div>
                 <div class="col-6">
-                  <tag-input :tags="settingsInternal.customValues" :numeric-only="true" @update="updateUserValues">
+                  <tag-input :tags="settingsInternal.customValues" :numeric-only="true" @update="updateCustomValues">
                   </tag-input>
                 </div>
               </div>
@@ -193,7 +193,7 @@ export default defineComponent({
             }
             return batchParsResult.value?.error;
         });
-        const updateUserValues = (newValues: number[]) => {
+        const updateCustomValues = (newValues: number[]) => {
             // sort and remove duplicates
             const cleaned = Array.from(new Set(newValues)).sort((a, b) => a - b);
             settingsInternal.customValues = cleaned;
@@ -214,7 +214,7 @@ export default defineComponent({
             centralValue,
             batchPars,
             batchParsError,
-            updateUserValues,
+            updateCustomValues,
             close,
             updateSettings
         };

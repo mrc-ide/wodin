@@ -38,11 +38,11 @@
           <hr v-if="idx < allSettings.length-1" />
         </div>
         <div v-if="multiSensitivity" class="text-center">
-          <button class="btn btn-outline"
+          <button class="btn btn-outline add-param-settings"
                   v-if="paramsWithoutSettings.length"
                   id="add-param-settings"
                   @click="addSettings"
-                  v-tooltip="'Add parameter'">Add</button>
+                  v-tooltip="'Add parameter settings'">Add</button>
         </div>
       </div>
       <hr/>
