@@ -11,7 +11,7 @@ describe("Sensitivity getters", () => {
         rangeFrom: 0,
         rangeTo: 0,
         numberOfRuns: 3,
-        userValues: []
+        customValues: []
     };
 
     it("generates batchPars", () => {

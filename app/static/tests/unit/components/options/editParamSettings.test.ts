@@ -225,8 +225,7 @@ describe("EditParamSettings", () => {
     };
 
     it("emits update and closes on OK click", async () => {
-        const mockSetParamSettings = jest.fn();
-        const wrapper = await getWrapper(percentSettings, true, mockSetParamSettings);
+        const wrapper = await getWrapper(percentSettings, true);
 
         await updateSelect(wrapper, "edit-param-to-vary", "A");
         await updateSelect(wrapper, "edit-scale-type", SensitivityScaleType.Logarithmic);
@@ -292,16 +291,14 @@ describe("EditParamSettings", () => {
     });
 
     it("updates values from TagInput, dedupes and sorts", async () => {
-        const mockSetParamSettings = jest.fn();
-        const wrapper = await getWrapper(customSettings, true, mockSetParamSettings);
+        const wrapper = await getWrapper(customSettings, true);
         wrapper.findComponent(TagInput).vm.$emit("update", [5, 1, 5, 0, -1, -2, 1]);
         const expectedValues = [-2, -1, 0, 1, 5];
         await nextTick();
         expect((wrapper.vm as any).settingsInternal.customValues).toStrictEqual(expectedValues);
         await wrapper.find("#ok-settings").trigger("click");
-        expect(mockSetParamSettings).toHaveBeenCalledTimes(1);
-        const committed = mockSetParamSettings.mock.calls[0][1];
-        expect(committed.customValues).toStrictEqual(expectedValues);
+        expect(wrapper.emitted("update")?.length).toBe(1);
+        expect((wrapper.emitted("update")![0] as any)[0].customValues).toStrictEqual(expectedValues);
     });
 
     it("test set", () => {
