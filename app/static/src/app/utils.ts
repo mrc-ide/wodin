@@ -139,7 +139,7 @@ export function generateBatchPars(
     paramSettings: SensitivityParameterSettings,
     paramValues: OdinUserType | null
 ): GenerateBatchParsResult {
-    let batchPars = null;
+    let varyingParam = null;
     let errorDetail = null;
     // TODO: NB For now we use ode runner to generate batch pars for all app types, but expect this to change
     const runner = rootState.model.odinRunnerOde;
@@ -154,7 +154,7 @@ export function generateBatchPars(
         errorDetail = "Model is not initialised";
     } else if (variationType === SensitivityVariationType.Percentage) {
         try {
-            batchPars = runner.batchParsDisplace(
+            varyingParam = runner.batchParsDisplace(
                 paramValues, parameterToVary,
                 numberOfRuns, logarithmic,
                 variationPercentage
@@ -164,7 +164,7 @@ export function generateBatchPars(
         }
     } else {
         try {
-            batchPars = runner.batchParsRange(
+            varyingParam = runner.batchParsRange(
                 paramValues,
                 parameterToVary,
                 numberOfRuns,
@@ -178,6 +178,7 @@ export function generateBatchPars(
     }
 
     const error = errorDetail ? { error: userMessages.sensitivity.invalidSettings, detail: errorDetail } : null;
+    const batchPars = errorDetail ? null : { base: paramValues!, varying: [varyingParam!] };
     return {
         batchPars,
         error

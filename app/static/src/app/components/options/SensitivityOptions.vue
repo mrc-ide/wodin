@@ -16,7 +16,7 @@
           </template>
           <li><strong>Number of runs:</strong> {{ settings.numberOfRuns}}</li>
         </ul>
-        <sensitivity-param-values :batch-pars="batchPars"></sensitivity-param-values>
+        <sensitivity-param-values :batch-pars="batchPars" :param-name="settings.parameterToVary"></sensitivity-param-values>
       </div>
       <hr/>
       <sensitivity-plot-options></sensitivity-plot-options>
