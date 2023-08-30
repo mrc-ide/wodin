@@ -18,11 +18,11 @@ import {
 import { AxisType, newPlot, Plots } from "plotly.js-basic-dist-min";
 import { useStore } from "vuex";
 import {
-  config, fadePlotStyle, filterSeriesSet, filterUserTypeSeriesSet, margin, odinToPlotly, updatePlotTraceName
+    config, fadePlotStyle, filterUserTypeSeriesSet, margin, odinToPlotly, updatePlotTraceName
 } from "../../plot";
 import { SensitivityPlotExtremePrefix, SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
-import {Batch, OdinSeriesSet, OdinUserTypeSeriesSet} from "../../types/responseTypes";
+import { Batch, OdinUserTypeSeriesSet } from "../../types/responseTypes";
 import { runPlaceholderMessage } from "../../utils";
 import { RunGetter } from "../../store/run/getters";
 import { Dict } from "../../types/utilTypes";

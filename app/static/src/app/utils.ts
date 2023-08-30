@@ -148,7 +148,7 @@ function generateBatchParsFromOdin(
     if (variationType === SensitivityVariationType.Percentage) {
         try {
             varyingParam = runner!.batchParsDisplace(
-                paramValues, parameterToVary,
+                paramValues, parameterToVary!,
                 numberOfRuns, logarithmic,
                 variationPercentage
             );
@@ -199,8 +199,10 @@ export function generateBatchPars(
     if (paramSettings.variationType === SensitivityVariationType.Custom) {
         const batchPars: BatchPars = {
             base: paramValues!,
-            name: paramSettings.parameterToVary!,
-            values: paramSettings.customValues
+            varying: [{
+                name: paramSettings.parameterToVary!,
+                values: paramSettings.customValues
+            }]
         };
         return {
             batchPars,

@@ -50,10 +50,10 @@ const batchRunDiscrete = (runner: OdinRunnerDiscrete,
     replicates: number,
     dispatch: Dispatch,
     commit: Commit): Batch => {
-    console.log("Attempting batchRunDiscrete")
+    console.log("Attempting batchRunDiscrete");
     const batch = runner.batchRunDiscrete(odin, pars, 0, endTime, dt, replicates);
-    console.log("Did batchRunDiscrete")
-    console.log(JSON.stringify(batch))
+    console.log("Did batchRunDiscrete");
+    console.log(JSON.stringify(batch));
     commit(SensitivityMutation.SetRunning, true);
     dispatch(SensitivityAction.ComputeNext, batch);
     return batch;

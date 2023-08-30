@@ -24,8 +24,8 @@ import {
     allFitDataToPlotly, filterSeriesSet, odinToPlotly, PlotlyOptions, updatePlotTraceName, WodinPlotData
 } from "../../plot";
 import {
-  Batch,
-  DiscreteSeriesValues, OdinSeriesSet, OdinSolution, VaryingPar
+    Batch,
+    DiscreteSeriesValues, OdinSeriesSet, OdinSolution, VaryingPar
 } from "../../types/responseTypes";
 import { AppType } from "../../store/appState/state";
 import { runPlaceholderMessage } from "../../utils";
