@@ -89,9 +89,9 @@ export default defineComponent({
                 const time = {
                     mode: "grid" as const, tStart: start, tEnd: end, nPoints: points
                 };
-                const varyingPar = pars.varying.filter((v: VaryingPar) => v.name === paramSettings.value.parameterToVary);
-                const parValues = varyingPar.length ? varyingPar[0].values : [];
                 const varyingParamName = paramSettings.value.parameterToVary;
+                const varyingPar = pars.varying.filter((v: VaryingPar) => v.name === varyingParamName);
+                const parValues = varyingPar.length ? varyingPar[0].values : [];
 
                 const addSolutionOutputToResult = (
                     solution: OdinSolution,

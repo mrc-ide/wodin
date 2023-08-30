@@ -39,7 +39,7 @@ describe("SensitivitySummaryPlot", () => {
     const mockSetLoading = jest.fn();
 
     const mockData = {
-        x: [1, 1.1],
+        x: [{ beta: 1 }, { beta: 1.1}],
         values: [
             { name: "S", y: [10, 10.1] },
             { name: "I", y: [20, 19.9] },
@@ -48,7 +48,7 @@ describe("SensitivitySummaryPlot", () => {
     };
 
     const mockDataSet1 = {
-        x: [10, 10.1],
+        x: [{ beta: 10 }, { beta: 10.1 }],
         values: [
             { name: "S", y: [100, 100.1] },
             { name: "I", y: [200, 190.9] },
@@ -57,7 +57,7 @@ describe("SensitivitySummaryPlot", () => {
     };
 
     const mockDataSet2 = {
-        x: [20, 20.1],
+        x: [{ beta: 20 }, { beta: 20.1 }],
         values: [
             { name: "S", y: [101, 101.1] },
             { name: "I", y: [201, 191.9] },
@@ -66,7 +66,7 @@ describe("SensitivitySummaryPlot", () => {
     };
 
     const mockDataSet3 = {
-        x: [30, 30.1],
+        x: [{ beta: 30 }, { beta: 30.1 }],
         values: [
             { name: "S", y: [102, 102.1] },
             { name: "I", y: [202, 192.9] },

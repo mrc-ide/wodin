@@ -346,9 +346,11 @@ describe("generateBatchPars", () => {
     it("generates BatchPars for Percentage variation type", () => {
         const result = generateBatchPars(rootState, percentSettings, parameterValues)!;
         expect(result.error).toBe(null);
-        expect(result.batchPars!.name).toBe("A");
         expect(result.batchPars!.base).toBe(parameterValues);
-        expect(result.batchPars!.values).toStrictEqual([0.5, 0.75, 1, 1.25, 1.5]);
+        expect(result.batchPars!.varying).toStrictEqual([{
+            name: "A",
+            values: [0.5, 0.75, 1, 1.25, 1.5]
+        }]);
 
         expect(spyBatchParsDisplace).toHaveBeenCalledTimes(1);
         expect(spyBatchParsDisplace.mock.calls[0][0]).toStrictEqual(parameterValues);
@@ -361,9 +363,11 @@ describe("generateBatchPars", () => {
     it("generates BatchPars for Range variation type", () => {
         const result = generateBatchPars(rootState, rangeSettings, parameterValues)!;
         expect(result.error).toBe(null);
-        expect(result.batchPars!.name).toBe("B");
         expect(result.batchPars!.base).toBe(parameterValues);
-        expect(result.batchPars!.values).toStrictEqual([2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]);
+        expect(result.batchPars!.varying).toStrictEqual([{
+            name: "B",
+            values: [2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]
+        }]);
         expect(spyBatchParsRange).toHaveBeenCalledTimes(1);
         expect(spyBatchParsRange.mock.calls[0][0]).toStrictEqual(parameterValues);
         expect(spyBatchParsRange.mock.calls[0][1]).toStrictEqual("B");

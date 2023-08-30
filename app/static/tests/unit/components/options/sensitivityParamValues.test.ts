@@ -4,8 +4,14 @@ import SensitivityParamValues from "../../../../src/app/components/options/Sensi
 
 describe("SensitivityParamValues", () => {
     const getWrapper = (values: number[]) => {
-        const batchPars = { values };
-        return mount(SensitivityParamValues, { props: { batchPars } });
+        const paramName = "beta";
+        const batchPars = {
+            varying: [{
+                name: paramName,
+                values
+            }]
+        };
+        return mount(SensitivityParamValues, { props: { batchPars, paramName } });
     };
 
     it("renders up to three values as expected", () => {
