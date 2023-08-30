@@ -17,7 +17,8 @@ describe("Tag Input", () => {
     };
 
     const defaultProps = {
-        tags: [1, 2, "p1", "p2", "p3"]
+        tags: [1, 2, "p1", "p2", "p3"],
+        numericOnly: false
     };
 
     const getWrapper = (props = defaultProps) => {
@@ -72,5 +73,31 @@ describe("Tag Input", () => {
         store.state.run.parameterValues = { a: 2 };
         await nextTick();
         expect(wrapper.emitted("update")![0]).toStrictEqual([["1", "hey"]]);
+    });
+
+    it("renders as expected when numeric only is true", () => {
+        const wrapper = getWrapper({ ...defaultProps, numericOnly: true });
+        const tagsInput = wrapper.findComponent(VueTagsInput);
+        // should filter out non-numeric tags
+        expect(tagsInput.props("tags")).toStrictEqual(["1", "2"]);
+        expect(tagsInput.props("placeholder")).toBe("...");
+    });
+
+    it("does not accept update with valid parameter tags when numericOnly is true", () => {
+        const wrapper = getWrapper({ ...defaultProps, numericOnly: true });
+        const tagsInput = wrapper.findComponent(VueTagsInput);
+        (tagsInput.vm as any).$emit("on-tags-changed", ["1", "2", "p2", "p1: 1.1", "p3"]);
+        expect(wrapper.emitted("update")![0]).toStrictEqual([[1, 2]]);
+    });
+
+    it("resets input value model on error", async () => {
+        const wrapper = getWrapper();
+        const vm = wrapper.vm as any;
+        vm.currentTag = "blah";
+        await nextTick();
+        const vueTagsInput = wrapper.findComponent(VueTagsInput);
+        expect(vueTagsInput.props().modelValue).toBe("blah");
+        await vueTagsInput.vm.$emit("on-error");
+        expect(vueTagsInput.props().modelValue).toBe("");
     });
 });

@@ -8,7 +8,8 @@ export enum SensitivityScaleType {
 
 export enum SensitivityVariationType {
     Percentage = "Percentage",
-    Range = "Range"
+    Range = "Range",
+    Custom = "Custom"
 }
 
 export interface SensitivityParameterSettings {
@@ -18,7 +19,8 @@ export interface SensitivityParameterSettings {
     variationPercentage: number,
     rangeFrom: number,
     rangeTo: number,
-    numberOfRuns: number
+    numberOfRuns: number,
+    customValues: number[]
 }
 
 export enum SensitivityPlotType {

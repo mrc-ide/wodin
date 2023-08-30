@@ -1,5 +1,6 @@
 import Vuex from "vuex";
 import { mount, VueWrapper } from "@vue/test-utils";
+import { nextTick } from "vue";
 import {
     SensitivityParameterSettings,
     SensitivityScaleType,
@@ -14,6 +15,8 @@ import NumericInput from "../../../../src/app/components/options/NumericInput.vu
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
 import { expectCloseNumericArray } from "../../../testUtils";
+import TagInput from "../../../../src/app/components/options/TagInput.vue";
+import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 
 const mockTooltipDirective = jest.fn();
 
@@ -25,7 +28,8 @@ describe("EditParamSettings", () => {
         variationPercentage: 10,
         rangeFrom: 0,
         rangeTo: 0,
-        numberOfRuns: 5
+        numberOfRuns: 5,
+        customValues: []
     };
 
     const rangeSettings = {
@@ -35,7 +39,19 @@ describe("EditParamSettings", () => {
         variationPercentage: 0,
         rangeFrom: 2,
         rangeTo: 6,
-        numberOfRuns: 5
+        numberOfRuns: 5,
+        customValues: []
+    };
+
+    const customSettings = {
+        parameterToVary: "C",
+        scaleType: SensitivityScaleType.Arithmetic,
+        variationType: SensitivityVariationType.Custom,
+        variationPercentage: 10,
+        rangeFrom: 0,
+        rangeTo: 0,
+        numberOfRuns: 5,
+        customValues: [1, 2, 3]
     };
 
     const mockRunner = {
@@ -43,7 +59,7 @@ describe("EditParamSettings", () => {
         batchParsRange: mockBatchParsRange
     } as any;
 
-    const parameterValues = { A: 1, B: 2 };
+    const parameterValues = { A: 1, B: 2, C: 3 };
 
     const getWrapper = async (paramSettings: SensitivityParameterSettings, open = true,
         mockSetParamSettings = jest.fn()) => {
@@ -107,9 +123,10 @@ describe("EditParamSettings", () => {
         const paramSelect = wrapper.find("#edit-param-to-vary select");
         expect((paramSelect.element as HTMLSelectElement).value).toBe("B");
         const paramOptions = paramSelect.findAll("option");
-        expect(paramOptions.length).toBe(2);
+        expect(paramOptions.length).toBe(3);
         expect(paramOptions.at(0)!.text()).toBe("A");
         expect(paramOptions.at(1)!.text()).toBe("B");
+        expect(paramOptions.at(2)!.text()).toBe("C");
 
         expect(wrapper.find("#edit-scale-type label").text()).toBe("Scale type");
         const scaleSelect = wrapper.find("#edit-scale-type select");
@@ -123,9 +140,10 @@ describe("EditParamSettings", () => {
         const varSelect = wrapper.find("#edit-variation-type select");
         expect((varSelect.element as HTMLSelectElement).value).toBe(SensitivityVariationType.Percentage);
         const varOptions = varSelect.findAll("option");
-        expect(varOptions.length).toBe(2);
+        expect(varOptions.length).toBe(3);
         expect(varOptions.at(0)!.text()).toBe(SensitivityVariationType.Percentage);
         expect(varOptions.at(1)!.text()).toBe(SensitivityVariationType.Range);
+        expect(varOptions.at(2)!.text()).toBe(SensitivityVariationType.Custom);
 
         expect(wrapper.find("#edit-percent label").text()).toBe("Variation (%)");
         expect(wrapper.find("#edit-percent").findComponent(NumericInput).props("value")).toBe(10);
@@ -168,6 +186,24 @@ describe("EditParamSettings", () => {
 
         expect(wrapper.find(".modal-footer button.btn-primary").attributes("disabled")).toBe(undefined);
         expect(wrapper.find("#invalid-msg").exists()).toBe(false);
+    });
+
+    it("renders as expected when variation type is Custom", async () => {
+        const wrapper = await getWrapper(customSettings);
+        const paramSelect = wrapper.find("#edit-param-to-vary select");
+        expect((paramSelect.element as HTMLSelectElement).value).toBe("C");
+        const varSelect = wrapper.find("#edit-variation-type select");
+        expect((varSelect.element as HTMLSelectElement).value).toBe(SensitivityVariationType.Custom);
+        expect(wrapper.find("#param-central").text()).toBe("Central value 3");
+        const tagInput = wrapper.find("#edit-values").findComponent(TagInput);
+        expect(tagInput.props().tags).toStrictEqual([1, 2, 3]);
+        expect(tagInput.props().numericOnly).toBe(true);
+        expect(wrapper.find("#edit-scale-type").exists()).toBe(false);
+        expect(wrapper.find("#edit-percent").exists()).toBe(false);
+        expect(wrapper.find("#edit-from").exists()).toBe(false);
+        expect(wrapper.find("#edit-to").exists()).toBe(false);
+        expect(wrapper.find("#edit-runs").exists()).toBe(false);
+        expect(wrapper.findComponent(SensitivityParamValues).exists()).toBe(false);
     });
 
     it("disables OK and renders message when settings are invalid", async () => {
@@ -220,7 +256,8 @@ describe("EditParamSettings", () => {
             variationPercentage: 15,
             rangeFrom: 1,
             rangeTo: 3,
-            numberOfRuns: 11
+            numberOfRuns: 11,
+            customValues: []
         });
     });
 
@@ -249,5 +286,42 @@ describe("EditParamSettings", () => {
         expect(rangeSpy.mock.calls[2][3]).toBe(false);
         expect(rangeSpy.mock.calls[2][4]).toBe(1);
         expect(rangeSpy.mock.calls[2][5]).toBe(3);
+    });
+
+    it("displays error when Custom variation type, and there are less than 2 values", async () => {
+        const expectError = (wrapper: VueWrapper<any>) => {
+            expect(wrapper.findComponent(ErrorInfo).props().error).toStrictEqual({
+                error: "Invalid settings", detail: "Must include at least 2 traces in the batch"
+            });
+        };
+        expectError(await getWrapper({ ...customSettings, customValues: [] }));
+        expectError(await getWrapper({ ...customSettings, customValues: [1] }));
+
+        const wrapper = await getWrapper({ ...customSettings, customValues: [1, 2] });
+        expect(wrapper.findComponent(ErrorInfo).exists()).toBe(false);
+    });
+
+    it("updates values from TagInput", async () => {
+        const mockSetParamSettings = jest.fn();
+        const wrapper = await getWrapper(customSettings, true, mockSetParamSettings);
+        const expectedValues = [-1, 0, 1];
+        wrapper.findComponent(TagInput).vm.$emit("update", expectedValues);
+        await nextTick();
+        expect((wrapper.vm as any).settingsInternal.customValues).toStrictEqual(expectedValues);
+        await wrapper.find("#ok-settings").trigger("click");
+        expect(mockSetParamSettings).toHaveBeenCalledTimes(1);
+        const committed = mockSetParamSettings.mock.calls[0][1];
+        expect(committed.customValues).toStrictEqual(expectedValues);
+    });
+
+    it("sorts custom values on commit", async () => {
+        const mockSetParamSettings = jest.fn();
+        const wrapper = await getWrapper(customSettings, true, mockSetParamSettings);
+        wrapper.findComponent(TagInput).vm.$emit("update", [5, 1, 0, -2, -1]);
+        await wrapper.find("#ok-settings").trigger("click");
+        expect(mockSetParamSettings.mock.calls[0][1]).toStrictEqual({
+            ...customSettings,
+            customValues: [-2, -1, 0, 1, 5]
+        });
     });
 });

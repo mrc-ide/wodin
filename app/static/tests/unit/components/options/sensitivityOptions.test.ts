@@ -60,7 +60,8 @@ describe("SensitivityOptions", () => {
         variationPercentage: 10,
         rangeFrom: 0,
         rangeTo: 0,
-        numberOfRuns: 5
+        numberOfRuns: 5,
+        customValues: []
     };
 
     it("displays percentage variance as expected", () => {
@@ -72,8 +73,8 @@ describe("SensitivityOptions", () => {
         const listItems = wrapper.findAll("ul li");
         expect(listItems.length).toBe(5);
         expect(listItems.at(0)!.text()).toBe("Parameter: B");
-        expect(listItems.at(1)!.text()).toBe("Scale Type: Arithmetic");
-        expect(listItems.at(2)!.text()).toBe("Variation Type: Percentage");
+        expect(listItems.at(1)!.text()).toBe("Variation Type: Percentage");
+        expect(listItems.at(2)!.text()).toBe("Scale Type: Arithmetic");
         expect(listItems.at(3)!.text()).toBe("Variation (%): 10");
         expect(listItems.at(4)!.text()).toBe("Number of runs: 5");
 
@@ -96,17 +97,37 @@ describe("SensitivityOptions", () => {
             variationPercentage: 10,
             rangeFrom: 1,
             rangeTo: 3,
-            numberOfRuns: 5
+            numberOfRuns: 5,
+            customValues: []
         });
 
         const listItems = wrapper.findAll("ul li");
         expect(listItems.length).toBe(6);
         expect(listItems.at(0)!.text()).toBe("Parameter: B");
-        expect(listItems.at(1)!.text()).toBe("Scale Type: Logarithmic");
-        expect(listItems.at(2)!.text()).toBe("Variation Type: Range");
+        expect(listItems.at(1)!.text()).toBe("Variation Type: Range");
+        expect(listItems.at(2)!.text()).toBe("Scale Type: Logarithmic");
         expect(listItems.at(3)!.text()).toBe("From: 1");
         expect(listItems.at(4)!.text()).toBe("To: 3");
         expect(listItems.at(5)!.text()).toBe("Number of runs: 5");
+    });
+
+    it("displays custom values as expected", () => {
+        const wrapper = getWrapper({
+            parameterToVary: "C",
+            scaleType: SensitivityScaleType.Logarithmic,
+            variationType: SensitivityVariationType.Custom,
+            variationPercentage: 10,
+            rangeFrom: 1,
+            rangeTo: 3,
+            numberOfRuns: 5,
+            customValues: [1, 2, 3]
+        });
+
+        const listItems = wrapper.findAll("ul li");
+        expect(listItems.length).toBe(3);
+        expect(listItems.at(0)!.text()).toBe("Parameter: C");
+        expect(listItems.at(1)!.text()).toBe("Variation Type: Custom");
+        expect(listItems.at(2)!.text()).toBe("Values: 1, 2, 3");
     });
 
     it("opens and closes edit dialog", async () => {

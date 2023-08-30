@@ -10,11 +10,8 @@ import {
 } from "./types/responseTypes";
 import userMessages from "./userMessages";
 import settings from "./settings";
-import {
-    SensitivityParameterSettings,
-    SensitivityScaleType,
-    SensitivityVariationType
-} from "./store/sensitivity/state";
+import { SensitivityParameterSettings, SensitivityScaleType, SensitivityVariationType }
+    from "./store/sensitivity/state";
 import { AppState } from "./store/appState/state";
 import { AdvancedComponentType, AdvancedSettings, Tag } from "./store/run/state";
 
@@ -134,10 +131,10 @@ export interface GenerateBatchParsResult {
     error: WodinError | null
 }
 
-export function generateBatchPars(
+function generateBatchParsFromOdin(
     rootState: AppState,
     paramSettings: SensitivityParameterSettings,
-    paramValues: OdinUserType | null
+    paramValues: OdinUserType
 ): GenerateBatchParsResult {
     let batchPars = null;
     let errorDetail = null;
@@ -148,14 +145,10 @@ export function generateBatchPars(
     } = paramSettings;
     const logarithmic = scaleType === SensitivityScaleType.Logarithmic;
 
-    if (!parameterToVary) {
-        errorDetail = "Parameter to vary is not set";
-    } else if (!runner || !paramValues) {
-        errorDetail = "Model is not initialised";
-    } else if (variationType === SensitivityVariationType.Percentage) {
+    if (variationType === SensitivityVariationType.Percentage) {
         try {
-            batchPars = runner.batchParsDisplace(
-                paramValues, parameterToVary,
+            batchPars = runner!.batchParsDisplace(
+                paramValues, parameterToVary!,
                 numberOfRuns, logarithmic,
                 variationPercentage
             );
@@ -164,9 +157,9 @@ export function generateBatchPars(
         }
     } else {
         try {
-            batchPars = runner.batchParsRange(
+            batchPars = runner!.batchParsRange(
                 paramValues,
-                parameterToVary,
+                parameterToVary!,
                 numberOfRuns,
                 logarithmic,
                 rangeFrom,
@@ -182,6 +175,38 @@ export function generateBatchPars(
         batchPars,
         error
     };
+}
+
+export function generateBatchPars(
+    rootState: AppState,
+    paramSettings: SensitivityParameterSettings,
+    paramValues: OdinUserType | null
+): GenerateBatchParsResult {
+    let errorDetail = null;
+    if (!paramSettings.parameterToVary) {
+        errorDetail = "Parameter to vary is not set";
+    } else if (!rootState.model.odinRunnerOde || !paramValues) {
+        errorDetail = "Model is not initialised";
+    }
+    if (errorDetail) {
+        return {
+            batchPars: null,
+            error: { error: userMessages.sensitivity.invalidSettings, detail: errorDetail }
+        };
+    }
+
+    if (paramSettings.variationType === SensitivityVariationType.Custom) {
+        const batchPars: BatchPars = {
+            base: paramValues!,
+            name: paramSettings.parameterToVary!,
+            values: paramSettings.customValues
+        };
+        return {
+            batchPars,
+            error: null
+        };
+    }
+    return generateBatchParsFromOdin(rootState, paramSettings, paramValues!);
 }
 
 export const newSessionId = (): string => uid(32);
