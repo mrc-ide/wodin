@@ -159,6 +159,7 @@ export const paramSetLineStyle = (index: number): string => (lineStyles[index % 
 
 export const updatePlotTraceName = (plotTrace: Partial<PlotData>, param: string | null, value: number | null,
     parameterSetName = "") => {
+    console.log(`updating plot trace nane with param ${param} and value ${value}`)
     const parenthesisItems = [];
     if (param && value) {
         parenthesisItems.push(`${param}=${format(".3f")(value)}`);

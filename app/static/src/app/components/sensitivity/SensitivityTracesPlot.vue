@@ -24,8 +24,8 @@ import {
     allFitDataToPlotly, filterSeriesSet, odinToPlotly, PlotlyOptions, updatePlotTraceName, WodinPlotData
 } from "../../plot";
 import {
-    Batch,
-    DiscreteSeriesValues, OdinSeriesSet, OdinSolution
+  Batch,
+  DiscreteSeriesValues, OdinSeriesSet, OdinSolution, VaryingPar
 } from "../../types/responseTypes";
 import { AppType } from "../../store/appState/state";
 import { runPlaceholderMessage } from "../../utils";
@@ -52,6 +52,7 @@ export default defineComponent({
         const parameterSetDisplayNames = computed(() => {
             return parameterSets.value.map((paramSet) => paramSet.displayName);
         });
+        const paramSettings = computed(() => store.state.sensitivity.paramSettings);
 
         const parameterSetBatches = computed(() => {
             const result = {} as Dict<Batch>;
@@ -88,6 +89,9 @@ export default defineComponent({
                 const time = {
                     mode: "grid" as const, tStart: start, tEnd: end, nPoints: points
                 };
+                const varyingPar = pars.varying.filter((v: VaryingPar) => v.name === paramSettings.value.parameterToVary);
+                const parValues = varyingPar.length ? varyingPar[0].values : [];
+                const varyingParamName = paramSettings.value.parameterToVary;
 
                 const addSolutionOutputToResult = (
                     solution: OdinSolution,
@@ -120,7 +124,7 @@ export default defineComponent({
                         showLegend: false
                     };
                     addSolutionOutputToResult(sln, plotlyOptions,
-                        (plotTrace) => updatePlotTraceName(plotTrace, pars.name, pars.values[slnIdx]));
+                        (plotTrace) => updatePlotTraceName(plotTrace, varyingParamName, parValues[slnIdx]));
                 });
 
                 if (centralSolution.value) {
@@ -151,8 +155,8 @@ export default defineComponent({
                         addSolutionOutputToResult(sln, plotlyOptions,
                             (plotTrace) => updatePlotTraceName(
                                 plotTrace,
-                                pars.name,
-                                pars.values[slnIdx],
+                                varyingParamName,
+                                parValues[slnIdx],
                                 currentParamSet!.displayName
                             ));
                     });
