@@ -304,7 +304,10 @@ export const mockBatchParsRange = (base: OdinUserType, name: string, count: numb
         current += d;
         i += 1;
     }
-    return { base, name, values };
+    return {
+        base,
+        varying: [{name, values}]
+    };
 };
 
 export const mockBatchParsDisplace = (base: OdinUserType, name: string, count: number,

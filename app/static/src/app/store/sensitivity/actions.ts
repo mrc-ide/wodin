@@ -79,6 +79,8 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
         const { advancedSettings, parameterValues } = rootState.run;
 
         try {
+            console.log("Running sensitivity");
+            console.log("BatchPars: " + JSON.stringify(batchPars))
             const batch = isStochastic
                 ? batchRunDiscrete(odinRunnerDiscrete!, odin, batchPars, endTime, dt!, replicates, dispatch, commit)
                 : batchRunOde(odinRunnerOde!, odin, batchPars, endTime, advancedSettings, parameterValues);
