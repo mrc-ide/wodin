@@ -16,8 +16,8 @@ test.describe("Multi-sensitivity tests", () => {
         const section = await page.locator(`:nth-match(.sensitivity-options-settings, ${index})`);
         const listItems = await section.locator("ul li");
         await expect(await listItems.nth(0).innerText()).toBe(`Parameter: ${param}`);
-        await expect(await listItems.nth(1).innerText()).toBe(`Scale Type: ${scale}`);
-        await expect(await listItems.nth(2).innerText()).toBe(`Variation Type: ${variation}`);
+        await expect(await listItems.nth(1).innerText()).toBe(`Variation Type: ${variation}`);
+        await expect(await listItems.nth(2).innerText()).toBe(`Scale Type: ${scale}`);
         if (variation === SensitivityVariationType.Percentage) {
             await expect(await listItems.nth(3).innerText()).toBe(`Variation (%): ${percentage}`);
             await expect(await listItems.nth(4).innerText()).toBe(`Number of runs: ${runs}`);
@@ -34,8 +34,8 @@ test.describe("Multi-sensitivity tests", () => {
         variation: SensitivityVariationType, percentage: number | null, from: number | null, central: number | null,
         to: number | null, runs: number, values: string) => {
         await expect(await page.inputValue("#edit-param-to-vary select")).toBe(param);
-        await expect(await page.inputValue("#edit-scale-type select")).toBe(scale);
         await expect(await page.inputValue("#edit-variation-type select")).toBe(variation);
+        await expect(await page.inputValue("#edit-scale-type select")).toBe(scale);
         if (variation === SensitivityVariationType.Percentage) {
             await expect(await page.inputValue("#edit-percent input")).toBe(percentage!.toString());
         } else {
