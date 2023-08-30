@@ -89,4 +89,15 @@ describe("Tag Input", () => {
         (tagsInput.vm as any).$emit("on-tags-changed", ["1", "2", "p2", "p1: 1.1", "p3"]);
         expect(wrapper.emitted("update")![0]).toStrictEqual([[1, 2]]);
     });
+
+    it("resets input value model on error", async () => {
+        const wrapper = getWrapper();
+        const vm = wrapper.vm as any;
+        vm.currentTag = "blah";
+        await nextTick();
+        const vueTagsInput = wrapper.findComponent(VueTagsInput);
+        expect(vueTagsInput.props().modelValue).toBe("blah");
+        await vueTagsInput.vm.$emit("on-error");
+        expect(vueTagsInput.props().modelValue).toBe("");
+    });
 });

@@ -1,15 +1,17 @@
 <template>
     <vue-tags-input style="border-color: #d7dce1;"
+                    v-model="currentTag"
                     :tags="computedTags"
                     :placeholder="'...'"
                     :validate="validate"
                     :add-tag-on-blur="true"
                     :add-tag-on-keys="[13, ',', 32, ':']"
+                    @on-error="handleError"
                     @on-tags-changed="handleTagsChanged"/>
 </template>
 <script lang="ts">
 import {
-    PropType, computed, defineComponent, watch
+    PropType, computed, defineComponent, watch, ref
 } from "vue";
 import VueTagsInput from "vue3-tags-input";
 import { useStore } from "vuex";
@@ -29,6 +31,8 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore();
+
+        const currentTag = ref("");
 
         const paramValues = computed(() => store.state.run.parameterValues);
 
@@ -59,6 +63,11 @@ export default defineComponent({
 
         const isParameterName = (tag: string) => {
             return paramValues.value && tag in paramValues.value;
+        };
+
+        const handleError = () => {
+            // remove duplicate current tag
+            currentTag.value = "";
         };
 
         const handleTagsChanged = (tags: string[]) => {
@@ -97,7 +106,9 @@ export default defineComponent({
         };
 
         return {
+            currentTag,
             computedTags,
+            handleError,
             handleTagsChanged,
             validate
         };
@@ -111,5 +122,10 @@ export default defineComponent({
 
 .v3ti-tag .v3ti-remove-tag {
     text-decoration: none !important;
+}
+
+.v3ti-new-tag--error {
+  text-decoration: none !important;
+  color: #000 !important;
 }
 </style>

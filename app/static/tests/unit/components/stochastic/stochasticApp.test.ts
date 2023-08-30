@@ -33,6 +33,12 @@ import { AppConfig } from "../../../../src/app/types/responseTypes";
 const mockSetOpenVisualisationTab = jest.fn();
 const mockTooltipDirective = jest.fn();
 
+function mockResizeObserver(this: any) {
+    this.observe = jest.fn();
+    this.disconnect = jest.fn();
+}
+(global.ResizeObserver as any) = mockResizeObserver;
+
 describe("StochasticApp", () => {
     const getWrapper = (config: Partial<AppConfig> = {}) => {
         const store = new Vuex.Store<StochasticState>({

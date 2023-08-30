@@ -16,8 +16,8 @@ test.describe("Sensitivity tests", () => {
     test("can edit Sensitivity options", async ({ page }) => {
         // Default settings are visible
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 1)")).toBe("Parameter: beta");
-        await expect(await page.innerText(":nth-match(#sensitivity-options li, 2)")).toBe("Scale Type: Arithmetic");
-        await expect(await page.innerText(":nth-match(#sensitivity-options li, 3)")).toBe("Variation Type: Percentage");
+        await expect(await page.innerText(":nth-match(#sensitivity-options li, 2)")).toBe("Variation Type: Percentage");
+        await expect(await page.innerText(":nth-match(#sensitivity-options li, 3)")).toBe("Scale Type: Arithmetic");
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 4)")).toBe("Variation (%): 10");
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 5)")).toBe("Number of runs: 10");
         await expect(await page.innerText("#sensitivity-options .alert-success"))
@@ -54,8 +54,8 @@ test.describe("Sensitivity tests", () => {
 
         // New settings are visible
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 1)")).toBe("Parameter: sigma");
-        await expect(await page.innerText(":nth-match(#sensitivity-options li, 2)")).toBe("Scale Type: Logarithmic");
-        await expect(await page.innerText(":nth-match(#sensitivity-options li, 3)")).toBe("Variation Type: Range");
+        await expect(await page.innerText(":nth-match(#sensitivity-options li, 2)")).toBe("Variation Type: Range");
+        await expect(await page.innerText(":nth-match(#sensitivity-options li, 3)")).toBe("Scale Type: Logarithmic");
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 4)")).toBe("From: 1");
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 5)")).toBe("To: 5");
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 6)")).toBe("Number of runs: 12");
@@ -238,6 +238,8 @@ test.describe("Sensitivity tests", () => {
         await expect(await page.innerText("#invalid-msg"))
             .toBe("Invalid settings: Must include at least 2 traces in the batch");
 
+        await expect(await page.innerText(":nth-match(.modal #param-central div, 1)")).toBe("Central value");
+        await expect(await page.innerText(":nth-match(.modal #param-central div, 2)")).toBe("4");
         const tagInput = await page.locator("#edit-values input");
         await tagInput.press("1");
         await tagInput.press(",");

@@ -185,6 +185,7 @@ describe("EditParamSettings", () => {
         expect((paramSelect.element as HTMLSelectElement).value).toBe("C");
         const varSelect = wrapper.find("#edit-variation-type select");
         expect((varSelect.element as HTMLSelectElement).value).toBe(SensitivityVariationType.Custom);
+        expect(wrapper.find("#param-central").text()).toBe("Central value 3");
         const tagInput = wrapper.find("#edit-values").findComponent(TagInput);
         expect(tagInput.props().tags).toStrictEqual([1, 2, 3]);
         expect(tagInput.props().numericOnly).toBe(true);
@@ -290,19 +291,19 @@ describe("EditParamSettings", () => {
         expect(wrapper.findComponent(ErrorInfo).exists()).toBe(false);
     });
 
-    it("updates values from TagInput, dedupes and sorts", async () => {
-        const wrapper = await getWrapper(customSettings, true);
-        wrapper.findComponent(TagInput).vm.$emit("update", [5, 1, 5, 0, -1, -2, 1]);
-        const expectedValues = [-2, -1, 0, 1, 5];
-        await nextTick();
-        expect((wrapper.vm as any).settingsInternal.customValues).toStrictEqual(expectedValues);
-        await wrapper.find("#ok-settings").trigger("click");
-        expect(wrapper.emitted("update")?.length).toBe(1);
-        expect((wrapper.emitted("update")![0] as any)[0].customValues).toStrictEqual(expectedValues);
+    it("updates values from TagInput", async () => {
+        const mockSetParamSettings = jest.fn();
+        const wrapper = await getWrapper(customSettings, true,);
+        const expectedValues = [-1, 0, 1];
+        wrapper.findComponent(TagInput).vm.$emit("update", expectedValues);
+        expect((wrapper.vm as any).settingsInternal.customValues).toStrictEqual([-1, 0, 1]);
     });
 
-    it("test set", () => {
-        const cleaned = [...new Set([1, 2, 1])].sort();
-        expect(cleaned).toStrictEqual([1, 2]);
+    it("sorts custom values on update", async () => {
+        const mockSetParamSettings = jest.fn();
+        const wrapper = await getWrapper(customSettings, true);
+        wrapper.findComponent(TagInput).vm.$emit("update", [5, 1, 0, -2, -1]);
+        await wrapper.find("#ok-settings").trigger("click");
+        expect((wrapper.emitted("update")![0] as any)[0].customValues).toStrictEqual([-2, -1, 0, 1, 5]);
     });
 });

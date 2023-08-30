@@ -16,8 +16,8 @@
           </div>
           <ul>
             <li><strong>Parameter:</strong> {{settings.parameterToVary}}</li>
-            <li v-if="settings.variationType !== 'Custom'"><strong>Scale Type:</strong> {{ settings.scaleType }}</li>
             <li><strong>Variation Type:</strong> {{ settings.variationType }}</li>
+            <li v-if="settings.variationType !== 'Custom'"><strong>Scale Type:</strong> {{ settings.scaleType }}</li>
             <li v-if="settings.variationType === 'Percentage'">
               <strong>Variation (%):</strong> {{ settings.variationPercentage }}
             </li>
