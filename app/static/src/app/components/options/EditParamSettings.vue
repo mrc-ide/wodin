@@ -18,18 +18,6 @@
                  </select>
                </div>
              </div>
-             <div class="row mt-2" id="edit-scale-type">
-               <div class="col-6">
-                 <label class="col-form-label">Scale type</label>
-               </div>
-               <div class="col-6">
-                 <select class="form-select" v-model="settingsInternal.scaleType">
-                   <option v-for="scale in scaleValues" :key="scale">{{scale}}</option>
-                 </select>
-               </div>
-               <div class="col-6">
-             </div>
-             </div>
             <div class="row mt-2" id="edit-variation-type">
               <div class="col-6">
                 <label class="col-form-label">Variation type</label>
@@ -38,6 +26,18 @@
                 <select class="form-select" v-model="settingsInternal.variationType">
                   <option v-for="variation in variationTypeValues" :key="variation">{{variation}}</option>
                 </select>
+              </div>
+            </div>
+            <div v-if="settingsInternal.variationType !== 'Custom'"  class="row mt-2" id="edit-scale-type">
+              <div class="col-6">
+                <label class="col-form-label">Scale type</label>
+              </div>
+              <div class="col-6">
+                <select class="form-select" v-model="settingsInternal.scaleType">
+                  <option v-for="scale in scaleValues" :key="scale">{{scale}}</option>
+                </select>
+              </div>
+              <div class="col-6">
               </div>
             </div>
             <div v-if="settingsInternal.variationType === 'Percentage'" class="row mt-2" id="edit-percent">
@@ -49,35 +49,45 @@
                                @update="(n) => settingsInternal.variationPercentage = n"></numeric-input>
               </div>
             </div>
-            <template v-else>
-              <div class="row mt-2" id="edit-from">
-                <div class="col-6">
-                  <label class="col-form-label">From</label>
-                </div>
-                <div class="col-6">
-                  <numeric-input :value="settingsInternal.rangeFrom"
-                                 @update="(n) => settingsInternal.rangeFrom = n"></numeric-input>
-                </div>
+            <div v-if="settingsInternal.variationType === 'Range'" class="row mt-2" id="edit-from">
+              <div class="col-6">
+                <label class="col-form-label">From</label>
               </div>
-              <div class="row mt-2 text-muted" id="param-central">
-                <div class="col-6">
-                  Central value
-                </div>
-                <div class="col-6">
-                  {{ centralValue }}
-                </div>
+              <div class="col-6">
+                <numeric-input :value="settingsInternal.rangeFrom"
+                               @update="(n) => settingsInternal.rangeFrom = n"></numeric-input>
               </div>
-              <div class="row mt-2" id="edit-to">
+            </div>
+            <div v-if="['Range', 'Custom'].includes(settingsInternal.variationType)"
+                 class="row mt-2 text-muted" id="param-central">
+              <div class="col-6">
+                Central value
+              </div>
+              <div class="col-6">
+                {{ centralValue }}
+              </div>
+            </div>
+            <div v-if="settingsInternal.variationType === 'Range'" class="row mt-2" id="edit-to">
+              <div class="col-6">
+                <label class="col-form-label">To</label>
+              </div>
+              <div class="col-6">
+                <numeric-input :value="settingsInternal.rangeTo"
+                               @update="(n) => settingsInternal.rangeTo = n"></numeric-input>
+              </div>
+            </div>
+            <template v-if="settingsInternal.variationType === 'Custom'">
+              <div id="edit-values" class="row mt-2">
                 <div class="col-6">
-                  <label class="col-form-label">To</label>
+                  <label class="col-form-label">Values</label>
                 </div>
                 <div class="col-6">
-                  <numeric-input :value="settingsInternal.rangeTo"
-                                 @update="(n) => settingsInternal.rangeTo = n"></numeric-input>
+                  <tag-input :tags="settingsInternal.customValues" :numeric-only="true" @update="updateUserValues">
+                  </tag-input>
                 </div>
               </div>
             </template>
-            <div class="row mt-2" id="edit-runs">
+            <div v-if="settingsInternal.variationType !== 'Custom'" id="edit-runs" class="row mt-2">
               <div class="col-6">
                 <label class="col-form-label">Number of runs</label>
               </div>
@@ -91,7 +101,10 @@
                 <error-info :error="batchParsError"></error-info>
               </div>
             </div>
-            <sensitivity-param-values :batch-pars="batchPars" :param-name="settingsInternal.parameterToVary"></sensitivity-param-values>
+            <sensitivity-param-values v-if="settingsInternal.variationType !== 'Custom'"
+                                      :batch-pars="batchPars"
+                                      :param-name="settingsInternal.parameterToVary">
+            </sensitivity-param-values>
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary"
@@ -123,6 +136,7 @@ import NumericInput from "./NumericInput.vue";
 import SensitivityParamValues from "./SensitivityParamValues.vue";
 import { generateBatchPars } from "../../utils";
 import ErrorInfo from "../ErrorInfo.vue";
+import TagInput from "./TagInput.vue";
 
 export default defineComponent({
     name: "EditParamSettings.vue",
@@ -135,7 +149,8 @@ export default defineComponent({
     components: {
         ErrorInfo,
         NumericInput,
-        SensitivityParamValues
+        SensitivityParamValues,
+        TagInput
     },
     setup(props, { emit }) {
         const store = useStore();
@@ -161,13 +176,32 @@ export default defineComponent({
         const centralValue = computed(() => store.state.run.parameterValues[settingsInternal.parameterToVary!]);
 
         const paramValues = computed(() => store.state.run.parameterValues);
-        const batchParsResult = computed(() => generateBatchPars(store.state, settingsInternal, paramValues.value));
-        const batchPars = computed(() => batchParsResult.value.batchPars);
-        const batchParsError = computed(() => batchParsResult.value.error);
+        const batchParsResult = computed(() => {
+            if (settingsInternal.variationType === SensitivityVariationType.Custom) {
+                return null;
+            }
+            return generateBatchPars(store.state, settingsInternal, paramValues.value);
+        });
+        const batchPars = computed(() => batchParsResult.value?.batchPars);
+        const batchParsError = computed(() => {
+            if (settingsInternal.variationType === SensitivityVariationType.Custom) {
+                // Minimum of two custom values
+                return settingsInternal.customValues.length < 2
+                    ? { error: "Invalid settings", detail: "Must include at least 2 traces in the batch" } : null;
+            }
+            return batchParsResult.value?.error;
+        });
+        const updateUserValues = (newValues: number[]) => {
+            // sort and remove duplicates
+            settingsInternal.customValues = newValues;
+        };
 
         const close = () => { emit("close"); };
         const updateSettings = () => {
-            store.commit(`sensitivity/${SensitivityMutation.SetParamSettings}`, { ...settingsInternal });
+            // sort custom values
+            const customValues = settingsInternal.customValues.sort((a, b) => a - b);
+            store.commit(`sensitivity/${SensitivityMutation.SetParamSettings}`,
+                { ...settingsInternal, customValues });
             close();
         };
 
@@ -180,6 +214,7 @@ export default defineComponent({
             centralValue,
             batchPars,
             batchParsError,
+            updateUserValues,
             close,
             updateSettings
         };

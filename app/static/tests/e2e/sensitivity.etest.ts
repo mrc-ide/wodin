@@ -16,8 +16,8 @@ test.describe("Sensitivity tests", () => {
     test("can edit Sensitivity options", async ({ page }) => {
         // Default settings are visible
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 1)")).toBe("Parameter: beta");
-        await expect(await page.innerText(":nth-match(#sensitivity-options li, 2)")).toBe("Scale Type: Arithmetic");
-        await expect(await page.innerText(":nth-match(#sensitivity-options li, 3)")).toBe("Variation Type: Percentage");
+        await expect(await page.innerText(":nth-match(#sensitivity-options li, 2)")).toBe("Variation Type: Percentage");
+        await expect(await page.innerText(":nth-match(#sensitivity-options li, 3)")).toBe("Scale Type: Arithmetic");
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 4)")).toBe("Variation (%): 10");
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 5)")).toBe("Number of runs: 10");
         await expect(await page.innerText("#sensitivity-options .alert-success"))
@@ -54,8 +54,8 @@ test.describe("Sensitivity tests", () => {
 
         // New settings are visible
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 1)")).toBe("Parameter: sigma");
-        await expect(await page.innerText(":nth-match(#sensitivity-options li, 2)")).toBe("Scale Type: Logarithmic");
-        await expect(await page.innerText(":nth-match(#sensitivity-options li, 3)")).toBe("Variation Type: Range");
+        await expect(await page.innerText(":nth-match(#sensitivity-options li, 2)")).toBe("Variation Type: Range");
+        await expect(await page.innerText(":nth-match(#sensitivity-options li, 3)")).toBe("Scale Type: Logarithmic");
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 4)")).toBe("From: 1");
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 5)")).toBe("To: 5");
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 6)")).toBe("Number of runs: 12");
@@ -228,5 +228,42 @@ test.describe("Sensitivity tests", () => {
         await expectSummaryValues(page, 64, "S (Set 1)", 1000, "#2e5cb8", "dot", "0", "100", "1000000", "1000000");
         await expectSummaryValues(page, 65, "I (Set 1)", 1000, "#cccc00", "dot", "0", "100", "0", "0");
         await expectSummaryValues(page, 66, "R (Set 1)", 1000, "#cc0044", "dot", "0", "100", "0", "0");
+    });
+
+    test("can change sensitivity settings to Custom variation, and see values in plot", async ({ page }) => {
+        await page.click("#sensitivity-options .btn-primary");
+        await expect(await page.locator("#edit-param .modal")).toBeVisible();
+        const varSelect = await page.locator("#edit-variation-type select");
+        await varSelect.selectOption("Custom");
+        await expect(await page.innerText("#invalid-msg"))
+            .toBe("Invalid settings: Must include at least 2 traces in the batch");
+
+        await expect(await page.innerText(":nth-match(.modal #param-central div, 1)")).toBe("Central value");
+        await expect(await page.innerText(":nth-match(.modal #param-central div, 2)")).toBe("4");
+        const tagInput = await page.locator("#edit-values input");
+        await tagInput.press("1");
+        await tagInput.press(",");
+        await tagInput.press("2");
+        await tagInput.press(",");
+        await tagInput.press("3");
+        await tagInput.press(",");
+
+        await page.waitForTimeout(100);
+        await expect(await page.locator("#invalid-msg").count()).toBe(0);
+        await expect(await page.locator(".modal .alert-success").count()).toBe(0);
+
+        await page.click("#ok-settings");
+
+        // run and see traces summary
+        await page.click("#run-sens-btn");
+        await expectSummaryValues(page, 1, "S (beta=1.000)", 1000, "#2e5cb8");
+        await expectSummaryValues(page, 2, "I (beta=1.000)", 1000, "#cccc00");
+        await expectSummaryValues(page, 3, "R (beta=1.000)", 1000, "#cc0044");
+        await expectSummaryValues(page, 4, "S (beta=2.000)", 1000, "#2e5cb8");
+        await expectSummaryValues(page, 5, "I (beta=2.000)", 1000, "#cccc00");
+        await expectSummaryValues(page, 6, "R (beta=2.000)", 1000, "#cc0044");
+        await expectSummaryValues(page, 7, "S (beta=3.000)", 1000, "#2e5cb8");
+        await expectSummaryValues(page, 8, "I (beta=3.000)", 1000, "#cccc00");
+        await expectSummaryValues(page, 9, "R (beta=3.000)", 1000, "#cc0044");
     });
 });
