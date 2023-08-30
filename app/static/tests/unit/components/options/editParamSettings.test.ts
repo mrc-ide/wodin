@@ -293,7 +293,7 @@ describe("EditParamSettings", () => {
 
     it("updates values from TagInput", async () => {
         const mockSetParamSettings = jest.fn();
-        const wrapper = await getWrapper(customSettings, true,);
+        const wrapper = await getWrapper(customSettings, true);
         const expectedValues = [-1, 0, 1];
         wrapper.findComponent(TagInput).vm.$emit("update", expectedValues);
         expect((wrapper.vm as any).settingsInternal.customValues).toStrictEqual([-1, 0, 1]);
