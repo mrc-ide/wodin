@@ -177,8 +177,6 @@ export function generateBatchPars(
         }
     }
 
-    console.log("VARYING PARAM: " + JSON.stringify(varyingParam))
-
     const error = errorDetail ? { error: userMessages.sensitivity.invalidSettings, detail: errorDetail } : null;
     const batchPars = errorDetail ? null : { base: paramValues!, varying: [varyingParam!] };
     return {
