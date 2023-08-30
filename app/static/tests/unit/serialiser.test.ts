@@ -135,14 +135,18 @@ describe("serialise", () => {
 
     const sensitivityBatchPars = {
         base: { alpha: 1, beta: 1.1 },
-        name: "alpha",
-        values: [0.5, 0.75, 1, 1.25, 1.5]
+        varying: [{
+            name: "alpha",
+            values: [0.5, 0.75, 1, 1.25, 1.5]
+        }]
     };
 
     const sensitivityParamSetBatchPars = {
         base: { alpha: 2, beta: 3.3 },
-        name: "alpha",
-        values: [1.5, 1.75, 2, 2.25, 2.5]
+        varying: [{
+            name: "alpha",
+            values: [1.5, 1.75, 2, 2.25, 2.5]
+        }]
     };
     const sensitivityState = {
         running: true,
@@ -179,6 +183,7 @@ describe("serialise", () => {
                 pars: sensitivityBatchPars,
                 solutions: [jest.fn(), jest.fn()],
                 errors: [],
+                successfulVaryingParams: [],
                 valueAtTime: jest.fn(),
                 extreme: jest.fn(),
                 compute: jest.fn()
@@ -195,6 +200,7 @@ describe("serialise", () => {
                     pars: sensitivityParamSetBatchPars,
                     solutions: [jest.fn(), jest.fn()],
                     errors: [],
+                    successfulVaryingParams: [],
                     valueAtTime: jest.fn(),
                     extreme: jest.fn(),
                     compute: jest.fn()
