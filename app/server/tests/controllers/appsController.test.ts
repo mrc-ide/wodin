@@ -104,7 +104,7 @@ describe("appsController", () => {
             shareNotFound: "",
             mathjaxSrc,
             defaultLanguage: "en",
-            enableI18n: true
+            enableI18n: false
         });
     });
 
@@ -130,7 +130,7 @@ describe("appsController", () => {
             shareNotFound: "",
             mathjaxSrc,
             defaultLanguage: "en",
-            enableI18n: true
+            enableI18n: false
         });
     });
 
@@ -154,7 +154,7 @@ describe("appsController", () => {
             shareNotFound: "tiny-mouse",
             mathjaxSrc,
             defaultLanguage: "en",
-            enableI18n: true
+            enableI18n: false
         });
     });
 
