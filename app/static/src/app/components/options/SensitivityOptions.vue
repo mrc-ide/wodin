@@ -176,6 +176,7 @@ export default defineComponent({
             canDeleteSettings,
             showOptions,
             compileModelMessage,
+            addingParamSettings,
             closeEdit,
             openEdit,
             editSettings,

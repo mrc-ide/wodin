@@ -322,16 +322,44 @@ describe("SensitivityOptions", () => {
         expect(mockSensitivitySetParamSettings).not.toHaveBeenCalled();
     });
 
-    it("adds param settings when click Add button", async () => {
+    it("opens editor with default new settings when click Add button", async () => {
         const settings = [customSettings, percentSettings];
         const wrapper = getWrapperForMultiSensitivity(settings);
         await wrapper.find("#add-param-settings").trigger("click");
+
+        const editParamSettings = wrapper.findComponent(EditParamSettings);
+        expect(editParamSettings.props("open")).toBe(true);
+        expect(editParamSettings.props("paramSettings")).toStrictEqual({
+            ...defaultSensitivityParamSettings(),
+            parameterToVary: "B"
+        });
+        expect(mockMultiSensitivitySetParamSettings).not.toHaveBeenCalled();
+    });
+
+    it("saves added multi-sensitivity param settings", async () => {
+        const settings = [customSettings, percentSettings];
+        const wrapper = getWrapperForMultiSensitivity(settings);
+        await wrapper.find("#add-param-settings").trigger("click");
+        const editParamSettings = wrapper.findComponent(EditParamSettings);
+        await editParamSettings.vm.$emit("update", { ...rangeSettings });
         expect(mockMultiSensitivitySetParamSettings).toHaveBeenCalledTimes(1);
         // The first parameter not already in the settings should be B
         expect(mockMultiSensitivitySetParamSettings.mock.calls[0][1]).toStrictEqual([
             ...settings,
-            { ...defaultSensitivityParamSettings(), parameterToVary: "B" }
+            rangeSettings
         ]);
+    });
+
+    it("can edit setting after closing editor on add", async () => {
+        const settings = [customSettings, percentSettings];
+        const wrapper = getWrapperForMultiSensitivity(settings);
+        await wrapper.find("#add-param-settings").trigger("click");
+        expect((wrapper.vm as any).addingParamSettings).toBe(true);
+        const editParamSettings = wrapper.findComponent(EditParamSettings);
+        editParamSettings.vm.$emit("close");
+        expect((wrapper.vm as any).addingParamSettings).toBe(false);
+        await wrapper.find(".edit-param-settings").trigger("click");
+        expect(editParamSettings.props("paramSettings")).toStrictEqual(customSettings);
     });
 
     it("deletes param settings when click Delete button", async () => {
