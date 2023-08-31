@@ -1,6 +1,4 @@
 // Mock the import of third party packages to prevent errors
-import {expectLeftWodinTabs, expectRightWodinTabs} from "../../../testUtils";
-
 jest.mock("plotly.js-basic-dist-min", () => ({}));
 jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
     return function () {
@@ -16,6 +14,7 @@ jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
 /* eslint-disable import/first */
 import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
+import { expectLeftWodinTabs, expectRightWodinTabs } from "../../../testUtils";
 import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
 import BasicApp from "../../../../src/app/components/basic/BasicApp.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
@@ -100,7 +99,7 @@ describe("BasicApp", () => {
         const leftTabs = wodinPanels.find(".wodin-left #left-tabs");
         expect(leftTabs.find("div.mt-4 div.code-tab").exists()).toBe(true);
 
-        expectRightWodinTabs(wrapper,["Run", "Sensitivity"]);
+        expectRightWodinTabs(wrapper, ["Run", "Sensitivity"]);
         const rightTabs = wodinPanels.find(".wodin-right #right-tabs");
         const rightTabLinks = rightTabs.findAll("ul li a");
         expect(rightTabs.find("div.mt-4 div.run-tab").exists()).toBe(true);

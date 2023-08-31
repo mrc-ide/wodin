@@ -1,6 +1,4 @@
 // Mock the import of third party packages to prevent errors
-import {expectLeftWodinTabs, expectRightWodinTabs} from "../../../testUtils";
-
 jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
     return function () {
         return {
@@ -15,6 +13,7 @@ jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
 /* eslint-disable import/first */
 import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
+import { expectLeftWodinTabs, expectRightWodinTabs } from "../../../testUtils";
 import StochasticApp from "../../../../src/app/components/stochastic/StochasticApp.vue";
 import { StochasticState } from "../../../../src/app/store/stochastic/state";
 import { mockModelState, mockGraphSettingsState, mockStochasticState } from "../../../mocks";
@@ -90,7 +89,7 @@ describe("StochasticApp", () => {
 
         const wodinPanels = wodinApp.findComponent(WodinPanels);
 
-        expectLeftWodinTabs(wrapper,["Code", "Options"]);
+        expectLeftWodinTabs(wrapper, ["Code", "Options"]);
 
         const leftTabs = wodinPanels.find(".wodin-left #left-tabs");
         expect(leftTabs.findComponent(CodeTab).exists()).toBe(true);
@@ -166,6 +165,6 @@ describe("StochasticApp", () => {
             multiSensitivity: true
         };
         const wrapper = getWrapper(bothConfig);
-        expectRightWodinTabs(wrapper,["Help", "Run", "Sensitivity", "Multi-sensitivity"]);
+        expectRightWodinTabs(wrapper, ["Help", "Run", "Sensitivity", "Multi-sensitivity"]);
     });
 });

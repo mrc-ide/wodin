@@ -1,4 +1,4 @@
-import {VueWrapper} from "@vue/test-utils";
+import { VueWrapper } from "@vue/test-utils";
 import WodinPanels from "../src/app/components/WodinPanels.vue";
 
 export const fileTimeout = 20;

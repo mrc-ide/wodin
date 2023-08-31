@@ -1,6 +1,4 @@
 // Mock the import of third party packages to prevent errors
-import {expectLeftWodinTabs, expectRightWodinTabs} from "../../../testUtils";
-
 jest.mock("plotly.js-basic-dist-min", () => ({}));
 jest.mock("plotly.js-basic-dist-min", () => ({}));
 jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
@@ -17,6 +15,7 @@ jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
 /* eslint-disable import/first */
 import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
+import { expectLeftWodinTabs, expectRightWodinTabs } from "../../../testUtils";
 import FitApp from "../../../../src/app/components/fit/FitApp.vue";
 import { FitState } from "../../../../src/app/store/fit/state";
 import { AppStateAction } from "../../../../src/app/store/appState/actions";
@@ -107,7 +106,7 @@ describe("FitApp", () => {
         const wodinApp = wrapper.findComponent(WodinApp);
 
         const wodinPanels = wodinApp.findComponent(WodinPanels);
-        expectLeftWodinTabs(wrapper,["Data", "Code", "Options"]);
+        expectLeftWodinTabs(wrapper, ["Data", "Code", "Options"]);
 
         const leftTabs = wodinPanels.find(".wodin-left #left-tabs");
         expect(leftTabs.findComponent(DataTab).exists()).toBe(true);
@@ -177,7 +176,7 @@ describe("FitApp", () => {
         const wodinPanels = wrapper.findComponent(WodinPanels);
         const rightPanel = wodinPanels.find(".wodin-right");
 
-        expectRightWodinTabs(wrapper,["Help", "Run", "Fit", "Sensitivity"]);
+        expectRightWodinTabs(wrapper, ["Help", "Run", "Fit", "Sensitivity"]);
         const rightTabs = wodinPanels.find(".wodin-right #right-tabs");
         expect(rightTabs.findComponent(HelpTab).exists()).toBe(true);
     });
