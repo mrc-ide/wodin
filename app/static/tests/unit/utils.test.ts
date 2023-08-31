@@ -393,9 +393,11 @@ describe("generateBatchPars", () => {
     it("generates BatchPars for Custom variation type", () => {
         const result = generateBatchPars(rootState, customSettings, parameterValues)!;
         expect(result.error).toBe(null);
-        expect(result.batchPars!.name).toBe("C");
         expect(result.batchPars!.base).toBe(parameterValues);
-        expect(result.batchPars!.values).toStrictEqual([1, 2, 3]);
+        expect(result.batchPars!.varying).toStrictEqual([{
+            name: "C",
+            values: [1, 2, 3]
+        }]);
         expect(spyBatchParsDisplace).not.toHaveBeenCalled();
         expect(spyBatchParsRange).not.toHaveBeenCalled();
     });
