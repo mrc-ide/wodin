@@ -74,20 +74,22 @@ test.describe("Multi-sensitivity tests", () => {
         await expectOptionsTabParamSettings(page, 1, "beta", SensitivityScaleType.Arithmetic,
             SensitivityVariationType.Range, null, 0, 9, 10, "0.000, 1.000, 2.000, ..., 9.000");
 
-        // Add two new settings, and edit one of them
+        // Add new settings - save defaults
         await page.click("#add-param-settings");
+        await expectModalParamSettings(page, "I0", SensitivityScaleType.Arithmetic,
+            SensitivityVariationType.Percentage, 10, null, null, null, 10, "0.900, 0.922, 0.944, ..., 1.100");
+        await page.click("#ok-settings");
         await expect(await page.locator(".sensitivity-options-settings").count()).toBe(2);
         await expectOptionsTabParamSettings(page, 2, "I0", SensitivityScaleType.Arithmetic,
             SensitivityVariationType.Percentage, 10, null, null, 10, "0.900, 0.922, 0.944, ..., 1.100");
 
+        // Add another new settings - make changes before saving
         await page.click("#add-param-settings");
-        await expect(await page.locator(".sensitivity-options-settings").count()).toBe(3);
-        await expectOptionsTabParamSettings(page, 3, "N", SensitivityScaleType.Arithmetic,
-            SensitivityVariationType.Percentage, 10, null, null, 10,
+        await expectModalParamSettings(page, "N", SensitivityScaleType.Arithmetic,
+            SensitivityVariationType.Percentage, 10, null, null, null, 10,
             "900000.000, 922222.222, 944444.444, ..., 1100000.000");
 
         // change a parameter
-        await page.click(":nth-match(.edit-param-settings, 3)");
         await page.selectOption("#edit-param-to-vary select", "sigma");
         await expectModalParamSettings(page, "sigma", SensitivityScaleType.Arithmetic,
             SensitivityVariationType.Percentage, 10, null, null, null, 10, "1.800, 1.844, 1.889, ..., 2.200");
@@ -98,6 +100,7 @@ test.describe("Multi-sensitivity tests", () => {
 
         // Save
         await page.click("#ok-settings");
+        await expect(await page.locator(".sensitivity-options-settings").count()).toBe(3);
         await expectOptionsTabParamSettings(page, 1, "beta", SensitivityScaleType.Arithmetic,
             SensitivityVariationType.Range, null, 0, 9, 10, "0.000, 1.000, 2.000, ..., 9.000");
         await expectOptionsTabParamSettings(page, 2, "I0", SensitivityScaleType.Arithmetic,

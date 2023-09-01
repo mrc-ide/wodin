@@ -3,7 +3,7 @@ import { format } from "d3-format";
 import { Palette, paletteData } from "./palette";
 import type { AllFitData, FitData, FitDataLink } from "./store/fitData/state";
 import {
-    DiscreteSeriesSet, OdinSeriesSet, OdinSeriesSetValues
+    DiscreteSeriesSet, OdinSeriesSet, OdinSeriesSetValues, OdinUserTypeSeriesSet
 } from "./types/responseTypes";
 import { Dict } from "./types/utilTypes";
 
@@ -21,6 +21,15 @@ export const margin = {
 export const config = {
     responsive: true
 };
+
+export function filterUserTypeSeriesSet(s: OdinUserTypeSeriesSet, param: string, names: string[]): OdinSeriesSet {
+    const values = s.values.filter((v) => names.includes(v.name));
+    const xValues = s.x.map((x) => x[param]);
+    return {
+        x: xValues,
+        values
+    };
+}
 
 export function filterSeriesSet(s: OdinSeriesSet, names: string[]): OdinSeriesSet {
     const values = s.values.filter((v) => names.includes(v.name));

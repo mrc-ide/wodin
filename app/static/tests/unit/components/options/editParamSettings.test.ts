@@ -256,8 +256,9 @@ describe("EditParamSettings", () => {
         const rangeSpy = jest.spyOn(mockRunner, "batchParsRange");
         const wrapper = await getWrapper(percentSettings);
         const sensitivityValues = wrapper.findComponent(SensitivityParamValues);
-        expectCloseNumericArray(sensitivityValues.props("batchPars").values, [1.8, 1.9, 2, 2.1, 2.2]);
-        expect(sensitivityValues.props("batchPars").name).toBe("B");
+        const { values, name } = sensitivityValues.props("batchPars").varying[0];
+        expectCloseNumericArray(values, [1.8, 1.9, 2, 2.1, 2.2]);
+        expect(name).toBe("B");
         expect(percentSpy).toHaveBeenCalledTimes(1);
         expect(percentSpy.mock.calls[0][0]).toStrictEqual(parameterValues);
         expect(percentSpy.mock.calls[0][1]).toBe("B");
@@ -268,7 +269,8 @@ describe("EditParamSettings", () => {
         await updateSelect(wrapper, "edit-variation-type", SensitivityVariationType.Range);
         await wrapper.find("#edit-from").findComponent(NumericInput).vm.$emit("update", 1);
         await wrapper.find("#edit-to").findComponent(NumericInput).vm.$emit("update", 3);
-        expectCloseNumericArray(sensitivityValues.props("batchPars").values, [1, 1.5, 2, 2.5, 3]);
+        const updatedValues = sensitivityValues.props("batchPars").varying[0].values;
+        expectCloseNumericArray(updatedValues, [1, 1.5, 2, 2.5, 3]);
         expect(rangeSpy).toHaveBeenCalledTimes(3); // called on each update
         expect(rangeSpy.mock.calls[2][0]).toStrictEqual(parameterValues);
         expect(rangeSpy.mock.calls[2][1]).toBe("B");

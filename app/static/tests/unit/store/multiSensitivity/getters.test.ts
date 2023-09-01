@@ -53,8 +53,18 @@ describe("MultiSensitivity getters", () => {
 
         const result = getters[MultiSensitivityGetter.multiBatchPars](state, getters, rootState, {} as any);
         expect(result).toStrictEqual([
-            { name: "A", values: [1, 2, 3], base: parameterValues },
-            { name: "B", values: [1, 2, 3, 4, 5], base: parameterValues }
+            {
+                varying: [
+                    { name: "A", values: [1, 2, 3] }
+                ],
+                base: parameterValues
+            },
+            {
+                varying: [
+                    { name: "B", values: [1, 2, 3, 4, 5] }
+                ],
+                base: parameterValues
+            }
         ]);
         expect(mockSpyDisplace).toHaveBeenCalledTimes(1);
         expect(mockSpyRange).toHaveBeenCalledTimes(1);

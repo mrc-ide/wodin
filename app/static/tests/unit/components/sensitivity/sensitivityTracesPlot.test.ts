@@ -431,13 +431,18 @@ describe("SensitivityTracesPlot", () => {
                 sensitivity: {
                     namespaced: true,
                     state: {
+                        paramSettings: {
+                            parameterToVary: "alpha"
+                        },
                         result: {
                             batch: {
                                 solutions: sensitivityHasSolutions ? mockSolutions : null,
                                 allFitData: sensitivityHasData ? mockAllFitData : undefined,
                                 pars: {
-                                    name: "alpha",
-                                    values: [1.11111, 2.22222]
+                                    varying: [{
+                                        name: "alpha",
+                                        values: [1.11111, 2.22222]
+                                    }]
                                 }
                             }
                         },

@@ -101,7 +101,9 @@
                 <error-info :error="batchParsError"></error-info>
               </div>
             </div>
-            <sensitivity-param-values v-if="settingsInternal.variationType !== 'Custom'" :batch-pars="batchPars">
+            <sensitivity-param-values v-if="settingsInternal.variationType !== 'Custom'"
+                                      :batch-pars="batchPars"
+                                      :param-name="settingsInternal.parameterToVary">
             </sensitivity-param-values>
           </div>
           <div class="modal-footer">
