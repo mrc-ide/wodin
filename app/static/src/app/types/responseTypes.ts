@@ -25,7 +25,8 @@ export interface AppConfigBase {
     help?: {
         markdown?: string[],
         tabName?: string
-    }
+    },
+    multiSensitivity?: boolean
 }
 
 export interface BasicConfig extends AppConfigBase {

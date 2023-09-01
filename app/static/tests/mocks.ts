@@ -24,6 +24,8 @@ import { VersionsState } from "../src/app/store/versions/state";
 import { GraphSettingsState } from "../src/app/store/graphSettings/state";
 import { LanguageState } from "../translationPackage/store/state";
 import { Language } from "../src/app/types/languageTypes";
+import { noSensitivityUpdateRequired } from "../src/app/store/sensitivity/sensitivity";
+import { MultiSensitivityState } from "../src/app/store/multiSensitivity/state";
 
 export const mockAxios = new MockAdapter(axios);
 
@@ -165,15 +167,22 @@ export const mockSensitivityState = (state: Partial<SensitivityState> = {}): Sen
             extreme: SensitivityPlotExtreme.Max,
             time: null
         },
-        sensitivityUpdateRequired: {
-            modelChanged: false,
-            parameterValueChanged: false,
-            endTimeChanged: false,
-            sensitivityOptionsChanged: false,
-            numberOfReplicatesChanged: false
-        },
+        sensitivityUpdateRequired: noSensitivityUpdateRequired(),
         result: null,
         parameterSetResults: {},
+        ...state
+    };
+};
+
+export const mockMultiSensitivityState = (state: Partial<MultiSensitivityState> = {}): MultiSensitivityState => {
+    return {
+        result: null,
+        downloading: false,
+        userSummaryDownloadFileName: "",
+        sensitivityUpdateRequired: noSensitivityUpdateRequired(),
+        running: false,
+        loading: false,
+        paramSettings: [],
         ...state
     };
 };
@@ -198,6 +207,7 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
         model: mockModelState(),
         run: mockRunState(),
         sensitivity: mockSensitivityState(),
+        multiSensitivity: mockMultiSensitivityState(),
         versions: mockVersionsState(),
         graphSettings: mockGraphSettingsState(),
         configured: false,
@@ -246,6 +256,7 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
         run: mockRunState(),
         fitData: mockFitDataState(),
         sensitivity: mockSensitivityState(),
+        multiSensitivity: mockMultiSensitivityState(),
         modelFit: mockModelFitState(),
         versions: mockVersionsState(),
         graphSettings: mockGraphSettingsState(),
@@ -276,6 +287,7 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
         model: mockModelState(),
         run: mockRunState(),
         sensitivity: mockSensitivityState(),
+        multiSensitivity: mockMultiSensitivityState(),
         versions: mockVersionsState(),
         graphSettings: mockGraphSettingsState(),
         configured: false,

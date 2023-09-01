@@ -25,7 +25,7 @@ test.describe("Sensitivity tests", () => {
 
         // Edit settings
         await expect(await page.isVisible(".modal")).toBe(false);
-        await page.click("#sensitivity-options .btn-primary");
+        await page.click("#sensitivity-options .edit-param-settings");
         await expect(await page.locator("#edit-param .modal")).toBeVisible();
         await expect(await page.innerText("#edit-param .modal-title")).toBe("Vary Parameter");
         await expect(await page.locator("#invalid-msg").count()).toBe(0);
@@ -231,7 +231,7 @@ test.describe("Sensitivity tests", () => {
     });
 
     test("can change sensitivity settings to Custom variation, and see values in plot", async ({ page }) => {
-        await page.click("#sensitivity-options .btn-primary");
+        await page.click("#sensitivity-options .edit-param-settings");
         await expect(await page.locator("#edit-param .modal")).toBeVisible();
         const varSelect = await page.locator("#edit-variation-type select");
         await varSelect.selectOption("Custom");

@@ -12,7 +12,7 @@ import {
     mockCodeState,
     mockFitDataState, mockGraphSettingsState,
     mockModelFitState,
-    mockModelState,
+    mockModelState, mockMultiSensitivityState,
     mockRunState,
     mockSensitivityState, mockVersionsState
 } from "../mocks";
@@ -272,6 +272,7 @@ describe("serialise", () => {
         model: modelState,
         run: runState,
         sensitivity: sensitivityState,
+        multiSensitivity: mockMultiSensitivityState(),
         versions: { versions: null },
         graphSettings: { logScaleYAxis: true },
         configured: false,
@@ -293,6 +294,7 @@ describe("serialise", () => {
         model: modelState,
         run: runState,
         sensitivity: sensitivityState,
+        multiSensitivity: mockMultiSensitivityState(),
         fitData: fitDataState,
         modelFit: modelFitState,
         versions: { versions: null },
