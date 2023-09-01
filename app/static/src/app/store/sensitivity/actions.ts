@@ -2,9 +2,9 @@ import {
     ActionContext, ActionTree, Commit, Dispatch
 } from "vuex";
 import { AppState, AppType } from "../appState/state";
-import { SensitivityState } from "./state";
+import {BaseSensitivityState, SensitivityState} from "./state";
 import { SensitivityGetter } from "./getters";
-import { SensitivityMutation } from "./mutations";
+import {BaseSensitivityMutation, SensitivityMutation} from "./mutations";
 import { RunAction } from "../run/actions";
 import userMessages from "../../userMessages";
 import { OdinSensitivityResult } from "../../types/wrapperTypes";
@@ -17,12 +17,17 @@ import { AdvancedSettings } from "../run/state";
 import { convertAdvancedSettingsToOdin } from "../../utils";
 import { WodinSensitivitySummaryDownload } from "../../excel/wodinSensitivitySummaryDownload";
 
+export enum BaseSensitivityAction {
+    ComputeNext = "ComputeNext"
+}
+
 export enum SensitivityAction {
     RunSensitivity = "RunSensitivity",
     RunSensitivityOnRehydrate = "RunSensitivityOnRehydrate",
-    ComputeNext = "ComputeNext",
     DownloadSummary = "DownloadSummary"
 }
+
+// TODO: move all these out to utils
 
 const runModelIfRequired = (rootState: AppState, dispatch: Dispatch) => {
     // Re-run model if required on sensitivity run so that plotted central traces are correct
@@ -51,12 +56,17 @@ const batchRunDiscrete = (runner: OdinRunnerDiscrete,
     dispatch: Dispatch,
     commit: Commit): Batch => {
     const batch = runner.batchRunDiscrete(odin, pars, 0, endTime, dt, replicates);
-    commit(SensitivityMutation.SetRunning, true);
-    dispatch(SensitivityAction.ComputeNext, batch);
+    commit(BaseSensitivityMutation.SetRunning, true);
+    dispatch(BaseSensitivityAction.ComputeNext, batch);
     return batch;
 };
 
-const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionContext<SensitivityState, AppState>) => {
+export const runSensitivity = (
+    batchPars: BatchPars,
+    endTime: number,
+    context: ActionContext<BaseSensitivityState, AppState>,
+    multiSensitivity = false
+    ) => {
     const {
         rootState, commit, dispatch, getters, rootGetters
     } = context;
@@ -89,9 +99,9 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
                 detail: (e as Error).message
             };
         }
-        commit(SensitivityMutation.SetResult, payload);
+        commit(BaseSensitivityMutation.SetResult, payload);
 
-        if (getters.parameterSetSensitivityUpdateRequired && !isStochastic) {
+        if (!multiSensitivity && getters.parameterSetSensitivityUpdateRequired && !isStochastic) {
             const parameterSetBatchPars = getters[SensitivityGetter.parameterSetBatchPars];
             const parameterSetNames = Object.keys(parameterSetBatchPars);
             const parameterSetResults = {} as Dict<OdinSensitivityResult>;
@@ -123,7 +133,7 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
         }
 
         if (payload.batch !== null) {
-            commit(SensitivityMutation.SetUpdateRequired, {
+            commit(BaseSensitivityMutation.SetUpdateRequired, {
                 modelChanged: false,
                 parameterValueChanged: false,
                 endTimeChanged: false,
@@ -134,7 +144,25 @@ const runSensitivity = (batchPars: BatchPars, endTime: number, context: ActionCo
     }
 };
 
+export const baseSensitivityActions: ActionTree<BaseSensitivityState, AppState> = {
+    [BaseSensitivityAction.ComputeNext](context, batch: Batch) {
+        const {
+            commit, dispatch, state
+        } = context;
+        const isComplete = batch.compute();
+        commit(BaseSensitivityMutation.SetResult, { ...state.result, batch });
+        if (isComplete) {
+            commit(BaseSensitivityMutation.SetRunning, false);
+        } else {
+            setTimeout(() => {
+                dispatch(BaseSensitivityAction.ComputeNext, batch);
+            }, 0);
+        }
+    }
+};
+
 export const actions: ActionTree<SensitivityState, AppState> = {
+    ...baseSensitivityActions,
     [SensitivityAction.RunSensitivity](context) {
         const { rootState, getters } = context;
         const { endTime } = rootState.run;
@@ -149,21 +177,6 @@ export const actions: ActionTree<SensitivityState, AppState> = {
         const { pars } = state.result!.inputs;
 
         runSensitivity(pars, endTime, context);
-    },
-
-    [SensitivityAction.ComputeNext](context, batch: Batch) {
-        const {
-            commit, dispatch, state
-        } = context;
-        const isComplete = batch.compute();
-        commit(SensitivityMutation.SetResult, { ...state.result, batch });
-        if (isComplete) {
-            commit(SensitivityMutation.SetRunning, false);
-        } else {
-            setTimeout(() => {
-                dispatch(SensitivityAction.ComputeNext, batch);
-            }, 0);
-        }
     },
 
     [SensitivityAction.DownloadSummary](context, filename: string) {

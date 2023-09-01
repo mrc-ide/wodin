@@ -8,20 +8,21 @@ import userMessages from "../../userMessages";
 import {SensitivityMutation} from "../sensitivity/mutations";
 import {SensitivityGetter} from "../sensitivity/getters";
 import {Dict} from "../../types/utilTypes";
-import {SensitivityAction} from "../sensitivity/actions";
+import {baseSensitivityActions, runSensitivity, SensitivityAction} from "../sensitivity/actions";
 import {MultiSensitivityState} from "./state";
+import {MultiSensitivityGetter} from "./getters";
 
 export enum MultiSensitivityAction {
     RunMultiSensitivity = "RunMultiSensitivity",
-    ComputeNext = "ComputeNext"
 }
 
 export const actions: ActionTree<MultiSensitivityState, AppState> = {
+    ...baseSensitivityActions,
     [MultiSensitivityAction.RunMultiSensitivity](context) {
         const {rootState, getters} = context;
         const {endTime} = rootState.run;
-        const batchPars = getters[SensitivityGetter.batchPars];
+        const batchPars = getters[MultiSensitivityGetter.batchPars];
 
-        //runSensitivity(batchPars, endTime, context);
+        runSensitivity(batchPars, endTime, context, true);
     }
 }
