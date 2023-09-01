@@ -23,15 +23,25 @@ const mockTooltipDirective = jest.fn();
 describe("SensitivityOptions", () => {
     const mockBatchPars = {
         varying: [{
-            name: "B",
+            name: "A",
             values: [1, 2, 3]
         }]
     } as any;
 
     const mockMultiBatchPars = [
         mockBatchPars,
-        { name: "B", values: [4, 5] },
-        { name: "C", values: [6, 7, 8] }
+        {
+            varying: [{
+                name: "B",
+                values: [4, 5]
+            }]
+        },
+        {
+            varying: [{
+                name: "C",
+                values: [6, 7, 8]
+            }]
+        }
     ] as any;
 
     const mockSensitivitySetParamSettings = jest.fn();
