@@ -18,11 +18,11 @@ import {
 import { AxisType, newPlot, Plots } from "plotly.js-basic-dist-min";
 import { useStore } from "vuex";
 import {
-    config, fadePlotStyle, filterSeriesSet, margin, odinToPlotly, updatePlotTraceName
+    config, fadePlotStyle, filterUserTypeSeriesSet, margin, odinToPlotly, updatePlotTraceName
 } from "../../plot";
 import { SensitivityPlotExtremePrefix, SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
-import { Batch, OdinSeriesSet } from "../../types/responseTypes";
+import { Batch, OdinUserTypeSeriesSet } from "../../types/responseTypes";
 import { runPlaceholderMessage } from "../../utils";
 import { RunGetter } from "../../store/run/getters";
 import { Dict } from "../../types/utilTypes";
@@ -91,8 +91,9 @@ export default defineComponent({
 
         const plotData = computed(() => {
             if (batch.value) {
-                let data: null | OdinSeriesSet;
-                const paramSetData: Dict<OdinSeriesSet> = {};
+                const paramName = store.state.sensitivity.paramSettings.parameterToVary;
+                let data: null | OdinUserTypeSeriesSet;
+                const paramSetData: Dict<OdinUserTypeSeriesSet> = {};
                 if (plotSettings.value.plotType === SensitivityPlotType.ValueAtTime) {
                     verifyValidPlotSettingsTime(store.state, store.commit);
                     data = batch.value.valueAtTime(plotSettings.value.time);
@@ -110,7 +111,7 @@ export default defineComponent({
                     });
                 }
 
-                const filtered = filterSeriesSet(data!, selectedVariables.value);
+                const filtered = filterUserTypeSeriesSet(data!, paramName, selectedVariables.value);
                 const result = [...odinToPlotly(filtered, palette.value, { includeLegendGroup: true })];
                 Object.keys(paramSetData).forEach((name: string) => {
                     const dash = lineStylesForParamSets.value[name];
@@ -121,7 +122,7 @@ export default defineComponent({
                         dash
                     };
                     const psData = paramSetData[name];
-                    const psFiltered = filterSeriesSet(psData, selectedVariables.value);
+                    const psFiltered = filterUserTypeSeriesSet(psData, paramName, selectedVariables.value);
                     const psPlotData = odinToPlotly(psFiltered, palette.value, options);
                     const currentParamSet = parameterSets.value.find((paramSet) => paramSet.name === name);
                     psPlotData.forEach((plotTrace) => {

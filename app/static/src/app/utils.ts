@@ -136,7 +136,7 @@ function generateBatchParsFromOdin(
     paramSettings: SensitivityParameterSettings,
     paramValues: OdinUserType
 ): GenerateBatchParsResult {
-    let batchPars = null;
+    let varyingParam = null;
     let errorDetail = null;
     // TODO: NB For now we use ode runner to generate batch pars for all app types, but expect this to change
     const runner = rootState.model.odinRunnerOde;
@@ -147,7 +147,7 @@ function generateBatchParsFromOdin(
 
     if (variationType === SensitivityVariationType.Percentage) {
         try {
-            batchPars = runner!.batchParsDisplace(
+            varyingParam = runner!.batchParsDisplace(
                 paramValues, parameterToVary!,
                 numberOfRuns, logarithmic,
                 variationPercentage
@@ -157,7 +157,7 @@ function generateBatchParsFromOdin(
         }
     } else {
         try {
-            batchPars = runner!.batchParsRange(
+            varyingParam = runner!.batchParsRange(
                 paramValues,
                 parameterToVary!,
                 numberOfRuns,
@@ -171,6 +171,7 @@ function generateBatchParsFromOdin(
     }
 
     const error = errorDetail ? { error: userMessages.sensitivity.invalidSettings, detail: errorDetail } : null;
+    const batchPars = errorDetail ? null : { base: paramValues!, varying: [varyingParam!] };
     return {
         batchPars,
         error
@@ -198,8 +199,10 @@ export function generateBatchPars(
     if (paramSettings.variationType === SensitivityVariationType.Custom) {
         const batchPars: BatchPars = {
             base: paramValues!,
-            name: paramSettings.parameterToVary!,
-            values: paramSettings.customValues
+            varying: [{
+                name: paramSettings.parameterToVary!,
+                values: paramSettings.customValues
+            }]
         };
         return {
             batchPars,
