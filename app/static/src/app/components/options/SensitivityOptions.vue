@@ -33,7 +33,9 @@
               <strong>Number of runs:</strong> {{ settings.numberOfRuns}}
             </li>
           </ul>
-          <sensitivity-param-values v-if="settings.variationType !== 'Custom'" :batch-pars="allBatchPars[idx]">
+          <sensitivity-param-values v-if="settings.variationType !== 'Custom'"
+                                    :batch-pars="allBatchPars[idx]"
+                                    :param-name="settings.parameterToVary!">
           </sensitivity-param-values>
           <hr v-if="idx < allSettings.length-1" />
         </div>

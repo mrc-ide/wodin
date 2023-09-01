@@ -17,13 +17,21 @@ export default defineComponent({
         batchPars: {
             type: Object as PropType<BatchPars>,
             required: false
+        },
+        paramName: {
+            type: String,
+            required: false
         }
     },
     components: {
         VueFeather
     },
     setup(props) {
-        const paramValues = computed(() => props.batchPars?.values || []);
+        const paramValues = computed(() => {
+            const varyingPar = props.batchPars?.varying.filter((v) => v.name === props.paramName);
+            return varyingPar?.length ? varyingPar[0].values : [];
+        });
+
         const valuesText = computed(() => {
             const formatValue = format(".3f");
             const { length } = paramValues.value;

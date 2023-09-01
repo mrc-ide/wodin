@@ -1,7 +1,7 @@
 import * as XLSX from "xlsx";
 import { WodinExcelDownload } from "./wodinExcelDownload";
 import { SensitivityPlotExtreme, SensitivityPlotExtremePrefix } from "../store/sensitivity/state";
-import { OdinSeriesSet } from "../types/responseTypes";
+import { OdinUserType, OdinUserTypeSeriesSet } from "../types/responseTypes";
 
 interface ExtremeSummarySheetSettings {
     name: string,
@@ -16,10 +16,12 @@ const extremeSummarySheets: ExtremeSummarySheetSettings[] = [
     { name: "TimeAtMax", extremePrefix: SensitivityPlotExtremePrefix.time, extreme: SensitivityPlotExtreme.Max }
 ];
 export class WodinSensitivitySummaryDownload extends WodinExcelDownload {
-    private _addSummarySheetFromOdinSeriesSet = (data: OdinSeriesSet, varyingParameter: string, sheetName: string) => {
-        const sheetData = data.x.map((x: number, index: number) => {
+    private _addSummarySheetFromOdinSeriesSet = (data: OdinUserTypeSeriesSet, varyingParameter: string,
+        sheetName: string) => {
+        const sheetData = data.x.map((x: OdinUserType, index: number) => {
+            const xValue = x[varyingParameter];
             return Object.fromEntries([
-                [varyingParameter, x],
+                [varyingParameter, xValue],
                 ...data.values.map((v) => [v.name, v.y[index]])
             ]);
         });
