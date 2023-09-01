@@ -170,7 +170,8 @@ export const mockSensitivityState = (state: Partial<SensitivityState> = {}): Sen
             parameterValueChanged: false,
             endTimeChanged: false,
             sensitivityOptionsChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         },
         result: null,
         parameterSetResults: {},
@@ -214,7 +215,8 @@ export const mockModelFitState = (state: Partial<ModelFitState> = {}): ModelFitS
             dataChanged: false,
             linkChanged: false,
             parameterValueChanged: false,
-            parameterToVaryChanged: false
+            parameterToVaryChanged: false,
+            advancedSettingsChanged: false
         },
         iterations: null,
         converged: null,

@@ -57,7 +57,8 @@ describe("construct actionable fit update messages from fit state changes", () =
         dataChanged: false,
         linkChanged: false,
         parameterValueChanged: false,
-        parameterToVaryChanged: false
+        parameterToVaryChanged: false,
+        advancedSettingsChanged: false
     };
 
     it("shows fallback when no reason can be found", () => {
@@ -72,11 +73,12 @@ describe("construct actionable fit update messages from fit state changes", () =
             dataChanged: true,
             linkChanged: true,
             parameterValueChanged: true,
-            parameterToVaryChanged: true
+            parameterToVaryChanged: true,
+            advancedSettingsChanged: true
         };
         expect(fitUpdateRequiredExplanation(everything))
-            .toBe("Fit is out of date: model has been recompiled and data have been updated. "
-                  + "Rerun fit to update.");
+            .toBe("Fit is out of date: model has been recompiled, data have been updated "
+                  + "and advanced settings have been changed. Rerun fit to update.");
     });
 
     it("gives specific messages when little has changed", () => {
@@ -92,5 +94,7 @@ describe("construct actionable fit update messages from fit state changes", () =
             .toBe(`${prefix}: parameters have been updated. ${suffix}`);
         expect(fitUpdateRequiredExplanation({ ...base, parameterToVaryChanged: true }))
             .toBe(`${prefix}: parameters to vary have been updated. ${suffix}`);
+        expect(fitUpdateRequiredExplanation({ ...base, advancedSettingsChanged: true }))
+            .toBe(`${prefix}: advanced settings have been changed. ${suffix}`);
     });
 });
