@@ -21,7 +21,7 @@ import {
     config, fadePlotStyle, filterUserTypeSeriesSet, margin, odinToPlotly, updatePlotTraceName
 } from "../../plot";
 import { SensitivityPlotExtremePrefix, SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
-import { SensitivityMutation } from "../../store/sensitivity/mutations";
+import {BaseSensitivityMutation, SensitivityMutation} from "../../store/sensitivity/mutations";
 import { Batch, OdinUserTypeSeriesSet } from "../../types/responseTypes";
 import { runPlaceholderMessage } from "../../utils";
 import { RunGetter } from "../../store/run/getters";

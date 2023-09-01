@@ -13,7 +13,7 @@ import { Dict } from "../../types/utilTypes";
 export enum BaseSensitivityMutation {
     SetRunning = "SetRunning",
     SetResult = "SetResult",
-    SetUpdateRequired = "SetUpdateRequired"
+    SetUpdateRequired = "SetUpdateRequired",
 }
 
 export enum SensitivityMutation {
@@ -23,8 +23,8 @@ export enum SensitivityMutation {
     SetPlotType = "SetPlotType",
     SetPlotExtreme = "SetPlotExtreme",
     SetPlotTime = "SetPlotTime",
-    SetLoading = "SetLoading",
     SetDownloading = "SetDownloading",
+    SetLoading = "SetLoading",
     SetUserSummaryDownloadFileName = "SetUserSummaryDownloadFileName",
     ParameterSetAdded = "ParameterSetAdded",
     SetParameterSetResults = "SetParameterSetResults",
@@ -88,7 +88,7 @@ export const mutations: MutationTree<SensitivityState> = {
         state.plotSettings.time = payload;
     },
 
-    [SensitivityMutation.SetLoading](state: SensitivityState, payload: boolean) {
+    [SensitivityMutation.SetLoading](state: BaseSensitivityState, payload: boolean) {
         state.loading = payload;
     },
 
