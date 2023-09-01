@@ -3,7 +3,7 @@ import { FitState } from "../fit/state";
 import { ModelFitState } from "./state";
 import { ModelFitMutation } from "./mutations";
 import { RunMutation } from "../run/mutations";
-import { SensitivityMutation } from "../sensitivity/mutations";
+import {BaseSensitivityMutation, SensitivityMutation} from "../sensitivity/mutations";
 import { ModelFitGetter } from "./getters";
 import { FitDataGetter } from "../fitData/getters";
 import { FitData } from "../fitData/state";
@@ -72,7 +72,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
     },
 
     [ModelFitAction.FitModelStep](context, simplex) {
-        const { commit, dispatch, state } = context;
+        const { commit, dispatch, state, rootState } = context;
 
         // Exit if fit has been cancelled
         if (!state.fitting) {
@@ -104,7 +104,11 @@ export const actions: ActionTree<ModelFitState, FitState> = {
         // current set of sensitivity data is out of date (this is not
         // the case for the main run of course because the parameters
         // have been set alongside the result).
-        commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, { parameterValueChanged: true }, { root: true });
+        const updateReason = { parameterValueChanged: true };
+        commit(`sensitivity/${BaseSensitivityMutation.SetUpdateRequired}`, updateReason, { root: true });
+        if (rootState.config?.multiSensitivity) {
+            commit(`multiSensitivity/${BaseSensitivityMutation.SetUpdateRequired}`, updateReason, { root: true });
+        }
 
         if (result.converged) {
             commit(ModelFitMutation.SetFitting, false);

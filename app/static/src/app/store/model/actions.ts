@@ -14,7 +14,7 @@ import { paletteModel } from "../../palette";
 import { RunMutation } from "../run/mutations";
 import { ModelFitMutation } from "../modelFit/mutations";
 import { ErrorsMutation } from "../errors/mutations";
-import { SensitivityMutation } from "../sensitivity/mutations";
+import {BaseSensitivityMutation, SensitivityMutation} from "../sensitivity/mutations";
 import { defaultSensitivityParamSettings } from "../sensitivity/sensitivity";
 import { MultiSensitivityMutation } from "../multiSensitivity/mutations";
 
@@ -79,7 +79,11 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
         if (state.compileRequired) {
             commit(ModelMutation.SetCompileRequired, false);
             commit(`run/${RunMutation.SetRunRequired}`, { modelChanged: true }, { root: true });
-            commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, { modelChanged: true }, { root: true });
+            const updateReason = { modelChanged: true };
+            commit(`sensitivity/${BaseSensitivityMutation.SetUpdateRequired}`, updateReason, { root: true });
+            if (rootState.config?.multiSensitivity) {
+                commit(`multiSensitivity/${BaseSensitivityMutation.SetUpdateRequired}`, updateReason, { root: true });
+            }
         }
 
         // set or update selected sensitivity variable
