@@ -5,7 +5,7 @@ import {
     AdvancedSettingsOdin,
     BatchPars,
     OdinModelResponseError,
-    OdinUserType,
+    OdinUserType, VaryingPar,
     WodinError
 } from "./types/responseTypes";
 import userMessages from "./userMessages";
@@ -131,13 +131,11 @@ export interface GenerateBatchParsResult {
     error: WodinError | null
 }
 
-function generateBatchParsFromOdin(
+function generateVaryingParFromOdin(
     rootState: AppState,
     paramSettings: SensitivityParameterSettings,
     paramValues: OdinUserType
-): GenerateBatchParsResult {
-    let varyingParam = null;
-    let errorDetail = null;
+): VaryingPar {
     // TODO: NB For now we use ode runner to generate batch pars for all app types, but expect this to change
     const runner = rootState.model.odinRunnerOde;
     const {
@@ -146,45 +144,29 @@ function generateBatchParsFromOdin(
     const logarithmic = scaleType === SensitivityScaleType.Logarithmic;
 
     if (variationType === SensitivityVariationType.Percentage) {
-        try {
-            varyingParam = runner!.batchParsDisplace(
-                paramValues, parameterToVary!,
-                numberOfRuns, logarithmic,
-                variationPercentage
-            );
-        } catch (e) {
-            errorDetail = (e as Error).message;
-        }
-    } else {
-        try {
-            varyingParam = runner!.batchParsRange(
-                paramValues,
+        return runner!.batchParsDisplace(
+            paramValues, parameterToVary!,
+            numberOfRuns, logarithmic,
+            variationPercentage
+        );
+    }
+    return runner!.batchParsRange(
+        paramValues,
                 parameterToVary!,
                 numberOfRuns,
                 logarithmic,
                 rangeFrom,
                 rangeTo
-            );
-        } catch (e) {
-            errorDetail = (e as Error).message;
-        }
-    }
-
-    const error = errorDetail ? { error: userMessages.sensitivity.invalidSettings, detail: errorDetail } : null;
-    const batchPars = errorDetail ? null : { base: paramValues!, varying: [varyingParam!] };
-    return {
-        batchPars,
-        error
-    };
+    );
 }
 
 export function generateBatchPars(
     rootState: AppState,
-    paramSettings: SensitivityParameterSettings,
+    paramSettings: SensitivityParameterSettings[],
     paramValues: OdinUserType | null
 ): GenerateBatchParsResult {
     let errorDetail = null;
-    if (!paramSettings.parameterToVary) {
+    if (paramSettings.some((s) => !s.parameterToVary)) {
         errorDetail = "Parameter to vary is not set";
     } else if (!rootState.model.odinRunnerOde || !paramValues) {
         errorDetail = "Model is not initialised";
@@ -196,20 +178,28 @@ export function generateBatchPars(
         };
     }
 
-    if (paramSettings.variationType === SensitivityVariationType.Custom) {
-        const batchPars: BatchPars = {
-            base: paramValues!,
-            varying: [{
-                name: paramSettings.parameterToVary!,
-                values: paramSettings.customValues
-            }]
-        };
-        return {
-            batchPars,
-            error: null
-        };
-    }
-    return generateBatchParsFromOdin(rootState, paramSettings, paramValues!);
+    const varying: VaryingPar[] = [];
+    paramSettings.forEach((s) => {
+        if (s.variationType === SensitivityVariationType.Custom) {
+            varying.push({
+                name: s.parameterToVary!,
+                values: s.customValues
+            });
+        } else {
+            try {
+                varying.push(generateVaryingParFromOdin(rootState, s, paramValues!));
+            } catch (e) {
+                errorDetail = (e as Error).message;
+            }
+        }
+    });
+
+    const error = errorDetail ? { error: userMessages.sensitivity.invalidSettings, detail: errorDetail } : null;
+    const batchPars = errorDetail ? null : { base: paramValues!, varying };
+    return {
+        batchPars,
+        error
+    };
 }
 
 export const newSessionId = (): string => uid(32);

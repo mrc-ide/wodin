@@ -21,7 +21,7 @@ export interface SensitivityGetters {
 export const getters: SensitivityGetters & GetterTree<SensitivityState, AppState> = {
     [SensitivityGetter.batchPars]: (state: SensitivityState, sensitivityGetters: SensitivityGetters,
         rootState: AppState) => {
-        return generateBatchPars(rootState, state.paramSettings, rootState.run.parameterValues).batchPars;
+        return generateBatchPars(rootState, [state.paramSettings], rootState.run.parameterValues).batchPars;
     },
 
     [SensitivityGetter.parameterSetBatchPars]: (state: SensitivityState, sensitivityGetters: SensitivityGetters,
@@ -29,7 +29,7 @@ export const getters: SensitivityGetters & GetterTree<SensitivityState, AppState
         const result = {} as Dict<BatchPars | null>;
         const { paramSettings } = state;
         rootState.run.parameterSets.forEach((paramSet: ParameterSet) => {
-            result[paramSet.name] = generateBatchPars(rootState, paramSettings, paramSet.parameterValues).batchPars;
+            result[paramSet.name] = generateBatchPars(rootState, [paramSettings], paramSet.parameterValues).batchPars;
         });
         return result;
     },

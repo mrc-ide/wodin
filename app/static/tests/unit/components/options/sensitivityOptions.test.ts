@@ -99,7 +99,7 @@ describe("SensitivityOptions", () => {
                         paramSettings
                     },
                     getters: {
-                        [MultiSensitivityGetter.multiBatchPars]: () => mockMultiBatchPars
+                        [MultiSensitivityGetter.batchPars]: () => mockMultiBatchPars
                     },
                     mutations: {
                         [MultiSensitivityMutation.SetParamSettings]: mockMultiSensitivitySetParamSettings

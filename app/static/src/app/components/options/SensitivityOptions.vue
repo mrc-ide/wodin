@@ -34,7 +34,7 @@
             </li>
           </ul>
           <sensitivity-param-values v-if="settings.variationType !== 'Custom'"
-                                    :batch-pars="allBatchPars[idx]"
+                                    :batch-pars="batchPars"
                                     :param-name="settings.parameterToVary">
           </sensitivity-param-values>
           <hr v-if="idx < allSettings.length-1" />
@@ -166,9 +166,9 @@ export default defineComponent({
             updateMultiSensitivitySettings(newSettings);
         };
 
-        const allBatchPars = computed(() => (props.multiSensitivity
-            ? store.getters[`multiSensitivity/${MultiSensitivityGetter.multiBatchPars}`]
-            : [store.getters[`sensitivity/${SensitivityGetter.batchPars}`]]));
+        const batchPars = computed(() => (props.multiSensitivity
+            ? store.getters[`multiSensitivity/${MultiSensitivityGetter.batchPars}`]
+            : store.getters[`sensitivity/${SensitivityGetter.batchPars}`]));
 
         return {
             title,
@@ -185,7 +185,7 @@ export default defineComponent({
             addSettings,
             deleteSettings,
             editOpen,
-            allBatchPars
+            batchPars
         };
     }
 });

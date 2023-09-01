@@ -51,7 +51,7 @@ describe("MultiSensitivity getters", () => {
         const mockSpyDisplace = jest.spyOn(odinRunnerOde, "batchParsDisplace");
         const mockSpyRange = jest.spyOn(odinRunnerOde, "batchParsRange");
 
-        const result = getters[MultiSensitivityGetter.multiBatchPars](state, getters, rootState, {} as any);
+        const result = getters[MultiSensitivityGetter.batchPars](state, getters, rootState, {} as any);
         expect(result).toStrictEqual([
             {
                 varying: [

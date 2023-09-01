@@ -183,7 +183,7 @@ export default defineComponent({
             if (settingsInternal.variationType === SensitivityVariationType.Custom) {
                 return null;
             }
-            return generateBatchPars(store.state, settingsInternal, paramValues.value);
+            return generateBatchPars(store.state, [settingsInternal], paramValues.value);
         });
         const batchPars = computed(() => batchParsResult.value?.batchPars);
         const batchParsError = computed(() => {

@@ -4,18 +4,16 @@ import { AppState } from "../appState/state";
 import { generateBatchPars } from "../../utils";
 
 export enum MultiSensitivityGetter {
-    multiBatchPars = "multiBatchPars"
+    batchPars = "batchPars"
 }
 
 export interface MultiSensitivityGetters {
-    [MultiSensitivityGetter.multiBatchPars]: Getter<MultiSensitivityState, AppState>
+    [MultiSensitivityGetter.batchPars]: Getter<MultiSensitivityState, AppState>
 }
 
 export const getters: MultiSensitivityGetters & GetterTree<MultiSensitivityState, AppState> = {
-    [MultiSensitivityGetter.multiBatchPars]: (state: MultiSensitivityState, _: MultiSensitivityGetters,
-        rootState: AppState) => {
-        return state.paramSettings.map((settings) => {
-            return generateBatchPars(rootState, settings, rootState.run.parameterValues).batchPars;
-        });
+    [MultiSensitivityGetter.batchPars]: (state: MultiSensitivityState, _: MultiSensitivityGetters,
+                                         rootState: AppState) => {
+        return generateBatchPars(rootState, state.paramSettings, rootState.run.parameterValues).batchPars;
     }
 };
