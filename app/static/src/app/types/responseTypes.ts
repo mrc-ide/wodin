@@ -82,6 +82,13 @@ export interface OdinModelResponse{
     error?: OdinModelResponseError
 }
 
+// This is strictly a little more restrictive than what odin supports,
+// but wodin does not support fancy user variables yet and we can sort
+// that out later (odin allows the union of number, number[], and a
+// tensor type - the latter two will be a challenge to expose nicely
+// in the interface).
+export type OdinUserType = Dict<number>;
+
 // This is Odin's SeriesSetValues and SeriesSet
 export interface OdinSeriesSetValues {
     description?: string;
@@ -92,6 +99,11 @@ export interface OdinSeriesSetValues {
 export type OdinSeriesSet = {
     x: number[];
     values: OdinSeriesSetValues[];
+}
+
+export type OdinUserTypeSeriesSet = {
+    x: OdinUserType[],
+    values: OdinSeriesSetValues[]
 }
 
 export interface TimeGrid {
@@ -116,13 +128,6 @@ export interface OdinFitData {
     value: number[]
 }
 
-// This is strictly a little more restrictive than what odin supports,
-// but wodin does not support fancy user variables yet and we can sort
-// that out later (odin allows the union of number, number[], and a
-// tensor type - the latter two will be a challenge to expose nicely
-// in the interface).
-export type OdinUserType = Dict<number>;
-
 export interface OdinFitParameters {
     base: OdinUserType,
     vary: string[]
@@ -146,23 +151,29 @@ export interface Simplex {
     result: () => SimplexResult;
 }
 
-export interface BatchPars {
-    base: OdinUserType;
-    name: string;
-    values: number[];
+export interface VaryingPar {
+    name: string,
+    values: number[]
 }
 
-export interface BatchError {
-    value: number,
-    error: string
+export interface BatchPars {
+    base: OdinUserType;
+    varying: VaryingPar[];
+}
+
+export interface OdinRunStatus {
+    pars: OdinUserType,
+    success: boolean,
+    error: string | null
 }
 
 export interface Batch {
     pars: BatchPars,
     solutions: OdinSolution[],
-    errors: BatchError[],
-    valueAtTime: (time: number) => OdinSeriesSet,
-    extreme: (type: string) => OdinSeriesSet,
+    errors: OdinRunStatus[],
+    successfulVaryingParams: OdinUserType[],
+    valueAtTime: (time: number) => OdinUserTypeSeriesSet,
+    extreme: (type: string) => OdinUserTypeSeriesSet,
     compute: () => boolean
 }
 
@@ -206,13 +217,13 @@ export interface OdinRunnerOde {
                      count: number,
                      logarithmic: boolean,
                      min: number,
-                     max: number) => BatchPars;
+                     max: number) => VaryingPar;
 
     batchParsDisplace: (base: OdinUserType,
                         name: string,
                         count: number,
                         logarithmic: boolean,
-                        displace: number) => BatchPars;
+                        displace: number) => VaryingPar;
     batchRun: (odin: Odin,
                pars: BatchPars,
                tStart: number,

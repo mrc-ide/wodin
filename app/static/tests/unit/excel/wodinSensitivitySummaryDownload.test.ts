@@ -2,7 +2,11 @@ import { mockBookNew, mockBookAppendSheet, mockWriteFile } from "./mocks";
 import { mockBasicState, mockRunState, mockSensitivityState } from "../../mocks";
 import { WodinSensitivitySummaryDownload } from "../../../src/app/excel/wodinSensitivitySummaryDownload";
 
-const xValues = [1, 1.1, 1.2];
+const xValues = [
+    { beta: 1 },
+    { beta: 1.1 },
+    { beta: 1.2 }
+];
 const mockBatch = {
     valueAtTime: jest.fn().mockImplementation(() => {
         return {
