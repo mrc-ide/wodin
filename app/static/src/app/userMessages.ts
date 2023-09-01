@@ -62,6 +62,7 @@ export default {
             linkChanged: "model-data link has changed",
             parameterValueChanged: "parameters have been updated",
             parameterToVaryChanged: "parameters to vary have been updated",
+            advancedSettingsChanged: "advanced settings have been changed",
             suffix: "Rerun fit to update"
         },
         fitRequirements: {
@@ -88,6 +89,7 @@ export default {
             sensitivityOptionsChanged: "sensitivity options have been changed",
             endTimeChanged: "end time has changed",
             numberOfReplicatesChanged: "number of replicates has changed",
+            advancedSettingsChanged: "advanced settings have been changed",
             unknown: "unknown reasons, contact the administrator, as this is unexpected",
             suffix: "Run sensitivity to update"
         }
