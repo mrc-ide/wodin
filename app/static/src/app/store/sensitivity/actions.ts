@@ -44,7 +44,6 @@ const batchRunOde = (runner: OdinRunnerOde,
     paramValues: OdinUserType | null): Batch => {
     const advancedSettingsOdin = convertAdvancedSettingsToOdin(advancedSettings, paramValues);
     const batch = runner.batchRun(odin, pars, 0, endTime, advancedSettingsOdin);
-    console.log("ran batch: " + batch?.solutions.length)
     return batch;
 };
 
@@ -147,7 +146,6 @@ export const runSensitivity = (
 
 export const baseSensitivityActions: ActionTree<BaseSensitivityState, AppState> = {
     [BaseSensitivityAction.ComputeNext](context, batch: Batch) {
-        console.log("computing next")
         const {
             commit, dispatch, state
         } = context;

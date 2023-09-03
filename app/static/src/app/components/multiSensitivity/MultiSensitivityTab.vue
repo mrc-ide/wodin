@@ -7,26 +7,36 @@
                       :is-disabled="!canRunMultiSensitivity"
                       @click="runMultiSensitivity">Run Multi-sensitivity</loading-button>
     </div>
+    <action-required-message :message="updateMsg"></action-required-message>
+    <div class="multi-sensitivity-status p-4" :class="updateMsg || error ? 'text-muted' : ''">
+      {{ multiSensitivityRunStatusMsg }}
+    </div>
+    <error-info :error="error"></error-info>
   </div>
 </template>
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
+import ActionRequiredMessage from "@/app/components/ActionRequiredMessage.vue";
+import ErrorInfo from "@/app/components/ErrorInfo.vue";
+import { update } from "plotly.js-basic-dist-min";
 import { SensitivityGetter } from "../../store/sensitivity/getters";
-import sensitivityPrerequisites from "../mixins/sensitivityPrerequisites";
-import { BaseSensitivityMutation } from "../../store/sensitivity/mutations";
+import baseSensitivity from "../mixins/baseSensitivity";
 import { MultiSensitivityAction } from "../../store/multiSensitivity/actions";
 import LoadingButton from "../LoadingButton.vue";
 
 export default defineComponent({
     name: "MultiSensitivityTab",
+    methods: { update },
     components: {
+        ErrorInfo,
+        ActionRequiredMessage,
         LoadingButton
     },
     setup() {
         const store = useStore();
         const namespace = "multiSensitivity";
-        const { sensitivityPrerequisitesReady } = sensitivityPrerequisites(store);
+        const { sensitivityPrerequisitesReady, updateMsg } = baseSensitivity(store, true);
 
         const running = computed(() => store.state.multiSensitivity.running);
 
@@ -41,11 +51,30 @@ export default defineComponent({
             }, 100);
         };
 
+        // TODO: put this is user messages
+        const multiSensitivityRunStatusMsg = computed(() => {
+            const solutions = store.state.multiSensitivity.result?.batch?.solutions?.length;
+            if (solutions) {
+                return `Multi-sensitivity run produced ${solutions} solutions`;
+            }
+            return "Multi-sensitivity has not been run";
+        });
+
+        const error = computed(() => store.state.multiSensitivity.result?.error);
+
         return {
             running,
             canRunMultiSensitivity,
+            updateMsg,
+            multiSensitivityRunStatusMsg,
+            error,
             runMultiSensitivity
         };
     }
 });
 </script>
+<style scoped>
+  .multi-sensitivity-status {
+    background-color: #eee;
+  }
+</style>

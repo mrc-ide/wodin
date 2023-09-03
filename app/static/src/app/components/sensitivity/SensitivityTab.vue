@@ -51,10 +51,10 @@ import SensitivitySummaryPlot from "./SensitivitySummaryPlot.vue";
 import ErrorInfo from "../ErrorInfo.vue";
 import { sensitivityUpdateRequiredExplanation, verifyValidPlotSettingsTime } from "./support";
 import { anyTrue } from "../../utils";
-import LoadingSpinner from "../LoadingSpinner.vue";;
+import LoadingSpinner from "../LoadingSpinner.vue";
 import LoadingButton from "../LoadingButton.vue";
-import {BaseSensitivityMutation, SensitivityMutation} from "../../store/sensitivity/mutations";
-import sensitivityPrerequisites from "../mixins/sensitivityPrerequisites";
+import { SensitivityMutation } from "../../store/sensitivity/mutations";
+import baseSensitivity from "../mixins/baseSensitivity";
 
 export default defineComponent({
     name: "SensitivityTab",
@@ -70,7 +70,7 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
-        const { sensitivityPrerequisitesReady } = sensitivityPrerequisites(store);
+        const { sensitivityPrerequisitesReady, updateMsg } = baseSensitivity(store, false);
         const namespace = "sensitivity";
 
         const running = computed(() => store.state.sensitivity.running);
@@ -113,23 +113,6 @@ export default defineComponent({
             const finished = batch ? batch.solutions.length + batch.errors.length : 0;
             const total = store.state.sensitivity.paramSettings.numberOfRuns;
             return `Running sensitivity: finished ${finished} of ${total} runs`;
-        });
-
-        const sensitivityUpdateRequired = computed(() => store.state.sensitivity.sensitivityUpdateRequired);
-        const updateMsg = computed(() => {
-            if (store.state.sensitivity.result?.batch?.solutions.length) {
-                if (store.state.model.compileRequired) {
-                    return userMessages.sensitivity.compileRequiredForUpdate;
-                }
-
-                if (!store.state.model.selectedVariables.length) {
-                    return userMessages.model.selectAVariable;
-                }
-                if (anyTrue(sensitivityUpdateRequired.value)) {
-                    return sensitivityUpdateRequiredExplanation(sensitivityUpdateRequired.value);
-                }
-            }
-            return "";
         });
 
         const tracesPlot = computed(

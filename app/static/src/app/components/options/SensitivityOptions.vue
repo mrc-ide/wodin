@@ -102,7 +102,7 @@ export default defineComponent({
             : [store.state.sensitivity.paramSettings]));
 
         const showOptions = computed(() => allSettings.value.length && !!allSettings.value[0].parameterToVary);
-        const compileModelMessage = userMessages.sensitivity.compileRequiredForOptions;
+        const compileModelMessage = userMessages.sensitivity.compileRequiredForOptions(props.multiSensitivity);
         const editOpen = ref(false);
         const editSettingsIdx = ref<number | null>(0);
 

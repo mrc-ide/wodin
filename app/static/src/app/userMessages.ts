@@ -1,4 +1,7 @@
 import settings from "./settings";
+import {multiSensitivity} from "./store/multiSensitivity/multiSensitivity";
+
+const sensType = (multiSens: boolean) => multiSens ? "Multi-sensitivity" : "Sensitivity";
 
 export default {
     code: {
@@ -76,20 +79,20 @@ export default {
         }
     },
     sensitivity: {
-        compileRequiredForOptions: "Please compile a valid model in order to set sensitivity options.",
-        compileRequiredForUpdate: "Model code has been updated. "
-            + "Compile code and Run Sensitivity to update.",
+        compileRequiredForOptions: (multiSens: boolean) => `Please compile a valid model in order to set ${sensType(multiSens)} options.`,
+        compileRequiredForUpdate: (multiSens: boolean) => "Model code has been updated. "
+            + `Compile code and Run ${sensType(multiSens)} to update.`,
         invalidSettings: "Invalid settings",
         notRunYet: "Sensitivity has not been run.",
         updateReasons: {
             prefix: "Plot is out of date:",
             modelChanged: "model code has been recompiled",
             parameterValueChanged: "parameters have been changed",
-            sensitivityOptionsChanged: "sensitivity options have been changed",
+            sensitivityOptionsChanged: (multiSens: boolean) => `${sensType(multiSens)} options have been changed`,
             endTimeChanged: "end time has changed",
             numberOfReplicatesChanged: "number of replicates has changed",
             unknown: "unknown reasons, contact the administrator, as this is unexpected",
-            suffix: "Run sensitivity to update"
+            suffix: (multiSens: boolean) => `Run ${sensType(multiSens)} to update`
         }
     },
     sessions: {
