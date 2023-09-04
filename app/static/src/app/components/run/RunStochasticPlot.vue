@@ -15,6 +15,7 @@ import { useStore } from "vuex";
 import { WodinPlotData, discreteSeriesSetToPlotly, filterSeriesSet } from "../../plot";
 import WodinPlot from "../WodinPlot.vue";
 import { runPlaceholderMessage } from "../../utils";
+import { StochasticConfig } from "../../types/responseTypes";
 
 export default defineComponent({
     name: "RunStochasticPlot",
@@ -43,7 +44,15 @@ export default defineComponent({
             if (!result) {
                 return [];
             }
-            return discreteSeriesSetToPlotly(filterSeriesSet(result, selectedVariables.value), palette.value);
+            const replicates = store.state.run.numberOfReplicates;
+            const maxReplicatesDisplay = (store.state.config as StochasticConfig)?.maxReplicatesDisplay || 50;
+            const showIndividualTraces = replicates <= maxReplicatesDisplay;
+
+            return discreteSeriesSetToPlotly(
+                filterSeriesSet(result, selectedVariables.value),
+                palette.value,
+                showIndividualTraces
+            );
         };
 
         return {

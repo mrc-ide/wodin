@@ -21,6 +21,7 @@
                 <numeric-input
                     :value="numberOfReplicates"
                     :min-allowed="0"
+                    :max-allowed="maxAllowedArray"
                     @update="updateNumberOfReplicates"></numeric-input>
             </div>
         </div>
@@ -33,8 +34,9 @@ import { useStore } from "vuex";
 import { RunMutation } from "../../store/run/mutations";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { FitDataGetter } from "../../store/fitData/getters";
-import NumericInput from "./NumericInput.vue";
+import NumericInput, { BoundTooltip } from "./NumericInput.vue";
 import { AppType } from "../../store/appState/state";
+import { StochasticConfig } from "../../types/responseTypes";
 
 export default defineComponent({
     name: "RunOptions",
@@ -59,6 +61,26 @@ export default defineComponent({
         const numberOfReplicates = computed(() => store.state.run.numberOfReplicates);
         const isStochasticApp = computed(() => store.state.appType === AppType.Stochastic);
 
+        const maxReplicatesDisplay = computed(() => {
+            return (store.state.config as StochasticConfig)?.maxReplicatesDisplay || 50;
+        });
+        const maxReplicatesRun = computed(() => {
+            return (store.state.config as StochasticConfig)?.maxReplicatesRun || 1000;
+        });
+        const maxAllowedArray = computed(() => {
+            return [
+                {
+                    number: maxReplicatesDisplay.value,
+                    message: 'Individual traces will not be shown past this point',
+                    variant: 'warning'
+                },
+                {
+                    number: maxReplicatesRun.value,
+                    message: `Please enter a value less than ${maxReplicatesRun.value}`
+                }
+            ] as BoundTooltip[]
+        });
+
         const updateNumberOfReplicates = (newValue: number) => {
             store.commit(`run/${RunMutation.SetNumberOfReplicates}`, newValue);
             store.commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, {
@@ -72,7 +94,8 @@ export default defineComponent({
             updateEndTime,
             isStochasticApp,
             numberOfReplicates,
-            updateNumberOfReplicates
+            updateNumberOfReplicates,
+            maxAllowedArray
         };
     }
 });
