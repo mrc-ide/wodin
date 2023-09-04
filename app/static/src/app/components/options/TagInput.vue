@@ -48,7 +48,7 @@ export default defineComponent({
 
         onMounted(() => {
             if (cleanTags.value.length !== props.tags?.length) {
-                emit("update", cleanTags.value)
+                emit("update", cleanTags.value);
             }
         });
 
@@ -91,8 +91,8 @@ export default defineComponent({
                 }
                 return undefined;
             });
-            const cleanTags = parsedTags.filter((x) => x !== undefined);
-            emit("update", cleanTags);
+            const cleanedNewTags = parsedTags.filter((x) => x !== undefined);
+            emit("update", cleanedNewTags);
         };
 
         const validate = (tag: string) => {

@@ -72,7 +72,7 @@ describe("Tag Input", () => {
             },
             computed: {
                 cleanTags() {
-                    return [1]
+                    return [1];
                 }
             }
         });
