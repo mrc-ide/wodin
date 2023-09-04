@@ -1,5 +1,4 @@
 import settings from "./settings";
-import {multiSensitivity} from "./store/multiSensitivity/multiSensitivity";
 
 const sensType = (multiSens: boolean) => multiSens ? "Multi-sensitivity" : "Sensitivity";
 
@@ -78,12 +77,18 @@ export default {
             needsParamsToVary: "select at least one parameter to vary (Options tab)"
         }
     },
+    multiSensitivity: {
+        runSummary: (solutionCount: number) => `${sensType(true)} run produced ${solutionCount} solutions.`,
+        updateReasons: {
+            prefix: "Status is out of date:"
+        }
+    },
     sensitivity: {
         compileRequiredForOptions: (multiSens: boolean) => `Please compile a valid model in order to set ${sensType(multiSens)} options.`,
         compileRequiredForUpdate: (multiSens: boolean) => "Model code has been updated. "
             + `Compile code and Run ${sensType(multiSens)} to update.`,
         invalidSettings: "Invalid settings",
-        notRunYet: "Sensitivity has not been run.",
+        notRunYet: (multiSens: boolean) => `${sensType(multiSens)} has not been run.`,
         updateReasons: {
             prefix: "Plot is out of date:",
             modelChanged: "model code has been recompiled",

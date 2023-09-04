@@ -24,6 +24,7 @@ import baseSensitivity from "../mixins/baseSensitivity";
 import { MultiSensitivityAction } from "../../store/multiSensitivity/actions";
 import LoadingButton from "../LoadingButton.vue";
 import {MultiSensitivityGetter} from "../../store/multiSensitivity/getters";
+import userMessages from "../../userMessages";
 
 export default defineComponent({
     name: "MultiSensitivityTab",
@@ -51,13 +52,12 @@ export default defineComponent({
             }, 100);
         };
 
-        // TODO: put this is user messages
         const multiSensitivityRunStatusMsg = computed(() => {
             const solutions = store.state.multiSensitivity.result?.batch?.solutions?.length;
             if (solutions) {
-                return `Multi-sensitivity run produced ${solutions} solutions`;
+                return userMessages.multiSensitivity.runSummary(solutions);
             }
-            return "Multi-sensitivity has not been run";
+            return userMessages.sensitivity.notRunYet(true);
         });
 
         const error = computed(() => store.state.multiSensitivity.result?.error);

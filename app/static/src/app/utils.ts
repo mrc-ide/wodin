@@ -229,7 +229,7 @@ export const anyTrue = (x: Dict<boolean>): boolean => {
 };
 
 export const runPlaceholderMessage = (selectedVariables: string[], sensitivity: boolean) => {
-    const notRunYet = sensitivity ? userMessages.sensitivity.notRunYet : userMessages.run.notRunYet;
+    const notRunYet = sensitivity ? userMessages.sensitivity.notRunYet(false) : userMessages.run.notRunYet;
     return selectedVariables.length ? notRunYet : userMessages.model.noVariablesSelected;
 };
 
