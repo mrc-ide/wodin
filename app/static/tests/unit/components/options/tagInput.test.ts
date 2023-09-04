@@ -66,13 +66,13 @@ describe("Tag Input", () => {
                 plugins: [store]
             },
             props: {
-                tags: ["1", "hey"],
+                tags: [1, "a"],
                 placeholder: []
             }
         });
         store.state.run.parameterValues = { a: 2 };
         await nextTick();
-        expect(wrapper.emitted("update")![0]).toStrictEqual([["1", "hey"]]);
+        expect(wrapper.emitted("update")![0]).toStrictEqual([[1, "a"]]);
     });
 
     it("renders as expected when numeric only is true", () => {

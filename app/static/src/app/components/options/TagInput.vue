@@ -38,7 +38,10 @@ export default defineComponent({
 
         watch(paramValues, () => {
             if (props.tags) {
-                emit("update", [...props.tags]);
+                const stringTags = props.tags.filter((x) => typeof x === "string");
+                if (stringTags.length > 0) {
+                    emit("update", [...props.tags]);
+                }
             }
         }, { deep: true });
 
