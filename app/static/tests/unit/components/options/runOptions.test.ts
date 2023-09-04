@@ -14,6 +14,7 @@ describe("RunOptions", () => {
     const mockSensitivitySetEndTime = jest.fn();
     const mockRunSetEndTime = jest.fn();
     const mockSetSensitivityUpdateRequired = jest.fn();
+    const mockSetMultiSensitivityUpdateRequired = jest.fn();
     const mockNumberOfReplicates = jest.fn();
 
     const getWrapper = (mockDataEnd: number | null = 0, states = {}) => {
@@ -26,6 +27,12 @@ describe("RunOptions", () => {
                 mutations: {
                     SetEndTime: mockRunSetEndTime,
                     SetNumberOfReplicates: mockNumberOfReplicates
+                }
+            },
+            multiSensitivity: {
+                namespaced: true,
+                mutations: {
+                    SetUpdateRequired: mockSetMultiSensitivityUpdateRequired
                 }
             },
             sensitivity: {
@@ -99,6 +106,25 @@ describe("RunOptions", () => {
         expect(noOfReplicates.text()).toBe("Number of replicates");
         expect(mockSetSensitivityUpdateRequired).toHaveBeenCalledTimes(1);
         expect(mockSetSensitivityUpdateRequired.mock.calls[0][1]).toStrictEqual({
+            numberOfReplicatesChanged: true
+        });
+        expect(mockSetMultiSensitivityUpdateRequired).not.toHaveBeenCalled();
+    });
+
+    it("can render and update number of replicates when multiSensitivity is enabled", () => {
+        const wrapper = getWrapper(0, {
+            appType: `${AppType.Stochastic}`,
+            config: { multiSensitivity: true }
+        }, );
+        const noOfReplicates = wrapper.find("#number-of-replicates");
+        noOfReplicates.findComponent(NumericInput).vm.$emit("update", 20);
+        expect(mockNumberOfReplicates).toHaveBeenCalledTimes(1);
+        expect(mockSetSensitivityUpdateRequired).toHaveBeenCalledTimes(1);
+        expect(mockSetSensitivityUpdateRequired.mock.calls[0][1]).toStrictEqual({
+            numberOfReplicatesChanged: true
+        });
+        expect(mockSetMultiSensitivityUpdateRequired).toHaveBeenCalledTimes(1);
+        expect(mockSetMultiSensitivityUpdateRequired.mock.calls[0][1]).toStrictEqual({
             numberOfReplicatesChanged: true
         });
     });

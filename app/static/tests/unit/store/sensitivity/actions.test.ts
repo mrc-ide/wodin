@@ -1,17 +1,18 @@
-import { actions, SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
-import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import {actions, BaseSensitivityAction, SensitivityAction} from "../../../../src/app/store/sensitivity/actions";
+import {BaseSensitivityMutation, SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
 import { ModelGetter } from "../../../../src/app/store/model/getters";
-import { AppType } from "../../../../src/app/store/appState/state";
+import {AppState, AppType} from "../../../../src/app/store/appState/state";
 import { RunAction } from "../../../../src/app/store/run/actions";
 import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
 import { AdvancedComponentType } from "../../../../src/app/store/run/state";
 import { WodinSensitivitySummaryDownload } from "../../../../src/app/excel/wodinSensitivitySummaryDownload";
 import Mock = jest.Mock;
+import {Action} from "vuex";
 
 jest.mock("../../../../src/app/excel/wodinSensitivitySummaryDownload");
 
 const mockBatch = {};
-const mockRunnerOde = {
+export const mockRunnerOde = {
     batchRun: jest.fn().mockReturnValue(mockBatch)
 };
 
@@ -19,7 +20,7 @@ const mockRunnerDiscrete = {
     batchRunDiscrete: jest.fn().mockReturnValue(mockBatch)
 };
 
-const mockModelState = {
+export const mockModelState = {
     odin: {},
     odinRunnerOde: mockRunnerOde,
     odinRunnerDiscrete: mockRunnerDiscrete,
@@ -29,7 +30,7 @@ const mockModelState = {
         }
     }
 };
-const mockRunState = {
+export const mockRunState = {
     endTime: 99,
     numberOfReplicates: 5,
     advancedSettings: {
@@ -42,7 +43,7 @@ const mockRunState = {
     parameterValues: { p1: 3.14 }
 };
 
-const defaultAdvanced = {
+export const defaultAdvanced = {
     atol: 0.000001,
     maxSteps: 10000,
     rtol: 0.000001,
@@ -58,19 +59,79 @@ const getters = {
     parameterSetBatchPars: []
 };
 
-const rootGetters = {
+export const rootGetters = {
     [`model/${ModelGetter.hasRunner}`]: true
 };
 
-describe("Sensitivity actions", () => {
-    const mockDownload = jest.fn();
-    const mockWodinSensitivitySummaryDownload = WodinSensitivitySummaryDownload as any as Mock;
-    mockWodinSensitivitySummaryDownload.mockImplementation(() => ({ download: mockDownload }));
-
+describe("BaseSensitivity actions", () => {
     afterEach(() => {
         jest.clearAllMocks();
     });
 
+    it("ComputeNext dispatches call to itself if batch is not complete", (done) => {
+        const commit = jest.fn();
+        const dispatch = jest.fn();
+        const state = {
+            result: {
+                inputs: {},
+                batch: {}
+            }
+        };
+        const rootState = {
+            run: {
+                runRequired: true
+            }
+        };
+        const batch = {
+            compute: () => false
+        };
+        (actions[BaseSensitivityAction.ComputeNext] as any)({
+            state, rootState, commit, dispatch
+        }, batch);
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
+        expect(commit.mock.calls[0][1]).toStrictEqual({ ...state.result, batch });
+        setTimeout(() => {
+            expect(dispatch).toHaveBeenCalledTimes(1);
+            expect(dispatch.mock.calls[0][0]).toBe(BaseSensitivityAction.ComputeNext);
+            expect(dispatch.mock.calls[0][1]).toBe(batch);
+            done();
+        });
+    });
+
+    it("ComputeNext commits running false, if batch is complete", (done) => {
+        const commit = jest.fn();
+        const dispatch = jest.fn();
+        const state = {
+            result: {
+                inputs: {},
+                batch: {}
+            }
+        };
+        const rootState = {
+            run: {
+                runRequired: true
+            }
+        };
+        const batch = {
+            compute: () => true
+        };
+        (actions[BaseSensitivityAction.ComputeNext] as any)({
+            state, rootState, commit, dispatch
+        }, batch);
+        expect(commit).toHaveBeenCalledTimes(2);
+        expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
+        expect(commit.mock.calls[0][1]).toStrictEqual({ ...state.result, batch });
+        expect(commit.mock.calls[1][0]).toBe(BaseSensitivityMutation.SetRunning);
+        expect(commit.mock.calls[1][1]).toBe(false);
+        setTimeout(() => {
+            expect(dispatch).toHaveBeenCalledTimes(0);
+            done();
+        });
+    });
+});
+
+export const testCommonRunSensitivity = (runSensitivityAction: Action<any, AppState>) => {
     it("runs sensitivity", () => {
         const rootState = {
             appType: AppType.Basic,
@@ -81,18 +142,18 @@ describe("Sensitivity actions", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
 
-        (actions[SensitivityAction.RunSensitivity] as any)({
+        (runSensitivityAction as any)({
             rootState, getters, commit, dispatch, rootGetters
         });
 
         expect(commit).toHaveBeenCalledTimes(2);
-        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetResult);
+        expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
         expect(commit.mock.calls[0][1]).toStrictEqual({
             inputs: { endTime: 99, pars: mockBatchPars },
             batch: mockBatch,
             error: null
         });
-        expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetUpdateRequired);
+        expect(commit.mock.calls[1][0]).toBe(BaseSensitivityMutation.SetUpdateRequired);
         expect(commit.mock.calls[1][1]).toStrictEqual({
             endTimeChanged: false,
             modelChanged: false,
@@ -104,88 +165,6 @@ describe("Sensitivity actions", () => {
         expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
             rootState.model.odin,
             mockBatchPars,
-            0,
-            99,
-            defaultAdvanced
-        );
-
-        expect(dispatch).not.toHaveBeenCalled();
-    });
-
-    it("runs sensitivity for parameter sets if required", () => {
-        const rootState = {
-            appType: AppType.Basic,
-            model: mockModelState,
-            run: mockRunState
-        };
-
-        const commit = jest.fn();
-        const dispatch = jest.fn();
-
-        const paramSet1BatchPars = {};
-        const paramSet2BatchPars = {};
-        const mockParamSetBatchPars = {
-            "Set 1": paramSet1BatchPars,
-            "Set 2": paramSet2BatchPars
-        };
-
-        const parameterSetGetters = {
-            ...getters,
-            parameterSetSensitivityUpdateRequired: true,
-            parameterSetBatchPars: mockParamSetBatchPars
-        };
-
-        (actions[SensitivityAction.RunSensitivity] as any)({
-            rootState, getters: parameterSetGetters, commit, dispatch, rootGetters
-        });
-
-        expect(commit).toHaveBeenCalledTimes(3);
-        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetResult);
-        expect(commit.mock.calls[0][1]).toStrictEqual({
-            inputs: { endTime: 99, pars: mockBatchPars },
-            batch: mockBatch,
-            error: null
-        });
-        expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetParameterSetResults);
-        expect(commit.mock.calls[1][1]).toStrictEqual({
-            "Set 1": {
-                inputs: { endTime: 99, pars: paramSet1BatchPars },
-                batch: mockBatch,
-                error: null
-            },
-            "Set 2": {
-                inputs: { endTime: 99, pars: paramSet2BatchPars },
-                batch: mockBatch,
-                error: null
-            }
-        });
-        expect(commit.mock.calls[2][0]).toBe(SensitivityMutation.SetUpdateRequired);
-        expect(commit.mock.calls[2][1]).toStrictEqual({
-            endTimeChanged: false,
-            modelChanged: false,
-            parameterValueChanged: false,
-            sensitivityOptionsChanged: false,
-            numberOfReplicatesChanged: false
-        });
-
-        expect(mockRunnerOde.batchRun).toHaveBeenCalledTimes(3);
-        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
-            rootState.model.odin,
-            mockBatchPars,
-            0,
-            99,
-            defaultAdvanced
-        );
-        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
-            rootState.model.odin,
-            paramSet1BatchPars,
-            0,
-            99,
-            defaultAdvanced
-        );
-        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
-            rootState.model.odin,
-            paramSet2BatchPars,
             0,
             99,
             defaultAdvanced
@@ -212,12 +191,12 @@ describe("Sensitivity actions", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
 
-        (actions[SensitivityAction.RunSensitivity] as any)({
+        (runSensitivityAction as any)({
             rootState, getters, commit, dispatch, rootGetters
         });
 
         expect(commit).toHaveBeenCalledTimes(1);
-        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetResult);
+        expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
         expect(commit.mock.calls[0][1]).toStrictEqual({
             inputs: {
                 endTime: 99,
@@ -264,12 +243,12 @@ describe("Sensitivity actions", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
 
-        (actions[SensitivityAction.RunSensitivity] as any)({
+        (runSensitivityAction as any)({
             rootState, getters: parameterSetGetters, commit, dispatch, rootGetters
         });
 
         expect(commit).toHaveBeenCalledTimes(2);
-        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetResult);
+        expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
         expect(commit.mock.calls[0][1]).toStrictEqual({
             inputs: {
                 endTime: 99,
@@ -321,7 +300,7 @@ describe("Sensitivity actions", () => {
         };
 
         const commit = jest.fn();
-        (actions[SensitivityAction.RunSensitivity] as any)({
+        (runSensitivityAction as any)({
             rootState, getters, commit, rootGetters: rootGettersNoRunner
         });
 
@@ -339,7 +318,7 @@ describe("Sensitivity actions", () => {
         };
 
         const commit = jest.fn();
-        (actions[SensitivityAction.RunSensitivity] as any)({
+        (runSensitivityAction as any)({
             rootState, getters, commit, rootGetters
         });
 
@@ -358,7 +337,7 @@ describe("Sensitivity actions", () => {
         };
 
         const commit = jest.fn();
-        (actions[SensitivityAction.RunSensitivity] as any)({
+        (runSensitivityAction as any)({
             rootState, getters: testGetters, commit, rootGetters
         });
 
@@ -386,13 +365,13 @@ describe("Sensitivity actions", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
 
-        (actions[SensitivityAction.RunSensitivity] as any)({
+        (runSensitivityAction as any)({
             rootState, getters, commit, dispatch, rootGetters
         });
 
         expect(commit).toHaveBeenCalledTimes(2);
-        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetResult);
-        expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetUpdateRequired);
+        expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
+        expect(commit.mock.calls[1][0]).toBe(BaseSensitivityMutation.SetUpdateRequired);
 
         expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
             rootState.model.odin,
@@ -418,21 +397,21 @@ describe("Sensitivity actions", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
 
-        (actions[SensitivityAction.RunSensitivity] as any)({
+        (runSensitivityAction as any)({
             rootState, getters, commit, dispatch, rootGetters
         });
 
         expect(commit).toHaveBeenCalledTimes(3);
-        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetRunning);
+        expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetRunning);
         expect(commit.mock.calls[0][1]).toBe(true);
 
-        expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetResult);
+        expect(commit.mock.calls[1][0]).toBe(BaseSensitivityMutation.SetResult);
         expect(commit.mock.calls[1][1]).toStrictEqual({
             inputs: { endTime: 99, pars: mockBatchPars },
             batch: mockBatch,
             error: null
         });
-        expect(commit.mock.calls[2][0]).toBe(SensitivityMutation.SetUpdateRequired);
+        expect(commit.mock.calls[2][0]).toBe(BaseSensitivityMutation.SetUpdateRequired);
         expect(commit.mock.calls[2][1]).toStrictEqual({
             endTimeChanged: false,
             modelChanged: false,
@@ -450,7 +429,7 @@ describe("Sensitivity actions", () => {
         expect(dispatch.mock.calls[0][0]).toBe(`run/${RunAction.RunModel}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);
         expect(dispatch.mock.calls[0][2]).toStrictEqual({ root: true });
-        expect(dispatch.mock.calls[1][0]).toBe(SensitivityAction.ComputeNext);
+        expect(dispatch.mock.calls[1][0]).toBe(BaseSensitivityAction.ComputeNext);
         expect(dispatch.mock.calls[1][1]).toBe(mockBatch);
     });
 
@@ -467,21 +446,198 @@ describe("Sensitivity actions", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
 
-        (actions[SensitivityAction.RunSensitivity] as any)({
+        (runSensitivityAction as any)({
             rootState, getters, commit, dispatch, rootGetters
         });
 
         expect(commit).toHaveBeenCalledTimes(3);
-        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetRunning);
-        expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetResult);
-        expect(commit.mock.calls[2][0]).toBe(SensitivityMutation.SetUpdateRequired);
+        expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetRunning);
+        expect(commit.mock.calls[1][0]).toBe(BaseSensitivityMutation.SetResult);
+        expect(commit.mock.calls[2][0]).toBe(BaseSensitivityMutation.SetUpdateRequired);
 
         expect(mockRunnerDiscrete.batchRunDiscrete)
             .toHaveBeenCalledWith(rootState.model.odin, mockBatchPars, 0, 99, 0.1, 5);
 
         expect(dispatch).toHaveBeenCalledTimes(1);
-        expect(dispatch.mock.calls[0][0]).toBe(SensitivityAction.ComputeNext);
+        expect(dispatch.mock.calls[0][0]).toBe(BaseSensitivityAction.ComputeNext);
         expect(dispatch.mock.calls[0][1]).toBe(mockBatch);
+    });
+};
+
+describe("Sensitivity actions", () => {
+    const mockDownload = jest.fn();
+    const mockWodinSensitivitySummaryDownload = WodinSensitivitySummaryDownload as any as Mock;
+    mockWodinSensitivitySummaryDownload.mockImplementation(() => ({ download: mockDownload }));
+
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
+    testCommonRunSensitivity(actions[SensitivityAction.RunSensitivity]);
+
+    it("runs sensitivity for parameter sets if required", () => {
+        const rootState = {
+            appType: AppType.Basic,
+            model: mockModelState,
+            run: mockRunState
+        };
+
+        const commit = jest.fn();
+        const dispatch = jest.fn();
+
+        const paramSet1BatchPars = {};
+        const paramSet2BatchPars = {};
+        const mockParamSetBatchPars = {
+            "Set 1": paramSet1BatchPars,
+            "Set 2": paramSet2BatchPars
+        };
+
+        const parameterSetGetters = {
+            ...getters,
+            parameterSetSensitivityUpdateRequired: true,
+            parameterSetBatchPars: mockParamSetBatchPars
+        };
+
+        (actions[SensitivityAction.RunSensitivity] as any)({
+            rootState, getters: parameterSetGetters, commit, dispatch, rootGetters
+        });
+
+        expect(commit).toHaveBeenCalledTimes(3);
+        expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
+        expect(commit.mock.calls[0][1]).toStrictEqual({
+            inputs: { endTime: 99, pars: mockBatchPars },
+            batch: mockBatch,
+            error: null
+        });
+        expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetParameterSetResults);
+        expect(commit.mock.calls[1][1]).toStrictEqual({
+            "Set 1": {
+                inputs: { endTime: 99, pars: paramSet1BatchPars },
+                batch: mockBatch,
+                error: null
+            },
+            "Set 2": {
+                inputs: { endTime: 99, pars: paramSet2BatchPars },
+                batch: mockBatch,
+                error: null
+            }
+        });
+        expect(commit.mock.calls[2][0]).toBe(BaseSensitivityMutation.SetUpdateRequired);
+        expect(commit.mock.calls[2][1]).toStrictEqual({
+            endTimeChanged: false,
+            modelChanged: false,
+            parameterValueChanged: false,
+            sensitivityOptionsChanged: false,
+            numberOfReplicatesChanged: false
+        });
+
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledTimes(3);
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
+            rootState.model.odin,
+            mockBatchPars,
+            0,
+            99,
+            defaultAdvanced
+        );
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
+            rootState.model.odin,
+            paramSet1BatchPars,
+            0,
+            99,
+            defaultAdvanced
+        );
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
+            rootState.model.odin,
+            paramSet2BatchPars,
+            0,
+            99,
+            defaultAdvanced
+        );
+
+        expect(dispatch).not.toHaveBeenCalled();
+    });
+
+
+    it("runs sensitivity for parameter sets if required", () => {
+        const rootState = {
+            appType: AppType.Basic,
+            model: mockModelState,
+            run: mockRunState
+        };
+
+        const commit = jest.fn();
+        const dispatch = jest.fn();
+
+        const paramSet1BatchPars = {};
+        const paramSet2BatchPars = {};
+        const mockParamSetBatchPars = {
+            "Set 1": paramSet1BatchPars,
+            "Set 2": paramSet2BatchPars
+        };
+
+        const parameterSetGetters = {
+            ...getters,
+            parameterSetSensitivityUpdateRequired: true,
+            parameterSetBatchPars: mockParamSetBatchPars
+        };
+
+        (actions[SensitivityAction.RunSensitivity] as any)({
+            rootState, getters: parameterSetGetters, commit, dispatch, rootGetters
+        });
+
+        expect(commit).toHaveBeenCalledTimes(3);
+        expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
+        expect(commit.mock.calls[0][1]).toStrictEqual({
+            inputs: { endTime: 99, pars: mockBatchPars },
+            batch: mockBatch,
+            error: null
+        });
+        expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetParameterSetResults);
+        expect(commit.mock.calls[1][1]).toStrictEqual({
+            "Set 1": {
+                inputs: { endTime: 99, pars: paramSet1BatchPars },
+                batch: mockBatch,
+                error: null
+            },
+            "Set 2": {
+                inputs: { endTime: 99, pars: paramSet2BatchPars },
+                batch: mockBatch,
+                error: null
+            }
+        });
+        expect(commit.mock.calls[2][0]).toBe(BaseSensitivityMutation.SetUpdateRequired);
+        expect(commit.mock.calls[2][1]).toStrictEqual({
+            endTimeChanged: false,
+            modelChanged: false,
+            parameterValueChanged: false,
+            sensitivityOptionsChanged: false,
+            numberOfReplicatesChanged: false
+        });
+
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledTimes(3);
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
+            rootState.model.odin,
+            mockBatchPars,
+            0,
+            99,
+            defaultAdvanced
+        );
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
+            rootState.model.odin,
+            paramSet1BatchPars,
+            0,
+            99,
+            defaultAdvanced
+        );
+        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
+            rootState.model.odin,
+            paramSet2BatchPars,
+            0,
+            99,
+            defaultAdvanced
+        );
+
+        expect(dispatch).not.toHaveBeenCalled();
     });
 
     it("run sensitivity on rehydrate uses parameters from result", () => {
@@ -506,13 +662,13 @@ describe("Sensitivity actions", () => {
         });
 
         expect(commit).toHaveBeenCalledTimes(2);
-        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetResult);
+        expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
         expect(commit.mock.calls[0][1]).toStrictEqual({
             inputs: { endTime: 99, pars: mockResultBatchPars },
             batch: mockBatch,
             error: null
         });
-        expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetUpdateRequired);
+        expect(commit.mock.calls[1][0]).toBe(BaseSensitivityMutation.SetUpdateRequired);
         expect(commit.mock.calls[1][1]).toStrictEqual({
             endTimeChanged: false,
             modelChanged: false,
@@ -530,68 +686,6 @@ describe("Sensitivity actions", () => {
         );
 
         expect(dispatch).not.toHaveBeenCalled();
-    });
-
-    it("ComputeNext dispatches call to itself if batch is not complete", (done) => {
-        const commit = jest.fn();
-        const dispatch = jest.fn();
-        const state = {
-            result: {
-                inputs: {},
-                batch: {}
-            }
-        };
-        const rootState = {
-            run: {
-                runRequired: true
-            }
-        };
-        const batch = {
-            compute: () => false
-        };
-        (actions[SensitivityAction.ComputeNext] as any)({
-            state, rootState, commit, dispatch
-        }, batch);
-        expect(commit).toHaveBeenCalledTimes(1);
-        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetResult);
-        expect(commit.mock.calls[0][1]).toStrictEqual({ ...state.result, batch });
-        setTimeout(() => {
-            expect(dispatch).toHaveBeenCalledTimes(1);
-            expect(dispatch.mock.calls[0][0]).toBe(SensitivityAction.ComputeNext);
-            expect(dispatch.mock.calls[0][1]).toBe(batch);
-            done();
-        });
-    });
-
-    it("ComputeNext commits running false, if batch is complete", (done) => {
-        const commit = jest.fn();
-        const dispatch = jest.fn();
-        const state = {
-            result: {
-                inputs: {},
-                batch: {}
-            }
-        };
-        const rootState = {
-            run: {
-                runRequired: true
-            }
-        };
-        const batch = {
-            compute: () => true
-        };
-        (actions[SensitivityAction.ComputeNext] as any)({
-            state, rootState, commit, dispatch
-        }, batch);
-        expect(commit).toHaveBeenCalledTimes(2);
-        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetResult);
-        expect(commit.mock.calls[0][1]).toStrictEqual({ ...state.result, batch });
-        expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetRunning);
-        expect(commit.mock.calls[1][1]).toBe(false);
-        setTimeout(() => {
-            expect(dispatch).toHaveBeenCalledTimes(0);
-            done();
-        });
     });
 
     it("downloads sensitivity summary", (done) => {

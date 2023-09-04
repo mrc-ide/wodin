@@ -6,20 +6,23 @@ import { BatchPars } from "../../types/responseTypes";
 import { Dict } from "../../types/utilTypes";
 import { ParameterSet } from "../run/state";
 
+export enum BaseSensitivityGetter {
+    batchPars = "batchPars"
+}
+
 export enum SensitivityGetter {
-    batchPars = "batchPars",
     parameterSetBatchPars = "parameterSetBatchPars",
     parameterSetSensitivityUpdateRequired = "parameterSetSensitivityUpdateRequired"
 }
 
 export interface SensitivityGetters {
-    [SensitivityGetter.batchPars]: Getter<SensitivityState, AppState>,
+    [BaseSensitivityGetter.batchPars]: Getter<SensitivityState, AppState>,
     [SensitivityGetter.parameterSetSensitivityUpdateRequired]: Getter<SensitivityState, AppState>,
     [SensitivityGetter.parameterSetSensitivityUpdateRequired]: Getter<SensitivityState, AppState>
 }
 
 export const getters: SensitivityGetters & GetterTree<SensitivityState, AppState> = {
-    [SensitivityGetter.batchPars]: (state: SensitivityState, sensitivityGetters: SensitivityGetters,
+    [BaseSensitivityGetter.batchPars]: (state: SensitivityState, sensitivityGetters: SensitivityGetters,
         rootState: AppState) => {
         return generateBatchPars(rootState, [state.paramSettings], rootState.run.parameterValues).batchPars;
     },

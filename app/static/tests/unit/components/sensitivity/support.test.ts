@@ -15,9 +15,12 @@ describe("construct actionable fit update messages from fit state changes", () =
     };
 
     it("shows fallback when no reason can be found", () => {
-        expect(sensitivityUpdateRequiredExplanation(base))
+        expect(sensitivityUpdateRequiredExplanation(base, false))
             .toBe("Plot is out of date: unknown reasons, contact the administrator, as this is unexpected. "
-                  + "Run sensitivity to update.");
+                  + "Run Sensitivity to update.");
+        expect(sensitivityUpdateRequiredExplanation(base, true))
+            .toBe("Status is out of date: unknown reasons, contact the administrator, as this is unexpected. "
+                + "Run Multi-sensitivity to update.");
     });
 
     it("shows sensible message when everything has changed", () => {
@@ -28,24 +31,36 @@ describe("construct actionable fit update messages from fit state changes", () =
             sensitivityOptionsChanged: true,
             numberOfReplicatesChanged: true
         };
-        expect(sensitivityUpdateRequiredExplanation(everything))
-            .toBe("Plot is out of date: model code has been recompiled. "
-                  + "Run sensitivity to update.");
+        expect(sensitivityUpdateRequiredExplanation(everything, false))
+            .toBe("Plot is out of date: model code has been recompiled. Run Sensitivity to update.");
+        expect(sensitivityUpdateRequiredExplanation(everything, true))
+            .toBe("Status is out of date: model code has been recompiled. Run Multi-sensitivity to update.");
     });
 
-    it("gives specific messages when little has changed", () => {
-        const prefix = "Plot is out of date";
-        const suffix = "Run sensitivity to update.";
-        expect(sensitivityUpdateRequiredExplanation({ ...base, modelChanged: true }))
+    const expectSpecificMessages = (multiSens: boolean, prefix: string, suffix: string) => {
+        const module = multiSens ? "Multi-sensitivity" : "Sensitivity";
+        expect(sensitivityUpdateRequiredExplanation({ ...base, modelChanged: true }, multiSens))
             .toBe(`${prefix}: model code has been recompiled. ${suffix}`);
-        expect(sensitivityUpdateRequiredExplanation({ ...base, parameterValueChanged: true }))
+        expect(sensitivityUpdateRequiredExplanation({ ...base, parameterValueChanged: true }, multiSens))
             .toBe(`${prefix}: parameters have been changed. ${suffix}`);
-        expect(sensitivityUpdateRequiredExplanation({ ...base, endTimeChanged: true }))
+        expect(sensitivityUpdateRequiredExplanation({ ...base, endTimeChanged: true }, multiSens))
             .toBe(`${prefix}: end time has changed. ${suffix}`);
-        expect(sensitivityUpdateRequiredExplanation({ ...base, sensitivityOptionsChanged: true }))
-            .toBe(`${prefix}: sensitivity options have been changed. ${suffix}`);
-        expect(sensitivityUpdateRequiredExplanation({ ...base, numberOfReplicatesChanged: true }))
+        expect(sensitivityUpdateRequiredExplanation({ ...base, sensitivityOptionsChanged: true }, multiSens))
+            .toBe(`${prefix}: ${module} options have been changed. ${suffix}`);
+        expect(sensitivityUpdateRequiredExplanation({ ...base, numberOfReplicatesChanged: true }, multiSens))
             .toBe(`${prefix}: number of replicates has changed. ${suffix}`);
+    };
+
+    it("gives specific messages when little has changed for sensitivity", () => {
+        const prefix = "Plot is out of date";
+        const suffix = "Run Sensitivity to update.";
+        expectSpecificMessages(false, prefix, suffix);
+    });
+
+    it("gives specific messages when little has changed for multiSensitivity", () => {
+        const prefix = "Status is out of date";
+        const suffix = "Run Multi-sensitivity to update.";
+        expectSpecificMessages(true, prefix, suffix);
     });
 });
 

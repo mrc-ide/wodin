@@ -3,7 +3,7 @@ import {
 } from "vuex";
 import { AppState, AppType } from "../appState/state";
 import {BaseSensitivityState, SensitivityState} from "./state";
-import { SensitivityGetter } from "./getters";
+import {BaseSensitivityGetter, SensitivityGetter} from "./getters";
 import {BaseSensitivityMutation, SensitivityMutation} from "./mutations";
 import { RunAction } from "../run/actions";
 import userMessages from "../../userMessages";
@@ -26,8 +26,6 @@ export enum SensitivityAction {
     RunSensitivityOnRehydrate = "RunSensitivityOnRehydrate",
     DownloadSummary = "DownloadSummary"
 }
-
-// TODO: move all these out to utils
 
 const runModelIfRequired = (rootState: AppState, dispatch: Dispatch) => {
     // Re-run model if required on sensitivity run so that plotted central traces are correct
@@ -167,7 +165,7 @@ export const actions: ActionTree<SensitivityState, AppState> = {
     [SensitivityAction.RunSensitivity](context) {
         const { rootState, getters } = context;
         const { endTime } = rootState.run;
-        const batchPars = getters[SensitivityGetter.batchPars];
+        const batchPars = getters[BaseSensitivityGetter.batchPars];
 
         runSensitivity(batchPars, endTime, context);
     },
