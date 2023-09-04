@@ -82,7 +82,7 @@
                   <label class="col-form-label">Values</label>
                 </div>
                 <div class="col-6">
-                  <tag-input :tags="settingsInternal.customValues" :numeric-only="true" @update="updateUserValues">
+                  <tag-input :tags="settingsInternal.customValues" :numeric-only="true" @update="updateCustomValues">
                   </tag-input>
                 </div>
               </div>
@@ -123,10 +123,9 @@
 
 <script lang="ts">
 import {
-    computed, defineComponent, reactive, watch
+    computed, defineComponent, PropType, reactive, watch
 } from "vue";
 import { useStore } from "vuex";
-import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import {
     SensitivityParameterSettings,
     SensitivityScaleType,
@@ -139,11 +138,15 @@ import ErrorInfo from "../ErrorInfo.vue";
 import TagInput from "./TagInput.vue";
 
 export default defineComponent({
-    name: "EditParamSettings.vue",
+    name: "EditParamSettings",
     props: {
         open: {
             type: Boolean,
             required: true
+        },
+        paramSettings: {
+            type: Object as PropType<SensitivityParameterSettings>,
+            required: false
         }
     },
     components: {
@@ -169,7 +172,7 @@ export default defineComponent({
 
         watch(() => props.open, (newValue) => {
             if (newValue) {
-                Object.assign(settingsInternal, { ...store.state.sensitivity.paramSettings });
+                Object.assign(settingsInternal, { ...props.paramSettings });
             }
         });
 
@@ -191,7 +194,7 @@ export default defineComponent({
             }
             return batchParsResult.value?.error;
         });
-        const updateUserValues = (newValues: number[]) => {
+        const updateCustomValues = (newValues: number[]) => {
             // sort and remove duplicates
             settingsInternal.customValues = newValues;
         };
@@ -200,8 +203,7 @@ export default defineComponent({
         const updateSettings = () => {
             // sort custom values
             const customValues = settingsInternal.customValues.sort((a, b) => a - b);
-            store.commit(`sensitivity/${SensitivityMutation.SetParamSettings}`,
-                { ...settingsInternal, customValues });
+            emit("update", { ...settingsInternal, customValues });
             close();
         };
 
@@ -214,7 +216,7 @@ export default defineComponent({
             centralValue,
             batchPars,
             batchParsError,
-            updateUserValues,
+            updateCustomValues,
             close,
             updateSettings
         };

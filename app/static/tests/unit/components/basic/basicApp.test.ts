@@ -14,6 +14,7 @@ jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
 /* eslint-disable import/first */
 import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
+import { expectLeftWodinTabs, expectRightWodinTabs } from "../../../testUtils";
 import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
 import BasicApp from "../../../../src/app/components/basic/BasicApp.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
@@ -23,6 +24,7 @@ import {
 import WodinApp from "../../../../src/app/components/WodinApp.vue";
 import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
+import MultiSensitivityTab from "../../../../src/app/components/multiSensitivity/MultiSensitivityTab.vue";
 import { ModelAction } from "../../../../src/app/store/model/actions";
 import { AppStateAction } from "../../../../src/app/store/appState/actions";
 import { VisualisationTab } from "../../../../src/app/store/appState/state";
@@ -92,20 +94,14 @@ describe("BasicApp", () => {
         const wodinApp = wrapper.findComponent(WodinApp);
 
         const wodinPanels = wodinApp.findComponent(WodinPanels);
-        const leftPanel = wodinPanels.find(".wodin-left");
-        const leftTabs = leftPanel.find("#left-tabs");
-        const leftTabLinks = leftTabs.findAll("ul li a");
-        expect(leftTabLinks.length).toBe(2);
-        expect(leftTabLinks.at(0)!.text()).toBe("Code");
-        expect(leftTabLinks.at(1)!.text()).toBe("Options");
+
+        expectLeftWodinTabs(wrapper, ["Code", "Options"]);
+        const leftTabs = wodinPanels.find(".wodin-left #left-tabs");
         expect(leftTabs.find("div.mt-4 div.code-tab").exists()).toBe(true);
 
-        const rightPanel = wodinPanels.find(".wodin-right");
-        const rightTabs = rightPanel.find("#right-tabs");
+        expectRightWodinTabs(wrapper, ["Run", "Sensitivity"]);
+        const rightTabs = wodinPanels.find(".wodin-right #right-tabs");
         const rightTabLinks = rightTabs.findAll("ul li a");
-        expect(rightTabLinks.length).toBe(2);
-        expect(rightTabLinks.at(0)!.text()).toBe("Run");
-        expect(rightTabLinks.at(1)!.text()).toBe("Sensitivity");
         expect(rightTabs.find("div.mt-4 div.run-tab").exists()).toBe(true);
     });
 
@@ -145,14 +141,35 @@ describe("BasicApp", () => {
             }
         };
         const wrapper = getWrapper(jest.fn(), helpConfig);
-        const wodinPanels = wrapper.findComponent(WodinPanels);
-        const rightPanel = wodinPanels.find(".wodin-right");
-        const rightTabs = rightPanel.find("#right-tabs");
-        const rightTabLinks = rightTabs.findAll("ul li a");
-        expect(rightTabLinks.length).toBe(3);
-        expect(rightTabLinks.at(0)!.text()).toBe("Help");
-        expect(rightTabLinks.at(1)!.text()).toBe("Run");
-        expect(rightTabLinks.at(2)!.text()).toBe("Sensitivity");
+        expectRightWodinTabs(wrapper, ["Help", "Run", "Sensitivity"]);
+
+        const rightTabs = wrapper.findComponent(WodinPanels).find(".wodin-right #right-tabs");
         expect(rightTabs.findComponent(HelpTab).exists()).toBe(true);
+    });
+
+    it("renders Multi-sensitivity tab if configured", async () => {
+        const multiSensConfig = {
+            multiSensitivity: true
+        };
+        const wrapper = getWrapper(jest.fn(), multiSensConfig);
+        expectRightWodinTabs(wrapper, ["Run", "Sensitivity", "Multi-sensitivity"]);
+
+        const rightTabs = wrapper.findComponent(WodinPanels).find(".wodin-right #right-tabs");
+        const rightTabLinks = rightTabs.findAll("ul li a");
+        // Change to Options tab
+        await rightTabLinks.at(2)!.trigger("click");
+        expect(rightTabs.findComponent(MultiSensitivityTab).exists()).toBe(true);
+    });
+
+    it("renders both Help and MultiSensitivity if configured", () => {
+        const bothConfig = {
+            help: {
+                markdown: ["test md"],
+                tabName: "Help"
+            },
+            multiSensitivity: true
+        };
+        const wrapper = getWrapper(jest.fn(), bothConfig);
+        expectRightWodinTabs(wrapper, ["Help", "Run", "Sensitivity", "Multi-sensitivity"]);
     });
 });

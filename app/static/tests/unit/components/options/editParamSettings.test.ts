@@ -61,8 +61,7 @@ describe("EditParamSettings", () => {
 
     const parameterValues = { A: 1, B: 2, C: 3 };
 
-    const getWrapper = async (paramSettings: SensitivityParameterSettings, open = true,
-        mockSetParamSettings = jest.fn()) => {
+    const getWrapper = async (paramSettings: SensitivityParameterSettings, open = true) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
@@ -77,15 +76,6 @@ describe("EditParamSettings", () => {
                     state: mockRunState({
                         parameterValues
                     })
-                },
-                sensitivity: {
-                    namespaced: true,
-                    state: {
-                        paramSettings
-                    },
-                    mutations: {
-                        [SensitivityMutation.SetParamSettings]: mockSetParamSettings
-                    }
                 }
             }
         });
@@ -95,7 +85,8 @@ describe("EditParamSettings", () => {
                 directives: { tooltip: mockTooltipDirective }
             },
             props: {
-                open: false
+                open: false,
+                paramSettings
             }
         });
 
@@ -234,9 +225,8 @@ describe("EditParamSettings", () => {
         await select.trigger("change");
     };
 
-    it("updates param settings and closes on OK click", async () => {
-        const mockSetParamSettings = jest.fn();
-        const wrapper = await getWrapper(percentSettings, true, mockSetParamSettings);
+    it("emits update and closes on OK click", async () => {
+        const wrapper = await getWrapper(percentSettings, true);
 
         await updateSelect(wrapper, "edit-param-to-vary", "A");
         await updateSelect(wrapper, "edit-scale-type", SensitivityScaleType.Logarithmic);
@@ -248,8 +238,8 @@ describe("EditParamSettings", () => {
 
         await wrapper.find("#ok-settings").trigger("click");
         expect(wrapper.emitted("close")?.length).toBe(1);
-        expect(mockSetParamSettings).toHaveBeenCalledTimes(1);
-        expect(mockSetParamSettings.mock.calls[0][1]).toStrictEqual({
+        expect(wrapper.emitted("update")?.length).toBe(1);
+        expect(wrapper.emitted("update")![0]).toStrictEqual([{
             parameterToVary: "A",
             scaleType: SensitivityScaleType.Logarithmic,
             variationType: SensitivityVariationType.Range,
@@ -258,7 +248,7 @@ describe("EditParamSettings", () => {
             rangeTo: 3,
             numberOfRuns: 11,
             customValues: []
-        });
+        }]);
     });
 
     it("renders and updates sensitivity param values", async () => {
@@ -305,25 +295,17 @@ describe("EditParamSettings", () => {
 
     it("updates values from TagInput", async () => {
         const mockSetParamSettings = jest.fn();
-        const wrapper = await getWrapper(customSettings, true, mockSetParamSettings);
+        const wrapper = await getWrapper(customSettings, true);
         const expectedValues = [-1, 0, 1];
         wrapper.findComponent(TagInput).vm.$emit("update", expectedValues);
-        await nextTick();
-        expect((wrapper.vm as any).settingsInternal.customValues).toStrictEqual(expectedValues);
-        await wrapper.find("#ok-settings").trigger("click");
-        expect(mockSetParamSettings).toHaveBeenCalledTimes(1);
-        const committed = mockSetParamSettings.mock.calls[0][1];
-        expect(committed.customValues).toStrictEqual(expectedValues);
+        expect((wrapper.vm as any).settingsInternal.customValues).toStrictEqual([-1, 0, 1]);
     });
 
-    it("sorts custom values on commit", async () => {
+    it("sorts custom values on update", async () => {
         const mockSetParamSettings = jest.fn();
-        const wrapper = await getWrapper(customSettings, true, mockSetParamSettings);
+        const wrapper = await getWrapper(customSettings, true);
         wrapper.findComponent(TagInput).vm.$emit("update", [5, 1, 0, -2, -1]);
         await wrapper.find("#ok-settings").trigger("click");
-        expect(mockSetParamSettings.mock.calls[0][1]).toStrictEqual({
-            ...customSettings,
-            customValues: [-2, -1, 0, 1, 5]
-        });
+        expect((wrapper.emitted("update")![0] as any)[0].customValues).toStrictEqual([-2, -1, 0, 1, 5]);
     });
 });

@@ -55,16 +55,12 @@ export interface SensitivityUpdateRequiredReasons {
     advancedSettingsChanged: boolean;
 }
 
-export interface SensitivityState {
-    paramSettings: SensitivityParameterSettings,
-    // Whether sensitivity needs to be re-run because of change to settings or model
-    sensitivityUpdateRequired: SensitivityUpdateRequiredReasons
-    plotSettings: SensitivityPlotSettings,
+export interface BaseSensitivityState {
     result: OdinSensitivityResult | null;
-    parameterSetResults: Dict<OdinSensitivityResult>,
     downloading: boolean,
     userSummaryDownloadFileName: string,
-
+    // Whether sensitivity needs to be re-run because of change to settings or model
+    sensitivityUpdateRequired: SensitivityUpdateRequiredReasons
     // true only in stochastic mode when odinWorker produces multiple sensitivity
     // traces sequentially. This toggle is required to show how many runs out of
     // the total have finished.  Turned off when all runs are complete
@@ -73,4 +69,10 @@ export interface SensitivityState {
     // function in sensitivity plot components since they take the longest in
     // reshaping the data
     loading: boolean
+}
+
+export interface SensitivityState extends BaseSensitivityState {
+    paramSettings: SensitivityParameterSettings,
+    plotSettings: SensitivityPlotSettings,
+    parameterSetResults: Dict<OdinSensitivityResult>,
 }
