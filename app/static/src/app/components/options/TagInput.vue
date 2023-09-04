@@ -47,7 +47,7 @@ export default defineComponent({
         });
 
         onMounted(() => {
-            if (cleanTags.value.length !== props.tags?.length) {
+            if (props.tags && cleanTags.value.length !== props.tags.length) {
                 emit("update", cleanTags.value);
             }
         });
