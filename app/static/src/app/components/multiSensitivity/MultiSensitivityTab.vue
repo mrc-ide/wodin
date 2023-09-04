@@ -20,10 +20,10 @@ import { useStore } from "vuex";
 import ActionRequiredMessage from "@/app/components/ActionRequiredMessage.vue";
 import ErrorInfo from "@/app/components/ErrorInfo.vue";
 import { update } from "plotly.js-basic-dist-min";
-import { SensitivityGetter } from "../../store/sensitivity/getters";
 import baseSensitivity from "../mixins/baseSensitivity";
 import { MultiSensitivityAction } from "../../store/multiSensitivity/actions";
 import LoadingButton from "../LoadingButton.vue";
+import {MultiSensitivityGetter} from "../../store/multiSensitivity/getters";
 
 export default defineComponent({
     name: "MultiSensitivityTab",
@@ -42,7 +42,7 @@ export default defineComponent({
 
         const canRunMultiSensitivity = computed(() => {
             return sensitivityPrerequisitesReady.value
-            && !!store.getters[`${namespace}/${SensitivityGetter.batchPars}`];
+            && !!store.getters[`${namespace}/${MultiSensitivityGetter.batchPars}`];
         });
 
         const runMultiSensitivity = () => {
