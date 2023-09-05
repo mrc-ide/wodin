@@ -154,6 +154,14 @@ describe("NumericInput", () => {
         expect(mockTooltipDirective).toHaveBeenCalledTimes(2);
     });
 
+    it("does min validation when min is 0", async () => {
+        const wrapper = getWrapper(1, Infinity, 0);
+        await wrapper.find("input").setValue("-1");
+        expect(wrapper.emitted("update")![0]).toStrictEqual([0]);
+        const { tooltipProps } = wrapper.vm as any;
+        expect(tooltipProps.content).toBe("Please enter a non-negative number");
+    });
+
     it("does min validation (array)", async () => {
         const wrapper = getWrapper(12, Infinity, [
             { number: 12, message: "middle tooltip" },
