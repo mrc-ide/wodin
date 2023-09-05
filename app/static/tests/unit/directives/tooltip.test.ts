@@ -118,7 +118,7 @@ describe("tooltip directive", () => {
         await div.trigger("click");
         const divClick = wrapper.find("div");
         const tooltipClick = Tooltip.getInstance(divClick.element) as any;
-        expect(spyDispose).toBeCalledTimes(1)
+        expect(spyDispose).toBeCalledTimes(1);
         expect(tooltipClick._config.title).toBe("hey");
         expect(tooltipClick._config.customClass).toBe("tooltip-warning");
     });
