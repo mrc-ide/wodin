@@ -15,6 +15,7 @@ import Vuex, { Store } from "vuex";
 import WodinPlot from "../../../src/app/components/WodinPlot.vue";
 import WodinPlotDataSummary from "../../../src/app/components/WodinPlotDataSummary.vue";
 import { BasicState } from "../../../src/app/store/basic/state";
+import { fadePlotStyle } from "../../../src/app/plot";
 
 describe("WodinPlot", () => {
     const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");
@@ -361,5 +362,17 @@ describe("WodinPlot", () => {
             yaxis: { autorange: true, type: "log" }
         };
         expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual(expectedLogScaleLayout);
+    });
+
+    it("does not re-draw plot if plot is faded", async () => {
+        const wrapper = getWrapper();
+        const mockOn = mockPlotElementOn(wrapper);
+
+        await wrapper.setProps({ fadePlot: true });
+        await wrapper.setProps({ redrawWatches: [{} as any] });
+
+        expect(mockPlotDataFn).toBeCalledTimes(0);
+        expect(mockPlotlyNewPlot).toBeCalledTimes(0);
+        expect(mockOn).toBeCalledTimes(0);
     });
 });

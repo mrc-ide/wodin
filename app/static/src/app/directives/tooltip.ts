@@ -49,7 +49,6 @@ export default {
 
             const isVariantSame = (tooltip as any)._config.customClass === oldCustomClass;
             if (!isVariantSame) {
-                console.log("creating new tooltips")
                 tooltip.dispose();
 
                 tooltip = new Tooltip(el, {

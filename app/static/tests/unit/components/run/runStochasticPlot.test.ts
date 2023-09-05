@@ -170,4 +170,43 @@ describe("RunPlot for stochastic", () => {
         const wodinPlot = wrapper.findComponent(WodinPlot);
         expect(wodinPlot.props("fadePlot")).toBe(true);
     });
+
+    it("doesn't show individual traces when replicates > maxReplicatesDisplay", () => {
+        const store = new Vuex.Store<StochasticState>({
+            state: {
+                model: mockModelState({ paletteModel, selectedVariables }),
+                run: {
+                    endTime: 99,
+                    numberOfReplicates: 51,
+                    resultDiscrete: mockResult
+                }
+            } as any
+        });
+        const wrapper = shallowMount(RunStochasticPlot, {
+            props: {
+                fadePlot: false
+            },
+            global: {
+                plugins: [store]
+            }
+        });
+        const wodinPlot = wrapper.findComponent(WodinPlot);
+        const plotData = wodinPlot.props("plotData");
+        const data = plotData();
+        expect(data).toStrictEqual([
+            {
+                mode: "lines",
+                line: {
+                    color: "#00ff00",
+                    width: undefined,
+                    opacity: undefined
+                },
+                name: "I (mean)",
+                x: [0, 1],
+                y: [5, 10],
+                showlegend: true,
+                legendgroup: "I (mean)"
+            }
+        ]);
+    });
 });
