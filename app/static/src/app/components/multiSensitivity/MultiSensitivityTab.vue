@@ -2,7 +2,7 @@
   <div class="multi-sensitivity-tab">
     <div>
       <loading-button class="btn btn-primary"
-                      id="run-sens-btn"
+                      id="run-multi-sens-btn"
                       :loading="running"
                       :is-disabled="!canRunMultiSensitivity"
                       @click="runMultiSensitivity">Run Multi-sensitivity</loading-button>
