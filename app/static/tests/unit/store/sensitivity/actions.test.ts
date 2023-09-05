@@ -1,3 +1,4 @@
+import { Action } from "vuex";
 import { actions, BaseSensitivityAction, SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
 import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import { ModelGetter } from "../../../../src/app/store/model/getters";
@@ -7,7 +8,6 @@ import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
 import { AdvancedComponentType } from "../../../../src/app/store/run/state";
 import { WodinSensitivitySummaryDownload } from "../../../../src/app/excel/wodinSensitivitySummaryDownload";
 import Mock = jest.Mock;
-import { Action } from "vuex";
 
 jest.mock("../../../../src/app/excel/wodinSensitivitySummaryDownload");
 

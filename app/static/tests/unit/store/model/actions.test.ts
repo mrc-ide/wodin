@@ -212,7 +212,7 @@ describe("Model actions", () => {
         expect(dispatch).not.toHaveBeenCalled();
     });
 
-    it("does not set multi-sensitivity update required or parameter to vary when multiSensitivity is not enabled", () => {
+    it("does not set multi-sensitivity update required or parameter to vary when multiSensitivity not enabled", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
         const noMultiRootState = {

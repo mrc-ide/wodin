@@ -40,7 +40,7 @@ import { Dict } from "../../types/utilTypes";
 import { AppType, VisualisationTab } from "../../store/appState/state";
 import { ModelFitMutation } from "../../store/modelFit/mutations";
 import userMessages from "../../userMessages";
-import { BaseSensitivityMutation, SensitivityMutation } from "../../store/sensitivity/mutations";
+import { BaseSensitivityMutation } from "../../store/sensitivity/mutations";
 import { OdinParameter, OdinUserType } from "../../types/responseTypes";
 
 export default defineComponent({

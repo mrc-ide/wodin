@@ -6,7 +6,8 @@ import { noSensitivityUpdateRequired } from "../../../../src/app/store/sensitivi
 import { AppState } from "../../../../src/app/store/appState/state";
 
 describe("baseSensitivity mixin", () => {
-    const getStore = (hasRunner = true, modelState: Partial<ModelState> = {}, sensitivityState: Partial<BaseSensitivityState> = {},
+    const getStore = (hasRunner = true, modelState: Partial<ModelState> = {},
+        sensitivityState: Partial<BaseSensitivityState> = {},
         multiSensitivityState: Partial<BaseSensitivityState> = {}) => {
         return new Vuex.Store<AppState>({
             state: {} as any,

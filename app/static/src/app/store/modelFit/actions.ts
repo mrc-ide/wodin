@@ -3,7 +3,7 @@ import { FitState } from "../fit/state";
 import { ModelFitState } from "./state";
 import { ModelFitMutation } from "./mutations";
 import { RunMutation } from "../run/mutations";
-import { BaseSensitivityMutation, SensitivityMutation } from "../sensitivity/mutations";
+import { BaseSensitivityMutation } from "../sensitivity/mutations";
 import { ModelFitGetter } from "./getters";
 import { FitDataGetter } from "../fitData/getters";
 import { FitData } from "../fitData/state";
