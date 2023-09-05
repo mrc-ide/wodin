@@ -43,7 +43,7 @@ import VueFeather from "vue-feather";
 import DownloadOutput from "@/app/components/DownloadOutput.vue";
 import SensitivityTracesPlot from "./SensitivityTracesPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
-import { SensitivityGetter } from "../../store/sensitivity/getters";
+import {BaseSensitivityGetter, SensitivityGetter} from "../../store/sensitivity/getters";
 import { SensitivityAction } from "../../store/sensitivity/actions";
 import userMessages from "../../userMessages";
 import { SensitivityPlotType } from "../../store/sensitivity/state";
@@ -78,10 +78,10 @@ export default defineComponent({
 
         const showDownloadSummary = ref(false);
 
-        const canRunSensitivity = computed(() => {
-            return sensitivityPrerequisitesReady.value
-            && !!store.getters[`${namespace}/${SensitivityGetter.batchPars}`];
-        });
+      const canRunSensitivity = computed(() => {
+        return sensitivityPrerequisitesReady.value
+            && !!store.getters[`${namespace}/${BaseSensitivityGetter.batchPars}`];
+      });
 
         const runSensitivity = () => {
             store.commit(`${namespace}/${SensitivityMutation.SetLoading}`, true);

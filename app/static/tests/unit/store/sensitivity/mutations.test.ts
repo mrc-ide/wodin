@@ -1,4 +1,4 @@
-import { mutations, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import {BaseSensitivityMutation, mutations, SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
 import { SensitivityPlotExtreme, SensitivityPlotType } from "../../../../src/app/store/sensitivity/state";
 import { mockSensitivityState } from "../../../mocks";
 
@@ -47,7 +47,7 @@ describe("Sensitivity mutations", () => {
             batch: { solutions: [] },
             error: null
         };
-        mutations[SensitivityMutation.SetResult](state, batch);
+        mutations[BaseSensitivityMutation.SetResult](state, batch);
         expect(state.result).toBe(batch);
     });
 
@@ -58,7 +58,7 @@ describe("Sensitivity mutations", () => {
                 parameterValueChanged: false
             }
         } as any;
-        mutations[SensitivityMutation.SetUpdateRequired](state, { modelChanged: true });
+        mutations[BaseSensitivityMutation.SetUpdateRequired](state, { modelChanged: true });
         expect(state.sensitivityUpdateRequired).toStrictEqual({
             modelChanged: true,
             parameterValueChanged: false
@@ -96,7 +96,7 @@ describe("Sensitivity mutations", () => {
             batch: null,
             error: { error: "TEST ERROR", detail: "test error detail" }
         };
-        mutations[SensitivityMutation.SetResult](state, batch);
+        mutations[BaseSensitivityMutation.SetResult](state, batch);
         expect(state.result).toBe(batch);
     });
 

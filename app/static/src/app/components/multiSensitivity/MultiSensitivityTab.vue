@@ -23,8 +23,8 @@ import { update } from "plotly.js-basic-dist-min";
 import baseSensitivity from "../mixins/baseSensitivity";
 import { MultiSensitivityAction } from "../../store/multiSensitivity/actions";
 import LoadingButton from "../LoadingButton.vue";
-import {MultiSensitivityGetter} from "../../store/multiSensitivity/getters";
 import userMessages from "../../userMessages";
+import {BaseSensitivityGetter} from "@/app/store/sensitivity/getters";
 
 export default defineComponent({
     name: "MultiSensitivityTab",
@@ -43,7 +43,7 @@ export default defineComponent({
 
         const canRunMultiSensitivity = computed(() => {
             return sensitivityPrerequisitesReady.value
-            && !!store.getters[`${namespace}/${MultiSensitivityGetter.batchPars}`];
+            && !!store.getters[`${namespace}/${BaseSensitivityGetter.batchPars}`];
         });
 
         const runMultiSensitivity = () => {

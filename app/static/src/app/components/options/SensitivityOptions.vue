@@ -66,11 +66,10 @@ import { computed, defineComponent, ref } from "vue";
 import VueFeather from "vue-feather";
 import { AppState } from "../../store/appState/state";
 import { defaultSensitivityParamSettings } from "../../store/sensitivity/sensitivity";
-import { MultiSensitivityGetter } from "../../store/multiSensitivity/getters";
 import userMessages from "../../userMessages";
 import VerticalCollapse from "../VerticalCollapse.vue";
 import EditParamSettings from "./EditParamSettings.vue";
-import { SensitivityGetter } from "../../store/sensitivity/getters";
+import {BaseSensitivityGetter} from "../../store/sensitivity/getters";
 import SensitivityParamValues from "./SensitivityParamValues.vue";
 import SensitivityPlotOptions from "./SensitivityPlotOptions.vue";
 import { SensitivityParameterSettings } from "../../store/sensitivity/state";
@@ -167,8 +166,8 @@ export default defineComponent({
         };
 
         const batchPars = computed(() => (props.multiSensitivity
-            ? store.getters[`multiSensitivity/${MultiSensitivityGetter.batchPars}`]
-            : store.getters[`sensitivity/${SensitivityGetter.batchPars}`]));
+            ? store.getters[`multiSensitivity/${BaseSensitivityGetter.batchPars}`]
+            : store.getters[`sensitivity/${BaseSensitivityGetter.batchPars}`]));
 
         return {
             title,

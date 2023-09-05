@@ -4,7 +4,7 @@ import { nextTick } from "vue";
 import { ModelState } from "../../../../src/app/store/model/state";
 import SensitivityTab from "../../../../src/app/components/sensitivity/SensitivityTab.vue";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
-import { SensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
+import {BaseSensitivityGetter, SensitivityGetter} from "../../../../src/app/store/sensitivity/getters";
 import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/SensitivityTracesPlot.vue";
 import { SensitivityPlotType, SensitivityState } from "../../../../src/app/store/sensitivity/state";
 import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
@@ -78,7 +78,7 @@ describe("SensitivityTab", () => {
                         ...sensitivityState
                     },
                     getters: {
-                        [SensitivityGetter.batchPars]: () => batchPars
+                        [BaseSensitivityGetter.batchPars]: () => batchPars
                     },
                     actions: {
                         [SensitivityAction.RunSensitivity]: mockRunSensitivity,
@@ -302,7 +302,7 @@ describe("SensitivityTab", () => {
         } as any;
         const wrapper = getWrapper(AppType.Basic, {}, sensitivityState);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Plot is out of date: model code has been recompiled. Run sensitivity to update.");
+            .toBe("Plot is out of date: model code has been recompiled. Run Sensitivity to update.");
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);
     });
 
@@ -320,7 +320,7 @@ describe("SensitivityTab", () => {
         } as any;
         const wrapper = getWrapper(AppType.Basic, {}, sensitivityState);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Plot is out of date: parameters have been changed. Run sensitivity to update.");
+            .toBe("Plot is out of date: parameters have been changed. Run Sensitivity to update.");
         expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(true);
     });
 

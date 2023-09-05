@@ -212,11 +212,14 @@ describe("Model actions", () => {
         expect(dispatch).not.toHaveBeenCalled();
     });
 
-    it("does not set multi-sensitivity update required or paramater to vary when multiSensitivity is not enabled", () => {
+    it("does not set multi-sensitivity update required or parameter to vary when multiSensitivity is not enabled", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
         const noMultiRootState = {
-            config: { multiSensitivity: false }
+            config: { multiSensitivity: false },
+            sensitivity: {
+                paramSettings: {}
+            }
         };
         (actions[ModelAction.CompileModel] as any)({
             commit, dispatch, state: updatedParamState, rootState: noMultiRootState
@@ -264,11 +267,11 @@ describe("Model actions", () => {
             state: updatedParamState,
             rootState: oldMultiSensRootState
         });
-        expect(commit.mock.calls.length).toBe(9);
-        expect(commit.mock.calls[8][0]).toBe(`multiSensitivity/${MultiSensitivityMutation.SetParamSettings}`);
-        expect(commit.mock.calls[8][1])
+        expect(commit.mock.calls.length).toBe(10);
+        expect(commit.mock.calls[9][0]).toBe(`multiSensitivity/${MultiSensitivityMutation.SetParamSettings}`);
+        expect(commit.mock.calls[9][1])
             .toStrictEqual([{ ...defaultSensitivityParamSettings(), parameterToVary: "p2" }]);
-        expect(commit.mock.calls[8][2]).toStrictEqual({ root: true });
+        expect(commit.mock.calls[9][2]).toStrictEqual({ root: true });
     });
 
     it("compile model dispatches update linked variables and update params to vary for Fit apps", () => {
@@ -305,7 +308,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[3][1]).toStrictEqual(["x", "y"]);
         expect(commit.mock.calls[4][0]).toBe(ModelMutation.SetCompileRequired);
         expect(commit.mock.calls[5][0]).toBe(`run/${RunMutation.SetRunRequired}`);
-        expect(commit.mock.calls[6][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
+        expect(commit.mock.calls[6][0]).toBe(`sensitivity/${BaseSensitivityMutation.SetUpdateRequired}`);
         expect(commit.mock.calls[6][1]).toStrictEqual({ modelChanged: true });
         expect(commit.mock.calls[7][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
         expect(commit.mock.calls[7][1]).toBe(null);
@@ -361,7 +364,7 @@ describe("Model actions", () => {
         (actions[ModelAction.CompileModel] as any)({
             commit, dispatch, state, rootState: testRootState
         });
-        expect(commit.mock.calls.length).toBe(8);
+        expect(commit.mock.calls.length).toBe(9);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
         expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
         expect(commit.mock.calls[2][0]).toBe(ModelMutation.SetPaletteModel);
@@ -369,8 +372,9 @@ describe("Model actions", () => {
         expect(commit.mock.calls[3][1]).toStrictEqual(["x", "y"]);
         expect(commit.mock.calls[4][0]).toBe(ModelMutation.SetCompileRequired);
         expect(commit.mock.calls[5][0]).toBe(`run/${RunMutation.SetRunRequired}`);
-        expect(commit.mock.calls[6][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
-        expect(commit.mock.calls[7][0]).toBe(`multiSensitivity/${MultiSensitivityMutation.SetParamSettings}`);
+        expect(commit.mock.calls[6][0]).toBe(`sensitivity/${BaseSensitivityMutation.SetUpdateRequired}`);
+        expect(commit.mock.calls[7][0]).toBe(`multiSensitivity/${BaseSensitivityMutation.SetUpdateRequired}`);
+        expect(commit.mock.calls[8][0]).toBe(`multiSensitivity/${MultiSensitivityMutation.SetParamSettings}`);
     });
 
     it("compile model does not update runRequired or compileRequired if compileRequired was false", () => {
@@ -511,7 +515,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[7][0]).toBe(`run/${RunMutation.SetRunRequired}`);
         expect(commit.mock.calls[7][1]).toStrictEqual({ modelChanged: true });
 
-        expect(commit.mock.calls[8][0]).toBe(`sensitivity/${SensitivityMutation.SetUpdateRequired}`);
+        expect(commit.mock.calls[8][0]).toBe(`sensitivity/${BaseSensitivityMutation.SetUpdateRequired}`);
         expect(commit.mock.calls[8][1]).toStrictEqual({ modelChanged: true });
 
         expect(commit.mock.calls[9][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);

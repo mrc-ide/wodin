@@ -31,7 +31,8 @@ describe("SensitivityOptions", () => {
         varying: [
             { name: "A", values: [1, 2, 3] },
             { name: "B", values: [4, 5] },
-            { name: "C", values: [6, 7, 8] }]
+            { name: "C", values: [6, 7, 8] }
+        ]
     } as any;
 
     const mockSensitivitySetParamSettings = jest.fn();
@@ -90,7 +91,7 @@ describe("SensitivityOptions", () => {
                 multiSensitivity: {
                     namespaced: true,
                     state: {
-                        paramSettingss
+                        paramSettings
                     },
                     getters: {
                         [BaseSensitivityGetter.batchPars]: () => mockMultiBatchPars
@@ -187,6 +188,7 @@ describe("SensitivityOptions", () => {
         expect(listItems.at(3)!.text()).toBe("Variation (%): 10");
         expect(listItems.at(4)!.text()).toBe("Number of runs: 5");
 
+        expect(wrapper.findComponent(SensitivityParamValues).props("paramName")).toBe("A");
         expect(wrapper.findComponent(SensitivityParamValues).props("batchPars")).toBe(batchPars);
 
         expectEditButton(wrapper);
@@ -219,6 +221,7 @@ describe("SensitivityOptions", () => {
         expect(listItems.at(4)!.text()).toBe("To: 3");
         expect(listItems.at(5)!.text()).toBe("Number of runs: 5");
 
+        expect(wrapper.findComponent(SensitivityParamValues).props("paramName")).toBe("B");
         expect(wrapper.findComponent(SensitivityParamValues).props("batchPars")).toBe(batchPars);
         expectEditButton(wrapper);
     };
@@ -259,10 +262,10 @@ describe("SensitivityOptions", () => {
         expect(wrapper.findComponent(VerticalCollapse).props("collapseId")).toBe("sensitivity-options");
         const allSettingsDivs = wrapper.findAll(".sensitivity-options-settings");
         expect(allSettingsDivs.length).toBe(3);
-        expectPercentSettings(allSettingsDivs[0], mockMultiBatchPars[0]);
+        expectPercentSettings(allSettingsDivs[0], mockMultiBatchPars);
         expectDeleteButton(allSettingsDivs[0]);
 
-        expectRangeSettings(allSettingsDivs[1], mockMultiBatchPars[1]);
+        expectRangeSettings(allSettingsDivs[1], mockMultiBatchPars);
         expectDeleteButton(allSettingsDivs[1]);
 
         expectCustomSettings(allSettingsDivs[2]);

@@ -1,19 +1,24 @@
 import {actions, MultiSensitivityAction} from "../../../../src/app/store/multiSensitivity/actions";
 import {
     defaultAdvanced,
+    mockBatch,
     mockModelState,
+    mockRunState,
     mockRunnerOde,
     rootGetters,
     testCommonRunSensitivity
 } from "../sensitivity/actions.test";
 import {AppType} from "../../../../src/app/store/appState/state";
 import {BaseSensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
-import {mockRunState} from "../../../mocks";
 
 describe("multiSensitivity actions", () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
     testCommonRunSensitivity(actions[MultiSensitivityAction.RunMultiSensitivity]);
 
-    it("does not runs sensitivity for parameter sets", () => {
+    it("does not runs sensitivity for parameter sets", async () => {
         const rootState = {
             appType: AppType.Basic,
             model: mockModelState,
@@ -32,8 +37,22 @@ describe("multiSensitivity actions", () => {
             rootState, getters: testGetters, commit, dispatch, rootGetters
         });
 
-        expect(commit).toHaveBeenCalledTimes(1);
+        console.log("expecting...")
+        expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
+        expect(commit.mock.calls[0][1]).toStrictEqual({
+            inputs: { endTime: 99, pars: mockBatchPars },
+            batch: mockBatch,
+            error: null
+        });
+        expect(commit.mock.calls[1][0]).toBe(BaseSensitivityMutation.SetUpdateRequired);
+        expect(commit.mock.calls[1][1]).toStrictEqual({
+            endTimeChanged: false,
+            modelChanged: false,
+            parameterValueChanged: false,
+            sensitivityOptionsChanged: false,
+            numberOfReplicatesChanged: false
+        });
 
         expect(mockRunnerOde.batchRun).toHaveBeenCalledTimes(1);
         expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
