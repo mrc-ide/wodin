@@ -84,7 +84,7 @@ export default {
         }
     },
     sensitivity: {
-        compileRequiredForOptions: (multiSens: boolean) => "Please compile a valid model in order to set"
+        compileRequiredForOptions: (multiSens: boolean) => "Please compile a valid model in order to set "
             + `${sensType(multiSens)} options.`,
         compileRequiredForUpdate: (multiSens: boolean) => "Model code has been updated. "
             + `Compile code and Run ${sensType(multiSens)} to update.`,

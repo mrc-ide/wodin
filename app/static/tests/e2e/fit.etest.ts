@@ -276,7 +276,7 @@ test.describe("Wodin App model fit tests", () => {
         // Back to sensitivity tab
         await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
         await expect(await page.innerText(".action-required-msg"))
-            .toBe("Plot is out of date: parameters have been changed. Run sensitivity to update.");
+            .toBe("Plot is out of date: parameters have been changed. Run Sensitivity to update.");
     });
 
     test("can display sum of squares on run tab", async ({ page }) => {

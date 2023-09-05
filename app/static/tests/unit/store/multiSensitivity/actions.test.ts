@@ -39,7 +39,6 @@ describe("multiSensitivity actions", () => {
             rootState, getters: testGetters, commit, dispatch, rootGetters
         });
 
-        console.log("expecting...");
         expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
         expect(commit.mock.calls[0][1]).toStrictEqual({

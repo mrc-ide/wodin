@@ -40,11 +40,8 @@ const batchRunOde = (runner: OdinRunnerOde,
     endTime: number,
     advancedSettings: AdvancedSettings,
     paramValues: OdinUserType | null): Batch => {
-    console.log("doing batch run ode");
     const advancedSettingsOdin = convertAdvancedSettingsToOdin(advancedSettings, paramValues);
-    console.log("got adv settings");
     const batch = runner.batchRun(odin, pars, 0, endTime, advancedSettingsOdin);
-    console.log("got batch");
     return batch;
 };
 
@@ -79,9 +76,7 @@ export const runSensitivity = (
     const isStochastic = rootState.appType === AppType.Stochastic;
     const hasRunner = rootGetters[`model/${ModelGetter.hasRunner}`];
 
-    console.log("1");
     if (hasRunner && odin && batchPars) {
-        console.log("2");
         const payload : OdinSensitivityResult = {
             inputs: { endTime, pars: batchPars },
             batch: null,
@@ -102,9 +97,7 @@ export const runSensitivity = (
                 detail: (e as Error).message
             };
         }
-        console.log("3");
         commit(BaseSensitivityMutation.SetResult, payload);
-        console.log("4");
 
         if (!multiSensitivity && getters.parameterSetSensitivityUpdateRequired && !isStochastic) {
             const parameterSetBatchPars = getters[SensitivityGetter.parameterSetBatchPars];
