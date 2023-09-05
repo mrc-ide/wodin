@@ -48,10 +48,6 @@ export default defineComponent({
             const maxReplicatesDisplay = (store.state.config as StochasticConfig)?.maxReplicatesDisplay || 50;
             const showIndividualTraces = replicates <= maxReplicatesDisplay;
 
-            console.log(replicates)
-            console.log(maxReplicatesDisplay)
-            console.log(showIndividualTraces)
-
             return discreteSeriesSetToPlotly(
                 filterSeriesSet(result, selectedVariables.value),
                 palette.value,

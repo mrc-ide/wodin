@@ -89,7 +89,7 @@ export function discreteSeriesSetToPlotly(
 ): WodinPlotData {
     const individualLegends: string[] = [];
     const series = showIndividualTraces ? s.values
-        : s.values.filter((el) => el.description !== "Individual"); 
+        : s.values.filter((el) => el.description !== "Individual");
     return series.map(
         (values: OdinSeriesSetValues) => {
             const isIndividual = values.description === "Individual";

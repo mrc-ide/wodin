@@ -71,14 +71,14 @@ export default defineComponent({
             return [
                 {
                     number: maxReplicatesDisplay.value,
-                    message: 'Individual traces will not be shown past this point',
-                    variant: 'warning'
+                    message: "Individual traces will not be shown past this point",
+                    variant: "warning"
                 },
                 {
                     number: maxReplicatesRun.value,
                     message: `Please enter a value less than ${maxReplicatesRun.value}`
                 }
-            ] as BoundTooltip[]
+            ] as BoundTooltip[];
         });
 
         const updateNumberOfReplicates = (newValue: number) => {

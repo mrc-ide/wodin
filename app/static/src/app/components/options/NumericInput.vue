@@ -78,7 +78,7 @@ export default defineComponent({
                 // wrap tooltip props update with update to input box
                 // as the v-tooltip directive needs an update to actually
                 // hide the tooltip
-                textValue.value = textValue.value + " ";
+                textValue.value = `${textValue.value} `;
                 tooltipProps.value.content = "";
                 textValue.value = textValue.value.trim();
             }
@@ -108,9 +108,8 @@ export default defineComponent({
                 if (numeric > props.maxAllowed) {
                     tooltipProps.value.content = `Please enter a value no greater than ${props.maxAllowed}`;
                     return props.maxAllowed;
-                } else {
-                    tooltipProps.value.content = "";
                 }
+                tooltipProps.value.content = "";
             }
 
             if (typeof props.minAllowed === "number") {
@@ -118,15 +117,14 @@ export default defineComponent({
                     tooltipProps.value.content = (props.minAllowed === 0)
                         ? "Please enter a non-negative number"
                         : `Please enter a value no less than ${props.minAllowed}`;
-                    return props.minAllowed
-                } else {
-                    tooltipProps.value.content = "";
+                    return props.minAllowed;
                 }
+                tooltipProps.value.content = "";
             }
 
             if (Array.isArray(props.maxAllowed) && props.maxAllowed.length > 0) {
                 const maxesAllowed = [...props.maxAllowed] as BoundTooltip[];
-                validateArray(maxesAllowed, numeric, true)
+                validateArray(maxesAllowed, numeric, true);
 
                 if (numeric > maxesAllowed.at(-1)!.number) {
                     return maxesAllowed.at(-1)!.number;
@@ -170,7 +168,7 @@ export default defineComponent({
             const cleanedValue = newVal.replace(/,/g, "");
             const numeric = parseFloat(cleanedValue);
             if (!Number.isNaN(numeric)) {
-                let validatedNumeric = minMaxValidation(numeric);
+                const validatedNumeric = minMaxValidation(numeric);
                 lastNumericValueSet.value = validatedNumeric;
                 emit("update", validatedNumeric);
             } else if (props.placeholder) {

@@ -125,7 +125,7 @@ export default defineComponent({
 
         watch([() => props.redrawWatches, yAxisType], () => {
             if (plotStyle.value !== fadePlotStyle) {
-                drawPlot()
+                drawPlot();
             }
         });
 
