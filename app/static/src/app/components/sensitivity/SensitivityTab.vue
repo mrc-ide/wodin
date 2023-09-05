@@ -15,24 +15,7 @@
       <span class="ms-2">{{ sensitivityProgressMsg }}</span>
     </div>
     <error-info :error="error"></error-info>
-    <div>
-      <button class="btn btn-primary" id="download-summary-btn"
-              :disabled="downloading || !canDownloadSummary"
-              @click="toggleShowDownloadSummary(true)">
-        <vue-feather size="20" class="inline-icon" type="download"></vue-feather>
-        Download summary
-      </button>
-      <div v-if="downloading" id="downloading">
-        <LoadingSpinner size="xs"></LoadingSpinner>
-        Downloading...
-      </div>
-    </div>
-    <DownloadOutput :open="showDownloadSummary"
-                    :download-type="'Sensitivity Summary'"
-                    :include-points="false"
-                    v-model:user-file-name="downloadSummaryUserFileName"
-                    @download="downloadSummary"
-                    @close="toggleShowDownloadSummary(false)"></DownloadOutput>
+    <sensitivity-summary-download :multi-sensitivity="false" :download-type="'Sensitivity Summary'"></sensitivity-summary-download>
   </div>
 </template>
 
@@ -48,11 +31,11 @@ import { SensitivityAction } from "../../store/sensitivity/actions";
 import { SensitivityPlotType } from "../../store/sensitivity/state";
 import SensitivitySummaryPlot from "./SensitivitySummaryPlot.vue";
 import ErrorInfo from "../ErrorInfo.vue";
-import { verifyValidPlotSettingsTime } from "./support";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import LoadingButton from "../LoadingButton.vue";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import baseSensitivity from "../mixins/baseSensitivity";
+import SensitivitySummaryDownload from "@/app/components/sensitivity/SensitivitySummaryDownload.vue";
 
 export default defineComponent({
     name: "SensitivityTab",
@@ -64,7 +47,8 @@ export default defineComponent({
         SensitivitySummaryPlot,
         ActionRequiredMessage,
         SensitivityTracesPlot,
-        LoadingButton
+        LoadingButton,
+        SensitivitySummaryDownload
     },
     setup() {
         const store = useStore();
@@ -73,8 +57,6 @@ export default defineComponent({
 
         const running = computed(() => store.state.sensitivity.running);
         const loading = computed(() => store.state.sensitivity.loading);
-
-        const showDownloadSummary = ref(false);
 
         const canRunSensitivity = computed(() => {
             return sensitivityPrerequisitesReady.value
@@ -93,19 +75,6 @@ export default defineComponent({
             }, 100);
         };
 
-        const toggleShowDownloadSummary = (show: boolean) => { showDownloadSummary.value = show; };
-        const downloading = computed(() => store.state.sensitivity.downloading);
-        const downloadSummaryUserFileName = computed({
-            get: () => store.state.sensitivity.userSummaryDownloadFileName,
-            set: (newVal) => {
-                store.commit(`${namespace}/${SensitivityMutation.SetUserSummaryDownloadFileName}`, newVal);
-            }
-        });
-        const downloadSummary = ((payload: { fileName: string }) => {
-            verifyValidPlotSettingsTime(store.state, store.commit);
-            store.dispatch(`${namespace}/${SensitivityAction.DownloadSummary}`, payload.fileName);
-        });
-
         const sensitivityProgressMsg = computed(() => {
             const batch = store.state.sensitivity.result?.batch;
             const finished = batch ? batch.solutions.length + batch.errors.length : 0;
@@ -117,9 +86,6 @@ export default defineComponent({
             () => store.state.sensitivity.plotSettings.plotType === SensitivityPlotType.TraceOverTime
         );
 
-        // only allow download if update not required, and if we have run sensitivity
-        const canDownloadSummary = computed(() => !updateMsg.value && store.state.sensitivity.result?.batch);
-
         const error = computed(() => store.state.sensitivity.result?.error);
 
         return {
@@ -127,12 +93,6 @@ export default defineComponent({
             running,
             sensitivityProgressMsg,
             runSensitivity,
-            downloading,
-            downloadSummary,
-            downloadSummaryUserFileName,
-            canDownloadSummary,
-            showDownloadSummary,
-            toggleShowDownloadSummary,
             updateMsg,
             tracesPlot,
             error,

@@ -12,6 +12,7 @@
       {{ multiSensitivityRunStatusMsg }}
     </div>
     <error-info :error="error"></error-info>
+    <sensitivity-summary-download :multi-sensitivity="true" :download-type="'Multi-sensitivity Summary'"></sensitivity-summary-download>
   </div>
 </template>
 <script lang="ts">
@@ -25,11 +26,13 @@ import { MultiSensitivityAction } from "../../store/multiSensitivity/actions";
 import LoadingButton from "../LoadingButton.vue";
 import userMessages from "../../userMessages";
 import { BaseSensitivityGetter } from "../../store/sensitivity/getters";
+import SensitivitySummaryDownload from "@/app/components/sensitivity/SensitivitySummaryDownload.vue";
 
 export default defineComponent({
     name: "MultiSensitivityTab",
     methods: { update },
     components: {
+        SensitivitySummaryDownload,
         ErrorInfo,
         ActionRequiredMessage,
         LoadingButton

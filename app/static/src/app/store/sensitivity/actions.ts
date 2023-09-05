@@ -18,13 +18,13 @@ import { convertAdvancedSettingsToOdin } from "../../utils";
 import { WodinSensitivitySummaryDownload } from "../../excel/wodinSensitivitySummaryDownload";
 
 export enum BaseSensitivityAction {
-    ComputeNext = "ComputeNext"
+    ComputeNext = "ComputeNext",
+    DownloadSummary = "DownloadSummary"
 }
 
 export enum SensitivityAction {
     RunSensitivity = "RunSensitivity",
-    RunSensitivityOnRehydrate = "RunSensitivityOnRehydrate",
-    DownloadSummary = "DownloadSummary"
+    RunSensitivityOnRehydrate = "RunSensitivityOnRehydrate"
 }
 
 const runModelIfRequired = (rootState: AppState, dispatch: Dispatch) => {
@@ -142,6 +142,8 @@ export const runSensitivity = (
     }
 };
 
+
+
 export const baseSensitivityActions: ActionTree<BaseSensitivityState, AppState> = {
     [BaseSensitivityAction.ComputeNext](context, batch: Batch) {
         const {
@@ -156,6 +158,16 @@ export const baseSensitivityActions: ActionTree<BaseSensitivityState, AppState> 
                 dispatch(BaseSensitivityAction.ComputeNext, batch);
             }, 0);
         }
+    },
+
+    [BaseSensitivityAction.DownloadSummary](context, filename: string) {
+        const { commit, state } = context;
+        commit(BaseSensitivityMutation.SetDownloading, true);
+        setTimeout(() => {
+            new WodinSensitivitySummaryDownload(context, filename)
+                .download(state.result!);
+            commit(BaseSensitivityMutation.SetDownloading, false);
+        }, 5);
     }
 };
 
@@ -175,15 +187,5 @@ export const actions: ActionTree<SensitivityState, AppState> = {
         const { pars } = state.result!.inputs;
 
         runSensitivity(pars, endTime, context);
-    },
-
-    [SensitivityAction.DownloadSummary](context, filename: string) {
-        const { commit } = context;
-        commit(SensitivityMutation.SetDownloading, true);
-        setTimeout(() => {
-            new WodinSensitivitySummaryDownload(context, filename)
-                .download();
-            commit(SensitivityMutation.SetDownloading, false);
-        }, 5);
     }
 };

@@ -14,6 +14,8 @@ export enum BaseSensitivityMutation {
     SetRunning = "SetRunning",
     SetResult = "SetResult",
     SetUpdateRequired = "SetUpdateRequired",
+    SetUserSummaryDownloadFileName = "SetUserSummaryDownloadFileName",
+    SetDownloading = "SetDownloading",
 }
 
 export enum SensitivityMutation {
@@ -23,9 +25,7 @@ export enum SensitivityMutation {
     SetPlotType = "SetPlotType",
     SetPlotExtreme = "SetPlotExtreme",
     SetPlotTime = "SetPlotTime",
-    SetDownloading = "SetDownloading",
     SetLoading = "SetLoading",
-    SetUserSummaryDownloadFileName = "SetUserSummaryDownloadFileName",
     ParameterSetAdded = "ParameterSetAdded",
     SetParameterSetResults = "SetParameterSetResults",
     ParameterSetDeleted = "ParameterSetDeleted",
@@ -47,6 +47,14 @@ export const baseSensitivityMutations: MutationTree<BaseSensitivityState> = {
 
     [BaseSensitivityMutation.SetRunning](state: BaseSensitivityState, payload: boolean) {
         state.running = payload;
+    },
+
+    [BaseSensitivityMutation.SetUserSummaryDownloadFileName](state: BaseSensitivityState, payload: string) {
+        state.userSummaryDownloadFileName = payload;
+    },
+
+    [BaseSensitivityMutation.SetDownloading](state: BaseSensitivityState, payload: boolean) {
+        state.downloading = payload;
     }
 };
 
@@ -90,14 +98,6 @@ export const mutations: MutationTree<SensitivityState> = {
 
     [SensitivityMutation.SetLoading](state: BaseSensitivityState, payload: boolean) {
         state.loading = payload;
-    },
-
-    [SensitivityMutation.SetDownloading](state: SensitivityState, payload: boolean) {
-        state.downloading = payload;
-    },
-
-    [SensitivityMutation.SetUserSummaryDownloadFileName](state: SensitivityState, payload: string) {
-        state.userSummaryDownloadFileName = payload;
     },
 
     [SensitivityMutation.ParameterSetAdded](state: SensitivityState, payload: string) {

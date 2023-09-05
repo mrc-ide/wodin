@@ -45,6 +45,4 @@ export abstract class WodinExcelDownload {
                 { detail: `Error downloading to ${this._fileName}: ${e}` }, { root: true });
         }
     }
-
-    abstract download(): void;
 }
