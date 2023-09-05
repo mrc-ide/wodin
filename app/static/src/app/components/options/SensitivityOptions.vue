@@ -69,7 +69,7 @@ import { defaultSensitivityParamSettings } from "../../store/sensitivity/sensiti
 import userMessages from "../../userMessages";
 import VerticalCollapse from "../VerticalCollapse.vue";
 import EditParamSettings from "./EditParamSettings.vue";
-import {BaseSensitivityGetter} from "../../store/sensitivity/getters";
+import { BaseSensitivityGetter } from "../../store/sensitivity/getters";
 import SensitivityParamValues from "./SensitivityParamValues.vue";
 import SensitivityPlotOptions from "./SensitivityPlotOptions.vue";
 import { SensitivityParameterSettings } from "../../store/sensitivity/state";

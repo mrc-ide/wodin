@@ -19,7 +19,7 @@ import { FitDataAction } from "../../../../src/app/store/fitData/actions";
 import { ModelFitAction } from "../../../../src/app/store/modelFit/actions";
 import { RunMutation, mutations as runMutations } from "../../../../src/app/store/run/mutations";
 import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
-import {BaseSensitivityMutation, SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
+import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import { MultiSensitivityMutation } from "../../../../src/app/store/multiSensitivity/mutations";
 import { defaultSensitivityParamSettings } from "../../../../src/app/store/sensitivity/sensitivity";
 

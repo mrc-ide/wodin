@@ -1,7 +1,7 @@
 import { MutationTree } from "vuex";
 import { MultiSensitivityState } from "./state";
 import { SensitivityParameterSettings } from "../sensitivity/state";
-import {baseSensitivityMutations} from "../sensitivity/mutations";
+import { baseSensitivityMutations } from "../sensitivity/mutations";
 
 export enum MultiSensitivityMutation {
     SetParamSettings = "SetParamSettings"

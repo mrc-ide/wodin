@@ -4,7 +4,7 @@ import userMessages from "../../userMessages";
 import { appendIf, joinStringsSentence } from "../../utils";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { AppState } from "../../store/appState/state";
-import {multiSensitivity} from "../../store/multiSensitivity/multiSensitivity";
+import { multiSensitivity } from "../../store/multiSensitivity/multiSensitivity";
 
 export const sensitivityUpdateRequiredExplanation = (reasons: SensitivityUpdateRequiredReasons, multiSens: boolean): string => {
     const explanation: string[] = [];

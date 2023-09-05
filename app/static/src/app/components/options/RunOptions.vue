@@ -31,7 +31,7 @@
 import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
 import { RunMutation } from "../../store/run/mutations";
-import {BaseSensitivityMutation, SensitivityMutation} from "../../store/sensitivity/mutations";
+import { BaseSensitivityMutation, SensitivityMutation } from "../../store/sensitivity/mutations";
 import { FitDataGetter } from "../../store/fitData/getters";
 import NumericInput from "./NumericInput.vue";
 import { AppType } from "../../store/appState/state";
@@ -64,7 +64,7 @@ export default defineComponent({
             const updateReason = { numberOfReplicatesChanged: true };
             store.commit(`sensitivity/${BaseSensitivityMutation.SetUpdateRequired}`, updateReason);
             if (store.state.config?.multiSensitivity) {
-              store.commit(`multiSensitivity/${BaseSensitivityMutation.SetUpdateRequired}`, updateReason);
+                store.commit(`multiSensitivity/${BaseSensitivityMutation.SetUpdateRequired}`, updateReason);
             }
         };
 

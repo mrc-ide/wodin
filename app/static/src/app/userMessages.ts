@@ -1,6 +1,6 @@
 import settings from "./settings";
 
-const sensType = (multiSens: boolean) => multiSens ? "Multi-sensitivity" : "Sensitivity";
+const sensType = (multiSens: boolean) => (multiSens ? "Multi-sensitivity" : "Sensitivity");
 
 export default {
     code: {

@@ -1,19 +1,19 @@
 import { shallowMount } from "@vue/test-utils";
-import MultiSensitivityTab from "../../../../src/app/components/multiSensitivity/MultiSensitivityTab.vue";
-import {AppState} from "../../../../src/app/store/appState/state";
 import Vuex from "vuex";
+import MultiSensitivityTab from "../../../../src/app/components/multiSensitivity/MultiSensitivityTab.vue";
+import { AppState } from "../../../../src/app/store/appState/state";
 import LoadingButton from "../../../../src/app/components/LoadingButton.vue";
-import {ModelState} from "../../../../src/app/store/model/state";
-import {MultiSensitivityAction} from "../../../../src/app/store/multiSensitivity/actions";
+import { ModelState } from "../../../../src/app/store/model/state";
+import { MultiSensitivityAction } from "../../../../src/app/store/multiSensitivity/actions";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
-import {MultiSensitivityState} from "../../../../src/app/store/multiSensitivity/state";
+import { MultiSensitivityState } from "../../../../src/app/store/multiSensitivity/state";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 
 describe("MultiSensitivityTab", () => {
     const mockRunMultiSensitivity = jest.fn();
 
     const getWrapper = (running = false, modelState: Partial<ModelState> = {}, batchPars: any = {},
-                        multiSensitivityState: Partial<MultiSensitivityState> = {}) => {
+        multiSensitivityState: Partial<MultiSensitivityState> = {}) => {
         const store = new Vuex.Store<AppState>({
             state: {} as any,
             modules: {
@@ -133,7 +133,7 @@ describe("MultiSensitivityTab", () => {
     });
 
     it("renders ErrorInfo as expected when there is a result error", () => {
-        const error = { error: "test error", detail: "test detail"};
+        const error = { error: "test error", detail: "test detail" };
         const wrapper = getWrapper(false, {}, {}, {
             result: {
                 error

@@ -1,4 +1,4 @@
-import {BaseSensitivityMutation, mutations, SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
+import { BaseSensitivityMutation, mutations, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import { SensitivityPlotExtreme, SensitivityPlotType } from "../../../../src/app/store/sensitivity/state";
 import { mockSensitivityState } from "../../../mocks";
 

@@ -3,7 +3,7 @@ import { FitState } from "../fit/state";
 import { ModelFitState } from "./state";
 import { ModelFitMutation } from "./mutations";
 import { RunMutation } from "../run/mutations";
-import {BaseSensitivityMutation, SensitivityMutation} from "../sensitivity/mutations";
+import { BaseSensitivityMutation, SensitivityMutation } from "../sensitivity/mutations";
 import { ModelFitGetter } from "./getters";
 import { FitDataGetter } from "../fitData/getters";
 import { FitData } from "../fitData/state";
@@ -72,7 +72,9 @@ export const actions: ActionTree<ModelFitState, FitState> = {
     },
 
     [ModelFitAction.FitModelStep](context, simplex) {
-        const { commit, dispatch, state, rootState } = context;
+        const {
+            commit, dispatch, state, rootState
+        } = context;
 
         // Exit if fit has been cancelled
         if (!state.fitting) {

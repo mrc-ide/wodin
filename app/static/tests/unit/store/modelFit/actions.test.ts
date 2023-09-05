@@ -5,7 +5,7 @@ import {
 } from "../../../mocks";
 import { actions, ModelFitAction } from "../../../../src/app/store/modelFit/actions";
 import { RunMutation } from "../../../../src/app/store/run/mutations";
-import {BaseSensitivityMutation, SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
+import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
 import { AdvancedComponentType } from "../../../../src/app/store/run/state";
 
@@ -155,7 +155,9 @@ describe("ModelFit actions", () => {
 
         const commit = jest.fn();
         const dispatch = jest.fn();
-        (actions[ModelFitAction.FitModelStep] as any)({ commit, dispatch, rootState, state: testState }, simplex);
+        (actions[ModelFitAction.FitModelStep] as any)({
+            commit, dispatch, rootState, state: testState
+        }, simplex);
 
         setTimeout(() => {
             expect(simplex.step).toHaveBeenCalledTimes(1);
@@ -198,7 +200,9 @@ describe("ModelFit actions", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
         const testState = mockModelFitState({ fitting: true });
-        (actions[ModelFitAction.FitModelStep] as any)({ commit, dispatch, rootState, state: testState }, simplex);
+        (actions[ModelFitAction.FitModelStep] as any)({
+            commit, dispatch, rootState, state: testState
+        }, simplex);
 
         setTimeout(() => {
             expect(simplex.step).toHaveBeenCalledTimes(1);
@@ -222,7 +226,9 @@ describe("ModelFit actions", () => {
         const testRootState = {
             config: { multiSensitivity: true }
         };
-        (actions[ModelFitAction.FitModelStep] as any)({ commit, dispatch, state: testState, rootState: testRootState }, simplex);
+        (actions[ModelFitAction.FitModelStep] as any)({
+            commit, dispatch, state: testState, rootState: testRootState
+        }, simplex);
 
         setTimeout(() => {
             expect(simplex.step).toHaveBeenCalledTimes(1);

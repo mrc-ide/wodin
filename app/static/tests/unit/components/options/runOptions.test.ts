@@ -115,7 +115,7 @@ describe("RunOptions", () => {
         const wrapper = getWrapper(0, {
             appType: `${AppType.Stochastic}`,
             config: { multiSensitivity: true }
-        }, );
+        });
         const noOfReplicates = wrapper.find("#number-of-replicates");
         noOfReplicates.findComponent(NumericInput).vm.$emit("update", 20);
         expect(mockNumberOfReplicates).toHaveBeenCalledTimes(1);

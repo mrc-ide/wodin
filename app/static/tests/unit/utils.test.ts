@@ -408,7 +408,7 @@ describe("generateBatchPars", () => {
         expect(result.error).toBe(null);
         expect(result.batchPars!.base).toBe(parameterValues);
         expect(result.batchPars!.varying).toStrictEqual([
-            { name: "C", values: [1, 2, 3]},
+            { name: "C", values: [1, 2, 3] },
             { name: "B", values: [2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6] },
             { name: "A", values: [0.5, 0.75, 1, 1.25, 1.5] }
         ]);

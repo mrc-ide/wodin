@@ -1,4 +1,4 @@
-import {BaseSensitivityGetter, getters, SensitivityGetter} from "../../../../src/app/store/sensitivity/getters";
+import { BaseSensitivityGetter, getters, SensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
 import { mockBatchParsDisplace, mockRunState, mockSensitivityState } from "../../../mocks";
 import { SensitivityScaleType, SensitivityVariationType } from "../../../../src/app/store/sensitivity/state";
 

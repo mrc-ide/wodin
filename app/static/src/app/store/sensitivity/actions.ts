@@ -2,9 +2,9 @@ import {
     ActionContext, ActionTree, Commit, Dispatch
 } from "vuex";
 import { AppState, AppType } from "../appState/state";
-import {BaseSensitivityState, SensitivityState} from "./state";
-import {BaseSensitivityGetter, SensitivityGetter} from "./getters";
-import {BaseSensitivityMutation, SensitivityMutation} from "./mutations";
+import { BaseSensitivityState, SensitivityState } from "./state";
+import { BaseSensitivityGetter, SensitivityGetter } from "./getters";
+import { BaseSensitivityMutation, SensitivityMutation } from "./mutations";
 import { RunAction } from "../run/actions";
 import userMessages from "../../userMessages";
 import { OdinSensitivityResult } from "../../types/wrapperTypes";
@@ -40,11 +40,11 @@ const batchRunOde = (runner: OdinRunnerOde,
     endTime: number,
     advancedSettings: AdvancedSettings,
     paramValues: OdinUserType | null): Batch => {
-    console.log("doing batch run ode")
+    console.log("doing batch run ode");
     const advancedSettingsOdin = convertAdvancedSettingsToOdin(advancedSettings, paramValues);
-    console.log("got adv settings")
+    console.log("got adv settings");
     const batch = runner.batchRun(odin, pars, 0, endTime, advancedSettingsOdin);
-    console.log("got batch")
+    console.log("got batch");
     return batch;
 };
 
@@ -67,7 +67,7 @@ export const runSensitivity = (
     endTime: number,
     context: ActionContext<BaseSensitivityState, AppState>,
     multiSensitivity = false
-    ) => {
+) => {
     const {
         rootState, commit, dispatch, getters, rootGetters
     } = context;
@@ -79,9 +79,9 @@ export const runSensitivity = (
     const isStochastic = rootState.appType === AppType.Stochastic;
     const hasRunner = rootGetters[`model/${ModelGetter.hasRunner}`];
 
-    console.log("1")
+    console.log("1");
     if (hasRunner && odin && batchPars) {
-        console.log("2")
+        console.log("2");
         const payload : OdinSensitivityResult = {
             inputs: { endTime, pars: batchPars },
             batch: null,
@@ -102,9 +102,9 @@ export const runSensitivity = (
                 detail: (e as Error).message
             };
         }
-        console.log("3")
+        console.log("3");
         commit(BaseSensitivityMutation.SetResult, payload);
-        console.log("4")
+        console.log("4");
 
         if (!multiSensitivity && getters.parameterSetSensitivityUpdateRequired && !isStochastic) {
             const parameterSetBatchPars = getters[SensitivityGetter.parameterSetBatchPars];

@@ -1,4 +1,4 @@
-import {actions, MultiSensitivityAction} from "../../../../src/app/store/multiSensitivity/actions";
+import { actions, MultiSensitivityAction } from "../../../../src/app/store/multiSensitivity/actions";
 import {
     defaultAdvanced,
     mockBatch,
@@ -8,8 +8,10 @@ import {
     rootGetters,
     testCommonRunSensitivity
 } from "../sensitivity/actions.test";
-import {AppType} from "../../../../src/app/store/appState/state";
-import {BaseSensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
+import { AppType } from "../../../../src/app/store/appState/state";
+import { BaseSensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+
+jest.mock("../../../../src/app/excel/wodinSensitivitySummaryDownload");
 
 describe("multiSensitivity actions", () => {
     beforeEach(() => {
@@ -37,7 +39,7 @@ describe("multiSensitivity actions", () => {
             rootState, getters: testGetters, commit, dispatch, rootGetters
         });
 
-        console.log("expecting...")
+        console.log("expecting...");
         expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
         expect(commit.mock.calls[0][1]).toStrictEqual({

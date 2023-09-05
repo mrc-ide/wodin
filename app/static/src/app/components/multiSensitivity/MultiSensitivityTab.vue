@@ -24,7 +24,7 @@ import baseSensitivity from "../mixins/baseSensitivity";
 import { MultiSensitivityAction } from "../../store/multiSensitivity/actions";
 import LoadingButton from "../LoadingButton.vue";
 import userMessages from "../../userMessages";
-import {BaseSensitivityGetter} from "../../store/sensitivity/getters";
+import { BaseSensitivityGetter } from "../../store/sensitivity/getters";
 
 export default defineComponent({
     name: "MultiSensitivityTab",

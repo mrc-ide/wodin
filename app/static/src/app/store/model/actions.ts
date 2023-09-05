@@ -14,7 +14,7 @@ import { paletteModel } from "../../palette";
 import { RunMutation } from "../run/mutations";
 import { ModelFitMutation } from "../modelFit/mutations";
 import { ErrorsMutation } from "../errors/mutations";
-import {BaseSensitivityMutation, SensitivityMutation} from "../sensitivity/mutations";
+import { BaseSensitivityMutation, SensitivityMutation } from "../sensitivity/mutations";
 import { defaultSensitivityParamSettings } from "../sensitivity/sensitivity";
 import { MultiSensitivityMutation } from "../multiSensitivity/mutations";
 

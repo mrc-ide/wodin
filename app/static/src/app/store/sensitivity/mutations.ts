@@ -38,7 +38,7 @@ export const baseSensitivityMutations: MutationTree<BaseSensitivityState> = {
     },
 
     [BaseSensitivityMutation.SetUpdateRequired](state: BaseSensitivityState,
-                                            payload: Partial<SensitivityUpdateRequiredReasons>) {
+        payload: Partial<SensitivityUpdateRequiredReasons>) {
         state.sensitivityUpdateRequired = {
             ...state.sensitivityUpdateRequired,
             ...payload

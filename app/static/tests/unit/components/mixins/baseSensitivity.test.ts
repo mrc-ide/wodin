@@ -3,7 +3,7 @@ import { ModelState } from "../../../../src/app/store/model/state";
 import baseSensitivity from "../../../../src/app/components/mixins/baseSensitivity";
 import { BaseSensitivityState } from "../../../../src/app/store/sensitivity/state";
 import { noSensitivityUpdateRequired } from "../../../../src/app/store/sensitivity/sensitivity";
-import {AppState} from "../../../../src/app/store/appState/state";
+import { AppState } from "../../../../src/app/store/appState/state";
 
 describe("baseSensitivity mixin", () => {
     const getStore = (hasRunner = true, modelState: Partial<ModelState> = {}, sensitivityState: Partial<BaseSensitivityState> = {},

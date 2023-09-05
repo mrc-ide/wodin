@@ -1,11 +1,11 @@
-import {Store} from "vuex";
-import {AppState} from "../../store/appState/state";
-import {computed} from "vue";
-import {ModelGetter} from "../../store/model/getters";
+import { Store } from "vuex";
+import { computed } from "vue";
+import { AppState } from "../../store/appState/state";
+import { ModelGetter } from "../../store/model/getters";
 import userMessages from "../../userMessages";
-import {anyTrue} from "../../utils";
-import {sensitivityUpdateRequiredExplanation} from "../sensitivity/support";
-import {Dict} from "../../types/utilTypes";
+import { anyTrue } from "../../utils";
+import { sensitivityUpdateRequiredExplanation } from "../sensitivity/support";
+import { Dict } from "../../types/utilTypes";
 
 export default (store: Store<AppState>, multiSensitivity: boolean) => {
     const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);

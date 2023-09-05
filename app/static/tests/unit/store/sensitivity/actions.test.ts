@@ -1,13 +1,13 @@
-import {actions, BaseSensitivityAction, SensitivityAction} from "../../../../src/app/store/sensitivity/actions";
-import {BaseSensitivityMutation, SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
+import { actions, BaseSensitivityAction, SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
+import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import { ModelGetter } from "../../../../src/app/store/model/getters";
-import {AppState, AppType} from "../../../../src/app/store/appState/state";
+import { AppState, AppType } from "../../../../src/app/store/appState/state";
 import { RunAction } from "../../../../src/app/store/run/actions";
 import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
 import { AdvancedComponentType } from "../../../../src/app/store/run/state";
 import { WodinSensitivitySummaryDownload } from "../../../../src/app/excel/wodinSensitivitySummaryDownload";
 import Mock = jest.Mock;
-import {Action} from "vuex";
+import { Action } from "vuex";
 
 jest.mock("../../../../src/app/excel/wodinSensitivitySummaryDownload");
 
@@ -388,10 +388,6 @@ export const testCommonRunSensitivity = (runSensitivityAction: Action<any, AppSt
 };
 
 describe("Sensitivity actions", () => {
-    const mockDownload = jest.fn();
-    const mockWodinSensitivitySummaryDownload = WodinSensitivitySummaryDownload as any as Mock;
-    mockWodinSensitivitySummaryDownload.mockImplementation(() => ({ download: mockDownload }));
-
     beforeEach(() => {
         jest.clearAllMocks();
     });
@@ -688,6 +684,10 @@ describe("Sensitivity actions", () => {
     });
 
     it("downloads sensitivity summary", (done) => {
+        const mockDownload = jest.fn();
+        const mockWodinSensitivitySummaryDownload = WodinSensitivitySummaryDownload as any as Mock;
+        mockWodinSensitivitySummaryDownload.mockImplementation(() => ({ download: mockDownload }));
+
         const commit = jest.fn();
         const context = { commit };
         const payload = "myFile.xlsx";
@@ -704,6 +704,7 @@ describe("Sensitivity actions", () => {
             expect(commit).toHaveBeenCalledTimes(2);
             expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetDownloading);
             expect(commit.mock.calls[1][1]).toBe(false);
+
             done();
         }, 20);
     });
