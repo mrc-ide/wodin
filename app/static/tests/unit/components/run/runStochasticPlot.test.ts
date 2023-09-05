@@ -42,6 +42,7 @@ describe("RunPlot for stochastic", () => {
                 model: mockModelState({ paletteModel, selectedVariables }),
                 run: {
                     endTime: 99,
+                    numberOfReplicates: 20,
                     resultDiscrete: mockResult
                 }
             } as any

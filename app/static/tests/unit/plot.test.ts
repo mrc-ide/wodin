@@ -234,7 +234,7 @@ describe("discreteSeriesSetToPlotly", () => {
                 { name: "B", description: "Deterministic", y: [10, 11, 12] }
             ]
         };
-        const res = discreteSeriesSetToPlotly(seriesSet, palette);
+        const res = discreteSeriesSetToPlotly(seriesSet, palette, true);
         expect(res).toStrictEqual([
             {
                 mode: "lines",
