@@ -189,6 +189,8 @@ test.describe("Sessions tests", () => {
 
         // force another session to be created
         await page.goto(appUrl);
+        await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
+
         // can delete session
         console.log("1")
         await page.goto(`${appUrl}/sessions`);
