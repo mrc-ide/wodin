@@ -188,6 +188,7 @@ test.describe("Sessions tests", () => {
 
         // can delete session
         await page.goto(`${appUrl}/sessions`);
+        await expect(await page.locator("#app .container .row").count).toBeGreaterThan(2);
         const row = await page.locator(":nth-match(#app .container .row, 3)");
         await row.locator(".session-edit-label i").click();
         await enterSessionLabel(page, "page-edit-session-label", "delete me");
