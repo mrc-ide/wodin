@@ -23,7 +23,7 @@ const enterSessionLabel = async (page: Page, dialogId: string, newLabel: string)
 test.describe("Sessions tests", () => {
     const { timeout } = PlaywrightConfig;
 
-    test("can navigate to Sessions page from navbar, and load a session", async () => {
+    test("can use Sessions page", async () => {
         // We need to use a browser with persistent context instead of the default incognito browser so that
         // we can use the session ids in local storage
         const userDataDir = os.tmpdir();
@@ -188,7 +188,7 @@ test.describe("Sessions tests", () => {
 
         // can delete session
         await page.goto(`${appUrl}/sessions`);
-        await expect(await page.locator("#app .container .row").count).toBeGreaterThan(2);
+        await expect(await page.locator("#app .container .row").count()).toBeGreaterThan(2);
         const row = await page.locator(":nth-match(#app .container .row, 3)");
         await row.locator(".session-edit-label i").click();
         await enterSessionLabel(page, "page-edit-session-label", "delete me");
