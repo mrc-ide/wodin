@@ -120,6 +120,11 @@ export const mockVersionsState = (states: Partial<VersionsState> = {}): Versions
 export const mockGraphSettingsState = (state: Partial<GraphSettingsState> = {}): GraphSettingsState => {
     return {
         logScaleYAxis: false,
+        lockAxes: false,
+        axesRange: {
+            x: [0, 0],
+            y: [0, 0]
+        },
         ...state
     };
 };
