@@ -9,10 +9,20 @@ class LocalStorageManager {
         return (serialised ? JSON.parse(serialised) : []) as string[];
     }
 
+    saveSessionIds = (appName: string, basePath: string, sessionIds: string[]) => {
+        window.localStorage.setItem(LocalStorageManager._sessionIdsKey(appName, basePath), JSON.stringify(sessionIds));
+    }
+
     addSessionId = (appName: string, basePath: string, sessionId: string) => {
         const sessionIds = this.getSessionIds(appName, basePath);
         sessionIds.unshift(sessionId); // prepends the id
-        window.localStorage.setItem(LocalStorageManager._sessionIdsKey(appName, basePath), JSON.stringify(sessionIds));
+        this.saveSessionIds(appName, basePath, sessionIds);
+    }
+
+    deleteSessionId = (appName: string, basePath: string, sessionId: string) => {
+        let sessionIds = this.getSessionIds(appName, basePath);
+        sessionIds = sessionIds.filter((s) => s !== sessionId);
+        this.saveSessionIds(appName, basePath, sessionIds);
     }
 }
 

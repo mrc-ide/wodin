@@ -17,7 +17,8 @@ export enum SessionsAction {
     GetSessions = "GetSessions",
     Rehydrate = "Rehydrate",
     SaveSessionLabel = "SaveSessionLabel",
-    GenerateFriendlyId = "GenerateFriendlyId"
+    GenerateFriendlyId = "GenerateFriendlyId",
+    DeleteSession = "DeleteSession"
 }
 
 interface SaveSessionLabelPayload {
@@ -99,5 +100,12 @@ export const actions: ActionTree<SessionsState, AppState> = {
         if (response) {
             commit(SessionsMutation.SetSessionFriendlyId, { sessionId, friendlyId: response.data });
         }
+    },
+
+    async [SessionsAction.DeleteSession](context, sessionId: string) {
+        const { rootState, rootGetters, commit } = context;
+        const { appName } = rootState;
+        localStorageManager.deleteSessionId(appName!, rootGetters[AppStateGetter.baseUrlPath], sessionId);
+        commit(SessionsMutation.RemoveSessionId, sessionId);
     }
 };

@@ -4,7 +4,8 @@ import { SessionMetadata } from "../../types/responseTypes";
 
 export enum SessionsMutation {
     SetSessionsMetadata = "SetSessionsMetadata",
-    SetSessionFriendlyId = "SetSessionFriendlyId"
+    SetSessionFriendlyId = "SetSessionFriendlyId",
+    RemoveSessionId = "RemoveSessionId"
 }
 
 export interface SetSessionFriendlyIdPayload {
@@ -21,6 +22,12 @@ export const mutations: MutationTree<SessionsState> = {
         const sessionMetadata = state.sessionsMetadata?.find((m: SessionMetadata) => m.id === payload.sessionId);
         if (sessionMetadata) {
             sessionMetadata.friendlyId = payload.friendlyId;
+        }
+    },
+
+    [SessionsMutation.RemoveSessionId](state: SessionsState, payload: string) {
+        if (state.sessionsMetadata) {
+            state.sessionsMetadata = state.sessionsMetadata.filter((s) => s.id !== payload);
         }
     }
 };

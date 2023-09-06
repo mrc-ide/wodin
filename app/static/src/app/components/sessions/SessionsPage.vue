@@ -7,14 +7,15 @@
     <template v-if="sessionsMetadata">
       <template v-if="sessionsMetadata.length">
         <div class="row fw-bold py-2">
-          <div class="col-3 session-col-header">Saved</div>
+          <div class="col-2 session-col-header">Saved</div>
           <div class="col-2 session-col-header">Label</div>
           <div class="col-2 text-center session-col-header">Edit Label</div>
           <div class="col-1 text-center session-col-header">Load</div>
+          <div class="col-1 text-center session-col-header">Delete</div>
           <div class="col-4 text-center session-col-header">Shareable Link</div>
         </div>
         <div class="row py-2" v-for="session in sessionsMetadata" :key="session.id">
-          <div class="col-3 session-col-value session-time">
+          <div class="col-2 session-col-value session-time">
             {{formatDateTime(session.time)}}
             <div v-if="isCurrentSession(session.id)" class="small text-muted">(current session)</div>
           </div>
@@ -33,6 +34,11 @@
             <a class="ms-2" :href="sessionUrl(session.id)" title="Load as new session">
               <vue-feather class="inline-icon brand" type="upload"></vue-feather>
             </a>
+          </div>
+          <div class="col-1 text-center session-col-value session-delete">
+            <vue-feather class="inline-icon brand clickable"
+                         type="trash-2"
+                         @click="confirmDeleteSession(session.id)"></vue-feather>
           </div>
           <div class="col-4 session-col-value session-share brand">
               <div class="mx-auto" style="width: 16rem">
@@ -66,7 +72,15 @@
                         :session-id="selectedSessionId"
                         :session-label="selectedSessionLabel"
                         @close="toggleEditSessionLabelOpen(false)"
+                        @confirm="deleteSession"
     ></edit-session-label>
+    <confirm-modal id="confirm-delete-session"
+                   :title="'Delete session'"
+                   :text="'Do you want to delete this session?'"
+                   :open="confirmDeleteSessionOpen"
+                   @close="toggleConfirmDeleteSessionOpen(false)"
+                   @confirm="deleteSession"
+                  ></confirm-modal>
   </div>
 </template>
 
@@ -83,6 +97,7 @@ import userMessages from "../../userMessages";
 import ErrorsAlert from "../ErrorsAlert.vue";
 import EditSessionLabel from "./EditSessionLabel.vue";
 import { SessionMetadata } from "../../types/responseTypes";
+import ConfirmModal from "../ConfirmModal.vue";
 
 export default defineComponent({
     name: "SessionsPage",
@@ -90,10 +105,12 @@ export default defineComponent({
         ErrorsAlert,
         EditSessionLabel,
         VueFeather,
-        RouterLink
+        RouterLink,
+        ConfirmModal
     },
     setup() {
         const store = useStore();
+        const namespace = "sessions";
 
         const sessionsMetadata = computed(() => store.state.sessions.sessionsMetadata);
         const baseUrl = computed(() => store.state.baseUrl);
@@ -107,6 +124,8 @@ export default defineComponent({
 
         const lastCopySessionId = ref<string | null>(null);
         const lastCopyMsg = ref<string | null>(null); // Feedback message to show under last copy control clicked
+
+        const sessionIdToDelete = ref("");
 
         const formatDateTime = (isoUTCString: string) => {
             return utc(isoUTCString).local().format("DD/MM/YYYY HH:mm:ss");
@@ -133,7 +152,7 @@ export default defineComponent({
                 return session.friendlyId;
             }
             lastCopyMsg.value = "Fetching code...";
-            await store.dispatch(`sessions/${SessionsAction.GenerateFriendlyId}`, session.id);
+            await store.dispatch(`${namespace}/${SessionsAction.GenerateFriendlyId}`, session.id);
             await nextTick();
             const friendlyId = sessionsMetadata.value.find((m: SessionMetadata) => m.id === session.id)?.friendlyId;
             if (!friendlyId) {
@@ -171,8 +190,21 @@ export default defineComponent({
             lastCopyMsg.value = null;
         };
 
+        const confirmDeleteSessionOpen = ref(false);
+        const toggleConfirmDeleteSessionOpen = (open: boolean) => {
+          confirmDeleteSessionOpen.value = open;
+        }
+        const confirmDeleteSession = (sessionId: string) => {
+          sessionIdToDelete.value = sessionId;
+          toggleConfirmDeleteSessionOpen(true);
+        };
+
+        const deleteSession = () => {
+          store.dispatch(`${namespace}/${SessionsAction.DeleteSession}`, sessionIdToDelete.value);
+        }
+
         onMounted(() => {
-            store.dispatch(`sessions/${SessionsAction.GetSessions}`);
+            store.dispatch(`${namespace}/${SessionsAction.GetSessions}`);
         });
 
         const messages = userMessages.sessions;
@@ -187,12 +219,16 @@ export default defineComponent({
             selectedSessionLabel,
             lastCopySessionId,
             lastCopyMsg,
+            confirmDeleteSessionOpen,
             editSessionLabel,
             toggleEditSessionLabelOpen,
             copyLink,
             copyCode,
             getCopyMsg,
             clearLastCopied,
+            confirmDeleteSession,
+            toggleConfirmDeleteSessionOpen,
+            deleteSession,
             messages
         };
     }
