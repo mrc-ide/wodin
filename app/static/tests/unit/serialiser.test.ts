@@ -274,7 +274,14 @@ describe("serialise", () => {
         sensitivity: sensitivityState,
         multiSensitivity: mockMultiSensitivityState(),
         versions: { versions: null },
-        graphSettings: { logScaleYAxis: true },
+        graphSettings: {
+            logScaleYAxis: true,
+            lockAxes: false,
+            axesRange: {
+                x: [0, 0],
+                y: [0, 0]
+            }
+        },
         configured: false,
         language: langaugeState
     };
@@ -298,7 +305,14 @@ describe("serialise", () => {
         fitData: fitDataState,
         modelFit: modelFitState,
         versions: { versions: null },
-        graphSettings: { logScaleYAxis: true },
+        graphSettings: {
+            logScaleYAxis: true,
+            lockAxes: false,
+            axesRange: {
+                x: [0, 0],
+                y: [0, 0]
+            }
+        },
         configured: false,
         language: langaugeState
     };
