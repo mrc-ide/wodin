@@ -83,7 +83,8 @@ test.describe("Sessions tests", () => {
         await expect(await page.innerText(":nth-match(.session-col-header, 2)")).toBe("Label");
         await expect(await page.innerText(":nth-match(.session-col-header, 3)")).toBe("Edit Label");
         await expect(await page.innerText(":nth-match(.session-col-header, 4)")).toBe("Load");
-        await expect(await page.innerText(":nth-match(.session-col-header, 5)")).toBe("Shareable Link");
+        await expect(await page.innerText(":nth-match(.session-col-header, 5)")).toBe("Delete");
+        await expect(await page.innerText(":nth-match(.session-col-header, 6)")).toBe("Shareable Link");
 
         await expect(await page.innerText(".session-label")).toBe("--no label--");
 
@@ -184,6 +185,19 @@ test.describe("Sessions tests", () => {
         // Expect to be able to navigate to the share link we copied earlier - check it has some rehydrated data
         await page.goto(copiedLinkText);
         await expect(await page.innerText("#data-upload-success")).toBe(" Uploaded 32 rows and 2 columns");
+
+        // can delete session
+        await page.goto(`${appUrl}/sessions`);
+        const row = await page.locator(":nth-match(#app .container .row, 3)");
+        await row.locator(".session-edit-label i").click();
+        await enterSessionLabel(page, "page-edit-session-label", "delete me");
+        await expect(await row.locator(".session-label")).toHaveText(
+            "delete me", { timeout }
+        );
+        await row.locator(".session-delete i").click();
+        await expect(await page.locator("#confirm-yes")).toBeVisible();
+        await page.click("#confirm-yes");
+        await expect(await page.locator("#app")).not.toHaveText("delete me");
 
         await browser.close();
     });
