@@ -207,7 +207,7 @@ test.describe("Sessions tests", () => {
             "delete me", { timeout }
         );
         console.log("7")
-        await row.locator(".session-delete i").click();
+        await page.locator(":nth-match(#app .container .row, 4) .session-delete i").click();
         console.log("8")
         await expect(await page.locator("#confirm-yes")).toBeVisible();
         console.log("9")
