@@ -12,10 +12,10 @@
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary"
-                    id="ok-session-label"
+                    id="confirm-yes"
                     @click="confirm">Yes</button>
             <button class="btn btn-outline"
-                    id="cancel-session-label"
+                    id="confirm-no"
                     @click="close">No</button>
           </div>
         </div>
