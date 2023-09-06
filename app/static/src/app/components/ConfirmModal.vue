@@ -25,26 +25,26 @@
 </template>
 
 <script setup lang="ts">
-import {computed} from "vue";
+import { computed, defineProps, defineEmits } from "vue";
 
 const props = defineProps({
-  open: Boolean,
-  title: String,
-  text: String
+    open: Boolean,
+    title: String,
+    text: String
 });
 
 const emit = defineEmits(["close", "confirm"]);
 
 const modalStyle = computed(() => {
-  return { display: props.open ? "block" : "none" };
+    return { display: props.open ? "block" : "none" };
 });
 
 const close = () => {
-  emit("close");
+    emit("close");
 };
 
 const confirm = () => {
-  emit("confirm");
-  close();
+    emit("confirm");
+    close();
 };
 </script>

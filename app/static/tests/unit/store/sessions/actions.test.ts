@@ -14,6 +14,7 @@ import { AppStateGetter } from "../../../../src/app/store/appState/getters";
 describe("SessionsActions", () => {
     const getSessionIdsSpy = jest.spyOn(localStorageManager, "getSessionIds")
         .mockReturnValue(["123", "456"]);
+    const deleteSessionIdSpy = jest.spyOn(localStorageManager, "deleteSessionId");
 
     afterEach(() => {
         jest.clearAllTimers();
@@ -313,5 +314,14 @@ describe("SessionsActions", () => {
         expect(commit.mock.calls[0][0]).toBe(`errors/${ErrorsMutation.AddError}`);
         expect(commit.mock.calls[0][1].detail).toBe("Test Error");
         expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
+    });
+
+    it("DeleteSession removes from local storage and commits remove session id", async () => {
+        const commit = jest.fn();
+        const rootState = { appName: "testApp" };
+        await (actions[SessionsAction.DeleteSession] as any)({ commit, rootState, rootGetters }, "testSessionId");
+        expect(deleteSessionIdSpy).toHaveBeenCalledWith("testApp", "testInstance", "testSessionId");
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit).toHaveBeenCalledWith(SessionsMutation.RemoveSessionId, "testSessionId");
     });
 });

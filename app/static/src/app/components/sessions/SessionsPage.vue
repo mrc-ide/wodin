@@ -192,16 +192,16 @@ export default defineComponent({
 
         const confirmDeleteSessionOpen = ref(false);
         const toggleConfirmDeleteSessionOpen = (open: boolean) => {
-          confirmDeleteSessionOpen.value = open;
-        }
+            confirmDeleteSessionOpen.value = open;
+        };
         const confirmDeleteSession = (sessionId: string) => {
-          sessionIdToDelete.value = sessionId;
-          toggleConfirmDeleteSessionOpen(true);
+            sessionIdToDelete.value = sessionId;
+            toggleConfirmDeleteSessionOpen(true);
         };
 
         const deleteSession = () => {
-          store.dispatch(`${namespace}/${SessionsAction.DeleteSession}`, sessionIdToDelete.value);
-        }
+            store.dispatch(`${namespace}/${SessionsAction.DeleteSession}`, sessionIdToDelete.value);
+        };
 
         onMounted(() => {
             store.dispatch(`${namespace}/${SessionsAction.GetSessions}`);

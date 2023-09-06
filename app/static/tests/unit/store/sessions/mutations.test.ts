@@ -43,4 +43,18 @@ describe("Sessions mutations", () => {
         mutations[SessionsMutation.SetSessionFriendlyId](state, payload);
         expect(state.sessionsMetadata).toStrictEqual(sessionsMetadata);
     });
+
+    it("RemoveSessionId removes session metadata from state", () => {
+        const sessionsMetadata = [
+            { id: "123" },
+            { id: "456" },
+            { id: "789" }
+        ];
+        const state = { sessionsMetadata } as any;
+        mutations[SessionsMutation.RemoveSessionId](state, "456");
+        expect(state.sessionsMetadata).toStrictEqual([
+            { id: "123" },
+            { id: "789" }
+        ]);
+    });
 });
