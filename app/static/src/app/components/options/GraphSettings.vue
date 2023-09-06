@@ -8,6 +8,14 @@
         <input type="checkbox" class="form-check-input" style="vertical-align:bottom;" v-model="logScaleYAxis">
       </div>
     </div>
+    <div id="lock-axes" class="row my-2">
+      <div class="col-5">
+        <label class="col-form-label">Lock axes</label>
+      </div>
+      <div class="col-6">
+        <input type="checkbox" class="form-check-input" style="vertical-align:bottom;" v-model="lockAxes">
+      </div>
+    </div>
   </div>
 </template>
 
@@ -29,8 +37,18 @@ export default defineComponent({
             }
         });
 
+        const lockAxes = computed({
+            get() {
+                return store.state.graphSettings.lockAxes;
+            },
+            set(newValue) {
+                store.commit(`graphSettings/${GraphSettingsMutation.SetLockAxes}`, newValue);
+            }
+        });
+
         return {
-            logScaleYAxis
+            logScaleYAxis,
+            lockAxes
         };
     }
 });

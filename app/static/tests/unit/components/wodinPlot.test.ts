@@ -15,6 +15,7 @@ import Vuex, { Store } from "vuex";
 import WodinPlot from "../../../src/app/components/WodinPlot.vue";
 import WodinPlotDataSummary from "../../../src/app/components/WodinPlotDataSummary.vue";
 import { BasicState } from "../../../src/app/store/basic/state";
+import { GraphSettingsMutation } from "../../../src/app/store/graphSettings/mutations";
 
 describe("WodinPlot", () => {
     const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");
@@ -58,34 +59,60 @@ describe("WodinPlot", () => {
         placeholderMessage: "No data available"
     };
 
-    const getStore = (graphSettingsLogScaleYAxis = false) => {
+    const mockSetAxesRange = jest.fn();
+
+    const getStore = (logScaleYAxis = false, lockAxes = false) => {
         return new Vuex.Store<BasicState>({
-            state: {
+            modules: {
                 graphSettings: {
-                    logScaleYAxis: graphSettingsLogScaleYAxis
+                    namespaced: true,
+                    state: {
+                        logScaleYAxis,
+                        lockAxes,
+                        axesRange: {
+                            x: [10, 20],
+                            y: [30, 40]
+                        }
+                    },
+                    mutations: {
+                        [GraphSettingsMutation.SetAxesRange]: mockSetAxesRange
+                    }
                 }
-            } as any
+            }
         });
     };
 
     const getWrapper = (props = {}, store: Store<BasicState> = getStore()) => {
+        const div = document.createElement("div");
+        div.id = "root";
+        document.body.appendChild(div);
+
         return shallowMount(WodinPlot, {
             props: { ...defaultProps, ...props },
             global: {
                 plugins: [store]
-            }
+            },
+            attachTo: "#root"
         });
+    };
+
+    const mockLayout = {
+        xaxis: { range: [1, 2] },
+        yaxis: { range: [3, 4] }
     };
 
     const mockPlotElementOn = (wrapper: VueWrapper<any>) => {
         const divElement = wrapper.find("div.plot").element;
         const mockOn = jest.fn();
         (divElement as any).on = mockOn;
+        (divElement as any).layout = mockLayout;
         return mockOn;
     };
 
     afterEach(() => {
         jest.clearAllMocks();
+        jest.restoreAllMocks();
+        mockSetAxesRange.mockReset();
     });
 
     it("renders plot ref element", () => {
@@ -332,6 +359,60 @@ describe("WodinPlot", () => {
             margin: { t: 25 },
             xaxis: { title: "Time" },
             yaxis: { type: "log" }
+        });
+    });
+
+    it("locks axes if graph setting is set", async () => {
+        const store = getStore(false, true);
+        const wrapper = getWrapper({}, store);
+        mockPlotElementOn(wrapper);
+
+        wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+        expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({
+            margin: { t: 25 },
+            xaxis: { title: "Time", fixedrange: true, range: [10, 20] },
+            yaxis: { type: "linear", fixedrange: true, range: [30, 40] }
+        });
+    });
+
+    it("commits SetAxesRange on drawPlot", async () => {
+        const store = getStore(false, true);
+        const wrapper = getWrapper({}, store);
+        mockPlotElementOn(wrapper);
+
+        const plotObj = document.getElementById("plot");
+        (plotObj! as any).layout = mockLayout;
+
+        wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+        expect(mockSetAxesRange.mock.calls[0][1]).toStrictEqual({
+            x: [1, 2],
+            y: [3, 4]
+        });
+    });
+
+    it("commits SetAxesRange on relayout", async () => {
+        const store = getStore(false, true);
+        const wrapper = getWrapper({}, store);
+        mockPlotElementOn(wrapper);
+
+        const plotObj = document.getElementById("plot");
+        (plotObj! as any).layout = mockLayout;
+
+        wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+
+        const relayoutEvent = {
+            "xaxis.autorange": true
+        };
+
+        const { relayout } = wrapper.vm as any;
+        await relayout(relayoutEvent);
+
+        expect(mockSetAxesRange.mock.calls[0][1]).toStrictEqual({
+            x: [1, 2],
+            y: [3, 4]
         });
     });
 

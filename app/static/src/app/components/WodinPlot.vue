@@ -1,6 +1,6 @@
 <template>
   <div class="wodin-plot-container" :style="plotStyle">
-    <div class="plot" ref="plot">
+    <div class="plot" ref="plot" id="plot">
     </div>
     <div v-if="!hasPlotData" class="plot-placeholder">
       {{ placeholderMessage }}
@@ -17,12 +17,14 @@ import {
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
 import {
-    newPlot, react, PlotRelayoutEvent, Plots, AxisType
+    newPlot, react, PlotRelayoutEvent, Plots, AxisType, Layout, Config
 } from "plotly.js-basic-dist-min";
 import {
     WodinPlotData, fadePlotStyle, margin, config
 } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
+import { GraphSettingsMutation } from "../store/graphSettings/mutations";
+import { AxesRange } from "../store/graphSettings/state";
 
 export default defineComponent({
     name: "WodinPlot",
@@ -64,6 +66,18 @@ export default defineComponent({
         const hasPlotData = computed(() => !!(baseData.value?.length));
 
         const yAxisType = computed(() => (store.state.graphSettings.logScaleYAxis ? "log" : "linear" as AxisType));
+        const lockAxes = computed(() => store.state.graphSettings.lockAxes);
+        const axesRange = computed(() => store.state.graphSettings.axesRange as AxesRange);
+
+        const updateAxesRange = () => {
+            const plotObj = document.getElementById("plot") as any;
+            const yRange = plotObj.layout?.yaxis?.range;
+            const xRange = plotObj.layout?.xaxis?.range;
+            const range = { x: xRange, y: yRange };
+            if (plotObj) {
+                store.commit(`graphSettings/${GraphSettingsMutation.SetAxesRange}`, range);
+            }
+        };
 
         const relayout = async (event: PlotRelayoutEvent) => {
             let data;
@@ -78,7 +92,7 @@ export default defineComponent({
                 data = props.plotData(t0, t1, nPoints);
             }
 
-            const layout = {
+            const layout: Partial<Layout> = {
                 margin,
                 uirevision: "true",
                 xaxis: { title: "Time", autorange: true },
@@ -87,6 +101,8 @@ export default defineComponent({
 
             const el = plot.value as HTMLElement;
             await react(el, data, layout, config);
+
+            updateAxesRange();
         };
 
         const resize = () => {
@@ -103,7 +119,7 @@ export default defineComponent({
 
                 if (hasPlotData.value) {
                     const el = plot.value as unknown;
-                    const layout = {
+                    const layout: Partial<Layout> = {
                         margin,
                         yaxis: {
                             type: yAxisType.value
@@ -111,7 +127,22 @@ export default defineComponent({
                         xaxis: { title: "Time" }
                     };
 
-                    newPlot(el as HTMLElement, baseData.value, layout, config);
+                    const configCopy = { ...config } as Partial<Config>;
+
+                    if (lockAxes.value) {
+                        // removing ability to zoom in and using the display
+                        // mode bar
+                        layout.yaxis!.range = axesRange.value.y;
+                        layout.xaxis!.range = axesRange.value.x;
+                        layout.yaxis!.fixedrange = true;
+                        layout.xaxis!.fixedrange = true;
+                        configCopy.displayModeBar = false;
+                    }
+
+                    newPlot(el as HTMLElement, baseData.value, layout, configCopy);
+
+                    updateAxesRange();
+
                     if (props.recalculateOnRelayout) {
                         (el as EventEmitter).on("plotly_relayout", relayout);
                     }
@@ -123,7 +154,7 @@ export default defineComponent({
 
         onMounted(drawPlot);
 
-        watch([() => props.redrawWatches, yAxisType], drawPlot);
+        watch([() => props.redrawWatches, yAxisType, lockAxes], drawPlot);
 
         onUnmounted(() => {
             if (resizeObserver) {

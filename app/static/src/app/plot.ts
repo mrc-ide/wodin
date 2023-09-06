@@ -19,7 +19,8 @@ export const margin = {
 };
 
 export const config = {
-    responsive: true
+    responsive: true,
+    displayModeBar: true
 };
 
 export function filterUserTypeSeriesSet(s: OdinUserTypeSeriesSet, param: string, names: string[]): OdinSeriesSet {

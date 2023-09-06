@@ -212,6 +212,25 @@ test.describe("Options Tab tests", () => {
         await expect(await page.innerHTML(tickSelector)).toBe("0.2M");
     });
 
+    test.only("can change graph setting for lock axes", async ({ page }) => {
+        await expect(await page.innerText(":nth-match(.collapse-title, 3)")).toContain("Graph Settings");
+        await page.locator("#lock-axes input").click();
+
+        const tickSelector = ":nth-match(.plotly .ytick text, 6)";
+        await expect(await page.innerHTML(tickSelector)).toBe("1M");
+
+        await page.locator(":nth-match(.parameter-input, 3)").fill("1000000000");
+
+        await page.locator("#run-btn").click();
+
+        // would be 1B if we didn't lock the axes
+        await expect(await page.innerHTML(tickSelector)).toBe("1M");
+        await page.locator("#lock-axes input").click();
+
+        // autorange on deselect of lock axes
+        await expect(await page.innerHTML(tickSelector)).toBe("1B");
+    });
+
     const createParameterSet = async (page: Page) => {
         await page.click("#create-param-set");
     };
