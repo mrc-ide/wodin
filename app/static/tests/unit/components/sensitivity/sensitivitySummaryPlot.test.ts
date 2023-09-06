@@ -326,7 +326,10 @@ describe("SensitivitySummaryPlot", () => {
         };
         expect(mockPlotlyNewPlot.mock.calls[0][1]).toStrictEqual(expectedPlotData);
         expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual(expectedLayout);
-        expect(mockPlotlyNewPlot.mock.calls[0][3]).toStrictEqual({ responsive: true });
+        expect(mockPlotlyNewPlot.mock.calls[0][3]).toStrictEqual({
+            responsive: true,
+            displayModeBar: true
+        });
 
         expect(wrapper.findComponent(WodinPlotDataSummary).props("data")).toStrictEqual(expectedPlotData);
     };

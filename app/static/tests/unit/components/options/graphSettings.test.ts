@@ -8,14 +8,14 @@ describe("GraphSettings", () => {
     const mockSetLogScaleYAxis = jest.fn();
     const mockSetLockYAxis = jest.fn();
 
-    const getWrapper = (logScaleYAxis = true, lockYAxis = true) => {
+    const getWrapper = (logScaleYAxis = true, lockAxes = true) => {
         const store = new Vuex.Store<BasicState>({
             modules: {
                 graphSettings: {
                     namespaced: true,
                     state: {
                         logScaleYAxis,
-                        lockYAxis
+                        lockAxes
                     } as any,
                     mutations: {
                         [GraphSettingsMutation.SetLogScaleYAxis]: mockSetLogScaleYAxis,
@@ -44,7 +44,7 @@ describe("GraphSettings", () => {
         expect(labels[0].text()).toBe("Log scale y axis");
         expect(inputs[0].attributes("type")).toBe("checkbox");
         expect((inputs[0].element as HTMLInputElement).checked).toBe(true);
-        expect(labels[1].text()).toBe("Lock y axis");
+        expect(labels[1].text()).toBe("Lock axes");
         expect(inputs[1].attributes("type")).toBe("checkbox");
         expect((inputs[1].element as HTMLInputElement).checked).toBe(true);
     });
