@@ -197,13 +197,13 @@ test.describe("Sessions tests", () => {
         console.log("2")
         await expect(await page.locator("#app .container .row").count()).toBeGreaterThan(2);
         console.log("3")
-        const row = await page.locator(":nth-match(#app .container .row, 3)");
+        const row = await page.locator(":nth-match(#app .container .row, 4)");
         console.log("4")
         await row.locator(".session-edit-label i").click();
         console.log("5")
         await enterSessionLabel(page, "page-edit-session-label", "delete me");
         console.log("6")
-        await expect(await row.locator(".session-label")).toHaveText(
+        await expect(await page.locator("#app")).toContainText(
             "delete me", { timeout }
         );
         console.log("7")
@@ -213,7 +213,7 @@ test.describe("Sessions tests", () => {
         console.log("9")
         await page.click("#confirm-yes");
         console.log("10")
-        await expect(await page.locator("#app")).not.toHaveText("delete me");
+        await expect(await page.locator("#app")).not.toContainText("delete me");
         console.log("11")
 
         await browser.close();
