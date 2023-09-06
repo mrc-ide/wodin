@@ -87,7 +87,8 @@ describe("SessionsPage", () => {
         expect(session1Cells.at(2)!.findComponent(VueFeather).props("type")).toBe("edit-2");
         const routerLink = session1Cells.at(3)!.findComponent(RouterLink);
         expect(routerLink.props("to")).toBe("/");
-        expect(session1Cells.at(4)!.findComponent(VueFeather).props("type")).toBe("trash-2");
+        // No delete control for current session
+        expect(session1Cells.at(4)!.findComponent(VueFeather).exists()).toBe(false);
         expect(session1Cells.at(5)!.find("span.session-copy-link").text()).toBe("Copy link");
         expect(session1Cells.at(5)!.find("span.session-copy-link").findComponent(VueFeather).props("type"))
             .toBe("copy");
@@ -244,7 +245,7 @@ describe("SessionsPage", () => {
     it("opens and closes confirm delete dialog", async () => {
         const wrapper = getWrapper(sessionsMetadata);
         const rows = wrapper.findAll(".container .row");
-        const session1Cells = rows.at(2)!.findAll("div.session-col-value");
+        const session1Cells = rows.at(3)!.findAll("div.session-col-value");
         await session1Cells.at(4)!.findComponent(VueFeather).trigger("click");
         const confirm = wrapper.findComponent(ConfirmModal);
         expect(confirm.props("open")).toBe(true);
@@ -255,11 +256,11 @@ describe("SessionsPage", () => {
     it("deletes session on confirm", async () => {
         const wrapper = getWrapper(sessionsMetadata);
         const rows = wrapper.findAll(".container .row");
-        const session1Cells = rows.at(2)!.findAll("div.session-col-value");
+        const session1Cells = rows.at(3)!.findAll("div.session-col-value");
         await session1Cells.at(4)!.findComponent(VueFeather).trigger("click"); // set session to delete
         const confirm = wrapper.findComponent(ConfirmModal);
         await confirm.vm.$emit("confirm");
         expect(mockDeleteSession).toHaveBeenCalledTimes(1);
-        expect(mockDeleteSession.mock.calls[0][1]).toBe("abc");
+        expect(mockDeleteSession.mock.calls[0][1]).toBe("def");
     });
 });

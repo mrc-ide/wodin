@@ -36,7 +36,8 @@
             </a>
           </div>
           <div class="col-1 text-center session-col-value session-delete">
-            <vue-feather class="inline-icon brand clickable"
+            <vue-feather v-if="!isCurrentSession(session.id)"
+                         class="inline-icon brand clickable"
                          type="trash-2"
                          @click="confirmDeleteSession(session.id)"></vue-feather>
           </div>
