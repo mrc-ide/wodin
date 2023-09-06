@@ -187,6 +187,8 @@ test.describe("Sessions tests", () => {
         await page.goto(copiedLinkText);
         await expect(await page.innerText("#data-upload-success")).toBe(" Uploaded 32 rows and 2 columns");
 
+        // force another session to be created
+        await page.goto(appUrl);
         // can delete session
         console.log("1")
         await page.goto(`${appUrl}/sessions`);

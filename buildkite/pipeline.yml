@@ -6,8 +6,6 @@ steps:
 
   - label: ":playwright::chrome: Browser tests"
     command: docker/browser_tests
-    artifact_paths:
-      - "app/static/test-results/**/*"
 
   - wait
 
