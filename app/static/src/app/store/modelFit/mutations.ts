@@ -50,7 +50,8 @@ export const mutations: MutationTree<ModelFitState> = {
                 dataChanged: false,
                 linkChanged: false,
                 parameterValueChanged: false,
-                parameterToVaryChanged: false
+                parameterToVaryChanged: false,
+                advancedSettingsChanged: false
             };
         } else {
             state.fitUpdateRequired = {

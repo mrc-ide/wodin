@@ -52,6 +52,7 @@ export interface SensitivityUpdateRequiredReasons {
     endTimeChanged: boolean;
     sensitivityOptionsChanged: boolean;
     numberOfReplicatesChanged: boolean;
+    advancedSettingsChanged: boolean;
 }
 
 export interface BaseSensitivityState {

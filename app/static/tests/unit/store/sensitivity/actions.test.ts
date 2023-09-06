@@ -98,7 +98,8 @@ describe("Sensitivity actions", () => {
             modelChanged: false,
             parameterValueChanged: false,
             sensitivityOptionsChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
 
         expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
@@ -165,7 +166,8 @@ describe("Sensitivity actions", () => {
             modelChanged: false,
             parameterValueChanged: false,
             sensitivityOptionsChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
 
         expect(mockRunnerOde.batchRun).toHaveBeenCalledTimes(3);
@@ -438,7 +440,8 @@ describe("Sensitivity actions", () => {
             modelChanged: false,
             parameterValueChanged: false,
             sensitivityOptionsChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
 
         expect(mockRunnerDiscrete.batchRunDiscrete)
@@ -518,7 +521,8 @@ describe("Sensitivity actions", () => {
             modelChanged: false,
             parameterValueChanged: false,
             sensitivityOptionsChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         });
 
         expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(

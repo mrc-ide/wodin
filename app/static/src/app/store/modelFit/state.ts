@@ -13,6 +13,7 @@ export interface FitUpdateRequiredReasons {
     linkChanged: boolean;
     parameterValueChanged: boolean;
     parameterToVaryChanged: boolean;
+    advancedSettingsChanged: boolean;
 }
 
 export interface ModelFitState {

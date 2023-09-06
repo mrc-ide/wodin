@@ -1,24 +1,46 @@
 import { VueWrapper, shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
 import AdvancedSettings from "../../../../src/app/components/options/AdvancedSettings.vue";
-import { mockRunState } from "../../../mocks";
+import { mockModelFitState, mockRunState, mockSensitivityState } from "../../../mocks";
 import { RunMutation } from "../../../../src/app/store/run/mutations";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
 import StandardFormInput from "../../../../src/app/components/options/StandardFormInput.vue";
 import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
 import TagInput from "../../../../src/app/components/options/TagInput.vue";
+import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
+import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import { AppType } from "../../../../src/app/store/appState/state";
 
 describe("Advanced Settings", () => {
     const mockUpdateAdvancedSettings = jest.fn();
+    const mockSetFitUpdateRequired = jest.fn();
+    const mockSetSensitivityUpdateRequired = jest.fn();
 
-    const getWrapper = () => {
+    const getWrapper = (isFit = false) => {
         const store = new Vuex.Store({
+            state: {
+                appType: isFit ? AppType.Fit : AppType.Basic
+            },
             modules: {
                 run: {
                     namespaced: true,
                     state: mockRunState(),
                     mutations: {
                         [RunMutation.UpdateAdvancedSettings]: mockUpdateAdvancedSettings
+                    }
+                },
+                modelFit: {
+                    namespaced: true,
+                    state: mockModelFitState(),
+                    mutations: {
+                        [ModelFitMutation.SetFitUpdateRequired]: mockSetFitUpdateRequired
+                    }
+                },
+                sensitivity: {
+                    namespaced: true,
+                    state: mockSensitivityState(),
+                    mutations: {
+                        [SensitivityMutation.SetUpdateRequired]: mockSetSensitivityUpdateRequired
                     }
                 }
             }
@@ -87,5 +109,27 @@ describe("Advanced Settings", () => {
         expect(mockUpdateAdvancedSettings).toBeCalledTimes(1);
         expect(mockUpdateAdvancedSettings.mock.calls[0][1])
             .toStrictEqual({ newVal: [2, 3], option: AdvancedOptions.tol });
+    });
+
+    it("commits update required to both fit and sensitivity when on fit app", () => {
+        const wrapper = getWrapper(true);
+
+        const inputs = wrapper.findAllComponents(NumericInput);
+        inputs[0].vm.$emit("update", 2);
+
+        expect(mockUpdateAdvancedSettings).toBeCalledTimes(1);
+        expect(mockSetFitUpdateRequired).toBeCalledTimes(1);
+        expect(mockSetSensitivityUpdateRequired).toBeCalledTimes(1);
+    });
+
+    it("commits update required to only sensitivity when not on fit app", () => {
+        const wrapper = getWrapper();
+
+        const inputs = wrapper.findAllComponents(NumericInput);
+        inputs[0].vm.$emit("update", 2);
+
+        expect(mockUpdateAdvancedSettings).toBeCalledTimes(1);
+        expect(mockSetFitUpdateRequired).toBeCalledTimes(0);
+        expect(mockSetSensitivityUpdateRequired).toBeCalledTimes(1);
     });
 });

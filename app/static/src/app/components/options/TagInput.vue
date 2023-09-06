@@ -11,7 +11,7 @@
 </template>
 <script lang="ts">
 import {
-    PropType, computed, defineComponent, watch, ref
+    PropType, computed, defineComponent, ref, onMounted
 } from "vue";
 import VueTagsInput from "vue3-tags-input";
 import { useStore } from "vuex";
@@ -36,21 +36,24 @@ export default defineComponent({
 
         const paramValues = computed(() => store.state.run.parameterValues);
 
-        watch(paramValues, () => {
-            if (props.tags) {
-                emit("update", [...props.tags]);
-            }
-        }, { deep: true });
-
-        const computedTags = computed(() => {
+        const cleanTags = computed(() => {
             if (props.tags?.length === 0 || !props.tags) {
                 return [];
             }
-            const cleanTags = props.tags.filter((tag) => {
+            return props.tags.filter((tag) => {
                 if (typeof tag === "number") return true;
                 return !props.numericOnly && paramValues.value[tag] !== undefined;
             });
-            return cleanTags.map((tag) => {
+        });
+
+        onMounted(() => {
+            if (props.tags && cleanTags.value.length !== props.tags.length) {
+                emit("update", cleanTags.value);
+            }
+        });
+
+        const computedTags = computed(() => {
+            return cleanTags.value.map((tag) => {
                 if (typeof tag === "number") return `${tag}`;
                 const tagValue = paramValues.value[tag];
                 return `${tag}: ${tagValue}`;
@@ -88,8 +91,8 @@ export default defineComponent({
                 }
                 return undefined;
             });
-            const cleanTags = parsedTags.filter((x) => x !== undefined);
-            emit("update", cleanTags);
+            const cleanedNewTags = parsedTags.filter((x) => x !== undefined);
+            emit("update", cleanedNewTags);
         };
 
         const validate = (tag: string) => {
