@@ -1,4 +1,4 @@
-import { mount } from "@vue/test-utils";
+import {mount, shallowMount} from "@vue/test-utils";
 import Vuex from "vuex";
 import { nextTick } from "vue";
 import { ModelState } from "../../../../src/app/store/model/state";
@@ -14,15 +14,12 @@ import { AppState, AppType } from "../../../../src/app/store/appState/state";
 import { ModelGetter } from "../../../../src/app/store/model/getters";
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
-import DownloadOutput from "../../../../src/app/components/DownloadOutput.vue";
 
 jest.mock("plotly.js-basic-dist-min", () => {});
 
 describe("SensitivityTab", () => {
     const mockRunSensitivity = jest.fn();
     const mockSetLoading = jest.fn();
-    const mockSetUserSummaryDownloadFileName = jest.fn();
-    const mockDownloadSummary = jest.fn();
     const mockSetPlotTime = jest.fn();
 
     const getWrapper = (appType = AppType.Basic, modelState: Partial<ModelState> = {},
@@ -74,25 +71,22 @@ describe("SensitivityTab", () => {
                         paramSettings: {
                             numberOfRuns: 5
                         },
-                        userSummaryDownloadFileName: "",
                         ...sensitivityState
                     },
                     getters: {
                         [BaseSensitivityGetter.batchPars]: () => batchPars
                     },
                     actions: {
-                        [SensitivityAction.RunSensitivity]: mockRunSensitivity,
-                        [SensitivityAction.DownloadSummary]: mockDownloadSummary
+                        [SensitivityAction.RunSensitivity]: mockRunSensitivity
                     },
                     mutations: {
                         [SensitivityMutation.SetLoading]: mockSetLoading,
-                        [SensitivityMutation.SetUserSummaryDownloadFileName]: mockSetUserSummaryDownloadFileName,
                         [SensitivityMutation.SetPlotTime]: mockSetPlotTime
                     }
                 }
             }
         });
-        return mount(SensitivityTab, {
+        return shallowMount(SensitivityTab, {
             global: {
                 plugins: [store],
                 stubs: [
@@ -149,73 +143,6 @@ describe("SensitivityTab", () => {
         const wrapper = getWrapper(AppType.Basic, {}, sensitivityState);
         expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(false);
         expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
-    });
-
-    it("enables download button when expected", () => {
-        const expectDownloadButtonEnabled = (state: Partial<SensitivityState>, expectButtonEnabled: boolean) => {
-            const wrapper = getWrapper(AppType.Basic, {}, state);
-            const button = wrapper.find("button#download-summary-btn");
-            expect((button.element as HTMLButtonElement).disabled).toBe(!expectButtonEnabled);
-        };
-
-        // enabled if not downloading, and no update required, and batch result exists
-        const noUpdateRequiredReasons = {
-            modelChanged: false,
-            parameterValueChanged: false,
-            endTimeChanged: false,
-            sensitivityOptionsChanged: false,
-            numberOfReplicatesChanged: false
-        };
-        const enabledResult = {
-            inputs: {},
-            batch: {
-                solutions: ["test solution"] as any,
-                errors: []
-            },
-            error: null
-        };
-        const enabledState = {
-            downloading: false,
-            sensitivityUpdateRequired: noUpdateRequiredReasons,
-            result: enabledResult
-        } as any;
-        expectDownloadButtonEnabled(enabledState, true);
-
-        // disabled if downloading
-        expectDownloadButtonEnabled({ ...enabledState, downloading: true }, false);
-
-        // disabled if update required
-        expectDownloadButtonEnabled({
-            ...enabledState,
-            sensitivityUpdateRequired: { modelChanged: true }
-        }, false);
-
-        // disabled if no batch result
-        expectDownloadButtonEnabled({
-            ...enabledState,
-            result: { ...enabledResult, batch: null }
-        }, false);
-    });
-
-    it("renders DownloadOutput as expected", () => {
-        const wrapper = getWrapper(AppType.Basic, {}, { userSummaryDownloadFileName: "test.xlsx" });
-        const downloadOutput = wrapper.findComponent(DownloadOutput);
-        expect(downloadOutput.props().open).toBe(false);
-        expect(downloadOutput.props().downloadType).toBe("Sensitivity Summary");
-        expect(downloadOutput.props().includePoints).toBe(false);
-        expect(downloadOutput.props().userFileName).toBe("test.xlsx");
-    });
-
-    it("renders downloading as expected", () => {
-        // does not render if not downloading
-        let wrapper = getWrapper();
-        expect(wrapper.find("div#downloading").exists()).toBe(false);
-
-        // does render if downloading
-        wrapper = getWrapper(AppType.Basic, {}, { downloading: true });
-        const downloading = wrapper.find("div#downloading");
-        expect(downloading.text()).toBe("Downloading...");
-        expect(wrapper.findComponent(LoadingSpinner).props("size")).toBe("xs");
     });
 
     it("renders error", () => {
@@ -351,38 +278,5 @@ describe("SensitivityTab", () => {
         await new Promise((r) => setTimeout(r, 101));
         expect(mockRunSensitivity).toHaveBeenCalledTimes(1);
         expect(mockSetLoading).toHaveBeenCalledTimes(1);
-    });
-
-    it("opens dialog on click download button", async () => {
-        const wrapper = getWrapper();
-        await wrapper.find("button#download-summary-btn").trigger("click");
-        expect(wrapper.findComponent(DownloadOutput).props().open).toBe(true);
-    });
-
-    it("commits user download filename change", () => {
-        const wrapper = getWrapper();
-        const downloadOutput = wrapper.findComponent(DownloadOutput);
-        downloadOutput.vm.$emit("update:userFileName", "newFile.xlsx");
-        expect(mockSetUserSummaryDownloadFileName).toHaveBeenCalledTimes(1);
-        expect(mockSetUserSummaryDownloadFileName.mock.calls[0][1]).toBe("newFile.xlsx");
-    });
-
-    it("verifies end time and dispatches action on download output emit", () => {
-        const wrapper = getWrapper();
-        const downloadOutput = wrapper.findComponent(DownloadOutput);
-        downloadOutput.vm.$emit("download", { fileName: "test.xlsx" });
-        // should have updated plot settings time to run end time
-        expect(mockSetPlotTime.mock.calls[0][1]).toBe(100);
-        expect(mockDownloadSummary.mock.calls[0][1]).toBe("test.xlsx");
-    });
-
-    it("closes output dialog on close emit", async () => {
-        const wrapper = getWrapper();
-        await wrapper.find("#download-summary-btn").trigger("click");
-        const downloadOutput = wrapper.findComponent(DownloadOutput);
-        expect(downloadOutput.props().open).toBe(true);
-        downloadOutput.vm.$emit("close");
-        await nextTick();
-        expect(downloadOutput.props().open).toBe(false);
     });
 });
