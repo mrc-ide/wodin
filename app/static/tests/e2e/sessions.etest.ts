@@ -188,18 +188,18 @@ test.describe("Sessions tests", () => {
         await expect(await page.innerText("#data-upload-success")).toBe(" Uploaded 32 rows and 2 columns");
 
         // force another session to be created
-        await page.goto(appUrl);
-        await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
+        //await page.goto(appUrl);
+        //await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
 
         // can delete session
         console.log("1")
         await page.goto(`${appUrl}/sessions`);
         console.log("2")
-        await expect(await page.locator("#app .container .row").count()).toBeGreaterThan(2);
+        await expect(await page.locator("#app .container .row").count()).toBeGreaterThan(3);
         console.log("3")
-        const row = await page.locator(":nth-match(#app .container .row, 4)");
+        //const row = await page.locator(":nth-match(#app .container .row, 4)");
         console.log("4")
-        await row.locator(".session-edit-label i").click();
+        await page.locator(":nth-match(#app .container .row, 4) .session-edit-label i").click();
         console.log("5")
         await enterSessionLabel(page, "page-edit-session-label", "delete me");
 
