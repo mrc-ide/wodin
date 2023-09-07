@@ -113,7 +113,7 @@ export default defineComponent({
 
         let resizeObserver: null | ResizeObserver = null;
 
-        const drawPlot = () => {
+        const drawPlot = (toggleLogScale = false) => {
             if (props.redrawWatches.length) {
                 baseData.value = props.plotData(startTime, props.endTime, nPoints);
 
@@ -129,14 +129,13 @@ export default defineComponent({
 
                     const configCopy = { ...config } as Partial<Config>;
 
-                    if (lockAxes.value) {
+                    if (lockAxes.value && !toggleLogScale) {
                         // removing ability to zoom in and using the display
                         // mode bar
                         layout.yaxis!.range = axesRange.value.y;
                         layout.xaxis!.range = axesRange.value.x;
                         layout.yaxis!.fixedrange = true;
                         layout.xaxis!.fixedrange = true;
-                        configCopy.displayModeBar = false;
                     }
 
                     newPlot(el as HTMLElement, baseData.value, layout, configCopy);
@@ -154,7 +153,8 @@ export default defineComponent({
 
         onMounted(drawPlot);
 
-        watch([() => props.redrawWatches, yAxisType, lockAxes], drawPlot);
+        watch([() => props.redrawWatches, lockAxes], () => drawPlot());
+        watch(yAxisType, () => drawPlot(true));
 
         onUnmounted(() => {
             if (resizeObserver) {
