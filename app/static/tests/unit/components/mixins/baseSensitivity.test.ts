@@ -111,7 +111,8 @@ describe("baseSensitivity mixin", () => {
             parameterValueChanged: false,
             endTimeChanged: false,
             sensitivityOptionsChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         };
         expectUpdateMsgForSensAndMultiSens(true, {}, { sensitivityUpdateRequired },
             "Plot is out of date: model code has been recompiled. Run Sensitivity to update.",

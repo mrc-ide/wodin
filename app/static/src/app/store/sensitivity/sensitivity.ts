@@ -25,7 +25,8 @@ export const noSensitivityUpdateRequired = () => ({
     parameterValueChanged: false,
     endTimeChanged: false,
     sensitivityOptionsChanged: false,
-    numberOfReplicatesChanged: false
+    numberOfReplicatesChanged: false,
+    advancedSettingsChanged: false
 });
 
 export const defaultState: SensitivityState = {

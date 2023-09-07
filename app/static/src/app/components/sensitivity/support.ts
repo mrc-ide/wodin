@@ -16,6 +16,7 @@ export const sensitivityUpdateRequiredExplanation = (reasons: SensitivityUpdateR
     appendIf(explanation, reasons.sensitivityOptionsChanged && !reasons.modelChanged,
         help.sensitivityOptionsChanged(multiSens));
     appendIf(explanation, reasons.numberOfReplicatesChanged && !reasons.modelChanged, help.numberOfReplicatesChanged);
+    appendIf(explanation, reasons.advancedSettingsChanged, help.advancedSettingsChanged);
     // Fallback reason if something unexpected has happened.
     appendIf(explanation, explanation.length === 0, help.unknown);
     return `${prefix} ${joinStringsSentence(explanation)}. ${help.suffix(multiSens)}.`;
