@@ -121,7 +121,7 @@ export default defineComponent({
                 if (numeric > error.number) {
                     setMaxTooltip(error.number, error.message);
                     return error.number;
-                } else if (numeric > warning.number) {
+                } if (numeric > warning.number) {
                     setMaxTooltip(warning.number, warning.message, "warning");
                     return numeric;
                 }
@@ -132,7 +132,7 @@ export default defineComponent({
                 if (numeric < error.number) {
                     setMaxTooltip(error.number, error.message);
                     return error.number;
-                } else if (numeric < warning.number) {
+                } if (numeric < warning.number) {
                     setMaxTooltip(warning.number, warning.message, "warning");
                     return numeric;
                 }

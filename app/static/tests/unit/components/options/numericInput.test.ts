@@ -140,7 +140,7 @@ describe("NumericInput", () => {
     it("does max validation (array)", async () => {
         const wrapper = getWrapper(10, {
             error: { number: 12, message: "high tooltip" },
-            warning: {number: 10, message: "middle tooltip"}
+            warning: { number: 10, message: "middle tooltip" }
         });
         await expectValueAndTooltip(wrapper, "10", 0, 10, "");
         await expectValueAndTooltip(wrapper, "11", 1, 11, "middle tooltip");

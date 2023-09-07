@@ -72,7 +72,7 @@ export default defineComponent({
                 error: { number: maxReplicatesRun.value },
                 warning: {
                     number: maxReplicatesDisplay.value,
-                    message: `Individual traces will not be shown for `
+                    message: "Individual traces will not be shown for "
                         + `values greater than ${maxReplicatesDisplay.value}`
                 }
             } as BoundTooltip;
