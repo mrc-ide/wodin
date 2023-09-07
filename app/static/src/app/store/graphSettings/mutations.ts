@@ -1,10 +1,10 @@
 import { MutationTree } from "vuex";
-import { AxesRange, GraphSettingsState } from "./state";
+import { YAxisRange, GraphSettingsState } from "./state";
 
 export enum GraphSettingsMutation {
     SetLogScaleYAxis = "SetLogScaleYAxis",
-    SetLockAxes = "SetLockAxes",
-    SetAxesRange = "SetAxesRange"
+    SetLockYAxis = "SetLockYAxis",
+    SetYAxisRange = "SetYAxisRange"
 }
 
 export const mutations: MutationTree<GraphSettingsState> = {
@@ -12,11 +12,11 @@ export const mutations: MutationTree<GraphSettingsState> = {
         state.logScaleYAxis = payload;
     },
 
-    [GraphSettingsMutation.SetLockAxes](state: GraphSettingsState, payload: boolean) {
-        state.lockAxes = payload;
+    [GraphSettingsMutation.SetLockYAxis](state: GraphSettingsState, payload: boolean) {
+        state.lockYAxis = payload;
     },
 
-    [GraphSettingsMutation.SetAxesRange](state: GraphSettingsState, payload: AxesRange) {
-        state.axesRange = payload;
+    [GraphSettingsMutation.SetYAxisRange](state: GraphSettingsState, payload: YAxisRange) {
+        state.yAxisRange = payload;
     }
 };

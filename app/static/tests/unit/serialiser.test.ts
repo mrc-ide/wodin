@@ -276,11 +276,8 @@ describe("serialise", () => {
         versions: { versions: null },
         graphSettings: {
             logScaleYAxis: true,
-            lockAxes: true,
-            axesRange: {
-                x: [1, 2],
-                y: [3, 4]
-            }
+            lockYAxis: true,
+            yAxisRange: [1, 2]
         },
         configured: false,
         language: langaugeState
@@ -307,11 +304,8 @@ describe("serialise", () => {
         versions: { versions: null },
         graphSettings: {
             logScaleYAxis: true,
-            lockAxes: true,
-            axesRange: {
-                x: [1, 2],
-                y: [3, 4]
-            }
+            lockYAxis: true,
+            yAxisRange: [1, 2]
         },
         configured: false,
         language: langaugeState
@@ -392,11 +386,8 @@ describe("serialise", () => {
 
     const expectedGraphSettings = {
         logScaleYAxis: true,
-        lockAxes: true,
-        axesRange: {
-            x: [1, 2],
-            y: [3, 4]
-        }
+        lockYAxis: true,
+        yAxisRange: [1, 2]
     };
 
     const expectedFitData = {

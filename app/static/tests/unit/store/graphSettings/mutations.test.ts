@@ -4,11 +4,8 @@ import { GraphSettingsState } from "../../../../src/app/store/graphSettings/stat
 describe("GraphSettings mutations", () => {
     const state: GraphSettingsState = {
         logScaleYAxis: false,
-        lockAxes: false,
-        axesRange: {
-            x: [0, 0] as [number, number],
-            y: [0, 0] as [number, number]
-        }
+        lockYAxis: false,
+        yAxisRange: [0, 0] as [number, number]
     };
 
     it("sets logScaleYAxis", () => {
@@ -17,16 +14,16 @@ describe("GraphSettings mutations", () => {
     });
 
     it("sets lockYAxis", () => {
-        mutations.SetLockAxes(state, true);
-        expect(state.lockAxes).toBe(true);
+        mutations.SetLockYAxis(state, true);
+        expect(state.lockYAxis).toBe(true);
     });
 
-    it("sets axesRange", () => {
-        mutations.SetAxesRange(state, {
+    it("sets yAxisRange", () => {
+        mutations.SetYAxisRange(state, {
             x: [1, 2],
             y: [3, 4]
         });
-        expect(state.axesRange).toStrictEqual({
+        expect(state.yAxisRange).toStrictEqual({
             x: [1, 2],
             y: [3, 4]
         });

@@ -8,18 +8,18 @@ describe("GraphSettings", () => {
     const mockSetLogScaleYAxis = jest.fn();
     const mockSetLockYAxis = jest.fn();
 
-    const getWrapper = (logScaleYAxis = true, lockAxes = true) => {
+    const getWrapper = (logScaleYAxis = true, lockYAxis = true) => {
         const store = new Vuex.Store<BasicState>({
             modules: {
                 graphSettings: {
                     namespaced: true,
                     state: {
                         logScaleYAxis,
-                        lockAxes
+                        lockYAxis
                     } as any,
                     mutations: {
                         [GraphSettingsMutation.SetLogScaleYAxis]: mockSetLogScaleYAxis,
-                        [GraphSettingsMutation.SetLockAxes]: mockSetLockYAxis
+                        [GraphSettingsMutation.SetLockYAxis]: mockSetLockYAxis
                     }
                 }
             }

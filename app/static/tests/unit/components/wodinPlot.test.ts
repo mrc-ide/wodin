@@ -59,23 +59,20 @@ describe("WodinPlot", () => {
         placeholderMessage: "No data available"
     };
 
-    const mockSetAxesRange = jest.fn();
+    const mockSetYAxisRange = jest.fn();
 
-    const getStore = (logScaleYAxis = false, lockAxes = false) => {
+    const getStore = (logScaleYAxis = false, lockYAxis = false) => {
         return new Vuex.Store<BasicState>({
             modules: {
                 graphSettings: {
                     namespaced: true,
                     state: {
                         logScaleYAxis,
-                        lockAxes,
-                        axesRange: {
-                            x: [10, 20],
-                            y: [30, 40]
-                        }
+                        lockYAxis,
+                        yAxisRange: [10, 20]
                     },
                     mutations: {
-                        [GraphSettingsMutation.SetAxesRange]: mockSetAxesRange
+                        [GraphSettingsMutation.SetYAxisRange]: mockSetYAxisRange
                     }
                 }
             }
@@ -97,8 +94,8 @@ describe("WodinPlot", () => {
     };
 
     const mockLayout = {
-        xaxis: { range: [1, 2] },
-        yaxis: { range: [3, 4] }
+        xaxis: { range: [3, 4] },
+        yaxis: { range: [1, 2] }
     };
 
     const mockPlotElementOn = (wrapper: VueWrapper<any>) => {
@@ -112,7 +109,7 @@ describe("WodinPlot", () => {
     afterEach(() => {
         jest.clearAllMocks();
         jest.restoreAllMocks();
-        mockSetAxesRange.mockReset();
+        mockSetYAxisRange.mockReset();
     });
 
     it("renders plot ref element", () => {
@@ -371,49 +368,24 @@ describe("WodinPlot", () => {
         await nextTick();
         expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({
             margin: { t: 25 },
-            xaxis: { title: "Time", fixedrange: true, range: [10, 20] },
-            yaxis: { type: "linear", fixedrange: true, range: [30, 40] }
+            xaxis: { title: "Time" },
+            yaxis: { type: "linear", autorange: false, range: [10, 20] }
         });
     });
 
-    it("commits SetAxesRange on drawPlot", async () => {
-        const store = getStore(false, true);
+    it("commits SetYAxisRange on drawPlot", async () => {
+        const store = getStore(false, false);
         const wrapper = getWrapper({}, store);
         mockPlotElementOn(wrapper);
 
-        const plotObj = document.getElementById("plot");
-        (plotObj! as any).layout = mockLayout;
-
-        wrapper.setProps({ redrawWatches: [{} as any] });
-        await nextTick();
-        expect(mockSetAxesRange.mock.calls[0][1]).toStrictEqual({
-            x: [1, 2],
-            y: [3, 4]
-        });
-    });
-
-    it("commits SetAxesRange on relayout", async () => {
-        const store = getStore(false, true);
-        const wrapper = getWrapper({}, store);
-        mockPlotElementOn(wrapper);
-
-        const plotObj = document.getElementById("plot");
-        (plotObj! as any).layout = mockLayout;
-
-        wrapper.setProps({ redrawWatches: [{} as any] });
-        await nextTick();
-
-        const relayoutEvent = {
-            "xaxis.autorange": true
+        (wrapper.vm as any).plot = {
+            layout: mockLayout,
+            on: jest.fn()
         };
-
-        const { relayout } = wrapper.vm as any;
-        await relayout(relayoutEvent);
-
-        expect(mockSetAxesRange.mock.calls[0][1]).toStrictEqual({
-            x: [1, 2],
-            y: [3, 4]
-        });
+        await nextTick();
+        await wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+        expect(mockSetYAxisRange.mock.calls[0][1]).toStrictEqual([1, 2]);
     });
 
     it("relayout uses graph settings log scale y axis value", async () => {

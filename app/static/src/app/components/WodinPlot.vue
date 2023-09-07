@@ -24,7 +24,7 @@ import {
 } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
 import { GraphSettingsMutation } from "../store/graphSettings/mutations";
-import { AxesRange } from "../store/graphSettings/state";
+import { YAxisRange } from "../store/graphSettings/state";
 
 export default defineComponent({
     name: "WodinPlot",
@@ -66,16 +66,14 @@ export default defineComponent({
         const hasPlotData = computed(() => !!(baseData.value?.length));
 
         const yAxisType = computed(() => (store.state.graphSettings.logScaleYAxis ? "log" : "linear" as AxisType));
-        const lockAxes = computed(() => store.state.graphSettings.lockAxes);
-        const axesRange = computed(() => store.state.graphSettings.axesRange as AxesRange);
+        const lockYAxis = computed(() => store.state.graphSettings.lockYAxis);
+        const yAxisRange = computed(() => store.state.graphSettings.yAxisRange as YAxisRange);
 
         const updateAxesRange = () => {
-            const plotObj = document.getElementById("plot") as any;
-            const yRange = plotObj.layout?.yaxis?.range;
-            const xRange = plotObj.layout?.xaxis?.range;
-            const range = { x: xRange, y: yRange };
-            if (plotObj) {
-                store.commit(`graphSettings/${GraphSettingsMutation.SetAxesRange}`, range);
+            const plotLayout = (plot.value as any).layout;
+            const yRange = plotLayout.yaxis?.range;
+            if (plotLayout) {
+                store.commit(`graphSettings/${GraphSettingsMutation.SetYAxisRange}`, yRange);
             }
         };
 
@@ -101,8 +99,6 @@ export default defineComponent({
 
             const el = plot.value as HTMLElement;
             await react(el, data, layout, config);
-
-            updateAxesRange();
         };
 
         const resize = () => {
@@ -129,17 +125,16 @@ export default defineComponent({
 
                     const configCopy = { ...config } as Partial<Config>;
 
-                    if (lockAxes.value && !toggleLogScale) {
-                        // removing ability to zoom in
-                        layout.yaxis!.range = axesRange.value.y;
-                        layout.xaxis!.range = axesRange.value.x;
-                        layout.yaxis!.fixedrange = true;
-                        layout.xaxis!.fixedrange = true;
+                    if (lockYAxis.value && !toggleLogScale) {
+                        layout.yaxis!.range = [...yAxisRange.value];
+                        layout.yaxis!.autorange = false;
                     }
 
                     newPlot(el as HTMLElement, baseData.value, layout, configCopy);
 
-                    updateAxesRange();
+                    if (!lockYAxis.value || toggleLogScale) {
+                        updateAxesRange();
+                    }
 
                     if (props.recalculateOnRelayout) {
                         (el as EventEmitter).on("plotly_relayout", relayout);
@@ -152,7 +147,7 @@ export default defineComponent({
 
         onMounted(drawPlot);
 
-        watch([() => props.redrawWatches, lockAxes], () => drawPlot());
+        watch([() => props.redrawWatches, lockYAxis], () => drawPlot());
         watch(yAxisType, () => drawPlot(true));
 
         onUnmounted(() => {

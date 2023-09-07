@@ -13,7 +13,7 @@
         <label class="col-form-label">Lock axes</label>
       </div>
       <div class="col-6">
-        <input type="checkbox" class="form-check-input" style="vertical-align:bottom;" v-model="lockAxes">
+        <input type="checkbox" class="form-check-input" style="vertical-align:bottom;" v-model="lockYAxis">
       </div>
     </div>
   </div>
@@ -37,18 +37,18 @@ export default defineComponent({
             }
         });
 
-        const lockAxes = computed({
+        const lockYAxis = computed({
             get() {
-                return store.state.graphSettings.lockAxes;
+                return store.state.graphSettings.lockYAxis;
             },
             set(newValue) {
-                store.commit(`graphSettings/${GraphSettingsMutation.SetLockAxes}`, newValue);
+                store.commit(`graphSettings/${GraphSettingsMutation.SetLockYAxis}`, newValue);
             }
         });
 
         return {
             logScaleYAxis,
-            lockAxes
+            lockYAxis
         };
     }
 });
