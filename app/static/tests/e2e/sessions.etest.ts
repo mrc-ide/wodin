@@ -202,12 +202,11 @@ test.describe("Sessions tests", () => {
         await row.locator(".session-edit-label i").click();
         console.log("5")
         await enterSessionLabel(page, "page-edit-session-label", "delete me");
+
         console.log("6")
-        await expect(await page.locator("#app")).toContainText(
-            "delete me", { timeout }
-        );
+        await expect( await page.locator(".row:has-text('delete me')")).toBeVisible({timeout});
         console.log("7")
-        await page.locator(":nth-match(#app .container .row, 4) .session-delete i").click();
+        await page.locator(".row:has-text('delete me') .session-delete i").click();
         console.log("8")
         await expect(await page.locator("#confirm-yes")).toBeVisible();
         console.log("9")
