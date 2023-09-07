@@ -34,7 +34,7 @@
             </li>
           </ul>
           <sensitivity-param-values v-if="settings.variationType !== 'Custom'"
-                                    :batch-pars="allBatchPars[idx]"
+                                    :batch-pars="batchPars"
                                     :param-name="settings.parameterToVary">
           </sensitivity-param-values>
           <hr v-if="idx < allSettings.length-1" />
@@ -66,11 +66,10 @@ import { computed, defineComponent, ref } from "vue";
 import VueFeather from "vue-feather";
 import { AppState } from "../../store/appState/state";
 import { defaultSensitivityParamSettings } from "../../store/sensitivity/sensitivity";
-import { MultiSensitivityGetter } from "../../store/multiSensitivity/getters";
 import userMessages from "../../userMessages";
 import VerticalCollapse from "../VerticalCollapse.vue";
 import EditParamSettings from "./EditParamSettings.vue";
-import { SensitivityGetter } from "../../store/sensitivity/getters";
+import { BaseSensitivityGetter } from "../../store/sensitivity/getters";
 import SensitivityParamValues from "./SensitivityParamValues.vue";
 import SensitivityPlotOptions from "./SensitivityPlotOptions.vue";
 import { SensitivityParameterSettings } from "../../store/sensitivity/state";
@@ -102,7 +101,7 @@ export default defineComponent({
             : [store.state.sensitivity.paramSettings]));
 
         const showOptions = computed(() => allSettings.value.length && !!allSettings.value[0].parameterToVary);
-        const compileModelMessage = userMessages.sensitivity.compileRequiredForOptions;
+        const compileModelMessage = userMessages.sensitivity.compileRequiredForOptions(props.multiSensitivity);
         const editOpen = ref(false);
         const editSettingsIdx = ref<number | null>(0);
 
@@ -166,9 +165,9 @@ export default defineComponent({
             updateMultiSensitivitySettings(newSettings);
         };
 
-        const allBatchPars = computed(() => (props.multiSensitivity
-            ? store.getters[`multiSensitivity/${MultiSensitivityGetter.multiBatchPars}`]
-            : [store.getters[`sensitivity/${SensitivityGetter.batchPars}`]]));
+        const batchPars = computed(() => (props.multiSensitivity
+            ? store.getters[`multiSensitivity/${BaseSensitivityGetter.batchPars}`]
+            : store.getters[`sensitivity/${BaseSensitivityGetter.batchPars}`]));
 
         return {
             title,
@@ -185,7 +184,7 @@ export default defineComponent({
             addSettings,
             deleteSettings,
             editOpen,
-            allBatchPars
+            batchPars
         };
     }
 });

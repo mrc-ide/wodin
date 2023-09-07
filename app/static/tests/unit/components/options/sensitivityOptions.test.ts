@@ -9,10 +9,9 @@ import { BasicState } from "../../../../src/app/store/basic/state";
 import SensitivityOptions from "../../../../src/app/components/options/SensitivityOptions.vue";
 import VerticalCollapse from "../../../../src/app/components/VerticalCollapse.vue";
 import EditParamSettings from "../../../../src/app/components/options/EditParamSettings.vue";
-import { SensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
+import { BaseSensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
 import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
 import SensitivityPlotOptions from "../../../../src/app/components/options/SensitivityPlotOptions.vue";
-import { MultiSensitivityGetter } from "../../../../src/app/store/multiSensitivity/getters";
 import { BatchPars } from "../../../../src/app/types/responseTypes";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import { MultiSensitivityMutation } from "../../../../src/app/store/multiSensitivity/mutations";
@@ -28,28 +27,24 @@ describe("SensitivityOptions", () => {
         }]
     } as any;
 
-    const mockMultiBatchPars = [
-        mockBatchPars,
-        {
-            varying: [{
-                name: "B",
-                values: [4, 5]
-            }]
-        },
-        {
-            varying: [{
-                name: "C",
-                values: [6, 7, 8]
-            }]
-        }
-    ] as any;
+    const mockMultiBatchPars = {
+        varying: [
+            { name: "A", values: [1, 2, 3] },
+            { name: "B", values: [4, 5] },
+            { name: "C", values: [6, 7, 8] }
+        ]
+    } as any;
 
     const mockSensitivitySetParamSettings = jest.fn();
     const mockMultiSensitivitySetParamSettings = jest.fn();
 
-    const getWrapper = (paramSettings: SensitivityParameterSettings) => {
+    const getWrapper = (paramSettings: SensitivityParameterSettings, multiSensitivityEnabled = false) => {
         const store = new Vuex.Store<BasicState>({
-            state: {} as any,
+            state: {
+                config: {
+                    multiSensitivity: multiSensitivityEnabled
+                }
+            } as any,
             modules: {
                 sensitivity: {
                     namespaced: true,
@@ -58,7 +53,7 @@ describe("SensitivityOptions", () => {
                         plotSettings: {}
                     },
                     getters: {
-                        [SensitivityGetter.batchPars]: () => mockBatchPars
+                        [BaseSensitivityGetter.batchPars]: () => mockBatchPars
                     },
                     mutations: {
                         [SensitivityMutation.SetParamSettings]: mockSensitivitySetParamSettings
@@ -81,7 +76,7 @@ describe("SensitivityOptions", () => {
             } as any
         });
         return mount(SensitivityOptions, {
-            props: { multiSensitivity: false },
+            props: { multiSensitivity: multiSensitivityEnabled },
             global: {
                 plugins: [store],
                 directives: { tooltip: mockTooltipDirective }
@@ -99,7 +94,7 @@ describe("SensitivityOptions", () => {
                         paramSettings
                     },
                     getters: {
-                        [MultiSensitivityGetter.multiBatchPars]: () => mockMultiBatchPars
+                        [BaseSensitivityGetter.batchPars]: () => mockMultiBatchPars
                     },
                     mutations: {
                         [MultiSensitivityMutation.SetParamSettings]: mockMultiSensitivitySetParamSettings
@@ -193,6 +188,7 @@ describe("SensitivityOptions", () => {
         expect(listItems.at(3)!.text()).toBe("Variation (%): 10");
         expect(listItems.at(4)!.text()).toBe("Number of runs: 5");
 
+        expect(wrapper.findComponent(SensitivityParamValues).props("paramName")).toBe("A");
         expect(wrapper.findComponent(SensitivityParamValues).props("batchPars")).toBe(batchPars);
 
         expectEditButton(wrapper);
@@ -225,6 +221,7 @@ describe("SensitivityOptions", () => {
         expect(listItems.at(4)!.text()).toBe("To: 3");
         expect(listItems.at(5)!.text()).toBe("Number of runs: 5");
 
+        expect(wrapper.findComponent(SensitivityParamValues).props("paramName")).toBe("B");
         expect(wrapper.findComponent(SensitivityParamValues).props("batchPars")).toBe(batchPars);
         expectEditButton(wrapper);
     };
@@ -265,10 +262,10 @@ describe("SensitivityOptions", () => {
         expect(wrapper.findComponent(VerticalCollapse).props("collapseId")).toBe("sensitivity-options");
         const allSettingsDivs = wrapper.findAll(".sensitivity-options-settings");
         expect(allSettingsDivs.length).toBe(3);
-        expectPercentSettings(allSettingsDivs[0], mockMultiBatchPars[0]);
+        expectPercentSettings(allSettingsDivs[0], mockMultiBatchPars);
         expectDeleteButton(allSettingsDivs[0]);
 
-        expectRangeSettings(allSettingsDivs[1], mockMultiBatchPars[1]);
+        expectRangeSettings(allSettingsDivs[1], mockMultiBatchPars);
         expectDeleteButton(allSettingsDivs[1]);
 
         expectCustomSettings(allSettingsDivs[2]);
@@ -308,9 +305,15 @@ describe("SensitivityOptions", () => {
         const wrapper = getWrapper({ parameterToVary: null } as any);
         expect(wrapper.find("ul").exists()).toBe(false);
         expect(wrapper.find("#sensitivity-options-msg").text())
-            .toBe("Please compile a valid model in order to set sensitivity options.");
+            .toBe("Please compile a valid model in order to set Sensitivity options.");
         expect(wrapper.find("#sensitivity-options").findComponent(SensitivityParamValues).exists()).toBe(false);
         expect(wrapper.findComponent(SensitivityPlotOptions).exists()).toBe(false);
+    });
+
+    it("displays message if no parameter to vary, for multiSensitivity", () => {
+        const wrapper = getWrapper({ parameterToVary: null } as any, true);
+        expect(wrapper.find("#sensitivity-options-msg").text())
+            .toBe("Please compile a valid model in order to set Multi-sensitivity options.");
     });
 
     it("saves edited sensitivity param settings", async () => {

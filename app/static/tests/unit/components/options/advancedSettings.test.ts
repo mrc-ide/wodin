@@ -8,18 +8,22 @@ import StandardFormInput from "../../../../src/app/components/options/StandardFo
 import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
 import TagInput from "../../../../src/app/components/options/TagInput.vue";
 import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
-import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import { AppType } from "../../../../src/app/store/appState/state";
 
 describe("Advanced Settings", () => {
     const mockUpdateAdvancedSettings = jest.fn();
     const mockSetFitUpdateRequired = jest.fn();
     const mockSetSensitivityUpdateRequired = jest.fn();
+    const mockSetMultiSensitivityUpdateRequired = jest.fn();
 
-    const getWrapper = (isFit = false) => {
+    const getWrapper = (isFit = false, multiSensitivity = false) => {
         const store = new Vuex.Store({
             state: {
-                appType: isFit ? AppType.Fit : AppType.Basic
+                appType: isFit ? AppType.Fit : AppType.Basic,
+                config: {
+                    multiSensitivity
+                }
             },
             modules: {
                 run: {
@@ -40,7 +44,14 @@ describe("Advanced Settings", () => {
                     namespaced: true,
                     state: mockSensitivityState(),
                     mutations: {
-                        [SensitivityMutation.SetUpdateRequired]: mockSetSensitivityUpdateRequired
+                        [BaseSensitivityMutation.SetUpdateRequired]: mockSetSensitivityUpdateRequired
+                    }
+                },
+                multiSensitivity: {
+                    namespaced: true,
+                    state: {},
+                    mutations: {
+                        [BaseSensitivityMutation.SetUpdateRequired]: mockSetMultiSensitivityUpdateRequired
                     }
                 }
             }
@@ -120,6 +131,7 @@ describe("Advanced Settings", () => {
         expect(mockUpdateAdvancedSettings).toBeCalledTimes(1);
         expect(mockSetFitUpdateRequired).toBeCalledTimes(1);
         expect(mockSetSensitivityUpdateRequired).toBeCalledTimes(1);
+        expect(mockSetMultiSensitivityUpdateRequired).toBeCalledTimes(0);
     });
 
     it("commits update required to only sensitivity when not on fit app", () => {
@@ -131,5 +143,18 @@ describe("Advanced Settings", () => {
         expect(mockUpdateAdvancedSettings).toBeCalledTimes(1);
         expect(mockSetFitUpdateRequired).toBeCalledTimes(0);
         expect(mockSetSensitivityUpdateRequired).toBeCalledTimes(1);
+        expect(mockSetMultiSensitivityUpdateRequired).toBeCalledTimes(0);
+    });
+
+    it("commits update required to multiSensitivity", () => {
+        const wrapper = getWrapper(true, true);
+
+        const inputs = wrapper.findAllComponents(NumericInput);
+        inputs[0].vm.$emit("update", 2);
+
+        expect(mockUpdateAdvancedSettings).toBeCalledTimes(1);
+        expect(mockSetFitUpdateRequired).toBeCalledTimes(1);
+        expect(mockSetSensitivityUpdateRequired).toBeCalledTimes(1);
+        expect(mockSetMultiSensitivityUpdateRequired).toBeCalledTimes(1);
     });
 });

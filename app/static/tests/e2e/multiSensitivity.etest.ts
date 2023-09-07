@@ -1,7 +1,11 @@
 import { expect, Page, test } from "@playwright/test";
 import { SensitivityScaleType, SensitivityVariationType } from "../../src/app/store/sensitivity/state";
+import PlaywrightConfig from "../../playwright.config";
+import { writeCode } from "./utils";
 
 test.describe("Multi-sensitivity tests", () => {
+    const { timeout } = PlaywrightConfig;
+
     test.beforeEach(async ({ page }) => {
         await page.goto("/apps/day1");
         // Open Options tab
@@ -116,5 +120,53 @@ test.describe("Multi-sensitivity tests", () => {
             SensitivityVariationType.Range, null, 0, 9, 10, "0.000, 1.000, 2.000, ..., 9.000");
         await expectOptionsTabParamSettings(page, 2, "sigma", SensitivityScaleType.Arithmetic,
             SensitivityVariationType.Percentage, 5, null, null, 10, "1.900, 1.922, 1.944, ..., 2.100");
+    });
+
+    const expectCanRunMultiSensitivity = async (page: Page) => {
+        // add a second varying parameter with default 10 values - should get 100 solutions from the 2 varying
+        await page.click("#add-param-settings");
+        await expect(await page.locator("#edit-param-to-vary select")).toBeVisible();
+        await page.click("#ok-settings");
+        await expect(await page.locator(".sensitivity-options-settings").count()).toBe(2);
+
+        await expect(await page.innerText(".multi-sensitivity-status")).toBe("Multi-sensitivity has not been run.");
+        await page.click("#run-multi-sens-btn");
+        await expect(await page.locator("#run-multi-sens-btn")).toBeEnabled();
+        await expect(await page.locator(".multi-sensitivity-status"))
+            .toHaveText("Multi-sensitivity run produced 100 solutions.", { timeout });
+    };
+
+    test("can run multi-sensitivity", async ({ page }) => {
+        await expectCanRunMultiSensitivity(page);
+
+        // shows update required message when update code
+        await page.click(":nth-match(.wodin-left .nav-tabs a, 1)");
+        await expect(page.locator(".code-tab")).toBeVisible();
+        await writeCode(page, "invalid code");
+        await expect(await page.locator(".action-required-msg"))
+            .toHaveText("Model code has been updated. Compile code and Run Multi-sensitivity to update.", { timeout });
+    });
+
+    test("can run multi-sensitivity in stochastic app", async ({ page }) => {
+        await page.goto("/apps/day3");
+        await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 4)");
+
+        await expectCanRunMultiSensitivity(page);
+    });
+
+    test("can show error in multi-sensitivity run", async ({ page }) => {
+        // Change advanced settings Max Steps to 10
+        await page.click("div.collapse-title:has-text(\"Advanced Settings\")");
+        await expect(await page.locator(":nth-match(#advanced-settings-panel input, 3)")).toBeVisible({ timeout });
+        await page.fill(":nth-match(#advanced-settings-panel input, 3)", "10");
+
+        // Multi-sensitivity run will produce error
+        await page.click("#run-multi-sens-btn");
+        await expect(await page.locator("#run-multi-sens-btn")).toBeEnabled();
+        await expect(await page.locator(".multi-sensitivity-status"))
+            .toHaveText("Multi-sensitivity has not been run.", { timeout });
+        await expect(await page.locator(".multi-sensitivity-tab #error-info"))
+            .toHaveText(/All solutions failed; first error: Integration failure: too many steps/, { timeout });
     });
 });

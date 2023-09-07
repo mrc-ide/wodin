@@ -43,18 +43,16 @@ import VueFeather from "vue-feather";
 import DownloadOutput from "@/app/components/DownloadOutput.vue";
 import SensitivityTracesPlot from "./SensitivityTracesPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
-import { SensitivityGetter } from "../../store/sensitivity/getters";
+import { BaseSensitivityGetter } from "../../store/sensitivity/getters";
 import { SensitivityAction } from "../../store/sensitivity/actions";
-import userMessages from "../../userMessages";
 import { SensitivityPlotType } from "../../store/sensitivity/state";
 import SensitivitySummaryPlot from "./SensitivitySummaryPlot.vue";
 import ErrorInfo from "../ErrorInfo.vue";
-import { sensitivityUpdateRequiredExplanation, verifyValidPlotSettingsTime } from "./support";
-import { anyTrue } from "../../utils";
+import { verifyValidPlotSettingsTime } from "./support";
 import LoadingSpinner from "../LoadingSpinner.vue";
-import { ModelGetter } from "../../store/model/getters";
 import LoadingButton from "../LoadingButton.vue";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
+import baseSensitivity from "../mixins/baseSensitivity";
 
 export default defineComponent({
     name: "SensitivityTab",
@@ -70,19 +68,17 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
+        const { sensitivityPrerequisitesReady, updateMsg } = baseSensitivity(store, false);
         const namespace = "sensitivity";
 
         const running = computed(() => store.state.sensitivity.running);
         const loading = computed(() => store.state.sensitivity.loading);
 
-        const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
-
         const showDownloadSummary = ref(false);
 
         const canRunSensitivity = computed(() => {
-            return hasRunner.value && !!store.state.model.odin
-            && !store.state.model.compileRequired
-            && !!store.getters[`${namespace}/${SensitivityGetter.batchPars}`];
+            return sensitivityPrerequisitesReady.value
+            && !!store.getters[`${namespace}/${BaseSensitivityGetter.batchPars}`];
         });
 
         const runSensitivity = () => {
@@ -115,23 +111,6 @@ export default defineComponent({
             const finished = batch ? batch.solutions.length + batch.errors.length : 0;
             const total = store.state.sensitivity.paramSettings.numberOfRuns;
             return `Running sensitivity: finished ${finished} of ${total} runs`;
-        });
-
-        const sensitivityUpdateRequired = computed(() => store.state.sensitivity.sensitivityUpdateRequired);
-        const updateMsg = computed(() => {
-            if (store.state.sensitivity.result?.batch?.solutions.length) {
-                if (store.state.model.compileRequired) {
-                    return userMessages.sensitivity.compileRequiredForUpdate;
-                }
-
-                if (!store.state.model.selectedVariables.length) {
-                    return userMessages.model.selectAVariable;
-                }
-                if (anyTrue(sensitivityUpdateRequired.value)) {
-                    return sensitivityUpdateRequiredExplanation(sensitivityUpdateRequired.value);
-                }
-            }
-            return "";
         });
 
         const tracesPlot = computed(
