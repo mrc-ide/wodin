@@ -1,7 +1,7 @@
 import DownloadOutput from "../../../../src/app/components/DownloadOutput.vue";
 import {AppState, AppType} from "../../../../src/app/store/appState/state";
 import {ModelState} from "../../../../src/app/store/model/state";
-import {BaseSensitivityState, SensitivityState} from "../../../../src/app/store/sensitivity/state";
+import {BaseSensitivityState, SensitivityPlotType, SensitivityState} from "../../../../src/app/store/sensitivity/state";
 import Vuex from "vuex";
 import {shallowMount} from "@vue/test-utils";
 import SensitivityTab from "../../../../src/app/components/sensitivity/SensitivityTab.vue";
@@ -11,11 +11,18 @@ import {BaseSensitivityMutation, SensitivityMutation} from "../../../../src/app/
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import {nextTick} from "vue";
 import {ModelGetter} from "../../../../src/app/store/model/getters";
+
 describe("SensitivitySummaryDownload", () => {
     const mockSetUserSummaryDownloadFileName = jest.fn();
     const mockDownloadSummary = jest.fn();
+    const mockSetPlotTime = jest.fn();
 
     const getWrapper = (multiSens = false, state: Partial<BaseSensitivityState> = {}) => {
+
+        const plotSettings = {
+            plotType: SensitivityPlotType.TraceOverTime,
+            time: null
+        };
 
         const sensMod = {
             namespaced: true,
@@ -29,6 +36,7 @@ describe("SensitivitySummaryDownload", () => {
                     },
                     error: null
                 },
+                plotSettings: multiSens ? undefined : plotSettings,
                 ...state
             },
             actions: {
@@ -36,8 +44,19 @@ describe("SensitivitySummaryDownload", () => {
             },
             mutations: {
                 [BaseSensitivityMutation.SetUserSummaryDownloadFileName]: mockSetUserSummaryDownloadFileName,
+                [SensitivityMutation.SetPlotTime]: multiSens ? jest.fn() : mockSetPlotTime
             }
         };
+        const minimalSensitivity = {
+            namespaced: true,
+            state: {
+                plotSettings
+            },
+            mutations: {
+                [SensitivityMutation.SetPlotTime]: mockSetPlotTime
+            }
+        } as any;
+
         const store = new Vuex.Store<AppState>({
             modules: {
                 model: {
@@ -51,8 +70,14 @@ describe("SensitivitySummaryDownload", () => {
                         [ModelGetter.hasRunner]: () => true
                     }
                 },
-                multiSensitivity: multiSens ? sensMod : {},
-                sensitivity: multiSens ? {} : sensMod
+                run: {
+                    namespaced: true,
+                    state: {
+                        endTime: 100
+                    }
+                },
+                multiSensitivity: multiSens ? sensMod : {} as any,
+                sensitivity: multiSens ? minimalSensitivity : sensMod
             }
         });
 
@@ -150,12 +175,12 @@ describe("SensitivitySummaryDownload", () => {
         expect(mockSetUserSummaryDownloadFileName.mock.calls[0][1]).toBe("newFile.xlsx");
     });
 
-    /*
     it("verifies end time and dispatches action on download output emit", () => {
         const wrapper = getWrapper();
         const downloadOutput = wrapper.findComponent(DownloadOutput);
         downloadOutput.vm.$emit("download", { fileName: "test.xlsx" });
         // should have updated plot settings time to run end time
+        expect(mockSetPlotTime).toHaveBeenCalledTimes(1);
         expect(mockSetPlotTime.mock.calls[0][1]).toBe(100);
         expect(mockDownloadSummary.mock.calls[0][1]).toBe("test.xlsx");
     });
@@ -169,5 +194,6 @@ describe("SensitivitySummaryDownload", () => {
         await nextTick();
         expect(downloadOutput.props().open).toBe(false);
     });
-    */
+
+    // TODO: test all for multisens
 });
