@@ -56,6 +56,16 @@ const mockBatchMulti = {
     })
 };
 
+const plotSettings = {
+    time: 50
+};
+
+const parameterValues = {
+    beta: 1.1,
+    N: 1000,
+    D: 3
+};
+
 describe("WodinSensitivitySummaryDownload", () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -67,17 +77,11 @@ describe("WodinSensitivitySummaryDownload", () => {
         } as any;
         const rootState = mockBasicState({
             sensitivity: mockSensitivityState({
-                plotSettings: {
-                    time: 50
-                },
+                plotSettings,
                 result
             } as any),
             run: mockRunState({
-                parameterValues: {
-                    beta: 1.1,
-                    N: 1000,
-                    D: 3
-                }
+                parameterValues
             })
         });
         const commit = jest.fn();
@@ -156,19 +160,13 @@ describe("WodinSensitivitySummaryDownload", () => {
         } as any;
         const rootState = mockBasicState({
             sensitivity: mockSensitivityState({
-                plotSettings: {
-                    time: 50
-                }
+                plotSettings
             } as any),
             multiSensitivity: {
                 result
             } as any,
             run: mockRunState({
-                parameterValues: {
-                    beta: 1.1,
-                    N: 1000,
-                    D: 3
-                }
+                parameterValues
             })
         });
         const commit = jest.fn();
