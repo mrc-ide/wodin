@@ -1,13 +1,14 @@
 import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
 import MultiSensitivityTab from "../../../../src/app/components/multiSensitivity/MultiSensitivityTab.vue";
-import { AppState } from "../../../../src/app/store/appState/state";
+import {AppState, AppType} from "../../../../src/app/store/appState/state";
 import LoadingButton from "../../../../src/app/components/LoadingButton.vue";
 import { ModelState } from "../../../../src/app/store/model/state";
 import { MultiSensitivityAction } from "../../../../src/app/store/multiSensitivity/actions";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
 import { MultiSensitivityState } from "../../../../src/app/store/multiSensitivity/state";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
+import SensitivitySummaryDownload from "../../../../src/app/components/sensitivity/SensitivitySummaryDownload.vue";
 
 describe("MultiSensitivityTab", () => {
     const mockRunMultiSensitivity = jest.fn();
@@ -140,5 +141,12 @@ describe("MultiSensitivityTab", () => {
             } as any
         });
         expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(error);
+    });
+
+    it("renders SensitivitySummaryDownload", () => {
+        const wrapper = getWrapper();
+        const download = wrapper.findComponent(SensitivitySummaryDownload);
+        expect(download.props("multiSensitivity")).toBe(true);
+        expect(download.props("downloadType")).toBe("Multi-sensitivity Summary");
     });
 });

@@ -129,6 +129,32 @@ describe("BaseSensitivity actions", () => {
             done();
         });
     });
+
+    it("downloads sensitivity summary", (done) => {
+        const mockDownload = jest.fn();
+        const mockWodinSensitivitySummaryDownload = WodinSensitivitySummaryDownload as any as Mock;
+        mockWodinSensitivitySummaryDownload.mockImplementation(() => ({ download: mockDownload }));
+
+        const commit = jest.fn();
+        const context = { commit };
+        const payload = "myFile.xlsx";
+        (actions[BaseSensitivityAction.DownloadSummary] as any)(context, payload);
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetDownloading);
+        expect(commit.mock.calls[0][1]).toBe(true);
+        setTimeout(() => {
+            expect(mockWodinSensitivitySummaryDownload).toHaveBeenCalledTimes(1); // expect download constructor
+            expect(mockWodinSensitivitySummaryDownload.mock.calls[0][0]).toBe(context);
+            expect(mockWodinSensitivitySummaryDownload.mock.calls[0][1]).toBe("myFile.xlsx");
+            expect(mockDownload).toHaveBeenCalledTimes(1);
+
+            expect(commit).toHaveBeenCalledTimes(2);
+            expect(commit.mock.calls[1][0]).toBe(BaseSensitivityMutation.SetDownloading);
+            expect(commit.mock.calls[1][1]).toBe(false);
+
+            done();
+        }, 20);
+    });
 });
 
 export const testCommonRunSensitivity = (runSensitivityAction: Action<any, AppState>) => {
@@ -526,31 +552,5 @@ describe("Sensitivity actions", () => {
         );
 
         expect(dispatch).not.toHaveBeenCalled();
-    });
-
-    it("downloads sensitivity summary", (done) => {
-        const mockDownload = jest.fn();
-        const mockWodinSensitivitySummaryDownload = WodinSensitivitySummaryDownload as any as Mock;
-        mockWodinSensitivitySummaryDownload.mockImplementation(() => ({ download: mockDownload }));
-
-        const commit = jest.fn();
-        const context = { commit };
-        const payload = "myFile.xlsx";
-        (actions[SensitivityAction.DownloadSummary] as any)(context, payload);
-        expect(commit).toHaveBeenCalledTimes(1);
-        expect(commit.mock.calls[0][0]).toBe(SensitivityMutation.SetDownloading);
-        expect(commit.mock.calls[0][1]).toBe(true);
-        setTimeout(() => {
-            expect(mockWodinSensitivitySummaryDownload).toHaveBeenCalledTimes(1); // expect download constructor
-            expect(mockWodinSensitivitySummaryDownload.mock.calls[0][0]).toBe(context);
-            expect(mockWodinSensitivitySummaryDownload.mock.calls[0][1]).toBe("myFile.xlsx");
-            expect(mockDownload).toHaveBeenCalledTimes(1);
-
-            expect(commit).toHaveBeenCalledTimes(2);
-            expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetDownloading);
-            expect(commit.mock.calls[1][1]).toBe(false);
-
-            done();
-        }, 20);
     });
 });

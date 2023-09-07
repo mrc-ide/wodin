@@ -1,6 +1,6 @@
 import * as XLSX from "xlsx";
 import { WodinExcelDownload } from "./wodinExcelDownload";
-import {BaseSensitivityState, SensitivityPlotExtreme, SensitivityPlotExtremePrefix} from "../store/sensitivity/state";
+import { SensitivityPlotExtreme, SensitivityPlotExtremePrefix} from "../store/sensitivity/state";
 import { OdinUserType, OdinUserTypeSeriesSet } from "../types/responseTypes";
 import {OdinSensitivityResult} from "../types/wrapperTypes";
 

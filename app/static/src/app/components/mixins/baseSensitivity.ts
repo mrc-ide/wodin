@@ -1,5 +1,5 @@
-import { Store } from "vuex";
-import { computed } from "vue";
+import {Store} from "vuex";
+import {computed, ComputedRef, WritableComputedRef} from "vue";
 import { AppState } from "../../store/appState/state";
 import { ModelGetter } from "../../store/model/getters";
 import userMessages from "../../userMessages";
@@ -7,9 +7,18 @@ import { anyTrue } from "../../utils";
 import {sensitivityUpdateRequiredExplanation, verifyValidPlotSettingsTime} from "../sensitivity/support";
 import { Dict } from "../../types/utilTypes";
 import {BaseSensitivityMutation} from "../../store/sensitivity/mutations";
-import {BaseSensitivityAction, SensitivityAction} from "../../store/sensitivity/actions";
+import {BaseSensitivityAction} from "../../store/sensitivity/actions";
 
-export default (store: Store<AppState>, multiSensitivity: boolean) => {
+export interface BaseSensitivityMixin {
+    sensitivityPrerequisitesReady: ComputedRef<boolean>,
+    updateMsg: ComputedRef<string>,
+    downloading: ComputedRef<boolean>,
+    canDownloadSummary: ComputedRef<boolean>,
+    downloadSummaryUserFileName: WritableComputedRef<string>,
+    downloadSummary: (payload: { fileName: string }) => void
+}
+
+export default (store: Store<AppState>, multiSensitivity: boolean): BaseSensitivityMixin => {
     const namespace = multiSensitivity ? "multiSensitivity" : "sensitivity";
 
     const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
@@ -42,7 +51,7 @@ export default (store: Store<AppState>, multiSensitivity: boolean) => {
     const downloading = computed(() => sensModule.downloading);
 
     // only allow download if update not required, and if we have run sensitivity
-    const canDownloadSummary = computed(() => !updateMsg.value && sensModule.result?.batch);
+    const canDownloadSummary = computed(() => !updateMsg.value && !!sensModule.result?.batch);
 
     const downloadSummaryUserFileName = computed({
         get: () => sensModule.userSummaryDownloadFileName,

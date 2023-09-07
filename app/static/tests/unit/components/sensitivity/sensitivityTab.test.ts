@@ -1,19 +1,19 @@
-import {mount, shallowMount} from "@vue/test-utils";
+import {shallowMount} from "@vue/test-utils";
 import Vuex from "vuex";
-import { nextTick } from "vue";
-import { ModelState } from "../../../../src/app/store/model/state";
+import {ModelState} from "../../../../src/app/store/model/state";
 import SensitivityTab from "../../../../src/app/components/sensitivity/SensitivityTab.vue";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
-import { BaseSensitivityGetter, SensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
+import {BaseSensitivityGetter} from "../../../../src/app/store/sensitivity/getters";
 import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/SensitivityTracesPlot.vue";
-import { SensitivityPlotType, SensitivityState } from "../../../../src/app/store/sensitivity/state";
-import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
+import {SensitivityPlotType, SensitivityState} from "../../../../src/app/store/sensitivity/state";
+import {SensitivityAction} from "../../../../src/app/store/sensitivity/actions";
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
-import { AppState, AppType } from "../../../../src/app/store/appState/state";
-import { ModelGetter } from "../../../../src/app/store/model/getters";
+import {AppState, AppType} from "../../../../src/app/store/appState/state";
+import {ModelGetter} from "../../../../src/app/store/model/getters";
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
-import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import {SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
+import SensitivitySummaryDownload from "../../../../src/app/components/sensitivity/SensitivitySummaryDownload.vue";
 
 jest.mock("plotly.js-basic-dist-min", () => {});
 
@@ -143,6 +143,13 @@ describe("SensitivityTab", () => {
         const wrapper = getWrapper(AppType.Basic, {}, sensitivityState);
         expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(false);
         expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
+    });
+
+    it("renders SensitivitySummaryDownload", () => {
+        const wrapper = getWrapper(AppType.Basic);
+        const download = wrapper.findComponent(SensitivitySummaryDownload);
+        expect(download.props("multiSensitivity")).toBe(false);
+        expect(download.props("downloadType")).toBe("Sensitivity Summary");
     });
 
     it("renders error", () => {
