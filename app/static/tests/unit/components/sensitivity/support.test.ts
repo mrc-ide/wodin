@@ -11,7 +11,8 @@ describe("construct actionable fit update messages from fit state changes", () =
         parameterValueChanged: false,
         endTimeChanged: false,
         sensitivityOptionsChanged: false,
-        numberOfReplicatesChanged: false
+        numberOfReplicatesChanged: false,
+        advancedSettingsChanged: false
     };
 
     it("shows fallback when no reason can be found", () => {
@@ -29,12 +30,15 @@ describe("construct actionable fit update messages from fit state changes", () =
             parameterValueChanged: true,
             endTimeChanged: true,
             sensitivityOptionsChanged: true,
-            numberOfReplicatesChanged: true
+            numberOfReplicatesChanged: true,
+            advancedSettingsChanged: true
         };
         expect(sensitivityUpdateRequiredExplanation(everything, false))
-            .toBe("Plot is out of date: model code has been recompiled. Run Sensitivity to update.");
+            .toBe("Plot is out of date: model code has been recompiled and advanced settings have been "
+                + "changed. Run Sensitivity to update.");
         expect(sensitivityUpdateRequiredExplanation(everything, true))
-            .toBe("Status is out of date: model code has been recompiled. Run Multi-sensitivity to update.");
+            .toBe("Status is out of date: model code has been recompiled and advanced settings have been "
+                + "changed. Run Multi-sensitivity to update.");
     });
 
     const expectSpecificMessages = (multiSens: boolean, prefix: string, suffix: string) => {
@@ -49,6 +53,8 @@ describe("construct actionable fit update messages from fit state changes", () =
             .toBe(`${prefix}: ${module} options have been changed. ${suffix}`);
         expect(sensitivityUpdateRequiredExplanation({ ...base, numberOfReplicatesChanged: true }, multiSens))
             .toBe(`${prefix}: number of replicates has changed. ${suffix}`);
+        expect(sensitivityUpdateRequiredExplanation({ ...base, advancedSettingsChanged: true }, multiSens))
+            .toBe(`${prefix}: advanced settings have been changed. ${suffix}`);
     };
 
     it("gives specific messages when little has changed for sensitivity", () => {

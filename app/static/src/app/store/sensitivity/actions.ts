@@ -136,7 +136,8 @@ export const runSensitivity = (
                 parameterValueChanged: false,
                 endTimeChanged: false,
                 sensitivityOptionsChanged: false,
-                numberOfReplicatesChanged: false
+                numberOfReplicatesChanged: false,
+                advancedSettingsChanged: false
             });
         }
     }

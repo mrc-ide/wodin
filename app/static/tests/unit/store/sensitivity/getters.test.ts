@@ -86,7 +86,8 @@ describe("Sensitivity getters", () => {
         parameterValueChanged: false,
         endTimeChanged: false,
         sensitivityOptionsChanged: false,
-        numberOfReplicatesChanged: false
+        numberOfReplicatesChanged: false,
+        advancedSettingsChanged: false
     };
 
     it("parameterSetSensitivityUpdateRequired is true if any reason except parameterValueChanged is true", () => {
@@ -127,6 +128,8 @@ describe("Sensitivity getters", () => {
         state = getStateWithUpdateRequiredReason("numberOfReplicatesChanged");
         expect(paramSetSensUpdateRequired(state, {}, rootState)).toBe(true);
         state = getStateWithUpdateRequiredReason("sensitivityOptionsChanged");
+        expect(paramSetSensUpdateRequired(state, {}, rootState)).toBe(true);
+        state = getStateWithUpdateRequiredReason("advancedSettingsChanged");
         expect(paramSetSensUpdateRequired(state, {}, rootState)).toBe(true);
     });
 

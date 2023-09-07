@@ -48,6 +48,7 @@ describe("multiSensitivity actions", () => {
         });
         expect(commit.mock.calls[1][0]).toBe(BaseSensitivityMutation.SetUpdateRequired);
         expect(commit.mock.calls[1][1]).toStrictEqual({
+            advancedSettingsChanged: false,
             endTimeChanged: false,
             modelChanged: false,
             parameterValueChanged: false,

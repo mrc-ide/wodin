@@ -168,7 +168,8 @@ describe("serialise", () => {
             parameterValueChanged: false,
             endTimeChanged: false,
             sensitivityOptionsChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         },
         plotSettings: {
             plotType: SensitivityPlotType.ValueAtTime,
@@ -228,7 +229,8 @@ describe("serialise", () => {
             dataChanged: false,
             linkChanged: true,
             parameterValueChanged: false,
-            parameterToVaryChanged: false
+            parameterToVaryChanged: false,
+            advancedSettingsChanged: false
         },
         iterations: 28,
         converged: true,
@@ -359,7 +361,8 @@ describe("serialise", () => {
             parameterValueChanged: false,
             endTimeChanged: false,
             sensitivityOptionsChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         },
         plotSettings: sensitivityState.plotSettings,
         result: {
@@ -396,7 +399,8 @@ describe("serialise", () => {
             dataChanged: false,
             linkChanged: true,
             parameterValueChanged: false,
-            parameterToVaryChanged: false
+            parameterToVaryChanged: false,
+            advancedSettingsChanged: false
         },
         iterations: 28,
         converged: true,
