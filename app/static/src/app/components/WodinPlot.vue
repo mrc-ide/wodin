@@ -130,8 +130,7 @@ export default defineComponent({
                     const configCopy = { ...config } as Partial<Config>;
 
                     if (lockAxes.value && !toggleLogScale) {
-                        // removing ability to zoom in and using the display
-                        // mode bar
+                        // removing ability to zoom in
                         layout.yaxis!.range = axesRange.value.y;
                         layout.xaxis!.range = axesRange.value.x;
                         layout.yaxis!.fixedrange = true;
