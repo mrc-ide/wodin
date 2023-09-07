@@ -24,7 +24,6 @@ test.describe("Sessions tests", () => {
     const { timeout } = PlaywrightConfig;
 
     test("can use Sessions page", async () => {
-        console.log("0")
         // We need to use a browser with persistent context instead of the default incognito browser so that
         // we can use the session ids in local storage
         const userDataDir = os.tmpdir();
@@ -187,35 +186,18 @@ test.describe("Sessions tests", () => {
         await page.goto(copiedLinkText);
         await expect(await page.innerText("#data-upload-success")).toBe(" Uploaded 32 rows and 2 columns");
 
-        // force another session to be created
-        //await page.goto(appUrl);
-        //await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
-
         // can delete session
-        console.log("1")
         await page.goto(`${appUrl}/sessions`);
-        console.log("2")
         await expect(await page.locator("#app .container .row").count()).toBeGreaterThan(3);
-        console.log("3")
-        //const row = await page.locator(":nth-match(#app .container .row, 4)");
-        console.log("4")
         await page.locator(":nth-match(#app .container .row, 4) .session-edit-label i").click();
-        console.log("5")
         await enterSessionLabel(page, "page-edit-session-label", "delete me");
 
-        console.log("6")
-        await expect( await page.locator(".row:has-text('delete me')")).toBeVisible({timeout});
-        console.log("7")
+        await expect(await page.locator(".row:has-text('delete me')")).toBeVisible({ timeout });
         await page.locator(".row:has-text('delete me') .session-delete i").click();
-        console.log("8")
         await expect(await page.locator("#confirm-yes")).toBeVisible();
-        console.log("9")
         await page.click("#confirm-yes");
-        console.log("10")
         await expect(await page.locator("#app")).not.toContainText("delete me");
-        console.log("11")
 
         await browser.close();
-        console.log("12")
     });
 });
