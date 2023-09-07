@@ -62,10 +62,10 @@ export default defineComponent({
         const isStochasticApp = computed(() => store.state.appType === AppType.Stochastic);
 
         const maxReplicatesDisplay = computed(() => {
-            return (store.state.config as StochasticConfig)?.maxReplicatesDisplay || 50;
+            return (store.state.config as StochasticConfig)?.maxReplicatesDisplay;
         });
         const maxReplicatesRun = computed(() => {
-            return (store.state.config as StochasticConfig)?.maxReplicatesRun || 1000;
+            return (store.state.config as StochasticConfig)?.maxReplicatesRun;
         });
         const maxAllowedObj = computed(() => {
             return {

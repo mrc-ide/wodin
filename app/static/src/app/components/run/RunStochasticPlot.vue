@@ -45,7 +45,7 @@ export default defineComponent({
                 return [];
             }
             const replicates = store.state.run.numberOfReplicates;
-            const maxReplicatesDisplay = (store.state.config as StochasticConfig)?.maxReplicatesDisplay || 50;
+            const maxReplicatesDisplay = (store.state.config as StochasticConfig)?.maxReplicatesDisplay;
             const showIndividualTraces = replicates <= maxReplicatesDisplay;
 
             return discreteSeriesSetToPlotly(
