@@ -44,6 +44,10 @@ describe("RunPlot for stochastic", () => {
                     endTime: 99,
                     numberOfReplicates: 20,
                     resultDiscrete: mockResult
+                },
+                config: {
+                    maxReplicatesDisplay: 50,
+                    maxReplicatesRun: 1000
                 }
             } as any
         });

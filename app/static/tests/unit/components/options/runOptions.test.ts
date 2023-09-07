@@ -93,7 +93,13 @@ describe("RunOptions", () => {
     });
 
     it("renders number of replicates correctly", () => {
-        const wrapper = getWrapper(0, { appType: `${AppType.Stochastic}` });
+        const wrapper = getWrapper(0, {
+            appType: `${AppType.Stochastic}`,
+            config: {
+                maxReplicatesDisplay: 50,
+                maxReplicatesRun: 1000
+            }
+        });
         const noOfReplicates = wrapper.find("#number-of-replicates").findComponent(NumericInput);
         expect(noOfReplicates.props("value")).toBe(10);
         expect(noOfReplicates.props("minAllowed")).toBe(0);
