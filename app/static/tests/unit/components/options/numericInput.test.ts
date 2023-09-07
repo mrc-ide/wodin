@@ -2,10 +2,9 @@ import { mount, VueWrapper } from "@vue/test-utils";
 import { nextTick } from "vue";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
 
-type BoundTooltip = {
-    number: number,
-    variant?: "text" | "error"| "warning" | "success",
-    message: string
+export type BoundTooltip = {
+    error: { number: number, message?: string },
+    warning: { number: number, message: string }
 }
 
 const mockTooltipDirective = jest.fn();
@@ -13,8 +12,8 @@ const mockTooltipDirective = jest.fn();
 describe("NumericInput", () => {
     const getWrapper = (
         value: number | null,
-        maxAllowed: number | BoundTooltip[] = Infinity,
-        minAllowed: number | BoundTooltip[] = -Infinity,
+        maxAllowed: number | BoundTooltip = Infinity,
+        minAllowed: number | BoundTooltip = -Infinity,
         placeholder: string | undefined = undefined
     ) => {
         return mount(NumericInput, {
@@ -23,7 +22,7 @@ describe("NumericInput", () => {
                 maxAllowed,
                 minAllowed,
                 placeholder
-            },
+            } as any,
             global: {
                 directives: { tooltip: mockTooltipDirective }
             }
@@ -139,12 +138,13 @@ describe("NumericInput", () => {
     });
 
     it("does max validation (array)", async () => {
-        const wrapper = getWrapper(10, [
-            { number: 12, message: "high tooltip" },
-            { number: 10, message: "middle tooltip" }
-        ]);
-        await expectValueAndTooltip(wrapper, "11", 0, 11, "middle tooltip");
-        await expectValueAndTooltip(wrapper, "13", 1, 12, "high tooltip");
+        const wrapper = getWrapper(10, {
+            error: { number: 12, message: "high tooltip" },
+            warning: {number: 10, message: "middle tooltip"}
+        });
+        await expectValueAndTooltip(wrapper, "10", 0, 10, "");
+        await expectValueAndTooltip(wrapper, "11", 1, 11, "middle tooltip");
+        await expectValueAndTooltip(wrapper, "13", 2, 12, "high tooltip");
     });
 
     it("does min validation (number)", async () => {
@@ -163,37 +163,13 @@ describe("NumericInput", () => {
     });
 
     it("does min validation (array)", async () => {
-        const wrapper = getWrapper(12, Infinity, [
-            { number: 12, message: "middle tooltip" },
-            { number: 10, message: "low tooltip" }
-        ]);
-        await expectValueAndTooltip(wrapper, "11", 0, 11, "middle tooltip");
-        await expectValueAndTooltip(wrapper, "9", 1, 10, "low tooltip");
-    });
-
-    it("does max validation (array) with sorting", async () => {
-        const wrapper = getWrapper(12, [
-            { number: 10, message: "10 tooltip" },
-            { number: 12, message: "12 tooltip" },
-            { number: 13, message: "13 tooltip" },
-            { number: 13, message: "13 tooltip" },
-            { number: 10, message: "10 tooltip" }
-        ]);
-        await expectValueAndTooltip(wrapper, "9", 0, 9, "");
-        await expectValueAndTooltip(wrapper, "11", 1, 11, "10 tooltip");
-        await expectValueAndTooltip(wrapper, "13", 2, 13, "12 tooltip");
-        await expectValueAndTooltip(wrapper, "14", 3, 13, "13 tooltip");
-    });
-
-    it("sets tooltip content to empty if above all mins (array)", async () => {
-        const wrapper = getWrapper(12, Infinity, [
-            { number: 10, message: "10 tooltip" },
-            { number: 12, message: "12 tooltip" },
-            { number: 13, message: "13 tooltip" },
-            { number: 13, message: "13 tooltip" },
-            { number: 10, message: "10 tooltip" }
-        ]);
-        await expectValueAndTooltip(wrapper, "13", 0, 13, "");
+        const wrapper = getWrapper(12, Infinity, {
+            error: { number: 10, message: "low tooltip" },
+            warning: { number: 12, message: "middle tooltip" }
+        });
+        await expectValueAndTooltip(wrapper, "12", 0, 12, "");
+        await expectValueAndTooltip(wrapper, "11", 1, 11, "middle tooltip");
+        await expectValueAndTooltip(wrapper, "9", 2, 10, "low tooltip");
     });
 
     it("formats input value on blur", async () => {

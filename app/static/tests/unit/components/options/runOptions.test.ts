@@ -97,17 +97,13 @@ describe("RunOptions", () => {
         const noOfReplicates = wrapper.find("#number-of-replicates").findComponent(NumericInput);
         expect(noOfReplicates.props("value")).toBe(10);
         expect(noOfReplicates.props("minAllowed")).toBe(0);
-        expect(noOfReplicates.props("maxAllowed")).toStrictEqual([
-            {
+        expect(noOfReplicates.props("maxAllowed")).toStrictEqual({
+            error: { number: 1000 },
+            warning: {
                 number: 50,
-                message: "Individual traces will not be shown past this point",
-                variant: "warning"
-            },
-            {
-                number: 1000,
-                message: `Please enter a value less than ${1000}`
+                message: "Individual traces will not be shown for values greater than 50"
             }
-        ]);
+        });
     });
 
     it("can render and update number of replicates", async () => {

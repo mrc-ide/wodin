@@ -25,9 +25,8 @@ const d3Locale = formatLocale({
 });
 
 export type BoundTooltip = {
-    number: number,
-    variant?: ToolTipSettings["variant"],
-    message: string
+    error: { number: number, message?: string },
+    warning: { number: number, message: string }
 }
 
 export default defineComponent({
@@ -43,11 +42,11 @@ export default defineComponent({
             default: ""
         },
         maxAllowed: {
-            type: [Number, Array] as PropType<number | BoundTooltip[]>,
+            type: [Number, Array] as PropType<number | BoundTooltip>,
             default: Infinity
         },
         minAllowed: {
-            type: [Number, Array] as PropType<number | BoundTooltip[]>,
+            type: [Number, Array] as PropType<number | BoundTooltip>,
             default: -Infinity
         }
     },
@@ -84,68 +83,62 @@ export default defineComponent({
             }
         };
 
-        const validateArray = (arr: BoundTooltip[], numeric: number, ascending: boolean) => {
-            arr.sort((x, y) => {
-                if (x.number < y.number) return ascending ? -1 : 1;
-                if (x.number > y.number) return ascending ? 1 : -1;
-                return 0;
-            });
-
-            const condition = (compareNum: number) => {
-                return ascending ? numeric > compareNum : numeric < compareNum;
-            };
-
-            arr.forEach((bound) => {
-                if (condition(bound.number)) {
-                    tooltipProps.value.content = bound.message;
-                    tooltipProps.value.variant = bound.variant || "error";
-                }
-            });
+        const setMinTooltip = (
+            min: number,
+            msg: string | undefined = undefined,
+            variant: ToolTipSettings["variant"] = "error"
+        ) => {
+            const defaultMsg = (min === 0)
+                ? "Please enter a non-negative number"
+                : `Please enter a value no less than ${min}`;
+            tooltipProps.value.content = msg || defaultMsg;
+            tooltipProps.value.variant = variant;
         };
 
-        const minMaxValidation = (numeric: number) => {
-            if (typeof props.maxAllowed === "number") {
-                if (numeric > props.maxAllowed) {
-                    tooltipProps.value.content = `Please enter a value no greater than ${props.maxAllowed}`;
-                    return props.maxAllowed;
-                }
-                tooltipProps.value.content = "";
+        const setMaxTooltip = (
+            max: number,
+            msg: string | undefined = undefined,
+            variant: ToolTipSettings["variant"] = "error"
+        ) => {
+            const defaultMsg = `Please enter a value no greater than ${max}`;
+            tooltipProps.value.content = msg || defaultMsg;
+            tooltipProps.value.variant = variant;
+        };
+
+        const boundValidation = (numeric: number) => {
+            if (typeof props.maxAllowed === "number" && numeric > props.maxAllowed) {
+                setMaxTooltip(props.maxAllowed);
+                return props.maxAllowed;
             }
 
-            if (typeof props.minAllowed === "number") {
-                if (numeric < props.minAllowed) {
-                    tooltipProps.value.content = (props.minAllowed === 0)
-                        ? "Please enter a non-negative number"
-                        : `Please enter a value no less than ${props.minAllowed}`;
-                    return props.minAllowed;
-                }
-                tooltipProps.value.content = "";
+            if (typeof props.minAllowed === "number" && numeric < props.minAllowed) {
+                setMinTooltip(props.minAllowed);
+                return props.minAllowed;
             }
 
-            if (Array.isArray(props.maxAllowed) && props.maxAllowed.length > 0) {
-                const maxesAllowed = [...props.maxAllowed] as BoundTooltip[];
-                validateArray(maxesAllowed, numeric, true);
-
-                if (numeric > maxesAllowed.at(-1)!.number) {
-                    return maxesAllowed.at(-1)!.number;
-                }
-                if (numeric <= maxesAllowed[0].number) {
-                    tooltipProps.value.content = "";
-                }
-            }
-
-            if (Array.isArray(props.minAllowed) && props.minAllowed.length > 0) {
-                const minsAllowed = [...props.minAllowed] as BoundTooltip[];
-                validateArray(minsAllowed, numeric, false);
-
-                if (numeric < minsAllowed.at(-1)!.number) {
-                    return minsAllowed.at(-1)!.number;
-                }
-                if (numeric >= minsAllowed[0].number) {
-                    tooltipProps.value.content = "";
+            if (typeof props.maxAllowed === "object") {
+                const { error, warning } = props.maxAllowed;
+                if (numeric > error.number) {
+                    setMaxTooltip(error.number, error.message);
+                    return error.number;
+                } else if (numeric > warning.number) {
+                    setMaxTooltip(warning.number, warning.message, "warning");
+                    return numeric;
                 }
             }
 
+            if (typeof props.minAllowed === "object") {
+                const { error, warning } = props.minAllowed;
+                if (numeric < error.number) {
+                    setMaxTooltip(error.number, error.message);
+                    return error.number;
+                } else if (numeric < warning.number) {
+                    setMaxTooltip(warning.number, warning.message, "warning");
+                    return numeric;
+                }
+            }
+
+            tooltipProps.value.content = "";
             return numeric;
         };
 
@@ -168,7 +161,7 @@ export default defineComponent({
             const cleanedValue = newVal.replace(/,/g, "");
             const numeric = parseFloat(cleanedValue);
             if (!Number.isNaN(numeric)) {
-                const validatedNumeric = minMaxValidation(numeric);
+                const validatedNumeric = boundValidation(numeric);
                 lastNumericValueSet.value = validatedNumeric;
                 emit("update", validatedNumeric);
             } else if (props.placeholder) {

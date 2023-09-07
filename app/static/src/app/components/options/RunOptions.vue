@@ -21,7 +21,7 @@
                 <numeric-input
                     :value="numberOfReplicates"
                     :min-allowed="0"
-                    :max-allowed="maxAllowedArray"
+                    :max-allowed="maxAllowedObj"
                     @update="updateNumberOfReplicates"></numeric-input>
             </div>
         </div>
@@ -67,18 +67,15 @@ export default defineComponent({
         const maxReplicatesRun = computed(() => {
             return (store.state.config as StochasticConfig)?.maxReplicatesRun || 1000;
         });
-        const maxAllowedArray = computed(() => {
-            return [
-                {
+        const maxAllowedObj = computed(() => {
+            return {
+                error: { number: maxReplicatesRun.value },
+                warning: {
                     number: maxReplicatesDisplay.value,
-                    message: "Individual traces will not be shown past this point",
-                    variant: "warning"
-                },
-                {
-                    number: maxReplicatesRun.value,
-                    message: `Please enter a value less than ${maxReplicatesRun.value}`
+                    message: `Individual traces will not be shown for `
+                        + `values greater than ${maxReplicatesDisplay.value}`
                 }
-            ] as BoundTooltip[];
+            } as BoundTooltip;
         });
 
         const updateNumberOfReplicates = (newValue: number) => {
@@ -95,7 +92,7 @@ export default defineComponent({
             isStochasticApp,
             numberOfReplicates,
             updateNumberOfReplicates,
-            maxAllowedArray
+            maxAllowedObj
         };
     }
 });
