@@ -2,7 +2,8 @@ import type { PlaywrightTestConfig } from "@playwright/test";
 
 const config: PlaywrightTestConfig = {
     testMatch: "*.etest.ts",
-    workers: 1,
+    fullyParallel: true,
+    workers: process.env.CI ? 2 : undefined,
     use: {
         baseURL: "http://localhost:3000",
         screenshot: "only-on-failure",
