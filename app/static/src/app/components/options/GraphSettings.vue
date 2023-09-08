@@ -10,7 +10,7 @@
     </div>
     <div id="lock-y-axis" class="row my-2">
       <div class="col-5">
-        <label class="col-form-label">Lock Y Axis</label>
+        <label class="col-form-label">Lock y axis</label>
       </div>
       <div class="col-6">
         <input type="checkbox" class="form-check-input" style="vertical-align:bottom;" v-model="lockYAxis">

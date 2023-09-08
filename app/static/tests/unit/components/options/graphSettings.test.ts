@@ -44,7 +44,7 @@ describe("GraphSettings", () => {
         expect(labels[0].text()).toBe("Log scale y axis");
         expect(inputs[0].attributes("type")).toBe("checkbox");
         expect((inputs[0].element as HTMLInputElement).checked).toBe(true);
-        expect(labels[1].text()).toBe("Lock axes");
+        expect(labels[1].text()).toBe("Lock y axis");
         expect(inputs[1].attributes("type")).toBe("checkbox");
         expect((inputs[1].element as HTMLInputElement).checked).toBe(true);
     });
