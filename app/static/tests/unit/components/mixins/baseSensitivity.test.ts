@@ -1,11 +1,21 @@
 import Vuex from "vuex";
+import { nextTick } from "vue";
 import { ModelState } from "../../../../src/app/store/model/state";
-import baseSensitivity from "../../../../src/app/components/mixins/baseSensitivity";
+import baseSensitivity, { BaseSensitivityMixin } from "../../../../src/app/components/mixins/baseSensitivity";
 import { BaseSensitivityState } from "../../../../src/app/store/sensitivity/state";
 import { noSensitivityUpdateRequired } from "../../../../src/app/store/sensitivity/sensitivity";
 import { AppState } from "../../../../src/app/store/appState/state";
+import { BaseSensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import { BaseSensitivityAction } from "../../../../src/app/store/sensitivity/actions";
+import mock = jest.mock;
 
 describe("baseSensitivity mixin", () => {
+    const mockSensSetUserSummaryDownloadFileName = jest.fn();
+    const mockMultiSensSetUserSummaryDownloadFileName = jest.fn();
+
+    const mockSensDownloadSummary = jest.fn();
+    const mockMultiSensDownloadSummary = jest.fn();
+
     const getStore = (hasRunner = true, modelState: Partial<ModelState> = {},
         sensitivityState: Partial<BaseSensitivityState> = {},
         multiSensitivityState: Partial<BaseSensitivityState> = {}) => {
@@ -24,9 +34,16 @@ describe("baseSensitivity mixin", () => {
                         hasRunner: () => hasRunner
                     }
                 },
+                run: {
+                    namespace: true,
+                    state: {
+                        endTime: 100
+                    }
+                },
                 multiSensitivity: {
                     namespaced: true,
                     state: {
+                        downloading: false,
                         sensitivityUpdateRequired: noSensitivityUpdateRequired(),
                         result: {
                             batch: {
@@ -34,23 +51,45 @@ describe("baseSensitivity mixin", () => {
                             }
                         },
                         ...multiSensitivityState
+                    },
+                    mutations: {
+                        [BaseSensitivityMutation.SetUserSummaryDownloadFileName]:
+                            mockMultiSensSetUserSummaryDownloadFileName
+                    },
+                    actions: {
+                        [BaseSensitivityAction.DownloadSummary]: mockMultiSensDownloadSummary
                     }
                 },
                 sensitivity: {
                     namespaced: true,
                     state: {
+                        downloading: false,
                         sensitivityUpdateRequired: noSensitivityUpdateRequired(),
+                        plotSettings: {
+                            time: 50
+                        },
                         result: {
                             batch: {
                                 solutions: [{}]
                             }
                         },
                         ...sensitivityState
+                    },
+                    mutations: {
+                        [BaseSensitivityMutation.SetUserSummaryDownloadFileName]:
+                            mockSensSetUserSummaryDownloadFileName
+                    },
+                    actions: {
+                        [BaseSensitivityAction.DownloadSummary]: mockSensDownloadSummary
                     }
                 }
             } as any
         });
     };
+
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
 
     it("sensitivityPrerequisitesReady returns true when all prerequisites have been met", () => {
         const store = getStore();
@@ -117,5 +156,76 @@ describe("baseSensitivity mixin", () => {
         expectUpdateMsgForSensAndMultiSens(true, {}, { sensitivityUpdateRequired },
             "Plot is out of date: model code has been recompiled. Run Sensitivity to update.",
             "Status is out of date: model code has been recompiled. Run Multi-sensitivity to update.");
+    });
+
+    const testForSensAndMultiSens = (state: Partial<BaseSensitivityState>,
+        test: (mixin: BaseSensitivityMixin) => void) => {
+        let store = getStore(true, {}, state, {});
+        test(baseSensitivity(store, false));
+        store = getStore(true, {}, {}, state);
+        test(baseSensitivity(store, true));
+    };
+
+    it("returns downloading", () => {
+        testForSensAndMultiSens({ downloading: true }, (mixin) => {
+            expect(mixin.downloading.value).toBe(true);
+        });
+        testForSensAndMultiSens({}, (mixin) => {
+            expect(mixin.downloading.value).toBe(false);
+        });
+    });
+
+    it("can download summary when no update required and batch exists", () => {
+        testForSensAndMultiSens({}, (mixin) => {
+            expect(mixin.canDownloadSummary.value).toBe(true);
+        });
+    });
+
+    it("cannot download summary when update required", () => {
+        const state = {
+            sensitivityUpdateRequired: {
+                ...noSensitivityUpdateRequired(),
+                modelChanged: true
+            }
+        };
+        testForSensAndMultiSens(state, (mixin) => {
+            expect(mixin.canDownloadSummary.value).toBe(false);
+        });
+    });
+
+    it("cannot download summary when no batch exists", () => {
+        const state = {
+            result: {}
+        } as any;
+        testForSensAndMultiSens(state, (mixin) => {
+            expect(mixin.canDownloadSummary.value).toBe(false);
+        });
+    });
+
+    it("returns download summary user file name", () => {
+        const state = { userSummaryDownloadFileName: "test.xlsx" };
+        testForSensAndMultiSens(state, (mixin) => {
+            expect(mixin.downloadSummaryUserFileName.value).toBe("test.xlsx");
+        });
+    });
+
+    it("writes download summary user file name", () => {
+        const sensSut = baseSensitivity(getStore(), false);
+        sensSut.downloadSummaryUserFileName.value = "new.xlsx";
+        expect(mockSensSetUserSummaryDownloadFileName.mock.calls[0][1]).toBe("new.xlsx");
+
+        const multiSensSut = baseSensitivity(getStore(), true);
+        multiSensSut.downloadSummaryUserFileName.value = "newMulti.xlsx";
+        expect(mockMultiSensSetUserSummaryDownloadFileName.mock.calls[0][1]).toBe("newMulti.xlsx");
+    });
+
+    it("downloadSummary dispatches action", () => {
+        const sensSut = baseSensitivity(getStore(), false);
+        sensSut.downloadSummary({ fileName: "test.xlsx" });
+        expect(mockSensDownloadSummary.mock.calls[0][1]).toBe("test.xlsx");
+
+        const multiSensSut = baseSensitivity(getStore(), true);
+        multiSensSut.downloadSummary({ fileName: "testMulti.xlsx" });
+        expect(mockMultiSensDownloadSummary.mock.calls[0][1]).toBe("testMulti.xlsx");
     });
 });

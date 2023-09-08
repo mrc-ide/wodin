@@ -12,6 +12,8 @@
       {{ multiSensitivityRunStatusMsg }}
     </div>
     <error-info :error="error"></error-info>
+    <sensitivity-summary-download :multi-sensitivity="true" :download-type="'Multi-sensitivity Summary'">
+    </sensitivity-summary-download>
   </div>
 </template>
 <script lang="ts">
@@ -20,6 +22,7 @@ import { useStore } from "vuex";
 import ActionRequiredMessage from "@/app/components/ActionRequiredMessage.vue";
 import ErrorInfo from "@/app/components/ErrorInfo.vue";
 import { update } from "plotly.js-basic-dist-min";
+import SensitivitySummaryDownload from "@/app/components/sensitivity/SensitivitySummaryDownload.vue";
 import baseSensitivity from "../mixins/baseSensitivity";
 import { MultiSensitivityAction } from "../../store/multiSensitivity/actions";
 import LoadingButton from "../LoadingButton.vue";
@@ -30,6 +33,7 @@ export default defineComponent({
     name: "MultiSensitivityTab",
     methods: { update },
     components: {
+        SensitivitySummaryDownload,
         ErrorInfo,
         ActionRequiredMessage,
         LoadingButton

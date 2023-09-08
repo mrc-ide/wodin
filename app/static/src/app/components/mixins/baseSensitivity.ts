@@ -1,13 +1,26 @@
 import { Store } from "vuex";
-import { computed } from "vue";
+import { computed, ComputedRef, WritableComputedRef } from "vue";
 import { AppState } from "../../store/appState/state";
 import { ModelGetter } from "../../store/model/getters";
 import userMessages from "../../userMessages";
 import { anyTrue } from "../../utils";
-import { sensitivityUpdateRequiredExplanation } from "../sensitivity/support";
+import { sensitivityUpdateRequiredExplanation, verifyValidPlotSettingsTime } from "../sensitivity/support";
 import { Dict } from "../../types/utilTypes";
+import { BaseSensitivityMutation } from "../../store/sensitivity/mutations";
+import { BaseSensitivityAction } from "../../store/sensitivity/actions";
 
-export default (store: Store<AppState>, multiSensitivity: boolean) => {
+export interface BaseSensitivityMixin {
+    sensitivityPrerequisitesReady: ComputedRef<boolean>,
+    updateMsg: ComputedRef<string>,
+    downloading: ComputedRef<boolean>,
+    canDownloadSummary: ComputedRef<boolean>,
+    downloadSummaryUserFileName: WritableComputedRef<string>,
+    downloadSummary: (payload: { fileName: string }) => void
+}
+
+export default (store: Store<AppState>, multiSensitivity: boolean): BaseSensitivityMixin => {
+    const namespace = multiSensitivity ? "multiSensitivity" : "sensitivity";
+
     const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
 
     const sensitivityPrerequisitesReady = computed(() => {
@@ -35,5 +48,29 @@ export default (store: Store<AppState>, multiSensitivity: boolean) => {
         return "";
     });
 
-    return { sensitivityPrerequisitesReady, updateMsg };
+    const downloading = computed(() => sensModule.downloading);
+
+    // only allow download if update not required, and if we have run sensitivity
+    const canDownloadSummary = computed(() => !updateMsg.value && !!sensModule.result?.batch);
+
+    const downloadSummaryUserFileName = computed({
+        get: () => sensModule.userSummaryDownloadFileName,
+        set: (newVal) => {
+            store.commit(`${namespace}/${BaseSensitivityMutation.SetUserSummaryDownloadFileName}`, newVal);
+        }
+    });
+
+    const downloadSummary = ((payload: { fileName: string }) => {
+        verifyValidPlotSettingsTime(store.state, store.commit);
+        store.dispatch(`${namespace}/${BaseSensitivityAction.DownloadSummary}`, payload.fileName);
+    });
+
+    return {
+        sensitivityPrerequisitesReady,
+        updateMsg,
+        downloading,
+        canDownloadSummary,
+        downloadSummaryUserFileName,
+        downloadSummary
+    };
 };
