@@ -1,7 +1,7 @@
 import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
 import MultiSensitivityTab from "../../../../src/app/components/multiSensitivity/MultiSensitivityTab.vue";
-import {AppState, AppType} from "../../../../src/app/store/appState/state";
+import { AppState, AppType } from "../../../../src/app/store/appState/state";
 import LoadingButton from "../../../../src/app/components/LoadingButton.vue";
 import { ModelState } from "../../../../src/app/store/model/state";
 import { MultiSensitivityAction } from "../../../../src/app/store/multiSensitivity/actions";

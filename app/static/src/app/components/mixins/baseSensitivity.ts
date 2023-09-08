@@ -1,13 +1,13 @@
-import {Store} from "vuex";
-import {computed, ComputedRef, WritableComputedRef} from "vue";
+import { Store } from "vuex";
+import { computed, ComputedRef, WritableComputedRef } from "vue";
 import { AppState } from "../../store/appState/state";
 import { ModelGetter } from "../../store/model/getters";
 import userMessages from "../../userMessages";
 import { anyTrue } from "../../utils";
-import {sensitivityUpdateRequiredExplanation, verifyValidPlotSettingsTime} from "../sensitivity/support";
+import { sensitivityUpdateRequiredExplanation, verifyValidPlotSettingsTime } from "../sensitivity/support";
 import { Dict } from "../../types/utilTypes";
-import {BaseSensitivityMutation} from "../../store/sensitivity/mutations";
-import {BaseSensitivityAction} from "../../store/sensitivity/actions";
+import { BaseSensitivityMutation } from "../../store/sensitivity/mutations";
+import { BaseSensitivityAction } from "../../store/sensitivity/actions";
 
 export interface BaseSensitivityMixin {
     sensitivityPrerequisitesReady: ComputedRef<boolean>,

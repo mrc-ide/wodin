@@ -1,12 +1,12 @@
 import Vuex from "vuex";
+import { nextTick } from "vue";
 import { ModelState } from "../../../../src/app/store/model/state";
-import baseSensitivity, {BaseSensitivityMixin} from "../../../../src/app/components/mixins/baseSensitivity";
+import baseSensitivity, { BaseSensitivityMixin } from "../../../../src/app/components/mixins/baseSensitivity";
 import { BaseSensitivityState } from "../../../../src/app/store/sensitivity/state";
 import { noSensitivityUpdateRequired } from "../../../../src/app/store/sensitivity/sensitivity";
 import { AppState } from "../../../../src/app/store/appState/state";
-import {BaseSensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
-import {nextTick} from "vue";
-import {BaseSensitivityAction} from "../../../../src/app/store/sensitivity/actions";
+import { BaseSensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import { BaseSensitivityAction } from "../../../../src/app/store/sensitivity/actions";
 import mock = jest.mock;
 
 describe("baseSensitivity mixin", () => {
@@ -34,9 +34,16 @@ describe("baseSensitivity mixin", () => {
                         hasRunner: () => hasRunner
                     }
                 },
+                run: {
+                    namespace: true,
+                    state: {
+                        endTime: 100
+                    }
+                },
                 multiSensitivity: {
                     namespaced: true,
                     state: {
+                        downloading: false,
                         sensitivityUpdateRequired: noSensitivityUpdateRequired(),
                         result: {
                             batch: {
@@ -50,13 +57,17 @@ describe("baseSensitivity mixin", () => {
                             mockMultiSensSetUserSummaryDownloadFileName
                     },
                     actions: {
-                        [BaseSensitivityAction.DownloadSummary]: mockSensDownloadSummary
+                        [BaseSensitivityAction.DownloadSummary]: mockMultiSensDownloadSummary
                     }
                 },
                 sensitivity: {
                     namespaced: true,
                     state: {
+                        downloading: false,
                         sensitivityUpdateRequired: noSensitivityUpdateRequired(),
+                        plotSettings: {
+                            time: 50
+                        },
                         result: {
                             batch: {
                                 solutions: [{}]
@@ -79,7 +90,6 @@ describe("baseSensitivity mixin", () => {
     afterEach(() => {
         jest.clearAllMocks();
     });
-
 
     it("sensitivityPrerequisitesReady returns true when all prerequisites have been met", () => {
         const store = getStore();
@@ -148,7 +158,8 @@ describe("baseSensitivity mixin", () => {
             "Status is out of date: model code has been recompiled. Run Multi-sensitivity to update.");
     });
 
-    const testForSensAndMultiSens = (state: Partial<BaseSensitivityState>, test: (mixin: BaseSensitivityMixin) => void) => {
+    const testForSensAndMultiSens = (state: Partial<BaseSensitivityState>,
+        test: (mixin: BaseSensitivityMixin) => void) => {
         let store = getStore(true, {}, state, {});
         test(baseSensitivity(store, false));
         store = getStore(true, {}, {}, state);
@@ -156,7 +167,7 @@ describe("baseSensitivity mixin", () => {
     };
 
     it("returns downloading", () => {
-        testForSensAndMultiSens({downloading: true}, (mixin) => {
+        testForSensAndMultiSens({ downloading: true }, (mixin) => {
             expect(mixin.downloading.value).toBe(true);
         });
         testForSensAndMultiSens({}, (mixin) => {

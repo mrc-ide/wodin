@@ -1,8 +1,8 @@
 import * as XLSX from "xlsx";
 import { WodinExcelDownload } from "./wodinExcelDownload";
-import { SensitivityPlotExtreme, SensitivityPlotExtremePrefix} from "../store/sensitivity/state";
+import { SensitivityPlotExtreme, SensitivityPlotExtremePrefix } from "../store/sensitivity/state";
 import { OdinUserType, OdinUserTypeSeriesSet } from "../types/responseTypes";
-import {OdinSensitivityResult} from "../types/wrapperTypes";
+import { OdinSensitivityResult } from "../types/wrapperTypes";
 
 interface ExtremeSummarySheetSettings {
     name: string,

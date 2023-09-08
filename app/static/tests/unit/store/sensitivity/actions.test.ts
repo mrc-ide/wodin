@@ -136,7 +136,10 @@ describe("BaseSensitivity actions", () => {
         mockWodinSensitivitySummaryDownload.mockImplementation(() => ({ download: mockDownload }));
 
         const commit = jest.fn();
-        const context = { commit };
+        const state = {
+            result: {}
+        };
+        const context = { commit, state };
         const payload = "myFile.xlsx";
         (actions[BaseSensitivityAction.DownloadSummary] as any)(context, payload);
         expect(commit).toHaveBeenCalledTimes(1);
@@ -147,6 +150,7 @@ describe("BaseSensitivity actions", () => {
             expect(mockWodinSensitivitySummaryDownload.mock.calls[0][0]).toBe(context);
             expect(mockWodinSensitivitySummaryDownload.mock.calls[0][1]).toBe("myFile.xlsx");
             expect(mockDownload).toHaveBeenCalledTimes(1);
+            expect(mockDownload.mock.calls[0][0]).toBe(state.result);
 
             expect(commit).toHaveBeenCalledTimes(2);
             expect(commit.mock.calls[1][0]).toBe(BaseSensitivityMutation.SetDownloading);

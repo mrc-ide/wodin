@@ -143,8 +143,6 @@ export const runSensitivity = (
     }
 };
 
-
-
 export const baseSensitivityActions: ActionTree<BaseSensitivityState, AppState> = {
     [BaseSensitivityAction.ComputeNext](context, batch: Batch) {
         const {

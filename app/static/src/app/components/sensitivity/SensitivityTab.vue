@@ -15,15 +15,15 @@
       <span class="ms-2">{{ sensitivityProgressMsg }}</span>
     </div>
     <error-info :error="error"></error-info>
-    <sensitivity-summary-download :multi-sensitivity="false" :download-type="'Sensitivity Summary'"></sensitivity-summary-download>
+    <sensitivity-summary-download :multi-sensitivity="false" :download-type="'Sensitivity Summary'">
+    </sensitivity-summary-download>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
-import VueFeather from "vue-feather";
-import DownloadOutput from "@/app/components/DownloadOutput.vue";
+import SensitivitySummaryDownload from "@/app/components/sensitivity/SensitivitySummaryDownload.vue";
 import SensitivityTracesPlot from "./SensitivityTracesPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { BaseSensitivityGetter } from "../../store/sensitivity/getters";
@@ -35,13 +35,10 @@ import LoadingSpinner from "../LoadingSpinner.vue";
 import LoadingButton from "../LoadingButton.vue";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import baseSensitivity from "../mixins/baseSensitivity";
-import SensitivitySummaryDownload from "@/app/components/sensitivity/SensitivitySummaryDownload.vue";
 
 export default defineComponent({
     name: "SensitivityTab",
     components: {
-        DownloadOutput,
-        VueFeather,
         ErrorInfo,
         LoadingSpinner,
         SensitivitySummaryPlot,

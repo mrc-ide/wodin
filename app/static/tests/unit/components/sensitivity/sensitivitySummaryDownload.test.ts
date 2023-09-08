@@ -1,14 +1,18 @@
-import DownloadOutput from "../../../../src/app/components/DownloadOutput.vue";
-import {AppState, AppType} from "../../../../src/app/store/appState/state";
-import {BaseSensitivityState, SensitivityPlotType, SensitivityState} from "../../../../src/app/store/sensitivity/state";
 import Vuex from "vuex";
-import {shallowMount, VueWrapper} from "@vue/test-utils";
+import { shallowMount, VueWrapper } from "@vue/test-utils";
+import { nextTick } from "vue";
+import DownloadOutput from "../../../../src/app/components/DownloadOutput.vue";
+import { AppState } from "../../../../src/app/store/appState/state";
+import {
+    BaseSensitivityState,
+    SensitivityPlotType,
+    SensitivityState
+} from "../../../../src/app/store/sensitivity/state";
 import SensitivitySummaryDownload from "../../../../src/app/components/sensitivity/SensitivitySummaryDownload.vue";
-import {BaseSensitivityAction, SensitivityAction} from "../../../../src/app/store/sensitivity/actions";
-import {BaseSensitivityMutation, SensitivityMutation} from "../../../../src/app/store/sensitivity/mutations";
+import { BaseSensitivityAction, SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
+import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
-import {nextTick} from "vue";
-import {ModelGetter} from "../../../../src/app/store/model/getters";
+import { ModelGetter } from "../../../../src/app/store/model/getters";
 
 describe("SensitivitySummaryDownload", () => {
     const mockSetUserSummaryDownloadFileName = jest.fn();
@@ -16,7 +20,6 @@ describe("SensitivitySummaryDownload", () => {
     const mockSetPlotTime = jest.fn();
 
     const getWrapper = (multiSens = false, state: Partial<BaseSensitivityState> = {}) => {
-
         const plotSettings = {
             plotType: SensitivityPlotType.TraceOverTime,
             time: null
@@ -90,7 +93,8 @@ describe("SensitivitySummaryDownload", () => {
         });
     };
 
-    const testForSensAndMultiSens = (test: (wrapper: VueWrapper<any>, multiSens: boolean) => void, state: Partial<SensitivityState> = {}) => {
+    const testForSensAndMultiSens = (test: (wrapper: VueWrapper<any>, multiSens: boolean) => void,
+        state: Partial<SensitivityState> = {}) => {
         let wrapper = getWrapper(false, state);
         test(wrapper, false);
         jest.clearAllMocks();
@@ -98,7 +102,8 @@ describe("SensitivitySummaryDownload", () => {
         test(wrapper, true);
     };
 
-    const asyncTestForSensAndMultiSens = async (test: (wrapper: VueWrapper<any>, multiSens: boolean) => Promise<void>, state: Partial<SensitivityState> = {}) => {
+    const asyncTestForSensAndMultiSens = async (test: (wrapper: VueWrapper<any>, multiSens: boolean) => Promise<void>,
+        state: Partial<SensitivityState> = {}) => {
         let wrapper = getWrapper(false, state);
         await test(wrapper, false);
         jest.clearAllMocks();
@@ -158,7 +163,7 @@ describe("SensitivitySummaryDownload", () => {
     });
 
     it("renders DownloadOutput as expected", () => {
-        const state = {userSummaryDownloadFileName: "test.xlsx"};
+        const state = { userSummaryDownloadFileName: "test.xlsx" };
         testForSensAndMultiSens((wrapper) => {
             const downloadOutput = wrapper.findComponent(DownloadOutput);
             expect(downloadOutput.props().open).toBe(false);
@@ -186,7 +191,7 @@ describe("SensitivitySummaryDownload", () => {
     it("opens dialog on click download button", async () => {
         const wrapper = getWrapper();
         const button = wrapper.find("button#download-summary-btn");
-        expect((button.element as HTMLButtonElement).disabled).toBe(false)
+        expect((button.element as HTMLButtonElement).disabled).toBe(false);
         await button.trigger("click");
         expect(wrapper.findComponent(DownloadOutput).props().open).toBe(true);
     });
@@ -203,7 +208,7 @@ describe("SensitivitySummaryDownload", () => {
     it("verifies end time and dispatches action on download output emit", () => {
         testForSensAndMultiSens((wrapper) => {
             const downloadOutput = wrapper.findComponent(DownloadOutput);
-            downloadOutput.vm.$emit("download", {fileName: "test.xlsx"});
+            downloadOutput.vm.$emit("download", { fileName: "test.xlsx" });
             // should have updated plot settings time to run end time
             expect(mockSetPlotTime).toHaveBeenCalledTimes(1);
             expect(mockSetPlotTime.mock.calls[0][1]).toBe(100);

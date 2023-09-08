@@ -179,10 +179,18 @@ describe("WodinSensitivitySummaryDownload", () => {
 
         expect(mockBookAppendSheet.mock.calls[0][1]).toStrictEqual({
             data: [
-                { beta: 1, N: 100, S: 10, I: 50 },
-                { beta: 1, N: 1000, S: 20, I: 60 },
-                { beta: 2, N: 100, S: 30, I: 70 },
-                { beta: 2, N: 1000, S: 40, I: 80 }
+                {
+                    beta: 1, N: 100, S: 10, I: 50
+                },
+                {
+                    beta: 1, N: 1000, S: 20, I: 60
+                },
+                {
+                    beta: 2, N: 100, S: 30, I: 70
+                },
+                {
+                    beta: 2, N: 1000, S: 40, I: 80
+                }
             ],
             type: "json"
         });
