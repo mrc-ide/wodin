@@ -104,8 +104,9 @@ export default defineComponent({
             windowWidth.value = window.innerWidth;
             hidePanelMode.value = HidePanelContent.None;
             mode.value = PanelsMode.Both;
-            optionsWidth.value.width = `max(${windowBoundaryLeft.value}px, 30%)`;
-            chartsWidth.value.width = `calc(100% - ${optionsWidth.value.width})`;
+            const optionsWidthVal = `max(${windowBoundaryLeft.value}px, 30%)`;
+            optionsWidth.value.width = `max(${windowBoundaryLeft.value}px, 30%) !important`;
+            chartsWidth.value.width = `calc(100% - ${optionsWidthVal}) !important`;
         };
 
         const resizeObserver = new ResizeObserver(resize);
@@ -145,22 +146,32 @@ export default defineComponent({
             const { clientX } = getTouchEvent(event) as MouseEvent | Touch;
 
             if (clientX > snapToleranceRight.value) {
+                optionsWidth.value.width = "";
+                chartsWidth.value.width = "";
                 mode.value = PanelsMode.Left;
             } else if (clientX < snapToleranceLeft.value) {
+                optionsWidth.value.width = "";
+                chartsWidth.value.width = "";
                 mode.value = PanelsMode.Right;
             } else if (clientX > windowBoundaryRight.value) {
+                const optionsWidthVal = `calc(${clientX}px + ${dragStart.value === DragStart.Icon ? 1.4 : -1}rem)`;
+                optionsWidth.value.width = `${optionsWidthVal} !important`;
+                chartsWidth.value.width = `calc(100% - ${optionsWidthVal}) !important`;
                 mode.value = PanelsMode.Both;
                 hidePanelMode.value = HidePanelContent.Right;
             } else if (clientX < windowBoundaryLeft.value) {
+                const optionsWidthVal = `calc(${clientX}px + ${dragStart.value === DragStart.Icon ? 1.4 : -1}rem)`;
+                optionsWidth.value.width = `${optionsWidthVal} !important`;
+                chartsWidth.value.width = `calc(100% - ${optionsWidthVal}) !important`;
                 mode.value = PanelsMode.Both;
                 hidePanelMode.value = HidePanelContent.Left;
             } else {
+                const optionsWidthVal = `calc(${clientX}px + ${dragStart.value === DragStart.Icon ? 1.4 : -1}rem)`;
+                optionsWidth.value.width = `${optionsWidthVal} !important`;
+                chartsWidth.value.width = `calc(100% - ${optionsWidthVal}) !important`;
                 mode.value = PanelsMode.Both;
                 hidePanelMode.value = HidePanelContent.None;
             }
-
-            optionsWidth.value.width = `calc(${clientX}px + ${dragStart.value === DragStart.Icon ? 1.4 : -1}rem)`;
-            chartsWidth.value.width = `calc(100% - ${optionsWidth.value.width})`;
         };
 
         const handleDragEnd = (event: Event) => {
@@ -169,8 +180,12 @@ export default defineComponent({
             const { clientX } = getTouchEvent(event) as MouseEvent | Touch;
 
             if (clientX > windowBoundaryRight.value) {
+                optionsWidth.value.width = "";
+                chartsWidth.value.width = "";
                 mode.value = PanelsMode.Left;
             } else if (clientX < windowBoundaryLeft.value) {
+                optionsWidth.value.width = "";
+                chartsWidth.value.width = "";
                 mode.value = PanelsMode.Right;
             } else {
                 mode.value = PanelsMode.Both;

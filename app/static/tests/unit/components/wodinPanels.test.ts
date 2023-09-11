@@ -81,11 +81,12 @@ describe("WodinPanels", () => {
         expect(mode).toBe(expectedMode);
         expect(modeClass).toBe(modeClassMap[expectedMode]);
         expect(hidePanelMode).toBe(expectedHideContent);
-        if (position) {
+        if (position && mode === PanelsMode.Both) {
+            const optionsWidthVal = `calc(${position}px + ${dragStart === DragStart.Icon ? 1.4 : -1}rem)`;
             expect(optionsWidth)
-                .toStrictEqual({ width: `calc(${position}px + ${dragStart === DragStart.Icon ? 1.4 : -1}rem)` });
+                .toStrictEqual({ width: `${optionsWidthVal} !important` });
             expect(chartsWidth)
-                .toStrictEqual({ width: `calc(100% - ${optionsWidth.width})` });
+                .toStrictEqual({ width: `calc(100% - ${optionsWidthVal}) !important` });
         }
         expect(mockPreventDefault).toBeCalledTimes(expectedPreventDefault);
     };
@@ -278,8 +279,8 @@ describe("WodinPanels", () => {
         expect(vm.windowWidth).toBe(1000);
         expect(vm.mode).toBe(PanelsMode.Both);
         expect(vm.hidePanelMode).toBe(HidePanelContent.None);
-        expect(vm.optionsWidth.width).toBe("max(200px, 30%)");
-        expect(vm.chartsWidth.width).toBe("calc(100% - max(200px, 30%))");
+        expect(vm.optionsWidth.width).toBe("max(200px, 30%) !important");
+        expect(vm.chartsWidth.width).toBe("calc(100% - max(200px, 30%)) !important");
     });
 
     it("disconnects resizeObserver on unmount", () => {
