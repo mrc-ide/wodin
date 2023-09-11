@@ -46,8 +46,8 @@ test.describe("stochastic app", () => {
         await expectSummaryValues(page, 16, "extinct", 1001, "#cc0044");
     });
 
-    test.only("traces are hidden if replicates are above maxReplicatesDisplay", async ({ page }) => {
-        await page.fill(":nth-match(#run-options input, 2)", "20");
+    test("traces are hidden if replicates are above maxReplicatesDisplay", async ({ page }) => {
+        await page.fill(":nth-match(#run-options input, 2)", "50");
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
             "Plot is out of date: number of replicates has changed. Run model to update.", {
                 timeout
@@ -58,9 +58,9 @@ test.describe("stochastic app", () => {
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("");
 
         const summary = ".wodin-plot-data-summary-series";
-        expect(await page.locator(summary).count()).toBe(44);
+        expect(await page.locator(summary).count()).toBe(104);
 
-        await page.fill(":nth-match(#run-options input, 2)", "21");
+        await page.fill(":nth-match(#run-options input, 2)", "51");
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
             "Plot is out of date: number of replicates has changed. Run model to update.", {
                 timeout

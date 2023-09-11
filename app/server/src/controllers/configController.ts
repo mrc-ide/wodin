@@ -16,7 +16,7 @@ export const configDefaults = (appType: string) => {
         return {
             ...base,
             maxReplicatesRun: 1000,
-            maxReplicatesDisplay: 20
+            maxReplicatesDisplay: 50
         };
     }
     return base;
