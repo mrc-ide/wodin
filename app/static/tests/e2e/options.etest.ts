@@ -212,6 +212,39 @@ test.describe("Options Tab tests", () => {
         await expect(await page.innerHTML(tickSelector)).toBe("0.2M");
     });
 
+    test("can change graph setting for lock axes", async ({ page }) => {
+        await expect(await page.innerText(":nth-match(.collapse-title, 3)")).toContain("Graph Settings");
+        await page.locator("#lock-y-axis input").click();
+
+        const tickSelector = ":nth-match(.plotly .ytick text, 6)";
+        await expect(await page.innerHTML(tickSelector)).toBe("1M");
+
+        await page.locator(":nth-match(.parameter-input, 3)").fill("1000000000");
+
+        await page.locator("#run-btn").click();
+
+        // would be 1B if we didn't lock the axes
+        await expect(await page.innerHTML(tickSelector)).toBe("1M");
+        await page.locator("#lock-y-axis input").click();
+
+        // autorange on deselect of lock axes
+        await expect(await page.innerHTML(tickSelector)).toBe("1B");
+    });
+
+    test("overrides axes lock if log scale toggle changes", async ({ page }) => {
+        await expect(await page.innerText(":nth-match(.collapse-title, 3)")).toContain("Graph Settings");
+        await page.locator("#lock-y-axis input").click();
+
+        const tickSelector = ":nth-match(.plotly .ytick text, 2)";
+        await expect(await page.innerHTML(tickSelector)).toBe("0.2M");
+
+        await page.locator("#log-scale-y-axis input").click();
+
+        // if you've locked the axis, it should not update to 10n, would
+        // be 10^115441
+        await expect(await page.innerHTML(tickSelector)).toBe("10n");
+    });
+
     const createParameterSet = async (page: Page) => {
         await page.click("#create-param-set");
     };
