@@ -20,6 +20,7 @@ import { defaultState as defaultGraphSettingsState } from "../../src/app/store/g
 import { Language } from "../../src/app/types/languageTypes";
 import { AdvancedOptions } from "../../src/app/types/responseTypes";
 import { AdvancedComponentType } from "../../src/app/store/run/state";
+import { noSensitivityUpdateRequired } from "../../src/app/store/sensitivity/sensitivity";
 
 describe("serialise", () => {
     const codeState = {
@@ -212,6 +213,73 @@ describe("serialise", () => {
         }
     };
 
+    const multiSensitivityBatchPars = {
+        base: { alpha: 1, beta: 1.1 },
+        varying: [
+            {
+                name: "alpha",
+                values: [0.5, 0.75, 1, 1.25, 1.5]
+            },
+            {
+                name: "beta",
+                values: [1, 1.1, 2]
+            }
+        ]
+    };
+
+    const multiSensitivityState = {
+        running: true,
+        loading: false,
+        downloading: false,
+        userSummaryDownloadFileName: "",
+        paramSettings: [
+            {
+                parameterToVary: "alpha",
+                scaleType: SensitivityScaleType.Arithmetic,
+                variationType: SensitivityVariationType.Percentage,
+                variationPercentage: 50,
+                rangeFrom: 0,
+                rangeTo: 1,
+                numberOfRuns: 5,
+                customValues: []
+            },
+            {
+                parameterToVary: "beta",
+                scaleType: SensitivityScaleType.Arithmetic,
+                variationType: SensitivityVariationType.Percentage,
+                variationPercentage: 10,
+                rangeFrom: 0,
+                rangeTo: 1,
+                numberOfRuns: 3,
+                customValues: []
+            }
+        ],
+        sensitivityUpdateRequired: {
+            modelChanged: false,
+            parameterValueChanged: false,
+            endTimeChanged: false,
+            sensitivityOptionsChanged: false,
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
+        },
+        result: {
+            inputs: {
+                endTime: 10,
+                pars: multiSensitivityBatchPars
+            },
+            batch: {
+                pars: multiSensitivityBatchPars,
+                solutions: [jest.fn(), jest.fn()],
+                errors: [],
+                successfulVaryingParams: [],
+                valueAtTime: jest.fn(),
+                extreme: jest.fn(),
+                compute: jest.fn()
+            },
+            error: { error: "multiSensitivity error", detail: "multiSensitivity error detail" }
+        }
+    };
+
     const fitDataState = {
         data: [{ time: 0, cases: 0 }, { time: 1, cases: 2 }],
         columns: ["time", "cases"],
@@ -274,7 +342,7 @@ describe("serialise", () => {
         model: modelState,
         run: runState,
         sensitivity: sensitivityState,
-        multiSensitivity: mockMultiSensitivityState(),
+        multiSensitivity: multiSensitivityState,
         versions: { versions: null },
         graphSettings: {
             logScaleYAxis: true,
@@ -300,7 +368,7 @@ describe("serialise", () => {
         model: modelState,
         run: runState,
         sensitivity: sensitivityState,
-        multiSensitivity: mockMultiSensitivityState(),
+        multiSensitivity: multiSensitivityState,
         fitData: fitDataState,
         modelFit: modelFitState,
         versions: { versions: null },
@@ -364,14 +432,7 @@ describe("serialise", () => {
     const expectedSensitivity = {
         running: false,
         paramSettings: sensitivityState.paramSettings,
-        sensitivityUpdateRequired: {
-            modelChanged: false,
-            parameterValueChanged: false,
-            endTimeChanged: false,
-            sensitivityOptionsChanged: false,
-            numberOfReplicatesChanged: false,
-            advancedSettingsChanged: false
-        },
+        sensitivityUpdateRequired: noSensitivityUpdateRequired(),
         plotSettings: sensitivityState.plotSettings,
         result: {
             inputs: sensitivityState.result.inputs,
@@ -384,6 +445,17 @@ describe("serialise", () => {
                 hasResult: true,
                 error: sensitivityState.parameterSetResults["Set 1"].error
             }
+        }
+    };
+
+    const expectedMultiSensitivity = {
+        running: false,
+        paramSettings: multiSensitivityState.paramSettings,
+        sensitivityUpdateRequired: noSensitivityUpdateRequired(),
+        result: {
+            inputs: multiSensitivityState.result.inputs,
+            hasResult: true,
+            error: multiSensitivityState.result.error
         }
     };
 
@@ -431,6 +503,7 @@ describe("serialise", () => {
             model: expectedModel,
             run: expectedRun,
             sensitivity: expectedSensitivity,
+            multiSensitivity: expectedMultiSensitivity,
             graphSettings: expectedGraphSettings
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
@@ -444,6 +517,7 @@ describe("serialise", () => {
             model: expectedModel,
             run: expectedRun,
             sensitivity: expectedSensitivity,
+            multiSensitivity: expectedMultiSensitivity,
             fitData: expectedFitData,
             modelFit: expectedModelFit,
             graphSettings: expectedGraphSettings
@@ -472,6 +546,13 @@ describe("serialise", () => {
                     batch: null
                 }
             },
+            multiSensitivity: {
+                ...multiSensitivityState,
+                result: {
+                    ...multiSensitivityState.result,
+                    batch: null
+                }
+            },
             modelFit: {
                 ...modelFitState,
                 result: {
@@ -495,6 +576,10 @@ describe("serialise", () => {
                 ...expectedSensitivity,
                 result: { ...expectedSensitivity.result, hasResult: false }
             },
+            multiSensitivity: {
+                ...expectedMultiSensitivity,
+                result: { ...expectedMultiSensitivity.result, hasResult: false }
+            },
             fitData: expectedFitData,
             modelFit: {
                 ...expectedModelFit,
@@ -511,6 +596,7 @@ describe("serialise", () => {
             model: { ...modelState, odin: null },
             run: { ...runState, resultOde: null, resultDiscrete: null },
             sensitivity: { ...sensitivityState, result: null },
+            multiSensitivity: { ...multiSensitivityState, result: null },
             modelFit: { ...modelFitState, result: null }
         };
         const serialised = serialiseState(state);
@@ -521,6 +607,7 @@ describe("serialise", () => {
             model: { ...expectedModel, hasOdin: false },
             run: { ...expectedRun, resultOde: null, resultDiscrete: null },
             sensitivity: { ...expectedSensitivity, result: null },
+            multiSensitivity: { ...expectedMultiSensitivity, result: null },
             fitData: expectedFitData,
             modelFit: { ...expectedModelFit, result: null },
             graphSettings: expectedGraphSettings
@@ -535,6 +622,7 @@ describe("serialise", () => {
             model: mockModelState(),
             run: { ...mockRunState(), advancedSettings: expectedRun.advancedSettings },
             sensitivity: mockSensitivityState(),
+            multiSensitivity: mockMultiSensitivityState(),
             fitData: mockFitDataState(),
             modelFit: mockModelFitState(),
             versions: mockVersionsState(),
@@ -566,6 +654,7 @@ describe("serialise", () => {
             model: mockModelState(),
             run: mockRunState(),
             sensitivity: mockSensitivityState(),
+            multiSensitivity: mockMultiSensitivityState(),
             fitData: mockFitDataState(),
             modelFit: mockModelFitState(),
             versions: mockVersionsState(),
@@ -588,6 +677,7 @@ describe("serialise", () => {
             } as any),
             run: { ...mockRunState(), advancedSettings: expectedRun.advancedSettings },
             sensitivity: mockSensitivityState(),
+            multiSensitivity: mockMultiSensitivityState(),
             fitData: mockFitDataState(),
             modelFit: mockModelFitState(),
             versions: mockVersionsState()
@@ -619,6 +709,7 @@ describe("serialise", () => {
             model: mockModelState(),
             run: { ...mockRunState(), advancedSettings: expectedRun.advancedSettings },
             sensitivity: mockSensitivityState(),
+            multiSensitivity: mockMultiSensitivityState(),
             fitData: mockFitDataState(),
             modelFit: mockModelFitState(),
             versions: mockVersionsState()

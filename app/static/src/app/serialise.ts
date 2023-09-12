@@ -3,7 +3,7 @@ import { FitState } from "./store/fit/state";
 import { CodeState } from "./store/code/state";
 import { ModelState } from "./store/model/state";
 import { RunState } from "./store/run/state";
-import { SensitivityState } from "./store/sensitivity/state";
+import {BaseSensitivityState, SensitivityState} from "./store/sensitivity/state";
 import { FitDataState } from "./store/fitData/state";
 import { ModelFitState } from "./store/modelFit/state";
 import { OdinFitResult, OdinRunResultDiscrete, OdinRunResultOde } from "./types/wrapperTypes";
@@ -71,6 +71,18 @@ function serialiseRun(run: RunState): SerialisedRunState {
     };
 }
 
+function serialiseBaseSensitivity(sensitivity: BaseSensitivityState) {
+    return {
+        running: false,
+        sensitivityUpdateRequired: sensitivity.sensitivityUpdateRequired,
+        result: sensitivity.result ? {
+            inputs: sensitivity.result.inputs,
+            hasResult: !!sensitivity.result.batch,
+            error: sensitivity.result.error
+        } : null
+    }
+}
+
 function serialiseSensitivity(sensitivity: SensitivityState): SerialisedSensitivityState {
     const serialisedParameterSetResults = {} as Dict<SerialisedSensitivityResult>;
     Object.keys(sensitivity.parameterSetResults).forEach((name) => {
@@ -83,29 +95,17 @@ function serialiseSensitivity(sensitivity: SensitivityState): SerialisedSensitiv
     });
 
     return {
-        running: false,
+        ...serialiseBaseSensitivity(sensitivity),
         paramSettings: sensitivity.paramSettings,
-        sensitivityUpdateRequired: sensitivity.sensitivityUpdateRequired,
         plotSettings: sensitivity.plotSettings,
-        result: sensitivity.result ? {
-            inputs: sensitivity.result.inputs,
-            hasResult: !!sensitivity.result.batch,
-            error: sensitivity.result.error
-        } : null,
         parameterSetResults: serialisedParameterSetResults
     };
 }
 
 function serialiseMultiSensitivity(multiSensitivity: MultiSensitivityState): SerialisedMultiSensitivityState {
     return {
-        running: false,
-        paramSettings: multiSensitivity.paramSettings,
-        sensitivityUpdateRequired: multiSensitivity.sensitivityUpdateRequired,
-        result: multiSensitivity.result ? {
-            inputs: multiSensitivity.result.inputs,
-            hasResult: !!multiSensitivity.result.batch,
-            error: multiSensitivity.result.error
-        } : null
+        ...serialiseBaseSensitivity(multiSensitivity),
+        paramSettings: multiSensitivity.paramSettings
     };
 }
 

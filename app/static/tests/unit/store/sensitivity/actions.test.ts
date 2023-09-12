@@ -1,4 +1,4 @@
-import { Action } from "vuex";
+import {Action, ActionTree} from "vuex";
 import { actions, BaseSensitivityAction, SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
 import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import { ModelGetter } from "../../../../src/app/store/model/getters";
@@ -8,6 +8,7 @@ import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
 import { AdvancedComponentType } from "../../../../src/app/store/run/state";
 import { WodinSensitivitySummaryDownload } from "../../../../src/app/excel/wodinSensitivitySummaryDownload";
 import Mock = jest.Mock;
+import {BaseSensitivityState} from "../../../../src/app/store/sensitivity/state";
 
 jest.mock("../../../../src/app/excel/wodinSensitivitySummaryDownload");
 
@@ -61,6 +62,55 @@ const getters = {
 
 export const rootGetters = {
     [`model/${ModelGetter.hasRunner}`]: true
+};
+
+export const expectRunOnRehydrateToUseParametersFromResult = (action: Action<BaseSensitivityState, AppState>) => {
+    const mockResultBatchPars = {};
+    const rootState = {
+        model: mockModelState,
+        run: mockRunState
+    };
+    const state = {
+        result: {
+            inputs: {
+                pars: mockResultBatchPars
+            }
+        }
+    };
+
+    const commit = jest.fn();
+    const dispatch = jest.fn();
+
+    (action as any)({
+        rootState, getters, commit, dispatch, state, rootGetters
+    });
+
+    expect(commit).toHaveBeenCalledTimes(2);
+    expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
+    expect(commit.mock.calls[0][1]).toStrictEqual({
+        inputs: { endTime: 99, pars: mockResultBatchPars },
+        batch: mockBatch,
+        error: null
+    });
+    expect(commit.mock.calls[1][0]).toBe(BaseSensitivityMutation.SetUpdateRequired);
+    expect(commit.mock.calls[1][1]).toStrictEqual({
+        endTimeChanged: false,
+        modelChanged: false,
+        parameterValueChanged: false,
+        sensitivityOptionsChanged: false,
+        numberOfReplicatesChanged: false,
+        advancedSettingsChanged: false
+    });
+
+    expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
+        rootState.model.odin,
+        mockBatchPars,
+        0,
+        99,
+        defaultAdvanced
+    );
+
+    expect(dispatch).not.toHaveBeenCalled();
 };
 
 describe("BaseSensitivity actions", () => {
@@ -510,51 +560,6 @@ describe("Sensitivity actions", () => {
     });
 
     it("run sensitivity on rehydrate uses parameters from result", () => {
-        const mockResultBatchPars = {};
-        const rootState = {
-            model: mockModelState,
-            run: mockRunState
-        };
-        const state = {
-            result: {
-                inputs: {
-                    pars: mockResultBatchPars
-                }
-            }
-        };
-
-        const commit = jest.fn();
-        const dispatch = jest.fn();
-
-        (actions[SensitivityAction.RunSensitivityOnRehydrate] as any)({
-            rootState, getters, commit, dispatch, state, rootGetters
-        });
-
-        expect(commit).toHaveBeenCalledTimes(2);
-        expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
-        expect(commit.mock.calls[0][1]).toStrictEqual({
-            inputs: { endTime: 99, pars: mockResultBatchPars },
-            batch: mockBatch,
-            error: null
-        });
-        expect(commit.mock.calls[1][0]).toBe(BaseSensitivityMutation.SetUpdateRequired);
-        expect(commit.mock.calls[1][1]).toStrictEqual({
-            endTimeChanged: false,
-            modelChanged: false,
-            parameterValueChanged: false,
-            sensitivityOptionsChanged: false,
-            numberOfReplicatesChanged: false,
-            advancedSettingsChanged: false
-        });
-
-        expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
-            rootState.model.odin,
-            mockBatchPars,
-            0,
-            99,
-            defaultAdvanced
-        );
-
-        expect(dispatch).not.toHaveBeenCalled();
+        expectRunOnRehydrateToUseParametersFromResult(actions[SensitivityAction.RunSensitivityOnRehydrate] as any);
     });
 });

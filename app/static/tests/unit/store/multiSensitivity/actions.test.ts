@@ -6,10 +6,11 @@ import {
     mockRunState,
     mockRunnerOde,
     rootGetters,
-    testCommonRunSensitivity
+    testCommonRunSensitivity, expectRunOnRehydrateToUseParametersFromResult
 } from "../sensitivity/actions.test";
 import { AppType } from "../../../../src/app/store/appState/state";
 import { BaseSensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import {SensitivityAction} from "../../../../src/app/store/sensitivity/actions";
 
 jest.mock("../../../../src/app/excel/wodinSensitivitySummaryDownload");
 
@@ -65,5 +66,10 @@ describe("multiSensitivity actions", () => {
             defaultAdvanced
         );
         expect(dispatch).not.toHaveBeenCalled();
+    });
+
+    it("run multiSensitivity on rehydrate uses parameters from result", () => {
+        expectRunOnRehydrateToUseParametersFromResult(
+            actions[MultiSensitivityAction.RunMultiSensitivityOnRehydrate] as any);
     });
 });
