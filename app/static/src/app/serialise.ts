@@ -11,10 +11,11 @@ import {
     SerialisedAppState, SerialisedModelState,
     SerialisedRunState,
     SerialisedSensitivityState,
-    SerialisedRunResult, SerialisedSensitivityResult
+    SerialisedRunResult, SerialisedSensitivityResult, SerialisedMultiSensitivityState
 } from "./types/serialisationTypes";
 import { GraphSettingsState } from "./store/graphSettings/state";
 import { Dict } from "./types/utilTypes";
+import {MultiSensitivityState} from "./store/multiSensitivity/state";
 
 function serialiseCode(code: CodeState) : CodeState {
     return {
@@ -95,6 +96,19 @@ function serialiseSensitivity(sensitivity: SensitivityState): SerialisedSensitiv
     };
 }
 
+function serialiseMultiSensitivity(multiSensitivity: MultiSensitivityState): SerialisedMultiSensitivityState {
+    return {
+        running: false,
+        paramSettings: multiSensitivity.paramSettings,
+        sensitivityUpdateRequired: multiSensitivity.sensitivityUpdateRequired,
+        result: multiSensitivity.result ? {
+            inputs: multiSensitivity.result.inputs,
+            hasResult: !!multiSensitivity.result.batch,
+            error: multiSensitivity.result.error
+        } : null
+    };
+}
+
 function serialiseFitData(fitData: FitDataState) : FitDataState {
     return {
         data: fitData.data,
@@ -129,6 +143,7 @@ export const serialiseState = (state: AppState) => {
         model: serialiseModel(state.model),
         run: serialiseRun(state.run),
         sensitivity: serialiseSensitivity(state.sensitivity),
+        multiSensitivity: serialiseMultiSensitivity(state.multiSensitivity),
         graphSettings: serialiseGraphSettings(state.graphSettings)
     };
 

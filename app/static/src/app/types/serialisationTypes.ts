@@ -65,6 +65,13 @@ export interface SerialisedSensitivityState {
     parameterSetResults: Dict<SerialisedSensitivityResult>
 }
 
+export interface SerialisedMultiSensitivityState {
+    running: boolean,
+    paramSettings: SensitivityParameterSettings[]
+    sensitivityUpdateRequired: SensitivityUpdateRequiredReasons,
+    result: null | SerialisedSensitivityResult
+}
+
 export interface SerialisedModelFitState {
     fitUpdateRequired: FitUpdateRequiredReasons,
     iterations: number | null,
@@ -80,6 +87,7 @@ export interface SerialisedAppState {
     model: SerialisedModelState,
     run: SerialisedRunState,
     sensitivity: SerialisedSensitivityState,
+    multiSensitivity: SerialisedMultiSensitivityState,
     graphSettings: GraphSettingsState,
     fitData?: FitDataState,
     modelFit?: SerialisedModelFitState,
