@@ -21,6 +21,7 @@
                 <numeric-input
                     :value="numberOfReplicates"
                     :min-allowed="0"
+                    :max-allowed="maxAllowedObj"
                     @update="updateNumberOfReplicates"></numeric-input>
             </div>
         </div>
@@ -33,8 +34,9 @@ import { useStore } from "vuex";
 import { RunMutation } from "../../store/run/mutations";
 import { BaseSensitivityMutation, SensitivityMutation } from "../../store/sensitivity/mutations";
 import { FitDataGetter } from "../../store/fitData/getters";
-import NumericInput from "./NumericInput.vue";
+import NumericInput, { BoundTooltip } from "./NumericInput.vue";
 import { AppType } from "../../store/appState/state";
+import { StochasticConfig } from "../../types/responseTypes";
 
 export default defineComponent({
     name: "RunOptions",
@@ -59,6 +61,23 @@ export default defineComponent({
         const numberOfReplicates = computed(() => store.state.run.numberOfReplicates);
         const isStochasticApp = computed(() => store.state.appType === AppType.Stochastic);
 
+        const maxReplicatesDisplay = computed(() => {
+            return (store.state.config as StochasticConfig)?.maxReplicatesDisplay;
+        });
+        const maxReplicatesRun = computed(() => {
+            return (store.state.config as StochasticConfig)?.maxReplicatesRun;
+        });
+        const maxAllowedObj = computed(() => {
+            return {
+                error: { number: maxReplicatesRun.value },
+                warning: {
+                    number: maxReplicatesDisplay.value,
+                    message: "Individual traces will not be shown for "
+                        + `values greater than ${maxReplicatesDisplay.value}`
+                }
+            } as BoundTooltip;
+        });
+
         const updateNumberOfReplicates = (newValue: number) => {
             store.commit(`run/${RunMutation.SetNumberOfReplicates}`, newValue);
             const updateReason = { numberOfReplicatesChanged: true };
@@ -74,7 +93,8 @@ export default defineComponent({
             updateEndTime,
             isStochasticApp,
             numberOfReplicates,
-            updateNumberOfReplicates
+            updateNumberOfReplicates,
+            maxAllowedObj
         };
     }
 });

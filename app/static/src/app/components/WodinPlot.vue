@@ -147,8 +147,16 @@ export default defineComponent({
 
         onMounted(drawPlot);
 
-        watch([() => props.redrawWatches, lockYAxis], () => drawPlot());
-        watch(yAxisType, () => drawPlot(true));
+        watch([() => props.redrawWatches, lockYAxis], () => {
+            if (plotStyle.value !== fadePlotStyle) {
+                drawPlot();
+            }
+        });
+        watch(yAxisType, () => {
+            if (plotStyle.value !== fadePlotStyle) {
+                drawPlot(true);
+            }
+        });
 
         onUnmounted(() => {
             if (resizeObserver) {

@@ -4,7 +4,7 @@
          :value="textValue"
          @input="updateValue"
          @blur="formatTextValue(true)"
-         v-tooltip="errorTooltipProps"
+         v-tooltip="tooltipProps"
          :placeholder="`${placeholder}`"/>
 </template>
 
@@ -24,6 +24,11 @@ const d3Locale = formatLocale({
     minus: "-"
 });
 
+export type BoundTooltip = {
+    error: { number: number, message?: string },
+    warning: { number: number, message: string }
+}
+
 export default defineComponent({
     name: "NumericInput",
     props: {
@@ -37,11 +42,11 @@ export default defineComponent({
             default: ""
         },
         maxAllowed: {
-            type: Number,
+            type: [Number, Array] as PropType<number | BoundTooltip>,
             default: Infinity
         },
         minAllowed: {
-            type: Number,
+            type: [Number, Array] as PropType<number | BoundTooltip>,
             default: -Infinity
         }
     },
@@ -53,12 +58,12 @@ export default defineComponent({
         const lastNumericValueSet = ref<null|number>(null);
         const textValue = ref("");
 
-        const errorTooltipProps: ToolTipSettings = {
+        const tooltipProps = ref<ToolTipSettings>({
             content: "",
             variant: "error",
             placement: "right",
             trigger: "manual"
-        };
+        });
 
         const formatTextValue = (blur?: boolean) => {
             // display value with thousands formats
@@ -69,8 +74,72 @@ export default defineComponent({
             }
 
             if (blur) {
-                errorTooltipProps.content = "";
+                // wrap tooltip props update with update to input box
+                // as the v-tooltip directive needs an update to actually
+                // hide the tooltip
+                textValue.value = `${textValue.value} `;
+                tooltipProps.value.content = "";
+                textValue.value = textValue.value.trim();
             }
+        };
+
+        const setMinTooltip = (
+            min: number,
+            msg: string | undefined = undefined,
+            variant: ToolTipSettings["variant"] = "error"
+        ) => {
+            const defaultMsg = (min === 0)
+                ? "Please enter a non-negative number"
+                : `Please enter a value no less than ${min}`;
+            tooltipProps.value.content = msg || defaultMsg;
+            tooltipProps.value.variant = variant;
+        };
+
+        const setMaxTooltip = (
+            max: number,
+            msg: string | undefined = undefined,
+            variant: ToolTipSettings["variant"] = "error"
+        ) => {
+            const defaultMsg = `Please enter a value no greater than ${max}`;
+            tooltipProps.value.content = msg || defaultMsg;
+            tooltipProps.value.variant = variant;
+        };
+
+        const boundValidation = (numeric: number) => {
+            if (typeof props.maxAllowed === "number" && numeric > props.maxAllowed) {
+                setMaxTooltip(props.maxAllowed);
+                return props.maxAllowed;
+            }
+
+            if (typeof props.minAllowed === "number" && numeric < props.minAllowed) {
+                setMinTooltip(props.minAllowed);
+                return props.minAllowed;
+            }
+
+            if (typeof props.maxAllowed === "object") {
+                const { error, warning } = props.maxAllowed;
+                if (numeric > error.number) {
+                    setMaxTooltip(error.number, error.message);
+                    return error.number;
+                } if (numeric > warning.number) {
+                    setMaxTooltip(warning.number, warning.message, "warning");
+                    return numeric;
+                }
+            }
+
+            if (typeof props.minAllowed === "object") {
+                const { error, warning } = props.minAllowed;
+                if (numeric < error.number) {
+                    setMaxTooltip(error.number, error.message);
+                    return error.number;
+                } if (numeric < warning.number) {
+                    setMaxTooltip(warning.number, warning.message, "warning");
+                    return numeric;
+                }
+            }
+
+            tooltipProps.value.content = "";
+            return numeric;
         };
 
         const updateValue = (event: Event) => {
@@ -92,22 +161,7 @@ export default defineComponent({
             const cleanedValue = newVal.replace(/,/g, "");
             const numeric = parseFloat(cleanedValue);
             if (!Number.isNaN(numeric)) {
-                let validatedNumeric: number;
-
-                // min/max validation
-                if (numeric > props.maxAllowed) {
-                    validatedNumeric = props.maxAllowed;
-                    errorTooltipProps.content = `Please enter a value no greater than ${props.maxAllowed}`;
-                } else if (numeric < props.minAllowed) {
-                    validatedNumeric = props.minAllowed;
-                    errorTooltipProps.content = (props.minAllowed === 0)
-                        ? "Please enter a non-negative number"
-                        : `Please enter a value no less than ${props.minAllowed}`;
-                } else {
-                    validatedNumeric = numeric;
-                    errorTooltipProps.content = "";
-                }
-
+                const validatedNumeric = boundValidation(numeric);
                 lastNumericValueSet.value = validatedNumeric;
                 emit("update", validatedNumeric);
             } else if (props.placeholder) {
@@ -127,7 +181,7 @@ export default defineComponent({
             textValue,
             updateValue,
             formatTextValue,
-            errorTooltipProps
+            tooltipProps
         };
     }
 });

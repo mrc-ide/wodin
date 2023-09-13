@@ -105,6 +105,24 @@ describe("tooltip directive", () => {
         expect(tooltipClick._config.title).toBe("hey");
     });
 
+    it("disposes and creates new tooltip when variant is changed", async () => {
+        const wrapper = mountTemplate("hello",
+            true,
+            { content: "hey", variant: "warning" },
+            { content: "hey", variant: "success" });
+        const div = wrapper.find("div");
+        const tooltipInstance = Tooltip.getInstance(div.element) as any;
+        expect(tooltipInstance._config.title).toBe("hey");
+        expect(tooltipInstance._config.customClass).toBe("tooltip-success");
+        const spyDispose = jest.spyOn(tooltipInstance, "dispose");
+        await div.trigger("click");
+        const divClick = wrapper.find("div");
+        const tooltipClick = Tooltip.getInstance(divClick.element) as any;
+        expect(spyDispose).toBeCalledTimes(1);
+        expect(tooltipClick._config.title).toBe("hey");
+        expect(tooltipClick._config.customClass).toBe("tooltip-warning");
+    });
+
     it("does not have title if no content after update", async () => {
         const wrapper = mountTemplate("hello",
             true,

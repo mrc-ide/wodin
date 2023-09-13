@@ -22,7 +22,8 @@ describe("RunOptions", () => {
             run: {
                 namespaced: true,
                 state: {
-                    endTime: 99
+                    endTime: 99,
+                    numberOfReplicates: 10
                 },
                 mutations: {
                     SetEndTime: mockRunSetEndTime,
@@ -96,6 +97,26 @@ describe("RunOptions", () => {
         expect(mockRunSetEndTime.mock.calls[0][1]).toBe(101);
         expect(mockSensitivitySetEndTime).toHaveBeenCalledTimes(1);
         expect(mockSensitivitySetEndTime.mock.calls[0][1]).toBe(101);
+    });
+
+    it("renders number of replicates correctly", () => {
+        const wrapper = getWrapper(0, {
+            appType: `${AppType.Stochastic}`,
+            config: {
+                maxReplicatesDisplay: 50,
+                maxReplicatesRun: 1000
+            }
+        });
+        const noOfReplicates = wrapper.find("#number-of-replicates").findComponent(NumericInput);
+        expect(noOfReplicates.props("value")).toBe(10);
+        expect(noOfReplicates.props("minAllowed")).toBe(0);
+        expect(noOfReplicates.props("maxAllowed")).toStrictEqual({
+            error: { number: 1000 },
+            warning: {
+                number: 50,
+                message: "Individual traces will not be shown for values greater than 50"
+            }
+        });
     });
 
     it("can render and update number of replicates", async () => {

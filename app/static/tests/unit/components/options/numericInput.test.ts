@@ -2,13 +2,18 @@ import { mount, VueWrapper } from "@vue/test-utils";
 import { nextTick } from "vue";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
 
+export type BoundTooltip = {
+    error: { number: number, message?: string },
+    warning: { number: number, message: string }
+}
+
 const mockTooltipDirective = jest.fn();
 
 describe("NumericInput", () => {
     const getWrapper = (
         value: number | null,
-        maxAllowed = Infinity,
-        minAllowed = -Infinity,
+        maxAllowed: number | BoundTooltip = Infinity,
+        minAllowed: number | BoundTooltip = -Infinity,
         placeholder: string | undefined = undefined
     ) => {
         return mount(NumericInput, {
@@ -17,7 +22,7 @@ describe("NumericInput", () => {
                 maxAllowed,
                 minAllowed,
                 placeholder
-            },
+            } as any,
             global: {
                 directives: { tooltip: mockTooltipDirective }
             }
@@ -76,6 +81,19 @@ describe("NumericInput", () => {
         expectInputToHaveValue(wrapper, newInputValue);
     };
 
+    const expectValueAndTooltip = async (
+        wrapper: VueWrapper<any>,
+        setVal: string,
+        updateNum: number,
+        expectVal: number,
+        tooltipContent: string
+    ) => {
+        const { tooltipProps } = wrapper.vm as any;
+        await wrapper.find("input").setValue(setVal);
+        expect(wrapper.emitted("update")![updateNum]).toStrictEqual([expectVal]);
+        expect(tooltipProps.content).toBe(tooltipContent);
+    };
+
     it("emits new value on input change, and does not reformat", async () => {
         await expectEmitOnInputChange("9999", 9999);
         await expectEmitOnInputChange("0.1", 0.1);
@@ -111,7 +129,7 @@ describe("NumericInput", () => {
         expect(wrapper.emitted("update")).toBe(undefined);
     });
 
-    it("does max validation", async () => {
+    it("does max validation (number)", async () => {
         const wrapper = getWrapper(10, 10);
         await wrapper.find("input").setValue("11");
         expect(wrapper.emitted("update")![0]).toStrictEqual([10]);
@@ -119,11 +137,39 @@ describe("NumericInput", () => {
         expect(mockTooltipDirective).toHaveBeenCalledTimes(2);
     });
 
-    it("does min validation", async () => {
+    it("does max validation (array)", async () => {
+        const wrapper = getWrapper(10, {
+            error: { number: 12, message: "high tooltip" },
+            warning: { number: 10, message: "middle tooltip" }
+        });
+        await expectValueAndTooltip(wrapper, "10", 0, 10, "");
+        await expectValueAndTooltip(wrapper, "11", 1, 11, "middle tooltip");
+        await expectValueAndTooltip(wrapper, "13", 2, 12, "high tooltip");
+    });
+
+    it("does min validation (number)", async () => {
         const wrapper = getWrapper(1, 10, 2);
         await wrapper.find("input").setValue("1");
         expect(wrapper.emitted("update")![0]).toStrictEqual([2]);
         expect(mockTooltipDirective).toHaveBeenCalledTimes(2);
+    });
+
+    it("does min validation when min is 0", async () => {
+        const wrapper = getWrapper(1, Infinity, 0);
+        await wrapper.find("input").setValue("-1");
+        expect(wrapper.emitted("update")![0]).toStrictEqual([0]);
+        const { tooltipProps } = wrapper.vm as any;
+        expect(tooltipProps.content).toBe("Please enter a non-negative number");
+    });
+
+    it("does min validation (array)", async () => {
+        const wrapper = getWrapper(12, Infinity, {
+            error: { number: 10, message: "low tooltip" },
+            warning: { number: 12, message: "middle tooltip" }
+        });
+        await expectValueAndTooltip(wrapper, "12", 0, 12, "");
+        await expectValueAndTooltip(wrapper, "11", 1, 11, "middle tooltip");
+        await expectValueAndTooltip(wrapper, "9", 2, 10, "low tooltip");
     });
 
     it("formats input value on blur", async () => {

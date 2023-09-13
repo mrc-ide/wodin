@@ -82,9 +82,15 @@ export function odinToPlotly(s: OdinSeriesSet, palette: Palette, options: Partia
     );
 }
 
-export function discreteSeriesSetToPlotly(s: DiscreteSeriesSet, palette: Palette): WodinPlotData {
+export function discreteSeriesSetToPlotly(
+    s: DiscreteSeriesSet,
+    palette: Palette,
+    showIndividualTraces: boolean
+): WodinPlotData {
     const individualLegends: string[] = [];
-    return s.values.map(
+    const series = showIndividualTraces ? s.values
+        : s.values.filter((el) => el.description !== "Individual");
+    return series.map(
         (values: OdinSeriesSetValues) => {
             const isIndividual = values.description === "Individual";
             // show legend if not individual or if individual legend is not yet being shown

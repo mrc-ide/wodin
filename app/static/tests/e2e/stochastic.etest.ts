@@ -46,6 +46,38 @@ test.describe("stochastic app", () => {
         await expectSummaryValues(page, 16, "extinct", 1001, "#cc0044");
     });
 
+    test("traces are hidden if replicates are above maxReplicatesDisplay", async ({ page }) => {
+        await page.fill(":nth-match(#run-options input, 2)", "50");
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
+            "Plot is out of date: number of replicates has changed. Run model to update.", {
+                timeout
+            }
+        );
+
+        await page.click("#run-btn");
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("");
+
+        const summary = ".wodin-plot-data-summary-series";
+        expect(await page.locator(summary).count()).toBe(104);
+
+        await page.fill(":nth-match(#run-options input, 2)", "51");
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
+            "Plot is out of date: number of replicates has changed. Run model to update.", {
+                timeout
+            }
+        );
+
+        await page.click("#run-btn");
+        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("");
+
+        expect(await page.locator(summary).count()).toBe(4);
+
+        await expectSummaryValues(page, 1, "I_det", 1001, "#2e5cb8");
+        await expectSummaryValues(page, 2, "I (mean)", 1001, "#6ab74d");
+        await expectSummaryValues(page, 3, "S (mean)", 1001, "#ee9f33");
+        await expectSummaryValues(page, 4, "extinct", 1001, "#cc0044");
+    });
+
     test("can run stochastic sensitivity", async ({ page }) => {
         // Open Sensitivity tab
         await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");

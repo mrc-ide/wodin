@@ -41,7 +41,27 @@ export default {
     beforeUpdate(el: HTMLElement, binding: DirectiveBinding<string | ToolTipSettings>) {
         const { value } = binding;
 
-        const tooltip = Tooltip.getInstance(el);
+        let tooltip = Tooltip.getInstance(el);
+
+        if (typeof value !== "string" && tooltip) {
+            const variant = value?.variant || "text";
+            const oldCustomClass = (variant === "text") ? "" : `tooltip-${variant}`;
+
+            const isVariantSame = (tooltip as any)._config.customClass === oldCustomClass;
+            if (!isVariantSame) {
+                tooltip.dispose();
+
+                tooltip = new Tooltip(el, {
+                    title: value?.content || "",
+                    placement: value?.placement || "top",
+                    trigger: value?.trigger || "hover",
+                    customClass: (variant === "text") ? "" : `tooltip-${variant}`,
+                    animation: false,
+                    delay: { show: value?.delayMs || 0, hide: 0 }
+                });
+            }
+        }
+
         const content = (typeof value === "string")
             ? value
             : value?.content || "";
