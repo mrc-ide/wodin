@@ -144,6 +144,10 @@ export default defineComponent({
             type: Boolean,
             required: true
         },
+        paramNames: {s
+            type: Array as PropType<string[]>,
+            required: true
+        },
         paramSettings: {
             type: Object as PropType<SensitivityParameterSettings>,
             required: false
@@ -158,10 +162,6 @@ export default defineComponent({
     setup(props, { emit }) {
         const store = useStore();
         const settingsInternal = reactive({} as SensitivityParameterSettings);
-
-        const paramNames = computed(() => {
-            return store.state.run.parameterValues ? Object.keys(store.state.run.parameterValues) : [];
-        });
 
         const scaleValues = Object.keys(SensitivityScaleType);
         const variationTypeValues = Object.keys(SensitivityVariationType);
