@@ -427,4 +427,41 @@ describe("WodinPlot", () => {
         expect(mockPlotlyNewPlot).toBeCalledTimes(0);
         expect(mockOn).toBeCalledTimes(0);
     });
+
+    it("re-draws plot if yaxis graph setting toggled", async () => {
+        const wrapper = getWrapper();
+        const mockOn = mockPlotElementOn(wrapper);
+
+        await wrapper.setProps({ redrawWatches: [{} as any] });
+        expect(mockPlotDataFn).toBeCalledTimes(1);
+        expect(mockPlotlyNewPlot).toBeCalledTimes(1);
+        expect(mockOn).toBeCalledTimes(1);
+
+        const store = (wrapper.vm as any).$store;
+        store.state.graphSettings.logScaleYAxis = true;
+        await nextTick();
+
+        expect(mockPlotDataFn).toBeCalledTimes(2);
+        expect(mockPlotlyNewPlot).toBeCalledTimes(2);
+        expect(mockOn).toBeCalledTimes(2);
+    });
+
+    it("does not re-draw plot if plot is faded (yaxis toggle)", async () => {
+        const wrapper = getWrapper();
+        const mockOn = mockPlotElementOn(wrapper);
+
+        await wrapper.setProps({ redrawWatches: [{} as any] });
+        expect(mockPlotDataFn).toBeCalledTimes(1);
+        expect(mockPlotlyNewPlot).toBeCalledTimes(1);
+        expect(mockOn).toBeCalledTimes(1);
+
+        await wrapper.setProps({ fadePlot: true });
+        const store = (wrapper.vm as any).$store;
+        store.state.graphSettings.logScaleYAxis = true;
+        await nextTick();
+
+        expect(mockPlotDataFn).toBeCalledTimes(1);
+        expect(mockPlotlyNewPlot).toBeCalledTimes(1);
+        expect(mockOn).toBeCalledTimes(1);
+    });
 });
