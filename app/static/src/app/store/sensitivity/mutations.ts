@@ -1,5 +1,6 @@
 import { MutationTree } from "vuex";
 import {
+    BaseSensitivityState,
     SensitivityParameterSettings,
     SensitivityPlotExtreme,
     SensitivityPlotType,
@@ -9,26 +10,56 @@ import {
 import { OdinSensitivityResult } from "../../types/wrapperTypes";
 import { Dict } from "../../types/utilTypes";
 
+export enum BaseSensitivityMutation {
+    SetRunning = "SetRunning",
+    SetResult = "SetResult",
+    SetUpdateRequired = "SetUpdateRequired",
+    SetUserSummaryDownloadFileName = "SetUserSummaryDownloadFileName",
+    SetDownloading = "SetDownloading",
+}
+
 export enum SensitivityMutation {
     SetParameterToVary = "SetParameterToVary",
     SetParamSettings = "SetParamSettings",
-    SetResult = "SetResult",
     SetEndTime = "SetEndTime",
-    SetUpdateRequired = "SetUpdateRequired",
     SetPlotType = "SetPlotType",
     SetPlotExtreme = "SetPlotExtreme",
     SetPlotTime = "SetPlotTime",
-    SetRunning = "SetRunning",
     SetLoading = "SetLoading",
-    SetDownloading = "SetDownloading",
-    SetUserSummaryDownloadFileName = "SetUserSummaryDownloadFileName",
     ParameterSetAdded = "ParameterSetAdded",
     SetParameterSetResults = "SetParameterSetResults",
     ParameterSetDeleted = "ParameterSetDeleted",
     ParameterSetSwapped = "ParameterSetSwapped"
 }
 
+export const baseSensitivityMutations: MutationTree<BaseSensitivityState> = {
+    [BaseSensitivityMutation.SetResult](state: BaseSensitivityState, payload: OdinSensitivityResult) {
+        state.result = payload;
+    },
+
+    [BaseSensitivityMutation.SetUpdateRequired](state: BaseSensitivityState,
+        payload: Partial<SensitivityUpdateRequiredReasons>) {
+        state.sensitivityUpdateRequired = {
+            ...state.sensitivityUpdateRequired,
+            ...payload
+        };
+    },
+
+    [BaseSensitivityMutation.SetRunning](state: BaseSensitivityState, payload: boolean) {
+        state.running = payload;
+    },
+
+    [BaseSensitivityMutation.SetUserSummaryDownloadFileName](state: BaseSensitivityState, payload: string) {
+        state.userSummaryDownloadFileName = payload;
+    },
+
+    [BaseSensitivityMutation.SetDownloading](state: BaseSensitivityState, payload: boolean) {
+        state.downloading = payload;
+    }
+};
+
 export const mutations: MutationTree<SensitivityState> = {
+    ...baseSensitivityMutations,
     [SensitivityMutation.SetParameterToVary](state: SensitivityState, payload: string | null) {
         state.paramSettings.parameterToVary = payload;
         state.sensitivityUpdateRequired = {
@@ -42,18 +73,6 @@ export const mutations: MutationTree<SensitivityState> = {
         state.sensitivityUpdateRequired = {
             ...state.sensitivityUpdateRequired,
             sensitivityOptionsChanged: true
-        };
-    },
-
-    [SensitivityMutation.SetResult](state: SensitivityState, payload: OdinSensitivityResult) {
-        state.result = payload;
-    },
-
-    [SensitivityMutation.SetUpdateRequired](state: SensitivityState,
-        payload: Partial<SensitivityUpdateRequiredReasons>) {
-        state.sensitivityUpdateRequired = {
-            ...state.sensitivityUpdateRequired,
-            ...payload
         };
     },
 
@@ -77,20 +96,8 @@ export const mutations: MutationTree<SensitivityState> = {
         state.plotSettings.time = payload;
     },
 
-    [SensitivityMutation.SetRunning](state: SensitivityState, payload: boolean) {
-        state.running = payload;
-    },
-
-    [SensitivityMutation.SetLoading](state: SensitivityState, payload: boolean) {
+    [SensitivityMutation.SetLoading](state: BaseSensitivityState, payload: boolean) {
         state.loading = payload;
-    },
-
-    [SensitivityMutation.SetDownloading](state: SensitivityState, payload: boolean) {
-        state.downloading = payload;
-    },
-
-    [SensitivityMutation.SetUserSummaryDownloadFileName](state: SensitivityState, payload: string) {
-        state.userSummaryDownloadFileName = payload;
     },
 
     [SensitivityMutation.ParameterSetAdded](state: SensitivityState, payload: string) {

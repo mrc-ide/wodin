@@ -1,6 +1,6 @@
 <template>
   <div class="wodin-plot-container" :style="plotStyle">
-    <div class="plot" ref="plot">
+    <div class="plot" ref="plot" id="plot">
     </div>
     <div v-if="!hasPlotData" class="plot-placeholder">
       {{ placeholderMessage }}
@@ -17,12 +17,14 @@ import {
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
 import {
-    newPlot, react, PlotRelayoutEvent, Plots, AxisType
+    newPlot, react, PlotRelayoutEvent, Plots, AxisType, Layout, Config
 } from "plotly.js-basic-dist-min";
 import {
     WodinPlotData, fadePlotStyle, margin, config
 } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
+import { GraphSettingsMutation } from "../store/graphSettings/mutations";
+import { YAxisRange } from "../store/graphSettings/state";
 
 export default defineComponent({
     name: "WodinPlot",
@@ -64,6 +66,16 @@ export default defineComponent({
         const hasPlotData = computed(() => !!(baseData.value?.length));
 
         const yAxisType = computed(() => (store.state.graphSettings.logScaleYAxis ? "log" : "linear" as AxisType));
+        const lockYAxis = computed(() => store.state.graphSettings.lockYAxis);
+        const yAxisRange = computed(() => store.state.graphSettings.yAxisRange as YAxisRange);
+
+        const updateAxesRange = () => {
+            const plotLayout = (plot.value as any).layout;
+            const yRange = plotLayout.yaxis?.range;
+            if (plotLayout) {
+                store.commit(`graphSettings/${GraphSettingsMutation.SetYAxisRange}`, yRange);
+            }
+        };
 
         const relayout = async (event: PlotRelayoutEvent) => {
             let data;
@@ -78,7 +90,7 @@ export default defineComponent({
                 data = props.plotData(t0, t1, nPoints);
             }
 
-            const layout = {
+            const layout: Partial<Layout> = {
                 margin,
                 uirevision: "true",
                 xaxis: { title: "Time", autorange: true },
@@ -97,13 +109,13 @@ export default defineComponent({
 
         let resizeObserver: null | ResizeObserver = null;
 
-        const drawPlot = () => {
+        const drawPlot = (toggleLogScale = false) => {
             if (props.redrawWatches.length) {
                 baseData.value = props.plotData(startTime, props.endTime, nPoints);
 
                 if (hasPlotData.value) {
                     const el = plot.value as unknown;
-                    const layout = {
+                    const layout: Partial<Layout> = {
                         margin,
                         yaxis: {
                             type: yAxisType.value
@@ -111,7 +123,19 @@ export default defineComponent({
                         xaxis: { title: "Time" }
                     };
 
-                    newPlot(el as HTMLElement, baseData.value, layout, config);
+                    const configCopy = { ...config } as Partial<Config>;
+
+                    if (lockYAxis.value && !toggleLogScale) {
+                        layout.yaxis!.range = [...yAxisRange.value];
+                        layout.yaxis!.autorange = false;
+                    }
+
+                    newPlot(el as HTMLElement, baseData.value, layout, configCopy);
+
+                    if (!lockYAxis.value || toggleLogScale) {
+                        updateAxesRange();
+                    }
+
                     if (props.recalculateOnRelayout) {
                         (el as EventEmitter).on("plotly_relayout", relayout);
                     }
@@ -123,9 +147,14 @@ export default defineComponent({
 
         onMounted(drawPlot);
 
-        watch([() => props.redrawWatches, yAxisType], () => {
+        watch([() => props.redrawWatches, lockYAxis], () => {
             if (plotStyle.value !== fadePlotStyle) {
-                drawPlot();
+                drawPlot()
+            }
+        });
+        watch(yAxisType, () => {
+            if (plotStyle.value !== fadePlotStyle) {
+                drawPlot(true)
             }
         });
 

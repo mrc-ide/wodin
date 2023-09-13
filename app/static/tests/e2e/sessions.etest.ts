@@ -23,7 +23,7 @@ const enterSessionLabel = async (page: Page, dialogId: string, newLabel: string)
 test.describe("Sessions tests", () => {
     const { timeout } = PlaywrightConfig;
 
-    test("can navigate to Sessions page from navbar, and load a session", async () => {
+    test("can use Sessions page", async () => {
         // We need to use a browser with persistent context instead of the default incognito browser so that
         // we can use the session ids in local storage
         const userDataDir = os.tmpdir();
@@ -83,7 +83,8 @@ test.describe("Sessions tests", () => {
         await expect(await page.innerText(":nth-match(.session-col-header, 2)")).toBe("Label");
         await expect(await page.innerText(":nth-match(.session-col-header, 3)")).toBe("Edit Label");
         await expect(await page.innerText(":nth-match(.session-col-header, 4)")).toBe("Load");
-        await expect(await page.innerText(":nth-match(.session-col-header, 5)")).toBe("Shareable Link");
+        await expect(await page.innerText(":nth-match(.session-col-header, 5)")).toBe("Delete");
+        await expect(await page.innerText(":nth-match(.session-col-header, 6)")).toBe("Shareable Link");
 
         await expect(await page.innerText(".session-label")).toBe("--no label--");
 
@@ -184,6 +185,18 @@ test.describe("Sessions tests", () => {
         // Expect to be able to navigate to the share link we copied earlier - check it has some rehydrated data
         await page.goto(copiedLinkText);
         await expect(await page.innerText("#data-upload-success")).toBe(" Uploaded 32 rows and 2 columns");
+
+        // can delete session
+        await page.goto(`${appUrl}/sessions`);
+        await expect(await page.locator("#app .container .row").count()).toBeGreaterThan(3);
+        await page.locator(":nth-match(#app .container .row, 4) .session-edit-label i").click();
+        await enterSessionLabel(page, "page-edit-session-label", "delete me");
+
+        await expect(await page.locator(".row:has-text('delete me')")).toBeVisible({ timeout });
+        await page.locator(".row:has-text('delete me') .session-delete i").click();
+        await expect(await page.locator("#confirm-yes")).toBeVisible();
+        await page.click("#confirm-yes");
+        await expect(await page.locator("#app")).not.toContainText("delete me");
 
         await browser.close();
     });

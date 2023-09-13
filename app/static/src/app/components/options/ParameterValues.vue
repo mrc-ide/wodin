@@ -40,7 +40,7 @@ import { Dict } from "../../types/utilTypes";
 import { AppType, VisualisationTab } from "../../store/appState/state";
 import { ModelFitMutation } from "../../store/modelFit/mutations";
 import userMessages from "../../userMessages";
-import { SensitivityMutation } from "../../store/sensitivity/mutations";
+import { BaseSensitivityMutation } from "../../store/sensitivity/mutations";
 import { OdinParameter, OdinUserType } from "../../types/responseTypes";
 
 export default defineComponent({
@@ -77,10 +77,14 @@ export default defineComponent({
 
         const updateValue = (newValue: number, paramName: string) => {
             store.commit(`run/${RunMutation.UpdateParameterValues}`, { [paramName]: newValue });
+            const updateReason = { parameterValueChanged: true };
             if (isFit.value) {
-                store.commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { parameterValueChanged: true });
+                store.commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, updateReason);
             }
-            store.commit(`sensitivity/${SensitivityMutation.SetUpdateRequired}`, { parameterValueChanged: true });
+            store.commit(`sensitivity/${BaseSensitivityMutation.SetUpdateRequired}`, updateReason);
+            if (store.state.config?.multiSensitivity) {
+                store.commit(`multiSensitivity/${BaseSensitivityMutation.SetUpdateRequired}`, updateReason);
+            }
         };
 
         const checkBoxChange = (paramName: string, event: Event) => {

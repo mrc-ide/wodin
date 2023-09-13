@@ -29,7 +29,9 @@ import { AdvancedComponentType } from "../../store/run/state";
 import { RunMutation } from "../../store/run/mutations";
 import { AdvancedOptions } from "../../types/responseTypes";
 import TagInput from "./TagInput.vue";
-import { AppState } from "../../store/appState/state";
+import { AppState, AppType } from "../../store/appState/state";
+import { ModelFitMutation } from "../../store/modelFit/mutations";
+import { BaseSensitivityMutation } from "../../store/sensitivity/mutations";
 
 export default defineComponent({
     components: {
@@ -41,9 +43,18 @@ export default defineComponent({
         const store = useStore<AppState>();
 
         const advancedSettings = computed(() => store.state.run.advancedSettings);
+        const isFit = computed(() => store.state.appType === AppType.Fit);
 
         const updateOption = (newVal: number | null | [number|null, number|null], option: AdvancedOptions) => {
             store.commit(`run/${RunMutation.UpdateAdvancedSettings}`, { option, newVal });
+            if (isFit.value) {
+                store.commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { advancedSettingsChanged: true });
+            }
+            store.commit(`sensitivity/${BaseSensitivityMutation.SetUpdateRequired}`, { advancedSettingsChanged: true });
+            if (store.state.config?.multiSensitivity) {
+                store.commit(`multiSensitivity/${BaseSensitivityMutation.SetUpdateRequired}`,
+                    { advancedSettingsChanged: true });
+            }
         };
 
         return {

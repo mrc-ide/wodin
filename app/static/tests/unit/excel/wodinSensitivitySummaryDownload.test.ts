@@ -8,6 +8,7 @@ const xValues = [
     { beta: 1.2 }
 ];
 const mockBatch = {
+    successfulVaryingParams: xValues,
     valueAtTime: jest.fn().mockImplementation(() => {
         return {
             x: xValues,
@@ -27,36 +28,66 @@ const mockBatch = {
     })
 };
 
+const xValuesMulti = [
+    { beta: 1, N: 100 },
+    { beta: 1, N: 1000 },
+    { beta: 2, N: 100 },
+    { beta: 2, N: 1000 }
+];
+
+const mockBatchMulti = {
+    successfulVaryingParams: xValuesMulti,
+    valueAtTime: jest.fn().mockImplementation(() => {
+        return {
+            x: xValuesMulti,
+            values: [
+                { name: "S", y: [10, 20, 30, 40] },
+                { name: "I", y: [50, 60, 70, 80] }
+            ]
+        };
+    }),
+    extreme: jest.fn().mockImplementation((extremeType: string) => {
+        return {
+            x: xValuesMulti,
+            values: [
+                { name: extremeType, y: [11, 22, 33, 44] }
+            ]
+        };
+    })
+};
+
+const plotSettings = {
+    time: 50
+};
+
+const parameterValues = {
+    beta: 1.1,
+    N: 1000,
+    D: 3
+};
+
 describe("WodinSensitivitySummaryDownload", () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
-    it("downloads expected workbook", () => {
+    it("downloads expected workbook for single varying parameter", () => {
+        const result = {
+            batch: mockBatch
+        } as any;
         const rootState = mockBasicState({
             sensitivity: mockSensitivityState({
-                paramSettings: {
-                    parameterToVary: "beta"
-                },
-                plotSettings: {
-                    time: 50
-                },
-                result: {
-                    batch: mockBatch
-                }
+                plotSettings,
+                result
             } as any),
             run: mockRunState({
-                parameterValues: {
-                    beta: 1.1,
-                    N: 1000,
-                    D: 3
-                }
+                parameterValues
             })
         });
         const commit = jest.fn();
         const context = { rootState, commit } as any;
         const sut = new WodinSensitivitySummaryDownload(context, "test.xlsx");
-        sut.download();
+        sut.download(result);
 
         expect(mockBookNew).toHaveBeenCalledTimes(1);
         expect(mockBatch.valueAtTime).toHaveBeenCalledWith(50);
@@ -114,6 +145,103 @@ describe("WodinSensitivitySummaryDownload", () => {
         expect(mockBookAppendSheet.mock.calls[5][1]).toStrictEqual({
             data: [
                 { name: "N", value: 1000 },
+                { name: "D", value: 3 }
+            ],
+            type: "json"
+        });
+        expect(mockBookAppendSheet.mock.calls[5][2]).toStrictEqual("Parameters");
+
+        expect(mockWriteFile.mock.calls[0][1]).toBe("test.xlsx");
+    });
+
+    it("downloads expected workbook for multiple varying parameter", () => {
+        const result = {
+            batch: mockBatchMulti
+        } as any;
+        const rootState = mockBasicState({
+            sensitivity: mockSensitivityState({
+                plotSettings
+            } as any),
+            multiSensitivity: {
+                result
+            } as any,
+            run: mockRunState({
+                parameterValues
+            })
+        });
+        const commit = jest.fn();
+        const context = { rootState, commit } as any;
+        const sut = new WodinSensitivitySummaryDownload(context, "test.xlsx");
+        sut.download(result);
+
+        expect(mockBookNew).toHaveBeenCalledTimes(1);
+        expect(mockBatchMulti.valueAtTime).toHaveBeenCalledWith(50);
+
+        expect(mockBookAppendSheet.mock.calls[0][1]).toStrictEqual({
+            data: [
+                {
+                    beta: 1, N: 100, S: 10, I: 50
+                },
+                {
+                    beta: 1, N: 1000, S: 20, I: 60
+                },
+                {
+                    beta: 2, N: 100, S: 30, I: 70
+                },
+                {
+                    beta: 2, N: 1000, S: 40, I: 80
+                }
+            ],
+            type: "json"
+        });
+        expect(mockBookAppendSheet.mock.calls[0][2]).toStrictEqual("ValueAtTime50");
+
+        expect(mockBookAppendSheet.mock.calls[1][1]).toStrictEqual({
+            data: [
+                { beta: 1, N: 100, yMin: 11 },
+                { beta: 1, N: 1000, yMin: 22 },
+                { beta: 2, N: 100, yMin: 33 },
+                { beta: 2, N: 1000, yMin: 44 }
+            ],
+            type: "json"
+        });
+        expect(mockBookAppendSheet.mock.calls[1][2]).toStrictEqual("ValueAtMin");
+
+        expect(mockBookAppendSheet.mock.calls[2][1]).toStrictEqual({
+            data: [
+                { beta: 1, N: 100, yMax: 11 },
+                { beta: 1, N: 1000, yMax: 22 },
+                { beta: 2, N: 100, yMax: 33 },
+                { beta: 2, N: 1000, yMax: 44 }
+            ],
+            type: "json"
+        });
+        expect(mockBookAppendSheet.mock.calls[2][2]).toStrictEqual("ValueAtMax");
+
+        expect(mockBookAppendSheet.mock.calls[3][1]).toStrictEqual({
+            data: [
+                { beta: 1, N: 100, tMin: 11 },
+                { beta: 1, N: 1000, tMin: 22 },
+                { beta: 2, N: 100, tMin: 33 },
+                { beta: 2, N: 1000, tMin: 44 }
+            ],
+            type: "json"
+        });
+        expect(mockBookAppendSheet.mock.calls[3][2]).toStrictEqual("TimeAtMin");
+
+        expect(mockBookAppendSheet.mock.calls[4][1]).toStrictEqual({
+            data: [
+                { beta: 1, N: 100, tMax: 11 },
+                { beta: 1, N: 1000, tMax: 22 },
+                { beta: 2, N: 100, tMax: 33 },
+                { beta: 2, N: 1000, tMax: 44 }
+            ],
+            type: "json"
+        });
+        expect(mockBookAppendSheet.mock.calls[4][2]).toStrictEqual("TimeAtMax");
+
+        expect(mockBookAppendSheet.mock.calls[5][1]).toStrictEqual({
+            data: [
                 { name: "D", value: 3 }
             ],
             type: "json"

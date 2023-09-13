@@ -38,7 +38,8 @@ describe("Tag Input", () => {
         const wrapper = getWrapper();
         const tagsInput = wrapper.findComponent(VueTagsInput);
         (tagsInput.vm as any).$emit("on-tags-changed", ["1", "2", "p2", "p1: 1.1", "p3"]);
-        expect(wrapper.emitted("update")![0]).toStrictEqual([[1, 2, "p2", "p1"]]);
+        // one update already happens on mount
+        expect(wrapper.emitted("update")![1]).toStrictEqual([[1, 2, "p2", "p1"]]);
     });
 
     it("validate function works as expected", () => {
@@ -59,20 +60,24 @@ describe("Tag Input", () => {
         expect(tagsInput.props("tags")).toStrictEqual([]);
     });
 
-    it("emits update if paramValues change", async () => {
+    it("emits update if a param has been dropped in code on mount", async () => {
         const store = createStore();
         const wrapper = shallowMount(TagInput, {
             global: {
                 plugins: [store]
             },
             props: {
-                tags: ["1", "hey"],
+                tags: [1, "a"],
                 placeholder: []
+            },
+            computed: {
+                cleanTags() {
+                    return [1];
+                }
             }
         });
-        store.state.run.parameterValues = { a: 2 };
         await nextTick();
-        expect(wrapper.emitted("update")![0]).toStrictEqual([["1", "hey"]]);
+        expect(wrapper.emitted("update")![0]).toStrictEqual([[1]]);
     });
 
     it("renders as expected when numeric only is true", () => {

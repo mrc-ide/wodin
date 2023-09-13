@@ -168,7 +168,8 @@ describe("serialise", () => {
             parameterValueChanged: false,
             endTimeChanged: false,
             sensitivityOptionsChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         },
         plotSettings: {
             plotType: SensitivityPlotType.ValueAtTime,
@@ -228,7 +229,8 @@ describe("serialise", () => {
             dataChanged: false,
             linkChanged: true,
             parameterValueChanged: false,
-            parameterToVaryChanged: false
+            parameterToVaryChanged: false,
+            advancedSettingsChanged: false
         },
         iterations: 28,
         converged: true,
@@ -274,7 +276,11 @@ describe("serialise", () => {
         sensitivity: sensitivityState,
         multiSensitivity: mockMultiSensitivityState(),
         versions: { versions: null },
-        graphSettings: { logScaleYAxis: true },
+        graphSettings: {
+            logScaleYAxis: true,
+            lockYAxis: true,
+            yAxisRange: [1, 2]
+        },
         configured: false,
         language: langaugeState
     };
@@ -298,7 +304,11 @@ describe("serialise", () => {
         fitData: fitDataState,
         modelFit: modelFitState,
         versions: { versions: null },
-        graphSettings: { logScaleYAxis: true },
+        graphSettings: {
+            logScaleYAxis: true,
+            lockYAxis: true,
+            yAxisRange: [1, 2]
+        },
         configured: false,
         language: langaugeState
     };
@@ -359,7 +369,8 @@ describe("serialise", () => {
             parameterValueChanged: false,
             endTimeChanged: false,
             sensitivityOptionsChanged: false,
-            numberOfReplicatesChanged: false
+            numberOfReplicatesChanged: false,
+            advancedSettingsChanged: false
         },
         plotSettings: sensitivityState.plotSettings,
         result: {
@@ -377,7 +388,9 @@ describe("serialise", () => {
     };
 
     const expectedGraphSettings = {
-        logScaleYAxis: true
+        logScaleYAxis: true,
+        lockYAxis: true,
+        yAxisRange: [1, 2]
     };
 
     const expectedFitData = {
@@ -396,7 +409,8 @@ describe("serialise", () => {
             dataChanged: false,
             linkChanged: true,
             parameterValueChanged: false,
-            parameterToVaryChanged: false
+            parameterToVaryChanged: false,
+            advancedSettingsChanged: false
         },
         iterations: 28,
         converged: true,

@@ -15,7 +15,7 @@ import Vuex, { Store } from "vuex";
 import WodinPlot from "../../../src/app/components/WodinPlot.vue";
 import WodinPlotDataSummary from "../../../src/app/components/WodinPlotDataSummary.vue";
 import { BasicState } from "../../../src/app/store/basic/state";
-import { fadePlotStyle } from "../../../src/app/plot";
+import { GraphSettingsMutation } from "../../../src/app/store/graphSettings/mutations";
 
 describe("WodinPlot", () => {
     const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");
@@ -59,34 +59,57 @@ describe("WodinPlot", () => {
         placeholderMessage: "No data available"
     };
 
-    const getStore = (graphSettingsLogScaleYAxis = false) => {
+    const mockSetYAxisRange = jest.fn();
+
+    const getStore = (logScaleYAxis = false, lockYAxis = false) => {
         return new Vuex.Store<BasicState>({
-            state: {
+            modules: {
                 graphSettings: {
-                    logScaleYAxis: graphSettingsLogScaleYAxis
+                    namespaced: true,
+                    state: {
+                        logScaleYAxis,
+                        lockYAxis,
+                        yAxisRange: [10, 20]
+                    },
+                    mutations: {
+                        [GraphSettingsMutation.SetYAxisRange]: mockSetYAxisRange
+                    }
                 }
-            } as any
+            }
         });
     };
 
     const getWrapper = (props = {}, store: Store<BasicState> = getStore()) => {
+        const div = document.createElement("div");
+        div.id = "root";
+        document.body.appendChild(div);
+
         return shallowMount(WodinPlot, {
             props: { ...defaultProps, ...props },
             global: {
                 plugins: [store]
-            }
+            },
+            attachTo: "#root"
         });
+    };
+
+    const mockLayout = {
+        xaxis: { range: [3, 4] },
+        yaxis: { range: [1, 2] }
     };
 
     const mockPlotElementOn = (wrapper: VueWrapper<any>) => {
         const divElement = wrapper.find("div.plot").element;
         const mockOn = jest.fn();
         (divElement as any).on = mockOn;
+        (divElement as any).layout = mockLayout;
         return mockOn;
     };
 
     afterEach(() => {
         jest.clearAllMocks();
+        jest.restoreAllMocks();
+        mockSetYAxisRange.mockReset();
     });
 
     it("renders plot ref element", () => {
@@ -334,6 +357,35 @@ describe("WodinPlot", () => {
             xaxis: { title: "Time" },
             yaxis: { type: "log" }
         });
+    });
+
+    it("locks axes if graph setting is set", async () => {
+        const store = getStore(false, true);
+        const wrapper = getWrapper({}, store);
+        mockPlotElementOn(wrapper);
+
+        wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+        expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({
+            margin: { t: 25 },
+            xaxis: { title: "Time" },
+            yaxis: { type: "linear", autorange: false, range: [10, 20] }
+        });
+    });
+
+    it("commits SetYAxisRange on drawPlot", async () => {
+        const store = getStore(false, false);
+        const wrapper = getWrapper({}, store);
+        mockPlotElementOn(wrapper);
+
+        (wrapper.vm as any).plot = {
+            layout: mockLayout,
+            on: jest.fn()
+        };
+        await nextTick();
+        await wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+        expect(mockSetYAxisRange.mock.calls[0][1]).toStrictEqual([1, 2]);
     });
 
     it("relayout uses graph settings log scale y axis value", async () => {

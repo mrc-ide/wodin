@@ -15,74 +15,49 @@
       <span class="ms-2">{{ sensitivityProgressMsg }}</span>
     </div>
     <error-info :error="error"></error-info>
-    <div>
-      <button class="btn btn-primary" id="download-summary-btn"
-              :disabled="downloading || !canDownloadSummary"
-              @click="toggleShowDownloadSummary(true)">
-        <vue-feather size="20" class="inline-icon" type="download"></vue-feather>
-        Download summary
-      </button>
-      <div v-if="downloading" id="downloading">
-        <LoadingSpinner size="xs"></LoadingSpinner>
-        Downloading...
-      </div>
-    </div>
-    <DownloadOutput :open="showDownloadSummary"
-                    :download-type="'Sensitivity Summary'"
-                    :include-points="false"
-                    v-model:user-file-name="downloadSummaryUserFileName"
-                    @download="downloadSummary"
-                    @close="toggleShowDownloadSummary(false)"></DownloadOutput>
+    <sensitivity-summary-download :multi-sensitivity="false" :download-type="'Sensitivity Summary'">
+    </sensitivity-summary-download>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
-import VueFeather from "vue-feather";
-import DownloadOutput from "@/app/components/DownloadOutput.vue";
+import SensitivitySummaryDownload from "@/app/components/sensitivity/SensitivitySummaryDownload.vue";
 import SensitivityTracesPlot from "./SensitivityTracesPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
-import { SensitivityGetter } from "../../store/sensitivity/getters";
+import { BaseSensitivityGetter } from "../../store/sensitivity/getters";
 import { SensitivityAction } from "../../store/sensitivity/actions";
-import userMessages from "../../userMessages";
 import { SensitivityPlotType } from "../../store/sensitivity/state";
 import SensitivitySummaryPlot from "./SensitivitySummaryPlot.vue";
 import ErrorInfo from "../ErrorInfo.vue";
-import { sensitivityUpdateRequiredExplanation, verifyValidPlotSettingsTime } from "./support";
-import { anyTrue } from "../../utils";
 import LoadingSpinner from "../LoadingSpinner.vue";
-import { ModelGetter } from "../../store/model/getters";
 import LoadingButton from "../LoadingButton.vue";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
+import baseSensitivity from "../mixins/baseSensitivity";
 
 export default defineComponent({
     name: "SensitivityTab",
     components: {
-        DownloadOutput,
-        VueFeather,
         ErrorInfo,
         LoadingSpinner,
         SensitivitySummaryPlot,
         ActionRequiredMessage,
         SensitivityTracesPlot,
-        LoadingButton
+        LoadingButton,
+        SensitivitySummaryDownload
     },
     setup() {
         const store = useStore();
+        const { sensitivityPrerequisitesReady, updateMsg } = baseSensitivity(store, false);
         const namespace = "sensitivity";
 
         const running = computed(() => store.state.sensitivity.running);
         const loading = computed(() => store.state.sensitivity.loading);
 
-        const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
-
-        const showDownloadSummary = ref(false);
-
         const canRunSensitivity = computed(() => {
-            return hasRunner.value && !!store.state.model.odin
-            && !store.state.model.compileRequired
-            && !!store.getters[`${namespace}/${SensitivityGetter.batchPars}`];
+            return sensitivityPrerequisitesReady.value
+            && !!store.getters[`${namespace}/${BaseSensitivityGetter.batchPars}`];
         });
 
         const runSensitivity = () => {
@@ -97,19 +72,6 @@ export default defineComponent({
             }, 100);
         };
 
-        const toggleShowDownloadSummary = (show: boolean) => { showDownloadSummary.value = show; };
-        const downloading = computed(() => store.state.sensitivity.downloading);
-        const downloadSummaryUserFileName = computed({
-            get: () => store.state.sensitivity.userSummaryDownloadFileName,
-            set: (newVal) => {
-                store.commit(`${namespace}/${SensitivityMutation.SetUserSummaryDownloadFileName}`, newVal);
-            }
-        });
-        const downloadSummary = ((payload: { fileName: string }) => {
-            verifyValidPlotSettingsTime(store.state, store.commit);
-            store.dispatch(`${namespace}/${SensitivityAction.DownloadSummary}`, payload.fileName);
-        });
-
         const sensitivityProgressMsg = computed(() => {
             const batch = store.state.sensitivity.result?.batch;
             const finished = batch ? batch.solutions.length + batch.errors.length : 0;
@@ -117,29 +79,9 @@ export default defineComponent({
             return `Running sensitivity: finished ${finished} of ${total} runs`;
         });
 
-        const sensitivityUpdateRequired = computed(() => store.state.sensitivity.sensitivityUpdateRequired);
-        const updateMsg = computed(() => {
-            if (store.state.sensitivity.result?.batch?.solutions.length) {
-                if (store.state.model.compileRequired) {
-                    return userMessages.sensitivity.compileRequiredForUpdate;
-                }
-
-                if (!store.state.model.selectedVariables.length) {
-                    return userMessages.model.selectAVariable;
-                }
-                if (anyTrue(sensitivityUpdateRequired.value)) {
-                    return sensitivityUpdateRequiredExplanation(sensitivityUpdateRequired.value);
-                }
-            }
-            return "";
-        });
-
         const tracesPlot = computed(
             () => store.state.sensitivity.plotSettings.plotType === SensitivityPlotType.TraceOverTime
         );
-
-        // only allow download if update not required, and if we have run sensitivity
-        const canDownloadSummary = computed(() => !updateMsg.value && store.state.sensitivity.result?.batch);
 
         const error = computed(() => store.state.sensitivity.result?.error);
 
@@ -148,12 +90,6 @@ export default defineComponent({
             running,
             sensitivityProgressMsg,
             runSensitivity,
-            downloading,
-            downloadSummary,
-            downloadSummaryUserFileName,
-            canDownloadSummary,
-            showDownloadSummary,
-            toggleShowDownloadSummary,
             updateMsg,
             tracesPlot,
             error,

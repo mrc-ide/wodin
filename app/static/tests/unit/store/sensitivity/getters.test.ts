@@ -1,4 +1,4 @@
-import { getters, SensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
+import { BaseSensitivityGetter, getters, SensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
 import { mockBatchParsDisplace, mockRunState, mockSensitivityState } from "../../../mocks";
 import { SensitivityScaleType, SensitivityVariationType } from "../../../../src/app/store/sensitivity/state";
 
@@ -33,7 +33,7 @@ describe("Sensitivity getters", () => {
 
         const mockSpy = jest.spyOn(odinRunnerOde, "batchParsDisplace");
 
-        const result = getters[SensitivityGetter.batchPars](state, getters, rootState, {} as any);
+        const result = getters[BaseSensitivityGetter.batchPars](state, getters, rootState, {} as any);
         expect(result.varying).toStrictEqual([
             { name: "A", values: [1, 2, 3] }
         ]);
@@ -86,7 +86,8 @@ describe("Sensitivity getters", () => {
         parameterValueChanged: false,
         endTimeChanged: false,
         sensitivityOptionsChanged: false,
-        numberOfReplicatesChanged: false
+        numberOfReplicatesChanged: false,
+        advancedSettingsChanged: false
     };
 
     it("parameterSetSensitivityUpdateRequired is true if any reason except parameterValueChanged is true", () => {
@@ -127,6 +128,8 @@ describe("Sensitivity getters", () => {
         state = getStateWithUpdateRequiredReason("numberOfReplicatesChanged");
         expect(paramSetSensUpdateRequired(state, {}, rootState)).toBe(true);
         state = getStateWithUpdateRequiredReason("sensitivityOptionsChanged");
+        expect(paramSetSensUpdateRequired(state, {}, rootState)).toBe(true);
+        state = getStateWithUpdateRequiredReason("advancedSettingsChanged");
         expect(paramSetSensUpdateRequired(state, {}, rootState)).toBe(true);
     });
 

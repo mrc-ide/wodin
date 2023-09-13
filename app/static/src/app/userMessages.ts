@@ -1,5 +1,7 @@
 import settings from "./settings";
 
+const sensType = (multiSens: boolean) => (multiSens ? "Multi-sensitivity" : "Sensitivity");
+
 export default {
     code: {
         isValid: "Code is valid",
@@ -62,6 +64,7 @@ export default {
             linkChanged: "model-data link has changed",
             parameterValueChanged: "parameters have been updated",
             parameterToVaryChanged: "parameters to vary have been updated",
+            advancedSettingsChanged: "advanced settings have been changed",
             suffix: "Rerun fit to update"
         },
         fitRequirements: {
@@ -75,21 +78,29 @@ export default {
             needsParamsToVary: "select at least one parameter to vary (Options tab)"
         }
     },
+    multiSensitivity: {
+        runSummary: (solutionCount: number) => `${sensType(true)} run produced ${solutionCount} solutions.`,
+        updateReasons: {
+            prefix: "Status is out of date:"
+        }
+    },
     sensitivity: {
-        compileRequiredForOptions: "Please compile a valid model in order to set sensitivity options.",
-        compileRequiredForUpdate: "Model code has been updated. "
-            + "Compile code and Run Sensitivity to update.",
+        compileRequiredForOptions: (multiSens: boolean) => "Please compile a valid model in order to set "
+            + `${sensType(multiSens)} options.`,
+        compileRequiredForUpdate: (multiSens: boolean) => "Model code has been updated. "
+            + `Compile code and Run ${sensType(multiSens)} to update.`,
         invalidSettings: "Invalid settings",
-        notRunYet: "Sensitivity has not been run.",
+        notRunYet: (multiSens: boolean) => `${sensType(multiSens)} has not been run.`,
         updateReasons: {
             prefix: "Plot is out of date:",
             modelChanged: "model code has been recompiled",
             parameterValueChanged: "parameters have been changed",
-            sensitivityOptionsChanged: "sensitivity options have been changed",
+            sensitivityOptionsChanged: (multiSens: boolean) => `${sensType(multiSens)} options have been changed`,
             endTimeChanged: "end time has changed",
             numberOfReplicatesChanged: "number of replicates has changed",
+            advancedSettingsChanged: "advanced settings have been changed",
             unknown: "unknown reasons, contact the administrator, as this is unexpected",
-            suffix: "Run sensitivity to update"
+            suffix: (multiSens: boolean) => `Run ${sensType(multiSens)} to update`
         }
     },
     sessions: {

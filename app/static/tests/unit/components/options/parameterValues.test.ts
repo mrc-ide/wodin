@@ -11,7 +11,7 @@ import { RunMutation, mutations as runMutations } from "../../../../src/app/stor
 import { AppType, VisualisationTab } from "../../../../src/app/store/appState/state";
 import Mock = jest.Mock;
 import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
-import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import { ModelState } from "../../../../src/app/store/model/state";
 
 const mockTooltipDirective = jest.fn();
@@ -21,11 +21,13 @@ describe("ParameterValues", () => {
         fitTabIsOpen = false,
         mockUpdateParameterValues: Mock<any, any> | null = null,
         mockSetSensitivityUpdateRequired = jest.fn(),
+        mockSetMultiSensitivityUpdateRequired = jest.fn(),
         mockSetFitUpdateRequired = jest.fn(),
         paramsToVary: string[] = [],
         mockSetParamsToVary = jest.fn(),
         modelState: Partial<ModelState> = {},
-        appType: AppType = AppType.Fit
+        appType: AppType = AppType.Fit,
+        multiSensitivityEnabled = false
     ) => {
         // Use mock or real mutations
         const storeMutations = mockUpdateParameterValues
@@ -34,6 +36,9 @@ describe("ParameterValues", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 appType,
+                config: {
+                    multiSensitivity: multiSensitivityEnabled
+                },
                 openVisualisationTab: fitTabIsOpen ? VisualisationTab.Fit : VisualisationTab.Run
             } as any,
             modules: {
@@ -59,7 +64,13 @@ describe("ParameterValues", () => {
                 sensitivity: {
                     namespaced: true,
                     mutations: {
-                        [SensitivityMutation.SetUpdateRequired]: mockSetSensitivityUpdateRequired
+                        [BaseSensitivityMutation.SetUpdateRequired]: mockSetSensitivityUpdateRequired
+                    }
+                },
+                multiSensitivity: {
+                    namespaced: true,
+                    mutations: {
+                        [BaseSensitivityMutation.SetUpdateRequired]: mockSetMultiSensitivityUpdateRequired
                     }
                 }
             }
@@ -96,7 +107,7 @@ describe("ParameterValues", () => {
     });
 
     it("renders as expected when fit tab is open", () => {
-        const wrapper = getWrapper(getStore(true, null, jest.fn(), jest.fn(), ["param1"]));
+        const wrapper = getWrapper(getStore(true, null, jest.fn(), jest.fn(), jest.fn(), ["param1"]));
         const rows = wrapper.findAll("div.row");
 
         const p1 = rows.at(0)!;
@@ -116,7 +127,7 @@ describe("ParameterValues", () => {
     });
 
     it("shows select param to vary message if fit tab is open and none are selected", () => {
-        const wrapper = getWrapper(getStore(true, null, jest.fn(), jest.fn(), []));
+        const wrapper = getWrapper(getStore(true, null, jest.fn(), jest.fn(), jest.fn(), []));
         expect(wrapper.find("#select-param-msg").text()).toBe(
             "Please select at least one parameter to vary during model fit."
         );
@@ -137,6 +148,7 @@ describe("ParameterValues", () => {
         const wrapper = getWrapper(getStore(
             false,
             mockUpdateParameterValues,
+            jest.fn(),
             jest.fn(),
             jest.fn(),
             [],
@@ -188,6 +200,7 @@ describe("ParameterValues", () => {
             mockUpdateParameterValues,
             jest.fn(),
             jest.fn(),
+            jest.fn(),
             [],
             jest.fn(),
             modelState
@@ -200,15 +213,37 @@ describe("ParameterValues", () => {
     it("commits parameter value change", async () => {
         const mockUpdateParameterValues = jest.fn();
         const mockSetSensitivityUpdateRequired = jest.fn();
+        const mockSetMultiSensitivityUpdateRequired = jest.fn();
         const mockSetFitUpdateRequired = jest.fn();
         const wrapper = getWrapper(getStore(false, mockUpdateParameterValues, mockSetSensitivityUpdateRequired,
-            mockSetFitUpdateRequired));
+            mockSetMultiSensitivityUpdateRequired, mockSetFitUpdateRequired));
         const input2 = wrapper.findAllComponents(NumericInput).at(1)!;
         await input2.vm.$emit("update", 3.3);
         expect(mockUpdateParameterValues).toHaveBeenCalledTimes(1);
         expect(mockUpdateParameterValues.mock.calls[0][1]).toStrictEqual({ param2: 3.3 });
         expect(mockSetSensitivityUpdateRequired).toHaveBeenCalledTimes(1);
         expect(mockSetSensitivityUpdateRequired.mock.calls[0][1]).toStrictEqual({ parameterValueChanged: true });
+        expect(mockSetMultiSensitivityUpdateRequired).not.toHaveBeenCalled();
+        expect(mockSetFitUpdateRequired).toHaveBeenCalledTimes(1);
+        expect(mockSetFitUpdateRequired.mock.calls[0][1]).toStrictEqual({ parameterValueChanged: true });
+    });
+
+    it("parameter value change set multiSensitivity update required when multiSensitivity is enabled", async () => {
+        const mockUpdateParameterValues = jest.fn();
+        const mockSetSensitivityUpdateRequired = jest.fn();
+        const mockSetMultiSensitivityUpdateRequired = jest.fn();
+        const mockSetFitUpdateRequired = jest.fn();
+        const store = getStore(false, mockUpdateParameterValues, mockSetSensitivityUpdateRequired,
+            mockSetMultiSensitivityUpdateRequired, mockSetFitUpdateRequired, [], jest.fn(), {},
+            AppType.Fit, true);
+        const wrapper = getWrapper(store);
+        const input2 = wrapper.findAllComponents(NumericInput).at(1)!;
+        await input2.vm.$emit("update", 3.3);
+        expect(mockUpdateParameterValues).toHaveBeenCalledTimes(1);
+        expect(mockSetSensitivityUpdateRequired).toHaveBeenCalledTimes(1);
+        expect(mockSetSensitivityUpdateRequired.mock.calls[0][1]).toStrictEqual({ parameterValueChanged: true });
+        expect(mockSetMultiSensitivityUpdateRequired).toHaveBeenCalledTimes(1);
+        expect(mockSetMultiSensitivityUpdateRequired.mock.calls[0][1]).toStrictEqual({ parameterValueChanged: true });
         expect(mockSetFitUpdateRequired).toHaveBeenCalledTimes(1);
         expect(mockSetFitUpdateRequired.mock.calls[0][1]).toStrictEqual({ parameterValueChanged: true });
     });
@@ -218,7 +253,7 @@ describe("ParameterValues", () => {
         const mockSetSensitivityUpdateRequired = jest.fn();
         const mockSetFitUpdateRequired = jest.fn();
         const store = getStore(false, mockUpdateParameterValues, mockSetSensitivityUpdateRequired,
-            mockSetFitUpdateRequired, [], jest.fn(), {}, AppType.Basic);
+            jest.fn(), mockSetFitUpdateRequired, [], jest.fn(), {}, AppType.Basic);
         const wrapper = getWrapper(store);
         const input2 = wrapper.findAllComponents(NumericInput).at(1)!;
         await input2.vm.$emit("update", 3.3);
@@ -246,7 +281,8 @@ describe("ParameterValues", () => {
     it("updates params to vary when checkbox is checked", async () => {
         const mockSetParamsToVary = jest.fn();
         const mockSetFitUpdateRequired = jest.fn();
-        const store = getStore(true, null, jest.fn(), mockSetFitUpdateRequired, ["param1"], mockSetParamsToVary);
+        const store = getStore(true, null, jest.fn(), jest.fn(), mockSetFitUpdateRequired,
+            ["param1"], mockSetParamsToVary);
         const wrapper = getWrapper(store);
         const row2 = wrapper.findAll("div.row").at(1)!;
         await row2.find("input.vary-param-check").setValue(true);
@@ -259,7 +295,8 @@ describe("ParameterValues", () => {
     it("updates params to vary when checkbox is unchecked", async () => {
         const mockSetParamsToVary = jest.fn();
         const mockSetFitUpdateRequired = jest.fn();
-        const store = getStore(true, null, jest.fn(), mockSetFitUpdateRequired, ["param1"], mockSetParamsToVary);
+        const store = getStore(true, null, jest.fn(), jest.fn(), mockSetFitUpdateRequired,
+            ["param1"], mockSetParamsToVary);
         const wrapper = getWrapper(store);
         const row1 = wrapper.findAll("div.row").at(0)!;
         await row1.find("input.vary-param-check").setValue(false);

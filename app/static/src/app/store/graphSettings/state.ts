@@ -1,3 +1,7 @@
+export type YAxisRange = [number, number]
+
 export interface GraphSettingsState {
-    logScaleYAxis: boolean
+    logScaleYAxis: boolean,
+    lockYAxis: boolean,
+    yAxisRange: YAxisRange
 }
