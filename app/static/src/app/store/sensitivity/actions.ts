@@ -64,7 +64,7 @@ export const runSensitivity = (
     endTime: number,
     context: ActionContext<BaseSensitivityState, AppState>,
     multiSensitivity = false
-) => {
+): void => {
     const {
         rootState, commit, dispatch, getters, rootGetters
     } = context;

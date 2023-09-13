@@ -1,15 +1,16 @@
 import {
+    SensitivityParameterSettings,
     SensitivityPlotExtreme,
     SensitivityPlotType,
     SensitivityScaleType,
-    SensitivityState,
+    SensitivityState, SensitivityUpdateRequiredReasons,
     SensitivityVariationType
 } from "./state";
 import { mutations } from "./mutations";
 import { actions } from "./actions";
 import { getters } from "./getters";
 
-export const defaultSensitivityParamSettings = () => ({
+export const defaultSensitivityParamSettings = (): SensitivityParameterSettings => ({
     parameterToVary: null,
     scaleType: SensitivityScaleType.Arithmetic,
     variationType: SensitivityVariationType.Percentage,
@@ -20,7 +21,7 @@ export const defaultSensitivityParamSettings = () => ({
     customValues: []
 });
 
-export const noSensitivityUpdateRequired = () => ({
+export const noSensitivityUpdateRequired = (): SensitivityUpdateRequiredReasons => ({
     modelChanged: false,
     parameterValueChanged: false,
     endTimeChanged: false,

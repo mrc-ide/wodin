@@ -2,6 +2,7 @@
 jest.mock("plotly.js-basic-dist-min", () => ({}));
 jest.mock("plotly.js-basic-dist-min", () => ({}));
 jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
+    // eslint-disable-next-line func-names
     return function () {
         return {
             use: jest.fn().mockReturnValue({
