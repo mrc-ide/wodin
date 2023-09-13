@@ -21,6 +21,7 @@ module.exports = {
         "arrow-body-style": "off",
         "import/prefer-default-export": "off",
         "@typescript-eslint/no-non-null-assertion": "off",
+        "no-plusplus": "off",
         "no-shadow": "off",
         "@typescript-eslint/no-shadow": ["error"],
         "no-underscore-dangle": "off",

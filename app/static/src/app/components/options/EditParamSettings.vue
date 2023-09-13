@@ -13,10 +13,12 @@
                  <label class="col-form-label">Parameter to vary</label>
                </div>
                <div class="col-6">
-                 <select v-if="paramNames.length > 1" class="form-select" v-model="settingsInternal.parameterToVary">
+                 <select v-if="paramNames.length > 1"
+                         class="form-select edit-param-select"
+                         v-model="settingsInternal.parameterToVary">
                    <option v-for="param in paramNames" :key="param">{{param}}</option>
                  </select>
-                 <div v-else class="col-form-label">{{ settingsInternal.parameterToVary }}</div>
+                 <div v-else class="col-form-label param-name-label">{{ settingsInternal.parameterToVary }}</div>
                </div>
              </div>
             <div class="row mt-2" id="edit-variation-type">

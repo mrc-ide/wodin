@@ -1,6 +1,5 @@
 import Vuex from "vuex";
 import { mount, VueWrapper } from "@vue/test-utils";
-import { nextTick } from "vue";
 import {
     SensitivityParameterSettings,
     SensitivityScaleType,
@@ -12,7 +11,6 @@ import {
 import EditParamSettings from "../../../../src/app/components/options/EditParamSettings.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
-import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
 import { expectCloseNumericArray } from "../../../testUtils";
 import TagInput from "../../../../src/app/components/options/TagInput.vue";
@@ -61,7 +59,8 @@ describe("EditParamSettings", () => {
 
     const parameterValues = { A: 1, B: 2, C: 3 };
 
-    const getWrapper = async (paramSettings: SensitivityParameterSettings, open = true) => {
+    const getWrapper = async (paramSettings: SensitivityParameterSettings, open = true,
+        paramNames = ["A", "B", "C"]) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
@@ -86,6 +85,7 @@ describe("EditParamSettings", () => {
             },
             props: {
                 open: false,
+                paramNames,
                 paramSettings
             }
         });
@@ -118,6 +118,7 @@ describe("EditParamSettings", () => {
         expect(paramOptions.at(0)!.text()).toBe("A");
         expect(paramOptions.at(1)!.text()).toBe("B");
         expect(paramOptions.at(2)!.text()).toBe("C");
+        expect(wrapper.find("#edit-param-to-vary .param-name-label").exists()).toBe(false);
 
         expect(wrapper.find("#edit-scale-type label").text()).toBe("Scale type");
         const scaleSelect = wrapper.find("#edit-scale-type select");
@@ -294,7 +295,6 @@ describe("EditParamSettings", () => {
     });
 
     it("updates values from TagInput", async () => {
-        const mockSetParamSettings = jest.fn();
         const wrapper = await getWrapper(customSettings, true);
         const expectedValues = [-1, 0, 1];
         wrapper.findComponent(TagInput).vm.$emit("update", expectedValues);
@@ -302,10 +302,15 @@ describe("EditParamSettings", () => {
     });
 
     it("sorts custom values on update", async () => {
-        const mockSetParamSettings = jest.fn();
         const wrapper = await getWrapper(customSettings, true);
         wrapper.findComponent(TagInput).vm.$emit("update", [5, 1, 0, -2, -1]);
         await wrapper.find("#ok-settings").trigger("click");
         expect((wrapper.emitted("update")![0] as any)[0].customValues).toStrictEqual([-2, -1, 0, 1, 5]);
+    });
+
+    it("renders parameter to vary as text rather than select if only one option", async () => {
+        const wrapper = await getWrapper(percentSettings, true, ["B"]);
+        expect(wrapper.find("#edit-param-to-vary select").exists()).toBe(false);
+        expect(wrapper.find("#edit-param-to-vary .param-name-label").text()).toBe("B");
     });
 });
