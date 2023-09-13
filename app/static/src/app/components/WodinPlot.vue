@@ -149,12 +149,12 @@ export default defineComponent({
 
         watch([() => props.redrawWatches, lockYAxis], () => {
             if (plotStyle.value !== fadePlotStyle) {
-                drawPlot()
+                drawPlot();
             }
         });
         watch(yAxisType, () => {
             if (plotStyle.value !== fadePlotStyle) {
-                drawPlot(true)
+                drawPlot(true);
             }
         });
 
