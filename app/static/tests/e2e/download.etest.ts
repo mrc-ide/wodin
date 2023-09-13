@@ -21,6 +21,7 @@ test.describe("Download tests", () => {
     };
 
     test("can download from Run tab", async ({ page }) => {
+        console.log("start download");
         await page.click("#download-btn");
         await expect(await page.inputValue("#download-file-name input")).toContain("day2-run");
         await testCanInputFileNameAndDownload(page);

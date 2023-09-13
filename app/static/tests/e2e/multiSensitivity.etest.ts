@@ -1,11 +1,11 @@
 import { expect, Page, test } from "@playwright/test";
 import { SensitivityScaleType, SensitivityVariationType } from "../../src/app/store/sensitivity/state";
 import PlaywrightConfig from "../../playwright.config";
-import { writeCode } from "./utils";
+import { expectCanRunMultiSensitivity, writeCode } from "./utils";
+
+const { timeout } = PlaywrightConfig;
 
 test.describe("Multi-sensitivity tests", () => {
-    const { timeout } = PlaywrightConfig;
-
     test.beforeEach(async ({ page }) => {
         await page.goto("/apps/day1");
         // Open Options tab
@@ -122,22 +122,8 @@ test.describe("Multi-sensitivity tests", () => {
             SensitivityVariationType.Percentage, 5, null, null, 10, "1.900, 1.922, 1.944, ..., 2.100");
     });
 
-    const expectCanRunMultiSensitivity = async (page: Page) => {
-        // add a second varying parameter with default 10 values - should get 100 solutions from the 2 varying
-        await page.click("#add-param-settings");
-        await expect(await page.locator("#edit-param-to-vary select")).toBeVisible();
-        await page.click("#ok-settings");
-        await expect(await page.locator(".sensitivity-options-settings").count()).toBe(2);
-
-        await expect(await page.innerText(".multi-sensitivity-status")).toBe("Multi-sensitivity has not been run.");
-        await page.click("#run-multi-sens-btn");
-        await expect(await page.locator("#run-multi-sens-btn")).toBeEnabled();
-        await expect(await page.locator(".multi-sensitivity-status"))
-            .toHaveText("Multi-sensitivity run produced 100 solutions.", { timeout });
-    };
-
     test("can run multi-sensitivity", async ({ page }) => {
-        await expectCanRunMultiSensitivity(page);
+        await expectCanRunMultiSensitivity(page, timeout);
 
         // shows update required message when update code
         await page.click(":nth-match(.wodin-left .nav-tabs a, 1)");
@@ -152,7 +138,7 @@ test.describe("Multi-sensitivity tests", () => {
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
         await page.click(":nth-match(.wodin-right .nav-tabs a, 4)");
 
-        await expectCanRunMultiSensitivity(page);
+        await expectCanRunMultiSensitivity(page, timeout);
     });
 
     test("can show error in multi-sensitivity run", async ({ page }) => {

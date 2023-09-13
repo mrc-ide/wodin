@@ -149,7 +149,7 @@ export const runSensitivityOnRehydrate = (context: ActionContext<BaseSensitivity
     const { pars } = state.result!.inputs;
 
     runSensitivity(pars, endTime, context);
-}
+};
 
 export const baseSensitivityActions: ActionTree<BaseSensitivityState, AppState> = {
     [BaseSensitivityAction.ComputeNext](context, batch: Batch) {

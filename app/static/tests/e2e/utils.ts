@@ -148,3 +148,18 @@ export const expectSummaryValues = async (page: Page, idx: number, name: string,
         expect(await page.getAttribute(locator, "y-max")).toBe(yMax);
     }
 };
+
+export const expectCanRunMultiSensitivity = async (page: Page, timeout = 10000) => {
+    // add a second varying parameter with default 10 values - should get 100 solutions from the 2 varying
+    await page.click("#add-param-settings");
+    await expect(await page.locator("#edit-param-to-vary select")).toBeVisible();
+    await page.click("#ok-settings");
+    await expect(await page.locator(".sensitivity-options-settings").count()).toBe(2);
+
+    await expect(await page.innerText(".multi-sensitivity-status")).toBe("Multi-sensitivity has not been run.");
+    await page.click("#run-multi-sens-btn");
+    await expect(await page.locator("#run-multi-sens-btn")).toBeEnabled();
+    await expect(await page.locator(".multi-sensitivity-status"))
+        .toHaveText("Multi-sensitivity run produced 100 solutions.", { timeout });
+    await expect(await page.locator("#download-summary-btn")).toBeEnabled();
+};

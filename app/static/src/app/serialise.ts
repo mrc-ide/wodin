@@ -3,7 +3,7 @@ import { FitState } from "./store/fit/state";
 import { CodeState } from "./store/code/state";
 import { ModelState } from "./store/model/state";
 import { RunState } from "./store/run/state";
-import {BaseSensitivityState, SensitivityState} from "./store/sensitivity/state";
+import { BaseSensitivityState, SensitivityState } from "./store/sensitivity/state";
 import { FitDataState } from "./store/fitData/state";
 import { ModelFitState } from "./store/modelFit/state";
 import { OdinFitResult, OdinRunResultDiscrete, OdinRunResultOde } from "./types/wrapperTypes";
@@ -15,7 +15,7 @@ import {
 } from "./types/serialisationTypes";
 import { GraphSettingsState } from "./store/graphSettings/state";
 import { Dict } from "./types/utilTypes";
-import {MultiSensitivityState} from "./store/multiSensitivity/state";
+import { MultiSensitivityState } from "./store/multiSensitivity/state";
 
 function serialiseCode(code: CodeState) : CodeState {
     return {
@@ -80,7 +80,7 @@ function serialiseBaseSensitivity(sensitivity: BaseSensitivityState) {
             hasResult: !!sensitivity.result.batch,
             error: sensitivity.result.error
         } : null
-    }
+    };
 }
 
 function serialiseSensitivity(sensitivity: SensitivityState): SerialisedSensitivityState {
