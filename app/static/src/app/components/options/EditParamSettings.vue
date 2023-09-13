@@ -16,7 +16,7 @@
                  <select v-if="paramNames.length > 1" class="form-select" v-model="settingsInternal.parameterToVary">
                    <option v-for="param in paramNames" :key="param">{{param}}</option>
                  </select>
-                 <span v-else>{{ settingsInternal.parameterToVary }}</span>
+                 <div v-else class="col-form-label">{{ settingsInternal.parameterToVary }}</div>
                </div>
              </div>
             <div class="row mt-2" id="edit-variation-type">
