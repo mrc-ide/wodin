@@ -130,7 +130,7 @@ export default defineComponent({
             if (props.multiSensitivity) {
                 // return all params which are either unused or are the param for the settings to edit
                 return allParamNames.filter((p) => paramsWithoutSettings.value.includes(p)
-                    || (!addingParamSettings.value && !!editSettingsIdx.value
+                    || (!addingParamSettings.value && editSettingsIdx.value !== null
                         && p === allSettings.value[editSettingsIdx.value]?.parameterToVary));
             }
             return allParamNames;

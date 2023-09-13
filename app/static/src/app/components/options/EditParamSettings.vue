@@ -13,9 +13,10 @@
                  <label class="col-form-label">Parameter to vary</label>
                </div>
                <div class="col-6">
-                 <select class="form-select" v-model="settingsInternal.parameterToVary">
+                 <select v-if="paramNames.length > 1" class="form-select" v-model="settingsInternal.parameterToVary">
                    <option v-for="param in paramNames" :key="param">{{param}}</option>
                  </select>
+                 <span v-else>{{ settingsInternal.parameterToVary }}</span>
                </div>
              </div>
             <div class="row mt-2" id="edit-variation-type">
@@ -144,7 +145,7 @@ export default defineComponent({
             type: Boolean,
             required: true
         },
-        paramNames: {s
+        paramNames: {
             type: Array as PropType<string[]>,
             required: true
         },
@@ -208,7 +209,6 @@ export default defineComponent({
         };
 
         return {
-            paramNames,
             scaleValues,
             variationTypeValues,
             settingsInternal,
