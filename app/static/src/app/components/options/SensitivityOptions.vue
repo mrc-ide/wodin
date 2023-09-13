@@ -129,9 +129,10 @@ export default defineComponent({
             const allParamNames = store.state.run.parameterValues ? Object.keys(store.state.run.parameterValues) : [];
             if (props.multiSensitivity) {
                 // return all params which are either unused or are the param for the settings to edit
+                const editIdx = editSettingsIdx.value;
+                const editParam = editIdx !== null && (allSettings.value[editIdx]?.parameterToVary || null);
                 return allParamNames.filter((p) => paramsWithoutSettings.value.includes(p)
-                    || (!addingParamSettings.value && editSettingsIdx.value !== null
-                        && p === allSettings.value[editSettingsIdx.value]?.parameterToVary));
+                    || (!addingParamSettings.value && editParam !== null && p === editParam));
             }
             return allParamNames;
         });
