@@ -88,7 +88,6 @@ function serialiseSensitivity(sensitivity: SensitivityState): SerialisedSensitiv
     Object.keys(sensitivity.parameterSetResults).forEach((name) => {
         const result = sensitivity.parameterSetResults[name];
         serialisedParameterSetResults[name] = {
-            inputs: result.inputs,
             hasResult: !!result.batch,
             error: result.error
         };

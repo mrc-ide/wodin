@@ -51,7 +51,6 @@ export interface SerialisedRunState {
 }
 
 export interface SerialisedSensitivityResult {
-    inputs: OdinSensitivityInputs,
     hasResult: boolean,
     error: WodinError | null
 }
