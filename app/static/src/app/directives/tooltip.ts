@@ -10,7 +10,7 @@ export interface ToolTipSettings {
 }
 
 export default {
-    mounted(el: HTMLElement, binding: DirectiveBinding<string | ToolTipSettings>) {
+    mounted(el: HTMLElement, binding: DirectiveBinding<string | ToolTipSettings>): void {
         const { value } = binding;
 
         el.setAttribute("data-bs-toggle", "tooltip");
@@ -38,7 +38,7 @@ export default {
             });
         }
     },
-    beforeUpdate(el: HTMLElement, binding: DirectiveBinding<string | ToolTipSettings>) {
+    beforeUpdate(el: HTMLElement, binding: DirectiveBinding<string | ToolTipSettings>): void {
         const { value } = binding;
 
         let tooltip = Tooltip.getInstance(el);
@@ -47,6 +47,7 @@ export default {
             const variant = value?.variant || "text";
             const oldCustomClass = (variant === "text") ? "" : `tooltip-${variant}`;
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const isVariantSame = (tooltip as any)._config.customClass === oldCustomClass;
             if (!isVariantSame) {
                 tooltip.dispose();
@@ -67,8 +68,10 @@ export default {
             : value?.content || "";
 
         if (tooltip) {
-            (tooltip as any)._config.title = content;
-            const { trigger } = (tooltip as any)._config;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const configuredTooltip = tooltip as any;
+            configuredTooltip._config.title = content;
+            const { trigger } = configuredTooltip._config;
             if (trigger === "manual") {
                 if (!content) {
                     tooltip.hide();
@@ -78,7 +81,7 @@ export default {
             }
         }
     },
-    beforeUnmount(el: HTMLElement) {
+    beforeUnmount(el: HTMLElement): void {
         const tooltip = Tooltip.getInstance(el);
         if (tooltip) {
             tooltip.dispose();

@@ -11,7 +11,7 @@ import {
     SerialisedAppState, SerialisedModelState,
     SerialisedRunState,
     SerialisedSensitivityState,
-    SerialisedRunResult, SerialisedSensitivityResult
+    SerialisedRunResult, SerialisedSensitivityResult, SerialisedModelFitState
 } from "./types/serialisationTypes";
 import { GraphSettingsState } from "./store/graphSettings/state";
 import { Dict } from "./types/utilTypes";
@@ -107,7 +107,7 @@ function serialiseFitData(fitData: FitDataState) : FitDataState {
     };
 }
 
-function serialiseModelFit(modelFit: ModelFitState) {
+function serialiseModelFit(modelFit: ModelFitState): SerialisedModelFitState {
     return {
         fitUpdateRequired: modelFit.fitUpdateRequired,
         iterations: modelFit.iterations,
@@ -118,11 +118,11 @@ function serialiseModelFit(modelFit: ModelFitState) {
     };
 }
 
-export const serialiseGraphSettings = (state: GraphSettingsState) => {
+export const serialiseGraphSettings = (state: GraphSettingsState): GraphSettingsState => {
     return { ...state };
 };
 
-export const serialiseState = (state: AppState) => {
+export const serialiseState = (state: AppState): string => {
     const result: SerialisedAppState = {
         openVisualisationTab: state.openVisualisationTab,
         code: serialiseCode(state.code),
@@ -141,7 +141,7 @@ export const serialiseState = (state: AppState) => {
     return JSON.stringify(result);
 };
 
-export const deserialiseState = (targetState: AppState, serialised: SerialisedAppState) => {
+export const deserialiseState = (targetState: AppState, serialised: SerialisedAppState): void => {
     Object.assign(targetState, {
         ...targetState,
         ...serialised

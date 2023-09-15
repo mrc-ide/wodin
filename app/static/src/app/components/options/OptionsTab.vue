@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { computed } from "vue";
+import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import VerticalCollapse from "../VerticalCollapse.vue";
 import ParameterValues from "./ParameterValues.vue";
@@ -43,7 +43,7 @@ import GraphSettings from "./GraphSettings.vue";
 import ParameterSets from "./ParameterSets.vue";
 import AdvancedSettings from "./AdvancedSettings.vue";
 
-export default {
+export default defineComponent({
     name: "OptionsTab",
     components: {
         ParameterSets,
@@ -75,5 +75,5 @@ export default {
             fitTabIsOpen
         };
     }
-};
+});
 </script>

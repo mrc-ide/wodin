@@ -159,7 +159,8 @@ export default defineComponent({
             }
         };
         const saveButton = ref<HTMLButtonElement | null>(null);
-        const cancelEditDisplayName = (event: any) => {
+        const cancelEditDisplayName = (event: FocusEvent) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             if (event.relatedTarget && event.relatedTarget === (saveButton.value as any).$el) return;
             store.commit(`run/${RunMutation.TurnOffDisplayNameError}`, props.parameterSet.name);
             newDisplayName.value = props.parameterSet.displayName;

@@ -19,7 +19,7 @@ import {
 } from "../../plot";
 import WodinPlot from "../WodinPlot.vue";
 import { RunGetter } from "../../store/run/getters";
-import { OdinSolution } from "../../types/responseTypes";
+import { OdinSolution, Times } from "../../types/responseTypes";
 import { Dict } from "../../types/utilTypes";
 import { runPlaceholderMessage } from "../../utils";
 import { ParameterSet } from "../../store/run/state";
@@ -88,7 +88,7 @@ export default defineComponent({
 
             Object.keys(parameterSetSolutions.value).forEach((name) => {
                 const paramSetSln = parameterSetSolutions.value[name];
-                const paramSetResult = paramSetSln!(options as any);
+                const paramSetResult = paramSetSln!(options as Times);
 
                 const dash = lineStylesForParamSets.value[name];
                 if (paramSetResult) {
