@@ -66,10 +66,10 @@ export const actions: ActionTree<SessionsState, AppState> = {
                     dispatch(`run/${RunAction.RunModelOnRehydrate}`, null, rootOption);
                 }
                 if (sessionData.sensitivity.result?.hasResult) {
-                    dispatch(`sensitivity/${SensitivityAction.RunSensitivityOnRehydrate}`, null, rootOption);
+                    dispatch(`sensitivity/${SensitivityAction.RunSensitivity}`, null, rootOption);
                 }
                 if (sessionData.multiSensitivity.result?.hasResult) {
-                    dispatch(`multiSensitivity/${MultiSensitivityAction.RunMultiSensitivityOnRehydrate}`, null,
+                    dispatch(`multiSensitivity/${MultiSensitivityAction.RunMultiSensitivity}`, null,
                         rootOption);
                 }
             }
