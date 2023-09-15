@@ -1,5 +1,7 @@
 import {
-    expect, test, chromium, Page
+    expect, test,
+    chromium,
+    Page
 } from "@playwright/test";
 import * as os from "os";
 import {
@@ -7,7 +9,8 @@ import {
     newFitCode,
     realisticFitData,
     startModelFit,
-    waitForModelFitCompletion, expectWodinPlotDataSummary
+    waitForModelFitCompletion, expectWodinPlotDataSummary,
+    expectCanRunMultiSensitivity
 } from "./utils";
 import PlaywrightConfig from "../../playwright.config";
 
@@ -63,6 +66,10 @@ test.describe("Sessions tests", () => {
         expect(hidden).not.toBe(null);
         // 5 * 10 sensitivity traces, 5 central traces, 1 data plot
         expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(56);
+
+        // Run multi-sensitivity
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 4)");
+        expectCanRunMultiSensitivity(page, timeout);
 
         // give the page a chance to save the session to back end
         await page.waitForTimeout(saveSessionTimeout);
@@ -181,6 +188,13 @@ test.describe("Sessions tests", () => {
         await expectWodinPlotDataSummary(centralSummary, "S", 1000, 0, 31, 154.64, 369, "lines", "#2e5cb8", null);
         const sensitivityDataSummary = await page.locator(":nth-match(.wodin-plot-data-summary-series, 56)");
         await expectWodinPlotDataSummary(sensitivityDataSummary, "Cases", 32, 0, 31, 0, 13, "markers", null, "#cccc00");
+
+        // Check multi-sensitivity result
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 4)"); // Multi-sensitivity tab
+        await expect(await page.locator(".multi-sensitivity-status"))
+            .toHaveText("Multi-sensitivity run produced 100 solutions.", { timeout });
+        await expect(await page.locator("#download-summary-btn")).toBeEnabled();
+        await expect(await page.locator("#run-multi-sens-btn")).toBeEnabled();
 
         // Expect to be able to navigate to the share link we copied earlier - check it has some rehydrated data
         await page.goto(copiedLinkText);

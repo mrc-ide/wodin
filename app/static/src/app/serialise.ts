@@ -3,18 +3,23 @@ import { FitState } from "./store/fit/state";
 import { CodeState } from "./store/code/state";
 import { ModelState } from "./store/model/state";
 import { RunState } from "./store/run/state";
-import { SensitivityState } from "./store/sensitivity/state";
+import { BaseSensitivityState, SensitivityState } from "./store/sensitivity/state";
 import { FitDataState } from "./store/fitData/state";
 import { ModelFitState } from "./store/modelFit/state";
 import { OdinFitResult, OdinRunResultDiscrete, OdinRunResultOde } from "./types/wrapperTypes";
 import {
-    SerialisedAppState, SerialisedModelState,
+    SerialisedAppState,
+    SerialisedModelState,
     SerialisedRunState,
     SerialisedSensitivityState,
-    SerialisedRunResult, SerialisedSensitivityResult, SerialisedModelFitState
+    SerialisedRunResult,
+    SerialisedSensitivityResult,
+    SerialisedModelFitState,
+    SerialisedMultiSensitivityState
 } from "./types/serialisationTypes";
 import { GraphSettingsState } from "./store/graphSettings/state";
 import { Dict } from "./types/utilTypes";
+import { MultiSensitivityState } from "./store/multiSensitivity/state";
 
 function serialiseCode(code: CodeState) : CodeState {
     return {
@@ -70,6 +75,18 @@ function serialiseRun(run: RunState): SerialisedRunState {
     };
 }
 
+function serialiseBaseSensitivity(sensitivity: BaseSensitivityState) {
+    return {
+        running: false,
+        sensitivityUpdateRequired: sensitivity.sensitivityUpdateRequired,
+        result: sensitivity.result ? {
+            inputs: sensitivity.result.inputs,
+            hasResult: !!sensitivity.result.batch,
+            error: sensitivity.result.error
+        } : null
+    };
+}
+
 function serialiseSensitivity(sensitivity: SensitivityState): SerialisedSensitivityState {
     const serialisedParameterSetResults = {} as Dict<SerialisedSensitivityResult>;
     Object.keys(sensitivity.parameterSetResults).forEach((name) => {
@@ -82,16 +99,17 @@ function serialiseSensitivity(sensitivity: SensitivityState): SerialisedSensitiv
     });
 
     return {
-        running: false,
+        ...serialiseBaseSensitivity(sensitivity),
         paramSettings: sensitivity.paramSettings,
-        sensitivityUpdateRequired: sensitivity.sensitivityUpdateRequired,
         plotSettings: sensitivity.plotSettings,
-        result: sensitivity.result ? {
-            inputs: sensitivity.result.inputs,
-            hasResult: !!sensitivity.result.batch,
-            error: sensitivity.result.error
-        } : null,
         parameterSetResults: serialisedParameterSetResults
+    };
+}
+
+function serialiseMultiSensitivity(multiSensitivity: MultiSensitivityState): SerialisedMultiSensitivityState {
+    return {
+        ...serialiseBaseSensitivity(multiSensitivity),
+        paramSettings: multiSensitivity.paramSettings
     };
 }
 
@@ -129,6 +147,7 @@ export const serialiseState = (state: AppState): string => {
         model: serialiseModel(state.model),
         run: serialiseRun(state.run),
         sensitivity: serialiseSensitivity(state.sensitivity),
+        multiSensitivity: serialiseMultiSensitivity(state.multiSensitivity),
         graphSettings: serialiseGraphSettings(state.graphSettings)
     };
 
