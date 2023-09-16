@@ -7,7 +7,7 @@ import {
     AdvancedSettings,
     ParameterSet, RunUpdateRequiredReasons
 } from "../store/run/state";
-import { OdinFitInputs, OdinRunInputs, OdinSensitivityInputs } from "./wrapperTypes";
+import { OdinFitInputs, OdinRunInputs } from "./wrapperTypes";
 import {
     SensitivityParameterSettings,
     SensitivityPlotSettings,

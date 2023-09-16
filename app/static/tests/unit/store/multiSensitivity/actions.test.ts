@@ -6,7 +6,7 @@ import {
     mockRunState,
     mockRunnerOde,
     rootGetters,
-    testCommonRunSensitivity, expectRunOnRehydrateToUseParametersFromResult
+    testCommonRunSensitivity
 } from "../sensitivity/actions.test";
 import { AppType } from "../../../../src/app/store/appState/state";
 import { BaseSensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
@@ -66,11 +66,5 @@ describe("multiSensitivity actions", () => {
             defaultAdvanced
         );
         expect(dispatch).not.toHaveBeenCalled();
-    });
-
-    it("run multiSensitivity on rehydrate uses parameters from result", () => {
-        expectRunOnRehydrateToUseParametersFromResult(
-            actions[MultiSensitivityAction.RunMultiSensitivityOnRehydrate] as any
-        );
     });
 });
