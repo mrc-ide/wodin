@@ -143,6 +143,7 @@ test.describe("Sensitivity tests", () => {
         await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 9)")).toBe("1M");
 
         // Change Min/Max to Min
+        await expect(await page.locator('#sensitivity-plot-extreme option:has-text("Min")')).toBeEnabled();
         await page.locator("#sensitivity-plot-extreme select").selectOption("Min");
         await expect(await page.locator(".plotly .xaxislayer-above .xtick").count()).toBe(5);
         await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 1)")).toBe("4.6");
