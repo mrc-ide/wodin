@@ -124,6 +124,7 @@ test.describe("Sensitivity tests", () => {
         await expect(await page.innerText(".action-required-msg")).toBe("");
 
         // switch to Value at Time - expect axes to change
+        await expect(await page.locator('#sensitivity-plot-type option:has-text("Value at a single time")')).toBeEnabled({ timeout });
         await page.locator("#sensitivity-plot-type select").selectOption("ValueAtTime");
         await expect(await page.locator(".plotly .xaxislayer-above .xtick").count()).toBe(5);
         await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 1)")).toBe("4.6");
@@ -143,7 +144,7 @@ test.describe("Sensitivity tests", () => {
         await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 9)")).toBe("1M");
 
         // Change Min/Max to Min
-        await expect(await page.locator('#sensitivity-plot-extreme option:has-text("Min")')).toBeEnabled();
+        await expect(await page.locator('#sensitivity-plot-extreme option:has-text("Min")')).toBeEnabled({ timeout });
         await page.locator("#sensitivity-plot-extreme select").selectOption("Min");
         await expect(await page.locator(".plotly .xaxislayer-above .xtick").count()).toBe(5);
         await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 1)")).toBe("4.6");
