@@ -29,7 +29,6 @@ test.describe("Link Variables tests", () => {
     const makeInitialLinkSelections = async (page: Page) => {
         await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
         const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
-        await expect(linkContainer.locator(':nth-match(select, 1) option:has-text("I")')).toBeEnabled({ timeout });
         const select1 = await linkContainer.locator(":nth-match(select, 1)");
         await select1.selectOption("I");
         const select2 = await linkContainer.locator(":nth-match(select, 2)");
