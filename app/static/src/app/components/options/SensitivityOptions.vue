@@ -131,8 +131,9 @@ export default defineComponent({
                 // return all params which are either unused or are the param for the settings to edit
                 const editIdx = editSettingsIdx.value;
                 const editParam = editIdx !== null && (allSettings.value[editIdx]?.parameterToVary || null);
-                return allParamNames.filter((p) => paramsWithoutSettings.value.includes(p)
-                    || (!addingParamSettings.value && editParam !== null && p === editParam));
+                // check if a given param is that for the settings being edited
+                const isEditParam = (p: string) => !addingParamSettings.value && editParam !== null && p === editParam;
+                return allParamNames.filter((p) => paramsWithoutSettings.value.includes(p) || isEditParam(p));
             }
             return allParamNames;
         });
