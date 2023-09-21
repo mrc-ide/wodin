@@ -14,7 +14,7 @@
     <vertical-collapse v-if="fitTabIsOpen" title="Optimisation" collapse-id="optimisation">
       <optimisation-options></optimisation-options>
     </vertical-collapse>
-    <vertical-collapse title="Graph Settings" collapse-id="graph-settings">
+    <vertical-collapse v-if="!multiSensitivityOpen" title="Graph Settings" collapse-id="graph-settings">
       <graph-settings></graph-settings>
     </vertical-collapse>
     <vertical-collapse v-if="!isStochastic"

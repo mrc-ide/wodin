@@ -15,7 +15,6 @@ import { RunMutation } from "../../../../src/app/store/run/mutations";
 import GraphSettings from "../../../../src/app/components/options/GraphSettings.vue";
 import ParameterSets from "../../../../src/app/components/options/ParameterSets.vue";
 import { getters as runGetters } from "../../../../src/app/store/run/getters";
-import fitApp from "../../../../src/app/components/fit/FitApp.vue";
 import AdvancedSettings from "../../../../src/app/components/options/AdvancedSettings.vue";
 
 describe("OptionsTab", () => {
@@ -299,5 +298,6 @@ describe("OptionsTab", () => {
             }
         });
         expect(wrapper.findComponent(SensitivityOptions).exists()).toBe(true);
+        expect(wrapper.findComponent(GraphSettings).exists()).toBe(false);
     });
 });
