@@ -64,7 +64,7 @@ export const runSensitivity = (
     endTime: number,
     context: ActionContext<BaseSensitivityState, AppState>,
     multiSensitivity = false
-) => {
+): void => {
     const {
         rootState, commit, dispatch, getters, rootGetters
     } = context;
@@ -143,7 +143,7 @@ export const runSensitivity = (
     }
 };
 
-export const runSensitivityOnRehydrate = (context: ActionContext<BaseSensitivityState, AppState>) => {
+export const runSensitivityOnRehydrate = (context: ActionContext<BaseSensitivityState, AppState>): void => {
     const { state, rootState } = context;
     const { endTime } = rootState.run;
     const { pars } = state.result!.inputs;

@@ -1,8 +1,14 @@
 import { Store } from "vuex";
-import { computed } from "vue";
+import { computed, ComputedRef } from "vue";
 import { AppState, VisualisationTab } from "../../store/appState/state";
 
-export default (store: Store<AppState>, fixedTabNames: string[]) => {
+export interface IncludeConfiguredTabsMixin {
+    helpTabName: ComputedRef<string | null>,
+    multiSensitivityTabName: ComputedRef<string | null>,
+    rightTabNames: ComputedRef<string[]>
+}
+
+export default (store: Store<AppState>, fixedTabNames: string[]): IncludeConfiguredTabsMixin => {
     const helpTabName = computed(() => {
         if (store.state.config?.help?.markdown?.length) {
             return store.state.config.help.tabName || "Explanation"; // default if markdown but no tab name

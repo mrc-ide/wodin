@@ -228,7 +228,7 @@ export const anyTrue = (x: Dict<boolean>): boolean => {
     return Object.values(x).some((el: boolean) => el);
 };
 
-export const runPlaceholderMessage = (selectedVariables: string[], sensitivity: boolean) => {
+export const runPlaceholderMessage = (selectedVariables: string[], sensitivity: boolean): string => {
     const notRunYet = sensitivity ? userMessages.sensitivity.notRunYet(false) : userMessages.run.notRunYet;
     return selectedVariables.length ? notRunYet : userMessages.model.noVariablesSelected;
 };
@@ -243,7 +243,8 @@ const extractValuesFromTags = (values: Tag[], paramValues: OdinUserType | null) 
     return extracted.filter((x) => x !== undefined) as number[];
 };
 
-export const convertAdvancedSettingsToOdin = (advancedSettings: AdvancedSettings, paramValues: OdinUserType | null) => {
+export const convertAdvancedSettingsToOdin = (advancedSettings: AdvancedSettings,
+    paramValues: OdinUserType | null): AdvancedSettingsOdin => {
     const flattenedObject = Object.fromEntries(Object.entries(advancedSettings)
         .map(([key, value]) => {
             let cleanVal: number | number[] | null | undefined;
@@ -259,7 +260,7 @@ export const convertAdvancedSettingsToOdin = (advancedSettings: AdvancedSettings
             return [key, cleanVal];
         })) as Record<AdvancedOptions, number>;
 
-    const advancedSettingsOdin: AdvancedSettingsOdin = {
+    return {
         atol: flattenedObject[AdvancedOptions.tol],
         rtol: flattenedObject[AdvancedOptions.tol],
         maxSteps: flattenedObject[AdvancedOptions.maxSteps],
@@ -267,6 +268,4 @@ export const convertAdvancedSettingsToOdin = (advancedSettings: AdvancedSettings
         stepSizeMin: flattenedObject[AdvancedOptions.stepSizeMin],
         tcrit: flattenedObject[AdvancedOptions.tcrit]
     };
-
-    return advancedSettingsOdin;
 };

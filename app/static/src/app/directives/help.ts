@@ -11,13 +11,13 @@ const getHelpBinding = (binding: DirectiveBinding<string>) => {
 };
 
 export default {
-    mounted(el: HTMLElement, binding: DirectiveBinding<string>) {
+    mounted(el: HTMLElement, binding: DirectiveBinding<string>): void {
         tooltip.mounted(el, getHelpBinding(binding));
     },
-    beforeUpdate(el: HTMLElement, binding: DirectiveBinding<string>) {
+    beforeUpdate(el: HTMLElement, binding: DirectiveBinding<string>): void {
         tooltip.beforeUpdate(el, getHelpBinding(binding));
     },
-    beforeUnmount(el: HTMLElement) {
+    beforeUnmount(el: HTMLElement): void {
         tooltip.beforeUnmount(el);
     }
 };

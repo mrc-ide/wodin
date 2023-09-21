@@ -43,6 +43,7 @@ export default defineComponent({
         // Only used as an indicator that redraw is required when this changes - the data to display is calculated by
         // plotData function using these solutions
         redrawWatches: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             type: Array as PropType<any[]>,
             required: true
         },
@@ -70,6 +71,7 @@ export default defineComponent({
         const yAxisRange = computed(() => store.state.graphSettings.yAxisRange as YAxisRange);
 
         const updateAxesRange = () => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const plotLayout = (plot.value as any).layout;
             const yRange = plotLayout.yaxis?.range;
             if (plotLayout) {
