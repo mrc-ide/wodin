@@ -169,15 +169,6 @@ export default defineComponent({
 
         const sessionUrl = (sessionId: string) => `${appUrl.value}?sessionId=${sessionId}`;
 
-        const isCurrentSession = (sessionId: string) => sessionId === currentSessionId.value;
-
-        const previousSessions = computed(() => {
-            return sessionsMetadata.value?.filter((s: SessionMetadata) => !isCurrentSession(s.id));
-        });
-        const currentSession = computed(() => {
-            return sessionsMetadata.value?.find((s: SessionMetadata) => isCurrentSession(s.id));
-        });
-
         const showUnlabelledSessions = computed({
             get() {
                 return store.state.userPreferences.showUnlabelledSessions;
@@ -185,6 +176,18 @@ export default defineComponent({
             set(newValue: boolean) {
                 store.dispatch(AppStateAction.SaveUserPreferences, { showUnlabelledSessions: newValue });
             }
+        });
+
+        const isCurrentSession = (sessionId: string) => sessionId === currentSessionId.value;
+
+        const previousSessions = computed(() => {
+            return sessionsMetadata.value?.filter((s: SessionMetadata) => {
+                return !isCurrentSession(s.id) && (showUnlabelledSessions.value || s.label);
+            });
+        });
+
+        const currentSession = computed(() => {
+            return sessionsMetadata.value?.find((s: SessionMetadata) => isCurrentSession(s.id));
         });
 
         const toggleEditSessionLabelOpen = (open: boolean) => {
