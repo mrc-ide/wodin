@@ -45,6 +45,10 @@
     </div>
     <template v-if="previousSessions && previousSessions.length">
         <h3>Previous sessions</h3>
+        <div>
+          <input id="show-unlabelled-check" type="checkbox" class="form-check-input" v-model="showUnlabelledSessions" />
+          <label for="show-unlabelled-check" class="form-check-label">Show unlabelled sessions</label>
+        </div>
         <div class="row fw-bold py-2" id="previous-sessions-headers">
           <div class="col-2 session-col-header">Saved</div>
           <div class="col-2 session-col-header">Label</div>
@@ -121,6 +125,7 @@ import {
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import { RouterLink } from "vue-router";
+import { AppStateAction } from "../../store/appState/actions";
 import { SessionsAction } from "../../store/sessions/actions";
 import userMessages from "../../userMessages";
 import ErrorsAlert from "../ErrorsAlert.vue";
@@ -171,6 +176,15 @@ export default defineComponent({
         });
         const currentSession = computed(() => {
             return sessionsMetadata.value?.find((s: SessionMetadata) => isCurrentSession(s.id));
+        });
+
+        const showUnlabelledSessions = computed({
+            get() {
+                return store.state.userPreferences.showUnlabelledSessions;
+            },
+            set(newValue: boolean) {
+                store.dispatch(AppStateAction.SaveUserPreferences, { showUnlabelledSessions: newValue });
+            }
         });
 
         const toggleEditSessionLabelOpen = (open: boolean) => {
@@ -242,6 +256,7 @@ export default defineComponent({
 
         onMounted(() => {
             store.dispatch(`${namespace}/${SessionsAction.GetSessions}`);
+            store.dispatch(AppStateAction.LoadUserPreferences);
         });
 
         const messages = userMessages.sessions;
@@ -267,6 +282,7 @@ export default defineComponent({
             confirmDeleteSession,
             toggleConfirmDeleteSessionOpen,
             deleteSession,
+            showUnlabelledSessions,
             messages
         };
     }

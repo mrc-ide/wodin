@@ -21,6 +21,10 @@ export enum VisualisationTab {
     MultiSensitivity = "Multi-sensitivity"
 }
 
+export interface UserPreferences {
+    showUnlabelledSessions: boolean
+}
+
 export interface AppState {
     sessionId: string,
     sessionLabel: null | string,
@@ -40,5 +44,6 @@ export interface AppState {
     graphSettings: GraphSettingsState,
     versions: VersionsState,
     configured: boolean, // true if configuration has been loaded or rehydrated and defaults set
-    language: LanguageState
+    language: LanguageState,
+    userPreferences: UserPreferences
 }
