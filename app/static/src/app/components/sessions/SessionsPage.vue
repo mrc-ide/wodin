@@ -8,7 +8,10 @@
         <span>
           <router-link to="/" class="brand-link">
             Start a new session
-          </router-link><span v-if="previousSessions && previousSessions.length" id="load-previous-span">or load a previous session.</span>
+          </router-link>
+          <span v-if="previousSessions && previousSessions.length" id="load-previous-span">
+            or load a previous session.
+          </span>
         </span>
     </div>
     <div class="row mb-3" id="current-session" v-else>
@@ -21,12 +24,16 @@
           make a copy of the current session.
         </a>
       </p>
-      <p>
-        <span class="session-copy-link clickable brand" @click="copyLink(currentSession)" @mouseleave="clearLastCopied">
+      <div>
+        <span class="session-copy-link clickable brand"
+              @click="copyLink(currentSession)"
+              @mouseleave="clearLastCopied">
           <vue-feather class="inline-icon" type="copy"></vue-feather>
           Copy link for current session
         </span>
-        <span class="session-copy-code clickable brand ms-2" @click="copyCode(currentSession)" @mouseleave="clearLastCopied">
+        <span class="session-copy-code clickable brand ms-2"
+              @click="copyCode(currentSession)"
+              @mouseleave="clearLastCopied">
           <vue-feather class="inline-icon" type="copy"></vue-feather>
           Copy code for current session
         </span>
@@ -34,7 +41,7 @@
         <div class="session-copy-confirm small text-muted text-nowrap float-start" style="height:0.8rem;">
           {{getCopyMsg(currentSession)}}
         </div>
-      </p>
+      </div>
     </div>
     <template v-if="previousSessions && previousSessions.length">
         <h3>Previous sessions</h3>
@@ -159,8 +166,12 @@ export default defineComponent({
 
         const isCurrentSession = (sessionId: string) => sessionId === currentSessionId.value;
 
-        const previousSessions = computed(() => sessionsMetadata.value?.filter((s: SessionMetadata) => !isCurrentSession(s.id)));
-        const currentSession = computed(() => sessionsMetadata.value?.find((s: SessionMetadata) => isCurrentSession(s.id)));
+        const previousSessions = computed(() => {
+            return sessionsMetadata.value?.filter((s: SessionMetadata) => !isCurrentSession(s.id));
+        });
+        const currentSession = computed(() => {
+            return sessionsMetadata.value?.find((s: SessionMetadata) => isCurrentSession(s.id));
+        });
 
         const toggleEditSessionLabelOpen = (open: boolean) => {
             editSessionLabelOpen.value = open;

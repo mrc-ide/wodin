@@ -81,7 +81,8 @@ describe("SessionsPage", () => {
         const currentSessionRow = rows.at(1)!;
         expect(currentSessionRow.findComponent(RouterLink).props("to")).toBe("/");
         expect(currentSessionRow.find("a").text()).toBe("make a copy of the current session.");
-        expect(currentSessionRow.find("a").attributes("href")).toBe("http://localhost:3000/apps/testApp/?sessionId=abc");
+        expect(currentSessionRow.find("a").attributes("href"))
+            .toBe("http://localhost:3000/apps/testApp/?sessionId=abc");
         expect(currentSessionRow.find(".session-copy-link").text()).toBe("Copy link for current session");
         expect(currentSessionRow.find(".session-copy-code").text()).toBe("Copy code for current session");
 
