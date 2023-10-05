@@ -43,6 +43,19 @@
         </div>
       </div>
     </div>
+    <div class="mb-4">
+      <label for="session-code-input" class="">Load session from code:</label>
+      <input id="session-code-input"
+             v-model="sessionCode"
+             type="text"
+             placeholder="Session code"
+             class="form-control d-inline mx-2"
+             style="width: 20rem;"/>
+      <button id="load-session-from-code"
+              class="btn btn-primary"
+              @click="loadSessionFromCode"
+              :disabled="!sessionCode">Load</button>
+    </div>
     <h3>Previous sessions</h3>
     <template v-if="previousSessions && previousSessions.length">
         <div class="row fw-bold py-2" id="previous-sessions-headers">
@@ -130,10 +143,12 @@ import ErrorsAlert from "../ErrorsAlert.vue";
 import EditSessionLabel from "./EditSessionLabel.vue";
 import { SessionMetadata } from "../../types/responseTypes";
 import ConfirmModal from "../ConfirmModal.vue";
+import LoadSessionFromCode from "./LoadSessionFromCode.vue";
 
 export default defineComponent({
     name: "SessionsPage",
     components: {
+        LoadSessionFromCode,
         ErrorsAlert,
         EditSessionLabel,
         VueFeather,
@@ -143,6 +158,7 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const namespace = "sessions";
+        const sessionCode = ref("");
 
         const sessionsMetadata = computed(() => store.state.sessions.sessionsMetadata);
         const baseUrl = computed(() => store.state.baseUrl);
@@ -206,10 +222,14 @@ export default defineComponent({
             lastCopyMsg.value = `Copied: ${text}`;
         };
 
+        const getShareSessionLink = (friendlyId: string) => {
+            return `${appUrl.value}?share=${friendlyId}`;
+        };
+
         const copyLink = async (session: SessionMetadata) => {
             const friendlyId = await ensureFriendlyId(session);
             if (friendlyId) {
-                const link = `${appUrl.value}?share=${friendlyId}`;
+                const link = getShareSessionLink(friendlyId);
                 copyText(link);
             }
         };
@@ -243,6 +263,11 @@ export default defineComponent({
             store.dispatch(`${namespace}/${SessionsAction.DeleteSession}`, sessionIdToDelete.value);
         };
 
+        const loadSessionFromCode = () => {
+            const link = getShareSessionLink(sessionCode.value);
+            window.location.assign(link);
+        };
+
         onMounted(() => {
             store.dispatch(`${namespace}/${SessionsAction.GetSessions}`);
         });
@@ -270,6 +295,8 @@ export default defineComponent({
             confirmDeleteSession,
             toggleConfirmDeleteSessionOpen,
             deleteSession,
+            sessionCode,
+            loadSessionFromCode,
             messages
         };
     }
