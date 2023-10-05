@@ -93,7 +93,7 @@
           </div>
         </div>
     </template>
-    <p v-else>
+    <p v-else id="previous-sessions-placeholder">
       Saved sessions will appear here.
     </p>
     <div id="loading-sessions" v-if="!previousSessions">

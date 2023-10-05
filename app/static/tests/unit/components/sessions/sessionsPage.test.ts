@@ -149,6 +149,8 @@ describe("SessionsPage", () => {
         expect(current.findComponent(RouterLink).props("to")).toBe("/");
         expect(current.find("a").text()).toBe("make a copy of the current session.");
 
+        expect(wrapper.find("h3").text()).toBe("Previous sessions");
+        expect(wrapper.find("p#previous-sessions-placeholder").text()).toBe("Saved sessions will appear here.");
         expect(wrapper.find("#previous-sessions-headers").exists()).toBe(false);
         expect(wrapper.findAll(".previous-session-row").length).toBe(0);
     });
