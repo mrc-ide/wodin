@@ -40,5 +40,6 @@ export interface AppState {
     graphSettings: GraphSettingsState,
     versions: VersionsState,
     configured: boolean, // true if configuration has been loaded or rehydrated and defaults set
+    persisted: boolean, // true if we have done an initial save of the session to the back-end
     language: LanguageState
 }

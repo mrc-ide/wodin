@@ -43,8 +43,8 @@
         </div>
       </div>
     </div>
+    <h3>Previous sessions</h3>
     <template v-if="previousSessions && previousSessions.length">
-        <h3>Previous sessions</h3>
         <div class="row fw-bold py-2" id="previous-sessions-headers">
           <div class="col-2 session-col-header">Saved</div>
           <div class="col-2 session-col-header">Label</div>
@@ -93,6 +93,9 @@
           </div>
         </div>
     </template>
+    <p v-else>
+      Saved sessions will appear here.
+    </p>
     <div id="loading-sessions" v-if="!previousSessions">
       {{ messages.loading }}
     </div>

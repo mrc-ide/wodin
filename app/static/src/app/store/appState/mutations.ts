@@ -13,7 +13,8 @@ export enum AppStateMutation {
     SetQueuedStateUpload = "SetQueuedStateUpload",
     SetStateUploadInProgress = "SetStateUploadInProgress",
     SetSessionLabel = "SetSessionLabel",
-    SetConfigured = "SetConfigured"
+    SetConfigured = "SetConfigured",
+    SetPersisted = "SetPersisted"
 }
 
 export const StateUploadMutations = [
@@ -59,5 +60,9 @@ export const appStateMutations: MutationTree<AppState> = {
 
     [AppStateMutation.SetConfigured](state: AppState) {
         state.configured = true;
+    },
+
+    [AppStateMutation.SetPersisted](state: AppState) {
+        state.persisted = true;
     }
 };

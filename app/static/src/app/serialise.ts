@@ -163,7 +163,8 @@ export const serialiseState = (state: AppState): string => {
 export const deserialiseState = (targetState: AppState, serialised: SerialisedAppState): void => {
     Object.assign(targetState, {
         ...targetState,
-        ...serialised
+        ...serialised,
+        persisted: true
     });
 
     // Initialise selected variables if required
