@@ -117,6 +117,10 @@ describe("SessionsPage", () => {
         expect(wrapper.findComponent(ConfirmModal).props("open")).toBe(false);
         expect(wrapper.findComponent(ConfirmModal).props("title")).toBe("Delete session");
         expect(wrapper.findComponent(ConfirmModal).props("text")).toBe("Do you want to delete this session?");
+
+        expect(wrapper.find("input#session-code-input").attributes("placeholder")).toBe("Session code");
+        expect(wrapper.find("button#load-session-from-code").text()).toBe("Load");
+        expect((wrapper.find("button#load-session-from-code").element as HTMLInputElement).disabled).toBe(true);
     });
 
     it("shows loading message when session metadata is null in store", () => {
@@ -304,5 +308,19 @@ describe("SessionsPage", () => {
         await confirm.vm.$emit("confirm");
         expect(mockDeleteSession).toHaveBeenCalledTimes(1);
         expect(mockDeleteSession.mock.calls[0][1]).toBe("def");
+    });
+
+    it("loads session from code", async () => {
+        const realLocation = window.location;
+        delete (window as any).location;
+        window.location = {...realLocation, assign: jest.fn()};
+
+        const wrapper = getWrapper(sessionsMetadata, currentSessionId);
+        await wrapper.find("#session-code-input").setValue("bad-dog");
+        await wrapper.find("#load-session-from-code").trigger("click");
+        expect(window.location.assign).toHaveBeenCalledTimes(1);
+        expect(window.location.assign).toHaveBeenCalledWith("http://localhost:3000/apps/testApp/?share=bad-dog");
+
+        window.location = realLocation;
     });
 });

@@ -143,12 +143,10 @@ import ErrorsAlert from "../ErrorsAlert.vue";
 import EditSessionLabel from "./EditSessionLabel.vue";
 import { SessionMetadata } from "../../types/responseTypes";
 import ConfirmModal from "../ConfirmModal.vue";
-import LoadSessionFromCode from "./LoadSessionFromCode.vue";
 
 export default defineComponent({
     name: "SessionsPage",
     components: {
-        LoadSessionFromCode,
         ErrorsAlert,
         EditSessionLabel,
         VueFeather,
