@@ -313,7 +313,7 @@ describe("SessionsPage", () => {
     it("loads session from code", async () => {
         const realLocation = window.location;
         delete (window as any).location;
-        window.location = {...realLocation, assign: jest.fn()};
+        window.location = { ...realLocation, assign: jest.fn() };
 
         const wrapper = getWrapper(sessionsMetadata, currentSessionId);
         await wrapper.find("#session-code-input").setValue("bad-dog");
