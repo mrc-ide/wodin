@@ -28,6 +28,11 @@ $grey: #ccc;
   color: $brand;
 }
 
+.brand-link, .brand-link:hover, .brand-link:visited {
+  @extend .brand;
+  text-decoration: none;
+}
+
 .grey {
   color: $grey;
 }

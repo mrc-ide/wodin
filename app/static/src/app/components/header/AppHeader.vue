@@ -14,8 +14,14 @@
           <vue-feather class="grey inline-icon" type="edit-2" size="1.3rem"></vue-feather>
           Edit Label
         </li>
-        <hr/>
-        <li><router-link id="all-sessions-link" class="dropdown-item" to="/sessions">All Sessions</router-link></li>
+        <template v-if="sessionPersisted">
+          <hr/>
+          <li>
+            <router-link id="all-sessions-link" class="dropdown-item" to="/sessions">
+              All Sessions
+            </router-link>
+          </li>
+        </template>
       </ul>
     </span>
     <span v-if="initialised" style="display: flex; align-items: center;">
@@ -69,6 +75,7 @@ export default defineComponent({
 
         const sessionId = computed(() => store.state.sessionId);
         const sessionLabel = computed(() => store.state.sessionLabel);
+        const sessionPersisted = computed(() => store.state.persisted);
 
         const sessionMenuHeader = computed(() => {
             return sessionLabel.value ? `Session: ${sessionLabel.value}` : "Sessions";
@@ -87,6 +94,7 @@ export default defineComponent({
             sessionId,
             sessionLabel,
             sessionMenuHeader,
+            sessionPersisted,
             languagesKeys
         };
     }

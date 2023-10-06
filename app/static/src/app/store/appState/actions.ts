@@ -25,7 +25,7 @@ async function immediateUploadState(context: ActionContext<AppState, AppState>) 
 
     commit(AppStateMutation.SetStateUploadInProgress, true);
     await api<AppStateMutation, ErrorsMutation>(context)
-        .ignoreSuccess()
+        .withSuccess(AppStateMutation.SetPersisted)
         .withError(ErrorsMutation.AddError)
         .post(`/${appsPath}/${appName}/sessions/${sessionId}`, serialiseState(state));
     commit(AppStateMutation.SetStateUploadInProgress, false);

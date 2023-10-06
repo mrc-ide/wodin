@@ -4,9 +4,48 @@
       <errors-alert></errors-alert>
       <h2>Sessions</h2>
     </div>
-    <template v-if="sessionsMetadata">
-      <template v-if="sessionsMetadata.length">
-        <div class="row fw-bold py-2">
+    <div class="row mb-3" id="no-current-session" v-if="!currentSession">
+        <span>
+          <router-link to="/" class="brand-link">
+            Start a new session
+          </router-link>
+          <span v-if="previousSessions && previousSessions.length" id="load-previous-span">
+            or load a previous session.
+          </span>
+        </span>
+    </div>
+    <div class="row mb-3" id="current-session" v-else>
+      <p>
+        <router-link to="/" class="brand-link">
+          Return to the current session
+        </router-link>
+        or
+        <a class="brand-link" :href="sessionUrl(currentSessionId)">
+          make a copy of the current session.
+        </a>
+      </p>
+      <div>
+        <span class="session-copy-link clickable brand"
+              @click="copyLink(currentSession)"
+              @mouseleave="clearLastCopied">
+          <vue-feather class="inline-icon" type="copy"></vue-feather>
+          Copy link for current session
+        </span>
+        <span class="session-copy-code clickable brand ms-2"
+              @click="copyCode(currentSession)"
+              @mouseleave="clearLastCopied">
+          <vue-feather class="inline-icon" type="copy"></vue-feather>
+          Copy code for current session
+        </span>
+        <br/>
+        <div class="session-copy-confirm small text-muted text-nowrap float-start" style="height:0.8rem;">
+          {{getCopyMsg(currentSession)}}
+        </div>
+      </div>
+    </div>
+    <h3>Previous sessions</h3>
+    <template v-if="previousSessions && previousSessions.length">
+        <div class="row fw-bold py-2" id="previous-sessions-headers">
           <div class="col-2 session-col-header">Saved</div>
           <div class="col-2 session-col-header">Label</div>
           <div class="col-2 text-center session-col-header">Edit Label</div>
@@ -14,10 +53,9 @@
           <div class="col-1 text-center session-col-header">Delete</div>
           <div class="col-4 text-center session-col-header">Shareable Link</div>
         </div>
-        <div class="row py-2" v-for="session in sessionsMetadata" :key="session.id">
+        <div class="row py-2 previous-session-row" v-for="session in previousSessions" :key="session.id">
           <div class="col-2 session-col-value session-time">
             {{formatDateTime(session.time)}}
-            <div v-if="isCurrentSession(session.id)" class="small text-muted">(current session)</div>
           </div>
           <div class="col-2 session-col-value session-label" :class="session.label ? '' : 'text-muted'">
             {{session.label || "--no label--"}}
@@ -28,16 +66,12 @@
                          @click="editSessionLabel(session.id, session.label)"></vue-feather>
           </div>
           <div class="col-1 text-center session-col-value session-load">
-            <router-link v-if="isCurrentSession(session.id)" to="/" title="Return to session">
-              <vue-feather class="inline-icon brand" type="home"></vue-feather>
-            </router-link>
             <a class="ms-2" :href="sessionUrl(session.id)" title="Load as new session">
               <vue-feather class="inline-icon brand" type="upload"></vue-feather>
             </a>
           </div>
           <div class="col-1 text-center session-col-value session-delete">
-            <vue-feather v-if="!isCurrentSession(session.id)"
-                         class="inline-icon brand clickable"
+            <vue-feather class="inline-icon brand clickable"
                          type="trash-2"
                          @click="confirmDeleteSession(session.id)"></vue-feather>
           </div>
@@ -58,14 +92,11 @@
               </div>
           </div>
         </div>
-      </template>
-      <div id="empty-sessions" v-else>
-        {{ messages.noSavedYet }}
-        <router-link class="wodin-link" to="/">{{ messages.loadApplication.link }}</router-link>
-        {{ messages.loadApplication.suffix }}
-      </div>
     </template>
-    <div id="loading-sessions" v-else>
+    <p v-else id="previous-sessions-placeholder">
+      Saved sessions will appear here.
+    </p>
+    <div id="loading-sessions" v-if="!previousSessions">
       {{ messages.loading }}
     </div>
     <edit-session-label id="page-edit-session-label"
@@ -135,7 +166,15 @@ export default defineComponent({
         const appUrl = computed(() => `${baseUrl.value}/${appsPath.value}/${appName.value}/`);
 
         const sessionUrl = (sessionId: string) => `${appUrl.value}?sessionId=${sessionId}`;
+
         const isCurrentSession = (sessionId: string) => sessionId === currentSessionId.value;
+
+        const previousSessions = computed(() => {
+            return sessionsMetadata.value?.filter((s: SessionMetadata) => !isCurrentSession(s.id));
+        });
+        const currentSession = computed(() => {
+            return sessionsMetadata.value?.find((s: SessionMetadata) => isCurrentSession(s.id));
+        });
 
         const toggleEditSessionLabelOpen = (open: boolean) => {
             editSessionLabelOpen.value = open;
@@ -211,10 +250,11 @@ export default defineComponent({
         const messages = userMessages.sessions;
 
         return {
-            sessionsMetadata,
+            previousSessions,
+            currentSession,
             formatDateTime,
             sessionUrl,
-            isCurrentSession,
+            currentSessionId,
             editSessionLabelOpen,
             selectedSessionId,
             selectedSessionLabel,
