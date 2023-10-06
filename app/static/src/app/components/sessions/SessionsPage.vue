@@ -43,12 +43,12 @@
         </div>
       </div>
     </div>
+    <h3>Previous sessions</h3>
+    <p>
+      <input id="show-unlabelled-check" type="checkbox" class="form-check-input" v-model="showUnlabelledSessions" />
+      <label for="show-unlabelled-check" class="form-check-label ms-2">Show unlabelled sessions</label>
+    </p>
     <template v-if="previousSessions && previousSessions.length">
-        <h3>Previous sessions</h3>
-        <div>
-          <input id="show-unlabelled-check" type="checkbox" class="form-check-input" v-model="showUnlabelledSessions" />
-          <label for="show-unlabelled-check" class="form-check-label">Show unlabelled sessions</label>
-        </div>
         <div class="row fw-bold py-2" id="previous-sessions-headers">
           <div class="col-2 session-col-header">Saved</div>
           <div class="col-2 session-col-header">Label</div>
@@ -97,6 +97,9 @@
           </div>
         </div>
     </template>
+    <p v-else id="previous-sessions-placeholder">
+      Saved sessions will appear here.
+    </p>
     <div id="loading-sessions" v-if="!previousSessions">
       {{ messages.loading }}
     </div>
@@ -171,7 +174,7 @@ export default defineComponent({
 
         const showUnlabelledSessions = computed({
             get() {
-                return store.state.userPreferences.showUnlabelledSessions;
+                return store.state.userPreferences?.showUnlabelledSessions;
             },
             set(newValue: boolean) {
                 store.dispatch(AppStateAction.SaveUserPreferences, { showUnlabelledSessions: newValue });

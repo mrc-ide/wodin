@@ -350,6 +350,7 @@ describe("serialise", () => {
             yAxisRange: [1, 2]
         },
         configured: false,
+        persisted: true,
         language: langaugeState
     };
 
@@ -378,6 +379,7 @@ describe("serialise", () => {
             yAxisRange: [1, 2]
         },
         configured: false,
+        persisted: true,
         language: langaugeState
     };
 
@@ -646,6 +648,7 @@ describe("serialise", () => {
 
         deserialiseState(target, serialised);
         expect(target).toStrictEqual({
+            persisted: true,
             sessionId: "123",
             appType: AppType.Fit,
             config: {},

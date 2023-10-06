@@ -43,7 +43,8 @@ export interface AppState {
     multiSensitivity: MultiSensitivityState,
     graphSettings: GraphSettingsState,
     versions: VersionsState,
-    configured: boolean, // true if configuration has been loaded or rehydrated and defaults set
     language: LanguageState,
+    configured: boolean, // true if configuration has been loaded or rehydrated and defaults set
+    persisted: boolean, // true if we have done an initial save of the session to the back-end
     userPreferences: UserPreferences
 }

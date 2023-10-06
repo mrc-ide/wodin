@@ -32,7 +32,8 @@ const defaultState: () => any = () => {
         config: null,
         queuedStateUploadIntervalId: -1,
         stateUploadInProgress: false,
-        configured: false
+        configured: false,
+        persisted: false
     };
 };
 
