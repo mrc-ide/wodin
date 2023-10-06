@@ -213,4 +213,11 @@ test.describe("Sessions tests", () => {
 
         await browser.close();
     });
+
+    test("can load session from code", async ({ page }) => {
+        await page.goto("/apps/day1/sessions");
+        await page.fill("#session-code-input", "good-dog");
+        await page.click("#load-session-from-code");
+        await expect(await page.url()).toBe("http://localhost:3000/apps/day1/?share=good-dog");
+    });
 });
