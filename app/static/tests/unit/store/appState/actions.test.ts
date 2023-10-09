@@ -27,6 +27,11 @@ describe("AppState actions", () => {
     const appsPath = "apps";
     const defaultLanguage = Language.en;
     const enableI18n = true;
+
+    const mockGetUserPreferences = jest.spyOn(localStorageManager, "getUserPreferences")
+        .mockReturnValue({ showUnlabelledSessions: false });
+    const mockSetUserPreferences = jest.spyOn(localStorageManager, "setUserPreferences");
+
     const getStore = () => {
         const state = mockBasicState({ config: null, sessionId: "1234" });
         return new Vuex.Store<BasicState>({
@@ -419,5 +424,32 @@ describe("AppState actions", () => {
             expect(commit.mock.calls[5][1]).toBe(false);
             done();
         });
+    });
+
+    it("LoadUserPreferences gets preferences from local storage and commits", async () => {
+        const commit = jest.fn();
+        await (appStateActions[AppStateAction.LoadUserPreferences] as any)({ commit });
+        expect(mockGetUserPreferences).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetUserPreferences);
+        expect(commit.mock.calls[0][1]).toStrictEqual({ showUnlabelledSessions: false });
+    });
+
+    it("SaveUserPreferences sets preferences in local storage and commits", async () => {
+        const commit = jest.fn();
+        const state = {
+            userPreferences: {
+                somePref: "something",
+                showUnlabelledSessions: false
+            }
+        };
+        await (appStateActions[AppStateAction.SaveUserPreferences] as any)({ commit, state },
+            { showUnlabelledSessions: true });
+        const expectedPrefs = {
+            somePref: "something",
+            showUnlabelledSessions: true
+        };
+        expect(mockSetUserPreferences).toHaveBeenCalledWith(expectedPrefs);
+        expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetUserPreferences);
+        expect(commit.mock.calls[0][1]).toStrictEqual(expectedPrefs);
     });
 });
