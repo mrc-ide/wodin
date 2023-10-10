@@ -76,4 +76,14 @@ describe("AppState mutations", () => {
         appStateMutations.SetPersisted(state);
         expect(state.persisted).toBe(true);
     });
+
+    it("sets userPreferences", () => {
+        const state = mockBasicState();
+        const committed = {
+            showUnlabelledSessions: false,
+            someValue: "other"
+        };
+        appStateMutations.SetUserPreferences(state, committed);
+        expect(state.userPreferences).toBe(committed);
+    });
 });

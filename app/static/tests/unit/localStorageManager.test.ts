@@ -1,6 +1,6 @@
 import { localStorageManager } from "../../src/app/localStorageManager";
 
-describe("localStorageManager", () => {
+describe("localStorageManager for sessions", () => {
     const spyOnGetItem = jest.spyOn(Storage.prototype, "getItem").mockReturnValue("[\"session1\", \"session2\"]");
     const spyOnSetItem = jest.spyOn(Storage.prototype, "setItem");
 
@@ -44,5 +44,42 @@ describe("localStorageManager", () => {
         expect(spyOnSetItem).toHaveBeenCalledTimes(1);
         expect(spyOnSetItem.mock.calls[0][0]).toBe("testInstance_day1_sessionIds");
         expect(spyOnSetItem.mock.calls[0][1]).toBe(JSON.stringify(["session1"]));
+    });
+});
+
+describe("localStorageManager gets and saves user preferences", () => {
+    const spyOnGetItem = jest.spyOn(Storage.prototype, "getItem")
+        .mockReturnValue("{\"showUnlabelledSessions\": false}");
+    const spyOnSetItem = jest.spyOn(Storage.prototype, "setItem");
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it("can get user preferences", () => {
+        const result = localStorageManager.getUserPreferences();
+        expect(result).toStrictEqual({ showUnlabelledSessions: false });
+        expect(spyOnGetItem).toHaveBeenCalledWith("preferences");
+    });
+
+    it("can set user preferences", () => {
+        const prefs = { showUnlabelledSessions: false };
+        localStorageManager.setUserPreferences(prefs);
+        expect(spyOnSetItem).toHaveBeenCalledWith("preferences", JSON.stringify(prefs));
+    });
+});
+
+describe("localStorageManager gets default user preferences", () => {
+    const spyOnGetItem = jest.spyOn(Storage.prototype, "getItem")
+        .mockReturnValue(null);
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it("can get default user preferences", () => {
+        const result = localStorageManager.getUserPreferences();
+        expect(result).toStrictEqual({ showUnlabelledSessions: true });
+        expect(spyOnGetItem).toHaveBeenCalledWith("preferences");
     });
 });
