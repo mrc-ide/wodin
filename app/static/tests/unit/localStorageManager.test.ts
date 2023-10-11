@@ -1,8 +1,13 @@
 import { localStorageManager } from "../../src/app/localStorageManager";
 
 describe("localStorageManager for sessions", () => {
-    const spyOnGetItem = jest.spyOn(Storage.prototype, "getItem").mockReturnValue("[\"session1\", \"session2\"]");
-    const spyOnSetItem = jest.spyOn(Storage.prototype, "setItem");
+    let spyOnGetItem: any;
+    let spyOnSetItem : any;
+
+    beforeAll(() => {
+        spyOnGetItem = jest.spyOn(Storage.prototype, "getItem").mockReturnValue("[\"session1\", \"session2\"]");
+        spyOnSetItem = jest.spyOn(Storage.prototype, "setItem");
+    });
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -48,9 +53,14 @@ describe("localStorageManager for sessions", () => {
 });
 
 describe("localStorageManager gets and saves user preferences", () => {
-    const spyOnGetItem = jest.spyOn(Storage.prototype, "getItem")
-        .mockReturnValue("{\"showUnlabelledSessions\": false}");
-    const spyOnSetItem = jest.spyOn(Storage.prototype, "setItem");
+    let spyOnGetItem: any;
+    let spyOnSetItem: any;
+
+    beforeAll(() => {
+        spyOnGetItem = jest.spyOn(Storage.prototype, "getItem")
+            .mockReturnValue("{\"showUnlabelledSessions\": false}");
+        spyOnSetItem = jest.spyOn(Storage.prototype, "setItem");
+    });
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -70,8 +80,12 @@ describe("localStorageManager gets and saves user preferences", () => {
 });
 
 describe("localStorageManager gets default user preferences", () => {
-    const spyOnGetItem = jest.spyOn(Storage.prototype, "getItem")
-        .mockReturnValue(null);
+    let spyOnGetItem: any;
+
+    beforeAll(() => {
+        spyOnGetItem = jest.spyOn(Storage.prototype, "getItem")
+            .mockReturnValue(null);
+    });
 
     beforeEach(() => {
         jest.clearAllMocks();

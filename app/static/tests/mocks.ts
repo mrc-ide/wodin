@@ -189,6 +189,8 @@ export const mockMultiSensitivityState = (state: Partial<MultiSensitivityState> 
     };
 };
 
+const mockUserPreferences = () => ({ showUnlabelledSessions: true });
+
 export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
     return {
         sessionId: "123",
@@ -215,6 +217,7 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
         configured: false,
         persisted: true,
         language: mockLanguageState(),
+        userPreferences: mockUserPreferences(),
         ...state
     };
 };
@@ -267,6 +270,7 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
         configured: false,
         persisted: false,
         language: mockLanguageState(),
+        userPreferences: mockUserPreferences(),
         ...state
     };
 };
@@ -298,6 +302,7 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
         configured: false,
         persisted: false,
         language: mockLanguageState(),
+        userPreferences: mockUserPreferences(),
         ...state
     };
 };
