@@ -9,6 +9,7 @@ export abstract class WodinExcelDownload {
 
     protected readonly _state: AppState;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected readonly _rootGetters: any;
 
     protected readonly _commit: Commit;
@@ -23,7 +24,7 @@ export abstract class WodinExcelDownload {
         this._workbook = XLSX.utils.book_new();
     }
 
-    protected _addParameters(excludeParams: string[] = []) {
+    protected _addParameters(excludeParams: string[] = []): void {
         const paramVals = this._state.run.parameterValues;
         if (paramVals) {
             const paramData = Object.keys(paramVals)
@@ -36,7 +37,7 @@ export abstract class WodinExcelDownload {
         }
     }
 
-    protected _writeFile(buildWorkbook: () => void) {
+    protected _writeFile(buildWorkbook: () => void): void {
         try {
             buildWorkbook();
             XLSX.writeFile(this._workbook, this._fileName);

@@ -292,9 +292,10 @@ describe("AppState actions", () => {
         // use a real timer to wait for the final commit after mock axios returns!
         jest.useRealTimers();
         setTimeout(() => {
-            expect(commit).toHaveBeenCalledTimes(5);
-            expect(commit.mock.calls[4][0]).toBe(AppStateMutation.SetStateUploadInProgress);
-            expect(commit.mock.calls[4][1]).toBe(false);
+            expect(commit).toHaveBeenCalledTimes(6);
+            expect(commit.mock.calls[4][0]).toBe(AppStateMutation.SetPersisted);
+            expect(commit.mock.calls[5][0]).toBe(AppStateMutation.SetStateUploadInProgress);
+            expect(commit.mock.calls[5][1]).toBe(false);
             done();
         });
     });

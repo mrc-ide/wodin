@@ -12,10 +12,15 @@ import { LanguageSwitcher } from "../../../../translationPackage";
 
 describe("AppHeader", () => {
     const getWrapper = (appName: string | null = "test", sessionLabel: string | null = null,
-        sessionId = "testSessionId") => {
+        sessionId = "testSessionId", persisted = true) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
-                appName, sessionLabel, sessionId, baseUrl: "http://localhost:3000", appsPath: "apps"
+                appName,
+                sessionLabel,
+                sessionId,
+                baseUrl: "http://localhost:3000",
+                appsPath: "apps",
+                persisted
             })
         });
 
@@ -33,7 +38,7 @@ describe("AppHeader", () => {
         return shallowMount(AppHeader, options);
     };
 
-    it("renders as expected", () => {
+    it("renders as expected when session has been persisted", () => {
         const wrapper = getWrapper();
         expect(wrapper.find("a.navbar-brand").text()).toBe("Test Course Title");
         expect(wrapper.find("a.navbar-brand").attributes("href")).toBe("http://localhost:3000");
@@ -45,6 +50,7 @@ describe("AppHeader", () => {
         expect(editLabelItem.text()).toBe("Edit Label");
         expect(editLabelItem.findComponent(VueFeather).props("type")).toBe("edit-2");
 
+        expect(sessionsDropDown.find("hr").exists()).toBe(true);
         const routerLink = sessionsDropDown.findAll("ul.dropdown-menu li").at(1)!.findComponent(RouterLink);
         expect(routerLink.attributes("to")).toBe("/sessions");
 
@@ -54,6 +60,19 @@ describe("AppHeader", () => {
         expect(editDlg.props("sessionLabel")).toBe(null);
 
         expect(wrapper.findAllComponents(LanguageSwitcher)).toHaveLength(1);
+    });
+
+    it("renders as expected when session has not been persisted", () => {
+        const wrapper = getWrapper("test", null, "testSessionId", false);
+        const sessionsDropDown = wrapper.find(".dropdown");
+        expect(sessionsDropDown.find("a#sessions-menu").text()).toBe("Sessions");
+
+        expect(sessionsDropDown.find("hr").exists()).toBe(false);
+        const routerLink = sessionsDropDown.findComponent(RouterLink);
+        expect(routerLink.exists()).toBe(false);
+
+        const editDlg = wrapper.findComponent(EditSessionLabel);
+        expect(editDlg.exists()).toBe(true);
     });
 
     it("renders version menu as expected", () => {

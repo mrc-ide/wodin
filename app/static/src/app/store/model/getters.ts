@@ -11,7 +11,7 @@ export interface ModelGetters {
 }
 
 export const getters: ModelGetters & GetterTree<ModelState, AppState> = {
-    [ModelGetter.hasRunner]: (state: ModelState, _: any, rootState: AppState): boolean => {
+    [ModelGetter.hasRunner]: (state: ModelState, _: ModelGetters, rootState: AppState): boolean => {
         return (rootState.appType === AppType.Stochastic) ? !!state.odinRunnerDiscrete : !!state.odinRunnerOde;
     }
 };

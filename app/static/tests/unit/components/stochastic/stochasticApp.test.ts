@@ -1,5 +1,6 @@
 // Mock the import of third party packages to prevent errors
 jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
+    // eslint-disable-next-line func-names
     return function () {
         return {
             use: jest.fn().mockReturnValue({

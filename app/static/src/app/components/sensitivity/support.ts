@@ -22,7 +22,7 @@ export const sensitivityUpdateRequiredExplanation = (reasons: SensitivityUpdateR
     return `${prefix} ${joinStringsSentence(explanation)}. ${help.suffix(multiSens)}.`;
 };
 
-export const verifyValidPlotSettingsTime = (state: AppState, commit: Commit) => {
+export const verifyValidPlotSettingsTime = (state: AppState, commit: Commit): void => {
     // update plot settings' end time to be valid before we use it
     const { plotSettings } = state.sensitivity;
     let endTime = plotSettings.time;

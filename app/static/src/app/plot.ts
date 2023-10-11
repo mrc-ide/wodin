@@ -164,7 +164,7 @@ const lineStyles = ["dot", "dash", "longdash", "dashdot", "longdashdot"];
 export const paramSetLineStyle = (index: number): string => (lineStyles[index % lineStyles.length]);
 
 export const updatePlotTraceName = (plotTrace: Partial<PlotData>, param: string | null, value: number | null,
-    parameterSetName = "") => {
+    parameterSetName = ""): void => {
     const parenthesisItems = [];
     if (param && value) {
         parenthesisItems.push(`${param}=${format(".3f")(value)}`);

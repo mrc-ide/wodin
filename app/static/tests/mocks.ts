@@ -213,6 +213,7 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
         versions: mockVersionsState(),
         graphSettings: mockGraphSettingsState(),
         configured: false,
+        persisted: true,
         language: mockLanguageState(),
         ...state
     };
@@ -264,6 +265,7 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
         versions: mockVersionsState(),
         graphSettings: mockGraphSettingsState(),
         configured: false,
+        persisted: false,
         language: mockLanguageState(),
         ...state
     };
@@ -294,6 +296,7 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
         versions: mockVersionsState(),
         graphSettings: mockGraphSettingsState(),
         configured: false,
+        persisted: false,
         language: mockLanguageState(),
         ...state
     };

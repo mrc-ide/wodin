@@ -86,6 +86,8 @@ test.describe("Sessions tests", () => {
         await page.click("#all-sessions-link");
 
         await expect(await page.innerText(".container h2")).toBe("Sessions");
+        await expect(await page.innerText(":nth-match(#current-session p, 1)"))
+            .toBe("Return to the current session or make a copy of the current session.");
         await expect(await page.innerText(":nth-match(.session-col-header, 1)")).toBe("Saved");
         await expect(await page.innerText(":nth-match(.session-col-header, 2)")).toBe("Label");
         await expect(await page.innerText(":nth-match(.session-col-header, 3)")).toBe("Edit Label");
@@ -108,13 +110,10 @@ test.describe("Sessions tests", () => {
         const copiedLinkText = await page.evaluate("navigator.clipboard.readText()") as string;
         expect(copiedLinkText).toContain("http://localhost:3000/apps/day2/?share=");
 
-        // Set the current session label from the nav menu and check it updates on menu title and in the sessions list
+        // Set the current session label from the nav menu and check it updates on menu title
         await page.click("#sessions-menu");
         await page.click("#edit-current-session-label");
         await enterSessionLabel(page, "header-edit-session-label", "current session label");
-        await expect(await page.locator(":nth-match(.session-label, 1)")).toHaveText(
-            "current session label", { timeout }
-        );
         await expect(await page.innerText("#sessions-menu")).toBe("Session: current session label");
 
         // Set the current session label on a previous session
@@ -213,5 +212,12 @@ test.describe("Sessions tests", () => {
         await expect(await page.locator("#app")).not.toContainText("delete me");
 
         await browser.close();
+    });
+
+    test("can load session from code", async ({ page }) => {
+        await page.goto("/apps/day1/sessions");
+        await page.fill("#session-code-input", "good-dog");
+        await page.click("#load-session-from-code");
+        await expect(await page.url()).toBe("http://localhost:3000/apps/day1/?share=good-dog");
     });
 });

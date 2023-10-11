@@ -70,4 +70,10 @@ describe("AppState mutations", () => {
         appStateMutations.SetConfigured(state);
         expect(state.configured).toBe(true);
     });
+
+    it("sets persisted", () => {
+        const state = mockBasicState();
+        appStateMutations.SetPersisted(state);
+        expect(state.persisted).toBe(true);
+    });
 });

@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { computed } from "vue";
+import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import FitPlot from "./FitPlot.vue";
@@ -40,7 +40,7 @@ import { fitRequirementsExplanation, fitUpdateRequiredExplanation } from "./supp
 import { allTrue, anyTrue } from "../../utils";
 import LoadingButton from "../LoadingButton.vue";
 
-export default {
+export default defineComponent({
     name: "FitTab",
     components: {
         LoadingSpinner,
@@ -123,5 +123,5 @@ export default {
             iconClass
         };
     }
-};
+});
 </script>
