@@ -4,6 +4,7 @@ import {
     Page
 } from "@playwright/test";
 import * as os from "os";
+import * as fs from "fs";
 import {
     writeCode,
     newFitCode,
@@ -29,10 +30,9 @@ test.describe("Sessions tests", () => {
     test("can use Sessions page", async () => {
         // We need to use a browser with persistent context instead of the default incognito browser so that
         // we can use the session ids in local storage
-        const userDataDir = os.tmpdir();
+        const userDataDir = fs.mkdtempSync(`${os.tmpdir()}/`);
         const browser = await chromium.launchPersistentContext(userDataDir);
         const page = await browser.newPage();
-
         await page.goto(appUrl);
 
         // change code in this session, which we will later reload and check that we can see the code changes
@@ -95,7 +95,7 @@ test.describe("Sessions tests", () => {
         await expect(await page.innerText(":nth-match(.session-col-header, 5)")).toBe("Delete");
         await expect(await page.innerText(":nth-match(.session-col-header, 6)")).toBe("Shareable Link");
 
-        await expect(await page.innerText(".session-label")).toBe("--no label--");
+        await expect(await page.locator(".session-label")).toHaveText("--no label--");
 
         // Can copy code and link for a session
         await page.click(":nth-match(.session-copy-code, 2)");
@@ -116,15 +116,22 @@ test.describe("Sessions tests", () => {
         await enterSessionLabel(page, "header-edit-session-label", "current session label");
         await expect(await page.innerText("#sessions-menu")).toBe("Session: current session label");
 
+        // Toggle 'Show unlabelled sessions' - all historic sessions should be filtered out
+        const unlabelledCount = await page.locator(".previous-session-row").count();
+        await expect(unlabelledCount).toBeGreaterThan(0);
+        await page.click("input#show-unlabelled-check");
+        await expect(await page.locator(".previous-session-row")).toHaveCount(0);
+        await page.click("input#show-unlabelled-check");
+        await expect(await page.locator(".previous-session-row")).toHaveCount(unlabelledCount);
+
         // Set the current session label on a previous session
-        await page.click(":nth-match(.session-edit-label i, 2)");
+        await page.click(":nth-match(.session-edit-label i, 1)");
         await enterSessionLabel(page, "page-edit-session-label", "previous session label");
-        await expect(await page.locator(":nth-match(.session-label, 2)")).toHaveText(
+        await expect(await page.locator(":nth-match(.session-label, 1)")).toHaveText(
             "previous session label", { timeout }
         );
 
-        // NB this will load the second load link, i.e. the older session, not the current one
-        await page.click(":nth-match(.session-load a, 3)"); // 3rd because there are two of these on the current
+        await page.click(":nth-match(.session-load a, 1)");
 
         // Check all session values have been rehydrated:
 

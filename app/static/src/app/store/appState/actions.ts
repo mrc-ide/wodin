@@ -5,7 +5,7 @@ import { AppConfig } from "../../types/responseTypes";
 import { CodeMutation } from "../code/mutations";
 import { RunMutation } from "../run/mutations";
 import { ModelAction } from "../model/actions";
-import {AppState, AppType, UserPreferences} from "./state";
+import { AppState, AppType, UserPreferences } from "./state";
 import { AppStateMutation } from "./mutations";
 import { serialiseState } from "../../serialise";
 import { FitState } from "../fit/state";

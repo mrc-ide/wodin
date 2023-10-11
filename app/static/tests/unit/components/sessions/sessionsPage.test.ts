@@ -33,7 +33,7 @@ describe("SessionsPage", () => {
     const currentSessionId = "abc";
 
     const getWrapper = (sessionsMetadata: SessionMetadata[] | null, sessionId: string | undefined,
-                        showUnlabelledSessions = true) => {
+        showUnlabelledSessions = true) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
                 appName: "testApp",
@@ -390,4 +390,3 @@ describe("SessionsPage", () => {
         expect((wrapper.find("input#show-unlabelled-check").element as HTMLInputElement).checked).toBe(false);
     });
 });
-

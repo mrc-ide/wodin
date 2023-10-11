@@ -1,4 +1,4 @@
-import {UserPreferences} from "./store/appState/state";
+import { UserPreferences } from "./store/appState/state";
 
 class LocalStorageManager {
     static _sessionIdsKey = (appName: string, basePath: string) => {
