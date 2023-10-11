@@ -327,6 +327,10 @@ describe("serialise", () => {
         enableI18n: true
     };
 
+    const userPreferences = {
+        showUnlabelledSessions: true
+    };
+
     const basicState: BasicState = {
         sessionId: "1234",
         sessionLabel: null,
@@ -351,7 +355,8 @@ describe("serialise", () => {
         },
         configured: false,
         persisted: true,
-        language: langaugeState
+        language: langaugeState,
+        userPreferences
     };
 
     const fitState: FitState = {
@@ -380,7 +385,8 @@ describe("serialise", () => {
         },
         configured: false,
         persisted: true,
-        language: langaugeState
+        language: langaugeState,
+        userPreferences
     };
 
     const expectedCode = { currentCode: ["some code"], loading: false };
