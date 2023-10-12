@@ -2,15 +2,13 @@ import { ActionTree } from "vuex";
 import { AppState } from "../appState/state";
 import {
     baseSensitivityActions,
-    runSensitivity,
-    runSensitivityOnRehydrate
+    runSensitivity
 } from "../sensitivity/actions";
 import { MultiSensitivityState } from "./state";
 import { BaseSensitivityGetter } from "../sensitivity/getters";
 
 export enum MultiSensitivityAction {
-    RunMultiSensitivity = "RunMultiSensitivity",
-    RunMultiSensitivityOnRehydrate = "RunMultiSensitivityOnRehydrate"
+    RunMultiSensitivity = "RunMultiSensitivity"
 }
 
 export const actions: ActionTree<MultiSensitivityState, AppState> = {
@@ -21,9 +19,5 @@ export const actions: ActionTree<MultiSensitivityState, AppState> = {
         const batchPars = getters[BaseSensitivityGetter.batchPars];
 
         runSensitivity(batchPars, endTime, context, true);
-    },
-
-    [MultiSensitivityAction.RunMultiSensitivityOnRehydrate](context) {
-        runSensitivityOnRehydrate(context);
     }
 };

@@ -80,7 +80,6 @@ function serialiseBaseSensitivity(sensitivity: BaseSensitivityState) {
         running: false,
         sensitivityUpdateRequired: sensitivity.sensitivityUpdateRequired,
         result: sensitivity.result ? {
-            inputs: sensitivity.result.inputs,
             hasResult: !!sensitivity.result.batch,
             error: sensitivity.result.error
         } : null
@@ -92,7 +91,6 @@ function serialiseSensitivity(sensitivity: SensitivityState): SerialisedSensitiv
     Object.keys(sensitivity.parameterSetResults).forEach((name) => {
         const result = sensitivity.parameterSetResults[name];
         serialisedParameterSetResults[name] = {
-            inputs: result.inputs,
             hasResult: !!result.batch,
             error: result.error
         };

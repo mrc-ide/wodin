@@ -81,11 +81,11 @@ describe("SessionsActions", () => {
         expect(dispatch.mock.calls[2][0]).toBe(`run/${RunAction.RunModelOnRehydrate}`);
         expect(dispatch.mock.calls[2][1]).toBe(null);
         expect(dispatch.mock.calls[2][2]).toStrictEqual({ root: true });
-        expect(dispatch.mock.calls[3][0]).toBe(`sensitivity/${SensitivityAction.RunSensitivityOnRehydrate}`);
+        expect(dispatch.mock.calls[3][0]).toBe(`sensitivity/${SensitivityAction.RunSensitivity}`);
         expect(dispatch.mock.calls[3][1]).toBe(null);
         expect(dispatch.mock.calls[3][2]).toStrictEqual({ root: true });
         expect(dispatch.mock.calls[4][0])
-            .toBe(`multiSensitivity/${MultiSensitivityAction.RunMultiSensitivityOnRehydrate}`);
+            .toBe(`multiSensitivity/${MultiSensitivityAction.RunMultiSensitivity}`);
         expect(dispatch.mock.calls[4][1]).toBe(null);
         expect(dispatch.mock.calls[4][2]).toStrictEqual({ root: true });
     };
@@ -153,7 +153,7 @@ describe("SessionsActions", () => {
         expect(dispatch.mock.calls[1][0]).toBe(`model/${ModelAction.CompileModelOnRehydrate}`);
         expect(dispatch.mock.calls[1][1]).toBe(null);
         expect(dispatch.mock.calls[1][2]).toStrictEqual({ root: true });
-        expect(dispatch.mock.calls[2][0]).toBe(`sensitivity/${SensitivityAction.RunSensitivityOnRehydrate}`);
+        expect(dispatch.mock.calls[2][0]).toBe(`sensitivity/${SensitivityAction.RunSensitivity}`);
         expect(dispatch.mock.calls[2][1]).toBe(null);
         expect(dispatch.mock.calls[2][2]).toStrictEqual({ root: true });
     });
@@ -181,7 +181,7 @@ describe("SessionsActions", () => {
         expect(dispatch.mock.calls[2][1]).toBe(null);
         expect(dispatch.mock.calls[2][2]).toStrictEqual({ root: true });
         expect(dispatch.mock.calls[3][0])
-            .toBe(`multiSensitivity/${MultiSensitivityAction.RunMultiSensitivityOnRehydrate}`);
+            .toBe(`multiSensitivity/${MultiSensitivityAction.RunMultiSensitivity}`);
         expect(dispatch.mock.calls[3][1]).toBe(null);
         expect(dispatch.mock.calls[3][2]).toStrictEqual({ root: true });
     });
@@ -208,7 +208,7 @@ describe("SessionsActions", () => {
         expect(dispatch.mock.calls[2][0]).toBe(`run/${RunAction.RunModelOnRehydrate}`);
         expect(dispatch.mock.calls[2][1]).toBe(null);
         expect(dispatch.mock.calls[2][2]).toStrictEqual({ root: true });
-        expect(dispatch.mock.calls[3][0]).toBe(`sensitivity/${SensitivityAction.RunSensitivityOnRehydrate}`);
+        expect(dispatch.mock.calls[3][0]).toBe(`sensitivity/${SensitivityAction.RunSensitivity}`);
         expect(dispatch.mock.calls[3][1]).toBe(null);
         expect(dispatch.mock.calls[3][2]).toStrictEqual({ root: true });
     });

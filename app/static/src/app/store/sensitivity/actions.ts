@@ -23,8 +23,7 @@ export enum BaseSensitivityAction {
 }
 
 export enum SensitivityAction {
-    RunSensitivity = "RunSensitivity",
-    RunSensitivityOnRehydrate = "RunSensitivityOnRehydrate"
+    RunSensitivity = "RunSensitivity"
 }
 
 const runModelIfRequired = (rootState: AppState, dispatch: Dispatch) => {
@@ -143,14 +142,6 @@ export const runSensitivity = (
     }
 };
 
-export const runSensitivityOnRehydrate = (context: ActionContext<BaseSensitivityState, AppState>): void => {
-    const { state, rootState } = context;
-    const { endTime } = rootState.run;
-    const { pars } = state.result!.inputs;
-
-    runSensitivity(pars, endTime, context);
-};
-
 export const baseSensitivityActions: ActionTree<BaseSensitivityState, AppState> = {
     [BaseSensitivityAction.ComputeNext](context, batch: Batch) {
         const {
@@ -186,9 +177,5 @@ export const actions: ActionTree<SensitivityState, AppState> = {
         const batchPars = getters[BaseSensitivityGetter.batchPars];
 
         runSensitivity(batchPars, endTime, context);
-    },
-
-    [SensitivityAction.RunSensitivityOnRehydrate](context) {
-        runSensitivityOnRehydrate(context);
     }
 };

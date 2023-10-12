@@ -7,7 +7,7 @@ import {
     AdvancedSettings,
     ParameterSet, RunUpdateRequiredReasons
 } from "../store/run/state";
-import { OdinFitInputs, OdinRunInputs, OdinSensitivityInputs } from "./wrapperTypes";
+import { OdinFitInputs, OdinRunInputs } from "./wrapperTypes";
 import {
     SensitivityParameterSettings,
     SensitivityPlotSettings,
@@ -51,7 +51,6 @@ export interface SerialisedRunState {
 }
 
 export interface SerialisedSensitivityResult {
-    inputs: OdinSensitivityInputs,
     hasResult: boolean,
     error: WodinError | null
 }

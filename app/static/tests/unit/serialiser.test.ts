@@ -437,13 +437,11 @@ describe("serialise", () => {
         sensitivityUpdateRequired: noSensitivityUpdateRequired(),
         plotSettings: sensitivityState.plotSettings,
         result: {
-            inputs: sensitivityState.result.inputs,
             hasResult: true,
             error: sensitivityState.result.error
         },
         parameterSetResults: {
             "Set 1": {
-                inputs: sensitivityState.parameterSetResults["Set 1"].inputs,
                 hasResult: true,
                 error: sensitivityState.parameterSetResults["Set 1"].error
             }
@@ -455,7 +453,6 @@ describe("serialise", () => {
         paramSettings: multiSensitivityState.paramSettings,
         sensitivityUpdateRequired: noSensitivityUpdateRequired(),
         result: {
-            inputs: multiSensitivityState.result.inputs,
             hasResult: true,
             error: multiSensitivityState.result.error
         }

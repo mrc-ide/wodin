@@ -64,55 +64,6 @@ export const rootGetters = {
     [`model/${ModelGetter.hasRunner}`]: true
 };
 
-export const expectRunOnRehydrateToUseParametersFromResult = (action: Action<BaseSensitivityState, AppState>) => {
-    const mockResultBatchPars = {};
-    const rootState = {
-        model: mockModelState,
-        run: mockRunState
-    };
-    const state = {
-        result: {
-            inputs: {
-                pars: mockResultBatchPars
-            }
-        }
-    };
-
-    const commit = jest.fn();
-    const dispatch = jest.fn();
-
-    (action as any)({
-        rootState, getters, commit, dispatch, state, rootGetters
-    });
-
-    expect(commit).toHaveBeenCalledTimes(2);
-    expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
-    expect(commit.mock.calls[0][1]).toStrictEqual({
-        inputs: { endTime: 99, pars: mockResultBatchPars },
-        batch: mockBatch,
-        error: null
-    });
-    expect(commit.mock.calls[1][0]).toBe(BaseSensitivityMutation.SetUpdateRequired);
-    expect(commit.mock.calls[1][1]).toStrictEqual({
-        endTimeChanged: false,
-        modelChanged: false,
-        parameterValueChanged: false,
-        sensitivityOptionsChanged: false,
-        numberOfReplicatesChanged: false,
-        advancedSettingsChanged: false
-    });
-
-    expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
-        rootState.model.odin,
-        mockBatchPars,
-        0,
-        99,
-        defaultAdvanced
-    );
-
-    expect(dispatch).not.toHaveBeenCalled();
-};
-
 describe("BaseSensitivity actions", () => {
     afterEach(() => {
         jest.clearAllMocks();
@@ -557,9 +508,5 @@ describe("Sensitivity actions", () => {
         );
 
         expect(dispatch).not.toHaveBeenCalled();
-    });
-
-    it("run sensitivity on rehydrate uses parameters from result", () => {
-        expectRunOnRehydrateToUseParametersFromResult(actions[SensitivityAction.RunSensitivityOnRehydrate] as any);
     });
 });
