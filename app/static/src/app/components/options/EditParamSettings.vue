@@ -13,9 +13,12 @@
                  <label class="col-form-label">Parameter to vary</label>
                </div>
                <div class="col-6">
-                 <select class="form-select" v-model="settingsInternal.parameterToVary">
+                 <select v-if="paramNames.length > 1"
+                         class="form-select edit-param-select"
+                         v-model="settingsInternal.parameterToVary">
                    <option v-for="param in paramNames" :key="param">{{param}}</option>
                  </select>
+                 <div v-else class="col-form-label param-name-label">{{ settingsInternal.parameterToVary }}</div>
                </div>
              </div>
             <div class="row mt-2" id="edit-variation-type">
@@ -144,6 +147,10 @@ export default defineComponent({
             type: Boolean,
             required: true
         },
+        paramNames: {
+            type: Array as PropType<string[]>,
+            required: true
+        },
         paramSettings: {
             type: Object as PropType<SensitivityParameterSettings>,
             required: false
@@ -158,10 +165,6 @@ export default defineComponent({
     setup(props, { emit }) {
         const store = useStore();
         const settingsInternal = reactive({} as SensitivityParameterSettings);
-
-        const paramNames = computed(() => {
-            return store.state.run.parameterValues ? Object.keys(store.state.run.parameterValues) : [];
-        });
 
         const scaleValues = Object.keys(SensitivityScaleType);
         const variationTypeValues = Object.keys(SensitivityVariationType);
@@ -208,7 +211,6 @@ export default defineComponent({
         };
 
         return {
-            paramNames,
             scaleValues,
             variationTypeValues,
             settingsInternal,

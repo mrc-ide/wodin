@@ -70,7 +70,7 @@ describe("SensitivityOptions", () => {
                 run: {
                     namespaced: true,
                     state: {
-                        parameterValues: {}
+                        parameterValues: { A: 1, B: 2 }
                     }
                 }
             } as any
@@ -280,6 +280,7 @@ describe("SensitivityOptions", () => {
         const editParamSettings = wrapper.findComponent(EditParamSettings);
         expect(editParamSettings.props("open")).toBe(true);
         expect(editParamSettings.props("paramSettings")).toStrictEqual(percentSettings);
+        expect(editParamSettings.props("paramNames")).toStrictEqual(["A", "B"]);
 
         await editParamSettings.vm.$emit("close");
         expect(editParamSettings.props("open")).toBe(false);
@@ -292,6 +293,7 @@ describe("SensitivityOptions", () => {
         const editParamSettings = wrapper.findComponent(EditParamSettings);
         expect(editParamSettings.props("open")).toBe(true);
         expect(editParamSettings.props("paramSettings")).toStrictEqual(percentSettings);
+        expect(editParamSettings.props("paramNames")).toStrictEqual(["A", "C", "D"]);
 
         await editParamSettings.vm.$emit("close");
         expect(editParamSettings.props("open")).toBe(false);
@@ -401,5 +403,25 @@ describe("SensitivityOptions", () => {
             { ...rangeSettings, parameterToVary: "D" }
         ]);
         expect(wrapper.find("#add-param-settings").exists()).toBe(false);
+    });
+
+    it("removes parameter names from editor which already have multi-sensitivity, when Adding", async () => {
+        const wrapper = getWrapperForMultiSensitivity([
+            percentSettings, // param A
+            rangeSettings, // param B
+            customSettings // param C
+        ]);
+        await wrapper.find("#add-param-settings").trigger("click");
+        expect(wrapper.findComponent(EditParamSettings).props("paramNames")).toStrictEqual(["D"]);
+    });
+
+    it("removes non-current parameter names from editor which already have settings, when Editing", async () => {
+        const wrapper = getWrapperForMultiSensitivity([
+            percentSettings, // param A
+            rangeSettings, // param B
+            customSettings // param C
+        ]);
+        await wrapper.findAll(".edit-param-settings")[0].trigger("click");
+        expect(wrapper.findComponent(EditParamSettings).props("paramNames")).toStrictEqual(["A", "D"]);
     });
 });

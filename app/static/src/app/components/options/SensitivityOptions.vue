@@ -56,6 +56,7 @@
   </vertical-collapse>
   <edit-param-settings :open="editOpen"
                        :param-settings="settingsToEdit"
+                       :param-names="paramNamesForSettingsEdit"
                        @close="closeEdit"
                        @update="editSettings"></edit-param-settings>
 </template>
@@ -124,6 +125,19 @@ export default defineComponent({
             return editSettingsIdx.value === null ? null : allSettings.value[editSettingsIdx.value];
         });
 
+        const paramNamesForSettingsEdit = computed(() => {
+            const allParamNames = store.state.run.parameterValues ? Object.keys(store.state.run.parameterValues) : [];
+            if (props.multiSensitivity) {
+                // return all params which are either unused or are the param for the settings to edit
+                const editIdx = editSettingsIdx.value;
+                const editParam = editIdx !== null && (allSettings.value[editIdx]?.parameterToVary || null);
+                // check if a given param is that for the settings being edited
+                const isEditParam = (p: string) => !addingParamSettings.value && editParam !== null && p === editParam;
+                return allParamNames.filter((p) => paramsWithoutSettings.value.includes(p) || isEditParam(p));
+            }
+            return allParamNames;
+        });
+
         const openEdit = (settingsIdx: number) => {
             editSettingsIdx.value = settingsIdx;
             editOpen.value = true;
@@ -174,6 +188,7 @@ export default defineComponent({
             allSettings,
             settingsToEdit,
             paramsWithoutSettings,
+            paramNamesForSettingsEdit,
             canDeleteSettings,
             showOptions,
             compileModelMessage,
