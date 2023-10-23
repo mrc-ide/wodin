@@ -1,5 +1,5 @@
 import { MutationTree } from "vuex";
-import { AppState, VisualisationTab } from "./state";
+import { AppState, UserPreferences, VisualisationTab } from "./state";
 import { AppConfig } from "../../types/responseTypes";
 import { SetAppPayload } from "../../types/payloadTypes";
 import registerTranslations from "../../../../translationPackage/registerTranslations";
@@ -14,6 +14,7 @@ export enum AppStateMutation {
     SetStateUploadInProgress = "SetStateUploadInProgress",
     SetSessionLabel = "SetSessionLabel",
     SetConfigured = "SetConfigured",
+    SetUserPreferences = "SetUserPreferences",
     SetPersisted = "SetPersisted"
 }
 
@@ -60,6 +61,10 @@ export const appStateMutations: MutationTree<AppState> = {
 
     [AppStateMutation.SetConfigured](state: AppState) {
         state.configured = true;
+    },
+
+    [AppStateMutation.SetUserPreferences](state: AppState, payload: UserPreferences) {
+        state.userPreferences = payload;
     },
 
     [AppStateMutation.SetPersisted](state: AppState) {

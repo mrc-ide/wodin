@@ -57,6 +57,10 @@
               :disabled="!sessionCode">Load</button>
     </div>
     <h3>Previous sessions</h3>
+    <p>
+      <input id="show-unlabelled-check" type="checkbox" class="form-check-input" v-model="showUnlabelledSessions" />
+      <label for="show-unlabelled-check" class="form-check-label ms-2">Show unlabelled sessions</label>
+    </p>
     <template v-if="previousSessions && previousSessions.length">
         <div class="row fw-bold py-2" id="previous-sessions-headers">
           <div class="col-2 session-col-header">Saved</div>
@@ -137,6 +141,7 @@ import {
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import { RouterLink } from "vue-router";
+import { AppStateAction } from "../../store/appState/actions";
 import { SessionsAction } from "../../store/sessions/actions";
 import userMessages from "../../userMessages";
 import ErrorsAlert from "../ErrorsAlert.vue";
@@ -181,11 +186,23 @@ export default defineComponent({
 
         const sessionUrl = (sessionId: string) => `${appUrl.value}?sessionId=${sessionId}`;
 
+        const showUnlabelledSessions = computed({
+            get() {
+                return store.state.userPreferences?.showUnlabelledSessions;
+            },
+            set(newValue: boolean) {
+                store.dispatch(AppStateAction.SaveUserPreferences, { showUnlabelledSessions: newValue });
+            }
+        });
+
         const isCurrentSession = (sessionId: string) => sessionId === currentSessionId.value;
 
         const previousSessions = computed(() => {
-            return sessionsMetadata.value?.filter((s: SessionMetadata) => !isCurrentSession(s.id));
+            return sessionsMetadata.value?.filter((s: SessionMetadata) => {
+                return !isCurrentSession(s.id) && (showUnlabelledSessions.value || s.label);
+            });
         });
+
         const currentSession = computed(() => {
             return sessionsMetadata.value?.find((s: SessionMetadata) => isCurrentSession(s.id));
         });
@@ -268,6 +285,7 @@ export default defineComponent({
 
         onMounted(() => {
             store.dispatch(`${namespace}/${SessionsAction.GetSessions}`);
+            store.dispatch(AppStateAction.LoadUserPreferences);
         });
 
         const messages = userMessages.sessions;
@@ -293,6 +311,7 @@ export default defineComponent({
             confirmDeleteSession,
             toggleConfirmDeleteSessionOpen,
             deleteSession,
+            showUnlabelledSessions,
             sessionCode,
             loadSessionFromCode,
             messages

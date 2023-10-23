@@ -10,12 +10,15 @@ import { SessionsAction } from "../../../../src/app/store/sessions/actions";
 import { SessionMetadata } from "../../../../src/app/types/responseTypes";
 import EditSessionLabel from "../../../../src/app/components/sessions/EditSessionLabel.vue";
 import ConfirmModal from "../../../../src/app/components/ConfirmModal.vue";
+import { AppStateAction } from "../../../../src/app/store/appState/actions";
 
 describe("SessionsPage", () => {
     const mockGetSessions = jest.fn();
     const mockGenerateFriendlyId = jest.fn();
     const mockClipboardWriteText = jest.fn();
     const mockDeleteSession = jest.fn();
+    const mockSaveUserPreferences = jest.fn();
+    const mockLoadUserPreferences = jest.fn();
 
     Object.assign(window.navigator, {
         clipboard: {
@@ -29,14 +32,22 @@ describe("SessionsPage", () => {
 
     const currentSessionId = "abc";
 
-    const getWrapper = (sessionsMetadata: SessionMetadata[] | null, sessionId: string | undefined) => {
+    const getWrapper = (sessionsMetadata: SessionMetadata[] | null, sessionId: string | undefined,
+        showUnlabelledSessions = true) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
                 appName: "testApp",
                 sessionId,
                 baseUrl: "http://localhost:3000",
-                appsPath: "apps"
+                appsPath: "apps",
+                userPreferences: {
+                    showUnlabelledSessions
+                }
             }),
+            actions: {
+                [AppStateAction.SaveUserPreferences]: mockSaveUserPreferences,
+                [AppStateAction.LoadUserPreferences]: mockLoadUserPreferences
+            } as any,
             modules: {
                 sessions: {
                     namespaced: true,
@@ -95,6 +106,7 @@ describe("SessionsPage", () => {
         expect(columnHeaders.at(4)!.text()).toBe("Delete");
         expect(columnHeaders.at(5)!.text()).toBe("Shareable Link");
 
+        expect(wrapper.findAll(".previous-session-row").length).toBe(2);
         const session2Cells = rows.at(3)!.findAll("div.session-col-value");
         expect(session2Cells.length).toBe(6);
         expect(session2Cells.at(0)!.text()).toBe("13/01/2022 10:26:36");
@@ -107,6 +119,19 @@ describe("SessionsPage", () => {
         expect(session2Cells.at(5)!.find("span.session-copy-link").text()).toBe("Copy link");
         expect(session2Cells.at(5)!.find("span.session-copy-code").text()).toBe("Copy code");
         expect(session2Cells.at(5)!.find(".session-copy-confirm").text()).toBe("");
+
+        const session3Cells = rows.at(4)!.findAll("div.session-col-value");
+        expect(session3Cells.length).toBe(6);
+        expect(session3Cells.at(0)!.text()).toBe("14/01/2022 10:26:36");
+        expect(session3Cells.at(1)!.text()).toBe("another session");
+        expect(session3Cells.at(2)!.findComponent(VueFeather).props("type")).toBe("edit-2");
+        expect(session3Cells.at(3)!.find("a").attributes("href"))
+            .toBe("http://localhost:3000/apps/testApp/?sessionId=ghi");
+        expect(session3Cells.at(3)!.find("a").findComponent(VueFeather).props("type")).toBe("upload");
+        expect(session3Cells.at(4)!.findComponent(VueFeather).props("type")).toBe("trash-2");
+        expect(session3Cells.at(5)!.find("span.session-copy-link").text()).toBe("Copy link");
+        expect(session3Cells.at(5)!.find("span.session-copy-code").text()).toBe("Copy code");
+        expect(session3Cells.at(5)!.find(".session-copy-confirm").text()).toBe("");
 
         const editDlg = wrapper.findComponent(EditSessionLabel);
         expect(editDlg.props("open")).toBe(false);
@@ -121,6 +146,8 @@ describe("SessionsPage", () => {
         expect(wrapper.find("input#session-code-input").attributes("placeholder")).toBe("Session code");
         expect(wrapper.find("button#load-session-from-code").text()).toBe("Load");
         expect((wrapper.find("button#load-session-from-code").element as HTMLInputElement).disabled).toBe(true);
+
+        expect((wrapper.find("input#show-unlabelled-check").element as HTMLInputElement).checked).toBe(true);
     });
 
     it("shows loading message when session metadata is null in store", () => {
@@ -322,5 +349,44 @@ describe("SessionsPage", () => {
         expect(window.location.assign).toHaveBeenCalledWith("http://localhost:3000/apps/testApp/?share=bad-dog");
 
         window.location = realLocation;
+    });
+
+    it("loads user preferences on mount", () => {
+        const wrapper = getWrapper(sessionsMetadata, currentSessionId);
+        expect(mockLoadUserPreferences).toHaveBeenCalledTimes(1);
+    });
+
+    it("clicking checkbox saves show unlabelled sessions preference", async () => {
+        const wrapper = getWrapper(sessionsMetadata, currentSessionId);
+        await wrapper.find("input#show-unlabelled-check").trigger("click");
+        expect(mockSaveUserPreferences).toHaveBeenCalledTimes(1);
+        expect(mockSaveUserPreferences.mock.calls[0][1]).toStrictEqual({ showUnlabelledSessions: false });
+    });
+
+    it("when showUnlabelledSessions is false, filters out unlabelled sessions from view", () => {
+        const wrapper = getWrapper(sessionsMetadata, currentSessionId, false);
+        const rows = wrapper.findAll(".container .row");
+
+        const currentSessionRow = rows.at(1)!;
+        expect(currentSessionRow.findComponent(RouterLink).props("to")).toBe("/");
+        expect(currentSessionRow.find("a").text()).toBe("make a copy of the current session.");
+        expect(currentSessionRow.find("a").attributes("href"))
+            .toBe("http://localhost:3000/apps/testApp/?sessionId=abc");
+
+        expect(wrapper.findAll(".previous-session-row").length).toBe(1);
+        const session3Cells = rows.at(3)!.findAll("div.session-col-value");
+        expect(session3Cells.length).toBe(6);
+        expect(session3Cells.at(0)!.text()).toBe("14/01/2022 10:26:36");
+        expect(session3Cells.at(1)!.text()).toBe("another session");
+        expect(session3Cells.at(2)!.findComponent(VueFeather).props("type")).toBe("edit-2");
+        expect(session3Cells.at(3)!.find("a").attributes("href"))
+            .toBe("http://localhost:3000/apps/testApp/?sessionId=ghi");
+        expect(session3Cells.at(3)!.find("a").findComponent(VueFeather).props("type")).toBe("upload");
+        expect(session3Cells.at(4)!.findComponent(VueFeather).props("type")).toBe("trash-2");
+        expect(session3Cells.at(5)!.find("span.session-copy-link").text()).toBe("Copy link");
+        expect(session3Cells.at(5)!.find("span.session-copy-code").text()).toBe("Copy code");
+        expect(session3Cells.at(5)!.find(".session-copy-confirm").text()).toBe("");
+
+        expect((wrapper.find("input#show-unlabelled-check").element as HTMLInputElement).checked).toBe(false);
     });
 });

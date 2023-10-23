@@ -5,7 +5,7 @@ import { AppConfig } from "../../types/responseTypes";
 import { CodeMutation } from "../code/mutations";
 import { RunMutation } from "../run/mutations";
 import { ModelAction } from "../model/actions";
-import { AppState, AppType } from "./state";
+import { AppState, AppType, UserPreferences } from "./state";
 import { AppStateMutation } from "./mutations";
 import { serialiseState } from "../../serialise";
 import { FitState } from "../fit/state";
@@ -16,7 +16,9 @@ import { InitialisePayload } from "../../types/payloadTypes";
 
 export enum AppStateAction {
     Initialise = "Initialise",
-    QueueStateUpload = "QueueStateUpload"
+    QueueStateUpload = "QueueStateUpload",
+    LoadUserPreferences = "LoadUserPreferences",
+    SaveUserPreferences = "SaveUserPreferences"
 }
 
 async function immediateUploadState(context: ActionContext<AppState, AppState>) {
@@ -104,5 +106,18 @@ export const appStateActions: ActionTree<AppState, AppState> = {
             // record the newly queued upload
             commit(AppStateMutation.SetQueuedStateUpload, queuedId);
         }
+    },
+
+    async [AppStateAction.LoadUserPreferences](context) {
+        const { commit } = context;
+        const preferences = localStorageManager.getUserPreferences();
+        commit(AppStateMutation.SetUserPreferences, preferences);
+    },
+
+    async [AppStateAction.SaveUserPreferences](context, payload: Partial<UserPreferences>) {
+        const { commit, state } = context;
+        const newPrefs = { ...state.userPreferences, ...payload };
+        localStorageManager.setUserPreferences(newPrefs);
+        commit(AppStateMutation.SetUserPreferences, newPrefs);
     }
 };
