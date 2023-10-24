@@ -2,10 +2,8 @@
 set -ex
 HERE=$(dirname "$0")
 
-git clone --branch $1 $2 $3
+git clone --depth 1 --branch $1 $2 $3
 
-shift
-shift
-shift
+shift 3
 
 "$HERE"/wodin $*
