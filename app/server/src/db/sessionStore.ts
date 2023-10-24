@@ -1,4 +1,5 @@
 import Redis from "ioredis";
+import * as md5 from "md5";
 import { generateId } from "zoo-ids";
 import { Request } from "express";
 import { AppLocals, SessionMetadata } from "../types";
@@ -40,28 +41,68 @@ export class SessionStore {
 
     private sessionKey = (name: string) => `${this._sessionPrefix}${name}`;
 
+    private hashForData = (data: string) => md5(data);
+
     async saveSession(id: string, data: string) {
+        const hash = this.hashForData(data);
         await this._redis.pipeline()
             .hset(this.sessionKey("time"), id, new Date(Date.now()).toISOString())
             .hset(this.sessionKey("data"), id, data)
+            .hset(this.sessionKey("hash"), id, hash)
             .exec();
     }
 
-    async getSessionsMetadata(ids: string[]) {
+    async getSessionsMetadata(ids: string[], removeDuplicates: boolean = true) {
         return Promise.all([
             this._redis.hmget(this.sessionKey("time"), ...ids),
             this._redis.hmget(this.sessionKey("label"), ...ids),
-            this._redis.hmget(this.sessionKey("friendly"), ...ids)
+            this._redis.hmget(this.sessionKey("friendly"), ...ids),
+            this._redis.hmget(this.sessionKey("hash"), ...ids)
         ]).then((values) => {
             const times = values[0];
             const labels = values[1];
             const friendlies = values[2];
-            const allResults = ids.map((id: string, idx: number) => {
-                return {
-                    id, time: times[idx], label: labels[idx], friendlyId: friendlies[idx]
-                };
+            const hashes = values[3];
+
+            // We return all labelled sessions, and also the latest session for any hash (labelled or unlabelled)
+            const labelledSessions: SessionMetadata[] = [];
+            const latestByHash: Record<string, SessionMetadata> = {};
+
+            const buildSessionMetadata = (id: string, idx: number) => ({
+                id, time: times[idx], label: labels[idx], friendlyId: friendlies[idx]
             });
-            return allResults.filter((session) => session.time !== null) as SessionMetadata[];
+
+            if (removeDuplicates) {
+                ids.forEach(async (id: string, idx: number) => {
+                    if (times[idx] !== null) {
+                        const session = buildSessionMetadata(id, idx) as SessionMetadata;
+
+                        if (session.label) {
+                            labelledSessions.push(session);
+                        }
+
+                        let hash = hashes[idx];
+                        // For backward compatibility, save hash for data if not present
+                        if (hash === null) {
+                            const data = await this.getSession(id);
+                            hash = this.hashForData(data!);
+                            this._redis.hset(this.sessionKey("hash"), id, hash);
+                        }
+
+                        if (!latestByHash[hash] || session.time > latestByHash[hash].time) {
+                            latestByHash[hash] = session;
+                        }
+                    }
+                });
+                return [
+                    ...labelledSessions,
+                    ...Object.values(latestByHash).filter((s) => !s.label) // don't include labelled sessions twice
+                ].sort((a, b) => a.time > b.time ? 1 : -1);
+            }
+
+            // Return all sessions, including duplicates
+            return ids.map((id: string, idx: number) => buildSessionMetadata(id, idx))
+                .filter((session) => session.time !== null);
         });
     }
 

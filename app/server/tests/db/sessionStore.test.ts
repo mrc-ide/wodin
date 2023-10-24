@@ -1,3 +1,4 @@
+import * as md5 from "md5";
 import {
     friendlyAdjectiveAnimal, cleanFriendlyId, SessionStore, getSessionStore
 } from "../../src/db/sessionStore";
@@ -31,13 +32,16 @@ describe("SessionStore", () => {
         await sut.saveSession("1234", data);
 
         expect(mockRedis.pipeline).toHaveBeenCalledTimes(1);
-        expect(mockPipeline.hset).toHaveBeenCalledTimes(2);
+        expect(mockPipeline.hset).toHaveBeenCalledTimes(3);
         expect(mockPipeline.hset.mock.calls[0][0]).toBe("Test Course:testApp:sessions:time");
         expect(mockPipeline.hset.mock.calls[0][1]).toBe("1234");
         expect(mockPipeline.hset.mock.calls[0][2]).toBe("2022-01-24T17:00:00.000Z");
         expect(mockPipeline.hset.mock.calls[1][0]).toBe("Test Course:testApp:sessions:data");
         expect(mockPipeline.hset.mock.calls[1][1]).toBe("1234");
         expect(mockPipeline.hset.mock.calls[1][2]).toBe("testSession");
+        expect(mockPipeline.hset.mock.calls[2][0]).toBe("Test Course:testApp:sessions:hash");
+        expect(mockPipeline.hset.mock.calls[2][1]).toBe("1234");
+        expect(mockPipeline.hset.mock.calls[2][2]).toBe(md5("testSession"));
         expect(mockPipeline.exec).toHaveBeenCalledTimes(1);
     });
 
