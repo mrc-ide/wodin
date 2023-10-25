@@ -58,22 +58,23 @@ export class SessionStore {
             this._redis.hmget(this.sessionKey("label"), ...ids),
             this._redis.hmget(this.sessionKey("friendly"), ...ids),
             this._redis.hmget(this.sessionKey("hash"), ...ids)
-        ]).then((values) => {
+        ]).then(async (values) => {
             const times = values[0];
             const labels = values[1];
             const friendlies = values[2];
             const hashes = values[3];
 
-            // We return all labelled sessions, and also the latest session for any hash (labelled or unlabelled)
-            const labelledSessions: SessionMetadata[] = [];
-            const latestByHash: Record<string, SessionMetadata> = {};
-
             const buildSessionMetadata = (id: string, idx: number) => ({
                 id, time: times[idx], label: labels[idx], friendlyId: friendlies[idx]
             });
 
+            let allResults;
             if (removeDuplicates) {
-                ids.forEach(async (id: string, idx: number) => {
+                // We return all labelled sessions, and also the latest session for any hash (labelled or unlabelled)
+                const labelledSessions: SessionMetadata[] = [];
+                const latestByHash: Record<string, SessionMetadata> = {};
+
+                for (const [idx, id] of ids.entries()) {
                     if (times[idx] !== null) {
                         const session = buildSessionMetadata(id, idx) as SessionMetadata;
 
@@ -86,23 +87,24 @@ export class SessionStore {
                         if (hash === null) {
                             const data = await this.getSession(id);
                             hash = this.hashForData(data!);
-                            this._redis.hset(this.sessionKey("hash"), id, hash);
+                            await this._redis.hset(this.sessionKey("hash"), id, hash);
                         }
 
                         if (!latestByHash[hash] || session.time > latestByHash[hash].time) {
                             latestByHash[hash] = session;
                         }
                     }
-                });
-                return [
+                }
+                allResults = [
                     ...labelledSessions,
                     ...Object.values(latestByHash).filter((s) => !s.label) // don't include labelled sessions twice
-                ].sort((a, b) => a.time > b.time ? 1 : -1);
+                ];
+            } else {
+                // Return all sessions, including duplicates
+                allResults = ids.map((id: string, idx: number) => buildSessionMetadata(id, idx))
+                    .filter((session) => session.time !== null);
             }
-
-            // Return all sessions, including duplicates
-            return ids.map((id: string, idx: number) => buildSessionMetadata(id, idx))
-                .filter((session) => session.time !== null);
+            return allResults.sort((a, b) => a.time!! < b.time!! ? 1 : -1);
         });
     }
 
