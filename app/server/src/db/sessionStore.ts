@@ -3,6 +3,7 @@ import * as md5 from "md5";
 import { generateId } from "zoo-ids";
 import { Request } from "express";
 import { AppLocals, SessionMetadata } from "../types";
+import {Session} from "inspector";
 
 export const cleanFriendlyId = (id: string): string => {
     let ret = id.toLowerCase();
@@ -104,7 +105,7 @@ export class SessionStore {
                 allResults = ids.map((id: string, idx: number) => buildSessionMetadata(id, idx))
                     .filter((session) => session.time !== null);
             }
-            return allResults.sort((a, b) => a.time!! < b.time!! ? 1 : -1);
+            return allResults.sort((a, b) => a.time!! < b.time!! ? 1 : -1) as SessionMetadata[];
         });
     }
 

@@ -55,7 +55,8 @@ describe("SessionsController", () => {
         const metadataReq = {
             ...req,
             query: {
-                sessionIds: "1234,5678"
+                sessionIds: "1234,5678",
+                removeDuplicates: "true"
             }
         };
         await SessionsController.getSessionsMetadata(metadataReq, res, jest.fn());
@@ -63,9 +64,26 @@ describe("SessionsController", () => {
         expect(mockGetSessionStore.mock.calls[0][0]).toBe(metadataReq);
         expect(mockSessionStore.getSessionsMetadata).toHaveBeenCalledTimes(1);
         expect(mockSessionStore.getSessionsMetadata.mock.calls[0][0]).toStrictEqual(["1234", "5678"]);
+        expect(mockSessionStore.getSessionsMetadata.mock.calls[0][1]).toStrictEqual(true);
 
         expect(res.header).toHaveBeenCalledWith("Content-Type", "application/json");
         expect(res.end).toHaveBeenCalledTimes(1);
+    });
+
+    it("getSessionMetadata can pass false remove duplicates parameter to session store", async () => {
+        const metadataReq = {
+            ...req,
+            query: {
+                sessionIds: "1234",
+                removeDuplicates: "false"
+            }
+        };
+        await SessionsController.getSessionsMetadata(metadataReq, res, jest.fn());
+        expect(mockGetSessionStore).toHaveBeenCalledTimes(1);
+        expect(mockGetSessionStore.mock.calls[0][0]).toBe(metadataReq);
+        expect(mockSessionStore.getSessionsMetadata).toHaveBeenCalledTimes(1);
+        expect(mockSessionStore.getSessionsMetadata.mock.calls[0][0]).toStrictEqual(["1234"]);
+        expect(mockSessionStore.getSessionsMetadata.mock.calls[0][1]).toStrictEqual(false);
     });
 
     it("getSessionMetadata handles error", async () => {

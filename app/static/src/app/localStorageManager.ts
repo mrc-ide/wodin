@@ -9,7 +9,8 @@ class LocalStorageManager {
     static _preferencesKey = "preferences";
 
     static _initialUserPreferences = (): UserPreferences => ({
-        showUnlabelledSessions: true
+        showUnlabelledSessions: true,
+        showDuplicateSessions: false
     });
 
     getSessionIds = (appName: string, basePath: string): string[] => {

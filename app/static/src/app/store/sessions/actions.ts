@@ -34,7 +34,8 @@ export const actions: ActionTree<SessionsState, AppState> = {
 
         const sessionIds = localStorageManager.getSessionIds(appName!, rootGetters[AppStateGetter.baseUrlPath]);
         const sessionIdsQs = sessionIds.join(",");
-        const url = `/${appsPath}/${appName}/sessions/metadata?sessionIds=${sessionIdsQs}`;
+        const removeDuplicates = !rootState.userPreferences.showDuplicateSessions;
+        const url = `/${appsPath}/${appName}/sessions/metadata?sessionIds=${sessionIdsQs}&removeDuplicates=${removeDuplicates}`;
         await api(context)
             .withSuccess(SessionsMutation.SetSessionsMetadata)
             .withError(`errors/${ErrorsMutation.AddError}`, true)

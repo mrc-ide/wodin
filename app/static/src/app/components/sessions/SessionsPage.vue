@@ -60,6 +60,8 @@
     <p>
       <input id="show-unlabelled-check" type="checkbox" class="form-check-input" v-model="showUnlabelledSessions" />
       <label for="show-unlabelled-check" class="form-check-label ms-2">Show unlabelled sessions</label>
+      <input id="show-duplicates-check" type="checkbox" class="form-check-input ms-4" v-model="showDuplicateSessions" />
+      <label for="show-duplicates-check" class="form-check-label ms-2">Show duplicate sessions</label>
     </p>
     <template v-if="previousSessions && previousSessions.length">
         <div class="row fw-bold py-2" id="previous-sessions-headers">
@@ -195,6 +197,15 @@ export default defineComponent({
             }
         });
 
+        const showDuplicateSessions = computed({
+            get() {
+                return store.state.userPreferences?.showDuplicateSessions;
+            },
+            set(newValue: boolean) {
+                store.dispatch(AppStateAction.SaveUserPreferences, { showDuplicateSessions: newValue });
+            }
+        });
+
         const isCurrentSession = (sessionId: string) => sessionId === currentSessionId.value;
 
         const previousSessions = computed(() => {
@@ -312,6 +323,7 @@ export default defineComponent({
             toggleConfirmDeleteSessionOpen,
             deleteSession,
             showUnlabelledSessions,
+            showDuplicateSessions,
             sessionCode,
             loadSessionFromCode,
             messages
