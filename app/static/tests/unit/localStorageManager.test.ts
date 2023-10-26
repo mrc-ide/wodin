@@ -1,5 +1,5 @@
 import { localStorageManager } from "../../src/app/localStorageManager";
-import {mockUserPreferences} from "../mocks";
+import { mockUserPreferences } from "../mocks";
 
 describe("localStorageManager for sessions", () => {
     let spyOnGetItem: any;

@@ -2,16 +2,16 @@ import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
 import VueFeather from "vue-feather";
 import { RouterLink } from "vue-router";
+import { nextTick } from "vue";
 import SessionsPage from "../../../../src/app/components/sessions/SessionsPage.vue";
 import ErrorsAlert from "../../../../src/app/components/ErrorsAlert.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import {mockBasicState, mockUserPreferences} from "../../../mocks";
+import { mockBasicState, mockUserPreferences } from "../../../mocks";
 import { SessionsAction } from "../../../../src/app/store/sessions/actions";
 import { SessionMetadata } from "../../../../src/app/types/responseTypes";
 import EditSessionLabel from "../../../../src/app/components/sessions/EditSessionLabel.vue";
 import ConfirmModal from "../../../../src/app/components/ConfirmModal.vue";
 import { AppStateAction } from "../../../../src/app/store/appState/actions";
-import {nextTick} from "vue";
 
 describe("SessionsPage", () => {
     const mockGetSessions = jest.fn();

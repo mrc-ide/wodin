@@ -222,7 +222,7 @@ describe("SessionsActions", () => {
         const url = "/apps/test-app/sessions/metadata?sessionIds=123,456&removeDuplicates=true";
         mockAxios.onGet(url).reply(200, mockSuccess(metadata));
 
-        const userPreferences = {...mockUserPreferences(), showDuplicateSessions: false};
+        const userPreferences = { ...mockUserPreferences(), showDuplicateSessions: false };
         const rootState = mockBasicState({ appName: "test-app", appsPath: "apps", userPreferences });
         const commit = jest.fn();
         await (actions[SessionsAction.GetSessions] as any)({ commit, rootState, rootGetters });
@@ -242,7 +242,7 @@ describe("SessionsActions", () => {
         const url = "/apps/test-app/sessions/metadata?sessionIds=123,456&removeDuplicates=false";
         mockAxios.onGet(url).reply(200, mockSuccess([]));
 
-        const userPreferences = {...mockUserPreferences(), showDuplicateSessions: true};
+        const userPreferences = { ...mockUserPreferences(), showDuplicateSessions: true };
         const rootState = mockBasicState({ appName: "test-app", appsPath: "apps", userPreferences });
         const commit = jest.fn();
         await (actions[SessionsAction.GetSessions] as any)({ commit, rootState, rootGetters });
