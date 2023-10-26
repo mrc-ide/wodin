@@ -294,9 +294,9 @@ export default defineComponent({
             window.location.assign(link);
         };
 
-        onMounted(() => {
+        onMounted(async () => {
+            await store.dispatch(AppStateAction.LoadUserPreferences);
             store.dispatch(`${namespace}/${SessionsAction.GetSessions}`);
-            store.dispatch(AppStateAction.LoadUserPreferences);
         });
 
         const messages = userMessages.sessions;
