@@ -29,7 +29,7 @@ describe("AppState actions", () => {
     const enableI18n = true;
 
     const mockGetUserPreferences = jest.spyOn(localStorageManager, "getUserPreferences")
-        .mockReturnValue({ showUnlabelledSessions: false });
+        .mockReturnValue({ showUnlabelledSessions: false, showDuplicateSessions: false });
     const mockSetUserPreferences = jest.spyOn(localStorageManager, "setUserPreferences");
 
     const getStore = () => {
@@ -431,25 +431,44 @@ describe("AppState actions", () => {
         await (appStateActions[AppStateAction.LoadUserPreferences] as any)({ commit });
         expect(mockGetUserPreferences).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetUserPreferences);
-        expect(commit.mock.calls[0][1]).toStrictEqual({ showUnlabelledSessions: false });
+        expect(commit.mock.calls[0][1]).toStrictEqual({ showUnlabelledSessions: false, showDuplicateSessions: false });
     });
 
     it("SaveUserPreferences sets preferences in local storage and commits", async () => {
         const commit = jest.fn();
+        const dispatch = jest.fn();
         const state = {
             userPreferences: {
                 somePref: "something",
-                showUnlabelledSessions: false
+                showUnlabelledSessions: false,
+                showDuplicateSessions: true
             }
         };
-        await (appStateActions[AppStateAction.SaveUserPreferences] as any)({ commit, state },
+        await (appStateActions[AppStateAction.SaveUserPreferences] as any)({ commit, dispatch, state },
             { showUnlabelledSessions: true });
         const expectedPrefs = {
             somePref: "something",
-            showUnlabelledSessions: true
+            showUnlabelledSessions: true,
+            showDuplicateSessions: true
         };
         expect(mockSetUserPreferences).toHaveBeenCalledWith(expectedPrefs);
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetUserPreferences);
         expect(commit.mock.calls[0][1]).toStrictEqual(expectedPrefs);
+        expect(dispatch).not.toHaveBeenCalled();
+    });
+
+    it("SaveUserPreferences dispatches GetSessions if showDuplicateSessions has changed", async () => {
+        const commit = jest.fn();
+        const dispatch = jest.fn();
+        const state = {
+            userPreferences: {
+                showUnlabelledSessions: false,
+                showDuplicateSessions: true
+            }
+        };
+        await (appStateActions[AppStateAction.SaveUserPreferences] as any)({ commit, dispatch, state },
+            { showDuplicateSessions: false });
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(dispatch).toHaveBeenCalledWith(`sessions/${SessionsAction.GetSessions}`);
     });
 });

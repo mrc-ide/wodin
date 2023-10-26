@@ -1,4 +1,5 @@
 import { localStorageManager } from "../../src/app/localStorageManager";
+import {mockUserPreferences} from "../mocks";
 
 describe("localStorageManager for sessions", () => {
     let spyOnGetItem: any;
@@ -68,12 +69,12 @@ describe("localStorageManager gets and saves user preferences", () => {
 
     it("can get user preferences", () => {
         const result = localStorageManager.getUserPreferences();
-        expect(result).toStrictEqual({ showUnlabelledSessions: false });
+        expect(result).toStrictEqual(mockUserPreferences());
         expect(spyOnGetItem).toHaveBeenCalledWith("preferences");
     });
 
     it("can set user preferences", () => {
-        const prefs = { showUnlabelledSessions: false };
+        const prefs = mockUserPreferences();
         localStorageManager.setUserPreferences(prefs);
         expect(spyOnSetItem).toHaveBeenCalledWith("preferences", JSON.stringify(prefs));
     });
