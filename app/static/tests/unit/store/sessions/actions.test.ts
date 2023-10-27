@@ -251,10 +251,11 @@ describe("SessionsActions", () => {
     });
 
     it("GetSessions commits error", async () => {
-        mockAxios.onGet("/apps/test-app/sessions/metadata?sessionIds=123,456")
+        mockAxios.onGet("/apps/test-app/sessions/metadata?sessionIds=123,456&removeDuplicates=true")
             .reply(500, mockFailure("TEST ERROR"));
 
-        const rootState = mockBasicState({ appName: "test-app", appsPath: "apps" });
+        const userPreferences = mockUserPreferences();
+        const rootState = mockBasicState({ appName: "test-app", appsPath: "apps", userPreferences });
         const commit = jest.fn();
         await (actions[SessionsAction.GetSessions] as any)({ commit, rootState, rootGetters });
 

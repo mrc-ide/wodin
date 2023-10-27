@@ -37,7 +37,7 @@ describe("localStorageManager for sessions", () => {
     });
 
     it("can add session id when basePath is not empty", () => {
-        localStorageManager.addSessionId("day1", "testInstance", "session3");
+        localStorageManager.addSessionId("day1", "testInstance","session3");
         expect(spyOnGetItem).toHaveBeenCalledTimes(1);
         expect(spyOnSetItem).toHaveBeenCalledTimes(1);
         expect(spyOnSetItem.mock.calls[0][0]).toBe("testInstance_day1_sessionIds");
@@ -59,7 +59,7 @@ describe("localStorageManager gets and saves user preferences", () => {
 
     beforeAll(() => {
         spyOnGetItem = jest.spyOn(Storage.prototype, "getItem")
-            .mockReturnValue("{\"showUnlabelledSessions\": false}");
+            .mockReturnValue("{\"showUnlabelledSessions\": false, \"showDuplicateSessions\": true}");
         spyOnSetItem = jest.spyOn(Storage.prototype, "setItem");
     });
 
@@ -69,7 +69,7 @@ describe("localStorageManager gets and saves user preferences", () => {
 
     it("can get user preferences", () => {
         const result = localStorageManager.getUserPreferences();
-        expect(result).toStrictEqual(mockUserPreferences());
+        expect(result).toStrictEqual({showUnlabelledSessions: false, showDuplicateSessions: true});
         expect(spyOnGetItem).toHaveBeenCalledWith("preferences");
     });
 
@@ -94,7 +94,7 @@ describe("localStorageManager gets default user preferences", () => {
 
     it("can get default user preferences", () => {
         const result = localStorageManager.getUserPreferences();
-        expect(result).toStrictEqual({ showUnlabelledSessions: true });
+        expect(result).toStrictEqual({ showUnlabelledSessions: true, showDuplicateSessions: false });
         expect(spyOnGetItem).toHaveBeenCalledWith("preferences");
     });
 });
