@@ -50,16 +50,16 @@ describe("SessionStore", () => {
         const result = await sut.getSessionsMetadata(["1234", "5678"]);
         expect(result).toStrictEqual([
             {
-                id: "1234",
-                time: "1234 value for Test Course:testApp:sessions:time",
-                label: "1234 value for Test Course:testApp:sessions:label",
-                friendlyId: "1234 value for Test Course:testApp:sessions:friendly"
-            },
-            {
                 id: "5678",
                 time: "5678 value for Test Course:testApp:sessions:time",
                 label: "5678 value for Test Course:testApp:sessions:label",
                 friendlyId: "5678 value for Test Course:testApp:sessions:friendly"
+            },
+            {
+                id: "1234",
+                time: "1234 value for Test Course:testApp:sessions:time",
+                label: "1234 value for Test Course:testApp:sessions:label",
+                friendlyId: "1234 value for Test Course:testApp:sessions:friendly"
             }
         ]);
     });
