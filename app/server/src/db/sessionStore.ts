@@ -3,7 +3,6 @@ import * as md5 from "md5";
 import { generateId } from "zoo-ids";
 import { Request } from "express";
 import { AppLocals, SessionMetadata } from "../types";
-import {Session} from "inspector";
 
 export const cleanFriendlyId = (id: string): string => {
     let ret = id.toLowerCase();
@@ -42,10 +41,14 @@ export class SessionStore {
 
     private sessionKey = (name: string) => `${this._sessionPrefix}${name}`;
 
-    private hashForData = (data: string) => md5(data);
+    private static hashForData = (data: string) => md5(data);
+
+    private saveMissingSessionHash = async (sessionId: string, hash: string) => {
+        await this._redis.hset(this.sessionKey("hash"), sessionId, hash);
+    };
 
     async saveSession(id: string, data: string) {
-        const hash = this.hashForData(data);
+        const hash = SessionStore.hashForData(data);
         await this._redis.pipeline()
             .hset(this.sessionKey("time"), id, new Date(Date.now()).toISOString())
             .hset(this.sessionKey("data"), id, data)
@@ -75,7 +78,9 @@ export class SessionStore {
                 const labelledSessions: SessionMetadata[] = [];
                 const latestByHash: Record<string, SessionMetadata> = {};
 
-                for (const [idx, id] of ids.entries()) {
+                const saveMissingHashes = [];
+                // eslint-disable-next-line no-restricted-syntax
+                for await (const [idx, id] of ids.entries()) {
                     if (times[idx] !== null) {
                         const session = buildSessionMetadata(id, idx) as SessionMetadata;
 
@@ -88,7 +93,7 @@ export class SessionStore {
                         if (hash === null) {
                             const data = await this.getSession(id);
                             hash = this.hashForData(data!);
-                            await this._redis.hset(this.sessionKey("hash"), id, hash);
+                            saveMissingHashes.push(this.saveMissingSessionHash(id, hash));
                         }
 
                         if (!latestByHash[hash] || session.time > latestByHash[hash].time) {
@@ -96,6 +101,7 @@ export class SessionStore {
                         }
                     }
                 }
+                await Promise.all(saveMissingHashes);
                 allResults = [
                     ...labelledSessions,
                     ...Object.values(latestByHash).filter((s) => !s.label) // don't include labelled sessions twice
@@ -105,7 +111,7 @@ export class SessionStore {
                 allResults = ids.map((id: string, idx: number) => buildSessionMetadata(id, idx))
                     .filter((session) => session.time !== null);
             }
-            return allResults.sort((a, b) => a.time!! < b.time!! ? 1 : -1) as SessionMetadata[];
+            return allResults.sort((a, b) => (a.time!! < b.time!! ? 1 : -1)) as SessionMetadata[];
         });
     }
 

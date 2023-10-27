@@ -202,7 +202,10 @@ describe("generate friendly id", () => {
 });
 
 describe("SessionStore handles duplicate sessions", () => {
-    const mockRedis = (savedHmGetValues: Record<string, (string | null)[]>, savedHGetValues: Record<string, string> = {}) => {
+    const mockRedis = (
+        savedHmGetValues: Record<string, (string | null)[]>,
+        savedHGetValues: Record<string, string> = {}
+    ) => {
         return {
             hmget: jest.fn().mockImplementation(async (sessionKey: string) => {
                 const key = sessionKey.split(":").slice(-1)[0];
@@ -217,7 +220,13 @@ describe("SessionStore handles duplicate sessions", () => {
 
     it("Filters out earlier duplicate sessions if removeDuplicates is true", async () => {
         const savedValues = {
-            time: ["2023-10-25 11:10:01", "2023-10-25 11:10:02", "2023-10-25 11:10:03", "2023-10-25 11:10:04", "2023-10-25 11:10:05"],
+            time: [
+                "2023-10-25 11:10:01",
+                "2023-10-25 11:10:02",
+                "2023-10-25 11:10:03",
+                "2023-10-25 11:10:04",
+                "2023-10-25 11:10:05"
+            ],
             label: [null, null, null, null, null],
             friendly: ["good dog", "bad cat", "devious chaffinch", "happy bat", "sad owl"],
             hash: ["123", "234", "567", "234", "123"]
@@ -235,15 +244,27 @@ describe("SessionStore handles duplicate sessions", () => {
 
         // results should be ordered chrono desc
         expect(result).toStrictEqual([
-            {id: "mno", time: "2023-10-25 11:10:05", label: null, friendlyId: "sad owl"},
-            {id: "jkl", time: "2023-10-25 11:10:04", label: null, friendlyId: "happy bat"},
-            {id: "ghi", time: "2023-10-25 11:10:03", label: null, friendlyId: "devious chaffinch"}
+            {
+                id: "mno", time: "2023-10-25 11:10:05", label: null, friendlyId: "sad owl"
+            },
+            {
+                id: "jkl", time: "2023-10-25 11:10:04", label: null, friendlyId: "happy bat"
+            },
+            {
+                id: "ghi", time: "2023-10-25 11:10:03", label: null, friendlyId: "devious chaffinch"
+            }
         ]);
     });
 
     it("Does not filter out earlier duplicate sessions if removeDuplicates is false", async () => {
         const savedValues = {
-            time: ["2023-10-25 11:10:01", "2023-10-25 11:10:02", "2023-10-25 11:10:03", "2023-10-25 11:10:04", "2023-10-25 11:10:05"],
+            time: [
+                "2023-10-25 11:10:01",
+                "2023-10-25 11:10:02",
+                "2023-10-25 11:10:03",
+                "2023-10-25 11:10:04",
+                "2023-10-25 11:10:05"
+            ],
             label: [null, null, null, null, null],
             friendly: ["good dog", "bad cat", "devious chaffinch", "happy bat", "sad owl"],
             hash: ["123", "234", "567", "234", "123"]
@@ -260,17 +281,33 @@ describe("SessionStore handles duplicate sessions", () => {
         expect(redis.hmget).toHaveBeenNthCalledWith(4, `${sessionKeyPrefix}hash`, ...ids);
 
         expect(result).toStrictEqual([
-            {id: "mno", time: "2023-10-25 11:10:05", label: null, friendlyId: "sad owl"},
-            {id: "jkl", time: "2023-10-25 11:10:04", label: null, friendlyId: "happy bat"},
-            {id: "ghi", time: "2023-10-25 11:10:03", label: null, friendlyId: "devious chaffinch"},
-            {id: "def", time: "2023-10-25 11:10:02", label: null, friendlyId: "bad cat"},
-            {id: "abc", time: "2023-10-25 11:10:01", label: null, friendlyId: "good dog"}
+            {
+                id: "mno", time: "2023-10-25 11:10:05", label: null, friendlyId: "sad owl"
+            },
+            {
+                id: "jkl", time: "2023-10-25 11:10:04", label: null, friendlyId: "happy bat"
+            },
+            {
+                id: "ghi", time: "2023-10-25 11:10:03", label: null, friendlyId: "devious chaffinch"
+            },
+            {
+                id: "def", time: "2023-10-25 11:10:02", label: null, friendlyId: "bad cat"
+            },
+            {
+                id: "abc", time: "2023-10-25 11:10:01", label: null, friendlyId: "good dog"
+            }
         ]);
     });
 
     it("returns duplicates if they have labels", async () => {
         const savedValues = {
-            time: ["2023-10-25 11:10:01", "2023-10-25 11:10:02", "2023-10-25 11:10:03", "2023-10-25 11:10:04", "2023-10-25 11:10:05"],
+            time: [
+                "2023-10-25 11:10:01",
+                "2023-10-25 11:10:02",
+                "2023-10-25 11:10:03",
+                "2023-10-25 11:10:04",
+                "2023-10-25 11:10:05"
+            ],
             label: ["oldest session", null, null, "newer session", null],
             friendly: ["good dog", "bad cat", "devious chaffinch", "happy bat", "sad owl"],
             hash: ["123", "234", "567", "234", "123"]
@@ -281,10 +318,18 @@ describe("SessionStore handles duplicate sessions", () => {
         const result = await sut.getSessionsMetadata(ids, true);
 
         expect(result).toStrictEqual([
-            {id: "mno", time: "2023-10-25 11:10:05", label: null, friendlyId: "sad owl"},
-            {id: "jkl", time: "2023-10-25 11:10:04", label: "newer session", friendlyId: "happy bat"},
-            {id: "ghi", time: "2023-10-25 11:10:03", label: null, friendlyId: "devious chaffinch"},
-            {id: "abc", time: "2023-10-25 11:10:01", label: "oldest session", friendlyId: "good dog"}
+            {
+                id: "mno", time: "2023-10-25 11:10:05", label: null, friendlyId: "sad owl"
+            },
+            {
+                id: "jkl", time: "2023-10-25 11:10:04", label: "newer session", friendlyId: "happy bat"
+            },
+            {
+                id: "ghi", time: "2023-10-25 11:10:03", label: null, friendlyId: "devious chaffinch"
+            },
+            {
+                id: "abc", time: "2023-10-25 11:10:01", label: "oldest session", friendlyId: "good dog"
+            }
         ]);
     });
 
@@ -297,13 +342,19 @@ describe("SessionStore handles duplicate sessions", () => {
         const sessionContent2Hash = md5(sessionContent2);
 
         const savedValues = {
-            time: ["2023-10-25 11:10:01", "2023-10-25 11:10:02", "2023-10-25 11:10:03", "2023-10-25 11:10:04", "2023-10-25 11:10:05"],
+            time: [
+                "2023-10-25 11:10:01",
+                "2023-10-25 11:10:02",
+                "2023-10-25 11:10:03",
+                "2023-10-25 11:10:04",
+                "2023-10-25 11:10:05"
+            ],
             label: [null, null, null, null, null],
             friendly: ["good dog", "bad cat", "devious chaffinch", "happy bat", "sad owl"],
             hash: [sessionContent1Hash, null, "567", sessionContent2Hash, null]
         };
 
-        const redis = mockRedis(savedValues, {def: sessionContent2, mno: sessionContent1});
+        const redis = mockRedis(savedValues, { def: sessionContent2, mno: sessionContent1 });
         const sut = new SessionStore(redis, "Test Course", "testApp");
         const ids = ["abc", "def", "ghi", "jkl", "mno"];
         const result = await sut.getSessionsMetadata(ids, true);
@@ -316,9 +367,15 @@ describe("SessionStore handles duplicate sessions", () => {
 
         // results should be ordered chrono desc
         expect(result).toStrictEqual([
-            {id: "mno", time: "2023-10-25 11:10:05", label: null, friendlyId: "sad owl"},
-            {id: "jkl", time: "2023-10-25 11:10:04", label: null, friendlyId: "happy bat"},
-            {id: "ghi", time: "2023-10-25 11:10:03", label: null, friendlyId: "devious chaffinch"}
+            {
+                id: "mno", time: "2023-10-25 11:10:05", label: null, friendlyId: "sad owl"
+            },
+            {
+                id: "jkl", time: "2023-10-25 11:10:04", label: null, friendlyId: "happy bat"
+            },
+            {
+                id: "ghi", time: "2023-10-25 11:10:03", label: null, friendlyId: "devious chaffinch"
+            }
         ]);
     });
 });
