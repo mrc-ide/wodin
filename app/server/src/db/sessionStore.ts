@@ -92,7 +92,7 @@ export class SessionStore {
                         // For backward compatibility, save hash for data if not present
                         if (hash === null) {
                             const data = await this.getSession(id);
-                            hash = this.hashForData(data!);
+                            hash = SessionStore.hashForData(data!);
                             saveMissingHashes.push(this.saveMissingSessionHash(id, hash));
                         }
 

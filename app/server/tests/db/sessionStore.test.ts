@@ -218,20 +218,21 @@ describe("SessionStore handles duplicate sessions", () => {
         } as any;
     };
 
+    const sessionSavedValues = {
+        time: [
+            "2023-10-25 11:10:01",
+            "2023-10-25 11:10:02",
+            "2023-10-25 11:10:03",
+            "2023-10-25 11:10:04",
+            "2023-10-25 11:10:05"
+        ],
+        label: [null, null, null, null, null],
+        friendly: ["good dog", "bad cat", "devious chaffinch", "happy bat", "sad owl"],
+        hash: ["123", "234", "567", "234", "123"]
+    };
+
     it("Filters out earlier duplicate sessions if removeDuplicates is true", async () => {
-        const savedValues = {
-            time: [
-                "2023-10-25 11:10:01",
-                "2023-10-25 11:10:02",
-                "2023-10-25 11:10:03",
-                "2023-10-25 11:10:04",
-                "2023-10-25 11:10:05"
-            ],
-            label: [null, null, null, null, null],
-            friendly: ["good dog", "bad cat", "devious chaffinch", "happy bat", "sad owl"],
-            hash: ["123", "234", "567", "234", "123"]
-        };
-        const redis = mockRedis(savedValues);
+        const redis = mockRedis(sessionSavedValues);
         const sut = new SessionStore(redis, "Test Course", "testApp");
         const ids = ["abc", "def", "ghi", "jkl", "mno"];
         const result = await sut.getSessionsMetadata(ids, true);
@@ -257,19 +258,7 @@ describe("SessionStore handles duplicate sessions", () => {
     });
 
     it("Does not filter out earlier duplicate sessions if removeDuplicates is false", async () => {
-        const savedValues = {
-            time: [
-                "2023-10-25 11:10:01",
-                "2023-10-25 11:10:02",
-                "2023-10-25 11:10:03",
-                "2023-10-25 11:10:04",
-                "2023-10-25 11:10:05"
-            ],
-            label: [null, null, null, null, null],
-            friendly: ["good dog", "bad cat", "devious chaffinch", "happy bat", "sad owl"],
-            hash: ["123", "234", "567", "234", "123"]
-        };
-        const redis = mockRedis(savedValues);
+        const redis = mockRedis(sessionSavedValues);
         const sut = new SessionStore(redis, "Test Course", "testApp");
         const ids = ["abc", "def", "ghi", "jkl", "mno"];
         const result = await sut.getSessionsMetadata(ids, false);
@@ -301,16 +290,8 @@ describe("SessionStore handles duplicate sessions", () => {
 
     it("returns duplicates if they have labels", async () => {
         const savedValues = {
-            time: [
-                "2023-10-25 11:10:01",
-                "2023-10-25 11:10:02",
-                "2023-10-25 11:10:03",
-                "2023-10-25 11:10:04",
-                "2023-10-25 11:10:05"
-            ],
-            label: ["oldest session", null, null, "newer session", null],
-            friendly: ["good dog", "bad cat", "devious chaffinch", "happy bat", "sad owl"],
-            hash: ["123", "234", "567", "234", "123"]
+            ...sessionSavedValues,
+            label: ["oldest session", null, null, "newer session", null]
         };
         const redis = mockRedis(savedValues);
         const sut = new SessionStore(redis, "Test Course", "testApp");
@@ -342,15 +323,7 @@ describe("SessionStore handles duplicate sessions", () => {
         const sessionContent2Hash = md5(sessionContent2);
 
         const savedValues = {
-            time: [
-                "2023-10-25 11:10:01",
-                "2023-10-25 11:10:02",
-                "2023-10-25 11:10:03",
-                "2023-10-25 11:10:04",
-                "2023-10-25 11:10:05"
-            ],
-            label: [null, null, null, null, null],
-            friendly: ["good dog", "bad cat", "devious chaffinch", "happy bat", "sad owl"],
+            ...sessionSavedValues,
             hash: [sessionContent1Hash, null, "567", sessionContent2Hash, null]
         };
 
