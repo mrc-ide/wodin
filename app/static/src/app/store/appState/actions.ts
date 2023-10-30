@@ -35,6 +35,7 @@ async function immediateUploadState(context: ActionContext<AppState, AppState>) 
 
 export const appStateActions: ActionTree<AppState, AppState> = {
     async [AppStateAction.Initialise](context, payload: InitialisePayload) {
+        // TODO: just accept loadSessionId here, everything else should already be set in the state
         const {
             commit, state, dispatch, getters
         } = context;
@@ -46,13 +47,13 @@ export const appStateActions: ActionTree<AppState, AppState> = {
             enableI18n,
             defaultLanguage
         } = payload;
-        commit(AppStateMutation.SetApp, {
+        /*commit(AppStateMutation.SetApp, {
             appName,
             baseUrl,
             appsPath,
             enableI18n,
             defaultLanguage
-        });
+        });*/
         localStorageManager.addSessionId(appName, getters[AppStateGetter.baseUrlPath], state.sessionId);
 
         const response = await api(context)

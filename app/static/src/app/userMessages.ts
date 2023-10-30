@@ -110,6 +110,7 @@ export default {
         loadApplication: {
             link: "Load the application",
             suffix: " to create a new session."
-        }
+        },
+        initialise: "Would you like to reload the most recent session or start a new session?"
     }
 };

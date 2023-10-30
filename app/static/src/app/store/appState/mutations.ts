@@ -21,7 +21,8 @@ export enum AppStateMutation {
 export const StateUploadMutations = [
     AppStateMutation.ClearQueuedStateUpload,
     AppStateMutation.SetQueuedStateUpload,
-    AppStateMutation.SetStateUploadInProgress
+    AppStateMutation.SetStateUploadInProgress,
+    AppStateMutation.SetPersisted
 ] as string[];
 
 export const appStateMutations: MutationTree<AppState> = {
