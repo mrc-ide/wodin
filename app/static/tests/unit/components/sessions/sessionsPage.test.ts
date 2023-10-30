@@ -2,10 +2,11 @@ import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
 import VueFeather from "vue-feather";
 import { RouterLink } from "vue-router";
+import { nextTick } from "vue";
 import SessionsPage from "../../../../src/app/components/sessions/SessionsPage.vue";
 import ErrorsAlert from "../../../../src/app/components/ErrorsAlert.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import { mockBasicState } from "../../../mocks";
+import { mockBasicState, mockUserPreferences } from "../../../mocks";
 import { SessionsAction } from "../../../../src/app/store/sessions/actions";
 import { SessionMetadata } from "../../../../src/app/types/responseTypes";
 import EditSessionLabel from "../../../../src/app/components/sessions/EditSessionLabel.vue";
@@ -33,16 +34,14 @@ describe("SessionsPage", () => {
     const currentSessionId = "abc";
 
     const getWrapper = (sessionsMetadata: SessionMetadata[] | null, sessionId: string | undefined,
-        showUnlabelledSessions = true) => {
+        userPreferences = mockUserPreferences()) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
                 appName: "testApp",
                 sessionId,
                 baseUrl: "http://localhost:3000",
                 appsPath: "apps",
-                userPreferences: {
-                    showUnlabelledSessions
-                }
+                userPreferences
             }),
             actions: {
                 [AppStateAction.SaveUserPreferences]: mockSaveUserPreferences,
@@ -148,6 +147,7 @@ describe("SessionsPage", () => {
         expect((wrapper.find("button#load-session-from-code").element as HTMLInputElement).disabled).toBe(true);
 
         expect((wrapper.find("input#show-unlabelled-check").element as HTMLInputElement).checked).toBe(true);
+        expect((wrapper.find("input#show-duplicates-check").element as HTMLInputElement).checked).toBe(false);
     });
 
     it("shows loading message when session metadata is null in store", () => {
@@ -198,8 +198,10 @@ describe("SessionsPage", () => {
         expect(wrapper.findAll(".previous-session-row").length).toBe(0);
     });
 
-    it("dispatches getSessions action on mount", () => {
+    it("dispatches getSessions action on mount", async () => {
         getWrapper(null, currentSessionId);
+        await nextTick();
+        await nextTick();
         expect(mockGetSessions).toHaveBeenCalledTimes(1);
     });
 
@@ -356,15 +358,23 @@ describe("SessionsPage", () => {
         expect(mockLoadUserPreferences).toHaveBeenCalledTimes(1);
     });
 
-    it("clicking checkbox saves show unlabelled sessions preference", async () => {
+    it("can save show unlabelled sessions preference", async () => {
         const wrapper = getWrapper(sessionsMetadata, currentSessionId);
         await wrapper.find("input#show-unlabelled-check").trigger("click");
         expect(mockSaveUserPreferences).toHaveBeenCalledTimes(1);
         expect(mockSaveUserPreferences.mock.calls[0][1]).toStrictEqual({ showUnlabelledSessions: false });
     });
 
+    it("can save show duplicate sessions preference", async () => {
+        const wrapper = getWrapper(sessionsMetadata, currentSessionId);
+        await wrapper.find("input#show-duplicates-check").trigger("click");
+        expect(mockSaveUserPreferences).toHaveBeenCalledTimes(1);
+        expect(mockSaveUserPreferences.mock.calls[0][1]).toStrictEqual({ showDuplicateSessions: true });
+    });
+
     it("when showUnlabelledSessions is false, filters out unlabelled sessions from view", () => {
-        const wrapper = getWrapper(sessionsMetadata, currentSessionId, false);
+        const wrapper = getWrapper(sessionsMetadata, currentSessionId,
+            { showUnlabelledSessions: false, showDuplicateSessions: true });
         const rows = wrapper.findAll(".container .row");
 
         const currentSessionRow = rows.at(1)!;
@@ -388,5 +398,6 @@ describe("SessionsPage", () => {
         expect(session3Cells.at(5)!.find(".session-copy-confirm").text()).toBe("");
 
         expect((wrapper.find("input#show-unlabelled-check").element as HTMLInputElement).checked).toBe(false);
+        expect((wrapper.find("input#show-duplicates-check").element as HTMLInputElement).checked).toBe(true);
     });
 });

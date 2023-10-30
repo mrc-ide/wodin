@@ -1,3 +1,4 @@
+import * as md5 from "md5";
 import {
     friendlyAdjectiveAnimal, cleanFriendlyId, SessionStore, getSessionStore
 } from "../../src/db/sessionStore";
@@ -31,13 +32,16 @@ describe("SessionStore", () => {
         await sut.saveSession("1234", data);
 
         expect(mockRedis.pipeline).toHaveBeenCalledTimes(1);
-        expect(mockPipeline.hset).toHaveBeenCalledTimes(2);
+        expect(mockPipeline.hset).toHaveBeenCalledTimes(3);
         expect(mockPipeline.hset.mock.calls[0][0]).toBe("Test Course:testApp:sessions:time");
         expect(mockPipeline.hset.mock.calls[0][1]).toBe("1234");
         expect(mockPipeline.hset.mock.calls[0][2]).toBe("2022-01-24T17:00:00.000Z");
         expect(mockPipeline.hset.mock.calls[1][0]).toBe("Test Course:testApp:sessions:data");
         expect(mockPipeline.hset.mock.calls[1][1]).toBe("1234");
         expect(mockPipeline.hset.mock.calls[1][2]).toBe("testSession");
+        expect(mockPipeline.hset.mock.calls[2][0]).toBe("Test Course:testApp:sessions:hash");
+        expect(mockPipeline.hset.mock.calls[2][1]).toBe("1234");
+        expect(mockPipeline.hset.mock.calls[2][2]).toBe(md5("testSession"));
         expect(mockPipeline.exec).toHaveBeenCalledTimes(1);
     });
 
@@ -46,16 +50,16 @@ describe("SessionStore", () => {
         const result = await sut.getSessionsMetadata(["1234", "5678"]);
         expect(result).toStrictEqual([
             {
-                id: "1234",
-                time: "1234 value for Test Course:testApp:sessions:time",
-                label: "1234 value for Test Course:testApp:sessions:label",
-                friendlyId: "1234 value for Test Course:testApp:sessions:friendly"
-            },
-            {
                 id: "5678",
                 time: "5678 value for Test Course:testApp:sessions:time",
                 label: "5678 value for Test Course:testApp:sessions:label",
                 friendlyId: "5678 value for Test Course:testApp:sessions:friendly"
+            },
+            {
+                id: "1234",
+                time: "1234 value for Test Course:testApp:sessions:time",
+                label: "1234 value for Test Course:testApp:sessions:label",
+                friendlyId: "1234 value for Test Course:testApp:sessions:friendly"
             }
         ]);
     });
@@ -194,6 +198,158 @@ describe("generate friendly id", () => {
         for (let i = 0; i < n; i += 1) {
             expect(friendlyAdjectiveAnimal()).toMatch(/^[a-z]+-[a-z]+$/);
         }
+    });
+});
+
+describe("SessionStore handles duplicate sessions", () => {
+    const mockRedis = (
+        savedHmGetValues: Record<string, (string | null)[]>,
+        savedHGetValues: Record<string, string> = {}
+    ) => {
+        return {
+            hmget: jest.fn().mockImplementation(async (sessionKey: string) => {
+                const key = sessionKey.split(":").slice(-1)[0];
+                return savedHmGetValues[key];
+            }),
+            hget: jest.fn().mockImplementation(async (sessionKey: string, sessionId: string) => {
+                return savedHGetValues[sessionId];
+            }),
+            hset: jest.fn()
+        } as any;
+    };
+
+    const sessionSavedValues = {
+        time: [
+            "2023-10-25 11:10:01",
+            "2023-10-25 11:10:02",
+            "2023-10-25 11:10:03",
+            "2023-10-25 11:10:04",
+            "2023-10-25 11:10:05"
+        ],
+        label: [null, null, null, null, null],
+        friendly: ["good dog", "bad cat", "devious chaffinch", "happy bat", "sad owl"],
+        hash: ["123", "234", "567", "234", "123"]
+    };
+
+    it("Filters out earlier duplicate sessions if removeDuplicates is true", async () => {
+        const redis = mockRedis(sessionSavedValues);
+        const sut = new SessionStore(redis, "Test Course", "testApp");
+        const ids = ["abc", "def", "ghi", "jkl", "mno"];
+        const result = await sut.getSessionsMetadata(ids, true);
+        expect(redis.hmget).toHaveBeenCalledTimes(4);
+        const sessionKeyPrefix = "Test Course:testApp:sessions:";
+        expect(redis.hmget).toHaveBeenNthCalledWith(1, `${sessionKeyPrefix}time`, ...ids);
+        expect(redis.hmget).toHaveBeenNthCalledWith(2, `${sessionKeyPrefix}label`, ...ids);
+        expect(redis.hmget).toHaveBeenNthCalledWith(3, `${sessionKeyPrefix}friendly`, ...ids);
+        expect(redis.hmget).toHaveBeenNthCalledWith(4, `${sessionKeyPrefix}hash`, ...ids);
+
+        // results should be ordered chrono desc
+        expect(result).toStrictEqual([
+            {
+                id: "mno", time: "2023-10-25 11:10:05", label: null, friendlyId: "sad owl"
+            },
+            {
+                id: "jkl", time: "2023-10-25 11:10:04", label: null, friendlyId: "happy bat"
+            },
+            {
+                id: "ghi", time: "2023-10-25 11:10:03", label: null, friendlyId: "devious chaffinch"
+            }
+        ]);
+    });
+
+    it("Does not filter out earlier duplicate sessions if removeDuplicates is false", async () => {
+        const redis = mockRedis(sessionSavedValues);
+        const sut = new SessionStore(redis, "Test Course", "testApp");
+        const ids = ["abc", "def", "ghi", "jkl", "mno"];
+        const result = await sut.getSessionsMetadata(ids, false);
+        expect(redis.hmget).toHaveBeenCalledTimes(4);
+        const sessionKeyPrefix = "Test Course:testApp:sessions:";
+        expect(redis.hmget).toHaveBeenNthCalledWith(1, `${sessionKeyPrefix}time`, ...ids);
+        expect(redis.hmget).toHaveBeenNthCalledWith(2, `${sessionKeyPrefix}label`, ...ids);
+        expect(redis.hmget).toHaveBeenNthCalledWith(3, `${sessionKeyPrefix}friendly`, ...ids);
+        expect(redis.hmget).toHaveBeenNthCalledWith(4, `${sessionKeyPrefix}hash`, ...ids);
+
+        expect(result).toStrictEqual([
+            {
+                id: "mno", time: "2023-10-25 11:10:05", label: null, friendlyId: "sad owl"
+            },
+            {
+                id: "jkl", time: "2023-10-25 11:10:04", label: null, friendlyId: "happy bat"
+            },
+            {
+                id: "ghi", time: "2023-10-25 11:10:03", label: null, friendlyId: "devious chaffinch"
+            },
+            {
+                id: "def", time: "2023-10-25 11:10:02", label: null, friendlyId: "bad cat"
+            },
+            {
+                id: "abc", time: "2023-10-25 11:10:01", label: null, friendlyId: "good dog"
+            }
+        ]);
+    });
+
+    it("returns duplicates if they have labels", async () => {
+        const savedValues = {
+            ...sessionSavedValues,
+            label: ["oldest session", null, null, "newer session", null]
+        };
+        const redis = mockRedis(savedValues);
+        const sut = new SessionStore(redis, "Test Course", "testApp");
+        const ids = ["abc", "def", "ghi", "jkl", "mno"];
+        const result = await sut.getSessionsMetadata(ids, true);
+
+        expect(result).toStrictEqual([
+            {
+                id: "mno", time: "2023-10-25 11:10:05", label: null, friendlyId: "sad owl"
+            },
+            {
+                id: "jkl", time: "2023-10-25 11:10:04", label: "newer session", friendlyId: "happy bat"
+            },
+            {
+                id: "ghi", time: "2023-10-25 11:10:03", label: null, friendlyId: "devious chaffinch"
+            },
+            {
+                id: "abc", time: "2023-10-25 11:10:01", label: "oldest session", friendlyId: "good dog"
+            }
+        ]);
+    });
+
+    it("if a session has no hash, calculates and saves hash, and applies filter rules", async () => {
+        // 2 sessions without hashes, one is a newer and one an older duplicate of another sessions
+        const sessionContent1 = "test content 1";
+        const sessionContent2 = "test content 2";
+
+        const sessionContent1Hash = md5(sessionContent1);
+        const sessionContent2Hash = md5(sessionContent2);
+
+        const savedValues = {
+            ...sessionSavedValues,
+            hash: [sessionContent1Hash, null, "567", sessionContent2Hash, null]
+        };
+
+        const redis = mockRedis(savedValues, { def: sessionContent2, mno: sessionContent1 });
+        const sut = new SessionStore(redis, "Test Course", "testApp");
+        const ids = ["abc", "def", "ghi", "jkl", "mno"];
+        const result = await sut.getSessionsMetadata(ids, true);
+        expect(redis.hmget).toHaveBeenCalledTimes(4);
+        const sessionKeyPrefix = "Test Course:testApp:sessions:";
+        expect(redis.hmget).toHaveBeenNthCalledWith(1, `${sessionKeyPrefix}time`, ...ids);
+        expect(redis.hmget).toHaveBeenNthCalledWith(2, `${sessionKeyPrefix}label`, ...ids);
+        expect(redis.hmget).toHaveBeenNthCalledWith(3, `${sessionKeyPrefix}friendly`, ...ids);
+        expect(redis.hmget).toHaveBeenNthCalledWith(4, `${sessionKeyPrefix}hash`, ...ids);
+
+        // results should be ordered chrono desc
+        expect(result).toStrictEqual([
+            {
+                id: "mno", time: "2023-10-25 11:10:05", label: null, friendlyId: "sad owl"
+            },
+            {
+                id: "jkl", time: "2023-10-25 11:10:04", label: null, friendlyId: "happy bat"
+            },
+            {
+                id: "ghi", time: "2023-10-25 11:10:03", label: null, friendlyId: "devious chaffinch"
+            }
+        ]);
     });
 });
 

@@ -328,7 +328,8 @@ describe("serialise", () => {
     };
 
     const userPreferences = {
-        showUnlabelledSessions: true
+        showUnlabelledSessions: true,
+        showDuplicateSessions: false
     };
 
     const basicState: BasicState = {

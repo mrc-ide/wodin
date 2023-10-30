@@ -115,9 +115,13 @@ export const appStateActions: ActionTree<AppState, AppState> = {
     },
 
     async [AppStateAction.SaveUserPreferences](context, payload: Partial<UserPreferences>) {
-        const { commit, state } = context;
+        const { commit, state, dispatch } = context;
         const newPrefs = { ...state.userPreferences, ...payload };
+        const duplicatesPrefChanged = newPrefs.showDuplicateSessions !== state.userPreferences.showDuplicateSessions;
         localStorageManager.setUserPreferences(newPrefs);
         commit(AppStateMutation.SetUserPreferences, newPrefs);
+        if (duplicatesPrefChanged) {
+            await dispatch(`sessions/${SessionsAction.GetSessions}`);
+        }
     }
 };

@@ -24,6 +24,12 @@ const enterSessionLabel = async (page: Page, dialogId: string, newLabel: string)
     await page.click(`#${dialogId} #ok-session-label`);
 };
 
+const newSessionFromAppPage = async (page: Page) => {
+    // Reload the page to get fresh session, and give it time to save new session Id
+    await page.goto(appUrl);
+    await page.waitForTimeout(saveSessionTimeout);
+};
+
 test.describe("Sessions tests", () => {
     const { timeout } = PlaywrightConfig;
 
@@ -75,8 +81,7 @@ test.describe("Sessions tests", () => {
         await page.waitForTimeout(saveSessionTimeout);
 
         // Reload the page to get fresh session, and give it time to save new session Id
-        await page.goto(appUrl);
-        await page.waitForTimeout(saveSessionTimeout);
+        await newSessionFromAppPage(page);
 
         // Get storage state in order to test that something has been written to it
         const storageState = await browser.storageState();
@@ -95,7 +100,8 @@ test.describe("Sessions tests", () => {
         await expect(await page.innerText(":nth-match(.session-col-header, 5)")).toBe("Delete");
         await expect(await page.innerText(":nth-match(.session-col-header, 6)")).toBe("Shareable Link");
 
-        await expect(await page.locator(".session-label")).toHaveText("--no label--");
+        const noLabel = "--no label--";
+        await expect(await page.locator(".session-label")).toHaveText(noLabel);
 
         // Can copy code and link for a session
         await page.click(":nth-match(.session-copy-code, 2)");
@@ -124,17 +130,54 @@ test.describe("Sessions tests", () => {
         await page.click("input#show-unlabelled-check");
         await expect(await page.locator(".previous-session-row")).toHaveCount(unlabelledCount);
 
-        // Set the current session label on a previous session
-        await page.click(":nth-match(.session-edit-label i, 1)");
-        await enterSessionLabel(page, "page-edit-session-label", "previous session label");
-        await expect(await page.locator(":nth-match(.session-label, 1)")).toHaveText(
-            "previous session label", { timeout }
-        );
+        // We now have a current session with a label, and we are not filtering unlabelled sessions.
+        // We'll test filtering out duplicate sessions, by adding three new sessions - only the latest of these should
+        // be displayed above the previous labelled sessions initially...
+        await newSessionFromAppPage(page);
+        await newSessionFromAppPage(page);
+        await newSessionFromAppPage(page);
 
-        await page.click(":nth-match(.session-load a, 1)");
+        await page.goto(`${appUrl}/sessions`);
+        await expect(await page.isChecked("#show-duplicates-check")).toBe(false);
+        await expect(await page.innerText(":nth-match(.session-label, 1)")).toBe(noLabel);
+        await expect(await page.innerText(":nth-match(.session-label, 2)"))
+            .toBe("current session label"); // the previous labelled session
+
+        // ... then after checking "Show duplicate sessions", all new sessions should be displayed...
+        await page.check("#show-duplicates-check");
+        await expect(await page.locator(":nth-match(.session-label, 1)")).toHaveText(noLabel, { timeout });
+        await expect(await page.locator(":nth-match(.session-label, 2)")).toHaveText(noLabel, { timeout });
+        await expect(await page.locator(":nth-match(.session-label, 3)")).toHaveText(noLabel, { timeout });
+        await expect(await page.locator(":nth-match(.session-label, 4)"))
+            .toHaveText("current session label", { timeout });
+
+        // ...then unchecking should filter out the earlier unlabelled duplicates again
+        await page.uncheck("#show-duplicates-check");
+        await expect(await page.locator(":nth-match(.session-label, 1)")).toHaveText(noLabel, { timeout });
+        await expect(await page.locator(":nth-match(.session-label, 2)"))
+            .toHaveText("current session label", { timeout });
+
+        // Adding a label to the earliest duplicate session means it should be displayed when we uncheck
+        // "Show duplicates"
+        await page.check("#show-duplicates-check");
+        // wait for second no label to appear
+        await expect(await page.locator(":nth-match(.session-label, 3)")).toHaveText(noLabel, { timeout });
+        await page.click(":nth-match(.session-edit-label i, 3)");
+        await enterSessionLabel(page, "page-edit-session-label", "earlier duplicate");
+        await expect(await page.locator(":nth-match(.session-label, 3)")).toHaveText("earlier duplicate", { timeout });
+
+        await page.uncheck("#show-duplicates-check");
+        // the newly labelled duplicate should still be visible after unchecking, as should the latest (unlabelled) one,
+        // but the middle duplicate should be removed
+        await expect(await page.locator(":nth-match(.session-label, 1)")).toHaveText(noLabel, { timeout });
+        await expect(await page.locator(":nth-match(.session-label, 2)")).toHaveText("earlier duplicate", { timeout });
+        await expect(await page.locator(":nth-match(.session-label, 3)"))
+            .toHaveText("current session label", { timeout });
+
+        // Load previously run session
+        await page.click(":nth-match(.session-load a, 4)");
 
         // Check all session values have been rehydrated:
-
         // Check data
         await page.waitForTimeout(saveSessionTimeout);
         await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Data");

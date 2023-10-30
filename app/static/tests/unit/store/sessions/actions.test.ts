@@ -1,6 +1,6 @@
 import { actions, SessionsAction } from "../../../../src/app/store/sessions/actions";
 import {
-    mockAxios, mockBasicState, mockFailure, mockSuccess
+    mockAxios, mockBasicState, mockFailure, mockSuccess, mockUserPreferences
 } from "../../../mocks";
 import { SessionsMutation } from "../../../../src/app/store/sessions/mutations";
 import { localStorageManager } from "../../../../src/app/localStorageManager";
@@ -218,12 +218,16 @@ describe("SessionsActions", () => {
             { id: "123", time: "10:20", label: "session1" },
             { id: "456", time: "10:21", label: "session2" }
         ];
-        mockAxios.onGet("/apps/test-app/sessions/metadata?sessionIds=123,456")
-            .reply(200, mockSuccess(metadata));
 
-        const rootState = mockBasicState({ appName: "test-app", appsPath: "apps" });
+        const url = "/apps/test-app/sessions/metadata?sessionIds=123,456&removeDuplicates=true";
+        mockAxios.onGet(url).reply(200, mockSuccess(metadata));
+
+        const userPreferences = { ...mockUserPreferences(), showDuplicateSessions: false };
+        const rootState = mockBasicState({ appName: "test-app", appsPath: "apps", userPreferences });
         const commit = jest.fn();
         await (actions[SessionsAction.GetSessions] as any)({ commit, rootState, rootGetters });
+
+        expect(mockAxios.history.get[0].url).toBe(url);
 
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(SessionsMutation.SetSessionsMetadata);
@@ -234,11 +238,24 @@ describe("SessionsActions", () => {
         expect(getSessionIdsSpy.mock.calls[0][1]).toBe("testInstance");
     });
 
+    it("GetSessions sends removeDuplicates=false if showDuplicates user preference is true", async () => {
+        const url = "/apps/test-app/sessions/metadata?sessionIds=123,456&removeDuplicates=false";
+        mockAxios.onGet(url).reply(200, mockSuccess([]));
+
+        const userPreferences = { ...mockUserPreferences(), showDuplicateSessions: true };
+        const rootState = mockBasicState({ appName: "test-app", appsPath: "apps", userPreferences });
+        const commit = jest.fn();
+        await (actions[SessionsAction.GetSessions] as any)({ commit, rootState, rootGetters });
+
+        expect(mockAxios.history.get[0].url).toBe(url);
+    });
+
     it("GetSessions commits error", async () => {
-        mockAxios.onGet("/apps/test-app/sessions/metadata?sessionIds=123,456")
+        mockAxios.onGet("/apps/test-app/sessions/metadata?sessionIds=123,456&removeDuplicates=true")
             .reply(500, mockFailure("TEST ERROR"));
 
-        const rootState = mockBasicState({ appName: "test-app", appsPath: "apps" });
+        const userPreferences = mockUserPreferences();
+        const rootState = mockBasicState({ appName: "test-app", appsPath: "apps", userPreferences });
         const commit = jest.fn();
         await (actions[SessionsAction.GetSessions] as any)({ commit, rootState, rootGetters });
 

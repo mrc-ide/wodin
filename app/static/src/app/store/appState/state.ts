@@ -22,7 +22,8 @@ export enum VisualisationTab {
 }
 
 export interface UserPreferences {
-    showUnlabelledSessions: boolean
+    showUnlabelledSessions: boolean,
+    showDuplicateSessions: boolean
 }
 
 export interface AppState {
