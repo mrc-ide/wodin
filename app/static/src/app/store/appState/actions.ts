@@ -12,10 +12,11 @@ import { FitState } from "../fit/state";
 import { SessionsAction } from "../sessions/actions";
 import { localStorageManager } from "../../localStorageManager";
 import { AppStateGetter } from "./getters";
-import { InitialisePayload } from "../../types/payloadTypes";
+import { SetAppPayload } from "../../types/payloadTypes";
 
 export enum AppStateAction {
-    Initialise = "Initialise",
+    InitialiseApp = "InitialiseApp",
+    InitialiseSession = "InitialiseSession",
     QueueStateUpload = "QueueStateUpload",
     LoadUserPreferences = "LoadUserPreferences",
     SaveUserPreferences = "SaveUserPreferences"
@@ -34,50 +35,57 @@ async function immediateUploadState(context: ActionContext<AppState, AppState>) 
 }
 
 export const appStateActions: ActionTree<AppState, AppState> = {
-    async [AppStateAction.Initialise](context, payload: InitialisePayload) {
-        // TODO: just accept loadSessionId here, everything else should already be set in the state
+    async [AppStateAction.InitialiseApp](context, payload: SetAppPayload) {
+        const { commit} = context;
         const {
-            commit, state, dispatch, getters
-        } = context;
-        const {
-            appName,
-            baseUrl,
-            loadSessionId,
-            appsPath,
-            enableI18n,
-            defaultLanguage
-        } = payload;
-        /*commit(AppStateMutation.SetApp, {
             appName,
             baseUrl,
             appsPath,
             enableI18n,
             defaultLanguage
-        });*/
-        localStorageManager.addSessionId(appName, getters[AppStateGetter.baseUrlPath], state.sessionId);
+        } = payload;
+        commit(AppStateMutation.SetApp, {
+            appName,
+            baseUrl,
+            appsPath,
+            enableI18n,
+            defaultLanguage
+        });
 
         const response = await api(context)
             .freezeResponse()
             .withSuccess(AppStateMutation.SetConfig)
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
             .get<AppConfig>(`/config/${appName}`);
+        if (response?.data.endTime) {
+            commit(`run/${RunMutation.SetEndTime}`, response.data.endTime, { root: true });
+        }
+    },
 
-        if (response) {
-            if (loadSessionId) {
-                // Fetch and rehydrate session data
-                await dispatch(`sessions/${SessionsAction.Rehydrate}`, loadSessionId);
-            } else {
-                await dispatch(`model/${ModelAction.FetchOdinRunner}`, null, { root: true });
-                // If not loading a session, set code and end time from default in config
-                commit(`code/${CodeMutation.SetCurrentCode}`, state.config!.defaultCode, { root: true });
-                if (response.data.endTime) {
-                    commit(`run/${RunMutation.SetEndTime}`, response.data.endTime, { root: true });
-                }
-                commit(AppStateMutation.SetConfigured);
-                if (state.code.currentCode.length) {
-                    // Fetch and run model for default code
-                    await dispatch(`model/${ModelAction.DefaultModel}`);
-                }
+    async [AppStateAction.InitialiseSession](context, loadSessionId: string) {
+        const {
+            commit, state, dispatch, getters
+        } = context;
+
+        // TODO: If user has selected to reload the previous session, presumably that meant *not* a copy
+        // - we need to set loadSessionId as the session in the state. But this has already been set - we should
+        // ensure it doesn't get saved as we don't really want to spawn another session... ALTHOUGH if we just don't
+        // add it to the local storage here, it will be ignored in future session list fetches
+        // So, todo - set state.sessionId to loadSessionId and *don't* add session id here (But make sure this doesn't
+        // impact load from share)
+        localStorageManager.addSessionId(state.appName!, getters[AppStateGetter.baseUrlPath], state.sessionId);
+
+        if (loadSessionId) {
+            // Fetch and rehydrate session data
+            await dispatch(`sessions/${SessionsAction.Rehydrate}`, loadSessionId);
+        } else {
+            await dispatch(`model/${ModelAction.FetchOdinRunner}`, null, { root: true });
+            // If not loading a session, set code and end time from default in config
+            commit(`code/${CodeMutation.SetCurrentCode}`, state.config!.defaultCode, { root: true });
+            commit(AppStateMutation.SetConfigured);
+            if (state.code.currentCode.length) {
+                // Fetch and run model for default code
+                await dispatch(`model/${ModelAction.DefaultModel}`);
             }
         }
     },

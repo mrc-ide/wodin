@@ -7,6 +7,7 @@ import AppHeader from "./components/header/AppHeader.vue";
 import { BasicState } from "./store/basic/state";
 import { initialiseRouter } from "./router";
 
+console.log("initialising store from basic")
 export const store = new Vuex.Store<BasicState>(storeOptions);
 
 const app = createApp({ components: { WodinSession, AppHeader } });

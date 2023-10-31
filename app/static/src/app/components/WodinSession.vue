@@ -1,17 +1,17 @@
 <template>
-  <session-initialise-modal :open="!sessionInitialised"
+  <session-initialise-modal :open="appInitialised && !sessionInitialised"
                             @new-session="newSession"
                             @reload-session="reloadSession"></session-initialise-modal>
-  <router-view v-if="sessionInitialised"></router-view>
+  <router-view v-if="appInitialised"></router-view>
 </template>
 
 <script lang="ts">
 import {
-    defineComponent, onMounted, ref
+    computed,
+    defineComponent, onMounted, ref, watch
 } from "vue";
-import { RouterView, useRoute, useRouter } from "vue-router";
+import { RouterView } from "vue-router";
 import { useStore } from "vuex";
-import { AppStateMutation } from "../store/appState/mutations";
 import SessionInitialiseModal from "./SessionInitialiseModal.vue";
 import { AppStateAction } from "../store/appState/actions";
 import { ErrorsMutation } from "../store/errors/mutations";
@@ -34,10 +34,13 @@ export default defineComponent({
     setup(props) {
         const store = useStore();
 
-        // TODO: These are undefined ,but they shouldn't be... Get router undefined error when load session from Sessions page
-       // (loadSessionId is set)
-        const route = useRoute();
-        const router = useRouter();
+        const path = new URL(window.location.href).pathname;
+        const isSessionsRoute = !!path.match(/\/sessions\/?$/);
+
+        // We don't need to show session initialise modal if showing the sessions page, or..
+        // TODO: if no previous sessions...
+        const sessionInitialised = ref(isSessionsRoute);
+        const appInitialised = computed(() => !!store.state.config);
 
         const {
             appName,
@@ -48,7 +51,7 @@ export default defineComponent({
             defaultLanguage
         } = props;
 
-        store.commit(AppStateMutation.SetApp, {
+        store.dispatch(AppStateAction.InitialiseApp, {
             appName,
             baseUrl,
             appsPath,
@@ -56,36 +59,25 @@ export default defineComponent({
             defaultLanguage
         });
 
-        // We don't need to show session initialise modal if showing the sessions page, or..
-        // TODO: if no previous sessions...
-        // Can't use the router here to check route as it isn't set up
-        // const sessionInitialised = ref(route.fullPath.endsWith("sessions"));
-        const sessionInitialised = ref(false);
-
-        const initialise = (sessionId: string) => {
-            store.dispatch(AppStateAction.Initialise,
-                {
-                    appName,
-                    baseUrl,
-                    sessionId,
-                    appsPath,
-                    enableI18n,
-                    defaultLanguage
-                });
-            sessionInitialised.value = true;
-        };
-
-        // If we have a loadSessionId we can initialise the session right away with the requested id
-        if (loadSessionId) {
-            initialise(loadSessionId);
-        }
-
-        // const initialised = computed(() => !!(store.state.appName && store.state.baseUrl && store.state.appsPath));
-
         onMounted(() => {
             if (props.shareNotFound) {
                 store.commit(`errors/${ErrorsMutation.AddError}`,
                     { detail: `Share id not found: ${props.shareNotFound}` });
+            }
+        });
+
+        const initialise = (sessionId: string) => {
+            store.dispatch(AppStateAction.InitialiseSession, sessionId);
+            sessionInitialised.value = true;
+        };
+
+        watch(appInitialised, (newValue) => {
+            if (newValue) {
+              console.log("app initialised")
+            }
+            // If we have a loadSessionId we can initialise the session as soon as app config is loaded, with id
+            if (newValue && loadSessionId) {
+                initialise(loadSessionId);
             }
         });
 
@@ -99,8 +91,10 @@ export default defineComponent({
             initialise("");
         };
 
+        console.log("completed setup")
         return {
             sessionInitialised,
+            appInitialised,
             newSession,
             reloadSession
         };

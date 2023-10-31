@@ -11,10 +11,6 @@ export interface SetAppPayload {
     defaultLanguage: Language
 }
 
-export interface InitialisePayload extends SetAppPayload{
-    loadSessionId: string
-}
-
 export interface SetParameterSetResultPayload {
     name: string,
     result: OdinRunResultOde
