@@ -7,14 +7,16 @@
 
 <script lang="ts">
 import {
-    computed,
-    defineComponent, onMounted, ref, watch
+  computed,
+  defineComponent, onMounted, Ref, ref, watch
 } from "vue";
 import { RouterView } from "vue-router";
 import { useStore } from "vuex";
 import SessionInitialiseModal from "./SessionInitialiseModal.vue";
 import { AppStateAction } from "../store/appState/actions";
 import { ErrorsMutation } from "../store/errors/mutations";
+import { localStorageManager } from "../localStorageManager";
+import {AppStateGetter} from "../store/appState/getters";
 
 export default defineComponent({
     name: "WodinSession",
@@ -36,11 +38,9 @@ export default defineComponent({
 
         const path = new URL(window.location.href).pathname;
         const isSessionsRoute = !!path.match(/\/sessions\/?$/);
-
-        // We don't need to show session initialise modal if showing the sessions page, or..
-        // TODO: if no previous sessions...
-        const sessionInitialised = ref(isSessionsRoute);
+        const sessionInitialised = ref(false);
         const appInitialised = computed(() => !!store.state.config);
+        const latestSessionId: Ref<null|string> = ref(null);
 
         const {
             appName,
@@ -72,12 +72,12 @@ export default defineComponent({
         };
 
         watch(appInitialised, (newValue) => {
-            if (newValue) {
-              console.log("app initialised")
-            }
-            // If we have a loadSessionId we can initialise the session as soon as app config is loaded, with id
-            if (newValue && loadSessionId) {
-                initialise(loadSessionId);
+            // We don't need to show session initialise modal if showing the sessions page, or if we have a
+            // loadSessionId or if there are no previous sessions
+            const sessions = localStorageManager.getSessionIds(store.state.appName, store.getters[AppStateGetter.baseUrlPath]);
+            latestSessionId.value = sessions.length ? sessions[0] : null;
+            if (newValue && (loadSessionId || isSessionsRoute || !latestSessionId.value)) {
+                initialise(loadSessionId || "");
             }
         });
 
@@ -86,12 +86,9 @@ export default defineComponent({
         };
 
         const reloadSession = () => {
-            // TODO: find the most recent session id from local store
-            // Expected behaviour: right now, both buttons should launch a fresh new session
-            initialise("");
+            initialise(latestSessionId.value!);
         };
 
-        console.log("completed setup")
         return {
             sessionInitialised,
             appInitialised,
