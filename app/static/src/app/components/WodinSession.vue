@@ -68,7 +68,6 @@ export default defineComponent({
         });
 
         const initialise = (sessionId: string, copySession = true) => {
-            console.log(`Initialising with sessionId: ${sessionId}, copySession: ${copySession}`)
             store.dispatch(AppStateAction.InitialiseSession, { loadSessionId: sessionId, copySession });
             sessionInitialised.value = true;
         };

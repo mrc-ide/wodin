@@ -6,9 +6,9 @@
     </div>
     <div class="row mb-3" id="no-current-session" v-if="!currentSession">
         <span>
-          <router-link to="/" class="brand-link">
+          <span class="brand-link clickable" @click="newSession">
             Start a new session
-          </router-link>
+          </span>
           <span v-if="previousSessions && previousSessions.length" id="load-previous-span">
             or load a previous session.
           </span>
@@ -140,7 +140,7 @@ import {
 } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
-import { RouterLink } from "vue-router";
+import {RouterLink, useRouter} from "vue-router";
 import { AppStateAction } from "../../store/appState/actions";
 import { SessionsAction } from "../../store/sessions/actions";
 import userMessages from "../../userMessages";
@@ -160,6 +160,8 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
+        const router = useRouter();
+
         const namespace = "sessions";
         const sessionCode = ref("");
 
@@ -278,6 +280,11 @@ export default defineComponent({
             store.dispatch(`${namespace}/${SessionsAction.DeleteSession}`, sessionIdToDelete.value);
         };
 
+        const newSession = () => {
+          store.dispatch(AppStateAction.InitialiseSession, { loadSessionId: "", copySession: false });
+          router.push("/");
+        };
+
         const loadSessionFromCode = () => {
             const link = getShareSessionLink(sessionCode.value);
             window.location.assign(link);
@@ -311,6 +318,7 @@ export default defineComponent({
             confirmDeleteSession,
             toggleConfirmDeleteSessionOpen,
             deleteSession,
+            newSession,
             showUnlabelledSessions,
             sessionCode,
             loadSessionFromCode,
