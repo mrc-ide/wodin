@@ -189,7 +189,7 @@ export const mockMultiSensitivityState = (state: Partial<MultiSensitivityState> 
     };
 };
 
-const mockUserPreferences = () => ({ showUnlabelledSessions: true });
+export const mockUserPreferences = () => ({ showUnlabelledSessions: true, showDuplicateSessions: false });
 
 export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
     return {

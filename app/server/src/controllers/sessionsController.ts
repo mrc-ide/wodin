@@ -32,9 +32,10 @@ export class SessionsController {
             const sessionIdsString = req.query.sessionIds as string;
             let metadata: SessionMetadata[] = [];
             if (sessionIdsString) {
+                const removeDups = req.query.removeDuplicates === "true";
                 const sessionIds = sessionIdsString.split(",");
                 const store = getSessionStore(req);
-                metadata = await store.getSessionsMetadata(sessionIds);
+                metadata = await store.getSessionsMetadata(sessionIds, removeDups);
             }
             jsonResponseSuccess(metadata, res);
         });

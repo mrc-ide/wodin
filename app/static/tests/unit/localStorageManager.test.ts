@@ -1,4 +1,5 @@
 import { localStorageManager } from "../../src/app/localStorageManager";
+import { mockUserPreferences } from "../mocks";
 
 describe("localStorageManager for sessions", () => {
     let spyOnGetItem: any;
@@ -58,7 +59,7 @@ describe("localStorageManager gets and saves user preferences", () => {
 
     beforeAll(() => {
         spyOnGetItem = jest.spyOn(Storage.prototype, "getItem")
-            .mockReturnValue("{\"showUnlabelledSessions\": false}");
+            .mockReturnValue("{\"showUnlabelledSessions\": false, \"showDuplicateSessions\": true}");
         spyOnSetItem = jest.spyOn(Storage.prototype, "setItem");
     });
 
@@ -68,12 +69,12 @@ describe("localStorageManager gets and saves user preferences", () => {
 
     it("can get user preferences", () => {
         const result = localStorageManager.getUserPreferences();
-        expect(result).toStrictEqual({ showUnlabelledSessions: false });
+        expect(result).toStrictEqual({ showUnlabelledSessions: false, showDuplicateSessions: true });
         expect(spyOnGetItem).toHaveBeenCalledWith("preferences");
     });
 
     it("can set user preferences", () => {
-        const prefs = { showUnlabelledSessions: false };
+        const prefs = mockUserPreferences();
         localStorageManager.setUserPreferences(prefs);
         expect(spyOnSetItem).toHaveBeenCalledWith("preferences", JSON.stringify(prefs));
     });
@@ -93,7 +94,7 @@ describe("localStorageManager gets default user preferences", () => {
 
     it("can get default user preferences", () => {
         const result = localStorageManager.getUserPreferences();
-        expect(result).toStrictEqual({ showUnlabelledSessions: true });
+        expect(result).toStrictEqual({ showUnlabelledSessions: true, showDuplicateSessions: false });
         expect(spyOnGetItem).toHaveBeenCalledWith("preferences");
     });
 });

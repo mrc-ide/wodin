@@ -76,13 +76,13 @@ describe("Session id integration", () => {
         expect(Array.isArray(sessions)).toBe(true);
         expect(sessions.length).toBe(2);
 
-        expect(sessions[0].id).toBe(sessionId);
+        expect(sessions[0].id).toBe(anotherSessionId);
         expectRecentTime(sessions[0].time);
-        expect(sessions[0].label).toBe("label1");
+        expect(sessions[0].label).toBe(null);
 
-        expect(sessions[1].id).toBe(anotherSessionId);
+        expect(sessions[1].id).toBe(sessionId);
         expectRecentTime(sessions[1].time);
-        expect(sessions[1].label).toBe(null);
+        expect(sessions[1].label).toBe("label1");
     });
 
     it("gets empty sessionMetadata if sessionIds parameter omitted", async () => {

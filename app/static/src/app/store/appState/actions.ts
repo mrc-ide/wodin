@@ -61,7 +61,9 @@ export const appStateActions: ActionTree<AppState, AppState> = {
             commit(`run/${RunMutation.SetEndTime}`, response.data.endTime, { root: true });
         }
 
-        // get sessions metadata so we can check latest session to reload
+        // get sessions metadata so we can check latest session to reload - get user preferences first, which are needed
+        // for sessions metadata fetch
+        await dispatch(AppStateAction.LoadUserPreferences);
         dispatch(`sessions/${SessionsAction.GetSessions}`);
     },
 
@@ -138,9 +140,13 @@ export const appStateActions: ActionTree<AppState, AppState> = {
     },
 
     async [AppStateAction.SaveUserPreferences](context, payload: Partial<UserPreferences>) {
-        const { commit, state } = context;
+        const { commit, state, dispatch } = context;
         const newPrefs = { ...state.userPreferences, ...payload };
+        const duplicatesPrefChanged = newPrefs.showDuplicateSessions !== state.userPreferences.showDuplicateSessions;
         localStorageManager.setUserPreferences(newPrefs);
         commit(AppStateMutation.SetUserPreferences, newPrefs);
+        if (duplicatesPrefChanged) {
+            await dispatch(`sessions/${SessionsAction.GetSessions}`);
+        }
     }
 };
