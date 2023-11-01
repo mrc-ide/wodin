@@ -60,6 +60,4 @@ app.directive("translate", translate<AppState>(store));
 app.mount("#app");
 
 const router = initialiseRouter(getComponent(), store.state.appName!, store.state.baseUrl!, store.state.appsPath!);
-console.log("initialising router")
 app.use(router);
-console.log("initialed store from wodin")

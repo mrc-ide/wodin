@@ -1,5 +1,5 @@
 <template>
-  <session-initialise-modal :open="appInitialised && !sessionInitialised"
+  <session-initialise-modal :open="appInitialised && !sessionInitialised && !isSessionsRoute"
                             @new-session="newSession"
                             @reload-session="reloadSession"></session-initialise-modal>
   <router-view v-if="appInitialised"></router-view>
@@ -17,6 +17,7 @@ import { AppStateAction } from "../store/appState/actions";
 import { ErrorsMutation } from "../store/errors/mutations";
 import { localStorageManager } from "../localStorageManager";
 import {AppStateGetter} from "../store/appState/getters";
+import {SessionMetadata} from "../types/responseTypes";
 
 export default defineComponent({
     name: "WodinSession",
@@ -39,7 +40,7 @@ export default defineComponent({
         const path = new URL(window.location.href).pathname;
         const isSessionsRoute = !!path.match(/\/sessions\/?$/);
         const sessionInitialised = ref(false);
-        const appInitialised = computed(() => !!store.state.config);
+        const appInitialised = computed(() => !!store.state.config && !!store.state.sessions.sessionsMetadata);
         const latestSessionId: Ref<null|string> = ref(null);
 
         const {
@@ -66,17 +67,24 @@ export default defineComponent({
             }
         });
 
-        const initialise = (sessionId: string) => {
-            store.dispatch(AppStateAction.InitialiseSession, sessionId);
+        const initialise = (sessionId: string, copySession = true) => {
+            console.log(`Initialising with sessionId: ${sessionId}, copySession: ${copySession}`)
+            store.dispatch(AppStateAction.InitialiseSession, { loadSessionId: sessionId, copySession });
             sessionInitialised.value = true;
         };
 
         watch(appInitialised, (newValue) => {
-            // We don't need to show session initialise modal if showing the sessions page, or if we have a
-            // loadSessionId or if there are no previous sessions
+            // We don't need to show session initialise modal if we have a
+            // loadSessionId (loading from share) or if there are no previous sessions
             const sessions = localStorageManager.getSessionIds(store.state.appName, store.getters[AppStateGetter.baseUrlPath]);
-            latestSessionId.value = sessions.length ? sessions[0] : null;
-            if (newValue && (loadSessionId || isSessionsRoute || !latestSessionId.value)) {
+            const sessionId = sessions.length ? sessions[0] : null;
+            // check latest session id is actually available from the back end
+            const sessionAvailable = sessionId && !!store.state.sessions.sessionsMetadata.find((s: SessionMetadata) => s.id === sessionId);
+            if (sessionAvailable) {
+              latestSessionId.value = sessionId;
+            }
+
+            if (newValue && (loadSessionId || !latestSessionId.value)) {
                 initialise(loadSessionId || "");
             }
         });
@@ -86,12 +94,13 @@ export default defineComponent({
         };
 
         const reloadSession = () => {
-            initialise(latestSessionId.value!);
+            initialise(latestSessionId.value!, false);
         };
 
         return {
             sessionInitialised,
             appInitialised,
+            isSessionsRoute,
             newSession,
             reloadSession
         };

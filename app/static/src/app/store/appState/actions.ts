@@ -12,7 +12,7 @@ import { FitState } from "../fit/state";
 import { SessionsAction } from "../sessions/actions";
 import { localStorageManager } from "../../localStorageManager";
 import { AppStateGetter } from "./getters";
-import { SetAppPayload } from "../../types/payloadTypes";
+import {InitialiseAppPayload, InitialiseSessionPayload} from "../../types/payloadTypes";
 
 export enum AppStateAction {
     InitialiseApp = "InitialiseApp",
@@ -35,8 +35,8 @@ async function immediateUploadState(context: ActionContext<AppState, AppState>) 
 }
 
 export const appStateActions: ActionTree<AppState, AppState> = {
-    async [AppStateAction.InitialiseApp](context, payload: SetAppPayload) {
-        const { commit} = context;
+    async [AppStateAction.InitialiseApp](context, payload: InitialiseAppPayload) {
+        const { commit, dispatch} = context;
         const {
             appName,
             baseUrl,
@@ -60,20 +60,34 @@ export const appStateActions: ActionTree<AppState, AppState> = {
         if (response?.data.endTime) {
             commit(`run/${RunMutation.SetEndTime}`, response.data.endTime, { root: true });
         }
+
+        // get sessions metadata so we can check latest session to reload
+        dispatch(`sessions/${SessionsAction.GetSessions}`);
     },
 
-    async [AppStateAction.InitialiseSession](context, loadSessionId: string) {
+    async [AppStateAction.InitialiseSession](context, payload: InitialiseSessionPayload) {
         const {
             commit, state, dispatch, getters
         } = context;
+        const {
+            loadSessionId,
+            copySession
+        } = payload;
 
-        // TODO: If user has selected to reload the previous session, presumably that meant *not* a copy
-        // - we need to set loadSessionId as the session in the state. But this has already been set - we should
-        // ensure it doesn't get saved as we don't really want to spawn another session... ALTHOUGH if we just don't
-        // add it to the local storage here, it will be ignored in future session list fetches
-        // So, todo - set state.sessionId to loadSessionId and *don't* add session id here (But make sure this doesn't
-        // impact load from share)
-        localStorageManager.addSessionId(state.appName!, getters[AppStateGetter.baseUrlPath], state.sessionId);
+        // If we're reloading a session on page refresh we want to use the same session id rather than making a copy
+        // as we do on share - otherwise we save the new session id to local storage
+        if (loadSessionId && !copySession) {
+            commit(AppStateMutation.SetSessionId, loadSessionId);
+
+            // set the session's label too, if any
+            const label = state.sessions
+                .sessionsMetadata?.find((s) => s.id === loadSessionId)?.label;
+            if (label) {
+                commit(AppStateMutation.SetSessionLabel, label);
+            }
+        } else {
+            localStorageManager.addSessionId(state.appName!, getters[AppStateGetter.baseUrlPath], state.sessionId);
+        }
 
         if (loadSessionId) {
             // Fetch and rehydrate session data

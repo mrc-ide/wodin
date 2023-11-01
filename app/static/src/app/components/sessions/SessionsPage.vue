@@ -284,7 +284,7 @@ export default defineComponent({
         };
 
         onMounted(() => {
-            store.dispatch(`${namespace}/${SessionsAction.GetSessions}`);
+            store.dispatch(`${namespace}/${SessionsAction.GetSessions}`); // get latest sessions
             store.dispatch(AppStateAction.LoadUserPreferences);
         });
 

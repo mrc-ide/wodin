@@ -1,7 +1,7 @@
 import { MutationTree } from "vuex";
 import { AppState, UserPreferences, VisualisationTab } from "./state";
 import { AppConfig } from "../../types/responseTypes";
-import { SetAppPayload } from "../../types/payloadTypes";
+import { InitialiseAppPayload } from "../../types/payloadTypes";
 import registerTranslations from "../../../../translationPackage/registerTranslations";
 import { collectedTranslations } from "../translations/collectedTranslations";
 
@@ -12,6 +12,7 @@ export enum AppStateMutation {
     ClearQueuedStateUpload = "ClearQueuedStateUpload",
     SetQueuedStateUpload = "SetQueuedStateUpload",
     SetStateUploadInProgress = "SetStateUploadInProgress",
+    SetSessionId = "SetSessionId",
     SetSessionLabel = "SetSessionLabel",
     SetConfigured = "SetConfigured",
     SetUserPreferences = "SetUserPreferences",
@@ -26,7 +27,7 @@ export const StateUploadMutations = [
 ] as string[];
 
 export const appStateMutations: MutationTree<AppState> = {
-    [AppStateMutation.SetApp](state: AppState, payload: SetAppPayload) {
+    [AppStateMutation.SetApp](state: AppState, payload: InitialiseAppPayload) {
         state.appName = payload.appName;
         state.baseUrl = payload.baseUrl;
         state.appsPath = payload.appsPath;
@@ -54,6 +55,10 @@ export const appStateMutations: MutationTree<AppState> = {
 
     [AppStateMutation.SetStateUploadInProgress](state: AppState, payload: boolean) {
         state.stateUploadInProgress = payload;
+    },
+
+    [AppStateMutation.SetSessionId](state: AppState, payload: string) {
+        state.sessionId = payload;
     },
 
     [AppStateMutation.SetSessionLabel](state: AppState, payload: null | string) {
