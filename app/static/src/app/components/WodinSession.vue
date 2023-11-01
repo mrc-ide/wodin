@@ -73,8 +73,8 @@ export default defineComponent({
         };
 
         watch(appInitialised, (newValue) => {
-            // We don't need to show session initialise modal if we have a
-            // loadSessionId (loading from share) or if there are no previous sessions
+            // We don't need to show session initialise modal if we have a  loadSessionId (loading from share) or if
+            // there are no previous sessions - initialise as soon as config available
             const sessions = localStorageManager.getSessionIds(store.state.appName, store.getters[AppStateGetter.baseUrlPath]);
             const sessionId = sessions.length ? sessions[0] : null;
             // check latest session id is actually available from the back end
