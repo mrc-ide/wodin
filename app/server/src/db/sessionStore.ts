@@ -69,10 +69,6 @@ export class SessionStore {
         await this._redis.hset(this.sessionKey("label"), id, label);
     }
 
-    async getSessionLabel(id: string) {
-        await this._redis.hget(this.sessionKey("label"), id);
-    }
-
     async getSession(id: string) {
         return this._redis.hget(this.sessionKey("data"), id);
     }

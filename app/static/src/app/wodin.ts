@@ -47,7 +47,6 @@ const getComponent = () => {
     }
 };
 
-console.log("initialising store from wodin")
 export const store = getStore();
 
 const app = createApp({ components: { WodinSession, AppHeader } });
