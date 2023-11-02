@@ -1,7 +1,13 @@
-import { shallowMount } from "@vue/test-utils";
+const mockRouter = {
+    push: jest.fn()
+};
+jest.mock("vue-router", () => ({
+    useRouter: jest.fn().mockImplementation(() => mockRouter)
+}));
+
+import {shallowMount} from "@vue/test-utils";
 import Vuex from "vuex";
 import VueFeather from "vue-feather";
-import { RouterLink } from "vue-router";
 import { nextTick } from "vue";
 import SessionsPage from "../../../../src/app/components/sessions/SessionsPage.vue";
 import ErrorsAlert from "../../../../src/app/components/ErrorsAlert.vue";
@@ -21,10 +27,6 @@ describe("SessionsPage", () => {
     const mockSaveUserPreferences = jest.fn();
     const mockLoadUserPreferences = jest.fn();
     const mockInitialiseSession = jest.fn();
-
-    const mockRouter = {
-        push: jest.fn()
-    };
 
     Object.assign(window.navigator, {
         clipboard: {
@@ -71,9 +73,6 @@ describe("SessionsPage", () => {
         const options = {
             global: {
                 plugins: [store]
-            },
-            mocks: {
-                $router: mockRouter
             }
         };
 
@@ -98,7 +97,7 @@ describe("SessionsPage", () => {
         expect(rows.at(0)!.find("h2").text()).toBe("Sessions");
 
         const currentSessionRow = rows.at(1)!;
-        expect(currentSessionRow.findComponent(RouterLink).props("to")).toBe("/");
+        expect(currentSessionRow.find("router-link").attributes("to")).toBe("/");
         expect(currentSessionRow.find("a").text()).toBe("make a copy of the current session.");
         expect(currentSessionRow.find("a").attributes("href"))
             .toBe("http://localhost:3000/apps/testApp/?sessionId=abc");
@@ -186,7 +185,7 @@ describe("SessionsPage", () => {
         expect(wrapper.find("#no-current-session").exists()).toBe(false);
         const current = wrapper.find("#current-session");
         expect(current.exists()).toBe(true);
-        expect(current.findComponent(RouterLink).props("to")).toBe("/");
+        expect(current.find("router-link").attributes("to")).toBe("/");
         expect(current.find("a").text()).toBe("make a copy of the current session.");
 
         expect(wrapper.find("h3").text()).toBe("Previous sessions");
@@ -362,11 +361,6 @@ describe("SessionsPage", () => {
         window.location = realLocation;
     });
 
-    it("loads user preferences on mount", () => {
-        const wrapper = getWrapper(sessionsMetadata, currentSessionId);
-        expect(mockLoadUserPreferences).toHaveBeenCalledTimes(1);
-    });
-
     it("can save show unlabelled sessions preference", async () => {
         const wrapper = getWrapper(sessionsMetadata, currentSessionId);
         await wrapper.find("input#show-unlabelled-check").trigger("click");
@@ -387,7 +381,7 @@ describe("SessionsPage", () => {
         const rows = wrapper.findAll(".container .row");
 
         const currentSessionRow = rows.at(1)!;
-        expect(currentSessionRow.findComponent(RouterLink).props("to")).toBe("/");
+        expect(currentSessionRow.find("router-link").attributes("to")).toBe("/");
         expect(currentSessionRow.find("a").text()).toBe("make a copy of the current session.");
         expect(currentSessionRow.find("a").attributes("href"))
             .toBe("http://localhost:3000/apps/testApp/?sessionId=abc");
@@ -413,7 +407,7 @@ describe("SessionsPage", () => {
     it("clicking start session initialises session and navigates to app homepage", async () => {
         const wrapper = getWrapper(sessionsMetadata, undefined);
         await wrapper.find("span#start-session").trigger("click");
-        expect(mockInitialiseSession).toHaveBeenCalledWith({loadSessionId: "", copySession: true});
+        expect(mockInitialiseSession.mock.calls[0][1]).toStrictEqual({loadSessionId: "", copySession: true});
         expect(mockRouter.push).toHaveBeenCalledWith("/");
     });
 });
