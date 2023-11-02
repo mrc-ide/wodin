@@ -26,6 +26,7 @@ import { LanguageState } from "../translationPackage/store/state";
 import { Language } from "../src/app/types/languageTypes";
 import { noSensitivityUpdateRequired } from "../src/app/store/sensitivity/sensitivity";
 import { MultiSensitivityState } from "../src/app/store/multiSensitivity/state";
+import {SessionsState} from "../src/app/store/sessions/state";
 
 export const mockAxios = new MockAdapter(axios);
 
@@ -189,6 +190,12 @@ export const mockMultiSensitivityState = (state: Partial<MultiSensitivityState> 
     };
 };
 
+const mockSessionsState = (): SessionsState => {
+    return {
+        sessionsMetadata: null
+    };
+};
+
 export const mockUserPreferences = () => ({ showUnlabelledSessions: true, showDuplicateSessions: false });
 
 export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
@@ -218,6 +225,7 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
         persisted: true,
         language: mockLanguageState(),
         userPreferences: mockUserPreferences(),
+        sessions: mockSessionsState(),
         ...state
     };
 };
@@ -271,6 +279,7 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
         persisted: false,
         language: mockLanguageState(),
         userPreferences: mockUserPreferences(),
+        sessions: mockSessionsState(),
         ...state
     };
 };
@@ -303,6 +312,7 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
         persisted: false,
         language: mockLanguageState(),
         userPreferences: mockUserPreferences(),
+        sessions: mockSessionsState(),
         ...state
     };
 };
