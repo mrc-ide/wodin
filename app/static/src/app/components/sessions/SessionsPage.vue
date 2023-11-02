@@ -6,7 +6,7 @@
     </div>
     <div class="row mb-3" id="no-current-session" v-if="!currentSession">
         <span>
-          <span class="brand-link clickable" @click="newSession">
+          <span id="start-session" class="brand-link clickable" @click="newSession">
             Start a new session
           </span>
           <span v-if="previousSessions && previousSessions.length" id="load-previous-span">
@@ -292,7 +292,7 @@ export default defineComponent({
         };
 
         const newSession = () => {
-          store.dispatch(AppStateAction.InitialiseSession, { loadSessionId: "", copySession: false });
+          store.dispatch(AppStateAction.InitialiseSession, { loadSessionId: "", copySession: true });
           router.push("/");
         };
 

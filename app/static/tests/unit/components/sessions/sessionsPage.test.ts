@@ -20,6 +20,11 @@ describe("SessionsPage", () => {
     const mockDeleteSession = jest.fn();
     const mockSaveUserPreferences = jest.fn();
     const mockLoadUserPreferences = jest.fn();
+    const mockInitialiseSession = jest.fn();
+
+    const mockRouter = {
+        push: jest.fn()
+    };
 
     Object.assign(window.navigator, {
         clipboard: {
@@ -45,7 +50,8 @@ describe("SessionsPage", () => {
             }),
             actions: {
                 [AppStateAction.SaveUserPreferences]: mockSaveUserPreferences,
-                [AppStateAction.LoadUserPreferences]: mockLoadUserPreferences
+                [AppStateAction.LoadUserPreferences]: mockLoadUserPreferences,
+                [AppStateAction.InitialiseSession]: mockInitialiseSession
             } as any,
             modules: {
                 sessions: {
@@ -65,6 +71,9 @@ describe("SessionsPage", () => {
         const options = {
             global: {
                 plugins: [store]
+            },
+            mocks: {
+                $router: mockRouter
             }
         };
 
@@ -164,7 +173,7 @@ describe("SessionsPage", () => {
         expect(wrapper.find("#current-session").exists()).toBe(false);
         const noCurrent = wrapper.find("#no-current-session");
         expect(noCurrent.exists()).toBe(true);
-        expect(noCurrent.findComponent(RouterLink).props("to")).toBe("/");
+        expect(noCurrent.find("span#start-session").text()).toBe("Start a new session");
         expect(noCurrent.find("#load-previous-span").text()).toBe("or load a previous session.");
 
         expect(wrapper.find("#previous-sessions-headers").exists()).toBe(true);
@@ -191,7 +200,7 @@ describe("SessionsPage", () => {
         expect(wrapper.find("#current-session").exists()).toBe(false);
         const noCurrent = wrapper.find("#no-current-session");
         expect(noCurrent.exists()).toBe(true);
-        expect(noCurrent.findComponent(RouterLink).props("to")).toBe("/");
+        expect(noCurrent.find("span#start-session").text()).toBe("Start a new session");
         expect(noCurrent.find("#load-previous-span").exists()).toBe(false);
 
         expect(wrapper.find("#previous-sessions-headers").exists()).toBe(false);
@@ -399,5 +408,12 @@ describe("SessionsPage", () => {
 
         expect((wrapper.find("input#show-unlabelled-check").element as HTMLInputElement).checked).toBe(false);
         expect((wrapper.find("input#show-duplicates-check").element as HTMLInputElement).checked).toBe(true);
+    });
+
+    it("clicking start session initialises session and navigates to app homepage", async () => {
+        const wrapper = getWrapper(sessionsMetadata, undefined);
+        await wrapper.find("span#start-session").trigger("click");
+        expect(mockInitialiseSession).toHaveBeenCalledWith({loadSessionId: "", copySession: true});
+        expect(mockRouter.push).toHaveBeenCalledWith("/");
     });
 });
