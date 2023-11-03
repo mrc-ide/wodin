@@ -11,12 +11,11 @@ import {
     realisticFitData,
     startModelFit,
     waitForModelFitCompletion, expectWodinPlotDataSummary,
-    expectCanRunMultiSensitivity
+    expectCanRunMultiSensitivity, saveSessionTimeout
 } from "./utils";
 import PlaywrightConfig from "../../playwright.config";
 
 const appUrl = "/apps/day2";
-const saveSessionTimeout = 3000;
 
 const enterSessionLabel = async (page: Page, dialogId: string, newLabel: string) => {
     await expect(await page.locator(`#${dialogId} #edit-session-label label`)).toBeVisible();

@@ -1,5 +1,7 @@
 import { expect, Page, Locator } from "@playwright/test";
 
+export const saveSessionTimeout = 3000;
+
 export const newFitCode = `# JUST CHANGE A COMMENT
 initial(S) <- N - I_0
 initial(E) <- 0
