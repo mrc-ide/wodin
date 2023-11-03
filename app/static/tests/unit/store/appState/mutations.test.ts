@@ -65,6 +65,12 @@ describe("AppState mutations", () => {
         expect(state.sessionLabel).toBe("new session label");
     });
 
+    it("sets session id", () => {
+        const state = mockBasicState();
+        appStateMutations.SetSessionId(state, "9876");
+        expect(state.sessionId).toBe("9876");
+    });
+
     it("sets configured", () => {
         const state = mockBasicState();
         appStateMutations.SetConfigured(state);
