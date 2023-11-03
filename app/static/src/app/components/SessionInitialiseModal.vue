@@ -28,13 +28,13 @@ import { computed, defineProps, defineEmits } from "vue";
 import userMessages from "../userMessages";
 
 const props = defineProps({
-  open: Boolean
+    open: Boolean
 });
 
 const emit = defineEmits(["newSession", "reloadSession"]);
 
 const modalStyle = computed(() => {
-  return { display: props.open ? "block" : "none" };
+    return { display: props.open ? "block" : "none" };
 });
 
 const modalText = userMessages.sessions.initialise;

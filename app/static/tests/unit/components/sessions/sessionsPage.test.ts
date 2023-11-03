@@ -1,11 +1,4 @@
-const mockRouter = {
-    push: jest.fn()
-};
-jest.mock("vue-router", () => ({
-    useRouter: jest.fn().mockImplementation(() => mockRouter)
-}));
-
-import {shallowMount} from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
 import VueFeather from "vue-feather";
 import { nextTick } from "vue";
@@ -18,6 +11,13 @@ import { SessionMetadata } from "../../../../src/app/types/responseTypes";
 import EditSessionLabel from "../../../../src/app/components/sessions/EditSessionLabel.vue";
 import ConfirmModal from "../../../../src/app/components/ConfirmModal.vue";
 import { AppStateAction } from "../../../../src/app/store/appState/actions";
+
+const mockRouter = {
+    push: jest.fn()
+};
+jest.mock("vue-router", () => ({
+    useRouter: jest.fn().mockImplementation(() => mockRouter)
+}));
 
 describe("SessionsPage", () => {
     const mockGetSessions = jest.fn();
@@ -407,7 +407,7 @@ describe("SessionsPage", () => {
     it("clicking start session initialises session and navigates to app homepage", async () => {
         const wrapper = getWrapper(sessionsMetadata, undefined);
         await wrapper.find("span#start-session").trigger("click");
-        expect(mockInitialiseSession.mock.calls[0][1]).toStrictEqual({loadSessionId: "", copySession: true});
+        expect(mockInitialiseSession.mock.calls[0][1]).toStrictEqual({ loadSessionId: "", copySession: true });
         expect(mockRouter.push).toHaveBeenCalledWith("/");
     });
 });

@@ -292,15 +292,15 @@ test.describe("Sessions tests", () => {
         await loadAppPage(page);
 
         // We don't see the modal on load first session...
-        await expect(await page.locator("#session-initialise-modal .modal")).not.toBeVisible({timeout});
+        await expect(await page.locator("#session-initialise-modal .modal")).not.toBeVisible({ timeout });
 
         // ..but we should on the second
         await loadAppPage(page);
-        await expect(await page.locator("#session-initialise-modal .modal")).toBeVisible({timeout});
+        await expect(await page.locator("#session-initialise-modal .modal")).toBeVisible({ timeout });
 
         // select new session and make some changes, including set label
         await page.click("#new-session");
-        await expect(await page.locator("#session-initialise-modal .modal")).not.toBeVisible({timeout});
+        await expect(await page.locator("#session-initialise-modal .modal")).not.toBeVisible({ timeout });
 
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)"); // select code tab
         await writeCode(page, newFitCode);
@@ -311,7 +311,7 @@ test.describe("Sessions tests", () => {
 
         // refresh page and select reload latest - should see the changes and new label
         await loadAppPage(page);
-        await expect(await page.locator("#session-initialise-modal .modal")).toBeVisible({timeout});
+        await expect(await page.locator("#session-initialise-modal .modal")).toBeVisible({ timeout });
         await page.click("#reload-session");
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)"); // select code tab
         await expectNewFitCode(page);

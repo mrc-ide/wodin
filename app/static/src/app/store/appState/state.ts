@@ -7,7 +7,7 @@ import { VersionsState } from "../versions/state";
 import { GraphSettingsState } from "../graphSettings/state";
 import { LanguageState } from "../../../../translationPackage/store/state";
 import { MultiSensitivityState } from "../multiSensitivity/state";
-import {SessionsState} from "../sessions/state";
+import { SessionsState } from "../sessions/state";
 
 export enum AppType {
     Basic = "basic",

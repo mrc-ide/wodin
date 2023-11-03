@@ -26,7 +26,7 @@ import { LanguageState } from "../translationPackage/store/state";
 import { Language } from "../src/app/types/languageTypes";
 import { noSensitivityUpdateRequired } from "../src/app/store/sensitivity/sensitivity";
 import { MultiSensitivityState } from "../src/app/store/multiSensitivity/state";
-import {SessionsState} from "../src/app/store/sessions/state";
+import { SessionsState } from "../src/app/store/sessions/state";
 
 export const mockAxios = new MockAdapter(axios);
 

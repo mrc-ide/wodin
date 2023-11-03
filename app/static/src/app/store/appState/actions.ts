@@ -12,7 +12,7 @@ import { FitState } from "../fit/state";
 import { SessionsAction } from "../sessions/actions";
 import { localStorageManager } from "../../localStorageManager";
 import { AppStateGetter } from "./getters";
-import {InitialiseAppPayload, InitialiseSessionPayload} from "../../types/payloadTypes";
+import { InitialiseAppPayload, InitialiseSessionPayload } from "../../types/payloadTypes";
 
 export enum AppStateAction {
     InitialiseApp = "InitialiseApp",
@@ -36,7 +36,7 @@ async function immediateUploadState(context: ActionContext<AppState, AppState>) 
 
 export const appStateActions: ActionTree<AppState, AppState> = {
     async [AppStateAction.InitialiseApp](context, payload: InitialiseAppPayload) {
-        const { commit, dispatch} = context;
+        const { commit, dispatch } = context;
         const {
             appName,
             baseUrl,

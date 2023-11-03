@@ -142,7 +142,7 @@ import {
 } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
-import {RouterLink, useRouter} from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import { AppStateAction } from "../../store/appState/actions";
 import { SessionsAction } from "../../store/sessions/actions";
 import userMessages from "../../userMessages";
@@ -292,8 +292,8 @@ export default defineComponent({
         };
 
         const newSession = () => {
-          store.dispatch(AppStateAction.InitialiseSession, { loadSessionId: "", copySession: true });
-          router.push("/");
+            store.dispatch(AppStateAction.InitialiseSession, { loadSessionId: "", copySession: true });
+            router.push("/");
         };
 
         const loadSessionFromCode = () => {

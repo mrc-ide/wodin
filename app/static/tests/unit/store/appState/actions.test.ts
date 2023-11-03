@@ -131,7 +131,7 @@ describe("AppState actions", () => {
             .reply(500, mockFailure("Test Error Msg"));
 
         const store = getStore({
-            config: {defaultCode: []} as any,
+            config: { defaultCode: [] } as any,
             appName: "test-app",
             sessionId: "1234",
             baseUrl
@@ -164,7 +164,7 @@ describe("AppState actions", () => {
 
     it("InitialiseSession adds session id and fetches odin runner", async () => {
         const store = getStore({
-            config: {defaultCode: []} as any,
+            config: { defaultCode: [] } as any,
             appName: "test-app",
             sessionId: "1234"
         });
@@ -173,7 +173,7 @@ describe("AppState actions", () => {
         const { state } = store;
         const rootState = state;
 
-        const payload = {loadSessionId: "", copySession: true};
+        const payload = { loadSessionId: "", copySession: true };
 
         await (appStateActions[AppStateAction.InitialiseSession] as any)({
             commit, state, dispatch, rootState, getters
@@ -192,17 +192,17 @@ describe("AppState actions", () => {
 
     it("InitialiseSession sets DefaultModel if there is current code", async () => {
         const store = getStore({
-            config: {defaultCode: []} as any,
+            config: { defaultCode: [] } as any,
             appName: "test-app",
             sessionId: "1234",
-            code: mockCodeState({currentCode: ["#some code"]})
+            code: mockCodeState({ currentCode: ["#some code"] })
         });
         const commit = jest.fn();
         const dispatch = jest.fn();
         const { state } = store;
         const rootState = state;
 
-        const payload = {loadSessionId: "", copySession: true};
+        const payload = { loadSessionId: "", copySession: true };
 
         await (appStateActions[AppStateAction.InitialiseSession] as any)({
             commit, state, dispatch, rootState, getters
@@ -220,7 +220,7 @@ describe("AppState actions", () => {
 
     it("InitialiseSession rehydrates, if loadSessionId is set", async () => {
         const store = getStore({
-            config: {defaultCode: []} as any,
+            config: { defaultCode: [] } as any,
             appName: "test-app",
             sessionId: "1234"
         });
@@ -245,11 +245,11 @@ describe("AppState actions", () => {
 
     it("InitialiseSession does not add session id if reloading without copy, and also sets label", async () => {
         const store = getStore({
-            config: {defaultCode: []} as any,
+            config: { defaultCode: [] } as any,
             appName: "test-app",
             sessionId: "1234",
             sessions: {
-                sessionsMetadata: [{id: "1234", label:"Test Label"}] as any
+                sessionsMetadata: [{ id: "1234", label: "Test Label" }] as any
             }
         });
         const commit = jest.fn();
