@@ -332,6 +332,10 @@ describe("serialise", () => {
         showDuplicateSessions: false
     };
 
+    const sessionsState = {
+        sessionsMetadata: []
+    };
+
     const basicState: BasicState = {
         sessionId: "1234",
         sessionLabel: null,
@@ -357,7 +361,8 @@ describe("serialise", () => {
         configured: false,
         persisted: true,
         language: langaugeState,
-        userPreferences
+        userPreferences,
+        sessions: sessionsState
     };
 
     const fitState: FitState = {
@@ -387,7 +392,8 @@ describe("serialise", () => {
         configured: false,
         persisted: true,
         language: langaugeState,
-        userPreferences
+        userPreferences,
+        sessions: sessionsState
     };
 
     const expectedCode = { currentCode: ["some code"], loading: false };
