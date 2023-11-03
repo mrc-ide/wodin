@@ -24,20 +24,38 @@ const enterSessionLabel = async (page: Page, dialogId: string, newLabel: string)
     await page.click(`#${dialogId} #ok-session-label`);
 };
 
-const newSessionFromAppPage = async (page: Page) => {
+const loadAppPage = async (page: Page) => {
     // Reload the page to get fresh session, and give it time to save new session Id
     await page.goto(appUrl);
     await page.waitForTimeout(saveSessionTimeout);
 };
 
+const newSessionFromAppPage = async (page: Page) => {
+    await loadAppPage(page);
+    if (await page.isVisible("#new-session")) {
+        await page.click("#new-session");
+    }
+};
+
+const expectNewFitCode = async (page: Page) => {
+    const editorSelector = ".wodin-left .wodin-content .editor-container .editor-scrollable";
+    // wait until there is some text in the code editor
+    await page.waitForFunction((selector) => !!document.querySelector(selector)?.textContent, editorSelector);
+    await expect(await page.innerText(editorSelector)).toContain("# JUST CHANGE A COMMENT");
+};
+
 test.describe("Sessions tests", () => {
     const { timeout } = PlaywrightConfig;
 
-    test("can use Sessions page", async () => {
+    const usePersistentContext = async () => {
         // We need to use a browser with persistent context instead of the default incognito browser so that
         // we can use the session ids in local storage
         const userDataDir = fs.mkdtempSync(`${os.tmpdir()}/`);
-        const browser = await chromium.launchPersistentContext(userDataDir);
+        return chromium.launchPersistentContext(userDataDir);
+    };
+
+    test("can use Sessions page", async () => {
+        const browser = await usePersistentContext();
         const page = await browser.newPage();
         await page.goto(appUrl);
 
@@ -186,10 +204,7 @@ test.describe("Sessions tests", () => {
         // Check code
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
         await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Code");
-        const editorSelector = ".wodin-left .wodin-content .editor-container .editor-scrollable";
-        // wait until there is some text in the code editor
-        await page.waitForFunction((selector) => !!document.querySelector(selector)?.textContent, editorSelector);
-        await expect(await page.innerText(editorSelector)).toContain("# JUST CHANGE A COMMENT");
+        await expectNewFitCode(page);
 
         // Check options
         await page.click(":nth-match(.wodin-left .nav-tabs a, 3)"); // Options tab
@@ -269,5 +284,39 @@ test.describe("Sessions tests", () => {
         await page.fill("#session-code-input", "good-dog");
         await page.click("#load-session-from-code");
         await expect(await page.url()).toBe("http://localhost:3000/apps/day1/?share=good-dog");
+    });
+
+    test("session initialise modal behaves as expected", async () => {
+        const browser = await usePersistentContext();
+        const page = await browser.newPage();
+        await loadAppPage(page);
+
+        // We don't see the modal on load first session...
+        await expect(await page.locator("#session-initialise-modal .modal")).not.toBeVisible({timeout});
+
+        // ..but we should on the second
+        await loadAppPage(page);
+        await expect(await page.locator("#session-initialise-modal .modal")).toBeVisible({timeout});
+
+        // select new session and make some changes, including set label
+        await page.click("#new-session");
+        await expect(await page.locator("#session-initialise-modal .modal")).not.toBeVisible({timeout});
+
+        await page.click(":nth-match(.wodin-left .nav-tabs a, 2)"); // select code tab
+        await writeCode(page, newFitCode);
+        await page.click("#sessions-menu");
+        await page.click("#edit-current-session-label");
+        await enterSessionLabel(page, "header-edit-session-label", "session to reload");
+        await page.waitForTimeout(saveSessionTimeout);
+
+        // refresh page and select reload latest - should see the changes and new label
+        await loadAppPage(page);
+        await expect(await page.locator("#session-initialise-modal .modal")).toBeVisible({timeout});
+        await page.click("#reload-session");
+        await page.click(":nth-match(.wodin-left .nav-tabs a, 2)"); // select code tab
+        await expectNewFitCode(page);
+        await expect(await page.locator("#sessions-menu")).toHaveText("Session: session to reload");
+
+        await browser.close();
     });
 });
