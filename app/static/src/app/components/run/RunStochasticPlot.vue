@@ -13,7 +13,7 @@
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import { WodinPlotData, discreteSeriesSetToPlotly, filterSeriesSet } from "../../plot";
-import WodinPlot from "../WodinPlot.vue";
+import WodinPlot from "../plot/WodinPlot.vue";
 import { runPlaceholderMessage } from "../../utils";
 import { StochasticConfig } from "../../types/responseTypes";
 

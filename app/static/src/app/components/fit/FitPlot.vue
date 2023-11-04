@@ -19,7 +19,7 @@ import userMessages from "../../userMessages";
 import {
     filterSeriesSet, fitDataToPlotly, odinToPlotly, WodinPlotData
 } from "../../plot";
-import WodinPlot from "../WodinPlot.vue";
+import WodinPlot from "../plot/WodinPlot.vue";
 
 export default defineComponent({
     name: "FitPlot",

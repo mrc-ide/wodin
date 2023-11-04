@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
-import { WodinPlotData } from "../plot";
+import { WodinPlotData } from "../../plot";
 
 export default defineComponent({
     name: "WodinPlotDataSummary",

@@ -7,28 +7,31 @@
     </div>
     <wodin-plot-data-summary :data="baseData"></wodin-plot-data-summary>
     <slot></slot>
+    <wodin-plot-download-image-modal :open="showDownloadImageModal" @close="close" @confirm="downloadImage"></wodin-plot-download-image-modal>
   </div>
 </template>
 
 <script lang="ts">
 import {
-    computed, defineComponent, ref, watch, onMounted, onUnmounted, PropType
+  computed, defineComponent, ref, watch, onMounted, onUnmounted, PropType, Ref
 } from "vue";
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
 import {
-    newPlot, react, PlotRelayoutEvent, Plots, AxisType, Layout, Config
+  newPlot, react, PlotRelayoutEvent, Plots, AxisType, Layout, Config, PlotlyDataLayoutConfig, RootOrData
 } from "plotly.js-basic-dist-min";
 import {
     WodinPlotData, fadePlotStyle, margin, config
-} from "../plot";
+} from "../../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
-import { GraphSettingsMutation } from "../store/graphSettings/mutations";
-import { YAxisRange } from "../store/graphSettings/state";
+import { GraphSettingsMutation } from "../../store/graphSettings/mutations";
+import { YAxisRange } from "../../store/graphSettings/state";
+import * as Plotly from "plotly.js-basic-dist-min";
+import WodinPlotDownloadImageModal from "./WodinPlotDownloadImageModal.vue";
 
 export default defineComponent({
     name: "WodinPlot",
-    components: { WodinPlotDataSummary },
+    components: {WodinPlotDownloadImageModal, WodinPlotDataSummary },
     props: {
         fadePlot: Boolean,
         placeholderMessage: String,
@@ -56,6 +59,9 @@ export default defineComponent({
     setup(props) {
         const store = useStore();
 
+        const showDownloadImageModal = ref(false);
+        const plotlyContext: Ref<PlotlyDataLayoutConfig | null> = ref(null);
+
         const plotStyle = computed(() => (props.fadePlot ? fadePlotStyle : ""));
 
         const startTime = 0;
@@ -69,6 +75,29 @@ export default defineComponent({
         const yAxisType = computed(() => (store.state.graphSettings.logScaleYAxis ? "log" : "linear" as AxisType));
         const lockYAxis = computed(() => store.state.graphSettings.lockYAxis);
         const yAxisRange = computed(() => store.state.graphSettings.yAxisRange as YAxisRange);
+
+        const downloadImageClick = (gd: PlotlyDataLayoutConfig) => {
+          plotlyContext.value = gd;
+          showDownloadImageModal.value = true;
+        };
+
+        const closeModal = () => {
+          showDownloadImageModal.value = false;
+        };
+
+        const downloadImage = (title: string, xLabel: string, yLabel: string) => {
+          console.log(`x axis is ${xLabel}`)
+          console.log(`old x axis is ${JSON.stringify( plotlyContext.value!.layout!.xaxis)}`)
+          plotlyContext.value!.layout!.title = title;
+          (plotlyContext.value!.layout!.xaxis! as any).title = {text: xLabel};
+          (plotlyContext.value!.layout!.yaxis! as any).title = {text: yLabel};
+          Plotly.downloadImage(plotlyContext.value as RootOrData, {
+            filename: "WODIN plot",
+            format: "png",
+            width: (plotlyContext.value as any)._fullLayout.width,
+            height: (plotlyContext.value as any)._fullLayout.height
+          });
+        };
 
         const updateAxesRange = () => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -100,7 +129,7 @@ export default defineComponent({
             };
 
             const el = plot.value as HTMLElement;
-            await react(el, data, layout, config);
+            await react(el, data, layout, config(downloadImageClick));
         };
 
         const resize = () => {
@@ -125,7 +154,7 @@ export default defineComponent({
                         xaxis: { title: "Time" }
                     };
 
-                    const configCopy = { ...config } as Partial<Config>;
+                    const configCopy = config(downloadImageClick) as Partial<Config>;
 
                     if (lockYAxis.value && !toggleLogScale) {
                         layout.yaxis!.range = [...yAxisRange.value];
@@ -172,7 +201,11 @@ export default defineComponent({
             relayout,
             resize,
             baseData,
-            hasPlotData
+            hasPlotData,
+            closeModal,
+            downloadImage,
+            downloadImageClick,
+            showDownloadImageModal
         };
     }
 });

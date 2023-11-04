@@ -6,7 +6,7 @@ import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { FitState } from "../../../../src/app/store/fit/state";
 import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
-import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
+import WodinPlot from "../../../../src/app/components/plot/WodinPlot.vue";
 import FitPlot from "../../../../src/app/components/fit/FitPlot.vue";
 import { OdinFitResult } from "../../../../src/app/types/wrapperTypes";
 

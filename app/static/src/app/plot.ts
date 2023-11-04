@@ -1,5 +1,6 @@
-import { Dash, PlotData } from "plotly.js-basic-dist-min";
+import {Dash, PlotData, PlotlyDataLayoutConfig} from "plotly.js-basic-dist-min";
 import { format } from "d3-format";
+import * as Plotly from "plotly.js-basic-dist-min";
 import { Palette, paletteData } from "./palette";
 import type { AllFitData, FitData, FitDataLink } from "./store/fitData/state";
 import {
@@ -18,9 +19,16 @@ export const margin = {
     t: 25
 };
 
-export const config = {
-    responsive: true
-};
+export const config = (downloadClick: (gd: PlotlyDataLayoutConfig) => void) => ({
+    responsive: true,
+    modeBarButtonsToAdd: [
+        {
+            name: "Custom Download",
+            icon: (Plotly as any).Icons.camera,
+            click: downloadClick
+        }
+    ]
+} as any);
 
 export function filterUserTypeSeriesSet(s: OdinUserTypeSeriesSet, param: string, names: string[]): OdinSeriesSet {
     const values = s.values.filter((v) => names.includes(v.name));

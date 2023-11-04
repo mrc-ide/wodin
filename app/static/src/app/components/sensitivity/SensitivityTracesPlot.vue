@@ -19,7 +19,7 @@ import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import { PlotData } from "plotly.js-basic-dist-min";
 import { FitDataGetter } from "../../store/fitData/getters";
-import WodinPlot from "../WodinPlot.vue";
+import WodinPlot from "../plot/WodinPlot.vue";
 import {
     allFitDataToPlotly, filterSeriesSet, odinToPlotly, PlotlyOptions, updatePlotTraceName, WodinPlotData
 } from "../../plot";

@@ -17,7 +17,7 @@ import { FitDataGetter } from "../../store/fitData/getters";
 import {
     odinToPlotly, allFitDataToPlotly, WodinPlotData, filterSeriesSet
 } from "../../plot";
-import WodinPlot from "../WodinPlot.vue";
+import WodinPlot from "../plot/WodinPlot.vue";
 import { RunGetter } from "../../store/run/getters";
 import { OdinSolution, Times } from "../../types/responseTypes";
 import { Dict } from "../../types/utilTypes";

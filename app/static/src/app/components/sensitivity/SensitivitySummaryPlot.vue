@@ -26,7 +26,7 @@ import { Batch, OdinUserTypeSeriesSet } from "../../types/responseTypes";
 import { runPlaceholderMessage } from "../../utils";
 import { RunGetter } from "../../store/run/getters";
 import { Dict } from "../../types/utilTypes";
-import WodinPlotDataSummary from "../WodinPlotDataSummary.vue";
+import WodinPlotDataSummary from "../plot/WodinPlotDataSummary.vue";
 import { ParameterSet } from "../../store/run/state";
 import { verifyValidPlotSettingsTime } from "./support";
 
@@ -154,7 +154,8 @@ export default defineComponent({
                     yaxis: yAxisSettings.value,
                     xaxis: xAxisSettings.value
                 };
-                newPlot(el as HTMLElement, plotData.value, layout, config);
+                // TODO: sort this out! put the download stuff in a mixin
+                newPlot(el as HTMLElement, plotData.value, layout, config(() => {}));
                 resizeObserver = new ResizeObserver(resize);
                 resizeObserver.observe(plot.value as HTMLElement);
             }

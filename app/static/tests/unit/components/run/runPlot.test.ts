@@ -5,7 +5,7 @@ jest.mock("plotly.js-basic-dist-min", () => {});
 import { shallowMount, VueWrapper } from "@vue/test-utils";
 import Vuex from "vuex";
 import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
-import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
+import WodinPlot from "../../../../src/app/components/plot/WodinPlot.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
 import { getters as runGetters } from "../../../../src/app/store/run/getters";
