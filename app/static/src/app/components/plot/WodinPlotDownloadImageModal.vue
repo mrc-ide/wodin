@@ -13,23 +13,23 @@
                 <label class="col-form-label">Title</label>
               </div>
               <div class="col-8 pe-0">
-                <input type="text" class="form-control" v-model="editTitle">
+                <input type="text" class="form-control" v-model="editProps.title">
               </div>
             </div>
-            <div class="row">
+            <div class="row mt-2">
               <div class="col-4">
                 <label class="col-form-label">X axis label</label>
               </div>
               <div class="col-8 pe-0">
-                <input type="text" class="form-control" v-model="editXLabel">
+                <input type="text" class="form-control" v-model="editProps.xLabel">
               </div>
             </div>
-            <div class="row">
+            <div class="row mt-2">
               <div class="col-4">
                 <label class="col-form-label">Y axis label</label>
               </div>
               <div class="col-8 pe-0">
-                <input type="text" class="form-control" v-model="editYLabel">
+                <input type="text" class="form-control" v-model="editProps.yLabel">
               </div>
             </div>
           </div>
@@ -48,7 +48,10 @@
 </template>
 
 <script setup lang="ts">
-import {computed, defineProps, defineEmits, ref} from "vue";
+import {computed, defineProps, defineEmits, watch, reactive} from "vue";
+
+// TODO: sort out buttons - put 'custom' download first, then the other standard buttons except download
+// TODO put the WodinPlot changes in a mixin and use that from Sensitivity Summary plot too
 
 const props = defineProps({
     open: Boolean,
@@ -59,12 +62,22 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "confirm"]);
 
-const editTitle = ref(props.title);
-const editXLabel = ref(props.xLabel);
-const editYLabel = ref(props.yLabel);
+const editProps = reactive({
+  title: "",
+  xLabel: "",
+  yLabel: ""
+});
 
 const modalStyle = computed(() => {
     return { display: props.open ? "block" : "none" };
+});
+
+watch(() => props.open, (newValue) => {
+  if (newValue) {
+    editProps.title = props.title;
+    editProps.xLabel = props.xLabel;
+    editProps.yLabel = props.yLabel;
+  }
 });
 
 const close = () => {
@@ -72,7 +85,7 @@ const close = () => {
 };
 
 const confirm = () => {
-    emit("confirm", editTitle.value, editXLabel.value, editYLabel.value);
+    emit("confirm", editProps.title, editProps.xLabel, editProps.yLabel);
     close();
 };
 </script>

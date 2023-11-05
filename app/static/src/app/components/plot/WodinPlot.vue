@@ -7,13 +7,18 @@
     </div>
     <wodin-plot-data-summary :data="baseData"></wodin-plot-data-summary>
     <slot></slot>
-    <wodin-plot-download-image-modal :open="showDownloadImageModal" @close="close" @confirm="downloadImage"></wodin-plot-download-image-modal>
+    <wodin-plot-download-image-modal :open="showDownloadImageModal"
+                                     :title="downloadImageProps.title"
+                                     :x-label="downloadImageProps.xLabel"
+                                     :y-label="downloadImageProps.yLabel"
+                                     @close="closeModal"
+                                     @confirm="downloadImage"></wodin-plot-download-image-modal>
   </div>
 </template>
 
 <script lang="ts">
 import {
-  computed, defineComponent, ref, watch, onMounted, onUnmounted, PropType, Ref
+  computed, defineComponent, ref, watch, onMounted, onUnmounted, PropType, Ref, reactive
 } from "vue";
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
@@ -61,6 +66,7 @@ export default defineComponent({
 
         const showDownloadImageModal = ref(false);
         const plotlyContext: Ref<PlotlyDataLayoutConfig | null> = ref(null);
+        const downloadImageProps = reactive({ title: "", xLabel: "", yLabel: "" });
 
         const plotStyle = computed(() => (props.fadePlot ? fadePlotStyle : ""));
 
@@ -78,6 +84,12 @@ export default defineComponent({
 
         const downloadImageClick = (gd: PlotlyDataLayoutConfig) => {
           plotlyContext.value = gd;
+          const layout = gd.layout! as any;
+          console.log("xaxis is: " + JSON.stringify(layout.xaxis))
+          console.log("yaxis is: " + JSON.stringify(layout.yaxis))
+          downloadImageProps.title = layout.title || "";
+          downloadImageProps.xLabel = layout.xaxis.title?.text || "";
+          downloadImageProps.yLabel = layout.yaxis.title?.text || "";
           showDownloadImageModal.value = true;
         };
 
@@ -198,6 +210,7 @@ export default defineComponent({
         return {
             plotStyle,
             plot,
+            downloadImageProps,
             relayout,
             resize,
             baseData,
