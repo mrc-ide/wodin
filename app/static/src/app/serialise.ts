@@ -130,7 +130,8 @@ function serialiseModelFit(modelFit: ModelFitState): SerialisedModelFitState {
         converged: modelFit.converged,
         sumOfSquares: modelFit.sumOfSquares,
         paramsToVary: modelFit.paramsToVary,
-        result: serialiseSolutionResult(modelFit.result)
+        result: serialiseSolutionResult(modelFit.result),
+        error: modelFit.error
     };
 }
 

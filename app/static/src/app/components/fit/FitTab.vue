@@ -21,6 +21,7 @@
           <div v-if="cancelled" id="fit-cancelled-msg" class="small text-danger">{{cancelledMsg}}</div>
         </div>
       </fit-plot>
+      <error-info :error="error"></error-info>
     </div>
   </div>
 </template>
@@ -39,10 +40,12 @@ import { ModelFitMutation } from "../../store/modelFit/mutations";
 import { fitRequirementsExplanation, fitUpdateRequiredExplanation } from "./support";
 import { allTrue, anyTrue } from "../../utils";
 import LoadingButton from "../LoadingButton.vue";
+import ErrorInfo from "@/app/components/ErrorInfo.vue";
 
 export default defineComponent({
     name: "FitTab",
     components: {
+      ErrorInfo,
         LoadingSpinner,
         FitPlot,
         ActionRequiredMessage,
@@ -57,6 +60,7 @@ export default defineComponent({
         const canFitModel = computed(() => allTrue(fitRequirements.value));
         const compileRequired = computed(() => store.state.model.compileRequired);
         const fitUpdateRequired = computed(() => store.state.modelFit.fitUpdateRequired);
+        const error = computed(() => store.state.modelFit.error);
         const fitModel = () => store.dispatch(`${namespace}/${ModelFitAction.FitModel}`);
 
         const cancelFit = () => store.commit(`${namespace}/${ModelFitMutation.SetFitting}`, false);
@@ -68,6 +72,10 @@ export default defineComponent({
         const sumOfSquares = computed(() => store.state.modelFit.sumOfSquares);
 
         const actionRequiredMessage = computed(() => {
+            if (error.value) {
+              return userMessages.modelFit.errorOccurred;
+            }
+
             if (!allTrue(fitRequirements.value)) {
                 return fitRequirementsExplanation(fitRequirements.value);
             }
@@ -119,6 +127,7 @@ export default defineComponent({
             cancelledMsg,
             sumOfSquares,
             actionRequiredMessage,
+            error,
             iconType,
             iconClass
         };

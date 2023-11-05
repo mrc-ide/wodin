@@ -50,24 +50,28 @@ export const actions: ActionTree<ModelFitState, FitState> = {
             const { advancedSettings } = rootState.run;
             const advancedSettingsOdin = convertAdvancedSettingsToOdin(advancedSettings, pars.base);
 
-            const simplex = odinRunnerOde!.wodinFit(
-                odin!,
-                data,
-                pars,
-                linkedVariable,
-                advancedSettingsOdin,
-                {}
-            );
+            try {
+                const simplex = odinRunnerOde!.wodinFit(
+                    odin!,
+                    data,
+                    pars,
+                    linkedVariable,
+                    advancedSettingsOdin,
+                    {}
+                );
 
-            const inputs = {
-                data,
-                endTime,
-                link
-            };
-
-            commit(ModelFitMutation.SetFitUpdateRequired, null);
-            commit(ModelFitMutation.SetInputs, inputs);
-            dispatch(ModelFitAction.FitModelStep, simplex);
+                const inputs = {
+                    data,
+                    endTime,
+                    link
+                };
+                commit(ModelFitMutation.SetFitUpdateRequired, null);
+                commit(ModelFitMutation.SetInputs, inputs);
+                dispatch(ModelFitAction.FitModelStep, simplex);
+            } catch (e: unknown) {
+                commit(ModelFitMutation.SetError, {error: "Model fit error", detail: (e as Error).message});
+                commit(ModelFitMutation.SetFitting, false);
+            }
         }
     },
 

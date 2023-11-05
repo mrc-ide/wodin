@@ -77,7 +77,8 @@ export interface SerialisedModelFitState {
     converged: boolean | null,
     sumOfSquares: number | null,
     paramsToVary: string[],
-    result: SerialisedRunResult | null
+    result: SerialisedRunResult | null,
+    error: null | WodinError
 }
 
 export interface SerialisedAppState {
