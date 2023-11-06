@@ -40,7 +40,7 @@ import { ModelFitMutation } from "../../store/modelFit/mutations";
 import { fitRequirementsExplanation, fitUpdateRequiredExplanation } from "./support";
 import { allTrue, anyTrue } from "../../utils";
 import LoadingButton from "../LoadingButton.vue";
-import ErrorInfo from "@/app/components/ErrorInfo.vue";
+import ErrorInfo from "../ErrorInfo.vue";
 
 export default defineComponent({
     name: "FitTab",

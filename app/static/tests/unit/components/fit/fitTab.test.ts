@@ -1,4 +1,6 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via FitPlot
+import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
+
 jest.mock("plotly.js-basic-dist-min", () => {});
 
 /* eslint-disable import/first */
@@ -11,6 +13,7 @@ import ActionRequiredMessage from "../../../../src/app/components/ActionRequired
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import FitPlot from "../../../../src/app/components/fit/FitPlot.vue";
 import { mockFitState, mockGraphSettingsState } from "../../../mocks";
+import {WodinError} from "../../../../src/app/types/responseTypes";
 
 describe("Fit Tab", () => {
     const getWrapper = (
@@ -22,7 +25,8 @@ describe("Fit Tab", () => {
         fitting = false,
         sumOfSquares: number | null = 2.1,
         mockFitModel = jest.fn(),
-        mockSetFitting = jest.fn()
+        mockSetFitting = jest.fn(),
+        error: WodinError | null = null
     ) => {
         const store = new Vuex.Store<FitState>({
             state: mockFitState(),
@@ -45,6 +49,7 @@ describe("Fit Tab", () => {
                         fitting,
                         sumOfSquares,
                         fitUpdateRequired,
+                        error,
                         result: {
                             solution: jest.fn()
                         }
@@ -82,6 +87,7 @@ describe("Fit Tab", () => {
         expect(fitPlot.findAll("span").at(0)!.text()).toBe("Iterations: 10");
         expect(fitPlot.findAll("span").at(1)!.text()).toBe("Sum of squares: 2.1");
         expect(fitPlot.find("#fit-cancelled-msg").exists()).toBe(false);
+        expect(wrapper.findComponent(ErrorInfo).props("error")).toBe(null);
     });
 
     it("renders as expected when fit is running", () => {
@@ -167,6 +173,14 @@ describe("Fit Tab", () => {
         expect(fitPlot.findComponent(LoadingSpinner).exists()).toBe(false);
         expect(fitPlot.findAll("span").at(0)!.text()).toBe("Iterations: 10");
         expect(fitPlot.findAll("span").at(1)!.text()).toBe("Sum of squares: 2.1");
+    });
+
+    it("renders model fit error as expected", () => {
+        const error = {error: "test error", detail: "test detail"};
+        const wrapper = getWrapper({}, false, {}, 10, true, false, 2.1, jest.fn(), jest.fn(), error);
+        expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(error);
+        expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
+            .toBe("An error occurred during model fit.");
     });
 
     it("dispatches fit action on click button", async () => {

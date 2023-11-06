@@ -163,6 +163,41 @@ test.describe("Wodin App model fit tests", () => {
         expect(newSumOfSquares).not.toEqual(sumOfSquares);
     });
 
+    test("can show model fit error", async ({page}) => {
+        // Upload data
+        await uploadCSVData(page, realisticFitData);
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
+
+        // link variables
+        await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
+        const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
+        const select1 = await linkContainer.locator(":nth-match(select, 1)");
+        await select1.selectOption("E");
+
+        await expect(await page.innerText("#optimisation label#target-fit-label")).toBe("Cases ~ E");
+
+        // select param to vary
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
+        await expect(await page.innerText("#select-param-msg"))
+            .toBe("Please select at least one parameter to vary during model fit.")
+        await page.click(":nth-match(input.vary-param-check, 1)");
+        await page.click(":nth-match(input.vary-param-check, 2)");
+
+        // change advanced setting to sabotage fit
+        await page.click(":nth-match(.collapse-title, 6)"); // Open Advanced Settings
+        const advancedSettingPanel = await page.locator("#advanced-settings-panel");
+        const input1 = await advancedSettingPanel.locator(":nth-match(input, 1)");
+        const input2 = await advancedSettingPanel.locator(":nth-match(input, 2)");
+        await input1.fill("7");
+        await input2.fill("-1");
+
+        await page.click(".wodin-right .wodin-content div.mt-4 button#fit-btn");
+        console.log("15");
+
+        await expect(await page.locator(".fit-tab .action-required-msg")).toHaveText("An error occurred during model fit.", {timeout});
+        await expect(await page.innerText(".fit-tab #error-info")).toContain("Model fit error: Integration failure");
+    });
+
     test("can see expected update required messages when code changes", async ({ page }) => {
         await runFit(page);
         await expectUpdateFitMsg(page, "");
