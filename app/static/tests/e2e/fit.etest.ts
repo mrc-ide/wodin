@@ -192,7 +192,6 @@ test.describe("Wodin App model fit tests", () => {
         await input2.fill("-1");
 
         await page.click(".wodin-right .wodin-content div.mt-4 button#fit-btn");
-        console.log("15");
 
         await expect(await page.locator(".fit-tab .action-required-msg"))
             .toHaveText("An error occurred during model fit.", { timeout });
