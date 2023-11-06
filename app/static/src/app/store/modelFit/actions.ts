@@ -69,7 +69,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
                 commit(ModelFitMutation.SetInputs, inputs);
                 dispatch(ModelFitAction.FitModelStep, simplex);
             } catch (e: unknown) {
-                commit(ModelFitMutation.SetError, {error: "Model fit error", detail: (e as Error).message});
+                commit(ModelFitMutation.SetError, { error: "Model fit error", detail: (e as Error).message });
                 commit(ModelFitMutation.SetFitting, false);
             }
         }

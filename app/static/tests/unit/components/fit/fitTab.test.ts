@@ -1,6 +1,4 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via FitPlot
-import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
-
 jest.mock("plotly.js-basic-dist-min", () => {});
 
 /* eslint-disable import/first */
@@ -13,7 +11,8 @@ import ActionRequiredMessage from "../../../../src/app/components/ActionRequired
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import FitPlot from "../../../../src/app/components/fit/FitPlot.vue";
 import { mockFitState, mockGraphSettingsState } from "../../../mocks";
-import {WodinError} from "../../../../src/app/types/responseTypes";
+import { WodinError } from "../../../../src/app/types/responseTypes";
+import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 
 describe("Fit Tab", () => {
     const getWrapper = (
@@ -176,7 +175,7 @@ describe("Fit Tab", () => {
     });
 
     it("renders model fit error as expected", () => {
-        const error = {error: "test error", detail: "test detail"};
+        const error = { error: "test error", detail: "test detail" };
         const wrapper = getWrapper({}, false, {}, 10, true, false, 2.1, jest.fn(), jest.fn(), error);
         expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(error);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message"))

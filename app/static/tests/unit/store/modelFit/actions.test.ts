@@ -137,7 +137,7 @@ describe("ModelFit actions", () => {
 
     it("FitModel commits error thrown during wodinFit", () => {
         const runner = {
-            wodinFit: jest.fn().mockImplementation(() => { throw {message: "TEST ERROR"}; }),
+            wodinFit: jest.fn().mockImplementation(() => { throw new Error("TEST ERROR"); }),
             wodinFitValue: mockWodinFitValue
         } as any;
         const errorModelState = mockModelState({
@@ -145,7 +145,7 @@ describe("ModelFit actions", () => {
             odinRunnerOde: runner
         });
 
-        const errorRootState = {...rootState, model: errorModelState};
+        const errorRootState = { ...rootState, model: errorModelState };
 
         const getters = { fitRequirements: {} };
         const link = { time: "t", data: "v", model: "S" };
@@ -163,10 +163,9 @@ describe("ModelFit actions", () => {
         expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetFitting);
         expect(commit.mock.calls[0][1]).toBe(true);
         expect(commit.mock.calls[1][0]).toBe(ModelFitMutation.SetError);
-        expect(commit.mock.calls[1][1]).toStrictEqual({error: "Model fit error", detail: "TEST ERROR"});
+        expect(commit.mock.calls[1][1]).toStrictEqual({ error: "Model fit error", detail: "TEST ERROR" });
         expect(commit.mock.calls[2][0]).toBe(ModelFitMutation.SetFitting);
         expect(commit.mock.calls[2][1]).toBe(false);
-
     });
 
     it("FitModelStep commits expected changes and dispatches further step if not converged", (done) => {

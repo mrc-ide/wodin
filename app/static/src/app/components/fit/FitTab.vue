@@ -45,7 +45,7 @@ import ErrorInfo from "../ErrorInfo.vue";
 export default defineComponent({
     name: "FitTab",
     components: {
-      ErrorInfo,
+        ErrorInfo,
         LoadingSpinner,
         FitPlot,
         ActionRequiredMessage,
@@ -73,7 +73,7 @@ export default defineComponent({
 
         const actionRequiredMessage = computed(() => {
             if (error.value) {
-              return userMessages.modelFit.errorOccurred;
+                return userMessages.modelFit.errorOccurred;
             }
 
             if (!allTrue(fitRequirements.value)) {

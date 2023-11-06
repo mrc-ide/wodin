@@ -163,7 +163,7 @@ test.describe("Wodin App model fit tests", () => {
         expect(newSumOfSquares).not.toEqual(sumOfSquares);
     });
 
-    test("can show model fit error", async ({page}) => {
+    test("can show model fit error", async ({ page }) => {
         // Upload data
         await uploadCSVData(page, realisticFitData);
         await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
@@ -179,7 +179,7 @@ test.describe("Wodin App model fit tests", () => {
         // select param to vary
         await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
         await expect(await page.innerText("#select-param-msg"))
-            .toBe("Please select at least one parameter to vary during model fit.")
+            .toBe("Please select at least one parameter to vary during model fit.");
         await page.click(":nth-match(input.vary-param-check, 1)");
         await page.click(":nth-match(input.vary-param-check, 2)");
 
@@ -194,7 +194,8 @@ test.describe("Wodin App model fit tests", () => {
         await page.click(".wodin-right .wodin-content div.mt-4 button#fit-btn");
         console.log("15");
 
-        await expect(await page.locator(".fit-tab .action-required-msg")).toHaveText("An error occurred during model fit.", {timeout});
+        await expect(await page.locator(".fit-tab .action-required-msg"))
+            .toHaveText("An error occurred during model fit.", { timeout });
         await expect(await page.innerText(".fit-tab #error-info")).toContain("Model fit error: Integration failure");
     });
 

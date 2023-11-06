@@ -1,6 +1,6 @@
 import { MutationTree } from "vuex";
 import { ModelFitInputs, ModelFitState, FitUpdateRequiredReasons } from "./state";
-import {SimplexResult, WodinError} from "../../types/responseTypes";
+import { SimplexResult, WodinError } from "../../types/responseTypes";
 
 export enum ModelFitMutation {
     SetFitting = "SetFitting",
@@ -16,7 +16,7 @@ export const mutations: MutationTree<ModelFitState> = {
     [ModelFitMutation.SetFitting](state: ModelFitState, payload: boolean) {
         state.fitting = payload;
         if (payload) {
-            state.error = null
+            state.error = null;
         }
     },
 

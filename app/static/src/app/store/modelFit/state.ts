@@ -1,6 +1,6 @@
 import { OdinFitResult } from "../../types/wrapperTypes";
 import type { FitData, FitDataLink } from "../fitData/state";
-import {WodinError} from "../../types/responseTypes";
+import { WodinError } from "../../types/responseTypes";
 
 export interface ModelFitInputs {
     data: FitData;

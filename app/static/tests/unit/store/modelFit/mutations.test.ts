@@ -19,7 +19,7 @@ describe("ModelFit mutations", () => {
     });
 
     it("SetFitting sets error to null if fitting is true", () => {
-        const error = {error: "test", detail: "test detail"};
+        const error = { error: "test", detail: "test detail" };
         const state = mockModelFitState({ error });
         mutations.SetFitting(state, false);
         expect(state.error).toBe(error);
@@ -28,7 +28,7 @@ describe("ModelFit mutations", () => {
     });
 
     it("sets error", () => {
-        const error = {error: "test", detail: "test detail"};
+        const error = { error: "test", detail: "test detail" };
         const state = mockModelFitState();
         mutations.SetError(state, error);
         expect(state.error).toBe(error);
