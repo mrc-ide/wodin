@@ -85,8 +85,6 @@ export default defineComponent({
         const downloadImageClick = (gd: PlotlyDataLayoutConfig) => {
           plotlyContext.value = gd;
           const layout = gd.layout! as any;
-          console.log("xaxis is: " + JSON.stringify(layout.xaxis))
-          console.log("yaxis is: " + JSON.stringify(layout.yaxis))
           downloadImageProps.title = layout.title || "";
           downloadImageProps.xLabel = layout.xaxis.title?.text || "";
           downloadImageProps.yLabel = layout.yaxis.title?.text || "";

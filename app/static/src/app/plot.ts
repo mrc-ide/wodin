@@ -21,13 +21,17 @@ export const margin = {
 
 export const config = (downloadClick: (gd: PlotlyDataLayoutConfig) => void) => ({
     responsive: true,
-    modeBarButtonsToAdd: [
-        {
-            name: "Custom Download",
-            icon: (Plotly as any).Icons.camera,
-            click: downloadClick
-        }
-    ]
+    modeBarButtons: [[{
+        name: "Custom Download",
+        icon: (Plotly as any).Icons.camera,
+        click: downloadClick
+    },
+    "zoom2d",
+    "pan2d",
+    "zoomIn2d",
+    "zoomOut2d",
+    "autoScale2d",
+    "resetScale2d"]]
 } as any);
 
 export function filterUserTypeSeriesSet(s: OdinUserTypeSeriesSet, param: string, names: string[]): OdinSeriesSet {

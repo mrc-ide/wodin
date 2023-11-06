@@ -50,7 +50,6 @@
 <script setup lang="ts">
 import {computed, defineProps, defineEmits, watch, reactive} from "vue";
 
-// TODO: sort out buttons - put 'custom' download first, then the other standard buttons except download
 // TODO put the WodinPlot changes in a mixin and use that from Sensitivity Summary plot too
 
 const props = defineProps({
