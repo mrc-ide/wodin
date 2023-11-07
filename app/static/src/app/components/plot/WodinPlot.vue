@@ -18,12 +18,12 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, ref, watch, onMounted, onUnmounted, PropType, Ref, reactive
+  computed, defineComponent, ref, watch, onMounted, onUnmounted, PropType
 } from "vue";
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
 import {
-  newPlot, react, PlotRelayoutEvent, Plots, AxisType, Layout, Config, PlotlyDataLayoutConfig, RootOrData
+  newPlot, react, PlotRelayoutEvent, Plots, AxisType, Layout, Config
 } from "plotly.js-basic-dist-min";
 import {
     WodinPlotData, fadePlotStyle, margin, config
@@ -31,8 +31,8 @@ import {
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
 import { GraphSettingsMutation } from "../../store/graphSettings/mutations";
 import { YAxisRange } from "../../store/graphSettings/state";
-import * as Plotly from "plotly.js-basic-dist-min";
 import WodinPlotDownloadImageModal from "./WodinPlotDownloadImageModal.vue";
+import downloadPlot from "../mixins/downloadPlot";
 
 export default defineComponent({
     name: "WodinPlot",
@@ -64,9 +64,13 @@ export default defineComponent({
     setup(props) {
         const store = useStore();
 
-        const showDownloadImageModal = ref(false);
-        const plotlyContext: Ref<PlotlyDataLayoutConfig | null> = ref(null);
-        const downloadImageProps = reactive({ title: "", xLabel: "", yLabel: "" });
+        const {
+            showDownloadImageModal,
+            downloadImageProps,
+            downloadImageClick,
+            closeModal,
+            downloadImage
+        } = downloadPlot();
 
         const plotStyle = computed(() => (props.fadePlot ? fadePlotStyle : ""));
 
@@ -81,33 +85,6 @@ export default defineComponent({
         const yAxisType = computed(() => (store.state.graphSettings.logScaleYAxis ? "log" : "linear" as AxisType));
         const lockYAxis = computed(() => store.state.graphSettings.lockYAxis);
         const yAxisRange = computed(() => store.state.graphSettings.yAxisRange as YAxisRange);
-
-        const downloadImageClick = (gd: PlotlyDataLayoutConfig) => {
-          plotlyContext.value = gd;
-          const layout = gd.layout! as any;
-          downloadImageProps.title = layout.title || "";
-          downloadImageProps.xLabel = layout.xaxis.title?.text || "";
-          downloadImageProps.yLabel = layout.yaxis.title?.text || "";
-          showDownloadImageModal.value = true;
-        };
-
-        const closeModal = () => {
-          showDownloadImageModal.value = false;
-        };
-
-        const downloadImage = (title: string, xLabel: string, yLabel: string) => {
-          console.log(`x axis is ${xLabel}`)
-          console.log(`old x axis is ${JSON.stringify( plotlyContext.value!.layout!.xaxis)}`)
-          plotlyContext.value!.layout!.title = title;
-          (plotlyContext.value!.layout!.xaxis! as any).title = {text: xLabel};
-          (plotlyContext.value!.layout!.yaxis! as any).title = {text: yLabel};
-          Plotly.downloadImage(plotlyContext.value as RootOrData, {
-            filename: "WODIN plot",
-            format: "png",
-            width: (plotlyContext.value as any)._fullLayout.width,
-            height: (plotlyContext.value as any)._fullLayout.height
-          });
-        };
 
         const updateAxesRange = () => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
