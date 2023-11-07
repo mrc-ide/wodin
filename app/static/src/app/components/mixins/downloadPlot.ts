@@ -1,6 +1,11 @@
-import {reactive, Ref, ref} from "vue";
-import {Config, PlotlyDataLayoutConfig, RootOrData} from "plotly.js-basic-dist-min";
-import * as Plotly from "plotly.js-basic-dist-min";
+import { reactive, Ref, ref } from "vue";
+import {
+    Config,
+    PlotlyDataLayoutConfig,
+    RootOrData,
+    Icons,
+    downloadImage as downloadPlotlyImage, DataTitle
+} from "plotly.js-basic-dist-min";
 
 export interface DownloadPlotMixin {
     showDownloadImageModal: Ref<boolean>,
@@ -17,10 +22,10 @@ export default (): DownloadPlotMixin => {
     const downloadImageProps = reactive({ title: "", xLabel: "", yLabel: "" });
     const downloadImageClick = (gd: PlotlyDataLayoutConfig) => {
         plotlyContext.value = gd;
-        const layout = gd.layout! as any;
-        downloadImageProps.title = layout.title || "";
-        downloadImageProps.xLabel = layout.xaxis.title?.text || "";
-        downloadImageProps.yLabel = layout.yaxis.title?.text || "";
+        const layout = gd.layout!;
+        downloadImageProps.title = layout.title as string || "";
+        downloadImageProps.xLabel = (layout.xaxis?.title as Partial<DataTitle | null>)?.text || "";
+        downloadImageProps.yLabel = (layout.yaxis?.title as Partial<DataTitle | null>)?.text || "";
         showDownloadImageModal.value = true;
     };
     const closeModal = () => {
@@ -29,13 +34,13 @@ export default (): DownloadPlotMixin => {
 
     const downloadImage = (title: string, xLabel: string, yLabel: string) => {
         plotlyContext.value!.layout!.title = title;
-        (plotlyContext.value!.layout!.xaxis! as any).title = {text: xLabel};
-        (plotlyContext.value!.layout!.yaxis! as any).title = {text: yLabel};
-        Plotly.downloadImage(plotlyContext.value as RootOrData, {
+        plotlyContext.value!.layout!.xaxis!.title = { text: xLabel };
+        plotlyContext.value!.layout!.yaxis!.title = { text: yLabel };
+        downloadPlotlyImage(plotlyContext.value as RootOrData, {
             filename: "WODIN plot",
             format: "png",
-            width: (plotlyContext.value as any)._fullLayout.width,
-            height: (plotlyContext.value as any)._fullLayout.height
+            width: plotlyContext.value!.layout!.width!,
+            height: plotlyContext.value!.layout!.height!
         });
     };
 
@@ -43,15 +48,15 @@ export default (): DownloadPlotMixin => {
         responsive: true,
         modeBarButtons: [[{
             name: "Download plot as a png",
-            icon: (Plotly as any).Icons.camera,
+            icon: Icons.camera,
             click: downloadImageClick
         },
-            "zoom2d",
-            "pan2d",
-            "zoomIn2d",
-            "zoomOut2d",
-            "autoScale2d",
-            "resetScale2d"]]
+        "zoom2d",
+        "pan2d",
+        "zoomIn2d",
+        "zoomOut2d",
+        "autoScale2d",
+        "resetScale2d"]]
     } as Partial<Config>;
 
     return {
