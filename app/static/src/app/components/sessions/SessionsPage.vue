@@ -6,8 +6,11 @@
     </div>
     <div class="row mb-3" id="no-current-session" v-if="!currentSession">
         <span>
-          <span id="start-session" class="brand-link clickable" @click="newSession">
-            Start a new session
+          <span id="start-session" class="brand-link clickable" @click="newSession">Start a new session</span>
+          <span v-if="latestSessionId">,
+            <span id="reload-session" class="brand-link clickable" @click="reloadSession">
+              reload the most recent session
+            </span>
           </span>
           <span v-if="previousSessions && previousSessions.length" id="load-previous-span">
             or load a previous session.
@@ -172,6 +175,7 @@ export default defineComponent({
         const appName = computed(() => store.state.appName);
         const appsPath = computed(() => store.state.appsPath);
         const currentSessionId = computed(() => store.state.sessionId);
+        const latestSessionId = computed(() => store.state.sessions.latestSessionId);
 
         const editSessionLabelOpen = ref(false);
         const selectedSessionId = ref<string | null>(null);
@@ -291,9 +295,16 @@ export default defineComponent({
             store.dispatch(`${namespace}/${SessionsAction.DeleteSession}`, sessionIdToDelete.value);
         };
 
-        const newSession = () => {
-            store.dispatch(AppStateAction.InitialiseSession, { loadSessionId: "", copySession: true });
+        const initialiseSession = (loadSessionId: string, copySession: boolean) => {
+            store.dispatch(AppStateAction.InitialiseSession, { loadSessionId, copySession });
             router.push("/");
+        };
+
+        const newSession = () => {
+            initialiseSession("", true);
+        };
+        const reloadSession = () => {
+            initialiseSession(latestSessionId.value, false);
         };
 
         const loadSessionFromCode = () => {
@@ -319,6 +330,7 @@ export default defineComponent({
             lastCopySessionId,
             lastCopyMsg,
             confirmDeleteSessionOpen,
+            latestSessionId,
             editSessionLabel,
             toggleEditSessionLabelOpen,
             copyLink,
@@ -329,6 +341,7 @@ export default defineComponent({
             toggleConfirmDeleteSessionOpen,
             deleteSession,
             newSession,
+            reloadSession,
             showUnlabelledSessions,
             showDuplicateSessions,
             sessionCode,

@@ -6,7 +6,7 @@ describe("SessionInitialiseModal", () => {
         return shallowMount(SessionInitialiseModal, { props: { open } });
     };
 
-    it("renders as expected when open is true", () => {
+    it("renders as expected", () => {
         const wrapper = getWrapper();
         expect(wrapper.find("#session-initialise-modal .modal").classes()).toContain("show");
         expect((wrapper.find("#session-initialise-modal .modal").element as HTMLDivElement).style.display)
@@ -16,13 +16,6 @@ describe("SessionInitialiseModal", () => {
             .toBe("Would you like to reload the most recent session or start a new session?");
         expect(wrapper.find("button#reload-session").text()).toBe("Reload session");
         expect(wrapper.find("button#new-session").text()).toBe("New session");
-    });
-
-    it("renders as expected when open is false", () => {
-        const wrapper = getWrapper(false);
-        expect(wrapper.find("#session-initialise-modal .modal").classes()).not.toContain("show");
-        expect((wrapper.find("#session-initialise-modal .modal").element as HTMLDivElement).style.display).toBe("none");
-        expect(wrapper.find(".modal-backdrop").exists()).toBe(false);
     });
 
     it("emits on new session", async () => {

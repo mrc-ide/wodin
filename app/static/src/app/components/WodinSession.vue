@@ -1,5 +1,5 @@
 <template>
-  <session-initialise-modal :open="appInitialised && !sessionInitialised && !isSessionsRoute"
+  <session-initialise-modal v-if="appInitialised && !sessionInitialised && !isSessionsRoute"
                             @new-session="newSession"
                             @reload-session="reloadSession"></session-initialise-modal>
   <router-view v-if="appInitialised"></router-view>
@@ -8,7 +8,7 @@
 <script lang="ts">
 import {
     computed,
-    defineComponent, onMounted, Ref, ref, watch
+    defineComponent, onMounted, ref, watch
 } from "vue";
 import { RouterView } from "vue-router";
 import { useStore } from "vuex";
@@ -18,6 +18,7 @@ import { ErrorsMutation } from "../store/errors/mutations";
 import { localStorageManager } from "../localStorageManager";
 import { AppStateGetter } from "../store/appState/getters";
 import { SessionMetadata } from "../types/responseTypes";
+import {SessionsMutation} from "../store/sessions/mutations";
 
 export default defineComponent({
     name: "WodinSession",
@@ -41,7 +42,7 @@ export default defineComponent({
         const isSessionsRoute = !!path.match(/\/sessions\/?$/);
         const sessionInitialised = ref(false);
         const appInitialised = computed(() => !!store.state.config && !!store.state.sessions.sessionsMetadata);
-        const latestSessionId: Ref<null|string> = ref(null);
+        const latestSessionId = computed(() => store.state.sessions.latestSessionId);
 
         // These props won't change as provided by server
         // eslint-disable-next-line vue/no-setup-props-destructure
@@ -84,7 +85,7 @@ export default defineComponent({
             const sessionAvailable = sessionId
                 && !!store.state.sessions.sessionsMetadata.find((s: SessionMetadata) => s.id === sessionId);
             if (sessionAvailable) {
-                latestSessionId.value = sessionId;
+                store.commit(`sessions/${SessionsMutation.SetLatestSessionId}`, sessionId);
             }
 
             if (newValue && (loadSessionId || !latestSessionId.value)) {
