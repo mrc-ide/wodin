@@ -7,6 +7,12 @@
     </div>
     <wodin-plot-data-summary :data="plotData"></wodin-plot-data-summary>
     <slot></slot>
+    <wodin-plot-download-image-modal :open="showDownloadImageModal"
+                                     :title="downloadImageProps.title"
+                                     :x-label="downloadImageProps.xLabel"
+                                     :y-label="downloadImageProps.yLabel"
+                                     @close="closeModal"
+                                     @confirm="downloadImage"></wodin-plot-download-image-modal>
   </div>
 </template>
 
@@ -17,8 +23,10 @@ import {
 } from "vue";
 import { AxisType, newPlot, Plots } from "plotly.js-basic-dist-min";
 import { useStore } from "vuex";
+import WodinPlotDownloadImageModal from "@/app/components/plot/WodinPlotDownloadImageModal.vue";
+import downloadPlot from "../mixins/downloadPlot";
 import {
-    config, fadePlotStyle, filterUserTypeSeriesSet, margin, odinToPlotly, updatePlotTraceName
+    fadePlotStyle, filterUserTypeSeriesSet, margin, odinToPlotly, updatePlotTraceName
 } from "../../plot";
 import { SensitivityPlotExtremePrefix, SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
@@ -32,13 +40,21 @@ import { verifyValidPlotSettingsTime } from "./support";
 
 export default defineComponent({
     name: "SensitivitySummaryPlot",
-    components: { WodinPlotDataSummary },
+    components: { WodinPlotDownloadImageModal, WodinPlotDataSummary },
     props: {
         fadePlot: Boolean
     },
     setup(props) {
         const store = useStore();
         const namespace = "sensitivity";
+        const {
+            showDownloadImageModal,
+            downloadImageProps,
+            closeModal,
+            downloadImage,
+            config
+        } = downloadPlot();
+
         const plotStyle = computed(() => (props.fadePlot ? fadePlotStyle : ""));
         const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
 
@@ -154,8 +170,7 @@ export default defineComponent({
                     yaxis: yAxisSettings.value,
                     xaxis: xAxisSettings.value
                 };
-                // TODO: sort this out! put the download stuff in a mixin
-                newPlot(el as HTMLElement, plotData.value, layout, config(() => {}));
+                newPlot(el as HTMLElement, plotData.value, layout, config);
                 resizeObserver = new ResizeObserver(resize);
                 resizeObserver.observe(plot.value as HTMLElement);
             }
@@ -175,9 +190,13 @@ export default defineComponent({
             placeholderMessage,
             plot,
             plotStyle,
+            downloadImageProps,
             plotData,
             hasPlotData,
-            resize
+            resize,
+            closeModal,
+            downloadImage,
+            showDownloadImageModal
         };
     }
 });

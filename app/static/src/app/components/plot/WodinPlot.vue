@@ -23,10 +23,10 @@ import {
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
 import {
-  newPlot, react, PlotRelayoutEvent, Plots, AxisType, Layout, Config
+  newPlot, react, PlotRelayoutEvent, Plots, AxisType, Layout
 } from "plotly.js-basic-dist-min";
 import {
-    WodinPlotData, fadePlotStyle, margin, config
+    WodinPlotData, fadePlotStyle, margin
 } from "../../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
 import { GraphSettingsMutation } from "../../store/graphSettings/mutations";
@@ -67,9 +67,9 @@ export default defineComponent({
         const {
             showDownloadImageModal,
             downloadImageProps,
-            downloadImageClick,
             closeModal,
-            downloadImage
+            downloadImage,
+            config
         } = downloadPlot();
 
         const plotStyle = computed(() => (props.fadePlot ? fadePlotStyle : ""));
@@ -116,7 +116,7 @@ export default defineComponent({
             };
 
             const el = plot.value as HTMLElement;
-            await react(el, data, layout, config(downloadImageClick));
+            await react(el, data, layout, config);
         };
 
         const resize = () => {
@@ -141,14 +141,12 @@ export default defineComponent({
                         xaxis: { title: "Time" }
                     };
 
-                    const configCopy = config(downloadImageClick) as Partial<Config>;
-
                     if (lockYAxis.value && !toggleLogScale) {
                         layout.yaxis!.range = [...yAxisRange.value];
                         layout.yaxis!.autorange = false;
                     }
 
-                    newPlot(el as HTMLElement, baseData.value, layout, configCopy);
+                    newPlot(el as HTMLElement, baseData.value, layout, config);
 
                     if (!lockYAxis.value || toggleLogScale) {
                         updateAxesRange();
@@ -192,7 +190,6 @@ export default defineComponent({
             hasPlotData,
             closeModal,
             downloadImage,
-            downloadImageClick,
             showDownloadImageModal
         };
     }

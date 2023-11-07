@@ -1,14 +1,14 @@
 import {reactive, Ref, ref} from "vue";
-import {PlotlyDataLayoutConfig, RootOrData} from "plotly.js-basic-dist-min";
+import {Config, PlotlyDataLayoutConfig, RootOrData} from "plotly.js-basic-dist-min";
 import * as Plotly from "plotly.js-basic-dist-min";
 
 export interface DownloadPlotMixin {
     showDownloadImageModal: Ref<boolean>,
     plotlyContext: Ref<PlotlyDataLayoutConfig | null>,
     downloadImageProps: { title: string, xLabel: string, yLabel: string },
-    downloadImageClick: (gd: PlotlyDataLayoutConfig) => void,
     closeModal: () => void,
-    downloadImage: (title: string, xLabel: string, yLabel: string) => void
+    downloadImage: (title: string, xLabel: string, yLabel: string) => void,
+    config: Partial<Config>
 }
 
 export default (): DownloadPlotMixin => {
@@ -41,12 +41,27 @@ export default (): DownloadPlotMixin => {
         });
     };
 
+    const config = {
+        responsive: true,
+        modeBarButtons: [[{
+            name: "Custom Download",
+            icon: (Plotly as any).Icons.camera,
+            click: downloadImageClick
+        },
+            "zoom2d",
+            "pan2d",
+            "zoomIn2d",
+            "zoomOut2d",
+            "autoScale2d",
+            "resetScale2d"]]
+    } as Partial<Config>;
+
     return {
         showDownloadImageModal,
         plotlyContext,
         downloadImageProps,
-        downloadImageClick,
         closeModal,
-        downloadImage
+        downloadImage,
+        config
     };
 };
