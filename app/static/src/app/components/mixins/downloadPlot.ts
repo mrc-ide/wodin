@@ -28,8 +28,6 @@ export default (): DownloadPlotMixin => {
     };
 
     const downloadImage = (title: string, xLabel: string, yLabel: string) => {
-        console.log(`x axis is ${xLabel}`)
-        console.log(`old x axis is ${JSON.stringify( plotlyContext.value!.layout!.xaxis)}`)
         plotlyContext.value!.layout!.title = title;
         (plotlyContext.value!.layout!.xaxis! as any).title = {text: xLabel};
         (plotlyContext.value!.layout!.yaxis! as any).title = {text: yLabel};
@@ -44,7 +42,7 @@ export default (): DownloadPlotMixin => {
     const config = {
         responsive: true,
         modeBarButtons: [[{
-            name: "Custom Download",
+            name: "Download plot as a png",
             icon: (Plotly as any).Icons.camera,
             click: downloadImageClick
         },
