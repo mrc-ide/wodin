@@ -190,9 +190,11 @@ export const mockMultiSensitivityState = (state: Partial<MultiSensitivityState> 
     };
 };
 
-const mockSessionsState = (): SessionsState => {
+export const mockSessionsState = (state: Partial<SessionsState> = {}): SessionsState => {
     return {
-        sessionsMetadata: null
+        sessionsMetadata: null,
+        latestSessionId: null,
+        ...state
     };
 };
 
@@ -214,6 +216,7 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
             basicProp: "",
             ...mockAppConfig
         },
+        loadSessionId: null,
         code: mockCodeState(),
         model: mockModelState(),
         run: mockRunState(),
@@ -266,6 +269,7 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
             appType: "fit",
             ...mockAppConfig
         },
+        loadSessionId: null,
         code: mockCodeState(),
         model: mockModelState(),
         run: mockRunState(),
@@ -301,6 +305,7 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
             maxReplicatesDisplay: 20,
             ...mockAppConfig
         },
+        loadSessionId: null,
         code: mockCodeState(),
         model: mockModelState(),
         run: mockRunState(),

@@ -6,7 +6,7 @@ import {
     mockFailure,
     mockFitState,
     mockModelFitState,
-    mockSensitivityState,
+    mockSensitivityState, mockSessionsState,
     mockSuccess
 } from "../../../mocks";
 import { AppStateAction, appStateActions } from "../../../../src/app/store/appState/actions";
@@ -83,6 +83,7 @@ describe("AppState actions", () => {
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
         expect(commit.mock.calls[0][1]).toStrictEqual({
             appName: "test-app",
+            loadSessionId: "",
             baseUrl,
             appsPath,
             defaultLanguage,
@@ -142,7 +143,7 @@ describe("AppState actions", () => {
         const rootState = state;
 
         const payload = {
-            appName: "test-app", loadSessionId: "", baseUrl, appsPath, defaultLanguage, enableI18n
+            appName: "test-app", loadSessionId: "xyz", baseUrl, appsPath, defaultLanguage, enableI18n
         };
         await (appStateActions[AppStateAction.InitialiseApp] as any)({
             commit, state, dispatch, rootState, getters
@@ -155,7 +156,8 @@ describe("AppState actions", () => {
             baseUrl,
             appsPath,
             defaultLanguage,
-            enableI18n
+            enableI18n,
+            loadSessionId: "xyz"
         });
 
         expect(commit.mock.calls[1][0]).toBe(`errors/${ErrorsMutation.AddError}`);
@@ -248,9 +250,9 @@ describe("AppState actions", () => {
             config: { defaultCode: [] } as any,
             appName: "test-app",
             sessionId: "1234",
-            sessions: {
+            sessions: mockSessionsState({
                 sessionsMetadata: [{ id: "1234", label: "Test Label" }] as any
-            }
+            })
         });
         const commit = jest.fn();
         const dispatch = jest.fn();

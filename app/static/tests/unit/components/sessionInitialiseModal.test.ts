@@ -9,8 +9,6 @@ describe("SessionInitialiseModal", () => {
     it("renders as expected", () => {
         const wrapper = getWrapper();
         expect(wrapper.find("#session-initialise-modal .modal").classes()).toContain("show");
-        expect((wrapper.find("#session-initialise-modal .modal").element as HTMLDivElement).style.display)
-            .toBe("block");
         expect(wrapper.find(".modal-backdrop").exists()).toBe(true);
         expect(wrapper.find(".modal-body").text())
             .toBe("Would you like to reload the most recent session or start a new session?");

@@ -14,7 +14,7 @@ import { ErrorsMutation } from "../store/errors/mutations";
 import { localStorageManager } from "../localStorageManager";
 import { AppStateGetter } from "../store/appState/getters";
 import { SessionMetadata } from "../types/responseTypes";
-import {SessionsMutation} from "../store/sessions/mutations";
+import { SessionsMutation } from "../store/sessions/mutations";
 
 export default defineComponent({
     name: "WodinSession",
@@ -35,7 +35,6 @@ export default defineComponent({
 
         const initialised = ref(false);
         const appInitialised = computed(() => !!store.state.config && !!store.state.sessions.sessionsMetadata);
-
 
         // These props won't change as provided by server
         // eslint-disable-next-line vue/no-setup-props-destructure

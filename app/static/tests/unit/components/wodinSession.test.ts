@@ -9,21 +9,19 @@ import { BasicState } from "../../../src/app/store/basic/state";
 import { ErrorsMutation } from "../../../src/app/store/errors/mutations";
 import { Language } from "../../../src/app/types/languageTypes";
 import { AppConfigBase, SessionMetadata } from "../../../src/app/types/responseTypes";
-import SessionInitialiseModal from "../../../src/app/components/SessionInitialiseModal.vue";
 import { mutations as sessionsMutations, SessionsMutation } from "../../../src/app/store/sessions/mutations";
 import { getters as appStateGetters } from "../../../src/app/store/appState/getters";
 import { localStorageManager } from "../../../src/app/localStorageManager";
 import { LanguageState } from "../../../translationPackage/store/state";
-import { InitialiseSessionPayload } from "../../../src/app/types/payloadTypes";
 
 const realLocation = window.location;
 
 describe("WodinSession", () => {
     const mockInitialiseApp = jest.fn();
-    const mockInitialiseSession = jest.fn();
     const mockAddError = jest.fn();
     const mockGetSessionIds = (sessionIds = ["1234", "5678"]) => jest.spyOn(localStorageManager, "getSessionIds")
         .mockReturnValue(sessionIds);
+    const mockSetLatestSessionId = jest.fn();
 
     const defaultBaseUrl = "http://localhost:3000/site1";
     const defaultLanguage = {
@@ -34,14 +32,6 @@ describe("WodinSession", () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-        delete (window as any).location;
-        window.location = {
-            href: `${defaultBaseUrl}/apps/day1`
-        } as any;
-    });
-
-    afterAll(() => {
-        window.location = realLocation;
     });
 
     interface StoreOptions {
@@ -74,8 +64,7 @@ describe("WodinSession", () => {
             baseUrl,
             appsPath,
             language,
-            config,
-            sessionsMetadata
+            config
         } = options;
         return new Vuex.Store<BasicState>({
             state: mockBasicState({
@@ -87,8 +76,7 @@ describe("WodinSession", () => {
             }),
             getters: appStateGetters,
             actions: {
-                [AppStateAction.InitialiseApp]: mockInitialiseApp,
-                [AppStateAction.InitialiseSession]: mockInitialiseSession
+                [AppStateAction.InitialiseApp]: mockInitialiseApp
             },
             modules: {
                 errors: {
@@ -100,9 +88,12 @@ describe("WodinSession", () => {
                 sessions: {
                     namespaced: true,
                     state: {
-                        sessionsMetadata
+                        sessionsMetadata: null
                     },
-                    mutations: sessionsMutations
+                    mutations: {
+                        ...sessionsMutations,
+                        [SessionsMutation.SetLatestSessionId]: mockSetLatestSessionId
+                    }
                 }
             }
         });
@@ -129,9 +120,25 @@ describe("WodinSession", () => {
         return shallowMount(WodinSession, options);
     };
 
-    it("renders as expected", () => {
-        const wrapper = getWrapper(getStore());
+    const initialiseAppSessionsMetadata = async (store: Store<BasicState>, sessionMetadata = [{ id: "1234" }]) => {
+        store!.commit(`sessions/${SessionsMutation.SetSessionsMetadata}`, sessionMetadata);
+        await nextTick();
+    };
+
+    const expectCheckedLatestSessionId = (wrapper: VueWrapper<any>, getSessionIds: jest.SpyInstance,
+        expectCommitLatestSessionId: boolean) => {
+        expect(getSessionIds).toHaveBeenCalledWith("test", "site1");
+        if (expectCommitLatestSessionId) {
+            expect(mockSetLatestSessionId.mock.calls[0][1]).toBe("1234");
+        } else {
+            expect(mockSetLatestSessionId).not.toHaveBeenCalled();
+        }
         expect(wrapper.findComponent(RouterView).exists()).toBe(true);
+    };
+
+    it("renders as expected before app Initialised", () => {
+        const wrapper = getWrapper(getStore());
+        expect(wrapper.findComponent(RouterView).exists()).toBe(false);
         expect(mockAddError).not.toHaveBeenCalled();
     });
 
@@ -143,97 +150,35 @@ describe("WodinSession", () => {
             appsPath: "apps",
             baseUrl: "http://localhost:3000/site1",
             defaultLanguage: Language.en,
-            enableI18n: true
+            enableI18n: true,
+            loadSessionId: ""
         });
     });
 
-    it("shows session initialise modal when app initialised, session not initialised and not on sessions page", () => {
-        const wrapper = getWrapper(getStore());
-        expect(wrapper.findComponent(SessionInitialiseModal).props("open")).toBe(true);
-        expect(wrapper.findComponent(RouterView).exists()).toBe(true);
-    });
-
-    it("does not show modal when app is not initialised (no app config)", () => {
-        const wrapper = getWrapper(getStore({ config: null }));
-        expect(wrapper.findComponent(SessionInitialiseModal).props("open")).toBe(false);
-        // router view is also not shown yet
-        expect(wrapper.findComponent(RouterView).exists()).toBe(false);
-    });
-
-    it("does not show modal when app is not initialised (no sessions metadata)", () => {
-        const wrapper = getWrapper(getStore({ sessionsMetadata: null }));
-        expect(wrapper.findComponent(SessionInitialiseModal).props("open")).toBe(false);
-    });
-
-    it("does not show modal when on sessions page", () => {
-        window.location = {
-            href: `${defaultBaseUrl}/apps/day1/sessions`
-        } as any;
-        const wrapper = getWrapper(getStore());
-        expect(wrapper.findComponent(SessionInitialiseModal).props("open")).toBe(false);
-    });
-
-    it("adds expected error when shareNotFound prop is set", () => {
-        const wrapper = getWrapper(getStore(), { shareNotFound: "cheeky-monkey" });
+    it("adds expected error when shareNotFound prop is set", async () => {
+        const store = getStore();
+        const wrapper = getWrapper(store, { shareNotFound: "cheeky-monkey" });
+        await initialiseAppSessionsMetadata(store);
         expect(wrapper.findComponent(RouterView).exists()).toBe(true);
         expect(mockAddError).toHaveBeenCalledTimes(1);
         expect(mockAddError.mock.calls[0][1]).toStrictEqual({ detail: "Share id not found: cheeky-monkey" });
     });
 
-    it("initialises new session when selected in modal", async () => {
-        const wrapper = getWrapper(getStore());
-        await wrapper.findComponent(SessionInitialiseModal).vm.$emit("newSession");
-        expect(mockInitialiseSession.mock.calls[0][1]).toStrictEqual({ loadSessionId: "", copySession: true });
-        expect(wrapper.findComponent(SessionInitialiseModal).props("open")).toBe(false);
-    });
-
-    const initialiseAppSessionsMetadata = async (store: Store<BasicState>, sessionMetadata = [{ id: "1234" }]) => {
-        store!.commit(`sessions/${SessionsMutation.SetSessionsMetadata}`, sessionMetadata);
-        await nextTick();
-    };
-
-    const expectImmediateInitialiseSession = (wrapper: VueWrapper<any>, initialisePayload: InitialiseSessionPayload,
-        getSessionIds: jest.SpyInstance) => {
-        expect(mockInitialiseSession.mock.calls[0][1]).toStrictEqual(initialisePayload);
-        expect(wrapper.findComponent(SessionInitialiseModal).props("open")).toBe(false);
-        expect(getSessionIds).toHaveBeenCalledWith("test", "site1");
-    };
-
-    it("initialises reload of most recent session when selected in modal", async () => {
-        // this requires that we update appInitialise to trigger the watch which initialises latestSessionId
-        const getSessionIds = mockGetSessionIds();
-        const store = getStore({ sessionsMetadata: null });
-        const wrapper = getWrapper(store);
-        await initialiseAppSessionsMetadata(store);
-
-        await wrapper.findComponent(SessionInitialiseModal).vm.$emit("reloadSession");
-        expectImmediateInitialiseSession(wrapper, { loadSessionId: "1234", copySession: false }, getSessionIds);
-    });
-
-    it("initialises session immediately on appInitialised if loadSessionId is set", async () => {
+    it("checks latest session id on appInitialised and commits if session is available", async () => {
         const getSessionIds = mockGetSessionIds();
         const store = getStore({ sessionsMetadata: null });
         const wrapper = getWrapper(store, { loadSessionId: "abcd" });
         await initialiseAppSessionsMetadata(store);
 
-        expectImmediateInitialiseSession(wrapper, { loadSessionId: "abcd", copySession: true }, getSessionIds);
+        expectCheckedLatestSessionId(wrapper, getSessionIds, true);
     });
 
-    it("initialises new session immediately on appInitialised if no session ids in local storage", async () => {
+    it("does not commit latest session id on appInitialised if session is not available", async () => {
         const getSessionIds = mockGetSessionIds([]);
         const store = getStore({ sessionsMetadata: null });
         const wrapper = getWrapper(store);
         await initialiseAppSessionsMetadata(store);
 
-        expectImmediateInitialiseSession(wrapper, { loadSessionId: "", copySession: true }, getSessionIds);
-    });
-
-    it("initialises new session immediately on appInitialised if latest session not in sessions metadata", async () => {
-        const getSessionIds = mockGetSessionIds();
-        const store = getStore({ sessionsMetadata: null });
-        const wrapper = getWrapper(store);
-        await initialiseAppSessionsMetadata(store, [{ id: "5678" }]);
-
-        expectImmediateInitialiseSession(wrapper, { loadSessionId: "", copySession: true }, getSessionIds);
+        expectCheckedLatestSessionId(wrapper, getSessionIds, false);
     });
 });

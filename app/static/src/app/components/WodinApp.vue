@@ -59,7 +59,9 @@ export default defineComponent({
         // If there's a load (share) session id, then immediately initialise with that
         // If there is no latest session id then immediately initialise a new session - display modal conditional on
         // this value as well as sessionInitialised to avoid momentary display of modal when this is true.
-        const immediateInitialise = computed(() => loadSessionId.value || !latestSessionId.value);
+        const immediateInitialise = computed(() => {
+            return !sessionInitialised.value && (loadSessionId.value || !latestSessionId.value);
+        });
 
         if (immediateInitialise.value) {
             initialise(loadSessionId.value || "");
