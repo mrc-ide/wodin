@@ -33,6 +33,7 @@ export const appStateMutations: MutationTree<AppState> = {
         state.appsPath = payload.appsPath;
         state.language.currentLanguage = payload.defaultLanguage;
         state.language.enableI18n = payload.enableI18n;
+        state.loadSessionId = payload.loadSessionId;
         registerTranslations(state.language, collectedTranslations);
     },
 

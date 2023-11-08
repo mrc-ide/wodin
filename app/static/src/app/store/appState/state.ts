@@ -35,6 +35,7 @@ export interface AppState {
     baseUrl: null | string,
     appsPath: null | string,
     appType: AppType
+    loadSessionId: null | string, // if sharing a session, this is the id of the session to share (copy)
     openVisualisationTab: VisualisationTab
     queuedStateUploadIntervalId: number
     stateUploadInProgress: boolean

@@ -1,8 +1,5 @@
 <template>
-  <session-initialise-modal v-if="appInitialised && !sessionInitialised && !isSessionsRoute"
-                            @new-session="newSession"
-                            @reload-session="reloadSession"></session-initialise-modal>
-  <router-view v-if="appInitialised"></router-view>
+  <router-view v-if="initialised"></router-view>
 </template>
 
 <script lang="ts">
@@ -12,7 +9,6 @@ import {
 } from "vue";
 import { RouterView } from "vue-router";
 import { useStore } from "vuex";
-import SessionInitialiseModal from "./SessionInitialiseModal.vue";
 import { AppStateAction } from "../store/appState/actions";
 import { ErrorsMutation } from "../store/errors/mutations";
 import { localStorageManager } from "../localStorageManager";
@@ -32,17 +28,14 @@ export default defineComponent({
         defaultLanguage: String
     },
     components: {
-        SessionInitialiseModal,
         RouterView
     },
     setup(props) {
         const store = useStore();
 
-        const path = new URL(window.location.href).pathname;
-        const isSessionsRoute = !!path.match(/\/sessions\/?$/);
-        const sessionInitialised = ref(false);
+        const initialised = ref(false);
         const appInitialised = computed(() => !!store.state.config && !!store.state.sessions.sessionsMetadata);
-        const latestSessionId = computed(() => store.state.sessions.latestSessionId);
+
 
         // These props won't change as provided by server
         // eslint-disable-next-line vue/no-setup-props-destructure
@@ -60,7 +53,8 @@ export default defineComponent({
             baseUrl,
             appsPath,
             enableI18n,
-            defaultLanguage
+            defaultLanguage,
+            loadSessionId
         });
 
         onMounted(() => {
@@ -70,14 +64,9 @@ export default defineComponent({
             }
         });
 
-        const initialise = (sessionId: string, copySession = true) => {
-            store.dispatch(AppStateAction.InitialiseSession, { loadSessionId: sessionId, copySession });
-            sessionInitialised.value = true;
-        };
-
-        watch(appInitialised, (newValue) => {
-            // We don't need to show session initialise modal if we have a  loadSessionId (loading from share) or if
-            // there are no previous sessions - initialise as soon as config available
+        watch(appInitialised, () => {
+            // Child component will either be SessionsPage or WodinApp depending on route - both will need the latest
+            // session id so delay rendering these until this has been committed
             const baseUrlPath = store.getters[AppStateGetter.baseUrlPath];
             const sessions = localStorageManager.getSessionIds(store.state.appName, baseUrlPath);
             const sessionId = sessions.length ? sessions[0] : null;
@@ -87,26 +76,11 @@ export default defineComponent({
             if (sessionAvailable) {
                 store.commit(`sessions/${SessionsMutation.SetLatestSessionId}`, sessionId);
             }
-
-            if (newValue && (loadSessionId || !latestSessionId.value)) {
-                initialise(loadSessionId || "");
-            }
+            initialised.value = true;
         });
 
-        const newSession = () => {
-            initialise("");
-        };
-
-        const reloadSession = () => {
-            initialise(latestSessionId.value!, false);
-        };
-
         return {
-            sessionInitialised,
-            appInitialised,
-            isSessionsRoute,
-            newSession,
-            reloadSession
+            initialised
         };
     }
 });

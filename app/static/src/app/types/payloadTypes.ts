@@ -8,7 +8,8 @@ export interface InitialiseAppPayload {
     baseUrl: string
     appsPath: string,
     enableI18n: boolean,
-    defaultLanguage: Language
+    defaultLanguage: Language,
+    loadSessionId: string | null
 }
 
 export interface InitialiseSessionPayload {

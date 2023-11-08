@@ -38,19 +38,9 @@ export const appStateActions: ActionTree<AppState, AppState> = {
     async [AppStateAction.InitialiseApp](context, payload: InitialiseAppPayload) {
         const { commit, dispatch } = context;
         const {
-            appName,
-            baseUrl,
-            appsPath,
-            enableI18n,
-            defaultLanguage
+            appName
         } = payload;
-        commit(AppStateMutation.SetApp, {
-            appName,
-            baseUrl,
-            appsPath,
-            enableI18n,
-            defaultLanguage
-        });
+        commit(AppStateMutation.SetApp, payload);
 
         const response = await api(context)
             .freezeResponse()
