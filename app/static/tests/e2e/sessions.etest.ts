@@ -43,6 +43,12 @@ const expectNewFitCode = async (page: Page) => {
     await expect(await page.innerText(editorSelector)).toContain("# JUST CHANGE A COMMENT");
 };
 
+const expectReloadedSession = async (page: Page) => {
+    await page.click(":nth-match(.wodin-left .nav-tabs a, 2)"); // select code tab
+    await expectNewFitCode(page);
+    await expect(await page.locator("#sessions-menu")).toHaveText("Session: session to reload");
+};
+
 test.describe("Sessions tests", () => {
     const { timeout } = PlaywrightConfig;
 
@@ -312,9 +318,13 @@ test.describe("Sessions tests", () => {
         await loadAppPage(page);
         await expect(await page.locator("#session-initialise-modal .modal")).toBeVisible({ timeout });
         await page.click("#reload-session");
-        await page.click(":nth-match(.wodin-left .nav-tabs a, 2)"); // select code tab
-        await expectNewFitCode(page);
-        await expect(await page.locator("#sessions-menu")).toHaveText("Session: session to reload");
+        await expectReloadedSession(page);
+
+        // navigate to sessions page - should also be able to reload from there
+        await page.goto(`${appUrl}/sessions`);
+        await page.waitForTimeout(saveSessionTimeout);
+        await page.click("#reload-session");
+        await expectReloadedSession(page);
 
         await browser.close();
     });
