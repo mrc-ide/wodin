@@ -1,6 +1,5 @@
 // Mock the import of plotly so we can mock Plotly methods
-import {mockDownloadImageResult, mockDownloadPlotMixin} from "../../../testUtils";
-
+/* eslint-disable import/first */
 jest.mock("plotly.js-basic-dist-min", () => ({
     newPlot: jest.fn(),
     react: jest.fn(),
@@ -14,9 +13,8 @@ jest.mock("../../../../src/app/components/mixins/downloadPlot", () => ({
     default: jest.fn()
 }));
 
-/* eslint-disable import/first */
 import { shallowMount, VueWrapper } from "@vue/test-utils";
-import {nextTick, ref} from "vue";
+import { nextTick, ref } from "vue";
 import * as plotly from "plotly.js-basic-dist-min";
 import Vuex, { Store } from "vuex";
 import WodinPlot from "../../../../src/app/components/plot/WodinPlot.vue";
@@ -24,6 +22,7 @@ import WodinPlotDataSummary from "../../../../src/app/components/plot/WodinPlotD
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { GraphSettingsMutation } from "../../../../src/app/store/graphSettings/mutations";
 import WodinPlotDownloadImageModal from "../../../../src/app/components/plot/WodinPlotDownloadImageModal.vue";
+import { mockDownloadImageResult, mockDownloadPlotMixin } from "../../../testUtils";
 
 describe("WodinPlot", () => {
     const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");

@@ -1,4 +1,4 @@
-import {shallowMount} from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
 import WodinPlotDownloadImageModal from "../../../../src/app/components/plot/WodinPlotDownloadImageModal.vue";
 
 describe("WodinPlotDownloadImageModal", () => {

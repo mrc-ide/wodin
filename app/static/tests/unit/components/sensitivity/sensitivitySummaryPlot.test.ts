@@ -16,7 +16,7 @@ import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutat
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
 import { RunGetter } from "../../../../src/app/store/run/getters";
 import WodinPlotDataSummary from "../../../../src/app/components/plot/WodinPlotDataSummary.vue";
-import {mockDownloadImageResult, mockDownloadPlotMixin} from "../../../testUtils";
+import { mockDownloadImageResult, mockDownloadPlotMixin } from "../../../testUtils";
 import WodinPlotDownloadImageModal from "../../../../src/app/components/plot/WodinPlotDownloadImageModal.vue";
 
 jest.mock("plotly.js-basic-dist-min", () => ({

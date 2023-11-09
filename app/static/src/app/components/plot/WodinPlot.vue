@@ -18,12 +18,12 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, ref, watch, onMounted, onUnmounted, PropType
+    computed, defineComponent, ref, watch, onMounted, onUnmounted, PropType
 } from "vue";
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
 import {
-  newPlot, react, PlotRelayoutEvent, Plots, AxisType, Layout
+    newPlot, react, PlotRelayoutEvent, Plots, AxisType, Layout
 } from "plotly.js-basic-dist-min";
 import {
     WodinPlotData, fadePlotStyle, margin
@@ -36,7 +36,7 @@ import downloadPlot from "../mixins/downloadPlot";
 
 export default defineComponent({
     name: "WodinPlot",
-    components: {WodinPlotDownloadImageModal, WodinPlotDataSummary },
+    components: { WodinPlotDownloadImageModal, WodinPlotDataSummary },
     props: {
         fadePlot: Boolean,
         placeholderMessage: String,

@@ -1,6 +1,5 @@
-import {Dash, PlotData, PlotlyDataLayoutConfig} from "plotly.js-basic-dist-min";
+import { Dash, PlotData } from "plotly.js-basic-dist-min";
 import { format } from "d3-format";
-import * as Plotly from "plotly.js-basic-dist-min";
 import { Palette, paletteData } from "./palette";
 import type { AllFitData, FitData, FitDataLink } from "./store/fitData/state";
 import {

@@ -1,12 +1,12 @@
+import * as plotly from "plotly.js-basic-dist-min";
+import downloadPlot from "../../../../src/app/components/mixins/downloadPlot";
+
 jest.mock("plotly.js-basic-dist-min", () => ({
     downloadImage: jest.fn(),
     Icons: {
         camera: "camera"
     }
 }));
-
-import downloadPlot from "../../../../src/app/components/mixins/downloadPlot";
-import * as plotly from "plotly.js-basic-dist-min";
 
 const mockGd = () => ({
     layout: {
@@ -76,7 +76,7 @@ describe("downloadPlot mixin", () => {
         const gd = mockGd();
         downloadImageClick(gd, {} as any);
         expect(plotlyContext.value).toStrictEqual(gd);
-        expect(downloadImageProps).toStrictEqual({title: "Test Layout Title", xLabel: "test x", yLabel: "test y"});
+        expect(downloadImageProps).toStrictEqual({ title: "Test Layout Title", xLabel: "test x", yLabel: "test y" });
         expect(showDownloadImageModal.value).toBe(true);
     });
 

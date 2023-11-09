@@ -1,6 +1,6 @@
 import { VueWrapper } from "@vue/test-utils";
+import { ref } from "vue";
 import WodinPanels from "../src/app/components/WodinPanels.vue";
-import {ref} from "vue";
 import * as downloadPlot from "../src/app/components/mixins/downloadPlot";
 
 export const fileTimeout = 20;
@@ -39,5 +39,5 @@ export const mockDownloadImageResult = {
     downloadImage: jest.fn()
 } as any;
 
-export const mockDownloadPlotMixin = jest.spyOn(downloadPlot, "default").mockImplementation(() => mockDownloadImageResult);
-
+export const mockDownloadPlotMixin = jest.spyOn(downloadPlot, "default")
+    .mockImplementation(() => mockDownloadImageResult);

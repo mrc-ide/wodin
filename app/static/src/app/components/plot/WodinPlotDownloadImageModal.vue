@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import {defineProps, defineEmits, reactive} from "vue";
+import { defineProps, defineEmits, reactive } from "vue";
 
 const props = defineProps({
     title: String,
@@ -59,11 +59,10 @@ const props = defineProps({
 const emit = defineEmits(["close", "confirm"]);
 
 const editProps = reactive({
-  title: props.title,
-  xLabel: props.xLabel,
-  yLabel: props.yLabel
+    title: props.title,
+    xLabel: props.xLabel,
+    yLabel: props.yLabel
 });
-
 
 const close = () => {
     emit("close");
