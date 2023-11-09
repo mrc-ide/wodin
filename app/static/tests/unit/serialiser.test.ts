@@ -292,6 +292,7 @@ describe("serialise", () => {
 
     const modelFitState = {
         fitting: false,
+        error: { error: "fit run error", detail: "fit run detail" },
         fitUpdateRequired: {
             modelChanged: false,
             dataChanged: false,
@@ -482,6 +483,7 @@ describe("serialise", () => {
     };
 
     const expectedModelFit = {
+        error: { error: "fit run error", detail: "fit run detail" },
         fitUpdateRequired: {
             modelChanged: false,
             dataChanged: false,
