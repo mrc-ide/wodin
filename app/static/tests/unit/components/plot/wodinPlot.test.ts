@@ -12,10 +12,10 @@ import { shallowMount, VueWrapper } from "@vue/test-utils";
 import { nextTick } from "vue";
 import * as plotly from "plotly.js-basic-dist-min";
 import Vuex, { Store } from "vuex";
-import WodinPlot from "../../../src/app/components/plot/WodinPlot.vue";
-import WodinPlotDataSummary from "../../../src/app/components/plot/WodinPlotDataSummary.vue";
-import { BasicState } from "../../../src/app/store/basic/state";
-import { GraphSettingsMutation } from "../../../src/app/store/graphSettings/mutations";
+import WodinPlot from "../../../../src/app/components/plot/WodinPlot.vue";
+import WodinPlotDataSummary from "../../../../src/app/components/plot/WodinPlotDataSummary.vue";
+import { BasicState } from "../../../../src/app/store/basic/state";
+import { GraphSettingsMutation } from "../../../../src/app/store/graphSettings/mutations";
 
 describe("WodinPlot", () => {
     const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");

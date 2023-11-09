@@ -28,6 +28,7 @@ export default (): DownloadPlotMixin => {
         downloadImageProps.yLabel = (layout.yaxis?.title as Partial<DataTitle | null>)?.text || "";
         showDownloadImageModal.value = true;
     };
+
     const closeModal = () => {
         showDownloadImageModal.value = false;
     };

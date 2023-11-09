@@ -34,7 +34,6 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
-
         const solution = computed(() => (store.state.run.resultOde?.solution));
         const visibleParameterSetNames = computed(() => store.getters[`run/${RunGetter.visibleParameterSetNames}`]);
         const parameterSets = computed(() => store.state.run.parameterSets as ParameterSet[]);
