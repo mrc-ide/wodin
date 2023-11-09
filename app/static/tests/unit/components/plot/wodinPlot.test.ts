@@ -1,4 +1,6 @@
 // Mock the import of plotly so we can mock Plotly methods
+import {mockDownloadImageResult, mockDownloadPlotMixin} from "../../../testUtils";
+
 jest.mock("plotly.js-basic-dist-min", () => ({
     newPlot: jest.fn(),
     react: jest.fn(),
@@ -7,15 +9,21 @@ jest.mock("plotly.js-basic-dist-min", () => ({
     }
 }));
 
+jest.mock("../../../../src/app/components/mixins/downloadPlot", () => ({
+    __esModule: true,
+    default: jest.fn()
+}));
+
 /* eslint-disable import/first */
 import { shallowMount, VueWrapper } from "@vue/test-utils";
-import { nextTick } from "vue";
+import {nextTick, ref} from "vue";
 import * as plotly from "plotly.js-basic-dist-min";
 import Vuex, { Store } from "vuex";
 import WodinPlot from "../../../../src/app/components/plot/WodinPlot.vue";
 import WodinPlotDataSummary from "../../../../src/app/components/plot/WodinPlotDataSummary.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { GraphSettingsMutation } from "../../../../src/app/store/graphSettings/mutations";
+import WodinPlotDownloadImageModal from "../../../../src/app/components/plot/WodinPlotDownloadImageModal.vue";
 
 describe("WodinPlot", () => {
     const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");
@@ -463,5 +471,30 @@ describe("WodinPlot", () => {
         expect(mockPlotDataFn).toBeCalledTimes(1);
         expect(mockPlotlyNewPlot).toBeCalledTimes(1);
         expect(mockOn).toBeCalledTimes(1);
+    });
+
+    it("shows modal if showDownloadImageModal from mixin is true", async () => {
+        const wrapper = getWrapper();
+        expect(mockDownloadPlotMixin).toHaveBeenCalled();
+
+        expect(wrapper.findComponent(WodinPlotDownloadImageModal).props("title")).toBe("test title");
+        expect(wrapper.findComponent(WodinPlotDownloadImageModal).props("xLabel")).toBe("test x");
+        expect(wrapper.findComponent(WodinPlotDownloadImageModal).props("yLabel")).toBe("test y");
+
+        mockDownloadImageResult.showDownloadImageModal.value = false;
+        await nextTick();
+        expect(wrapper.findComponent(WodinPlotDownloadImageModal).exists()).toBe(false);
+    });
+
+    it("closes modal on emit", () => {
+        const wrapper = getWrapper();
+        wrapper.findComponent(WodinPlotDownloadImageModal).vm.$emit("close");
+        expect(mockDownloadImageResult.closeModal).toHaveBeenCalled();
+    });
+
+    it("downloads image on emit confirm", () => {
+        const wrapper = getWrapper();
+        wrapper.findComponent(WodinPlotDownloadImageModal).vm.$emit("confirm", "new title", "new x", "new y");
+        expect(mockDownloadImageResult.downloadImage).toHaveBeenCalledWith("new title", "new x", "new y");
     });
 });

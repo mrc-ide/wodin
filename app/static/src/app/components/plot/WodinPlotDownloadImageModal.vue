@@ -10,35 +10,35 @@
           <div class="modal-body">
             <div class="row">
               <div class="col-4">
-                <label class="col-form-label">Title</label>
+                <label for="download-img-title" class="col-form-label">Title</label>
               </div>
               <div class="col-8 pe-0">
-                <input type="text" class="form-control" v-model="editProps.title">
+                <input id="download-img-title" type="text" class="form-control" v-model="editProps.title">
               </div>
             </div>
             <div class="row mt-2">
               <div class="col-4">
-                <label class="col-form-label">X axis label</label>
+                <label for="download-img-x-label" class="col-form-label">X axis label</label>
               </div>
               <div class="col-8 pe-0">
-                <input type="text" class="form-control" v-model="editProps.xLabel">
+                <input id="download-img-x-label" type="text" class="form-control" v-model="editProps.xLabel">
               </div>
             </div>
             <div class="row mt-2">
               <div class="col-4">
-                <label class="col-form-label">Y axis label</label>
+                <label for="download-img-y-label" class="col-form-label">Y axis label</label>
               </div>
               <div class="col-8 pe-0">
-                <input type="text" class="form-control" v-model="editProps.yLabel">
+                <input id="download-img-y-label" type="text" class="form-control" v-model="editProps.yLabel">
               </div>
             </div>
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary"
-                    id="confirm-download-plot-image"
+                    id="confirm-download-img"
                     @click="confirm">Download</button>
             <button class="btn btn-outline"
-                    id="cancel-download-plot-image"
+                    id="cancel-download-img"
                     @click="close">Cancel</button>
           </div>
         </div>

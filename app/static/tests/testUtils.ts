@@ -1,5 +1,7 @@
 import { VueWrapper } from "@vue/test-utils";
 import WodinPanels from "../src/app/components/WodinPanels.vue";
+import {ref} from "vue";
+import * as downloadPlot from "../src/app/components/mixins/downloadPlot";
 
 export const fileTimeout = 20;
 
@@ -29,3 +31,13 @@ export const expectRightWodinTabs = (wrapper: VueWrapper<any>, expectedTabNames:
 export const expectLeftWodinTabs = (wrapper: VueWrapper<any>, expectedTabNames: string[]) => {
     expectWodinTabs(wrapper, expectedTabNames, "left");
 };
+
+export const mockDownloadImageResult = {
+    showDownloadImageModal: ref(true),
+    downloadImageProps: { title: "test title", xLabel: "test x", yLabel: "test y" },
+    closeModal: jest.fn(),
+    downloadImage: jest.fn()
+} as any;
+
+export const mockDownloadPlotMixin = jest.spyOn(downloadPlot, "default").mockImplementation(() => mockDownloadImageResult);
+
