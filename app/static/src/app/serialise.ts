@@ -71,7 +71,8 @@ function serialiseRun(run: RunState): SerialisedRunState {
         resultOde: serialiseSolutionResult(run.resultOde),
         resultDiscrete: serialiseDiscreteResult(run.resultDiscrete),
         parameterSetResults: serialisedParameterSetResults,
-        advancedSettings: run.advancedSettings
+        advancedSettings: run.advancedSettings,
+        showUnchangedParameters: run.showUnchangedParameters
     };
 }
 

@@ -47,7 +47,8 @@ export interface SerialisedRunState {
     resultOde: SerialisedRunResult | null,
     resultDiscrete: SerialisedRunResult | null,
     parameterSetResults: Dict<SerialisedRunResult | null>,
-    advancedSettings: AdvancedSettings
+    advancedSettings: AdvancedSettings,
+    showUnchangedParameters: boolean
 }
 
 export interface SerialisedSensitivityResult {

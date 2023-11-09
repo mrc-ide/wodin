@@ -24,7 +24,8 @@ export enum RunMutation {
     ToggleParameterSetHidden = "ToggleParameterSetHidden",
     SaveParameterDisplayName = "SaveParameterDisplayName",
     TurnOffDisplayNameError = "TurnOffDisplayNameError",
-    UpdateAdvancedSettings = "UpdateAdvancedSettings"
+    UpdateAdvancedSettings = "UpdateAdvancedSettings",
+    ToggleShowUnchangedParameters = "ToggleShowUnchangedParameters"
 }
 
 const runRequiredNone = {
@@ -189,5 +190,8 @@ export const mutations: MutationTree<RunState> = {
         if (paramSet) {
             paramSet.displayNameErrorMsg = "";
         }
+    },
+    [RunMutation.ToggleShowUnchangedParameters](state: RunState) {
+        state.showUnchangedParameters = !state.showUnchangedParameters;
     }
 };
