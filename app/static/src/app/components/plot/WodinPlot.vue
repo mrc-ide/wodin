@@ -7,7 +7,7 @@
     </div>
     <wodin-plot-data-summary :data="baseData"></wodin-plot-data-summary>
     <slot></slot>
-    <wodin-plot-download-image-modal :open="showDownloadImageModal"
+    <wodin-plot-download-image-modal v-if="showDownloadImageModal"
                                      :title="downloadImageProps.title"
                                      :x-label="downloadImageProps.xLabel"
                                      :y-label="downloadImageProps.yLabel"

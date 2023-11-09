@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-if="open" class="modal-backdrop fade show"></div>
-    <div class="modal" :class="{show: open}" :style="modalStyle">
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal show d-block">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
@@ -48,12 +48,9 @@
 </template>
 
 <script setup lang="ts">
-import {computed, defineProps, defineEmits, watch, reactive} from "vue";
-
-// TODO put the WodinPlot changes in a mixin and use that from Sensitivity Summary plot too
+import {defineProps, defineEmits, reactive} from "vue";
 
 const props = defineProps({
-    open: Boolean,
     title: String,
     xLabel: String,
     yLabel: String
@@ -62,22 +59,11 @@ const props = defineProps({
 const emit = defineEmits(["close", "confirm"]);
 
 const editProps = reactive({
-  title: "",
-  xLabel: "",
-  yLabel: ""
+  title: props.title,
+  xLabel: props.xLabel,
+  yLabel: props.yLabel
 });
 
-const modalStyle = computed(() => {
-    return { display: props.open ? "block" : "none" };
-});
-
-watch(() => props.open, (newValue) => {
-  if (newValue) {
-    editProps.title = props.title;
-    editProps.xLabel = props.xLabel;
-    editProps.yLabel = props.yLabel;
-  }
-});
 
 const close = () => {
     emit("close");
