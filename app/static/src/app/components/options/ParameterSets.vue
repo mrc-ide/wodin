@@ -70,7 +70,8 @@ export default defineComponent({
             }
             // do not allow set to be created when a duplicate set already exists
             const duplicateExists = store.state.run.parameterSets.some(
-                (ps: ParameterSet) => JSON.stringify(ps.parameterValues) === JSON.stringify(store.state.run.parameterValues)
+                (ps: ParameterSet) => JSON.stringify(ps.parameterValues)
+          === JSON.stringify(store.state.run.parameterValues)
             );
             return !duplicateExists;
         });

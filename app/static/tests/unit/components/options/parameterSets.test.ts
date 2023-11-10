@@ -132,7 +132,7 @@ describe("ParameterSets", () => {
         const wrapper = getWrapper({});
         expect(wrapper.find("p.small").text()).toBe("Saved parameter sets will show here");
     });
-    it("should call RunMutation.ToggleShowUnchangedParameters when unchanged parameters checkbox is clicked", async () => {
+    it("should call ToggleShowUnchangedParameters when unchanged parameters checkbox is clicked", async () => {
         const wrapper = getWrapper({});
         await wrapper.find("input.form-check-input").trigger("click");
         expect(mockToggleShowUnchangedParameters).toHaveBeenCalledTimes(1);
