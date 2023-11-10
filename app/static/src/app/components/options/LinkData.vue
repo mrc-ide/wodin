@@ -6,12 +6,14 @@
           <label class="col-form-label">{{ dataColumn }}</label>
         </div>
         <div class="col-6">
-            <select class="form-select"
-                    @change="updateLinkedVariable(dataColumn, $event)"
-                    :value="linkedVariables[dataColumn] || ''">
-              <option value="">-- no link --</option>
-              <option v-for="modelVar in selectedVariables" :value="modelVar" :key="modelVar">{{modelVar}}</option>
-            </select>
+          <select
+            class="form-select"
+            @change="updateLinkedVariable(dataColumn, $event)"
+            :value="linkedVariables[dataColumn] || ''"
+          >
+            <option value="">-- no link --</option>
+            <option v-for="modelVar in selectedVariables" :value="modelVar" :key="modelVar">{{ modelVar }}</option>
+          </select>
         </div>
       </div>
     </template>
@@ -31,44 +33,46 @@ import userMessages from "../../userMessages";
 import { FitDataAction } from "../../store/fitData/actions";
 
 export default defineComponent({
-    name: "LinkData",
-    setup() {
-        const namespace = "fitData";
-        const store = useStore();
-        const dataColumns = computed(() => store.getters[`${namespace}/${FitDataGetter.nonTimeColumns}`]);
-        const modelSuccess = computed(() => store.state.model.odinModelResponse?.valid);
-        const selectedVariables = computed(() => store.state.model.selectedVariables);
-        const linkedVariables = computed(() => store.state.fitData.linkedVariables);
-        const linkPrerequisitesMessage = computed(() => {
-            const messages = [];
-            let result = null;
-            const { prefix, data, model } = userMessages.fitData.linkPrerequisites;
-            if (!dataColumns.value) {
-                messages.push(data);
-            }
-            if (!modelSuccess.value) {
-                messages.push(model);
-            }
-            if (messages.length) {
-                result = `${prefix} ${messages.join(", ")}`;
-            }
-            return result;
-        });
+  name: "LinkData",
+  setup() {
+    const namespace = "fitData";
+    const store = useStore();
+    const dataColumns = computed(() => store.getters[`${namespace}/${FitDataGetter.nonTimeColumns}`]);
+    const modelSuccess = computed(() => store.state.model.odinModelResponse?.valid);
+    const selectedVariables = computed(() => store.state.model.selectedVariables);
+    const linkedVariables = computed(() => store.state.fitData.linkedVariables);
+    const linkPrerequisitesMessage = computed(() => {
+      const messages = [];
+      let result = null;
+      const { prefix, data, model } = userMessages.fitData.linkPrerequisites;
+      if (!dataColumns.value) {
+        messages.push(data);
+      }
+      if (!modelSuccess.value) {
+        messages.push(model);
+      }
+      if (messages.length) {
+        result = `${prefix} ${messages.join(", ")}`;
+      }
+      return result;
+    });
 
-        const updateLinkedVariable = (dataColumn: string, event: Event) => {
-            const selectValue = (event.target as HTMLSelectElement).value;
-            store.dispatch(`${namespace}/${FitDataAction.UpdateLinkedVariable}`,
-                { column: dataColumn, variable: selectValue || null });
-        };
+    const updateLinkedVariable = (dataColumn: string, event: Event) => {
+      const selectValue = (event.target as HTMLSelectElement).value;
+      store.dispatch(`${namespace}/${FitDataAction.UpdateLinkedVariable}`, {
+        column: dataColumn,
+        variable: selectValue || null
+      });
+    };
 
-        return {
-            dataColumns,
-            modelSuccess,
-            selectedVariables,
-            linkedVariables,
-            updateLinkedVariable,
-            linkPrerequisitesMessage
-        };
-    }
+    return {
+      dataColumns,
+      modelSuccess,
+      selectedVariables,
+      linkedVariables,
+      updateLinkedVariable,
+      linkPrerequisitesMessage
+    };
+  }
 });
 </script>

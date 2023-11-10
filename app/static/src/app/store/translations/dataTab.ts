@@ -1,18 +1,18 @@
 import { TranslationLocales } from "../../types/languageTypes";
 
 interface DataTabTranslations extends TranslationLocales {
-    dataTabExample: string
+  dataTabExample: string;
 }
 
 const en: DataTabTranslations = {
-    dataTabExample: "hello data tab"
+  dataTabExample: "hello data tab"
 };
 
 const fr: DataTabTranslations = {
-    dataTabExample: "bonjour onglet données"
+  dataTabExample: "bonjour onglet données"
 };
 
 export const dataTabLocales = {
-    en,
-    fr
+  en,
+  fr
 };

@@ -1,18 +1,18 @@
 import { TranslationLocales } from "../../types/languageTypes";
 
 interface StochasticHelpTranslations extends TranslationLocales {
-    stochasticHelpExample: string
+  stochasticHelpExample: string;
 }
 
 const en: StochasticHelpTranslations = {
-    stochasticHelpExample: "hello stochastic help"
+  stochasticHelpExample: "hello stochastic help"
 };
 
 const fr: StochasticHelpTranslations = {
-    stochasticHelpExample: "bonjour aide stochastique"
+  stochasticHelpExample: "bonjour aide stochastique"
 };
 
 export const stochasticHelpLocales = {
-    en,
-    fr
+  en,
+  fr
 };

@@ -1,18 +1,18 @@
 import { TranslationLocales } from "../../types/languageTypes";
 
 interface GenericHelpTranslations extends TranslationLocales {
-    genericHelpExample: string
+  genericHelpExample: string;
 }
 
 const en: GenericHelpTranslations = {
-    genericHelpExample: "hello generic help"
+  genericHelpExample: "hello generic help"
 };
 
 const fr: GenericHelpTranslations = {
-    genericHelpExample: "bonjour aide générique"
+  genericHelpExample: "bonjour aide générique"
 };
 
 export const genericHelpLocales = {
-    en,
-    fr
+  en,
+  fr
 };

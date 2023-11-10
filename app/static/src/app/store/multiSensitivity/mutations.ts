@@ -4,12 +4,12 @@ import { SensitivityParameterSettings } from "../sensitivity/state";
 import { baseSensitivityMutations } from "../sensitivity/mutations";
 
 export enum MultiSensitivityMutation {
-    SetParamSettings = "SetParamSettings"
+  SetParamSettings = "SetParamSettings"
 }
 
 export const mutations: MutationTree<MultiSensitivityState> = {
-    ...baseSensitivityMutations,
-    [MultiSensitivityMutation.SetParamSettings](state:MultiSensitivityState, payload: SensitivityParameterSettings[]) {
-        state.paramSettings = payload;
-    }
+  ...baseSensitivityMutations,
+  [MultiSensitivityMutation.SetParamSettings](state: MultiSensitivityState, payload: SensitivityParameterSettings[]) {
+    state.paramSettings = payload;
+  }
 };

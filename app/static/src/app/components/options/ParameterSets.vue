@@ -16,9 +16,7 @@
         @input="toggleShowUnchangedParameters"
         id="unchangedParamsCheck"
       />
-      <label class="form-check-label" for="unchangedParamsCheck">
-        Show unchanged parameters
-      </label>
+      <label class="form-check-label" for="unchangedParamsCheck"> Show unchanged parameters </label>
     </div>
   </div>
   <div v-if="parameterSets?.length === 0" class="container mt-1">
@@ -45,43 +43,39 @@ import { RunGetter } from "../../store/run/getters";
 import { ParameterSet } from "../../store/run/state";
 
 export default defineComponent({
-    name: "ParameterSets",
-    components: { ParameterSetView },
-    setup() {
-        const store = useStore();
-        const parameterSets = computed(() => store.state.run.parameterSets);
+  name: "ParameterSets",
+  components: { ParameterSetView },
+  setup() {
+    const store = useStore();
+    const parameterSets = computed(() => store.state.run.parameterSets);
 
-        const showUnchangedParameters = computed(
-            () => store.state.run.showUnchangedParameters
-        );
-        const toggleShowUnchangedParameters = () => {
-            store.commit(`run/${RunMutation.ToggleShowUnchangedParameters}`);
-        };
-        const createParameterSet = () => {
-            store.dispatch(`run/${RunAction.NewParameterSet}`);
-        };
+    const showUnchangedParameters = computed(() => store.state.run.showUnchangedParameters);
+    const toggleShowUnchangedParameters = () => {
+      store.commit(`run/${RunMutation.ToggleShowUnchangedParameters}`);
+    };
+    const createParameterSet = () => {
+      store.dispatch(`run/${RunAction.NewParameterSet}`);
+    };
 
-        const runRequired = computed(
-            () => store.getters[`run/${RunGetter.runIsRequired}`]
-        );
-        const canCreateParameterSet = computed(() => {
-            if (store.state.model.compileRequired || runRequired.value) {
-                return false;
-            }
-            // do not allow set to be created when a duplicate set already exists
-            const duplicateExists = store.state.run.parameterSets.some(
-                (ps: ParameterSet) => JSON.stringify(ps.parameterValues) === JSON.stringify(store.state.run.parameterValues)
-            );
-            return !duplicateExists;
-        });
+    const runRequired = computed(() => store.getters[`run/${RunGetter.runIsRequired}`]);
+    const canCreateParameterSet = computed(() => {
+      if (store.state.model.compileRequired || runRequired.value) {
+        return false;
+      }
+      // do not allow set to be created when a duplicate set already exists
+      const duplicateExists = store.state.run.parameterSets.some(
+        (ps: ParameterSet) => JSON.stringify(ps.parameterValues) === JSON.stringify(store.state.run.parameterValues)
+      );
+      return !duplicateExists;
+    });
 
-        return {
-            parameterSets,
-            canCreateParameterSet,
-            createParameterSet,
-            showUnchangedParameters,
-            toggleShowUnchangedParameters
-        };
-    }
+    return {
+      parameterSets,
+      canCreateParameterSet,
+      createParameterSet,
+      showUnchangedParameters,
+      toggleShowUnchangedParameters
+    };
+  }
 });
 </script>

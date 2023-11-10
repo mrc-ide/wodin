@@ -3,12 +3,12 @@ import { actions } from "./actions";
 import { mutations } from "./mutations";
 
 export const defaultState: VersionsState = {
-    versions: null
+  versions: null
 };
 
 export const versions = {
-    namespaced: true,
-    state: defaultState,
-    actions,
-    mutations
+  namespaced: true,
+  state: defaultState,
+  actions,
+  mutations
 };

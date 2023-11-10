@@ -1,7 +1,9 @@
 <template>
   <div>
-    <sensitivity-options v-if="sensitivityOpen || multiSensitivityOpen"
-                         :multi-sensitivity="multiSensitivityOpen"></sensitivity-options>
+    <sensitivity-options
+      v-if="sensitivityOpen || multiSensitivityOpen"
+      :multi-sensitivity="multiSensitivityOpen"
+    ></sensitivity-options>
     <vertical-collapse v-if="isFit" title="Link" collapse-id="link-data">
       <link-data></link-data>
     </vertical-collapse>
@@ -17,10 +19,12 @@
     <vertical-collapse v-if="!multiSensitivityOpen" title="Graph Settings" collapse-id="graph-settings">
       <graph-settings></graph-settings>
     </vertical-collapse>
-    <vertical-collapse v-if="!isStochastic"
-                       title="Advanced Settings"
-                       collapse-id="advanced-settings"
-                       :collapsed-default="true">
+    <vertical-collapse
+      v-if="!isStochastic"
+      title="Advanced Settings"
+      collapse-id="advanced-settings"
+      :collapsed-default="true"
+    >
       <advanced-settings></advanced-settings>
     </vertical-collapse>
     <vertical-collapse v-if="!isStochastic" title="Saved Parameter Sets" collapse-id="parameter-sets">
@@ -44,36 +48,36 @@ import ParameterSets from "./ParameterSets.vue";
 import AdvancedSettings from "./AdvancedSettings.vue";
 
 export default defineComponent({
-    name: "OptionsTab",
-    components: {
-        ParameterSets,
-        LinkData,
-        OptimisationOptions,
-        ParameterValues,
-        RunOptions,
-        SensitivityOptions,
-        VerticalCollapse,
-        GraphSettings,
-        AdvancedSettings
-    },
-    setup() {
-        const store = useStore();
-        const isFit = computed(() => store.state.appType === AppType.Fit);
-        const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
+  name: "OptionsTab",
+  components: {
+    ParameterSets,
+    LinkData,
+    OptimisationOptions,
+    ParameterValues,
+    RunOptions,
+    SensitivityOptions,
+    VerticalCollapse,
+    GraphSettings,
+    AdvancedSettings
+  },
+  setup() {
+    const store = useStore();
+    const isFit = computed(() => store.state.appType === AppType.Fit);
+    const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
 
-        const sensitivityOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Sensitivity);
-        const multiSensitivityOpen = computed(() => {
-            return store.state.openVisualisationTab === VisualisationTab.MultiSensitivity;
-        });
-        const fitTabIsOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Fit);
+    const sensitivityOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Sensitivity);
+    const multiSensitivityOpen = computed(() => {
+      return store.state.openVisualisationTab === VisualisationTab.MultiSensitivity;
+    });
+    const fitTabIsOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Fit);
 
-        return {
-            isFit,
-            isStochastic,
-            sensitivityOpen,
-            multiSensitivityOpen,
-            fitTabIsOpen
-        };
-    }
+    return {
+      isFit,
+      isStochastic,
+      sensitivityOpen,
+      multiSensitivityOpen,
+      fitTabIsOpen
+    };
+  }
 });
 </script>

@@ -18,7 +18,8 @@
     "lint": "vue-cli-service lint --no-fix",
     "lint:fix": "vue-cli-service lint",
     "e2e-test": "npx playwright test",
-    "serve-app": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/hotReload/vue.config.js vue-cli-service serve ./src/app/wodin.ts"
+    "serve-app": "VUE_CLI_SERVICE_CONFIG_PATH=$PWD/hotReload/vue.config.js vue-cli-service serve ./src/app/wodin.ts",
+    "format": "prettier --write ."
   },
   "resolutions": {
     "ansi-regex": "5.0.1"
@@ -75,6 +76,7 @@
     "jest-raw-loader": "^1.0.1",
     "monaco-editor-webpack-plugin": "^6.0.0",
     "node-sass": "^6.0.1",
+    "prettier": "3.0.3",
     "raw-loader": "^4.0.2",
     "read-pkg": "^7.1.0",
     "renderkid": "^3.0.0",

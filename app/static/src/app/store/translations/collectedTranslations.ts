@@ -11,20 +11,20 @@ import { stochasticHelpLocales } from "./stochasticHelpTab";
 import { sharedLocales } from "./shared";
 
 const locales = [
-    codeTabLocales,
-    dataTabLocales,
-    fitTabLocales,
-    genericHelpLocales,
-    headerLocales,
-    indexPageLocales,
-    optionsTabLocales,
-    runTabLocales,
-    sensitivityTabLocales,
-    stochasticHelpLocales,
-    sharedLocales
+  codeTabLocales,
+  dataTabLocales,
+  fitTabLocales,
+  genericHelpLocales,
+  headerLocales,
+  indexPageLocales,
+  optionsTabLocales,
+  runTabLocales,
+  sensitivityTabLocales,
+  stochasticHelpLocales,
+  sharedLocales
 ];
 
 export const collectedTranslations = {
-    en: locales.map((locale) => locale.en),
-    fr: locales.map((locale) => locale.fr)
+  en: locales.map((locale) => locale.en),
+  fr: locales.map((locale) => locale.fr)
 };

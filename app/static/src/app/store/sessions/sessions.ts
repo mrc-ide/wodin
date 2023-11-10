@@ -3,12 +3,12 @@ import { actions } from "./actions";
 import { mutations } from "./mutations";
 
 export const defaultState: SessionsState = {
-    sessionsMetadata: null
+  sessionsMetadata: null
 };
 
 export const sessions = {
-    namespaced: true,
-    state: defaultState,
-    actions,
-    mutations
+  namespaced: true,
+  state: defaultState,
+  actions,
+  mutations
 };

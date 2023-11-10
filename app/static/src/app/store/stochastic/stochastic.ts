@@ -21,41 +21,38 @@ const language = getStoreModule();
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
-    return {
-        sessionId: newSessionId(),
-        sessionLabel: null,
-        appType: AppType.Stochastic,
-        openVisualisationTab: VisualisationTab.Run,
-        appName: null,
-        baseUrl: null,
-        appsPath: null,
-        config: null,
-        queuedStateUploadIntervalId: -1,
-        stateUploadInProgress: false,
-        configured: false,
-        persisted: false
-    };
+  return {
+    sessionId: newSessionId(),
+    sessionLabel: null,
+    appType: AppType.Stochastic,
+    openVisualisationTab: VisualisationTab.Run,
+    appName: null,
+    baseUrl: null,
+    appsPath: null,
+    config: null,
+    queuedStateUploadIntervalId: -1,
+    stateUploadInProgress: false,
+    configured: false,
+    persisted: false
+  };
 };
 
 export const storeOptions: StoreOptions<StochasticState> = {
-    state: defaultState(),
-    actions,
-    mutations,
-    getters,
-    modules: {
-        errors,
-        code,
-        model,
-        run,
-        sensitivity,
-        multiSensitivity,
-        sessions,
-        versions,
-        graphSettings,
-        language
-    },
-    plugins: [
-        logMutations,
-        persistState
-    ]
+  state: defaultState(),
+  actions,
+  mutations,
+  getters,
+  modules: {
+    errors,
+    code,
+    model,
+    run,
+    sensitivity,
+    multiSensitivity,
+    sessions,
+    versions,
+    graphSettings,
+    language
+  },
+  plugins: [logMutations, persistState]
 };

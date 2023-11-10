@@ -1,18 +1,18 @@
 import { TranslationLocales } from "../../types/languageTypes";
 
 interface CodeTabTranslations extends TranslationLocales {
-    codeTabExample: string
+  codeTabExample: string;
 }
 
 const en: CodeTabTranslations = {
-    codeTabExample: "hello code tab"
+  codeTabExample: "hello code tab"
 };
 
 const fr: CodeTabTranslations = {
-    codeTabExample: "bonjour onglet code"
+  codeTabExample: "bonjour onglet code"
 };
 
 export const codeTabLocales = {
-    en,
-    fr
+  en,
+  fr
 };

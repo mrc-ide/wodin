@@ -1,6 +1,11 @@
 import { expect, test, Page } from "@playwright/test";
 import {
-    newFitCode, uploadCSVData, writeCode, startModelFit, waitForModelFitCompletion, realisticFitData
+  newFitCode,
+  uploadCSVData,
+  writeCode,
+  startModelFit,
+  waitForModelFitCompletion,
+  realisticFitData
 } from "./utils";
 import PlaywrightConfig from "../../playwright.config";
 
@@ -75,219 +80,214 @@ const multiCasesFitData = `Day,Cases,Cases2
 const { timeout } = PlaywrightConfig;
 
 const runFit = async (page: Page) => {
-    await startModelFit(page);
-    await waitForModelFitCompletion(page);
+  await startModelFit(page);
+  await waitForModelFitCompletion(page);
 };
 
 const expectUpdateFitMsg = async (page: Page, msg: string) => {
-    await expect(await page.locator(".fit-tab .action-required-msg")).toHaveText(msg, { timeout });
+  await expect(await page.locator(".fit-tab .action-required-msg")).toHaveText(msg, { timeout });
 };
 
 const reRunFit = async (page: Page) => {
-    await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Fit");
-    await page.click(".wodin-right .wodin-content div.mt-4 button#fit-btn");
+  await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Fit");
+  await page.click(".wodin-right .wodin-content div.mt-4 button#fit-btn");
 
-    await waitForModelFitCompletion(page);
-    await expectUpdateFitMsg(page, "");
+  await waitForModelFitCompletion(page);
+  await expectUpdateFitMsg(page, "");
 };
 
 test.describe("Wodin App model fit tests", () => {
-    test.beforeEach(async ({ page }) => {
-        await page.goto("/apps/day2");
-    });
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/apps/day2");
+  });
 
-    test("renders Data tab", async ({ page }) => {
-        await expect(await page.innerText(".wodin-left .wodin-content .nav-tabs .active")).toBe("Data");
-        await expect(await page.innerText(".wodin-left .wodin-content div.mt-4 h3")).toBe("Upload data");
-    });
+  test("renders Data tab", async ({ page }) => {
+    await expect(await page.innerText(".wodin-left .wodin-content .nav-tabs .active")).toBe("Data");
+    await expect(await page.innerText(".wodin-left .wodin-content div.mt-4 h3")).toBe("Upload data");
+  });
 
-    test("can change to Code tab and back", async ({ page }) => {
-        await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
-        await expect(await page.innerText(".wodin-left .wodin-content .nav-tabs .active")).toBe("Code");
-        await expect(await page.innerText(".wodin-left .wodin-content #compile-btn")).toBe("Compile");
-    });
+  test("can change to Code tab and back", async ({ page }) => {
+    await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
+    await expect(await page.innerText(".wodin-left .wodin-content .nav-tabs .active")).toBe("Code");
+    await expect(await page.innerText(".wodin-left .wodin-content #compile-btn")).toBe("Compile");
+  });
 
-    test("can change to Options tab and back", async ({ page }) => {
-        await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
-        await expect(await page.innerText(".wodin-left .wodin-content .nav-tabs .active")).toBe("Options");
-        await expect(await page.innerText(".wodin-left .wodin-content div.mt-4")).toContain("Model Parameters");
-    });
+  test("can change to Options tab and back", async ({ page }) => {
+    await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
+    await expect(await page.innerText(".wodin-left .wodin-content .nav-tabs .active")).toBe("Options");
+    await expect(await page.innerText(".wodin-left .wodin-content div.mt-4")).toContain("Model Parameters");
+  });
 
-    test("renders Run tab", async ({ page }) => {
-        await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Run");
-        await expect(await page.innerText(".wodin-right .wodin-content #run-btn")).toBe("Run model");
-    });
+  test("renders Run tab", async ({ page }) => {
+    await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Run");
+    await expect(await page.innerText(".wodin-right .wodin-content #run-btn")).toBe("Run model");
+  });
 
-    test("can change to Fit tab and back", async ({ page }) => {
-        await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
-        await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Fit");
-        await expect(await page.innerText(".wodin-right .wodin-content div.mt-4 button"))
-            .toBe("Fit model");
-    });
+  test("can change to Fit tab and back", async ({ page }) => {
+    await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
+    await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Fit");
+    await expect(await page.innerText(".wodin-right .wodin-content div.mt-4 button")).toBe("Fit model");
+  });
 
-    test("can change to Sensitivity tab and back", async ({ page }) => {
-        await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
-        await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Sensitivity");
-        await expect(await page.innerText(".wodin-right .wodin-content div.mt-4 button")).toBe("Run sensitivity");
-    });
+  test("can change to Sensitivity tab and back", async ({ page }) => {
+    await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
+    await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Sensitivity");
+    await expect(await page.innerText(".wodin-right .wodin-content div.mt-4 button")).toBe("Run sensitivity");
+  });
 
-    test("can run model fit", async ({ page }) => {
-        await startModelFit(page);
-        await waitForModelFitCompletion(page);
+  test("can run model fit", async ({ page }) => {
+    await startModelFit(page);
+    await waitForModelFitCompletion(page);
 
-        await expect(await page.innerText(":nth-match(.wodin-plot-container span, 1)")).toContain("Iterations:");
-        const sumOfSquares = await page.innerText(":nth-match(.wodin-plot-container span, 2)");
-        expect(sumOfSquares).toContain("Sum of squares:");
+    await expect(await page.innerText(":nth-match(.wodin-plot-container span, 1)")).toContain("Iterations:");
+    const sumOfSquares = await page.innerText(":nth-match(.wodin-plot-container span, 2)");
+    expect(sumOfSquares).toContain("Sum of squares:");
 
-        const plotSelector = ".wodin-right .wodin-content div.mt-4 .js-plotly-plot";
+    const plotSelector = ".wodin-right .wodin-content div.mt-4 .js-plotly-plot";
 
-        // Test line is plotted for fit trace and data points
-        const linesSelector = `${plotSelector} .scatterlayer .trace .lines path`;
-        await expect((await page.locator(linesSelector).getAttribute("d"))!.startsWith("M")).toBe(true);
-        const pointsSelector = `${plotSelector} .scatterlayer .trace .points path`;
-        expect((await page.locator(`:nth-match(${pointsSelector}, 1)`).getAttribute("d"))!.startsWith("M")).toBe(true);
+    // Test line is plotted for fit trace and data points
+    const linesSelector = `${plotSelector} .scatterlayer .trace .lines path`;
+    await expect((await page.locator(linesSelector).getAttribute("d"))!.startsWith("M")).toBe(true);
+    const pointsSelector = `${plotSelector} .scatterlayer .trace .points path`;
+    expect((await page.locator(`:nth-match(${pointsSelector}, 1)`).getAttribute("d"))!.startsWith("M")).toBe(true);
 
-        // Test traces appear on legend
-        const legendTextSelector = `${plotSelector} .legendtext`;
-        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("I");
-        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 2)`)).toBe("Cases");
+    // Test traces appear on legend
+    const legendTextSelector = `${plotSelector} .legendtext`;
+    await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("I");
+    await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 2)`)).toBe("Cases");
 
-        // Test modebar menu is present
-        await expect(await page.isVisible(`${plotSelector} .modebar`)).toBe(true);
+    // Test modebar menu is present
+    await expect(await page.isVisible(`${plotSelector} .modebar`)).toBe(true);
 
-        // Test can run again with different params to vary, and get different result
-        await page.click(":nth-match(input.vary-param-check, 2)");
-        await page.click(".wodin-right .wodin-content div.mt-4 button");
-        await waitForModelFitCompletion(page);
-        const newSumOfSquares = await page.innerText(":nth-match(.wodin-plot-container span, 2)");
-        expect(newSumOfSquares).not.toEqual(sumOfSquares);
-    });
+    // Test can run again with different params to vary, and get different result
+    await page.click(":nth-match(input.vary-param-check, 2)");
+    await page.click(".wodin-right .wodin-content div.mt-4 button");
+    await waitForModelFitCompletion(page);
+    const newSumOfSquares = await page.innerText(":nth-match(.wodin-plot-container span, 2)");
+    expect(newSumOfSquares).not.toEqual(sumOfSquares);
+  });
 
-    test("can see expected update required messages when code changes", async ({ page }) => {
-        await runFit(page);
-        await expectUpdateFitMsg(page, "");
+  test("can see expected update required messages when code changes", async ({ page }) => {
+    await runFit(page);
+    await expectUpdateFitMsg(page, "");
 
-        // Update code
-        await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
-        await writeCode(page, newFitCode);
-        await expectUpdateFitMsg(page, "Model code has been updated. Compile code and Fit Model for updated best fit.");
+    // Update code
+    await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
+    await writeCode(page, newFitCode);
+    await expectUpdateFitMsg(page, "Model code has been updated. Compile code and Fit Model for updated best fit.");
 
-        // Compile code
-        await page.click("#compile-btn");
-        await expectUpdateFitMsg(page, "Fit is out of date: model has been recompiled. "
-                                 + "Rerun fit to update.");
+    // Compile code
+    await page.click("#compile-btn");
+    await expectUpdateFitMsg(page, "Fit is out of date: model has been recompiled. " + "Rerun fit to update.");
 
-        await reRunFit(page); // checks message is reset
-    });
+    await reRunFit(page); // checks message is reset
+  });
 
-    test("can see expected update required message when new data uploaded", async ({ page }) => {
-        await runFit(page);
+  test("can see expected update required message when new data uploaded", async ({ page }) => {
+    await runFit(page);
 
-        await page.click(":nth-match(.wodin-left .nav-tabs a, 1)");
-        await expect(await page.locator("#fitDataUpload")).toBeVisible({ timeout });
+    await page.click(":nth-match(.wodin-left .nav-tabs a, 1)");
+    await expect(await page.locator("#fitDataUpload")).toBeVisible({ timeout });
 
-        await uploadCSVData(page, multiTimeFitData);
+    await uploadCSVData(page, multiTimeFitData);
 
-        await expectUpdateFitMsg(page, "Fit is out of date: data have been updated. Rerun fit to update.");
+    await expectUpdateFitMsg(page, "Fit is out of date: data have been updated. Rerun fit to update.");
 
-        await reRunFit(page); // checks message is reset
+    await reRunFit(page); // checks message is reset
 
-        // Change time variable
-        await page.selectOption("#select-time-variable", "Day2");
-        await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. "
-                                 + "Rerun fit to update.");
+    // Change time variable
+    await page.selectOption("#select-time-variable", "Day2");
+    await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. " + "Rerun fit to update.");
 
-        await reRunFit(page); // checks message is reset
-    });
+    await reRunFit(page); // checks message is reset
+  });
 
-    test("can see expected update required message when linked variable changed", async ({ page }) => {
-        await runFit(page);
+  test("can see expected update required message when linked variable changed", async ({ page }) => {
+    await runFit(page);
 
-        await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
-        await expect(await page.locator("#link-data select")).toBeVisible({ timeout });
-        await page.selectOption("#link-data select", "E");
-        await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. "
-                                 + "Rerun fit to update.");
+    await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
+    await expect(await page.locator("#link-data select")).toBeVisible({ timeout });
+    await page.selectOption("#link-data select", "E");
+    await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. " + "Rerun fit to update.");
 
-        await reRunFit(page); // checks message is reset
-    });
+    await reRunFit(page); // checks message is reset
+  });
 
-    test("can see expected updated required message when target to fit changes", async ({ page }) => {
-        // run fit
-        await startModelFit(page, multiTimeFitData);
-        await waitForModelFitCompletion(page);
+  test("can see expected updated required message when target to fit changes", async ({ page }) => {
+    // run fit
+    await startModelFit(page, multiTimeFitData);
+    await waitForModelFitCompletion(page);
 
-        // Make a new link
-        const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
-        const linkSelect = await linkContainer.locator(":nth-match(select, 2)");
-        await linkSelect.selectOption("S");
+    // Make a new link
+    const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
+    const linkSelect = await linkContainer.locator(":nth-match(select, 2)");
+    await linkSelect.selectOption("S");
 
-        // Select the new link as target
-        const targetSelect = await page.locator("#optimisation select");
-        await targetSelect.selectOption("Day2");
+    // Select the new link as target
+    const targetSelect = await page.locator("#optimisation select");
+    await targetSelect.selectOption("Day2");
 
-        await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. "
-                                 + "Rerun fit to update.");
+    await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. " + "Rerun fit to update.");
 
-        await reRunFit(page); // checks message is reset
-    });
+    await reRunFit(page); // checks message is reset
+  });
 
-    test("can select from multiple targets", async ({ page }) => {
-        await uploadCSVData(page, multiCasesFitData);
-        await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
+  test("can select from multiple targets", async ({ page }) => {
+    await uploadCSVData(page, multiCasesFitData);
+    await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
 
-        // link variables
-        await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
-        await expect(await page.innerText("#optimisation")).toBe(
-            "Please link at least one column in order to set target to fit."
-        );
-        const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
-        const linkSelect1 = await linkContainer.locator(":nth-match(select, 1)");
-        await linkSelect1.selectOption("I");
-        const linkSelect2 = await linkContainer.locator(":nth-match(select, 2)");
-        await linkSelect2.selectOption("E");
+    // link variables
+    await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
+    await expect(await page.innerText("#optimisation")).toBe(
+      "Please link at least one column in order to set target to fit."
+    );
+    const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
+    const linkSelect1 = await linkContainer.locator(":nth-match(select, 1)");
+    await linkSelect1.selectOption("I");
+    const linkSelect2 = await linkContainer.locator(":nth-match(select, 2)");
+    await linkSelect2.selectOption("E");
 
-        await expect(await page.inputValue("#optimisation select")).toBe("Cases");
-        await expect(await page.innerText(":nth-match(#optimisation select option, 1)")).toBe("Cases ~ I");
-        await expect(await page.innerText(":nth-match(#optimisation select option, 2)")).toBe("Cases2 ~ E");
-    });
+    await expect(await page.inputValue("#optimisation select")).toBe("Cases");
+    await expect(await page.innerText(":nth-match(#optimisation select option, 1)")).toBe("Cases ~ I");
+    await expect(await page.innerText(":nth-match(#optimisation select option, 2)")).toBe("Cases2 ~ E");
+  });
 
-    test("can cancel model fit", async ({ page }) => {
-        await startModelFit(page);
-        await page.click(".wodin-right .wodin-content div.mt-4 button#cancel-fit-btn");
+  test("can cancel model fit", async ({ page }) => {
+    await startModelFit(page);
+    await page.click(".wodin-right .wodin-content div.mt-4 button#cancel-fit-btn");
 
-        await expect(await page.getAttribute(".wodin-plot-container .vue-feather", "data-type")).toBe("alert-circle");
-        await expect(await page.innerText(":nth-match(.wodin-plot-container span, 1)")).toContain("Iterations:");
-        await expect(await page.innerText(":nth-match(.wodin-plot-container span, 2)"))
-            .toContain("Sum of squares:");
-        await expect(await page.innerText("#fit-cancelled-msg")).toBe("Model fit was cancelled before converging");
-    });
+    await expect(await page.getAttribute(".wodin-plot-container .vue-feather", "data-type")).toBe("alert-circle");
+    await expect(await page.innerText(":nth-match(.wodin-plot-container span, 1)")).toContain("Iterations:");
+    await expect(await page.innerText(":nth-match(.wodin-plot-container span, 2)")).toContain("Sum of squares:");
+    await expect(await page.innerText("#fit-cancelled-msg")).toBe("Model fit was cancelled before converging");
+  });
 
-    test("can mark sensitivity as out of date after fit", async ({ page }) => {
-        await startModelFit(page);
-        await page.click(".wodin-right .wodin-content div.mt-4 button#cancel-fit-btn");
-        // Open sensitivity tab
-        await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
-        // Run sensitivity
-        await page.click("#run-sens-btn");
-        // Back to fit tab
-        await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
-        await reRunFit(page);
-        // Back to sensitivity tab
-        await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
-        await expect(await page.innerText(".action-required-msg"))
-            .toBe("Plot is out of date: parameters have been changed. Run Sensitivity to update.");
-    });
+  test("can mark sensitivity as out of date after fit", async ({ page }) => {
+    await startModelFit(page);
+    await page.click(".wodin-right .wodin-content div.mt-4 button#cancel-fit-btn");
+    // Open sensitivity tab
+    await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
+    // Run sensitivity
+    await page.click("#run-sens-btn");
+    // Back to fit tab
+    await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
+    await reRunFit(page);
+    // Back to sensitivity tab
+    await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
+    await expect(await page.innerText(".action-required-msg")).toBe(
+      "Plot is out of date: parameters have been changed. Run Sensitivity to update."
+    );
+  });
 
-    test("can display sum of squares on run tab", async ({ page }) => {
-        await uploadCSVData(page, realisticFitData);
-        await page.click(":nth-match(.wodin-right .nav-tabs a, 2)"); // change main to fit tab
-        await page.click(":nth-match(.wodin-left .nav-tabs a, 3)"); // change left to options tab
-        const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
-        const select1 = await linkContainer.locator(":nth-match(select, 1)");
-        await select1.selectOption("onset");
-        await page.click(":nth-match(.wodin-right .nav-tabs a, 1)"); // change main to run tab
-        const sumOfSquares = await page.innerText(":nth-match(.wodin-plot-container span, 1)");
-        expect(sumOfSquares).toContain("Sum of squares:");
-    });
+  test("can display sum of squares on run tab", async ({ page }) => {
+    await uploadCSVData(page, realisticFitData);
+    await page.click(":nth-match(.wodin-right .nav-tabs a, 2)"); // change main to fit tab
+    await page.click(":nth-match(.wodin-left .nav-tabs a, 3)"); // change left to options tab
+    const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
+    const select1 = await linkContainer.locator(":nth-match(select, 1)");
+    await select1.selectOption("onset");
+    await page.click(":nth-match(.wodin-right .nav-tabs a, 1)"); // change main to run tab
+    const sumOfSquares = await page.innerText(":nth-match(.wodin-plot-container span, 1)");
+    expect(sumOfSquares).toContain("Sum of squares:");
+  });
 });

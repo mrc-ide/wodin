@@ -4,20 +4,20 @@ import userMessages from "../userMessages";
 import { Dict } from "../types/utilTypes";
 
 const getHelpBinding = (binding: DirectiveBinding<string>) => {
-    const { value } = binding; // value should be key in userMessages.help
-    const helpString = (userMessages.help as Dict<string>)[value as string];
-    const settings: ToolTipSettings = { content: helpString, delayMs: 500 };
-    return { ...binding, value: settings } as DirectiveBinding<string | ToolTipSettings>;
+  const { value } = binding; // value should be key in userMessages.help
+  const helpString = (userMessages.help as Dict<string>)[value as string];
+  const settings: ToolTipSettings = { content: helpString, delayMs: 500 };
+  return { ...binding, value: settings } as DirectiveBinding<string | ToolTipSettings>;
 };
 
 export default {
-    mounted(el: HTMLElement, binding: DirectiveBinding<string>): void {
-        tooltip.mounted(el, getHelpBinding(binding));
-    },
-    beforeUpdate(el: HTMLElement, binding: DirectiveBinding<string>): void {
-        tooltip.beforeUpdate(el, getHelpBinding(binding));
-    },
-    beforeUnmount(el: HTMLElement): void {
-        tooltip.beforeUnmount(el);
-    }
+  mounted(el: HTMLElement, binding: DirectiveBinding<string>): void {
+    tooltip.mounted(el, getHelpBinding(binding));
+  },
+  beforeUpdate(el: HTMLElement, binding: DirectiveBinding<string>): void {
+    tooltip.beforeUpdate(el, getHelpBinding(binding));
+  },
+  beforeUnmount(el: HTMLElement): void {
+    tooltip.beforeUnmount(el);
+  }
 };

@@ -5,8 +5,14 @@
       <span class="nav-item navbar-app">{{ appTitle }}</span>
     </span>
     <span class="nav-item dropdown">
-      <a id="sessions-menu" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-         aria-expanded="false">
+      <a
+        id="sessions-menu"
+        class="nav-link dropdown-toggle"
+        href="#"
+        role="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
         {{ sessionMenuHeader }}
       </a>
       <ul v-if="initialised" class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -15,25 +21,24 @@
           Edit Label
         </li>
         <template v-if="sessionPersisted">
-          <hr/>
+          <hr />
           <li>
-            <router-link id="all-sessions-link" class="dropdown-item" to="/sessions">
-              All Sessions
-            </router-link>
+            <router-link id="all-sessions-link" class="dropdown-item" to="/sessions"> All Sessions </router-link>
           </li>
         </template>
       </ul>
     </span>
-    <span v-if="initialised" style="display: flex; align-items: center;">
-      <language-switcher :languagesKeys="languagesKeys"/>
+    <span v-if="initialised" style="display: flex; align-items: center">
+      <language-switcher :languagesKeys="languagesKeys" />
       <version-menu :wodin-version="wodinVersion"></version-menu>
     </span>
   </nav>
-  <edit-session-label id="header-edit-session-label"
-                      :open="editSessionLabelOpen"
-                      :session-id="sessionId"
-                      :session-label="sessionLabel"
-                      @close="toggleEditSessionLabel(false)"
+  <edit-session-label
+    id="header-edit-session-label"
+    :open="editSessionLabelOpen"
+    :session-id="sessionId"
+    :session-label="sessionLabel"
+    @close="toggleEditSessionLabel(false)"
   ></edit-session-label>
 </template>
 
@@ -47,57 +52,57 @@ import VersionMenu from "./VersionMenu.vue";
 import { LanguageSwitcher } from "../../../../translationPackage";
 import { Language } from "../../types/languageTypes";
 
-type LanguagesKeys = Record<Language, string>
+type LanguagesKeys = Record<Language, string>;
 
 export default defineComponent({
-    name: "AppHeader",
-    props: {
-        appTitle: String,
-        courseTitle: String,
-        wodinVersion: String
-    },
-    components: {
-        RouterLink,
-        EditSessionLabel,
-        VueFeather,
-        VersionMenu,
-        LanguageSwitcher
-    },
-    setup() {
-        const store = useStore();
-        const baseUrl = computed(() => store.state.baseUrl);
-        const initialised = computed(() => !!(store.state.appName && baseUrl.value && store.state.appsPath));
-        const editSessionLabelOpen = ref(false);
+  name: "AppHeader",
+  props: {
+    appTitle: String,
+    courseTitle: String,
+    wodinVersion: String
+  },
+  components: {
+    RouterLink,
+    EditSessionLabel,
+    VueFeather,
+    VersionMenu,
+    LanguageSwitcher
+  },
+  setup() {
+    const store = useStore();
+    const baseUrl = computed(() => store.state.baseUrl);
+    const initialised = computed(() => !!(store.state.appName && baseUrl.value && store.state.appsPath));
+    const editSessionLabelOpen = ref(false);
 
-        const toggleEditSessionLabel = (edit: boolean) => {
-            editSessionLabelOpen.value = edit;
-        };
+    const toggleEditSessionLabel = (edit: boolean) => {
+      editSessionLabelOpen.value = edit;
+    };
 
-        const sessionId = computed(() => store.state.sessionId);
-        const sessionLabel = computed(() => store.state.sessionLabel);
-        const sessionPersisted = computed(() => store.state.persisted);
+    const sessionId = computed(() => store.state.sessionId);
+    const sessionLabel = computed(() => store.state.sessionLabel);
+    const sessionPersisted = computed(() => store.state.persisted);
 
-        const sessionMenuHeader = computed(() => {
-            return sessionLabel.value ? `Session: ${sessionLabel.value}` : "Sessions";
-        });
+    const sessionMenuHeader = computed(() => {
+      return sessionLabel.value ? `Session: ${sessionLabel.value}` : "Sessions";
+    });
 
-        const languagesKeys: LanguagesKeys = {
-            [Language.en]: "English",
-            [Language.fr]: "Français"
-        };
+    const languagesKeys: LanguagesKeys = {
+      [Language.en]: "English",
+      [Language.fr]: "Français"
+    };
 
-        return {
-            baseUrl,
-            initialised,
-            toggleEditSessionLabel,
-            editSessionLabelOpen,
-            sessionId,
-            sessionLabel,
-            sessionMenuHeader,
-            sessionPersisted,
-            languagesKeys
-        };
-    }
+    return {
+      baseUrl,
+      initialised,
+      toggleEditSessionLabel,
+      editSessionLabelOpen,
+      sessionId,
+      sessionLabel,
+      sessionMenuHeader,
+      sessionPersisted,
+      languagesKeys
+    };
+  }
 });
 </script>
 
@@ -108,6 +113,6 @@ export default defineComponent({
 }
 
 .nav-link {
-  color: #fff
+  color: #fff;
 }
 </style>

@@ -4,15 +4,15 @@ import { AppState } from "../appState/state";
 import { ErrorsState } from "./state";
 
 const defaultErrorsState: () => ErrorsState = () => {
-    return {
-        errors: []
-    };
+  return {
+    errors: []
+  };
 };
 
 const namespaced = true;
 
 export const errors: Module<ErrorsState, AppState> = {
-    namespaced,
-    state: defaultErrorsState(),
-    mutations
+  namespaced,
+  state: defaultErrorsState(),
+  mutations
 };

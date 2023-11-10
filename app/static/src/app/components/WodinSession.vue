@@ -10,47 +10,38 @@ import { AppStateAction } from "../store/appState/actions";
 import { ErrorsMutation } from "../store/errors/mutations";
 
 export default defineComponent({
-    name: "WodinSession",
-    props: {
-        appName: String,
-        baseUrl: String,
-        appsPath: String,
-        loadSessionId: String,
-        shareNotFound: String,
-        enableI18n: Boolean,
-        defaultLanguage: String
-    },
-    components: {
-        RouterView
-    },
-    setup(props) {
-        const store = useStore();
-        const initialised = computed(() => !!(store.state.appName && store.state.baseUrl && store.state.appsPath));
-        onMounted(() => {
-            if (props.shareNotFound) {
-                store.commit(`errors/${ErrorsMutation.AddError}`,
-                    { detail: `Share id not found: ${props.shareNotFound}` });
-            }
-            const {
-                appName,
-                baseUrl,
-                loadSessionId,
-                appsPath,
-                enableI18n,
-                defaultLanguage
-            } = props;
-            store.dispatch(AppStateAction.Initialise,
-                {
-                    appName,
-                    baseUrl,
-                    loadSessionId,
-                    appsPath,
-                    enableI18n,
-                    defaultLanguage
-                });
-        });
+  name: "WodinSession",
+  props: {
+    appName: String,
+    baseUrl: String,
+    appsPath: String,
+    loadSessionId: String,
+    shareNotFound: String,
+    enableI18n: Boolean,
+    defaultLanguage: String
+  },
+  components: {
+    RouterView
+  },
+  setup(props) {
+    const store = useStore();
+    const initialised = computed(() => !!(store.state.appName && store.state.baseUrl && store.state.appsPath));
+    onMounted(() => {
+      if (props.shareNotFound) {
+        store.commit(`errors/${ErrorsMutation.AddError}`, { detail: `Share id not found: ${props.shareNotFound}` });
+      }
+      const { appName, baseUrl, loadSessionId, appsPath, enableI18n, defaultLanguage } = props;
+      store.dispatch(AppStateAction.Initialise, {
+        appName,
+        baseUrl,
+        loadSessionId,
+        appsPath,
+        enableI18n,
+        defaultLanguage
+      });
+    });
 
-        return { initialised };
-    }
+    return { initialised };
+  }
 });
 </script>

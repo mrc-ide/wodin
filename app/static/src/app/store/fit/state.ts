@@ -5,8 +5,8 @@ import { ModelState } from "../model/state";
 import { ModelFitState } from "../modelFit/state";
 
 export interface FitState extends AppState {
-    config: null | FitConfig,
-    fitData: FitDataState,
-    model: ModelState,
-    modelFit: ModelFitState
+  config: null | FitConfig;
+  fitData: FitDataState;
+  model: ModelState;
+  modelFit: ModelFitState;
 }

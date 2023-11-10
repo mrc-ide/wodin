@@ -28,7 +28,9 @@ $grey: #ccc;
   color: $brand;
 }
 
-.brand-link, .brand-link:hover, .brand-link:visited {
+.brand-link,
+.brand-link:hover,
+.brand-link:visited {
   @extend .brand;
   text-decoration: none;
 }
@@ -51,7 +53,8 @@ $grey: #ccc;
   color: #0d6efd !important;
 }
 
-.wodin-plot-container, .summary-plot-container {
+.wodin-plot-container,
+.summary-plot-container {
   position: relative;
 }
 

@@ -45,29 +45,33 @@ import HelpTab from "../help/HelpTab.vue";
 import includeConfiguredTabs from "../mixins/includeConfiguredTabs";
 
 export default defineComponent({
-    name: "BasicApp",
-    components: {
-        HelpTab,
-        CodeTab,
-        RunTab,
-        OptionsTab,
-        SensitivityTab,
-        MultiSensitivityTab,
-        WodinApp,
-        WodinTabs
-    },
-    setup() {
-        const store = useStore();
-        const rightTabSelected = (tab: string) => { store.commit(AppStateMutation.SetOpenVisualisationTab, tab); };
-        const { helpTabName, multiSensitivityTabName, rightTabNames } = includeConfiguredTabs(store,
-            [VisualisationTab.Run, VisualisationTab.Sensitivity]);
+  name: "BasicApp",
+  components: {
+    HelpTab,
+    CodeTab,
+    RunTab,
+    OptionsTab,
+    SensitivityTab,
+    MultiSensitivityTab,
+    WodinApp,
+    WodinTabs
+  },
+  setup() {
+    const store = useStore();
+    const rightTabSelected = (tab: string) => {
+      store.commit(AppStateMutation.SetOpenVisualisationTab, tab);
+    };
+    const { helpTabName, multiSensitivityTabName, rightTabNames } = includeConfiguredTabs(store, [
+      VisualisationTab.Run,
+      VisualisationTab.Sensitivity
+    ]);
 
-        return {
-            rightTabSelected,
-            helpTabName,
-            multiSensitivityTabName,
-            rightTabNames
-        };
-    }
+    return {
+      rightTabSelected,
+      helpTabName,
+      multiSensitivityTabName,
+      rightTabNames
+    };
+  }
 });
 </script>

@@ -1,8 +1,8 @@
 export enum Language {
-    en = "en",
-    fr = "fr"
+  en = "en",
+  fr = "fr"
 }
 
 export interface TranslationLocales {
-    [key: string]: string
+  [key: string]: string;
 }

@@ -20,7 +20,7 @@
             v-tooltip="{
               content: parameterSet.displayNameErrorMsg,
               trigger: 'manual',
-              variant: 'error',
+              variant: 'error'
             }"
           />
         </span>
@@ -74,10 +74,7 @@
           ></vue-feather>
         </span>
       </div>
-      <div
-        class="card-body"
-        :class="parameterSet.hidden ? 'hidden-parameter-set' : ''"
-      >
+      <div class="card-body" :class="parameterSet.hidden ? 'hidden-parameter-set' : ''">
         <span class="trace-label mb-3">
           <div class="me-3">Line Style</div>
           <div class="trace mt-2" :class="lineStyleClass"></div>
@@ -96,15 +93,7 @@
 </template>
 
 <script lang="ts">
-import {
-    computed,
-    defineComponent,
-    nextTick,
-    onBeforeUnmount,
-    PropType,
-    ref,
-    watch
-} from "vue";
+import { computed, defineComponent, nextTick, onBeforeUnmount, PropType, ref, watch } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import { ParameterSet } from "../../store/run/state";
@@ -114,148 +103,128 @@ import { paramSetLineStyle } from "../../plot";
 import { RunGetter } from "../../store/run/getters";
 
 export default defineComponent({
-    name: "ParameterSetView",
-    props: {
-        index: {
-            type: Number,
-            required: true
-        },
-        parameterSet: {
-            type: Object as PropType<ParameterSet>,
-            required: true
-        }
+  name: "ParameterSetView",
+  props: {
+    index: {
+      type: Number,
+      required: true
     },
-    components: {
-        VueFeather
-    },
-    setup(props) {
-        const store = useStore();
-        const currentParams = computed(() => store.state.run.parameterValues);
-        const parameterColors = {
-            red: "#dc3545",
-            blue: "#479fb6",
-            grey: "#bbb"
-        };
-        const parametersToShow = computed(() => (store.state.run.showUnchangedParameters
-            ? props.parameterSet.parameterValues
-            : Object.fromEntries(
-                Object.entries(props.parameterSet.parameterValues).filter(
-                    ([name, value]) => value !== currentParams.value[name]
-                )
-            )));
-
-        const getStyle = (name: string) => {
-            const diffFromCurrent = props.parameterSet.parameterValues[name] - currentParams.value[name];
-
-            let color = parameterColors.grey;
-            if (diffFromCurrent > 0) {
-                color = parameterColors.blue;
-            } else if (diffFromCurrent < 0) {
-                color = parameterColors.red;
-            }
-            return {
-                color,
-                border: `1px solid ${color}`
-            };
-        };
-
-        const lineStyleClass = computed(
-            () => `trace-${paramSetLineStyle(props.index)}`
-        );
-
-        const deleteParameterSet = () => {
-            store.dispatch(
-                `run/${RunAction.DeleteParameterSet}`,
-                props.parameterSet.name
-            );
-        };
-
-        const swapParameterSet = () => {
-            store.dispatch(
-                `run/${RunAction.SwapParameterSet}`,
-                props.parameterSet.name
-            );
-        };
-
-        const toggleHidden = () => {
-            store.commit(
-                `run/${RunMutation.ToggleParameterSetHidden}`,
-                props.parameterSet.name
-            );
-        };
-
-        const paramNameInput = ref(null);
-        const editDisplayName = ref(false);
-        const newDisplayName = ref(props.parameterSet.displayName);
-        const editDisplayNameOn = () => {
-            editDisplayName.value = true;
-            nextTick(() => {
-                (paramNameInput.value! as HTMLInputElement).select();
-            });
-        };
-        const saveDisplayName = () => {
-            const payload = {
-                parameterSetName: props.parameterSet.name,
-                newDisplayName: newDisplayName.value
-            };
-            store.commit(`run/${RunMutation.SaveParameterDisplayName}`, payload);
-            if (!props.parameterSet.displayNameErrorMsg) {
-                editDisplayName.value = false;
-            }
-        };
-        const saveButton = ref<HTMLButtonElement | null>(null);
-        const cancelEditDisplayName = (event: FocusEvent) => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            if (
-                event.relatedTarget
-        && event.relatedTarget === (saveButton.value as any).$el
-            ) return;
-            store.commit(
-                `run/${RunMutation.TurnOffDisplayNameError}`,
-                props.parameterSet.name
-            );
-            newDisplayName.value = props.parameterSet.displayName;
-            editDisplayName.value = false;
-        };
-
-        const turnOffDisplayNameError = () => {
-            if (props.parameterSet.displayNameErrorMsg) {
-                store.commit(
-                    `run/${RunMutation.TurnOffDisplayNameError}`,
-                    props.parameterSet.name
-                );
-            }
-        };
-
-        watch(newDisplayName, turnOffDisplayNameError);
-
-        const runRequired = computed(
-            () => store.getters[`run/${RunGetter.runIsRequired}`]
-        );
-        const canSwapParameterSet = computed(() => {
-            return !(store.state.model.compileRequired || runRequired.value);
-        });
-
-        onBeforeUnmount(turnOffDisplayNameError);
-
-        return {
-            lineStyleClass,
-            getStyle,
-            deleteParameterSet,
-            swapParameterSet,
-            toggleHidden,
-            canSwapParameterSet,
-            editDisplayName,
-            editDisplayNameOn,
-            newDisplayName,
-            saveDisplayName,
-            paramNameInput,
-            turnOffDisplayNameError,
-            cancelEditDisplayName,
-            saveButton,
-            parametersToShow
-        };
+    parameterSet: {
+      type: Object as PropType<ParameterSet>,
+      required: true
     }
+  },
+  components: {
+    VueFeather
+  },
+  setup(props) {
+    const store = useStore();
+    const currentParams = computed(() => store.state.run.parameterValues);
+    const parameterColors = {
+      red: "#dc3545",
+      blue: "#479fb6",
+      grey: "#bbb"
+    };
+    const parametersToShow = computed(() =>
+      store.state.run.showUnchangedParameters
+        ? props.parameterSet.parameterValues
+        : Object.fromEntries(
+            Object.entries(props.parameterSet.parameterValues).filter(
+              ([name, value]) => value !== currentParams.value[name]
+            )
+          )
+    );
+
+    const getStyle = (name: string) => {
+      const diffFromCurrent = props.parameterSet.parameterValues[name] - currentParams.value[name];
+
+      let color = parameterColors.grey;
+      if (diffFromCurrent > 0) {
+        color = parameterColors.blue;
+      } else if (diffFromCurrent < 0) {
+        color = parameterColors.red;
+      }
+      return {
+        color,
+        border: `1px solid ${color}`
+      };
+    };
+
+    const lineStyleClass = computed(() => `trace-${paramSetLineStyle(props.index)}`);
+
+    const deleteParameterSet = () => {
+      store.dispatch(`run/${RunAction.DeleteParameterSet}`, props.parameterSet.name);
+    };
+
+    const swapParameterSet = () => {
+      store.dispatch(`run/${RunAction.SwapParameterSet}`, props.parameterSet.name);
+    };
+
+    const toggleHidden = () => {
+      store.commit(`run/${RunMutation.ToggleParameterSetHidden}`, props.parameterSet.name);
+    };
+
+    const paramNameInput = ref(null);
+    const editDisplayName = ref(false);
+    const newDisplayName = ref(props.parameterSet.displayName);
+    const editDisplayNameOn = () => {
+      editDisplayName.value = true;
+      nextTick(() => {
+        (paramNameInput.value! as HTMLInputElement).select();
+      });
+    };
+    const saveDisplayName = () => {
+      const payload = {
+        parameterSetName: props.parameterSet.name,
+        newDisplayName: newDisplayName.value
+      };
+      store.commit(`run/${RunMutation.SaveParameterDisplayName}`, payload);
+      if (!props.parameterSet.displayNameErrorMsg) {
+        editDisplayName.value = false;
+      }
+    };
+    const saveButton = ref<HTMLButtonElement | null>(null);
+    const cancelEditDisplayName = (event: FocusEvent) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (event.relatedTarget && event.relatedTarget === (saveButton.value as any).$el) return;
+      store.commit(`run/${RunMutation.TurnOffDisplayNameError}`, props.parameterSet.name);
+      newDisplayName.value = props.parameterSet.displayName;
+      editDisplayName.value = false;
+    };
+
+    const turnOffDisplayNameError = () => {
+      if (props.parameterSet.displayNameErrorMsg) {
+        store.commit(`run/${RunMutation.TurnOffDisplayNameError}`, props.parameterSet.name);
+      }
+    };
+
+    watch(newDisplayName, turnOffDisplayNameError);
+
+    const runRequired = computed(() => store.getters[`run/${RunGetter.runIsRequired}`]);
+    const canSwapParameterSet = computed(() => {
+      return !(store.state.model.compileRequired || runRequired.value);
+    });
+
+    onBeforeUnmount(turnOffDisplayNameError);
+
+    return {
+      lineStyleClass,
+      getStyle,
+      deleteParameterSet,
+      swapParameterSet,
+      toggleHidden,
+      canSwapParameterSet,
+      editDisplayName,
+      editDisplayNameOn,
+      newDisplayName,
+      saveDisplayName,
+      paramNameInput,
+      turnOffDisplayNameError,
+      cancelEditDisplayName,
+      saveButton,
+      parametersToShow
+    };
+  }
 });
 </script>
 
@@ -289,20 +258,12 @@ export default defineComponent({
   }
 
   .trace-dash {
-    background-image: linear-gradient(
-      to right,
-      $trace-color 50%,
-      transparent 50%
-    );
+    background-image: linear-gradient(to right, $trace-color 50%, transparent 50%);
     background-size: 10px 2px;
   }
 
   .trace-longdash {
-    background-image: linear-gradient(
-      to right,
-      $trace-color 50%,
-      transparent 50%
-    );
+    background-image: linear-gradient(to right, $trace-color 50%, transparent 50%);
     background-size: 20px 2px;
   }
 

@@ -1,18 +1,18 @@
 import { TranslationLocales } from "../../types/languageTypes";
 
 interface RunTabTranslations extends TranslationLocales {
-    runTabExample: string
+  runTabExample: string;
 }
 
 const en: RunTabTranslations = {
-    runTabExample: "hello run tab"
+  runTabExample: "hello run tab"
 };
 
 const fr: RunTabTranslations = {
-    runTabExample: "bonjour run tab"
+  runTabExample: "bonjour run tab"
 };
 
 export const runTabLocales = {
-    en,
-    fr
+  en,
+  fr
 };

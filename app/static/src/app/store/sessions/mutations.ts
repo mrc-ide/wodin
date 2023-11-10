@@ -3,31 +3,31 @@ import { SessionsState } from "./state";
 import { SessionMetadata } from "../../types/responseTypes";
 
 export enum SessionsMutation {
-    SetSessionsMetadata = "SetSessionsMetadata",
-    SetSessionFriendlyId = "SetSessionFriendlyId",
-    RemoveSessionId = "RemoveSessionId"
+  SetSessionsMetadata = "SetSessionsMetadata",
+  SetSessionFriendlyId = "SetSessionFriendlyId",
+  RemoveSessionId = "RemoveSessionId"
 }
 
 export interface SetSessionFriendlyIdPayload {
-    sessionId: string,
-    friendlyId: string
+  sessionId: string;
+  friendlyId: string;
 }
 
 export const mutations: MutationTree<SessionsState> = {
-    [SessionsMutation.SetSessionsMetadata](state: SessionsState, payload: SessionMetadata[]) {
-        state.sessionsMetadata = payload;
-    },
+  [SessionsMutation.SetSessionsMetadata](state: SessionsState, payload: SessionMetadata[]) {
+    state.sessionsMetadata = payload;
+  },
 
-    [SessionsMutation.SetSessionFriendlyId](state: SessionsState, payload: SetSessionFriendlyIdPayload) {
-        const sessionMetadata = state.sessionsMetadata?.find((m: SessionMetadata) => m.id === payload.sessionId);
-        if (sessionMetadata) {
-            sessionMetadata.friendlyId = payload.friendlyId;
-        }
-    },
-
-    [SessionsMutation.RemoveSessionId](state: SessionsState, payload: string) {
-        if (state.sessionsMetadata) {
-            state.sessionsMetadata = state.sessionsMetadata.filter((s) => s.id !== payload);
-        }
+  [SessionsMutation.SetSessionFriendlyId](state: SessionsState, payload: SetSessionFriendlyIdPayload) {
+    const sessionMetadata = state.sessionsMetadata?.find((m: SessionMetadata) => m.id === payload.sessionId);
+    if (sessionMetadata) {
+      sessionMetadata.friendlyId = payload.friendlyId;
     }
+  },
+
+  [SessionsMutation.RemoveSessionId](state: SessionsState, payload: string) {
+    if (state.sessionsMetadata) {
+      state.sessionsMetadata = state.sessionsMetadata.filter((s) => s.id !== payload);
+    }
+  }
 };

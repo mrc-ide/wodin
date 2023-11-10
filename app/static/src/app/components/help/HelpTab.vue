@@ -8,14 +8,14 @@ import { useStore } from "vuex";
 import MarkdownPanel from "./MarkdownPanel.vue";
 
 export default defineComponent({
-    name: "HelpTab",
-    components: { MarkdownPanel },
-    setup() {
-        const store = useStore();
-        const appHelp = computed(() => store.state.config?.help?.markdown);
-        return {
-            appHelp
-        };
-    }
+  name: "HelpTab",
+  components: { MarkdownPanel },
+  setup() {
+    const store = useStore();
+    const appHelp = computed(() => store.state.config?.help?.markdown);
+    return {
+      appHelp
+    };
+  }
 });
 </script>

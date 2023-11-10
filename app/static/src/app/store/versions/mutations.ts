@@ -3,11 +3,11 @@ import { VersionsState } from "./state";
 import { Versions } from "../../types/responseTypes";
 
 export const enum VersionsMutation {
-    SetVersions = "SetVersions"
+  SetVersions = "SetVersions"
 }
 
 export const mutations: MutationTree<VersionsState> = {
-    [VersionsMutation.SetVersions](state: VersionsState, payload: Versions) {
-        state.versions = payload;
-    }
+  [VersionsMutation.SetVersions](state: VersionsState, payload: Versions) {
+    state.versions = payload;
+  }
 };
