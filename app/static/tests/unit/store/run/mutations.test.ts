@@ -618,7 +618,7 @@ describe("Run mutations", () => {
         }]);
     });
 
-    it('toggles showUnchangedParameters when ToggleShowUnchangedParameters is called', () => {
+    it("toggles showUnchangedParameters when ToggleShowUnchangedParameters is called", () => {
         const state = mockRunState({
             showUnchangedParameters: false
         });
@@ -626,5 +626,5 @@ describe("Run mutations", () => {
         expect(state.showUnchangedParameters).toBe(true);
         mutations[RunMutation.ToggleShowUnchangedParameters](state);
         expect(state.showUnchangedParameters).toBe(false);
-    })
+    });
 });

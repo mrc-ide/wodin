@@ -128,13 +128,13 @@ describe("ParameterSets", () => {
         expect(mockNewParameterSet).toHaveBeenCalledTimes(1);
     });
 
-    it('should show text when no parameter sets saved', () => {
+    it("should show text when no parameter sets saved", () => {
         const wrapper = getWrapper({});
-        expect(wrapper.find('p.small').text()).toBe('Saved parameter sets will show here');
-    })
-    it('should call RunMutation.ToggleShowUnchangedParameters when unchanged parameters checkbox is clicked',  async() => {
+        expect(wrapper.find("p.small").text()).toBe("Saved parameter sets will show here");
+    });
+    it("should call RunMutation.ToggleShowUnchangedParameters when unchanged parameters checkbox is clicked", async () => {
         const wrapper = getWrapper({});
-        await wrapper.find('input.form-check-input').trigger('click');
+        await wrapper.find("input.form-check-input").trigger("click");
         expect(mockToggleShowUnchangedParameters).toHaveBeenCalledTimes(1);
-    })
+    });
 });
