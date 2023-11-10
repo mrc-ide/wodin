@@ -32,12 +32,16 @@ export const expectLeftWodinTabs = (wrapper: VueWrapper<any>, expectedTabNames: 
     expectWodinTabs(wrapper, expectedTabNames, "left");
 };
 
-export const mockDownloadImageResult = {
-    showDownloadImageModal: ref(true),
+const getMockDownloadImageResult = () => ({
+    showDownloadImageModal: ref(false),
     downloadImageProps: { title: "test title", xLabel: "test x", yLabel: "test y" },
+    config: { responsive: true },
     closeModal: jest.fn(),
     downloadImage: jest.fn()
-} as any;
+} as any);
 
-export const mockDownloadPlotMixin = jest.spyOn(downloadPlot, "default")
-    .mockImplementation(() => mockDownloadImageResult);
+export const useMockDownloadPlotMixin = () => {
+    const result = getMockDownloadImageResult();
+    jest.spyOn(downloadPlot, "default").mockImplementation(() => result);
+    return result;
+};

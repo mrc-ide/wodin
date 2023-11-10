@@ -14,7 +14,7 @@ jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
 /* eslint-disable import/first */
 import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
-import { expectLeftWodinTabs, expectRightWodinTabs } from "../../../testUtils";
+import { expectLeftWodinTabs, expectRightWodinTabs, useMockDownloadPlotMixin } from "../../../testUtils";
 import StochasticApp from "../../../../src/app/components/stochastic/StochasticApp.vue";
 import { StochasticState } from "../../../../src/app/store/stochastic/state";
 import { mockModelState, mockGraphSettingsState, mockStochasticState } from "../../../mocks";
@@ -40,6 +40,8 @@ function mockResizeObserver(this: any) {
     this.disconnect = jest.fn();
 }
 (global.ResizeObserver as any) = mockResizeObserver;
+
+useMockDownloadPlotMixin();
 
 describe("StochasticApp", () => {
     const getWrapper = (config: Partial<AppConfig> = {}) => {
@@ -81,7 +83,7 @@ describe("StochasticApp", () => {
     };
 
     afterEach(() => {
-        jest.resetAllMocks();
+        jest.clearAllMocks();
     });
 
     it("renders content as expected", () => {

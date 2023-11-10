@@ -22,7 +22,7 @@ import WodinPlotDataSummary from "../../../../src/app/components/plot/WodinPlotD
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { GraphSettingsMutation } from "../../../../src/app/store/graphSettings/mutations";
 import WodinPlotDownloadImageModal from "../../../../src/app/components/plot/WodinPlotDownloadImageModal.vue";
-import { mockDownloadImageResult, mockDownloadPlotMixin } from "../../../testUtils";
+import { useMockDownloadPlotMixin } from "../../../testUtils";
 
 describe("WodinPlot", () => {
     const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");
@@ -67,6 +67,8 @@ describe("WodinPlot", () => {
     };
 
     const mockSetYAxisRange = jest.fn();
+
+    const mockDownloadImageResult = useMockDownloadPlotMixin();
 
     const getStore = (logScaleYAxis = false, lockYAxis = false) => {
         return new Vuex.Store<BasicState>({
@@ -473,8 +475,8 @@ describe("WodinPlot", () => {
     });
 
     it("shows modal if showDownloadImageModal from mixin is true", async () => {
+        mockDownloadImageResult.showDownloadImageModal.value = true;
         const wrapper = getWrapper();
-        expect(mockDownloadPlotMixin).toHaveBeenCalled();
 
         expect(wrapper.findComponent(WodinPlotDownloadImageModal).props("title")).toBe("test title");
         expect(wrapper.findComponent(WodinPlotDownloadImageModal).props("xLabel")).toBe("test x");
@@ -486,12 +488,14 @@ describe("WodinPlot", () => {
     });
 
     it("closes modal on emit", () => {
+        mockDownloadImageResult.showDownloadImageModal.value = true;
         const wrapper = getWrapper();
         wrapper.findComponent(WodinPlotDownloadImageModal).vm.$emit("close");
         expect(mockDownloadImageResult.closeModal).toHaveBeenCalled();
     });
 
     it("downloads image on emit confirm", () => {
+        mockDownloadImageResult.showDownloadImageModal.value = true;
         const wrapper = getWrapper();
         wrapper.findComponent(WodinPlotDownloadImageModal).vm.$emit("confirm", "new title", "new x", "new y");
         expect(mockDownloadImageResult.downloadImage).toHaveBeenCalledWith("new title", "new x", "new y");

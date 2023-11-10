@@ -16,7 +16,7 @@ jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
 /* eslint-disable import/first */
 import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
-import { expectLeftWodinTabs, expectRightWodinTabs } from "../../../testUtils";
+import { expectLeftWodinTabs, expectRightWodinTabs, useMockDownloadPlotMixin } from "../../../testUtils";
 import FitApp from "../../../../src/app/components/fit/FitApp.vue";
 import { FitState } from "../../../../src/app/store/fit/state";
 import { AppStateAction } from "../../../../src/app/store/appState/actions";
@@ -42,6 +42,8 @@ function mockResizeObserver(this: any) {
     this.disconnect = jest.fn();
 }
 (global.ResizeObserver as any) = mockResizeObserver;
+
+useMockDownloadPlotMixin();
 
 describe("FitApp", () => {
     const mockTooltipDirective = jest.fn();

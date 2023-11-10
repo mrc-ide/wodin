@@ -16,7 +16,7 @@ import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutat
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
 import { RunGetter } from "../../../../src/app/store/run/getters";
 import WodinPlotDataSummary from "../../../../src/app/components/plot/WodinPlotDataSummary.vue";
-import { mockDownloadImageResult, mockDownloadPlotMixin } from "../../../testUtils";
+import { useMockDownloadPlotMixin } from "../../../testUtils";
 import WodinPlotDownloadImageModal from "../../../../src/app/components/plot/WodinPlotDownloadImageModal.vue";
 
 jest.mock("plotly.js-basic-dist-min", () => ({
@@ -117,6 +117,8 @@ describe("SensitivitySummaryPlot", () => {
     } as SensitivityParameterSettings;
 
     const defaultSelectedVariables = ["S", "I"];
+
+    const mockDownloadImageResult = useMockDownloadPlotMixin();
 
     const getWrapper = (hasData = true, plotSettings: SensitivityPlotSettings = defaultPlotSettings,
         fadePlot = false, paramSettings: SensitivityParameterSettings = defaultParamSettings,
@@ -550,8 +552,8 @@ describe("SensitivitySummaryPlot", () => {
     });
 
     it("shows modal if showDownloadImageModal from mixin is true", async () => {
+        mockDownloadImageResult.showDownloadImageModal.value = true;
         const wrapper = getWrapper();
-        expect(mockDownloadPlotMixin).toHaveBeenCalled();
 
         expect(wrapper.findComponent(WodinPlotDownloadImageModal).props("title")).toBe("test title");
         expect(wrapper.findComponent(WodinPlotDownloadImageModal).props("xLabel")).toBe("test x");
@@ -563,12 +565,14 @@ describe("SensitivitySummaryPlot", () => {
     });
 
     it("closes modal on emit", () => {
+        mockDownloadImageResult.showDownloadImageModal.value = true;
         const wrapper = getWrapper();
         wrapper.findComponent(WodinPlotDownloadImageModal).vm.$emit("close");
         expect(mockDownloadImageResult.closeModal).toHaveBeenCalled();
     });
 
     it("downloads image on emit confirm", () => {
+        mockDownloadImageResult.showDownloadImageModal.value = true;
         const wrapper = getWrapper();
         wrapper.findComponent(WodinPlotDownloadImageModal).vm.$emit("confirm", "new title", "new x", "new y");
         expect(mockDownloadImageResult.downloadImage).toHaveBeenCalledWith("new title", "new x", "new y");

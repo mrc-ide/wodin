@@ -11,6 +11,9 @@ import ActionRequiredMessage from "../../../../src/app/components/ActionRequired
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import FitPlot from "../../../../src/app/components/fit/FitPlot.vue";
 import { mockFitState, mockGraphSettingsState } from "../../../mocks";
+import { useMockDownloadPlotMixin } from "../../../testUtils";
+
+useMockDownloadPlotMixin();
 
 describe("Fit Tab", () => {
     const getWrapper = (

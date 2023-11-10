@@ -15,7 +15,7 @@ jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
 /* eslint-disable import/first */
 import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
-import { expectLeftWodinTabs, expectRightWodinTabs } from "../../../testUtils";
+import { expectLeftWodinTabs, expectRightWodinTabs, useMockDownloadPlotMixin } from "../../../testUtils";
 import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
 import BasicApp from "../../../../src/app/components/basic/BasicApp.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
@@ -39,6 +39,8 @@ function mockResizeObserver(this: any) {
     this.disconnect = jest.fn();
 }
 (global.ResizeObserver as any) = mockResizeObserver;
+
+useMockDownloadPlotMixin();
 
 describe("BasicApp", () => {
     const getWrapper = (mockSetOpenVisualisationTab = jest.fn(), config: Partial<AppConfig> = {}) => {
