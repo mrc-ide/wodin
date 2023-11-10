@@ -239,6 +239,7 @@ export const mockModelFitState = (state: Partial<ModelFitState> = {}): ModelFitS
         paramsToVary: [],
         inputs: null,
         result: null,
+        error: null,
         ...state
     };
 };

@@ -1,6 +1,6 @@
 import { MutationTree } from "vuex";
 import { ModelFitInputs, ModelFitState, FitUpdateRequiredReasons } from "./state";
-import { SimplexResult } from "../../types/responseTypes";
+import { SimplexResult, WodinError } from "../../types/responseTypes";
 
 export enum ModelFitMutation {
     SetFitting = "SetFitting",
@@ -8,12 +8,16 @@ export enum ModelFitMutation {
     SetInputs = "SetInputs",
     SetParamsToVary = "SetParamsToVary",
     SetSumOfSquares = "SetSumOfSquares",
-    SetFitUpdateRequired = "SetFitUpdateRequired"
+    SetFitUpdateRequired = "SetFitUpdateRequired",
+    SetError = "SetError"
 }
 
 export const mutations: MutationTree<ModelFitState> = {
     [ModelFitMutation.SetFitting](state: ModelFitState, payload: boolean) {
         state.fitting = payload;
+        if (payload) {
+            state.error = null;
+        }
     },
 
     [ModelFitMutation.SetResult](state: ModelFitState, payload: SimplexResult) {
@@ -41,6 +45,10 @@ export const mutations: MutationTree<ModelFitState> = {
 
     [ModelFitMutation.SetSumOfSquares](state: ModelFitState, payload: number | null) {
         state.sumOfSquares = payload;
+    },
+
+    [ModelFitMutation.SetError](state: ModelFitState, payload: WodinError) {
+        state.error = payload;
     },
 
     [ModelFitMutation.SetFitUpdateRequired](state: ModelFitState, payload: null | Partial<FitUpdateRequiredReasons>) {

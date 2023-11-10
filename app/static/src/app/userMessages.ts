@@ -56,6 +56,7 @@ export default {
         notFittedYet: "Model has not been fitted.",
         selectParamToVary: "Please select at least one parameter to vary during model fit.",
         compileRequired: "Model code has been updated. Compile code and Fit Model for updated best fit.",
+        errorOccurred: "An error occurred during model fit.",
         updateFitReasons: {
             prefix: "Fit is out of date:",
             unknown: "unknown reasons, contact the administrator, as this is unexpected",
