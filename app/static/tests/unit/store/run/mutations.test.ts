@@ -1,4 +1,4 @@
-import { mutations } from "../../../../src/app/store/run/mutations";
+import { RunMutation, mutations } from "../../../../src/app/store/run/mutations";
 import { AdvancedComponentType } from "../../../../src/app/store/run/state";
 import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
 import { mockRunState } from "../../../mocks";
@@ -617,4 +617,14 @@ describe("Run mutations", () => {
             hidden: false
         }]);
     });
+
+    it('toggles showUnchangedParameters when ToggleShowUnchangedParameters is called', () => {
+        const state = mockRunState({
+            showUnchangedParameters: false
+        });
+        mutations[RunMutation.ToggleShowUnchangedParameters](state);
+        expect(state.showUnchangedParameters).toBe(true);
+        mutations[RunMutation.ToggleShowUnchangedParameters](state);
+        expect(state.showUnchangedParameters).toBe(false);
+    })
 });

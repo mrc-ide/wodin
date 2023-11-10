@@ -124,10 +124,6 @@ export default defineComponent({
       type: Object as PropType<ParameterSet>,
       required: true,
     },
-    showUnchangedParameters: {
-      type: Boolean,
-      required: true,
-    },
   },
   components: {
     VueFeather,
@@ -141,7 +137,7 @@ export default defineComponent({
       grey: "#bbb",
     };
     var parametersToShow = computed(() =>
-      props.showUnchangedParameters
+      store.state.run.showUnchangedParameters
         ? props.parameterSet.parameterValues
         : Object.fromEntries(
             Object.entries(props.parameterSet.parameterValues).filter(

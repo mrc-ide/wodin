@@ -233,7 +233,7 @@ test.describe("Code Tab tests", () => {
         await page.click("#reset-btn");
         await page.waitForResponse((response) => response.url().includes("/odin"));
         expect(await page.innerText(".wodin-left .wodin-content .editor-container")).toBe(defaultCode);
-        await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is valid");
+        await expect(page.getByText("Code is valid")).toBeVisible();
     });
 
     test("can display error message on code tab", async ({ page }) => {

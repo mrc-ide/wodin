@@ -91,6 +91,7 @@ export const mockRunState = (state: Partial<RunState> = {}): RunState => {
         parameterSetsCreated: 0,
         parameterSets: [],
         parameterSetResults: {},
+        showUnchangedParameters: false,
         advancedSettings: {
             [AdvancedOptions.tol]: { val: [null, null], default: [1, -6], type: AdvancedComponentType.stdf },
             [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num },

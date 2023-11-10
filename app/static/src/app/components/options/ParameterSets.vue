@@ -31,7 +31,6 @@
     :index="index"
     class="mt-2"
     :key="`saved-parameterSet-${paramSet.name}`"
-    :showUnchangedParameters="showUnchangedParameters"
   >
   </parameter-set-view>
 </template>

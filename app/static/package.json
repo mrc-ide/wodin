@@ -14,6 +14,7 @@
     "copy-all": "concurrently \"npm run copy-js\" \"npm run copy-bootstrap\" && concurrently \"npm run copy-css \" \"npm run copy-js-map\" \"npm run copy-fonts\"",
     "build": "npm run build-wodin && npm run copy-all",
     "test:unit": "vue-cli-service test:unit",
+    "test:dev": "vue-cli-service test:unit --watch",
     "lint": "vue-cli-service lint --no-fix",
     "lint:fix": "vue-cli-service lint",
     "e2e-test": "npx playwright test",

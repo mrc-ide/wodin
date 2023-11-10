@@ -26,7 +26,8 @@ describe("ParameterSetView", () => {
         index = 0,
         modelChanged = false,
         compileRequired = false,
-        dispNameErrorMsg = ""
+        dispNameErrorMsg = "",
+        showUnchangedParameters = true
     ) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
@@ -37,12 +38,13 @@ describe("ParameterSetView", () => {
                     namespaced: true,
                     state: mockRunState({
                         parameterValues: { alpha: 1, beta: 2, gamma: 3 },
+                        showUnchangedParameters,
                         runRequired: {
                             modelChanged,
                             parameterValueChanged: false,
                             endTimeChanged: false,
                             numberOfReplicatesChanged: false,
-                            advancedSettingsChanged: false
+                            advancedSettingsChanged: false,
                         }
                     }),
                     actions: {
@@ -386,4 +388,12 @@ describe("ParameterSetView", () => {
         expect(mockToggleParameterSetHidden).toHaveBeenCalledTimes(1);
         expect(mockToggleParameterSetHidden.mock.calls[0][1]).toBe("Set 1");
     });
+
+    it('should not show same parameters when showUnchangedParameters is false', () => {
+        const wrapper = getWrapper(false, 0, false, false, "", false);
+        const paramSpans = wrapper.findAll(".card-body span.badge");
+        expect(paramSpans.length).toBe(2);
+        expect(paramSpans[0].text()).toBe("alpha: 0");
+        expect(paramSpans[1].text()).toBe("gamma: 4");
+    })
 });
