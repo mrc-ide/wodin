@@ -118,7 +118,6 @@ const parameterColors = {
     blue: "#479fb6",
     grey: "#bbb"
 };
-        
 export default defineComponent({
     name: "ParameterSetView",
     props: {
@@ -136,7 +135,7 @@ export default defineComponent({
     },
     setup(props) {
         const store = useStore();
-        const currentParams = computed(() => store.state.run.parameterValues);        
+        const currentParams = computed(() => store.state.run.parameterValues);
 
         const parametersToShow = computed(() => (store.state.run.showUnchangedParameters
             ? props.parameterSet.parameterValues
