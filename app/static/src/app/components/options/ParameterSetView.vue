@@ -141,7 +141,7 @@ export default defineComponent({
             ? props.parameterSet.parameterValues
             : Object.fromEntries(
                 Object.entries(props.parameterSet.parameterValues).filter(
-                    ([name, value]) => currentParams.value[name] && value !== currentParams.value[name]
+                    ([name, value]) => currentParams.value[name] !== undefined && value !== currentParams.value[name]
                 )
             )));
 
