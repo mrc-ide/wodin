@@ -114,10 +114,10 @@ import { paramSetLineStyle } from "../../plot";
 import { RunGetter } from "../../store/run/getters";
 
 const parameterColors = {
-            red: "#dc3545",
-            blue: "#479fb6",
-            grey: "#bbb"
-        };
+    red: "#dc3545",
+    blue: "#479fb6",
+    grey: "#bbb"
+};
         
 export default defineComponent({
     name: "ParameterSetView",
