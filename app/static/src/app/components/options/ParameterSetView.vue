@@ -82,14 +82,16 @@
           <div class="me-3">Line Style</div>
           <div class="trace mt-2" :class="lineStyleClass"></div>
         </span>
-        <span
-          v-for="(value, name, index) in parametersToShow"
-          :key="`${name}-${index}`"
-          class="badge badge-light me-2 mb-2 parameter"
-          :style="getStyle(`${name}`)"
-        >
-          {{ name }}: <span style="font-weight: lighter">{{ value }}</span>
-        </span>
+          <span class="small fst-italic" v-if="Object.keys(parametersToShow).length === 0">Changed parameters will show here</span>
+          <span
+            v-else
+            v-for="(value, name) in parametersToShow"
+            :key="name"
+            class="badge badge-light me-2 mb-2 parameter"
+            :style="getStyle(`${name}`)"
+          >
+            {{ name }}: <span style="font-weight: lighter">{{ value }}</span>
+          </span>
       </div>
     </div>
   </div>

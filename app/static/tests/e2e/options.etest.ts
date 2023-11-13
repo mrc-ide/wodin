@@ -723,7 +723,7 @@ test.describe("Options Tab tests", () => {
         ).toBe("random name 1");
     });
 
-    test("can show/unshow same parameters", async ({ page }) => {
+    test("can show/un-show unchanged parameters", async ({ page }) => {
         await page.getByRole("button", { name: "Save Current Parameters" }).click();
         const sigmaParam = page.getByRole("textbox").nth(3);
         await sigmaParam.fill("3");

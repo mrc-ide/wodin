@@ -22,7 +22,7 @@
     </div>
   </div>
   <div v-if="parameterSets?.length === 0" class="container mt-1">
-    <p class="small">Saved parameter sets will show here</p>
+    <p class="small fst-italic">Saved parameter sets will show here</p>
   </div>
   <parameter-set-view
     v-else
