@@ -82,7 +82,8 @@
           <div class="me-3">Line Style</div>
           <div class="trace mt-2" :class="lineStyleClass"></div>
         </span>
-          <span class="small fst-italic" v-if="Object.keys(parametersToShow).length === 0">Changed parameters will show here</span>
+          <span class="small fst-italic" v-if="Object.keys(parametersToShow).length === 0">
+            Changed parameters will show here</span>
           <span
             v-else
             v-for="(value, name) in parametersToShow"
