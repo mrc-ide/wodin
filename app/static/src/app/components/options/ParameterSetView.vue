@@ -113,6 +113,12 @@ import { RunMutation } from "../../store/run/mutations";
 import { paramSetLineStyle } from "../../plot";
 import { RunGetter } from "../../store/run/getters";
 
+const parameterColors = {
+            red: "#dc3545",
+            blue: "#479fb6",
+            grey: "#bbb"
+        };
+        
 export default defineComponent({
     name: "ParameterSetView",
     props: {
@@ -130,17 +136,13 @@ export default defineComponent({
     },
     setup(props) {
         const store = useStore();
-        const currentParams = computed(() => store.state.run.parameterValues);
-        const parameterColors = {
-            red: "#dc3545",
-            blue: "#479fb6",
-            grey: "#bbb"
-        };
+        const currentParams = computed(() => store.state.run.parameterValues);        
+
         const parametersToShow = computed(() => (store.state.run.showUnchangedParameters
             ? props.parameterSet.parameterValues
             : Object.fromEntries(
                 Object.entries(props.parameterSet.parameterValues).filter(
-                    ([name, value]) => value !== currentParams.value[name]
+                    ([name, value]) => currentParams.value[name] && value !== currentParams.value[name]
                 )
             )));
 
