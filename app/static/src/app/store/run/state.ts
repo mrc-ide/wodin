@@ -65,6 +65,7 @@ export interface RunState {
     // counter of how many parmeter sets have been created in this session, including those subsequently deleted
     parameterSetsCreated: number;
     parameterSets: ParameterSet[];
+    showUnchangedParameters: boolean;
     parameterSetResults: Dict<OdinRunResultOde>;
     advancedSettings: AdvancedSettings;
 }

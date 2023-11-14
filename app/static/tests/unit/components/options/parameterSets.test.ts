@@ -8,9 +8,11 @@ import ParameterSetView from "../../../../src/app/components/options/ParameterSe
 import { ModelState } from "../../../../src/app/store/model/state";
 import { getters } from "../../../../src/app/store/run/getters";
 import { RunAction } from "../../../../src/app/store/run/actions";
+import { RunMutation } from "../../../../src/app/store/run/mutations";
 
 describe("ParameterSets", () => {
     const mockNewParameterSet = jest.fn();
+    const mockToggleShowUnchangedParameters = jest.fn();
     const getWrapper = (runState: Partial<RunState>, modelState: Partial<ModelState> = {}) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
@@ -23,6 +25,9 @@ describe("ParameterSets", () => {
                     getters,
                     actions: {
                         [RunAction.NewParameterSet]: mockNewParameterSet
+                    },
+                    mutations: {
+                        [RunMutation.ToggleShowUnchangedParameters]: mockToggleShowUnchangedParameters
                     }
                 }
             }
@@ -121,5 +126,15 @@ describe("ParameterSets", () => {
         const wrapper = getWrapper({});
         await wrapper.find("button#create-param-set").trigger("click");
         expect(mockNewParameterSet).toHaveBeenCalledTimes(1);
+    });
+
+    it("should show text when no parameter sets saved", () => {
+        const wrapper = getWrapper({});
+        expect(wrapper.find("p.small").text()).toBe("Saved parameter sets will show here");
+    });
+    it("should call ToggleShowUnchangedParameters when unchanged parameters checkbox is clicked", async () => {
+        const wrapper = getWrapper({});
+        await wrapper.find("input.form-check-input").trigger("click");
+        expect(mockToggleShowUnchangedParameters).toHaveBeenCalledTimes(1);
     });
 });

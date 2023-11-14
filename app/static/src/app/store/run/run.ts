@@ -21,6 +21,7 @@ export const defaultState: RunState = {
     numberOfReplicates: 5,
     parameterSetsCreated: 0,
     parameterSets: [],
+    showUnchangedParameters: false,
     parameterSetResults: {},
     advancedSettings: {
         [AdvancedOptions.tol]: { val: [null, null], default: [1, -6], type: AdvancedComponentType.stdf },

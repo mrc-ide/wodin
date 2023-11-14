@@ -75,6 +75,7 @@ describe("serialise", () => {
             numberOfReplicatesChanged: false,
             advancedSettingsChanged: false
         },
+        showUnchangedParameters: false,
         parameterValues: { alpha: 1, beta: 1.1 },
         endTime: 20,
         resultOde: {
@@ -409,6 +410,7 @@ describe("serialise", () => {
             numberOfReplicatesChanged: false,
             advancedSettingsChanged: false
         },
+        showUnchangedParameters: false,
         parameterValues: runState.parameterValues,
         parameterSetsCreated: runState.parameterSetsCreated,
         parameterSets: runState.parameterSets,
