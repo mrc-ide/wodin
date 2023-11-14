@@ -26,6 +26,8 @@ jobs:
         run: npm run lint --prefix=app/server
       - name: Lint front end
         run: npm run lint --prefix=app/static
+      - name: Check formatting frontend
+        run: npm run format:check --prefix=app/static
       - name: Check versions
         run: npm run genversion --prefix=app/server -- --check-only
       - name: Upload coverage

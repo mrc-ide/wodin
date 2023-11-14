@@ -3,15 +3,13 @@ module.exports = {
     env: {
         node: true
     },
-    extends: ["plugin:vue/vue3-essential", "@vue/airbnb", "@vue/typescript/recommended"],
+    extends: ["plugin:vue/vue3-essential", "@vue/airbnb", "@vue/typescript/recommended", "prettier"],
     parserOptions: {
         ecmaVersion: 2020
     },
     rules: {
         "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
         "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
-        "comma-dangle": ["error", "never"],
-        indent: ["error", 4],
         quotes: ["error", "double", { avoidEscape: true }],
         "max-len": [2, 120, 4],
         "arrow-body-style": "off",
@@ -23,7 +21,8 @@ module.exports = {
         "no-underscore-dangle": "off",
         "no-unused-vars": "off",
         "@typescript-eslint/no-unused-vars": ["error"],
-        "no-await-in-loop": "off"
+        "no-await-in-loop": "off",
+        "no-useless-concat": "off"
     },
     overrides: [
         {

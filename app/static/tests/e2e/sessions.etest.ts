@@ -140,7 +140,7 @@ test.describe("Sessions tests", () => {
         await page.goto(`${appUrl}/sessions`);
         await expect(await page.isChecked("#show-duplicates-check")).toBe(false);
         await expect(await page.innerText(":nth-match(.session-label, 1)")).toBe(noLabel);
-        await expect(await page.innerText(":nth-match(.session-label, 2)")).toBe("current session label"); // the previous labelled session
+        await expect(await page.innerText(":nth-match(.session-label, 2)")).toBe("current session label");
 
         // ... then after checking "Show duplicate sessions", all new sessions should be displayed...
         await page.check("#show-duplicates-check");
@@ -148,7 +148,7 @@ test.describe("Sessions tests", () => {
         await expect(await page.locator(":nth-match(.session-label, 2)")).toHaveText(noLabel, { timeout });
         await expect(await page.locator(":nth-match(.session-label, 3)")).toHaveText(noLabel, { timeout });
         await expect(await page.locator(":nth-match(.session-label, 4)")).toHaveText("current session label", {
-            timeout
+        timeout
         });
 
         // ...then unchecking should filter out the earlier unlabelled duplicates again

@@ -1,5 +1,4 @@
 /.idea/
-/.vscode/
 /app/server/coverage/
 /app/server/node_modules/
 /app/server/public/css/

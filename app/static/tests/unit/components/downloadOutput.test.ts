@@ -4,10 +4,10 @@ import { mockBasicState, mockRunState } from "../../mocks";
 import { BasicState } from "../../../src/app/store/basic/state";
 import DownloadOutput from "../../../src/app/components/DownloadOutput.vue";
 
-// eslint-disable-next-line max-len
+/* eslint-disable max-len */
 const generatedFilenameRegex =
     /^test-run-([0-9]{4})?(1[0-2]|0[1-9])?(3[01]|0[1-9]|[12][0-9])-(2[0-3]|[0-1][0-9])?([0-5][0-9])?([0-5][0-9])?$/;
-// eslint-disable-next-line max-len
+/* eslint-disable max-len */
 const generatedFilenameWithSuffixRegex =
     /^test-run-([0-9]{4})?(1[0-2]|0[1-9])?(3[01]|0[1-9]|[12][0-9])-(2[0-3]|[0-1][0-9])?([0-5][0-9])?([0-5][0-9])?.xlsx$/;
 
