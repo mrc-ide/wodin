@@ -3,3 +3,4 @@ build
 coverage
 test-results
 node_modules
+dist

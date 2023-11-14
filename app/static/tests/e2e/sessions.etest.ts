@@ -148,7 +148,7 @@ test.describe("Sessions tests", () => {
         await expect(await page.locator(":nth-match(.session-label, 2)")).toHaveText(noLabel, { timeout });
         await expect(await page.locator(":nth-match(.session-label, 3)")).toHaveText(noLabel, { timeout });
         await expect(await page.locator(":nth-match(.session-label, 4)")).toHaveText("current session label", {
-        timeout
+            timeout
         });
 
         // ...then unchecking should filter out the earlier unlabelled duplicates again
