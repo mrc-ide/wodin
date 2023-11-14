@@ -177,10 +177,10 @@ describe("EditParamSettings", () => {
 
         expect(wrapper.find("#edit-from label").text()).toBe("From");
         expect(wrapper.find("#edit-from").findComponent(NumericInput).props("value")).toBe(2);
-        expect(wrapper.find("#param-central").text()).toBe("Central value 1");
+        expect(wrapper.find("#param-central div:first-child").text()).toBe("Central value");
+        expect(wrapper.find("#param-central div:nth-child(2)").text()).toBe("1");
         expect(wrapper.find("#edit-to label").text()).toBe("To");
         expect(wrapper.find("#edit-to").findComponent(NumericInput).props("value")).toBe(6);
-
         expect(wrapper.find("#edit-runs").findComponent(NumericInput).props("value")).toBe(5);
 
         expect(wrapper.find(".modal-footer button.btn-primary").attributes("disabled")).toBe(undefined);
@@ -193,7 +193,8 @@ describe("EditParamSettings", () => {
         expect((paramSelect.element as HTMLSelectElement).value).toBe("C");
         const varSelect = wrapper.find("#edit-variation-type select");
         expect((varSelect.element as HTMLSelectElement).value).toBe(SensitivityVariationType.Custom);
-        expect(wrapper.find("#param-central").text()).toBe("Central value 3");
+        expect(wrapper.find("#param-central div:first-child").text()).toBe("Central value");
+        expect(wrapper.find("#param-central div:nth-child(2)").text()).toBe("3");
         const tagInput = wrapper.find("#edit-values").findComponent(TagInput);
         expect(tagInput.props().tags).toStrictEqual([1, 2, 3]);
         expect(tagInput.props().numericOnly).toBe(true);
