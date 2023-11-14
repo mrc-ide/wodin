@@ -1,7 +1,7 @@
 import { TranslationLocales } from "../../types/languageTypes";
 
 interface HeaderTranslations extends TranslationLocales {
-    headerExample: string
+    headerExample: string;
 }
 
 const en: HeaderTranslations = {

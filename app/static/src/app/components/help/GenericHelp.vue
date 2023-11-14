@@ -1,13 +1,13 @@
 <template>
-  <vue-feather type="help-circle"
-               v-tooltip="'Display help'"
-               class="generic-help-icon float-end clickable mb-2"
-               @click="toggleDialog(true)"></vue-feather>
-  <draggable-dialog v-if="show"
-                    :title = "title"
-                    @close="toggleDialog(false)">
-    <markdown-panel class="p-2 my-2" :markdown="[markdown]"></markdown-panel>
-  </draggable-dialog>
+    <vue-feather
+        type="help-circle"
+        v-tooltip="'Display help'"
+        class="generic-help-icon float-end clickable mb-2"
+        @click="toggleDialog(true)"
+    ></vue-feather>
+    <draggable-dialog v-if="show" :title="title" @close="toggleDialog(false)">
+        <markdown-panel class="p-2 my-2" :markdown="[markdown]"></markdown-panel>
+    </draggable-dialog>
 </template>
 <script lang="ts">
 import { defineComponent, ref } from "vue";

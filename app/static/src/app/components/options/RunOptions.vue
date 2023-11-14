@@ -9,7 +9,8 @@
                     v-if="endTimeData === 0"
                     :value="endTime"
                     :min-allowed="0"
-                    @update="updateEndTime"></numeric-input>
+                    @update="updateEndTime"
+                ></numeric-input>
                 <label v-else class="col-form-label">{{ endTimeData }} (from data)</label>
             </div>
         </div>
@@ -22,7 +23,8 @@
                     :value="numberOfReplicates"
                     :min-allowed="0"
                     :max-allowed="maxAllowedObj"
-                    @update="updateNumberOfReplicates"></numeric-input>
+                    @update="updateNumberOfReplicates"
+                ></numeric-input>
             </div>
         </div>
     </div>
@@ -72,8 +74,8 @@ export default defineComponent({
                 error: { number: maxReplicatesRun.value },
                 warning: {
                     number: maxReplicatesDisplay.value,
-                    message: "Individual traces will not be shown for "
-                        + `values greater than ${maxReplicatesDisplay.value}`
+                    message:
+                        "Individual traces will not be shown for " + `values greater than ${maxReplicatesDisplay.value}`
                 }
             } as BoundTooltip;
         });

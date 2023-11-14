@@ -28,9 +28,12 @@ describe("includeConfiguredTabs mixin", () => {
     });
 
     it("returns default help tab name", () => {
-        const store = getStore({
-            markdown: ["test md"]
-        }, false);
+        const store = getStore(
+            {
+                markdown: ["test md"]
+            },
+            false
+        );
 
         const result = includeConfiguredTabs(store, ["Run", "Sensitivity"]);
         expect(result.helpTabName.value).toBe("Explanation");
@@ -58,10 +61,13 @@ describe("includeConfiguredTabs mixin", () => {
     });
 
     it("includes both help and multi-sensitivity tab names if configured", () => {
-        const store = getStore({
-            markdown: ["test md"],
-            tabName: "Help"
-        }, true);
+        const store = getStore(
+            {
+                markdown: ["test md"],
+                tabName: "Help"
+            },
+            true
+        );
         const result = includeConfiguredTabs(store, ["Run", "Sensitivity"]);
         expect(result.helpTabName.value).toBe("Help");
         expect(result.multiSensitivityTabName.value).toBe("Multi-sensitivity");

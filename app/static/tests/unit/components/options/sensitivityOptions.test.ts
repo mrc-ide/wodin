@@ -21,10 +21,12 @@ const mockTooltipDirective = jest.fn();
 
 describe("SensitivityOptions", () => {
     const mockBatchPars = {
-        varying: [{
-            name: "A",
-            values: [1, 2, 3]
-        }]
+        varying: [
+            {
+                name: "A",
+                values: [1, 2, 3]
+            }
+        ]
     } as any;
 
     const mockMultiBatchPars = {
@@ -65,8 +67,7 @@ describe("SensitivityOptions", () => {
                         paramSettings: []
                     }
                 },
-                model: {
-                },
+                model: {},
                 run: {
                     namespaced: true,
                     state: {
@@ -84,7 +85,7 @@ describe("SensitivityOptions", () => {
         });
     };
 
-    const getWrapperForMultiSensitivity = ((paramSettings: SensitivityParameterSettings[]) => {
+    const getWrapperForMultiSensitivity = (paramSettings: SensitivityParameterSettings[]) => {
         const store = new Vuex.Store<BasicState>({
             state: {} as any,
             modules: {
@@ -100,8 +101,7 @@ describe("SensitivityOptions", () => {
                         [MultiSensitivityMutation.SetParamSettings]: mockMultiSensitivitySetParamSettings
                     }
                 },
-                model: {
-                },
+                model: {},
                 run: {
                     namespaced: true,
                     state: {
@@ -128,7 +128,7 @@ describe("SensitivityOptions", () => {
                 directives: { tooltip: mockTooltipDirective }
             }
         });
-    });
+    };
 
     const percentSettings = {
         parameterToVary: "A",
@@ -253,11 +253,7 @@ describe("SensitivityOptions", () => {
     });
 
     it("renders as expected for multi-sensitivity", () => {
-        const wrapper = getWrapperForMultiSensitivity([
-            percentSettings,
-            rangeSettings,
-            customSettings
-        ]);
+        const wrapper = getWrapperForMultiSensitivity([percentSettings, rangeSettings, customSettings]);
         expect(wrapper.findComponent(VerticalCollapse).props("title")).toBe("Multi-sensitivity Options");
         expect(wrapper.findComponent(VerticalCollapse).props("collapseId")).toBe("sensitivity-options");
         const allSettingsDivs = wrapper.findAll(".sensitivity-options-settings");
@@ -306,16 +302,18 @@ describe("SensitivityOptions", () => {
     it("displays message if no parameter to vary", () => {
         const wrapper = getWrapper({ parameterToVary: null } as any);
         expect(wrapper.find("ul").exists()).toBe(false);
-        expect(wrapper.find("#sensitivity-options-msg").text())
-            .toBe("Please compile a valid model in order to set Sensitivity options.");
+        expect(wrapper.find("#sensitivity-options-msg").text()).toBe(
+            "Please compile a valid model in order to set Sensitivity options."
+        );
         expect(wrapper.find("#sensitivity-options").findComponent(SensitivityParamValues).exists()).toBe(false);
         expect(wrapper.findComponent(SensitivityPlotOptions).exists()).toBe(false);
     });
 
     it("displays message if no parameter to vary, for multiSensitivity", () => {
         const wrapper = getWrapper({ parameterToVary: null } as any, true);
-        expect(wrapper.find("#sensitivity-options-msg").text())
-            .toBe("Please compile a valid model in order to set Multi-sensitivity options.");
+        expect(wrapper.find("#sensitivity-options-msg").text()).toBe(
+            "Please compile a valid model in order to set Multi-sensitivity options."
+        );
     });
 
     it("saves edited sensitivity param settings", async () => {
@@ -361,10 +359,7 @@ describe("SensitivityOptions", () => {
         await editParamSettings.vm.$emit("update", { ...rangeSettings });
         expect(mockMultiSensitivitySetParamSettings).toHaveBeenCalledTimes(1);
         // The first parameter not already in the settings should be B
-        expect(mockMultiSensitivitySetParamSettings.mock.calls[0][1]).toStrictEqual([
-            ...settings,
-            rangeSettings
-        ]);
+        expect(mockMultiSensitivitySetParamSettings.mock.calls[0][1]).toStrictEqual([...settings, rangeSettings]);
     });
 
     it("can edit setting after closing editor on add", async () => {
@@ -386,8 +381,7 @@ describe("SensitivityOptions", () => {
         await allSettingsDivs[1].find(".delete-param-settings").trigger("click");
         expect(mockMultiSensitivitySetParamSettings).toHaveBeenCalledTimes(1);
         // The first parameter not already in the settings should be B
-        expect(mockMultiSensitivitySetParamSettings.mock.calls[0][1])
-            .toStrictEqual([customSettings, rangeSettings]);
+        expect(mockMultiSensitivitySetParamSettings.mock.calls[0][1]).toStrictEqual([customSettings, rangeSettings]);
     });
 
     it("does not display delete button when there is only one param settings", () => {

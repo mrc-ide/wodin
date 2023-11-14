@@ -1,6 +1,11 @@
 import {
-    evaluateScript, freezer, generateBatchPars, getCodeErrorFromResponse,
-    processFitData, newSessionId, joinStringsSentence
+    evaluateScript,
+    freezer,
+    generateBatchPars,
+    getCodeErrorFromResponse,
+    processFitData,
+    newSessionId,
+    joinStringsSentence
 } from "../../src/app/utils";
 import { SensitivityScaleType, SensitivityVariationType } from "../../src/app/store/sensitivity/state";
 import { mockBatchParsDisplace, mockBatchParsRange } from "../mocks";
@@ -44,8 +49,9 @@ describe("evaluateScript", () => {
 });
 
 describe("processFitData", () => {
-    const noTimeVariableDetail = "Data contains no suitable time variable."
-        + " A time variable must strictly increase per row, with no negative values.";
+    const noTimeVariableDetail =
+        "Data contains no suitable time variable." +
+        " A time variable must strictly increase per row, with no negative values.";
     it("processes numeric data without errors", () => {
         const data = [
             { a: "1", b: "2" },
@@ -82,13 +88,7 @@ describe("processFitData", () => {
     });
 
     it("returns error if less than 2 columns", () => {
-        const data = [
-            { a: "1" },
-            { a: "3.5" },
-            { a: "5" },
-            { a: "7" },
-            { a: "10" }
-        ];
+        const data = [{ a: "1" }, { a: "3.5" }, { a: "5" }, { a: "7" }, { a: "10" }];
         const result = processFitData(data, "Error occurred");
         expect(result.data).toBe(null);
         expect(result.error).toStrictEqual({
@@ -258,7 +258,8 @@ describe("processFitData", () => {
         const transformedError = getCodeErrorFromResponse(error);
 
         expect(transformedError).toStrictEqual({
-            error: "Code error", detail: error.message
+            error: "Code error",
+            detail: error.message
         });
     });
 
@@ -270,7 +271,8 @@ describe("processFitData", () => {
         const transformedError = getCodeErrorFromResponse(error);
 
         expect(transformedError).toStrictEqual({
-            error: "Code error", detail: error.message
+            error: "Code error",
+            detail: error.message
         });
     });
 
@@ -360,10 +362,12 @@ describe("generateBatchPars", () => {
         const result = generateBatchPars(rootState, [percentSettings], parameterValues)!;
         expect(result.error).toBe(null);
         expect(result.batchPars!.base).toBe(parameterValues);
-        expect(result.batchPars!.varying).toStrictEqual([{
-            name: "A",
-            values: [0.5, 0.75, 1, 1.25, 1.5]
-        }]);
+        expect(result.batchPars!.varying).toStrictEqual([
+            {
+                name: "A",
+                values: [0.5, 0.75, 1, 1.25, 1.5]
+            }
+        ]);
 
         expect(spyBatchParsDisplace).toHaveBeenCalledTimes(1);
         expect(spyBatchParsDisplace.mock.calls[0][0]).toStrictEqual(parameterValues);
@@ -377,10 +381,12 @@ describe("generateBatchPars", () => {
         const result = generateBatchPars(rootState, [rangeSettings], parameterValues)!;
         expect(result.error).toBe(null);
         expect(result.batchPars!.base).toBe(parameterValues);
-        expect(result.batchPars!.varying).toStrictEqual([{
-            name: "B",
-            values: [2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]
-        }]);
+        expect(result.batchPars!.varying).toStrictEqual([
+            {
+                name: "B",
+                values: [2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]
+            }
+        ]);
         expect(spyBatchParsRange).toHaveBeenCalledTimes(1);
         expect(spyBatchParsRange.mock.calls[0][0]).toStrictEqual(parameterValues);
         expect(spyBatchParsRange.mock.calls[0][1]).toStrictEqual("B");
@@ -394,17 +400,18 @@ describe("generateBatchPars", () => {
         const result = generateBatchPars(rootState, [customSettings], parameterValues)!;
         expect(result.error).toBe(null);
         expect(result.batchPars!.base).toBe(parameterValues);
-        expect(result.batchPars!.varying).toStrictEqual([{
-            name: "C",
-            values: [1, 2, 3]
-        }]);
+        expect(result.batchPars!.varying).toStrictEqual([
+            {
+                name: "C",
+                values: [1, 2, 3]
+            }
+        ]);
         expect(spyBatchParsDisplace).not.toHaveBeenCalled();
         expect(spyBatchParsRange).not.toHaveBeenCalled();
     });
 
     it("generates BatchPars for multiple param settings", () => {
-        const result = generateBatchPars(rootState,
-            [customSettings, rangeSettings, percentSettings], parameterValues)!;
+        const result = generateBatchPars(rootState, [customSettings, rangeSettings, percentSettings], parameterValues)!;
         expect(result.error).toBe(null);
         expect(result.batchPars!.base).toBe(parameterValues);
         expect(result.batchPars!.varying).toStrictEqual([
@@ -449,8 +456,7 @@ describe("generateBatchPars", () => {
         const settings = { ...percentSettings, parameterToVary: null };
         const result = generateBatchPars(rootState, [settings], parameterValues);
         expect(result.batchPars).toBe(null);
-        expect(result.error)
-            .toStrictEqual({ error: "Invalid settings", detail: "Parameter to vary is not set" });
+        expect(result.error).toStrictEqual({ error: "Invalid settings", detail: "Parameter to vary is not set" });
         expect(spyBatchParsDisplace).not.toHaveBeenCalled();
     });
 
@@ -458,8 +464,10 @@ describe("generateBatchPars", () => {
         const settings = { ...rangeSettings, rangeFrom: 0, rangeTo: 0 };
         const result = generateBatchPars(rootState, [settings], parameterValues);
         expect(result.batchPars).toBe(null);
-        expect(result.error)
-            .toStrictEqual({ error: "Invalid settings", detail: "Mock error: min must be less than max" });
+        expect(result.error).toStrictEqual({
+            error: "Invalid settings",
+            detail: "Mock error: min must be less than max"
+        });
         expect(spyBatchParsRange).toHaveBeenCalledTimes(1);
     });
 
@@ -467,8 +475,10 @@ describe("generateBatchPars", () => {
         const settings = { ...percentSettings, numberOfRuns: 0 };
         const result = generateBatchPars(rootState, [settings], parameterValues);
         expect(result.batchPars).toBe(null);
-        expect(result.error)
-            .toStrictEqual({ error: "Invalid settings", detail: "Mock error: count must be 2 or more" });
+        expect(result.error).toStrictEqual({
+            error: "Invalid settings",
+            detail: "Mock error: count must be 2 or more"
+        });
         expect(spyBatchParsDisplace).toHaveBeenCalledTimes(1);
     });
 });

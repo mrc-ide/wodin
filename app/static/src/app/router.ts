@@ -1,10 +1,12 @@
-import {
-    createRouter, createWebHistory, RouteComponent, Router
-} from "vue-router";
+import { createRouter, createWebHistory, RouteComponent, Router } from "vue-router";
 import SessionsPage from "./components/sessions/SessionsPage.vue";
 
-export function initialiseRouter(appComponent: RouteComponent, appName: string, baseUrl: string,
-    appsPath: string): Router {
+export function initialiseRouter(
+    appComponent: RouteComponent,
+    appName: string,
+    baseUrl: string,
+    appsPath: string
+): Router {
     // Remove any sessionId parameter from url
     const url = window.location.href;
     if (url.includes("sessionId=")) {

@@ -5,7 +5,6 @@ const mockRouter = {} as any;
 jest.mock("vue-router", () => ({
     createWebHistory: jest.fn(),
     createRouter: jest.fn()
-
 }));
 
 import { createWebHistory, createRouter } from "vue-router";

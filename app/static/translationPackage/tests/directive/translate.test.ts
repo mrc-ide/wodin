@@ -1,11 +1,10 @@
-import {mount, shallowMount} from "@vue/test-utils";
+import { mount, shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
 import registerTranslations from "../../registerTranslations";
 import translate from "../../directive/translate";
 import { nextTick } from "vue";
 
 describe("translate directive", () => {
-
     beforeAll(() => {
         console.warn = jest.fn();
     });
@@ -15,15 +14,15 @@ describe("translate directive", () => {
     });
 
     const TranslateAttributeTest = {
-        template: '<input v-translate:value="\'validate\'" />'
+        template: "<input v-translate:value=\"'validate'\" />"
     };
 
     const TranslateLowercaseAttributeTest = {
-        template: '<input v-translate:value.lowercase="\'validate\'" />'
+        template: "<input v-translate:value.lowercase=\"'validate'\" />"
     };
 
     const TranslateInnerTextTestStatic = {
-        template: '<h4 v-translate="\'validate\'"></h4>'
+        template: "<h4 v-translate=\"'validate'\"></h4>"
     };
 
     const TranslateInnerTextTestDynamic = {
@@ -31,12 +30,13 @@ describe("translate directive", () => {
         data() {
             return {
                 text: "validate"
-            }
+            };
         }
     };
 
     const TranslateMultiple = {
-        template: '<input v-translate:value="\'validate\'" v-translate:placeholder="\'email\'" v-translate="\'logout\'"/>',
+        template:
+            "<input v-translate:value=\"'validate'\" v-translate:placeholder=\"'email'\" v-translate=\"'logout'\"/>"
     };
 
     const createStore = () => {
@@ -50,16 +50,20 @@ describe("translate directive", () => {
             }
         });
         registerTranslations(store.state.language, {
-            en: [{
-                validate: "Validate",
-                email: "Email address",
-                logout: "Logout"
-            }],
-            fr: [{
-                validate: "Valider",
-                email: "Adresse e-mail",
-                logout: "Fermer une session"
-            }]
+            en: [
+                {
+                    validate: "Validate",
+                    email: "Email address",
+                    logout: "Logout"
+                }
+            ],
+            fr: [
+                {
+                    validate: "Valider",
+                    email: "Adresse e-mail",
+                    logout: "Fermer une session"
+                }
+            ]
         });
         return store as any;
     };
@@ -211,7 +215,7 @@ describe("translate directive", () => {
                 }
             }
         });
-        let input = (rendered.find("input").element as HTMLInputElement);
+        let input = rendered.find("input").element as HTMLInputElement;
         expect(input.value).toBe("Validate");
         expect(input.placeholder).toBe("Email address");
         expect(input.textContent).toBe("Logout");
@@ -219,7 +223,7 @@ describe("translate directive", () => {
         store.state.language.currentLanguage = "fr";
         await nextTick();
 
-        input = (rendered.find("input").element as HTMLInputElement);
+        input = rendered.find("input").element as HTMLInputElement;
         expect(input.value).toBe("Valider");
         expect(input.placeholder).toBe("Adresse e-mail");
         expect(input.textContent).toBe("Fermer une session");
@@ -239,8 +243,7 @@ describe("translate directive", () => {
             }
         });
         expect(rendered.find("h4").text()).toBe("");
-        expect((console.warn as jest.Mock).mock.calls[0][0])
-            .toBe("v-translate directive declared without a value");
+        expect((console.warn as jest.Mock).mock.calls[0][0]).toBe("v-translate directive declared without a value");
     });
 
     it("removes watcher on unbind", async () => {
@@ -270,16 +273,16 @@ describe("translate directive", () => {
                 }
             }
         });
-        expect((renderedAttribute.element as any).__lang_unwatch__).toHaveProperty("value")
-        expect((renderedText.element as any).__lang_unwatch__).toHaveProperty("innerHTML")
-        expect((renderedMultiple.element as any).__lang_unwatch__).toHaveProperty("innerHTML")
-        expect((renderedMultiple.element as any).__lang_unwatch__).toHaveProperty("placeholder")
-        expect((renderedMultiple.element as any).__lang_unwatch__).toHaveProperty("value")
+        expect((renderedAttribute.element as any).__lang_unwatch__).toHaveProperty("value");
+        expect((renderedText.element as any).__lang_unwatch__).toHaveProperty("innerHTML");
+        expect((renderedMultiple.element as any).__lang_unwatch__).toHaveProperty("innerHTML");
+        expect((renderedMultiple.element as any).__lang_unwatch__).toHaveProperty("placeholder");
+        expect((renderedMultiple.element as any).__lang_unwatch__).toHaveProperty("value");
         renderedAttribute.unmount();
-        expect((renderedAttribute.element as any).__lang_unwatch__).toStrictEqual({})
+        expect((renderedAttribute.element as any).__lang_unwatch__).toStrictEqual({});
         renderedText.unmount();
-        expect((renderedText.element as any).__lang_unwatch__).toStrictEqual({})
+        expect((renderedText.element as any).__lang_unwatch__).toStrictEqual({});
         renderedMultiple.unmount();
-        expect((renderedMultiple.element as any).__lang_unwatch__).toStrictEqual({})
+        expect((renderedMultiple.element as any).__lang_unwatch__).toStrictEqual({});
     });
 });

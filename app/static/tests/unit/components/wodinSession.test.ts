@@ -16,7 +16,8 @@ describe("WodinSession", () => {
         jest.clearAllMocks();
     });
 
-    const getWrapper = (appName: string | null = "test",
+    const getWrapper = (
+        appName: string | null = "test",
         shareNotFound = "",
         baseUrl = "http://localhost:3000",
         appsPath = "apps",
@@ -24,7 +25,8 @@ describe("WodinSession", () => {
             currentLanguage: Language.fr,
             updatingLanguage: false,
             enableI18n: false
-        }) => {
+        }
+    ) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
                 appName,

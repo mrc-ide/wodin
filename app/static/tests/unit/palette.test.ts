@@ -1,10 +1,4 @@
-import {
-    interpolateColours,
-    paletteData,
-    paletteModel,
-    parseColour,
-    rgb
-} from "../../src/app/palette";
+import { interpolateColours, paletteData, paletteModel, parseColour, rgb } from "../../src/app/palette";
 
 describe("parse colours", () => {
     it("can roundtrip", () => {
@@ -46,8 +40,15 @@ describe("interpolate colours", () => {
             res.push(p(i));
         }
         const expected = [
-            "#2e5cb8", "#348496", "#39ac73", "#83bc3a", "#cccc00",
-            "#e6aa27", "#ff884d", "#e64449", "#cc0044"
+            "#2e5cb8",
+            "#348496",
+            "#39ac73",
+            "#83bc3a",
+            "#cccc00",
+            "#e6aa27",
+            "#ff884d",
+            "#e64449",
+            "#cc0044"
         ];
         expect(res).toEqual(expected);
     });

@@ -1,28 +1,28 @@
 <template>
-  <h3>Upload data</h3>
-  <div>
-    <input type="file"
-           id="fitDataUpload"
-           accept=".csv,.txt"
-           @change="upload"
-           @click="clearCurrentFile"
-           class="form-control">
-  </div>
-  <div v-if="success" class="mt-2" id="data-upload-success">
-    <vue-feather class="inline-icon text-success" type="check"></vue-feather>
-    Uploaded {{rows}} rows and {{columns}} columns
-  </div>
-  <error-info :error="error"></error-info>
-  <div v-if="timeVariableCandidates" id="time-variable" class="mt-4">
-    <label for="select-time-variable" class="fw-bold">
-      Select time variable
-    </label>
-    <select id="select-time-variable" class="form-select" v-model="timeVariable" @change="updateTimeVariable">
-      <option v-for="timeVar in timeVariableCandidates" :key="timeVar" :value="timeVar">
-        {{timeVar}}
-      </option>
-    </select>
-  </div>
+    <h3>Upload data</h3>
+    <div>
+        <input
+            type="file"
+            id="fitDataUpload"
+            accept=".csv,.txt"
+            @change="upload"
+            @click="clearCurrentFile"
+            class="form-control"
+        />
+    </div>
+    <div v-if="success" class="mt-2" id="data-upload-success">
+        <vue-feather class="inline-icon text-success" type="check"></vue-feather>
+        Uploaded {{ rows }} rows and {{ columns }} columns
+    </div>
+    <error-info :error="error"></error-info>
+    <div v-if="timeVariableCandidates" id="time-variable" class="mt-4">
+        <label for="select-time-variable" class="fw-bold"> Select time variable </label>
+        <select id="select-time-variable" class="form-select" v-model="timeVariable" @change="updateTimeVariable">
+            <option v-for="timeVar in timeVariableCandidates" :key="timeVar" :value="timeVar">
+                {{ timeVar }}
+            </option>
+        </select>
+    </div>
 </template>
 
 <script lang="ts">

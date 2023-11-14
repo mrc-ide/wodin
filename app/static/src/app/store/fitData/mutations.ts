@@ -13,14 +13,14 @@ export enum FitDataMutation {
 }
 
 export interface SetDataPayload {
-    data: Dict<number>[] | null,
-    columns: string[] | null,
-    timeVariableCandidates: string[] | null
+    data: Dict<number>[] | null;
+    columns: string[] | null;
+    timeVariableCandidates: string[] | null;
 }
 
 export interface SetLinkedVariablePayload {
-    column: string,
-    variable: string | null
+    column: string;
+    variable: string | null;
 }
 
 const updateColumnToFit = (state: FitDataState) => {

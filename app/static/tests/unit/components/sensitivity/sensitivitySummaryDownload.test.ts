@@ -77,7 +77,7 @@ describe("SensitivitySummaryDownload", () => {
                         endTime: 100
                     }
                 },
-                multiSensitivity: multiSens ? sensMod : {} as any,
+                multiSensitivity: multiSens ? sensMod : ({} as any),
                 sensitivity: multiSens ? minimalSensitivity : sensMod
             }
         });
@@ -93,8 +93,10 @@ describe("SensitivitySummaryDownload", () => {
         });
     };
 
-    const testForSensAndMultiSens = (test: (wrapper: VueWrapper<any>, multiSens: boolean) => void,
-        state: Partial<SensitivityState> = {}) => {
+    const testForSensAndMultiSens = (
+        test: (wrapper: VueWrapper<any>, multiSens: boolean) => void,
+        state: Partial<SensitivityState> = {}
+    ) => {
         let wrapper = getWrapper(false, state);
         test(wrapper, false);
         jest.clearAllMocks();
@@ -102,8 +104,10 @@ describe("SensitivitySummaryDownload", () => {
         test(wrapper, true);
     };
 
-    const asyncTestForSensAndMultiSens = async (test: (wrapper: VueWrapper<any>, multiSens: boolean) => Promise<void>,
-        state: Partial<SensitivityState> = {}) => {
+    const asyncTestForSensAndMultiSens = async (
+        test: (wrapper: VueWrapper<any>, multiSens: boolean) => Promise<void>,
+        state: Partial<SensitivityState> = {}
+    ) => {
         let wrapper = getWrapper(false, state);
         await test(wrapper, false);
         jest.clearAllMocks();
@@ -150,16 +154,22 @@ describe("SensitivitySummaryDownload", () => {
         expectDownloadButtonEnabled({ ...enabledState, downloading: true }, false);
 
         // disabled if update required
-        expectDownloadButtonEnabled({
-            ...enabledState,
-            sensitivityUpdateRequired: { modelChanged: true }
-        }, false);
+        expectDownloadButtonEnabled(
+            {
+                ...enabledState,
+                sensitivityUpdateRequired: { modelChanged: true }
+            },
+            false
+        );
 
         // disabled if no batch result
-        expectDownloadButtonEnabled({
-            ...enabledState,
-            result: { ...enabledResult, batch: null }
-        }, false);
+        expectDownloadButtonEnabled(
+            {
+                ...enabledState,
+                result: { ...enabledResult, batch: null }
+            },
+            false
+        );
     });
 
     it("renders DownloadOutput as expected", () => {

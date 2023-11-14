@@ -4,23 +4,23 @@ import { AdvancedOptions } from "./responseTypes";
 import { Tag } from "../store/run/state";
 
 export interface SetAppPayload {
-    appName: string
-    baseUrl: string
-    appsPath: string,
-    enableI18n: boolean,
-    defaultLanguage: Language
+    appName: string;
+    baseUrl: string;
+    appsPath: string;
+    enableI18n: boolean;
+    defaultLanguage: Language;
 }
 
-export interface InitialisePayload extends SetAppPayload{
-    loadSessionId: string
+export interface InitialisePayload extends SetAppPayload {
+    loadSessionId: string;
 }
 
 export interface SetParameterSetResultPayload {
-    name: string,
-    result: OdinRunResultOde
+    name: string;
+    result: OdinRunResultOde;
 }
 
 export interface SetAdvancedSettingPayload {
-    option: AdvancedOptions,
-    newVal: number | null | Tag[]
+    option: AdvancedOptions;
+    newVal: number | null | Tag[];
 }

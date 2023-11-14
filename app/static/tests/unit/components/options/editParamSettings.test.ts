@@ -6,7 +6,11 @@ import {
     SensitivityVariationType
 } from "../../../../src/app/store/sensitivity/state";
 import {
-    mockBasicState, mockBatchParsDisplace, mockBatchParsRange, mockModelState, mockRunState
+    mockBasicState,
+    mockBatchParsDisplace,
+    mockBatchParsRange,
+    mockModelState,
+    mockRunState
 } from "../../../mocks";
 import EditParamSettings from "../../../../src/app/components/options/EditParamSettings.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
@@ -59,8 +63,11 @@ describe("EditParamSettings", () => {
 
     const parameterValues = { A: 1, B: 2, C: 3 };
 
-    const getWrapper = async (paramSettings: SensitivityParameterSettings, open = true,
-        paramNames = ["A", "B", "C"]) => {
+    const getWrapper = async (
+        paramSettings: SensitivityParameterSettings,
+        open = true,
+        paramNames = ["A", "B", "C"]
+    ) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
@@ -203,8 +210,7 @@ describe("EditParamSettings", () => {
         const wrapper = await getWrapper(settings);
 
         expect(wrapper.find(".modal-footer button.btn-primary").attributes("disabled")).not.toBe(undefined);
-        expect(wrapper.find("#invalid-msg").text())
-            .toBe("Invalid settings: Mock error: min must be less than max");
+        expect(wrapper.find("#invalid-msg").text()).toBe("Invalid settings: Mock error: min must be less than max");
     });
 
     it("hides modal if not open", async () => {
@@ -240,16 +246,18 @@ describe("EditParamSettings", () => {
         await wrapper.find("#ok-settings").trigger("click");
         expect(wrapper.emitted("close")?.length).toBe(1);
         expect(wrapper.emitted("update")?.length).toBe(1);
-        expect(wrapper.emitted("update")![0]).toStrictEqual([{
-            parameterToVary: "A",
-            scaleType: SensitivityScaleType.Logarithmic,
-            variationType: SensitivityVariationType.Range,
-            variationPercentage: 15,
-            rangeFrom: 1,
-            rangeTo: 3,
-            numberOfRuns: 11,
-            customValues: []
-        }]);
+        expect(wrapper.emitted("update")![0]).toStrictEqual([
+            {
+                parameterToVary: "A",
+                scaleType: SensitivityScaleType.Logarithmic,
+                variationType: SensitivityVariationType.Range,
+                variationPercentage: 15,
+                rangeFrom: 1,
+                rangeTo: 3,
+                numberOfRuns: 11,
+                customValues: []
+            }
+        ]);
     });
 
     it("renders and updates sensitivity param values", async () => {
@@ -284,7 +292,8 @@ describe("EditParamSettings", () => {
     it("displays error when Custom variation type, and there are less than 2 values", async () => {
         const expectError = (wrapper: VueWrapper<any>) => {
             expect(wrapper.findComponent(ErrorInfo).props().error).toStrictEqual({
-                error: "Invalid settings", detail: "Must include at least 2 traces in the batch"
+                error: "Invalid settings",
+                detail: "Must include at least 2 traces in the batch"
             });
         };
         expectError(await getWrapper({ ...customSettings, customValues: [] }));

@@ -21,11 +21,11 @@ export interface AllFitData {
 }
 
 export interface FitDataState {
-    data: FitData | null,
-    columns: string[] | null,
-    timeVariableCandidates: string[] | null,
-    timeVariable: string | null
-    linkedVariables: Dict<string | null> // Dict of data column names (keys) to linked model variables (values)
-    columnToFit: string | null
-    error: WodinError | null
+    data: FitData | null;
+    columns: string[] | null;
+    timeVariableCandidates: string[] | null;
+    timeVariable: string | null;
+    linkedVariables: Dict<string | null>; // Dict of data column names (keys) to linked model variables (values)
+    columnToFit: string | null;
+    error: WodinError | null;
 }

@@ -1,22 +1,27 @@
 <template>
-  <div>
-    <button class="btn btn-primary" id="download-summary-btn"
+    <div>
+        <button
+            class="btn btn-primary"
+            id="download-summary-btn"
             :disabled="downloading || !canDownloadSummary"
-            @click="toggleShowDownloadSummary(true)">
-      <vue-feather size="20" class="inline-icon" type="download"></vue-feather>
-      Download summary
-    </button>
-    <div v-if="downloading" id="downloading">
-      <LoadingSpinner size="xs"></LoadingSpinner>
-      Downloading...
+            @click="toggleShowDownloadSummary(true)"
+        >
+            <vue-feather size="20" class="inline-icon" type="download"></vue-feather>
+            Download summary
+        </button>
+        <div v-if="downloading" id="downloading">
+            <LoadingSpinner size="xs"></LoadingSpinner>
+            Downloading...
+        </div>
     </div>
-  </div>
-  <DownloadOutput :open="showDownloadSummary"
-                  :download-type="downloadType"
-                  :include-points="false"
-                  v-model:user-file-name="downloadSummaryUserFileName"
-                  @download="downloadSummary"
-                  @close="toggleShowDownloadSummary(false)"></DownloadOutput>
+    <DownloadOutput
+        :open="showDownloadSummary"
+        :download-type="downloadType"
+        :include-points="false"
+        v-model:user-file-name="downloadSummaryUserFileName"
+        @download="downloadSummary"
+        @close="toggleShowDownloadSummary(false)"
+    ></DownloadOutput>
 </template>
 <script lang="ts">
 import { defineComponent, ref } from "vue";
@@ -41,14 +46,14 @@ export default defineComponent({
     },
     setup(props) {
         const store = useStore();
-        const {
-            canDownloadSummary,
-            downloading,
-            downloadSummaryUserFileName,
-            downloadSummary
-        } = baseSensitivity(store, props.multiSensitivity);
+        const { canDownloadSummary, downloading, downloadSummaryUserFileName, downloadSummary } = baseSensitivity(
+            store,
+            props.multiSensitivity
+        );
         const showDownloadSummary = ref(false);
-        const toggleShowDownloadSummary = (show: boolean) => { showDownloadSummary.value = show; };
+        const toggleShowDownloadSummary = (show: boolean) => {
+            showDownloadSummary.value = show;
+        };
 
         return {
             canDownloadSummary,

@@ -44,12 +44,18 @@ describe("Data Tab", () => {
     });
 
     it("renders as expected on successful upload", () => {
-        const data = [{ a: 1, b: 2, c: 3 }, { a: 2, b: 3, c: -4 }];
+        const data = [
+            { a: 1, b: 2, c: 3 },
+            { a: 2, b: 3, c: -4 }
+        ];
         const columns = ["a", "b", "c"];
         const timeVariableCandidates = ["a", "b"];
         const timeVariable = "b";
         const wrapper = getWrapper({
-            data, columns, timeVariableCandidates, timeVariable
+            data,
+            columns,
+            timeVariableCandidates,
+            timeVariable
         });
         expect(wrapper.find("#data-upload-success").text()).toBe("Uploaded 2 rows and 3 columns");
         expect(wrapper.findComponent(VueFeather).props("type")).toBe("check");
@@ -86,14 +92,24 @@ describe("Data Tab", () => {
     });
 
     it("dispatches UpdateTimeVariable when select changes", async () => {
-        const data = [{ a: 1, b: 2, c: 3 }, { a: 2, b: 3, c: -4 }];
+        const data = [
+            { a: 1, b: 2, c: 3 },
+            { a: 2, b: 3, c: -4 }
+        ];
         const columns = ["a", "b", "c"];
         const timeVariableCandidates = ["a", "b"];
         const timeVariable = "b";
         const mockUpdateTimeVar = jest.fn();
-        const wrapper = getWrapper({
-            data, columns, timeVariableCandidates, timeVariable
-        }, jest.fn(), mockUpdateTimeVar);
+        const wrapper = getWrapper(
+            {
+                data,
+                columns,
+                timeVariableCandidates,
+                timeVariable
+            },
+            jest.fn(),
+            mockUpdateTimeVar
+        );
 
         const select = wrapper.find("#time-variable select");
         (select.element as HTMLSelectElement).value = "a";
@@ -106,7 +122,7 @@ describe("Data Tab", () => {
     it("clears input value on click", async () => {
         const wrapper = getWrapper();
         const input = wrapper.find("input");
-        const el = (input.element as HTMLInputElement);
+        const el = input.element as HTMLInputElement;
         const mockSetValue = jest.fn();
         Object.defineProperty(el, "value", {
             get: jest.fn().mockReturnValue("testFile.csv"),

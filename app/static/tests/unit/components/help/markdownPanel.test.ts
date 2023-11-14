@@ -52,12 +52,12 @@ describe("MarkdownPanel", () => {
 
     // eslint-disable-next-line @typescript-eslint/ban-types
     const testImageRewriteRule = (rule: Function, imgSrc: string, expectedOutputSrc: string) => {
-        const tokens = [{
-            attrIndex: () => 0,
-            attrs: [
-                ["src", imgSrc]
-            ]
-        }];
+        const tokens = [
+            {
+                attrIndex: () => 0,
+                attrs: [["src", imgSrc]]
+            }
+        ];
         const idx = 0;
         const mockRenderToken = jest.fn();
         const slf = {
@@ -91,17 +91,13 @@ describe("MarkdownPanel", () => {
         const markdown = ["## header", "text"];
         const wrapper = getWrapper(markdown);
         expect(mockRender).toHaveBeenCalledWith("## header\ntext");
-        expect(wrapper.find(".markdown-panel").html()).toBe(
-            `<div class="markdown-panel">${mockRenderOutput}</div>`
-        );
+        expect(wrapper.find(".markdown-panel").html()).toBe(`<div class="markdown-panel">${mockRenderOutput}</div>`);
     });
 
     it("renders nothing when markdown is empty", () => {
         const wrapper = getWrapper([]);
         expect(mockRender).not.toHaveBeenCalledWith();
-        expect(wrapper.find(".markdown-panel").html()).toBe(
-            "<div class=\"markdown-panel\"></div>"
-        );
+        expect(wrapper.find(".markdown-panel").html()).toBe('<div class="markdown-panel"></div>');
     });
 
     it("calls Mathjax.typeset when mounted", () => {

@@ -8,9 +8,7 @@ import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { nextTick } from "vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import {
-    mockBasicState, mockModelState, mockRunState, mockStochasticState
-} from "../../../mocks";
+import { mockBasicState, mockModelState, mockRunState, mockStochasticState } from "../../../mocks";
 import { ModelState } from "../../../../src/app/store/model/state";
 import { RunState } from "../../../../src/app/store/run/state";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
@@ -54,16 +52,19 @@ describe("RunTab", () => {
     const mockDownloadOutput = jest.fn();
     const mockSetUserDownloadFileName = jest.fn();
 
-    const getWrapper = (modelState: Partial<ModelState> = defaultModelState,
-        runState: Partial<RunState> = defaultRunState, hasRunner = true, appType = AppType.Basic) => {
+    const getWrapper = (
+        modelState: Partial<ModelState> = defaultModelState,
+        runState: Partial<RunState> = defaultRunState,
+        hasRunner = true,
+        appType = AppType.Basic
+    ) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({ appType }),
             modules: {
                 model: {
                     namespaced: true,
                     state: mockModelState(modelState),
-                    actions: {
-                    },
+                    actions: {},
                     getters: {
                         [ModelGetter.hasRunner]: () => hasRunner
                     } as any
@@ -88,8 +89,11 @@ describe("RunTab", () => {
         });
     };
 
-    const getStochasticWrapper = (runner: Partial<OdinRunnerDiscrete> | null = {},
-        resultDiscrete: Partial<OdinRunResultDiscrete> | null = null, compileRequired = false) => {
+    const getStochasticWrapper = (
+        runner: Partial<OdinRunnerDiscrete> | null = {},
+        resultDiscrete: Partial<OdinRunResultDiscrete> | null = null,
+        compileRequired = false
+    ) => {
         const store = new Vuex.Store<StochasticState>({
             state: mockStochasticState(),
             modules: {
@@ -144,9 +148,12 @@ describe("RunTab", () => {
     });
 
     it("renders as expected when app is stochastic", () => {
-        const wrapper = getStochasticWrapper({}, {
-            solution: jest.fn()
-        });
+        const wrapper = getStochasticWrapper(
+            {},
+            {
+                solution: jest.fn()
+            }
+        );
         expect(wrapper.findComponent(RunStochasticPlot).props("fadePlot")).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         expect(wrapper.findComponent(RunPlot).exists()).toBe(false);

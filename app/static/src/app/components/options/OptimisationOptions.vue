@@ -1,24 +1,27 @@
 <template>
- <div class="container">
-   <div v-if="columnToFit" class="row my-2">
-     <div class="col-5">
-       <label class="col-form-label">Target to fit</label>
-     </div>
-     <div class="col-6">
-       <select v-if="columnsWithLinks.length > 1" class="form-select"
-               @change="updateColumnToFit"
-               :value="columnToFit">
-         <option v-for="col in columnsWithLinks" :value="col" :key="col">
-           {{ labelForLinkedCol(col) }}
-         </option>
-       </select>
-       <label class="col-form-label" id="target-fit-label" v-else>{{ labelForLinkedCol(columnToFit) }}</label>
-     </div>
-   </div>
-   <div v-else class="row my-2">
-     {{ columnToFitPrerequisitesMessage }}
-   </div>
- </div>
+    <div class="container">
+        <div v-if="columnToFit" class="row my-2">
+            <div class="col-5">
+                <label class="col-form-label">Target to fit</label>
+            </div>
+            <div class="col-6">
+                <select
+                    v-if="columnsWithLinks.length > 1"
+                    class="form-select"
+                    @change="updateColumnToFit"
+                    :value="columnToFit"
+                >
+                    <option v-for="col in columnsWithLinks" :value="col" :key="col">
+                        {{ labelForLinkedCol(col) }}
+                    </option>
+                </select>
+                <label class="col-form-label" id="target-fit-label" v-else>{{ labelForLinkedCol(columnToFit) }}</label>
+            </div>
+        </div>
+        <div v-else class="row my-2">
+            {{ columnToFitPrerequisitesMessage }}
+        </div>
+    </div>
 </template>
 
 <script lang="ts">

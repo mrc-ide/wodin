@@ -1,4 +1,4 @@
-import Vuex from 'vuex';
+import Vuex from "vuex";
 import { shallowMount, mount } from "@vue/test-utils";
 import LanguageSwitcher from "../../src/LanguageSwitcher.vue";
 
@@ -20,16 +20,16 @@ describe("languageSwitcher component", () => {
                     }
                 }
             }
-        })
-    }
+        });
+    };
 
     const getWrapper = (isMount: boolean, enableI18n = true) => {
         if (isMount) {
             return mount(LanguageSwitcher, {
                 props: {
                     languagesKeys: {
-                        "en": "English",
-                        "fr": "French"
+                        en: "English",
+                        fr: "French"
                     }
                 },
                 global: {
@@ -40,8 +40,8 @@ describe("languageSwitcher component", () => {
             return shallowMount(LanguageSwitcher, {
                 props: {
                     languagesKeys: {
-                        "en": "English",
-                        "fr": "French"
+                        en: "English",
+                        fr: "French"
                     }
                 },
                 global: {
@@ -54,7 +54,7 @@ describe("languageSwitcher component", () => {
     it("renders as expected", () => {
         const wrapper = getWrapper(false);
         expect(wrapper.find("div").classes()).toStrictEqual(["navbar-text", "navbar-version", "me-3"]);
-        expect(wrapper.find("drop-down-stub").attributes("text")).toBe("English")
+        expect(wrapper.find("drop-down-stub").attributes("text")).toBe("English");
     });
 
     it("changing language dispatches updateLanguage action", async () => {
@@ -68,6 +68,6 @@ describe("languageSwitcher component", () => {
 
     it("disabling i18n returns empty wrapper", () => {
         const wrapper = getWrapper(false, false);
-        expect(wrapper.html()).toBe("<!--v-if-->")
-    })
+        expect(wrapper.html()).toBe("<!--v-if-->");
+    });
 });

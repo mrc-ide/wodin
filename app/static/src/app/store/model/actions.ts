@@ -3,9 +3,7 @@ import { ModelState } from "./state";
 import { api } from "../../apiService";
 import { ModelMutation } from "./mutations";
 import { AppState, AppType } from "../appState/state";
-import {
-    Odin, OdinModelResponse, OdinParameter, OdinUserType
-} from "../../types/responseTypes";
+import { Odin, OdinModelResponse, OdinParameter, OdinUserType } from "../../types/responseTypes";
 import { evaluateScript } from "../../utils";
 import { FitDataAction } from "../fitData/actions";
 import { ModelFitAction } from "../modelFit/actions";
@@ -52,9 +50,7 @@ const compileModel = (context: ActionContext<ModelState, AppState>) => {
 };
 
 const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>) => {
-    const {
-        commit, state, rootState, dispatch
-    } = context;
+    const { commit, state, rootState, dispatch } = context;
 
     if (state.odinModelResponse) {
         compileModel(context);
@@ -95,8 +91,9 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
         }
         if (rootState.config?.multiSensitivity) {
             // multi-sensitivity: remove any param settings without valid param, include placeholder if all removed
-            const newMultiSettings = rootState.multiSensitivity.paramSettings
-                .filter((p) => p.parameterToVary && paramNames.includes(p.parameterToVary));
+            const newMultiSettings = rootState.multiSensitivity.paramSettings.filter(
+                (p) => p.parameterToVary && paramNames.includes(p.parameterToVary)
+            );
             if (!newMultiSettings.length) {
                 newMultiSettings.push({ ...defaultSensitivityParamSettings(), parameterToVary: newParamToVary });
             }

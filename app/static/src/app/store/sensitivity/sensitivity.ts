@@ -3,7 +3,8 @@ import {
     SensitivityPlotExtreme,
     SensitivityPlotType,
     SensitivityScaleType,
-    SensitivityState, SensitivityUpdateRequiredReasons,
+    SensitivityState,
+    SensitivityUpdateRequiredReasons,
     SensitivityVariationType
 } from "./state";
 import { mutations } from "./mutations";

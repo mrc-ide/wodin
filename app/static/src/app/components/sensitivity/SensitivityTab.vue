@@ -1,23 +1,26 @@
 <template>
-  <div class="sensitivity-tab">
-    <div>
-      <loading-button class="btn btn-primary"
-              id="run-sens-btn"
-              :loading="loading || running"
-              :is-disabled="!canRunSensitivity"
-              @click="runSensitivity">Run sensitivity</loading-button>
+    <div class="sensitivity-tab">
+        <div>
+            <loading-button
+                class="btn btn-primary"
+                id="run-sens-btn"
+                :loading="loading || running"
+                :is-disabled="!canRunSensitivity"
+                @click="runSensitivity"
+                >Run sensitivity</loading-button
+            >
+        </div>
+        <action-required-message :message="updateMsg"></action-required-message>
+        <sensitivity-traces-plot v-if="tracesPlot" :fade-plot="!!updateMsg"></sensitivity-traces-plot>
+        <sensitivity-summary-plot v-else :fade-plot="!!updateMsg"></sensitivity-summary-plot>
+        <div id="sensitivity-running" v-if="running">
+            <loading-spinner class="inline-spinner" size="xs"></loading-spinner>
+            <span class="ms-2">{{ sensitivityProgressMsg }}</span>
+        </div>
+        <error-info :error="error"></error-info>
+        <sensitivity-summary-download :multi-sensitivity="false" :download-type="'Sensitivity Summary'">
+        </sensitivity-summary-download>
     </div>
-    <action-required-message :message="updateMsg"></action-required-message>
-    <sensitivity-traces-plot v-if="tracesPlot" :fade-plot="!!updateMsg"></sensitivity-traces-plot>
-    <sensitivity-summary-plot v-else :fade-plot="!!updateMsg"></sensitivity-summary-plot>
-    <div id="sensitivity-running" v-if="running">
-      <loading-spinner class="inline-spinner" size="xs"></loading-spinner>
-      <span class="ms-2">{{ sensitivityProgressMsg }}</span>
-    </div>
-    <error-info :error="error"></error-info>
-    <sensitivity-summary-download :multi-sensitivity="false" :download-type="'Sensitivity Summary'">
-    </sensitivity-summary-download>
-  </div>
 </template>
 
 <script lang="ts">
@@ -56,8 +59,10 @@ export default defineComponent({
         const loading = computed(() => store.state.sensitivity.loading);
 
         const canRunSensitivity = computed(() => {
-            return sensitivityPrerequisitesReady.value
-            && !!store.getters[`${namespace}/${BaseSensitivityGetter.batchPars}`];
+            return (
+                sensitivityPrerequisitesReady.value &&
+                !!store.getters[`${namespace}/${BaseSensitivityGetter.batchPars}`]
+            );
         });
 
         const runSensitivity = () => {

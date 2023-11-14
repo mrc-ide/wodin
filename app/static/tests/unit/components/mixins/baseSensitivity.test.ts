@@ -16,9 +16,12 @@ describe("baseSensitivity mixin", () => {
     const mockSensDownloadSummary = jest.fn();
     const mockMultiSensDownloadSummary = jest.fn();
 
-    const getStore = (hasRunner = true, modelState: Partial<ModelState> = {},
+    const getStore = (
+        hasRunner = true,
+        modelState: Partial<ModelState> = {},
         sensitivityState: Partial<BaseSensitivityState> = {},
-        multiSensitivityState: Partial<BaseSensitivityState> = {}) => {
+        multiSensitivityState: Partial<BaseSensitivityState> = {}
+    ) => {
         return new Vuex.Store<AppState>({
             state: {} as any,
             modules: {
@@ -76,8 +79,7 @@ describe("baseSensitivity mixin", () => {
                         ...sensitivityState
                     },
                     mutations: {
-                        [BaseSensitivityMutation.SetUserSummaryDownloadFileName]:
-                            mockSensSetUserSummaryDownloadFileName
+                        [BaseSensitivityMutation.SetUserSummaryDownloadFileName]: mockSensSetUserSummaryDownloadFileName
                     },
                     actions: {
                         [BaseSensitivityAction.DownloadSummary]: mockSensDownloadSummary
@@ -115,8 +117,13 @@ describe("baseSensitivity mixin", () => {
         expect(sut.sensitivityPrerequisitesReady.value).toBe(false);
     });
 
-    const expectUpdateMsgForSensAndMultiSens = (hasRunner: true, modelState: Partial<ModelState>,
-        sensState: Partial<BaseSensitivityState>, expectedSensMsg: string, expectedMultiSensMsg: string) => {
+    const expectUpdateMsgForSensAndMultiSens = (
+        hasRunner: true,
+        modelState: Partial<ModelState>,
+        sensState: Partial<BaseSensitivityState>,
+        expectedSensMsg: string,
+        expectedMultiSensMsg: string
+    ) => {
         const sensStore = getStore(hasRunner, modelState, sensState);
         const sensSut = baseSensitivity(sensStore, false);
         expect(sensSut.updateMsg.value).toBe(expectedSensMsg);
@@ -134,14 +141,23 @@ describe("baseSensitivity mixin", () => {
     });
 
     it("returns expected update message when compile required", () => {
-        expectUpdateMsgForSensAndMultiSens(true, { compileRequired: true }, {},
+        expectUpdateMsgForSensAndMultiSens(
+            true,
+            { compileRequired: true },
+            {},
             "Model code has been updated. Compile code and Run Sensitivity to update.",
-            "Model code has been updated. Compile code and Run Multi-sensitivity to update.");
+            "Model code has been updated. Compile code and Run Multi-sensitivity to update."
+        );
     });
 
     it("returns expected update message when there are no selected variables", () => {
-        expectUpdateMsgForSensAndMultiSens(true, { selectedVariables: [] }, {},
-            "Please select at least one variable.", "Please select at least one variable.");
+        expectUpdateMsgForSensAndMultiSens(
+            true,
+            { selectedVariables: [] },
+            {},
+            "Please select at least one variable.",
+            "Please select at least one variable."
+        );
     });
 
     it("returns expected update message when some update required values are true", () => {
@@ -153,13 +169,19 @@ describe("baseSensitivity mixin", () => {
             numberOfReplicatesChanged: false,
             advancedSettingsChanged: false
         };
-        expectUpdateMsgForSensAndMultiSens(true, {}, { sensitivityUpdateRequired },
+        expectUpdateMsgForSensAndMultiSens(
+            true,
+            {},
+            { sensitivityUpdateRequired },
             "Plot is out of date: model code has been recompiled. Run Sensitivity to update.",
-            "Status is out of date: model code has been recompiled. Run Multi-sensitivity to update.");
+            "Status is out of date: model code has been recompiled. Run Multi-sensitivity to update."
+        );
     });
 
-    const testForSensAndMultiSens = (state: Partial<BaseSensitivityState>,
-        test: (mixin: BaseSensitivityMixin) => void) => {
+    const testForSensAndMultiSens = (
+        state: Partial<BaseSensitivityState>,
+        test: (mixin: BaseSensitivityMixin) => void
+    ) => {
         let store = getStore(true, {}, state, {});
         test(baseSensitivity(store, false));
         store = getStore(true, {}, {}, state);

@@ -1,5 +1,5 @@
 export const mockAoaToSheet = jest.fn().mockImplementation((data) => ({ data, type: "aoa" }));
-export const mockBookNew = jest.fn().mockImplementation(() => ({ sheets: [] } as any));
+export const mockBookNew = jest.fn().mockImplementation(() => ({ sheets: [] }) as any);
 export const mockWriteFile = jest.fn();
 export const mockBookAppendSheet = jest.fn().mockImplementation((workbook: any, worksheet: any, name: string) => {
     (workbook as any).sheets.push({ ...worksheet, name });

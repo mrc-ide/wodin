@@ -28,8 +28,7 @@ describe("SensitivityPlotOptions", () => {
             modules: {
                 model: {
                     namespaced: true,
-                    state: {
-                    }
+                    state: {}
                 },
                 run: {
                     namespaced: true,
@@ -65,8 +64,9 @@ describe("SensitivityPlotOptions", () => {
     it("renders as expected for Trace over time", () => {
         const wrapper = getWrapper();
         expect(wrapper.find("#sensitivity-plot-type label").text()).toBe("Type of plot");
-        expect((wrapper.find("#sensitivity-plot-type select").element as HTMLSelectElement).value)
-            .toBe(SensitivityPlotType.TraceOverTime);
+        expect((wrapper.find("#sensitivity-plot-type select").element as HTMLSelectElement).value).toBe(
+            SensitivityPlotType.TraceOverTime
+        );
         const plotTypeOptions = wrapper.findAll("#sensitivity-plot-type select option");
         expect(plotTypeOptions.length).toBe(4);
         expect(plotTypeOptions.at(0)!.attributes("value")).toBe(SensitivityPlotType.TraceOverTime);
@@ -84,8 +84,9 @@ describe("SensitivityPlotOptions", () => {
 
     it("renders as expected for Value at a single time", () => {
         const wrapper = getWrapper({ plotType: SensitivityPlotType.ValueAtTime });
-        expect((wrapper.find("#sensitivity-plot-type select").element as HTMLSelectElement).value)
-            .toBe(SensitivityPlotType.ValueAtTime);
+        expect((wrapper.find("#sensitivity-plot-type select").element as HTMLSelectElement).value).toBe(
+            SensitivityPlotType.ValueAtTime
+        );
 
         expect(wrapper.find("#sensitivity-plot-extreme").exists()).toBe(false);
 
@@ -97,11 +98,13 @@ describe("SensitivityPlotOptions", () => {
 
     it("renders as expected for Value at min/max", () => {
         const wrapper = getWrapper({ plotType: SensitivityPlotType.ValueAtExtreme });
-        expect((wrapper.find("#sensitivity-plot-type select").element as HTMLSelectElement).value)
-            .toBe(SensitivityPlotType.ValueAtExtreme);
+        expect((wrapper.find("#sensitivity-plot-type select").element as HTMLSelectElement).value).toBe(
+            SensitivityPlotType.ValueAtExtreme
+        );
         expect(wrapper.find("#sensitivity-plot-extreme label").text()).toBe("Min/Max");
-        expect((wrapper.find("#sensitivity-plot-extreme select").element as HTMLSelectElement).value)
-            .toBe(SensitivityPlotExtreme.Min);
+        expect((wrapper.find("#sensitivity-plot-extreme select").element as HTMLSelectElement).value).toBe(
+            SensitivityPlotExtreme.Min
+        );
         const extremeOptions = wrapper.findAll("#sensitivity-plot-extreme select option");
         expect(extremeOptions.length).toBe(2);
         expect(extremeOptions.at(0)!.text()).toBe(SensitivityPlotExtreme.Min);
@@ -112,11 +115,13 @@ describe("SensitivityPlotOptions", () => {
 
     it("renders as expected for Time at value's min/max", () => {
         const wrapper = getWrapper({ plotType: SensitivityPlotType.TimeAtExtreme });
-        expect((wrapper.find("#sensitivity-plot-type select").element as HTMLSelectElement).value)
-            .toBe(SensitivityPlotType.TimeAtExtreme);
+        expect((wrapper.find("#sensitivity-plot-type select").element as HTMLSelectElement).value).toBe(
+            SensitivityPlotType.TimeAtExtreme
+        );
         expect(wrapper.find("#sensitivity-plot-extreme label").text()).toBe("Min/Max");
-        expect((wrapper.find("#sensitivity-plot-extreme select").element as HTMLSelectElement).value)
-            .toBe(SensitivityPlotExtreme.Min);
+        expect((wrapper.find("#sensitivity-plot-extreme select").element as HTMLSelectElement).value).toBe(
+            SensitivityPlotExtreme.Min
+        );
         const extremeOptions = wrapper.findAll("#sensitivity-plot-extreme select option");
         expect(extremeOptions.length).toBe(2);
 

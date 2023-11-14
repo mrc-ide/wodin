@@ -9,7 +9,7 @@ export enum MultiSensitivityMutation {
 
 export const mutations: MutationTree<MultiSensitivityState> = {
     ...baseSensitivityMutations,
-    [MultiSensitivityMutation.SetParamSettings](state:MultiSensitivityState, payload: SensitivityParameterSettings[]) {
+    [MultiSensitivityMutation.SetParamSettings](state: MultiSensitivityState, payload: SensitivityParameterSettings[]) {
         state.paramSettings = payload;
     }
 };

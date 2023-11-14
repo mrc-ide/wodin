@@ -1,15 +1,18 @@
 <template>
-   <div class="ms-2 ">Click to toggle variables to include in graphs.</div>
+    <div class="ms-2">Click to toggle variables to include in graphs.</div>
     <div class="selected-variables-panel m-2">
-      <span v-for="variable in allVariables"
+        <span
+            v-for="variable in allVariables"
             class="badge variable me-2 mb-2"
             :style="getStyle(variable)"
             :key="variable"
-            @click="toggleVariable(variable)">{{variable}}</span>
+            @click="toggleVariable(variable)"
+            >{{ variable }}</span
+        >
     </div>
     <div class="ms-2">
-      <span class="clickable text-primary" id="select-variables-all" @click="selectAll">Select all</span> |
-      <span class="clickable text-primary" id="select-variables-none" @click="selectNone">Select none</span>
+        <span class="clickable text-primary" id="select-variables-all" @click="selectAll">Select all</span> |
+        <span class="clickable text-primary" id="select-variables-none" @click="selectNone">Select none</span>
     </div>
 </template>
 
@@ -23,7 +26,7 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const allVariables = computed<string[]>(() => store.state.model.odinModelResponse?.metadata?.variables || []);
-        const selectedVariables = computed<string[]>(() => (store.state.model.selectedVariables));
+        const selectedVariables = computed<string[]>(() => store.state.model.selectedVariables);
         const palette = computed(() => store.state.model.paletteModel!);
 
         const getStyle = (variable: string) => {
@@ -68,12 +71,12 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-  .selected-variables-panel {
+.selected-variables-panel {
     width: 100%;
 
     .variable {
-      font-size: large;
-      cursor: pointer;
+        font-size: large;
+        cursor: pointer;
     }
-  }
+}
 </style>

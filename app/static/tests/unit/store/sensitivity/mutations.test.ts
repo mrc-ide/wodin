@@ -94,7 +94,7 @@ describe("Sensitivity mutations", () => {
     });
 
     it("sets error", () => {
-        const state = { } as any;
+        const state = {} as any;
         const batch = {
             inputs: {},
             batch: null,

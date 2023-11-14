@@ -1,25 +1,19 @@
 <template>
-  <div class="summary-plot-container" :style="plotStyle">
-    <div class="plot" ref="plot">
+    <div class="summary-plot-container" :style="plotStyle">
+        <div class="plot" ref="plot"></div>
+        <div v-if="!hasPlotData" class="plot-placeholder">
+            {{ placeholderMessage }}
+        </div>
+        <wodin-plot-data-summary :data="plotData"></wodin-plot-data-summary>
+        <slot></slot>
     </div>
-    <div v-if="!hasPlotData" class="plot-placeholder">
-      {{ placeholderMessage }}
-    </div>
-    <wodin-plot-data-summary :data="plotData"></wodin-plot-data-summary>
-    <slot></slot>
-  </div>
 </template>
 
 <script lang="ts">
-
-import {
-    computed, defineComponent, onMounted, onUnmounted, ref, watch
-} from "vue";
+import { computed, defineComponent, onMounted, onUnmounted, ref, watch } from "vue";
 import { AxisType, newPlot, Plots } from "plotly.js-basic-dist-min";
 import { useStore } from "vuex";
-import {
-    config, fadePlotStyle, filterUserTypeSeriesSet, margin, odinToPlotly, updatePlotTraceName
-} from "../../plot";
+import { config, fadePlotStyle, filterUserTypeSeriesSet, margin, odinToPlotly, updatePlotTraceName } from "../../plot";
 import { SensitivityPlotExtremePrefix, SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { Batch, OdinUserTypeSeriesSet } from "../../types/responseTypes";
@@ -61,7 +55,7 @@ export default defineComponent({
         const yAxisSettings = computed(() => {
             const isNotTimePlot = plotSettings.value.plotType !== SensitivityPlotType.TimeAtExtreme;
             const logScale = store.state.graphSettings.logScaleYAxis && isNotTimePlot;
-            const type = logScale ? "log" : "linear" as AxisType;
+            const type = logScale ? "log" : ("linear" as AxisType);
             return { type };
         });
 
@@ -101,9 +95,10 @@ export default defineComponent({
                         paramSetData[name] = paramSetBatches.value[name].valueAtTime(plotSettings.value.time);
                     });
                 } else {
-                    const paramPrefix = plotSettings.value.plotType === SensitivityPlotType.TimeAtExtreme
-                        ? SensitivityPlotExtremePrefix.time
-                        : SensitivityPlotExtremePrefix.value;
+                    const paramPrefix =
+                        plotSettings.value.plotType === SensitivityPlotType.TimeAtExtreme
+                            ? SensitivityPlotExtremePrefix.time
+                            : SensitivityPlotExtremePrefix.value;
                     const extremeParam = `${paramPrefix}${plotSettings.value.extreme}`;
                     data = batch.value.extreme(extremeParam);
                     Object.keys(paramSetBatches.value).forEach((paramSetName) => {
@@ -136,7 +131,7 @@ export default defineComponent({
             finishLoading();
             return [];
         });
-        const hasPlotData = computed(() => !!(plotData.value?.length));
+        const hasPlotData = computed(() => !!plotData.value?.length);
 
         const resize = () => {
             if (plot.value) {
@@ -180,5 +175,4 @@ export default defineComponent({
         };
     }
 });
-
 </script>

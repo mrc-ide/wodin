@@ -1,7 +1,7 @@
 import { TranslationLocales } from "../../types/languageTypes";
 
 interface OptionsTabTranslations extends TranslationLocales {
-    optionsTabExample: string
+    optionsTabExample: string;
 }
 
 const en: OptionsTabTranslations = {

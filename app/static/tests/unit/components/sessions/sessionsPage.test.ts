@@ -33,8 +33,11 @@ describe("SessionsPage", () => {
 
     const currentSessionId = "abc";
 
-    const getWrapper = (sessionsMetadata: SessionMetadata[] | null, sessionId: string | undefined,
-        userPreferences = mockUserPreferences()) => {
+    const getWrapper = (
+        sessionsMetadata: SessionMetadata[] | null,
+        sessionId: string | undefined,
+        userPreferences = mockUserPreferences()
+    ) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
                 appName: "testApp",
@@ -73,13 +76,22 @@ describe("SessionsPage", () => {
 
     const sessionsMetadata = [
         {
-            id: "abc", time: "2022-01-13T09:26:36.396Z", label: "session1", friendlyId: "bad-cat"
+            id: "abc",
+            time: "2022-01-13T09:26:36.396Z",
+            label: "session1",
+            friendlyId: "bad-cat"
         },
         {
-            id: "def", time: "2022-01-13T10:26:36.396Z", label: null, friendlyId: null
+            id: "def",
+            time: "2022-01-13T10:26:36.396Z",
+            label: null,
+            friendlyId: null
         },
         {
-            id: "ghi", time: "2022-01-14T10:26:36.396Z", label: "another session", friendlyId: "good-dog"
+            id: "ghi",
+            time: "2022-01-14T10:26:36.396Z",
+            label: "another session",
+            friendlyId: "good-dog"
         }
     ];
 
@@ -91,8 +103,9 @@ describe("SessionsPage", () => {
         const currentSessionRow = rows.at(1)!;
         expect(currentSessionRow.findComponent(RouterLink).props("to")).toBe("/");
         expect(currentSessionRow.find("a").text()).toBe("make a copy of the current session.");
-        expect(currentSessionRow.find("a").attributes("href"))
-            .toBe("http://localhost:3000/apps/testApp/?sessionId=abc");
+        expect(currentSessionRow.find("a").attributes("href")).toBe(
+            "http://localhost:3000/apps/testApp/?sessionId=abc"
+        );
         expect(currentSessionRow.find(".session-copy-link").text()).toBe("Copy link for current session");
         expect(currentSessionRow.find(".session-copy-code").text()).toBe("Copy code for current session");
 
@@ -111,8 +124,9 @@ describe("SessionsPage", () => {
         expect(session2Cells.at(0)!.text()).toBe("13/01/2022 10:26:36");
         expect(session2Cells.at(1)!.text()).toBe("--no label--");
         expect(session2Cells.at(2)!.findComponent(VueFeather).props("type")).toBe("edit-2");
-        expect(session2Cells.at(3)!.find("a").attributes("href"))
-            .toBe("http://localhost:3000/apps/testApp/?sessionId=def");
+        expect(session2Cells.at(3)!.find("a").attributes("href")).toBe(
+            "http://localhost:3000/apps/testApp/?sessionId=def"
+        );
         expect(session2Cells.at(3)!.find("a").findComponent(VueFeather).props("type")).toBe("upload");
         expect(session2Cells.at(4)!.findComponent(VueFeather).props("type")).toBe("trash-2");
         expect(session2Cells.at(5)!.find("span.session-copy-link").text()).toBe("Copy link");
@@ -124,8 +138,9 @@ describe("SessionsPage", () => {
         expect(session3Cells.at(0)!.text()).toBe("14/01/2022 10:26:36");
         expect(session3Cells.at(1)!.text()).toBe("another session");
         expect(session3Cells.at(2)!.findComponent(VueFeather).props("type")).toBe("edit-2");
-        expect(session3Cells.at(3)!.find("a").attributes("href"))
-            .toBe("http://localhost:3000/apps/testApp/?sessionId=ghi");
+        expect(session3Cells.at(3)!.find("a").attributes("href")).toBe(
+            "http://localhost:3000/apps/testApp/?sessionId=ghi"
+        );
         expect(session3Cells.at(3)!.find("a").findComponent(VueFeather).props("type")).toBe("upload");
         expect(session3Cells.at(4)!.findComponent(VueFeather).props("type")).toBe("trash-2");
         expect(session3Cells.at(5)!.find("span.session-copy-link").text()).toBe("Copy link");
@@ -373,15 +388,18 @@ describe("SessionsPage", () => {
     });
 
     it("when showUnlabelledSessions is false, filters out unlabelled sessions from view", () => {
-        const wrapper = getWrapper(sessionsMetadata, currentSessionId,
-            { showUnlabelledSessions: false, showDuplicateSessions: true });
+        const wrapper = getWrapper(sessionsMetadata, currentSessionId, {
+            showUnlabelledSessions: false,
+            showDuplicateSessions: true
+        });
         const rows = wrapper.findAll(".container .row");
 
         const currentSessionRow = rows.at(1)!;
         expect(currentSessionRow.findComponent(RouterLink).props("to")).toBe("/");
         expect(currentSessionRow.find("a").text()).toBe("make a copy of the current session.");
-        expect(currentSessionRow.find("a").attributes("href"))
-            .toBe("http://localhost:3000/apps/testApp/?sessionId=abc");
+        expect(currentSessionRow.find("a").attributes("href")).toBe(
+            "http://localhost:3000/apps/testApp/?sessionId=abc"
+        );
 
         expect(wrapper.findAll(".previous-session-row").length).toBe(1);
         const session3Cells = rows.at(3)!.findAll("div.session-col-value");
@@ -389,8 +407,9 @@ describe("SessionsPage", () => {
         expect(session3Cells.at(0)!.text()).toBe("14/01/2022 10:26:36");
         expect(session3Cells.at(1)!.text()).toBe("another session");
         expect(session3Cells.at(2)!.findComponent(VueFeather).props("type")).toBe("edit-2");
-        expect(session3Cells.at(3)!.find("a").attributes("href"))
-            .toBe("http://localhost:3000/apps/testApp/?sessionId=ghi");
+        expect(session3Cells.at(3)!.find("a").attributes("href")).toBe(
+            "http://localhost:3000/apps/testApp/?sessionId=ghi"
+        );
         expect(session3Cells.at(3)!.find("a").findComponent(VueFeather).props("type")).toBe("upload");
         expect(session3Cells.at(4)!.findComponent(VueFeather).props("type")).toBe("trash-2");
         expect(session3Cells.at(5)!.find("span.session-copy-link").text()).toBe("Copy link");

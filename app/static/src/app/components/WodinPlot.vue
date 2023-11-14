@@ -1,27 +1,20 @@
 <template>
-  <div class="wodin-plot-container" :style="plotStyle">
-    <div class="plot" ref="plot" id="plot">
+    <div class="wodin-plot-container" :style="plotStyle">
+        <div class="plot" ref="plot" id="plot"></div>
+        <div v-if="!hasPlotData" class="plot-placeholder">
+            {{ placeholderMessage }}
+        </div>
+        <wodin-plot-data-summary :data="baseData"></wodin-plot-data-summary>
+        <slot></slot>
     </div>
-    <div v-if="!hasPlotData" class="plot-placeholder">
-      {{ placeholderMessage }}
-    </div>
-    <wodin-plot-data-summary :data="baseData"></wodin-plot-data-summary>
-    <slot></slot>
-  </div>
 </template>
 
 <script lang="ts">
-import {
-    computed, defineComponent, ref, watch, onMounted, onUnmounted, PropType
-} from "vue";
+import { computed, defineComponent, ref, watch, onMounted, onUnmounted, PropType } from "vue";
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
-import {
-    newPlot, react, PlotRelayoutEvent, Plots, AxisType, Layout, Config
-} from "plotly.js-basic-dist-min";
-import {
-    WodinPlotData, fadePlotStyle, margin, config
-} from "../plot";
+import { newPlot, react, PlotRelayoutEvent, Plots, AxisType, Layout, Config } from "plotly.js-basic-dist-min";
+import { WodinPlotData, fadePlotStyle, margin, config } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
 import { GraphSettingsMutation } from "../store/graphSettings/mutations";
 import { YAxisRange } from "../store/graphSettings/state";
@@ -64,9 +57,9 @@ export default defineComponent({
         const baseData = ref<WodinPlotData>([]);
         const nPoints = 1000; // TODO: appropriate value could be derived from width of element
 
-        const hasPlotData = computed(() => !!(baseData.value?.length));
+        const hasPlotData = computed(() => !!baseData.value?.length);
 
-        const yAxisType = computed(() => (store.state.graphSettings.logScaleYAxis ? "log" : "linear" as AxisType));
+        const yAxisType = computed(() => (store.state.graphSettings.logScaleYAxis ? "log" : ("linear" as AxisType)));
         const lockYAxis = computed(() => store.state.graphSettings.lockYAxis);
         const yAxisRange = computed(() => store.state.graphSettings.yAxisRange as YAxisRange);
 

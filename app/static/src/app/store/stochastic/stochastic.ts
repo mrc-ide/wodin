@@ -54,8 +54,5 @@ export const storeOptions: StoreOptions<StochasticState> = {
         graphSettings,
         language
     },
-    plugins: [
-        logMutations,
-        persistState
-    ]
+    plugins: [logMutations, persistState]
 };

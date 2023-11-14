@@ -26,11 +26,7 @@ describe("Fit Data actions", () => {
         return mockFileReader;
     };
 
-    const updateSumOfSquaresArgs = [
-        `modelFit/${ModelFitAction.UpdateSumOfSquares}`,
-        null,
-        { root: true }
-    ];
+    const updateSumOfSquaresArgs = [`modelFit/${ModelFitAction.UpdateSumOfSquares}`, null, { root: true }];
 
     afterEach(() => {
         resetAllMocks();
@@ -236,7 +232,11 @@ describe("Fit Data actions", () => {
         const dispatch = jest.fn();
 
         (actions[FitDataAction.UpdateLinkedVariables] as any)({
-            commit, dispatch, state, rootState, getters
+            commit,
+            dispatch,
+            state,
+            rootState,
+            getters
         });
 
         expect(commit).toHaveBeenCalledTimes(1);
@@ -263,7 +263,11 @@ describe("Fit Data actions", () => {
         const dispatch = jest.fn();
 
         (actions[FitDataAction.UpdateLinkedVariables] as any)({
-            commit, dispatch, state, rootState, getters
+            commit,
+            dispatch,
+            state,
+            rootState,
+            getters
         });
 
         expect(commit).toHaveBeenCalledTimes(1);
@@ -317,9 +321,16 @@ describe("Fit Data actions", () => {
             }
         });
         const dispatch = jest.fn();
-        (actions[FitDataAction.UpdateTimeVariable] as any)({
-            commit, dispatch, state: testState, rootState, getters: testGetters
-        }, "Day2");
+        (actions[FitDataAction.UpdateTimeVariable] as any)(
+            {
+                commit,
+                dispatch,
+                state: testState,
+                rootState,
+                getters: testGetters
+            },
+            "Day2"
+        );
         expect(commit).toHaveBeenCalledTimes(5);
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetTimeVariable);
         expect(commit.mock.calls[0][1]).toBe("Day2");

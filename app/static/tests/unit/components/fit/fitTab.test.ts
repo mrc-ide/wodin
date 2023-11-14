@@ -128,8 +128,7 @@ describe("Fit Tab", () => {
         expect(fitPlot.findComponent(LoadingSpinner).exists()).toBe(false);
         expect(fitPlot.findAll("span").at(0)!.text()).toBe("Iterations: 1");
         expect(fitPlot.findAll("span").at(1)!.text()).toBe("Sum of squares: 121.2");
-        expect(fitPlot.find("#fit-cancelled-msg").text())
-            .toBe("Model fit was cancelled before converging");
+        expect(fitPlot.find("#fit-cancelled-msg").text()).toBe("Model fit was cancelled before converging");
     });
 
     it("renders as expected when cannot run fit", () => {
@@ -140,8 +139,9 @@ describe("Fit Tab", () => {
         const wrapper = getWrapper(fitRequirements, false, false, null, null, false, null);
         expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(true);
         expect((wrapper.find("#cancel-fit-btn").element as HTMLButtonElement).disabled).toBe(true);
-        expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Cannot fit model. Please compile a model (Code tab) and upload a data set (Data tab).");
+        expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
+            "Cannot fit model. Please compile a model (Code tab) and upload a data set (Data tab)."
+        );
         const fitPlot = wrapper.findComponent(FitPlot);
         expect(fitPlot.props("fadePlot")).toBe(true);
         expect(fitPlot.findComponent(VueFeather).exists()).toBe(false);
@@ -153,8 +153,9 @@ describe("Fit Tab", () => {
     it("renders as expected when compile is required", () => {
         const wrapper = getWrapper({}, true, false);
         expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(false);
-        expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Model code has been updated. Compile code and Fit Model for updated best fit.");
+        expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
+            "Model code has been updated. Compile code and Fit Model for updated best fit."
+        );
         const fitPlot = wrapper.findComponent(FitPlot);
         expect(fitPlot.props("fadePlot")).toBe(true);
         expect(fitPlot.findComponent(VueFeather).props("type")).toBe("check");
@@ -165,8 +166,9 @@ describe("Fit Tab", () => {
     it("renders as expected when fit update is required", () => {
         const wrapper = getWrapper({}, false, { dataChanged: true });
         expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(false);
-        expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Fit is out of date: data have been updated. Rerun fit to update.");
+        expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
+            "Fit is out of date: data have been updated. Rerun fit to update."
+        );
         const fitPlot = wrapper.findComponent(FitPlot);
         expect(fitPlot.props("fadePlot")).toBe(true);
         expect(fitPlot.findComponent(LoadingSpinner).exists()).toBe(false);
@@ -178,8 +180,9 @@ describe("Fit Tab", () => {
         const error = { error: "test error", detail: "test detail" };
         const wrapper = getWrapper({}, false, {}, 10, true, false, 2.1, jest.fn(), jest.fn(), error);
         expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(error);
-        expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("An error occurred during model fit.");
+        expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
+            "An error occurred during model fit."
+        );
     });
 
     it("dispatches fit action on click button", async () => {

@@ -8,11 +8,8 @@ export enum VersionsAction {
     GetVersions = "GetVersions"
 }
 
-export const actions:ActionTree<VersionsState, AppState> = {
+export const actions: ActionTree<VersionsState, AppState> = {
     async [VersionsAction.GetVersions](context) {
-        await api(context)
-            .withSuccess(VersionsMutation.SetVersions)
-            .ignoreErrors()
-            .get("/odin/versions");
+        await api(context).withSuccess(VersionsMutation.SetVersions).ignoreErrors().get("/odin/versions");
     }
 };

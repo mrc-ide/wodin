@@ -3,7 +3,10 @@ import { mutations } from "../../../../src/app/store/modelFit/mutations";
 
 describe("ModelFit mutations", () => {
     const mockInputs = {
-        data: [{ a: 1, b: 2 }, { a: 3, b: -4 }],
+        data: [
+            { a: 1, b: 2 },
+            { a: 3, b: -4 }
+        ],
         endTime: 100,
         link: {
             time: "t",

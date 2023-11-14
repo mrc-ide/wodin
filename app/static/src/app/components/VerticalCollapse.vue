@@ -1,24 +1,24 @@
 <template>
-  <a data-bs-toggle="collapse"
-     :href="`#${collapseId}`"
-     role="button"
-     :aria-expanded="!collapsed"
-     :aria-controls="collapseId"
-     @click="toggleCollapse">
-    <div class="collapse-title p-2">
-        {{title}}
-        <vue-feather class="collapse-icon" :type="iconType"></vue-feather>
+    <a
+        data-bs-toggle="collapse"
+        :href="`#${collapseId}`"
+        role="button"
+        :aria-expanded="!collapsed"
+        :aria-controls="collapseId"
+        @click="toggleCollapse"
+    >
+        <div class="collapse-title p-2">
+            {{ title }}
+            <vue-feather class="collapse-icon" :type="iconType"></vue-feather>
+        </div>
+    </a>
+    <div class="collapse" :class="collapsed ? '' : 'show'" :id="collapseId">
+        <slot></slot>
     </div>
-  </a>
-  <div class="collapse" :class="collapsed ? '' : 'show'" :id="collapseId">
-    <slot></slot>
-  </div>
 </template>
 
 <script lang="ts">
-import {
-    defineComponent, ref, computed
-} from "vue";
+import { defineComponent, ref, computed } from "vue";
 import "bootstrap";
 import VueFeather from "vue-feather";
 
@@ -55,18 +55,18 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-  a {
+a {
     text-decoration: none;
 
     .collapse-title {
-      background-color: #e8ebee;
-      font-weight: bold;
-      color: #000;
+        background-color: #e8ebee;
+        font-weight: bold;
+        color: #000;
 
-      .collapse-icon {
-        float: right;
-        color: #777;
-      }
+        .collapse-icon {
+            float: right;
+            color: #777;
+        }
     }
-  }
+}
 </style>

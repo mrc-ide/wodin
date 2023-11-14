@@ -1,18 +1,18 @@
 <template>
-    <vue-tags-input style="border-color: #d7dce1;"
-                    v-model="currentTag"
-                    :tags="computedTags"
-                    :placeholder="'...'"
-                    :validate="validate"
-                    :add-tag-on-blur="true"
-                    :add-tag-on-keys="[13, ',', 32, ':']"
-                    @on-error="handleError"
-                    @on-tags-changed="handleTagsChanged"/>
+    <vue-tags-input
+        style="border-color: #d7dce1"
+        v-model="currentTag"
+        :tags="computedTags"
+        :placeholder="'...'"
+        :validate="validate"
+        :add-tag-on-blur="true"
+        :add-tag-on-keys="[13, ',', 32, ':']"
+        @on-error="handleError"
+        @on-tags-changed="handleTagsChanged"
+    />
 </template>
 <script lang="ts">
-import {
-    PropType, computed, defineComponent, ref, onMounted
-} from "vue";
+import { PropType, computed, defineComponent, ref, onMounted } from "vue";
 import VueTagsInput from "vue3-tags-input";
 import { useStore } from "vuex";
 import { Tag } from "../../store/run/state";
@@ -128,7 +128,7 @@ export default defineComponent({
 }
 
 .v3ti-new-tag--error {
-  text-decoration: none !important;
-  color: #000 !important;
+    text-decoration: none !important;
+    color: #000 !important;
 }
 </style>

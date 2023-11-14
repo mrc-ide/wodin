@@ -4,62 +4,58 @@
             <div class="wodin-left" :style="optionsWidth">
                 <span class="wodin-collapse-controls">
                     <span @mousedown="handleDragStartIcon" @mouseup="handleDragEnd" id="resize-panel-control">
-                        <vue-feather type="maximize-2"
-                                    style="transform: rotate(45deg); color: grey;"></vue-feather>
+                        <vue-feather type="maximize-2" style="transform: rotate(45deg); color: grey"></vue-feather>
                     </span>
                 </span>
-                <div v-show="hidePanelMode === HidePanelContent.Left"
-                    @click="openCollapsedView"
-                    class="view-left">
+                <div v-show="hidePanelMode === HidePanelContent.Left" @click="openCollapsedView" class="view-left">
                     View Options
                 </div>
-                <div v-show="hidePanelMode !== HidePanelContent.Left"
-                    class="wodin-content"
-                    id="wodin-content-left">
+                <div v-show="hidePanelMode !== HidePanelContent.Left" class="wodin-content" id="wodin-content-left">
                     <slot name="left"></slot>
                 </div>
             </div>
             <div class="wodin-right" :style="chartsWidth">
-                <div class="edge-resize"
-                    @mousedown="handleDragStartEdge"
-                    @mouseup="handleDragEnd"></div>
-                <div v-show="hidePanelMode === HidePanelContent.Right"
-                    @click="openCollapsedView"
-                    class="view-right">
+                <div class="edge-resize" @mousedown="handleDragStartEdge" @mouseup="handleDragEnd"></div>
+                <div v-show="hidePanelMode === HidePanelContent.Right" @click="openCollapsedView" class="view-right">
                     View Charts
                 </div>
-                <div v-show="hidePanelMode !== HidePanelContent.Right"
+                <div
+                    v-show="hidePanelMode !== HidePanelContent.Right"
                     class="wodin-content p-2"
-                    id="wodin-content-right">
+                    id="wodin-content-right"
+                >
                     <slot name="right"></slot>
                 </div>
             </div>
         </div>
     </div>
-    <div style="clear:both;"></div>
+    <div style="clear: both"></div>
 </template>
 
 <script lang="ts">
-import {
-    computed, defineComponent, onMounted, onUnmounted, ref
-} from "vue";
+import { computed, defineComponent, onMounted, onUnmounted, ref } from "vue";
 import VueFeather from "vue-feather";
 
 export enum PanelsMode {
-    Left, Right, Both
+    Left,
+    Right,
+    Both
 }
 
 export enum HidePanelContent {
-    Left, Right, None
+    Left,
+    Right,
+    None
 }
 
 enum DragStart {
-    Icon, Edge
+    Icon,
+    Edge
 }
 
 type WidthStyle = {
-    width?: string
-}
+    width?: string;
+};
 
 export default defineComponent({
     name: "WodinPanels",
@@ -225,109 +221,111 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-    $fullHeight: calc(100vh - 5rem);
+$fullHeight: calc(100vh - 5rem);
 
-    $leftBothModeWidth: 30%;
-    $rightBothModeWidth: 70%;
+$leftBothModeWidth: 30%;
+$rightBothModeWidth: 70%;
 
-    $animationDuration: 0.5s;
+$animationDuration: 0.5s;
 
-    $dark-grey: #777;
+$dark-grey: #777;
 
-    $widthToleranceLeft: calc(100% / 8);
-    $widthToleranceRight: calc(100% - calc(100% / 4));
+$widthToleranceLeft: calc(100% / 8);
+$widthToleranceRight: calc(100% - calc(100% / 4));
 
-    .show-drag-cursor {
-        cursor: col-resize !important;
-    }
+.show-drag-cursor {
+    cursor: col-resize !important;
+}
 
-    .edge-resize {
-        left: 0;
-        position: absolute;
-        height: 100%;
-        width: 10px;
-    }
-    .edge-resize:hover {
-        cursor: col-resize;
-    }
+.edge-resize {
+    left: 0;
+    position: absolute;
+    height: 100%;
+    width: 10px;
+}
+.edge-resize:hover {
+    cursor: col-resize;
+}
 
-    .wodin-left, .wodin-right {
-        float: left;
-        height: $fullHeight;
-        overflow-y: auto;
-        overflow-x: hidden;
-        position: relative;
+.wodin-left,
+.wodin-right {
+    float: left;
+    height: $fullHeight;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.wodin-left {
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-radius: 0 1rem 0 0;
+    border-color: $dark-grey;
+}
+
+.view-left,
+.view-right {
+    cursor: pointer;
+    width: 10rem;
+    color: $dark-grey;
+    transform: rotate(90deg);
+}
+
+.view-left {
+    position: absolute;
+    right: -2.7rem;
+    top: 7rem;
+}
+
+.view-right {
+    position: absolute;
+    translate: -4rem 7rem;
+}
+
+.wodin-mode-left {
+    .wodin-right {
+        width: 3.5rem !important;
+        .wodin-content {
+            display: none;
+        }
     }
 
     .wodin-left {
-        border-right-style: solid;
-        border-right-width: 1px;
-        border-radius: 0 1rem 0 0;
-        border-color: $dark-grey;
+        width: calc(100% - 3.5rem) !important;
+    }
+}
+
+.wodin-mode-both {
+    .wodin-left {
+        width: $leftBothModeWidth;
     }
 
-    .view-left, .view-right {
-        cursor: pointer;
-        width: 10rem;
-        color: $dark-grey;
-        transform: rotate(90deg);
+    .wodin-right {
+        width: $rightBothModeWidth;
     }
+}
 
-    .view-left {
-        position: absolute;
-        right: -2.7rem;
-        top: 7rem
-    }
-
-    .view-right {
-        position: absolute;
-        translate: -4rem 7rem;
-    }
-
-    .wodin-mode-left {
-        .wodin-right {
-            width: 3.5rem !important;
-            .wodin-content {
-                display: none;
-            }
-        }
-
-        .wodin-left {
-            width: calc(100% - 3.5rem) !important;
+.wodin-mode-right {
+    .wodin-left {
+        width: 3.5rem !important;
+        .wodin-content {
+            display: none;
         }
     }
 
-    .wodin-mode-both {
-        .wodin-left {
-            width: $leftBothModeWidth;
-        }
-
-        .wodin-right {
-            width: $rightBothModeWidth
-        }
+    .wodin-right {
+        width: calc(100% - 3.5rem) !important;
     }
+}
 
-    .wodin-mode-right {
-        .wodin-left {
-            width: 3.5rem !important;
-            .wodin-content {
-                display: none;
-            }
-        }
+.wodin-collapse-controls {
+    float: right;
+    margin-top: 0.5rem;
+    margin-right: 1.5rem;
+    white-space: nowrap;
 
-        .wodin-right {
-            width: calc(100% - 3.5rem) !important;
-        }
+    :hover {
+        cursor: col-resize;
     }
-
-    .wodin-collapse-controls {
-        float: right;
-        margin-top: 0.5rem;
-        margin-right: 1.5rem;
-        white-space: nowrap;
-
-        :hover {
-            cursor: col-resize;
-        }
-    }
+}
 </style>

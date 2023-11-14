@@ -35,17 +35,8 @@ async function immediateUploadState(context: ActionContext<AppState, AppState>) 
 
 export const appStateActions: ActionTree<AppState, AppState> = {
     async [AppStateAction.Initialise](context, payload: InitialisePayload) {
-        const {
-            commit, state, dispatch, getters
-        } = context;
-        const {
-            appName,
-            baseUrl,
-            loadSessionId,
-            appsPath,
-            enableI18n,
-            defaultLanguage
-        } = payload;
+        const { commit, state, dispatch, getters } = context;
+        const { appName, baseUrl, loadSessionId, appsPath, enableI18n, defaultLanguage } = payload;
         commit(AppStateMutation.SetApp, {
             appName,
             baseUrl,
@@ -84,7 +75,7 @@ export const appStateActions: ActionTree<AppState, AppState> = {
     async [AppStateAction.QueueStateUpload](context) {
         const { state, commit } = context;
         const isBusy = () => {
-            const isFitting = (state.appType === AppType.Fit) && ((state as FitState).modelFit.fitting);
+            const isFitting = state.appType === AppType.Fit && (state as FitState).modelFit.fitting;
             const isRunningSensitivity = state.sensitivity.running;
             return isFitting || isRunningSensitivity;
         };
@@ -94,14 +85,17 @@ export const appStateActions: ActionTree<AppState, AppState> = {
             // remove any existing queued upload, as this request should supersede it
             commit(AppStateMutation.ClearQueuedStateUpload);
 
-            const queuedId: number = window.setInterval(() => {
-                // wait for any ongoing uploads to finish before starting a new one
-                // and do not actually upload while fitting or runningSensitivity is true
-                if (!state.stateUploadInProgress && !isBusy()) {
-                    commit(AppStateMutation.ClearQueuedStateUpload);
-                    immediateUploadState(context);
-                }
-            }, state.config?.stateUploadIntervalMillis);
+            const queuedId: number = window.setInterval(
+                () => {
+                    // wait for any ongoing uploads to finish before starting a new one
+                    // and do not actually upload while fitting or runningSensitivity is true
+                    if (!state.stateUploadInProgress && !isBusy()) {
+                        commit(AppStateMutation.ClearQueuedStateUpload);
+                        immediateUploadState(context);
+                    }
+                },
+                state.config?.stateUploadIntervalMillis
+            );
 
             // record the newly queued upload
             commit(AppStateMutation.SetQueuedStateUpload, queuedId);

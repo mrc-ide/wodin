@@ -1,10 +1,13 @@
 <template>
     <div class="dropdown">
-        <a href="#"
-           class="dropdown-toggle text-decoration-none"
-           role="button"
-           data-bs-toggle="dropdown"
-           aria-expanded="false">{{ text }}</a>
+        <a
+            href="#"
+            class="dropdown-toggle text-decoration-none"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            >{{ text }}</a
+        >
         <ul class="dropdown-menu dropdown-menu-end">
             <slot name="items"></slot>
         </ul>

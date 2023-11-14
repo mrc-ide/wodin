@@ -7,11 +7,11 @@ export enum ModelGetter {
 }
 
 export interface ModelGetters {
-    [ModelGetter.hasRunner]: Getter<ModelState, AppState>
+    [ModelGetter.hasRunner]: Getter<ModelState, AppState>;
 }
 
 export const getters: ModelGetters & GetterTree<ModelState, AppState> = {
     [ModelGetter.hasRunner]: (state: ModelState, _: ModelGetters, rootState: AppState): boolean => {
-        return (rootState.appType === AppType.Stochastic) ? !!state.odinRunnerDiscrete : !!state.odinRunnerOde;
+        return rootState.appType === AppType.Stochastic ? !!state.odinRunnerDiscrete : !!state.odinRunnerOde;
     }
 };

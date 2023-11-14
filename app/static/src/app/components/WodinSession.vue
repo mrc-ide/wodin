@@ -1,5 +1,5 @@
 <template>
-  <router-view v-if="initialised"></router-view>
+    <router-view v-if="initialised"></router-view>
 </template>
 
 <script lang="ts">
@@ -28,26 +28,19 @@ export default defineComponent({
         const initialised = computed(() => !!(store.state.appName && store.state.baseUrl && store.state.appsPath));
         onMounted(() => {
             if (props.shareNotFound) {
-                store.commit(`errors/${ErrorsMutation.AddError}`,
-                    { detail: `Share id not found: ${props.shareNotFound}` });
+                store.commit(`errors/${ErrorsMutation.AddError}`, {
+                    detail: `Share id not found: ${props.shareNotFound}`
+                });
             }
-            const {
+            const { appName, baseUrl, loadSessionId, appsPath, enableI18n, defaultLanguage } = props;
+            store.dispatch(AppStateAction.Initialise, {
                 appName,
                 baseUrl,
                 loadSessionId,
                 appsPath,
                 enableI18n,
                 defaultLanguage
-            } = props;
-            store.dispatch(AppStateAction.Initialise,
-                {
-                    appName,
-                    baseUrl,
-                    loadSessionId,
-                    appsPath,
-                    enableI18n,
-                    defaultLanguage
-                });
+            });
         });
 
         return { initialised };

@@ -10,12 +10,12 @@ import { BaseSensitivityMutation } from "../../store/sensitivity/mutations";
 import { BaseSensitivityAction } from "../../store/sensitivity/actions";
 
 export interface BaseSensitivityMixin {
-    sensitivityPrerequisitesReady: ComputedRef<boolean>,
-    updateMsg: ComputedRef<string>,
-    downloading: ComputedRef<boolean>,
-    canDownloadSummary: ComputedRef<boolean>,
-    downloadSummaryUserFileName: WritableComputedRef<string>,
-    downloadSummary: (payload: { fileName: string }) => void
+    sensitivityPrerequisitesReady: ComputedRef<boolean>;
+    updateMsg: ComputedRef<string>;
+    downloading: ComputedRef<boolean>;
+    canDownloadSummary: ComputedRef<boolean>;
+    downloadSummaryUserFileName: WritableComputedRef<string>;
+    downloadSummary: (payload: { fileName: string }) => void;
 }
 
 export default (store: Store<AppState>, multiSensitivity: boolean): BaseSensitivityMixin => {
@@ -24,8 +24,7 @@ export default (store: Store<AppState>, multiSensitivity: boolean): BaseSensitiv
     const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
 
     const sensitivityPrerequisitesReady = computed(() => {
-        return hasRunner.value && !!store.state.model.odin
-            && !store.state.model.compileRequired;
+        return hasRunner.value && !!store.state.model.odin && !store.state.model.compileRequired;
     });
 
     const sensModule = multiSensitivity ? store.state.multiSensitivity : store.state.sensitivity;
@@ -60,10 +59,10 @@ export default (store: Store<AppState>, multiSensitivity: boolean): BaseSensitiv
         }
     });
 
-    const downloadSummary = ((payload: { fileName: string }) => {
+    const downloadSummary = (payload: { fileName: string }) => {
         verifyValidPlotSettingsTime(store.state, store.commit);
         store.dispatch(`${namespace}/${BaseSensitivityAction.DownloadSummary}`, payload.fileName);
-    });
+    };
 
     return {
         sensitivityPrerequisitesReady,

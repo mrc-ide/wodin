@@ -5,13 +5,17 @@ import {
     AdvancedSettingsOdin,
     BatchPars,
     OdinModelResponseError,
-    OdinUserType, VaryingPar,
+    OdinUserType,
+    VaryingPar,
     WodinError
 } from "./types/responseTypes";
 import userMessages from "./userMessages";
 import settings from "./settings";
-import { SensitivityParameterSettings, SensitivityScaleType, SensitivityVariationType }
-    from "./store/sensitivity/state";
+import {
+    SensitivityParameterSettings,
+    SensitivityScaleType,
+    SensitivityVariationType
+} from "./store/sensitivity/state";
 import { AppState } from "./store/appState/state";
 import { AdvancedComponentType, AdvancedSettings, Tag } from "./store/run/state";
 
@@ -39,14 +43,14 @@ export function evaluateScript<T>(script: string): T {
 
 export interface ProcessFitDataResult {
     data: Dict<number>[] | null;
-    columns: string[] | null,
-    timeVariableCandidates: string[] | null,
-    error?: WodinError
+    columns: string[] | null;
+    timeVariableCandidates: string[] | null;
+    error?: WodinError;
 }
 
 export function getCodeErrorFromResponse(errorResponse: OdinModelResponseError): WodinError {
     const line = errorResponse.line?.join();
-    const lineWord = (errorResponse.line && errorResponse.line.length > 1) ? "lines" : "line";
+    const lineWord = errorResponse.line && errorResponse.line.length > 1 ? "lines" : "line";
     const detail = line ? `Error on ${lineWord} ${line}: ${errorResponse.message}` : errorResponse.message;
     const error = "Code error";
     return { error, detail };
@@ -54,7 +58,9 @@ export function getCodeErrorFromResponse(errorResponse: OdinModelResponseError):
 
 export function processFitData(data: Dict<string>[], errorMsg: string): ProcessFitDataResult {
     const emptyResult = {
-        data: null, columns: null, timeVariableCandidates: null
+        data: null,
+        columns: null,
+        timeVariableCandidates: null
     };
     if (Object.keys(data[0]).length < settings.minFitDataColumns) {
         return { ...emptyResult, error: { error: errorMsg, detail: userMessages.fitData.tooFewColumns } };
@@ -82,7 +88,10 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
         // There might be many non-numeric values, just return the first few in the error
         const valueCount = Math.min(settings.displayFitDataNonNumericValues, nonNumValues.length);
         const suffix = nonNumValues.length > valueCount ? " and more" : "";
-        const msgValues = nonNumValues.slice(0, valueCount).map((s) => `'${s}'`).join(", ");
+        const msgValues = nonNumValues
+            .slice(0, valueCount)
+            .map((s) => `'${s}'`)
+            .join(", ");
         const detail = `${userMessages.fitData.nonNumericValues}: ${msgValues}${suffix}`;
         const error = { error: errorMsg, detail };
         return { ...emptyResult, error };
@@ -91,7 +100,8 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
     // There might be trailing empty rows to drop.
     while (processedData.length > 0) {
         const row = processedData[processedData.length - 1];
-        if (Object.values(row).every((v) => Number.isNaN(v))) { // all missing
+        if (Object.values(row).every((v) => Number.isNaN(v))) {
+            // all missing
             processedData.pop();
         } else {
             break;
@@ -122,13 +132,16 @@ export function processFitData(data: Dict<string>[], errorMsg: string): ProcessF
 
     const columns = Object.keys(processedData[0]);
     return {
-        ...emptyResult, data: processedData, columns, timeVariableCandidates
+        ...emptyResult,
+        data: processedData,
+        columns,
+        timeVariableCandidates
     };
 }
 
 export interface GenerateBatchParsResult {
-    batchPars: BatchPars | null,
-    error: WodinError | null
+    batchPars: BatchPars | null;
+    error: WodinError | null;
 }
 
 function generateVaryingParFromOdin(
@@ -138,26 +151,14 @@ function generateVaryingParFromOdin(
 ): VaryingPar {
     // TODO: NB For now we use ode runner to generate batch pars for all app types, but expect this to change
     const runner = rootState.model.odinRunnerOde;
-    const {
-        variationType, parameterToVary, numberOfRuns, variationPercentage, scaleType, rangeFrom, rangeTo
-    } = paramSettings;
+    const { variationType, parameterToVary, numberOfRuns, variationPercentage, scaleType, rangeFrom, rangeTo } =
+        paramSettings;
     const logarithmic = scaleType === SensitivityScaleType.Logarithmic;
 
     if (variationType === SensitivityVariationType.Percentage) {
-        return runner!.batchParsDisplace(
-            paramValues, parameterToVary!,
-            numberOfRuns, logarithmic,
-            variationPercentage
-        );
+        return runner!.batchParsDisplace(paramValues, parameterToVary!, numberOfRuns, logarithmic, variationPercentage);
     }
-    return runner!.batchParsRange(
-        paramValues,
-                parameterToVary!,
-                numberOfRuns,
-                logarithmic,
-                rangeFrom,
-                rangeTo
-    );
+    return runner!.batchParsRange(paramValues, parameterToVary!, numberOfRuns, logarithmic, rangeFrom, rangeTo);
 }
 
 export function generateBatchPars(
@@ -208,7 +209,8 @@ export const joinStringsSentence = (strings: string[], last = " and ", sep = ", 
     const n = strings.length;
     if (n === 0) {
         return "";
-    } if (n === 1) {
+    }
+    if (n === 1) {
         return strings[0];
     }
     return strings.slice(0, n - 1).join(sep) + last + strings[n - 1];
@@ -243,10 +245,12 @@ const extractValuesFromTags = (values: Tag[], paramValues: OdinUserType | null) 
     return extracted.filter((x) => x !== undefined) as number[];
 };
 
-export const convertAdvancedSettingsToOdin = (advancedSettings: AdvancedSettings,
-    paramValues: OdinUserType | null): AdvancedSettingsOdin => {
-    const flattenedObject = Object.fromEntries(Object.entries(advancedSettings)
-        .map(([key, value]) => {
+export const convertAdvancedSettingsToOdin = (
+    advancedSettings: AdvancedSettings,
+    paramValues: OdinUserType | null
+): AdvancedSettingsOdin => {
+    const flattenedObject = Object.fromEntries(
+        Object.entries(advancedSettings).map(([key, value]) => {
             let cleanVal: number | number[] | null | undefined;
             if (value.type === AdvancedComponentType.stdf) {
                 const firstValue = value.val[0] !== null ? value.val[0] : value.default[0];
@@ -258,7 +262,8 @@ export const convertAdvancedSettingsToOdin = (advancedSettings: AdvancedSettings
                 cleanVal = value.val !== null ? extractValuesFromTags(value.val, paramValues) : value.default;
             }
             return [key, cleanVal];
-        })) as Record<AdvancedOptions, number>;
+        })
+    ) as Record<AdvancedOptions, number>;
 
     return {
         atol: flattenedObject[AdvancedOptions.tol],

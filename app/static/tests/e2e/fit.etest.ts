@@ -1,6 +1,11 @@
 import { expect, test, Page } from "@playwright/test";
 import {
-    newFitCode, uploadCSVData, writeCode, startModelFit, waitForModelFitCompletion, realisticFitData
+    newFitCode,
+    uploadCSVData,
+    writeCode,
+    startModelFit,
+    waitForModelFitCompletion,
+    realisticFitData
 } from "./utils";
 import PlaywrightConfig from "../../playwright.config";
 
@@ -121,8 +126,7 @@ test.describe("Wodin App model fit tests", () => {
     test("can change to Fit tab and back", async ({ page }) => {
         await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
         await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Fit");
-        await expect(await page.innerText(".wodin-right .wodin-content div.mt-4 button"))
-            .toBe("Fit model");
+        await expect(await page.innerText(".wodin-right .wodin-content div.mt-4 button")).toBe("Fit model");
     });
 
     test("can change to Sensitivity tab and back", async ({ page }) => {
@@ -178,8 +182,9 @@ test.describe("Wodin App model fit tests", () => {
 
         // select param to vary
         await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
-        await expect(await page.innerText("#select-param-msg"))
-            .toBe("Please select at least one parameter to vary during model fit.");
+        await expect(await page.innerText("#select-param-msg")).toBe(
+            "Please select at least one parameter to vary during model fit."
+        );
         await page.click(":nth-match(input.vary-param-check, 1)");
         await page.click(":nth-match(input.vary-param-check, 2)");
 
@@ -193,8 +198,10 @@ test.describe("Wodin App model fit tests", () => {
 
         await page.click(".wodin-right .wodin-content div.mt-4 button#fit-btn");
 
-        await expect(await page.locator(".fit-tab .action-required-msg"))
-            .toHaveText("An error occurred during model fit.", { timeout });
+        await expect(await page.locator(".fit-tab .action-required-msg")).toHaveText(
+            "An error occurred during model fit.",
+            { timeout }
+        );
         await expect(await page.innerText(".fit-tab #error-info")).toContain("Model fit error: Integration failure");
     });
 
@@ -209,8 +216,7 @@ test.describe("Wodin App model fit tests", () => {
 
         // Compile code
         await page.click("#compile-btn");
-        await expectUpdateFitMsg(page, "Fit is out of date: model has been recompiled. "
-                                 + "Rerun fit to update.");
+        await expectUpdateFitMsg(page, "Fit is out of date: model has been recompiled. " + "Rerun fit to update.");
 
         await reRunFit(page); // checks message is reset
     });
@@ -229,8 +235,7 @@ test.describe("Wodin App model fit tests", () => {
 
         // Change time variable
         await page.selectOption("#select-time-variable", "Day2");
-        await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. "
-                                 + "Rerun fit to update.");
+        await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. " + "Rerun fit to update.");
 
         await reRunFit(page); // checks message is reset
     });
@@ -241,8 +246,7 @@ test.describe("Wodin App model fit tests", () => {
         await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
         await expect(await page.locator("#link-data select")).toBeVisible({ timeout });
         await page.selectOption("#link-data select", "E");
-        await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. "
-                                 + "Rerun fit to update.");
+        await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. " + "Rerun fit to update.");
 
         await reRunFit(page); // checks message is reset
     });
@@ -261,8 +265,7 @@ test.describe("Wodin App model fit tests", () => {
         const targetSelect = await page.locator("#optimisation select");
         await targetSelect.selectOption("Day2");
 
-        await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. "
-                                 + "Rerun fit to update.");
+        await expectUpdateFitMsg(page, "Fit is out of date: model-data link has changed. " + "Rerun fit to update.");
 
         await reRunFit(page); // checks message is reset
     });
@@ -293,8 +296,7 @@ test.describe("Wodin App model fit tests", () => {
 
         await expect(await page.getAttribute(".wodin-plot-container .vue-feather", "data-type")).toBe("alert-circle");
         await expect(await page.innerText(":nth-match(.wodin-plot-container span, 1)")).toContain("Iterations:");
-        await expect(await page.innerText(":nth-match(.wodin-plot-container span, 2)"))
-            .toContain("Sum of squares:");
+        await expect(await page.innerText(":nth-match(.wodin-plot-container span, 2)")).toContain("Sum of squares:");
         await expect(await page.innerText("#fit-cancelled-msg")).toBe("Model fit was cancelled before converging");
     });
 
@@ -310,8 +312,9 @@ test.describe("Wodin App model fit tests", () => {
         await reRunFit(page);
         // Back to sensitivity tab
         await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
-        await expect(await page.innerText(".action-required-msg"))
-            .toBe("Plot is out of date: parameters have been changed. Run Sensitivity to update.");
+        await expect(await page.innerText(".action-required-msg")).toBe(
+            "Plot is out of date: parameters have been changed. Run Sensitivity to update."
+        );
     });
 
     test("can display sum of squares on run tab", async ({ page }) => {

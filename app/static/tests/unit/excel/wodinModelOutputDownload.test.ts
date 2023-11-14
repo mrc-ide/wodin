@@ -1,8 +1,6 @@
 import { ErrorsMutation } from "../../../src/app/store/errors/mutations";
 import { mockBookNew, mockWriteFile } from "./mocks";
-import {
-    mockBasicState, mockFitDataState, mockFitState, mockModelState, mockRunState
-} from "../../mocks";
+import { mockBasicState, mockFitDataState, mockFitState, mockModelState, mockRunState } from "../../mocks";
 import { WodinModelOutputDownload } from "../../../src/app/excel/wodinModelOutputDownload";
 
 const mockSolution = jest.fn().mockImplementation((options) => {
@@ -71,10 +69,7 @@ describe("WodinModelOutputDownload", () => {
 
         expect(mockWriteFile).toHaveBeenCalledTimes(1);
         expect(mockWriteFile.mock.calls[0][0]).toStrictEqual({
-            sheets: [
-                expectedModelledSheet,
-                expectedParametersSheet
-            ]
+            sheets: [expectedModelledSheet, expectedParametersSheet]
         });
         expect(mockWriteFile.mock.calls[0][1]).toBe("myFile.xlsx");
     });
@@ -138,7 +133,9 @@ describe("WodinModelOutputDownload", () => {
         const errorRunState = {
             ...runState,
             resultOde: {
-                solution: jest.fn().mockImplementation(() => { throw new Error("test error"); })
+                solution: jest.fn().mockImplementation(() => {
+                    throw new Error("test error");
+                })
             } as any
         };
         const rootState = mockBasicState({

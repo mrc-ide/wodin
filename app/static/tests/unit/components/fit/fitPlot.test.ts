@@ -27,7 +27,10 @@ describe("FitPlot", () => {
         ]
     });
 
-    const mockFitData = [{ t: 0, v: 10 }, { t: 1, v: 20 }];
+    const mockFitData = [
+        { t: 0, v: 10 },
+        { t: 1, v: 20 }
+    ];
 
     const mockPalette = { y: "#0000ff", z: "#ff0000" };
 
@@ -146,7 +149,10 @@ describe("FitPlot", () => {
         const plotData = wodinPlot.props("plotData");
         expect(plotData(0, 1, 100)).toStrictEqual(expectedPlotData);
         expect(mockSolution).toBeCalledWith({
-            mode: "grid", tStart: 0, tEnd: 1, nPoints: 100
+            mode: "grid",
+            tStart: 0,
+            tEnd: 1,
+            nPoints: 100
         });
     });
 
@@ -174,7 +180,10 @@ describe("FitPlot", () => {
         const plotData = wodinPlot.props("plotData");
         expect(plotData(0, 10, 100)).toStrictEqual(expectedRunPlotData);
         expect(mockRunSolution).toBeCalledWith({
-            mode: "grid", tStart: 0, tEnd: 10, nPoints: 100
+            mode: "grid",
+            tStart: 0,
+            tEnd: 10,
+            nPoints: 100
         });
     });
 

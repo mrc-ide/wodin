@@ -1,40 +1,34 @@
 <template>
-  <div>
-    <div v-if="open" class="modal-backdrop fade show"></div>
-    <div class="modal" :class="{show: open}" :style="modalStyle">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Edit Session Label</h5>
-          </div>
-          <div class="modal-body">
-            <div class="row" id="edit-session-label">
-              <div class="col-2">
-                <label class="col-form-label">Label</label>
-              </div>
-              <div class="col-10">
-                <input v-model="sessionLabelInternal" type="text" class="form-control">
-              </div>
+    <div>
+        <div v-if="open" class="modal-backdrop fade show"></div>
+        <div class="modal" :class="{ show: open }" :style="modalStyle">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Session Label</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row" id="edit-session-label">
+                            <div class="col-2">
+                                <label class="col-form-label">Label</label>
+                            </div>
+                            <div class="col-10">
+                                <input v-model="sessionLabelInternal" type="text" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" id="ok-session-label" @click="updateSessionLabel">OK</button>
+                        <button class="btn btn-outline" id="cancel-session-label" @click="close">Cancel</button>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-primary"
-                    id="ok-session-label"
-                    @click="updateSessionLabel">OK</button>
-            <button class="btn btn-outline"
-                    id="cancel-session-label"
-                    @click="close">Cancel</button>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </template>
 
 <script lang="ts">
-import {
-    computed, defineComponent, ref, watch
-} from "vue";
+import { computed, defineComponent, ref, watch } from "vue";
 import { useStore } from "vuex";
 import { SessionsAction } from "../../store/sessions/actions";
 
@@ -62,11 +56,14 @@ export default defineComponent({
             return { display: props.open ? "block" : "none" };
         });
 
-        watch(() => props.open, (newValue) => {
-            if (newValue) {
-                sessionLabelInternal.value = props.sessionLabel;
+        watch(
+            () => props.open,
+            (newValue) => {
+                if (newValue) {
+                    sessionLabelInternal.value = props.sessionLabel;
+                }
             }
-        });
+        );
 
         const close = () => {
             emit("close");
@@ -84,6 +81,5 @@ export default defineComponent({
             updateSessionLabel
         };
     }
-
 });
 </script>

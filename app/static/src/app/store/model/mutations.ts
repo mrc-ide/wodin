@@ -1,11 +1,6 @@
 import { MutationTree } from "vuex";
 import { ModelState } from "./state";
-import {
-    Odin,
-    OdinModelResponse,
-    OdinRunnerDiscrete,
-    OdinRunnerOde
-} from "../../types/responseTypes";
+import { Odin, OdinModelResponse, OdinRunnerDiscrete, OdinRunnerOde } from "../../types/responseTypes";
 import { evaluateScript, getCodeErrorFromResponse } from "../../utils";
 import { Palette } from "../../palette";
 
@@ -52,7 +47,7 @@ export const mutations: MutationTree<ModelState> = {
         state.selectedVariables = payload;
         // Maintain unselected variables too, so we know which variables had been explicitly unselected when model
         // updates
-        state.unselectedVariables = state.odinModelResponse?.metadata?.variables
-            .filter((s) => !payload.includes(s)) || [];
+        state.unselectedVariables =
+            state.odinModelResponse?.metadata?.variables.filter((s) => !payload.includes(s)) || [];
     }
 };

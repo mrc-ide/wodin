@@ -12,10 +12,16 @@ describe("Sessions mutations", () => {
         const state = {
             sessionsMetadata: [
                 {
-                    id: "123", date: "", label: null, friendlyId: null
+                    id: "123",
+                    date: "",
+                    label: null,
+                    friendlyId: null
                 },
                 {
-                    id: "456", date: "", label: "label1", friendlyId: null
+                    id: "456",
+                    date: "",
+                    label: "label1",
+                    friendlyId: null
                 }
             ]
         } as any;
@@ -23,10 +29,16 @@ describe("Sessions mutations", () => {
         mutations[SessionsMutation.SetSessionFriendlyId](state, payload);
         expect(state.sessionsMetadata).toStrictEqual([
             {
-                id: "123", date: "", label: null, friendlyId: null
+                id: "123",
+                date: "",
+                label: null,
+                friendlyId: null
             },
             {
-                id: "456", date: "", label: "label1", friendlyId: "happy-hog"
+                id: "456",
+                date: "",
+                label: "label1",
+                friendlyId: "happy-hog"
             }
         ]);
     });
@@ -34,7 +46,10 @@ describe("Sessions mutations", () => {
     it("SetSessionFriendlyId does nothing if session metadata not found", () => {
         const sessionsMetadata = [
             {
-                id: "123", date: "", label: null, friendlyId: null
+                id: "123",
+                date: "",
+                label: null,
+                friendlyId: null
             }
         ];
         // this shouldn't happen!
@@ -45,16 +60,9 @@ describe("Sessions mutations", () => {
     });
 
     it("RemoveSessionId removes session metadata from state", () => {
-        const sessionsMetadata = [
-            { id: "123" },
-            { id: "456" },
-            { id: "789" }
-        ];
+        const sessionsMetadata = [{ id: "123" }, { id: "456" }, { id: "789" }];
         const state = { sessionsMetadata } as any;
         mutations[SessionsMutation.RemoveSessionId](state, "456");
-        expect(state.sessionsMetadata).toStrictEqual([
-            { id: "123" },
-            { id: "789" }
-        ]);
+        expect(state.sessionsMetadata).toStrictEqual([{ id: "123" }, { id: "789" }]);
     });
 });

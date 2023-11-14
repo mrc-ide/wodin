@@ -58,8 +58,5 @@ export const storeOptions: StoreOptions<FitState> = {
         graphSettings,
         language
     },
-    plugins: [
-        logMutations,
-        persistState
-    ]
+    plugins: [logMutations, persistState]
 };

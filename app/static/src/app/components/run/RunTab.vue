@@ -6,30 +6,35 @@
         <action-required-message :message="updateMsg"></action-required-message>
         <run-stochastic-plot v-if="isStochastic" :fade-plot="!!updateMsg"></run-stochastic-plot>
         <run-plot v-else :fade-plot="!!updateMsg" :model-fit="false">
-          <div v-if="sumOfSquares">
-            <span>Sum of squares: {{sumOfSquares}}</span>
-          </div>
+            <div v-if="sumOfSquares">
+                <span>Sum of squares: {{ sumOfSquares }}</span>
+            </div>
         </run-plot>
         <error-info :error="error"></error-info>
         <div>
-          <button v-if="!isStochastic"
-                  class="btn btn-primary" id="download-btn"
-                  :disabled="downloading || !canDownloadOutput"
-                  @click="toggleShowDownloadOutput(true)">
-            <vue-feather size="20"  class="inline-icon" type="download"></vue-feather>
-            Download
-          </button>
-          <div v-if="downloading" id="downloading">
-            <LoadingSpinner size="xs"></LoadingSpinner>
-            Downloading...
-          </div>
+            <button
+                v-if="!isStochastic"
+                class="btn btn-primary"
+                id="download-btn"
+                :disabled="downloading || !canDownloadOutput"
+                @click="toggleShowDownloadOutput(true)"
+            >
+                <vue-feather size="20" class="inline-icon" type="download"></vue-feather>
+                Download
+            </button>
+            <div v-if="downloading" id="downloading">
+                <LoadingSpinner size="xs"></LoadingSpinner>
+                Downloading...
+            </div>
         </div>
-        <DownloadOutput :open="showDownloadOutput"
-                        :download-type="'Run'"
-                        :include-points="true"
-                        v-model:user-file-name="downloadUserFileName"
-                        @download="download"
-                        @close="toggleShowDownloadOutput(false)"></DownloadOutput>
+        <DownloadOutput
+            :open="showDownloadOutput"
+            :download-type="'Run'"
+            :include-points="true"
+            v-model:user-file-name="downloadUserFileName"
+            @download="download"
+            @close="toggleShowDownloadOutput(false)"
+        ></DownloadOutput>
     </div>
 </template>
 
@@ -106,11 +111,12 @@ export default defineComponent({
 
         // only allow download if update not required, and if we have a model solution
         const canDownloadOutput = computed(() => !updateMsg.value && store.state.run.resultOde?.solution);
-        const toggleShowDownloadOutput = (show: boolean) => { showDownloadOutput.value = show; };
+        const toggleShowDownloadOutput = (show: boolean) => {
+            showDownloadOutput.value = show;
+        };
 
-        const download = (payload: {fileName: string, points: number}) => store.dispatch(
-            `run/${RunAction.DownloadOutput}`, payload
-        );
+        const download = (payload: { fileName: string; points: number }) =>
+            store.dispatch(`run/${RunAction.DownloadOutput}`, payload);
 
         return {
             canRunModel,

@@ -2,7 +2,10 @@ import { mutations } from "../../../../src/app/store/fitData/mutations";
 import { mockFitDataState } from "../../../mocks";
 
 describe("FitData mutations", () => {
-    const data = [{ a: 1, b: 2 }, { a: 3, b: -4 }];
+    const data = [
+        { a: 1, b: 2 },
+        { a: 3, b: -4 }
+    ];
     const columns = ["a", "b"];
     const error = { error: "test", detail: "test detail" };
     const timeVariableCandidates = ["a"];

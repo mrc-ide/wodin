@@ -94,7 +94,8 @@ test.describe("Code Tab tests", () => {
         await writeCode(page, newValidCode);
 
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to update.", {
+            "Model code has been updated. Compile code and Run Model to update.",
+            {
                 timeout
             }
         );
@@ -106,7 +107,8 @@ test.describe("Code Tab tests", () => {
         // Compile code - see new update message
         await page.click("#compile-btn");
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Plot is out of date: model code has been recompiled. Run model to update.", {
+            "Plot is out of date: model code has been recompiled. Run model to update.",
+            {
                 timeout
             }
         );
@@ -128,8 +130,9 @@ test.describe("Code Tab tests", () => {
         await page.press(".monaco-editor textarea", "Delete");
         page.fill(".monaco-editor textarea", "blah");
         expect(page.locator("#code-status")).toHaveClass("mt-2 code-validating-text");
-        expect(page.locator("#code-status").locator("i"))
-            .toHaveClass("vue-feather vue-feather--check inline-icon me-1 code-validating-icon");
+        expect(page.locator("#code-status").locator("i")).toHaveClass(
+            "vue-feather vue-feather--check inline-icon me-1 code-validating-icon"
+        );
     });
 
     test("can see code not valid msg when update code with syntax error", async ({ page }) => {
@@ -137,7 +140,8 @@ test.describe("Code Tab tests", () => {
         await writeCode(page, invalidCode);
 
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to update.", {
+            "Model code has been updated. Compile code and Run Model to update.",
+            {
                 timeout
             }
         );
@@ -151,7 +155,8 @@ test.describe("Code Tab tests", () => {
         await writeCode(page, invalidCode);
 
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to update.", {
+            "Model code has been updated. Compile code and Run Model to update.",
+            {
                 timeout
             }
         );
@@ -163,7 +168,8 @@ test.describe("Code Tab tests", () => {
         await writeCode(page, invalidCode);
 
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to update.", {
+            "Model code has been updated. Compile code and Run Model to update.",
+            {
                 timeout
             }
         );
@@ -175,7 +181,8 @@ test.describe("Code Tab tests", () => {
         await writeCode(page, invalidCode);
 
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to update.", {
+            "Model code has been updated. Compile code and Run Model to update.",
+            {
                 timeout
             }
         );
@@ -187,7 +194,8 @@ test.describe("Code Tab tests", () => {
         await writeCode(page, warningCode);
 
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to update.", {
+            "Model code has been updated. Compile code and Run Model to update.",
+            {
                 timeout
             }
         );
@@ -199,7 +207,8 @@ test.describe("Code Tab tests", () => {
         await writeCode(page, warningCode);
 
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to update.", {
+            "Model code has been updated. Compile code and Run Model to update.",
+            {
                 timeout
             }
         );
@@ -211,7 +220,8 @@ test.describe("Code Tab tests", () => {
         await writeCode(page, warningCode);
 
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to update.", {
+            "Model code has been updated. Compile code and Run Model to update.",
+            {
                 timeout
             }
         );
@@ -223,7 +233,8 @@ test.describe("Code Tab tests", () => {
         const invalidCode = "faker\n";
         await writeCode(page, invalidCode);
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to update.", {
+            "Model code has been updated. Compile code and Run Model to update.",
+            {
                 timeout
             }
         );
@@ -241,21 +252,24 @@ test.describe("Code Tab tests", () => {
         await writeCode(page, invalidCode);
 
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to update.", {
+            "Model code has been updated. Compile code and Run Model to update.",
+            {
                 timeout
             }
         );
         await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is not valid");
-        await expect(await page.innerText(".wodin-left .wodin-content #error-info"))
-            .toBe("Code error: Error on line 1: Every line must contain an assignment, a compare statement "
-                + "or a debug statement");
+        await expect(await page.innerText(".wodin-left .wodin-content #error-info")).toBe(
+            "Code error: Error on line 1: Every line must contain an assignment, a compare statement " +
+                "or a debug statement"
+        );
     });
 
     test("can display model error message when running model", async ({ page }) => {
         const defaultCode = await page.innerText(".wodin-left .wodin-content .editor-container");
         await writeCode(page, newInvalidCode);
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to update.", {
+            "Model code has been updated. Compile code and Run Model to update.",
+            {
                 timeout
             }
         );
@@ -271,8 +285,9 @@ test.describe("Code Tab tests", () => {
         await expect(await runBtn.isDisabled()).toBe(false);
         await runBtn.click();
 
-        await expect(await page.innerText(".run-tab #error-info"))
-            .toBe("An error occurred while running the model: Integration failure: too many steps at 0");
+        await expect(await page.innerText(".run-tab #error-info")).toBe(
+            "An error occurred while running the model: Integration failure: too many steps at 0"
+        );
     });
 
     test("can select and unselect variables", async ({ page }) => {
@@ -282,20 +297,25 @@ test.describe("Code Tab tests", () => {
 
         // check plot no longer contains R series
         await expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(2);
-        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 1)").getAttribute("name"))
-            .toBe("S");
-        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 2)").getAttribute("name"))
-            .toBe("R");
+        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 1)").getAttribute("name")).toBe(
+            "S"
+        );
+        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 2)").getAttribute("name")).toBe(
+            "R"
+        );
 
         // re-select I
         await iVariable.click();
         await expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(3);
-        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 1)").getAttribute("name"))
-            .toBe("S");
-        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 2)").getAttribute("name"))
-            .toBe("I");
-        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 3)").getAttribute("name"))
-            .toBe("R");
+        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 1)").getAttribute("name")).toBe(
+            "S"
+        );
+        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 2)").getAttribute("name")).toBe(
+            "I"
+        );
+        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 3)").getAttribute("name")).toBe(
+            "R"
+        );
     });
 
     test("can display help dialog", async ({ page }) => {
@@ -313,7 +333,8 @@ test.describe("Code Tab tests", () => {
         await writeCode(page, invalidCode);
 
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to update.", {
+            "Model code has been updated. Compile code and Run Model to update.",
+            {
                 timeout
             }
         );
@@ -330,7 +351,8 @@ test.describe("Code Tab tests", () => {
         await writeCode(page, warningCode);
 
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to update.", {
+            "Model code has been updated. Compile code and Run Model to update.",
+            {
                 timeout
             }
         );

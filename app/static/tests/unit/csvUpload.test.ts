@@ -33,8 +33,8 @@ describe("CSVUpload", () => {
     };
 
     enum TestMutation {
-      Success = "Success",
-      Error = "Error"
+        Success = "Success",
+        Error = "Error"
     }
 
     it("commits data and calls post success on success", (done) => {
@@ -170,8 +170,7 @@ describe("CSVUpload", () => {
         jest.spyOn(global, "FileReader").mockImplementation(() => mockFileReader);
         const consoleSpy = jest.spyOn(console, "warn");
         const commit = jest.fn();
-        csvUpload({ commit } as any)
-            .upload(file);
+        csvUpload({ commit } as any).upload(file);
         expect(consoleSpy).toHaveBeenCalledTimes(2);
         expect(consoleSpy.mock.calls[0][0]).toBe("No error handler registered for CSVUpload.");
         expect(consoleSpy.mock.calls[1][0]).toBe("No success handler registered for CSVUpload.");

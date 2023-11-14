@@ -1,29 +1,36 @@
 <template>
-  <div class="fit-tab">
-    <div>
-      <loading-button class="btn btn-primary me-2"
-                      id="fit-btn"
-                      :loading="fitting"
-                      :is-disabled="!canFitModel"
-                      @click="fitModel">Fit model</loading-button>
-      <button class="btn btn-outline" id="cancel-fit-btn" :disabled="!fitting" @click="cancelFit">Cancel fit</button>
-      <action-required-message :message="actionRequiredMessage"></action-required-message>
-      <fit-plot :fade-plot="!!actionRequiredMessage" :model-fit="true">
-        <div v-if="iterations">
-          <vue-feather v-if="iconType"
-                       class="inline-icon"
-                       :class="iconClass"
-                       :type="iconType"
-                       size="40px"></vue-feather>
-          <loading-spinner v-if="fitting" class="inline-icon" size="xs"></loading-spinner>
-          <span class="ms-2">Iterations: {{iterations}}</span>
-          <span class="ms-2">Sum of squares: {{sumOfSquares}}</span>
-          <div v-if="cancelled" id="fit-cancelled-msg" class="small text-danger">{{cancelledMsg}}</div>
+    <div class="fit-tab">
+        <div>
+            <loading-button
+                class="btn btn-primary me-2"
+                id="fit-btn"
+                :loading="fitting"
+                :is-disabled="!canFitModel"
+                @click="fitModel"
+                >Fit model</loading-button
+            >
+            <button class="btn btn-outline" id="cancel-fit-btn" :disabled="!fitting" @click="cancelFit">
+                Cancel fit
+            </button>
+            <action-required-message :message="actionRequiredMessage"></action-required-message>
+            <fit-plot :fade-plot="!!actionRequiredMessage" :model-fit="true">
+                <div v-if="iterations">
+                    <vue-feather
+                        v-if="iconType"
+                        class="inline-icon"
+                        :class="iconClass"
+                        :type="iconType"
+                        size="40px"
+                    ></vue-feather>
+                    <loading-spinner v-if="fitting" class="inline-icon" size="xs"></loading-spinner>
+                    <span class="ms-2">Iterations: {{ iterations }}</span>
+                    <span class="ms-2">Sum of squares: {{ sumOfSquares }}</span>
+                    <div v-if="cancelled" id="fit-cancelled-msg" class="small text-danger">{{ cancelledMsg }}</div>
+                </div>
+            </fit-plot>
+            <error-info :error="error"></error-info>
         </div>
-      </fit-plot>
-      <error-info :error="error"></error-info>
     </div>
-  </div>
 </template>
 
 <script lang="ts">

@@ -1,8 +1,5 @@
 import { MutationTree } from "vuex";
-import {
-    AdvancedComponentType,
-    ParameterSet, RunState, RunUpdateRequiredReasons, Tag
-} from "./state";
+import { AdvancedComponentType, ParameterSet, RunState, RunUpdateRequiredReasons, Tag } from "./state";
 import { OdinUserType } from "../../types/responseTypes";
 import { OdinRunResultDiscrete, OdinRunResultOde } from "../../types/wrapperTypes";
 import { SetAdvancedSettingPayload, SetParameterSetResultPayload } from "../../types/payloadTypes";
@@ -37,8 +34,8 @@ const runRequiredNone = {
 };
 
 interface ParameterSetNames {
-    parameterSetName: string
-    newDisplayName: string
+    parameterSetName: string;
+    newDisplayName: string;
 }
 
 export const mutations: MutationTree<RunState> = {
@@ -76,8 +73,7 @@ export const mutations: MutationTree<RunState> = {
     },
 
     [RunMutation.UpdateAdvancedSettings](state: RunState, payload: SetAdvancedSettingPayload) {
-        if (state.advancedSettings[payload.option].type === AdvancedComponentType.tag
-            && payload.newVal) {
+        if (state.advancedSettings[payload.option].type === AdvancedComponentType.tag && payload.newVal) {
             const sortedTags = (payload.newVal as Tag[]).sort((tag1, tag2) => {
                 const tag1Val = typeof tag1 === "number" ? tag1 : state.parameterValues![tag1];
                 const tag2Val = typeof tag2 === "number" ? tag2 : state.parameterValues![tag2];

@@ -4,7 +4,7 @@ import { LanguageStateMutation } from "./mutations";
 import { LanguageState } from "./state";
 
 export enum LanguageAction {
-    UpdateLanguage="UpdateLanguage"
+    UpdateLanguage = "UpdateLanguage"
 }
 
 export const actions: ActionTree<LanguageState, any> = {

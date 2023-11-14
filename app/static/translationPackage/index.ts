@@ -4,12 +4,7 @@ import { registerResources } from "./registerTranslations";
 import translate from "./directive/translate";
 
 function getStoreModule() {
-    return language
+    return language;
 }
 
-export {
-    LanguageSwitcher,
-    getStoreModule,
-    registerResources,
-    translate
-}
+export { LanguageSwitcher, getStoreModule, registerResources, translate };

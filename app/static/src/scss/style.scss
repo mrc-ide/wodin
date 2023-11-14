@@ -3,17 +3,17 @@
 @import "./editor.scss";
 
 .container {
-  max-width: 100%;
-  padding-left: 1rem;
-  padding-right: 1rem;
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 .inline-icon {
-  vertical-align: text-bottom;
+    vertical-align: text-bottom;
 }
 
 .inline-spinner {
-  vertical-align: middle;
+    vertical-align: middle;
 }
 
 $brand: #479fb6;
@@ -21,95 +21,98 @@ $light-grey: #eee;
 $grey: #ccc;
 
 .bg-brand {
-  background-color: $brand;
+    background-color: $brand;
 }
 
 .brand {
-  color: $brand;
+    color: $brand;
 }
 
-.brand-link, .brand-link:hover, .brand-link:visited {
-  @extend .brand;
-  text-decoration: none;
+.brand-link,
+.brand-link:hover,
+.brand-link:visited {
+    @extend .brand;
+    text-decoration: none;
 }
 
 .grey {
-  color: $grey;
+    color: $grey;
 }
 
 .wodin-link {
-  color: $brand;
-  text-decoration: none;
-  &:hover {
-    color: darken($brand, 10%);
-  }
+    color: $brand;
+    text-decoration: none;
+    &:hover {
+        color: darken($brand, 10%);
+    }
 }
 
 .btn-outline {
-  background-color: #fff;
-  border-color: #0d6efd;
-  color: #0d6efd !important;
+    background-color: #fff;
+    border-color: #0d6efd;
+    color: #0d6efd !important;
 }
 
-.wodin-plot-container, .summary-plot-container {
-  position: relative;
+.wodin-plot-container,
+.summary-plot-container {
+    position: relative;
 }
 
 .plot {
-  height: 450px;
+    height: 450px;
 }
 
 .plot-placeholder {
-  width: 100%;
-  height: 450px;
-  background-color: $light-grey;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  position: absolute;
-  top: 0;
+    width: 100%;
+    height: 450px;
+    background-color: $light-grey;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: absolute;
+    top: 0;
 }
 
 .alert-danger {
-  background-color: #fff;
+    background-color: #fff;
 }
 
 .clickable {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .hidden-parameter-set {
-  background-color: $light-grey;
+    background-color: $light-grey;
 }
 
 .generic-help-icon {
-  color: $brand;
-  float: right;
+    color: $brand;
+    float: right;
 }
 
 .prevent-select {
-  -webkit-user-select: none; /* Safari */
-  user-select: none; /* Standard syntax */
+    -webkit-user-select: none; /* Safari */
+    user-select: none; /* Standard syntax */
 }
 
 .param-set-icon {
-  margin-top: 8px;
-  margin-bottom: 8px;
+    margin-top: 8px;
+    margin-bottom: 8px;
 }
 
 .param-card-header {
-  display: inline-flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 0;
-  padding-bottom: 0;
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 .param-name-input {
-  width: 150px;
-  height: 30px;
-  padding-left: 7px;
-  padding-top: 0;
-  padding-bottom: 0;
+    width: 150px;
+    height: 30px;
+    padding-left: 7px;
+    padding-top: 0;
+    padding-bottom: 0;
 }

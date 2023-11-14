@@ -5,9 +5,11 @@ import { BasicState } from "../../../src/app/store/basic/state";
 import DownloadOutput from "../../../src/app/components/DownloadOutput.vue";
 
 // eslint-disable-next-line max-len
-const generatedFilenameRegex = /^test-run-([0-9]{4})?(1[0-2]|0[1-9])?(3[01]|0[1-9]|[12][0-9])-(2[0-3]|[0-1][0-9])?([0-5][0-9])?([0-5][0-9])?$/;
+const generatedFilenameRegex =
+    /^test-run-([0-9]{4})?(1[0-2]|0[1-9])?(3[01]|0[1-9]|[12][0-9])-(2[0-3]|[0-1][0-9])?([0-5][0-9])?([0-5][0-9])?$/;
 // eslint-disable-next-line max-len
-const generatedFilenameWithSuffixRegex = /^test-run-([0-9]{4})?(1[0-2]|0[1-9])?(3[01]|0[1-9]|[12][0-9])-(2[0-3]|[0-1][0-9])?([0-5][0-9])?([0-5][0-9])?.xlsx$/;
+const generatedFilenameWithSuffixRegex =
+    /^test-run-([0-9]{4})?(1[0-2]|0[1-9])?(3[01]|0[1-9]|[12][0-9])-(2[0-3]|[0-1][0-9])?([0-5][0-9])?([0-5][0-9])?.xlsx$/;
 
 describe("DownloadOutput", () => {
     const getWrapper = (userFileName = "", downloadType = "Run", includePoints = true) => {
@@ -99,10 +101,12 @@ describe("DownloadOutput", () => {
         await wrapper.find("#download-points input").setValue("1001");
         await wrapper.find("#ok-download").trigger("click");
         expect(wrapper.emitted().download.length).toBe(1);
-        expect(wrapper.emitted().download[0]).toStrictEqual([{
-            fileName: "myFile.xlsx",
-            points: 1001
-        }]);
+        expect(wrapper.emitted().download[0]).toStrictEqual([
+            {
+                fileName: "myFile.xlsx",
+                points: 1001
+            }
+        ]);
         expect(wrapper.emitted().close.length).toBe(1);
     });
 

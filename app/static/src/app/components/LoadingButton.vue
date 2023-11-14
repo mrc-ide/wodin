@@ -17,17 +17,17 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-    .hidden-loading {
-        visibility: hidden;
-    }
-    .loading-btn {
-        position: relative;
-    }
-    .loading-spinner {
-        position: absolute;
-        height: 1.25rem;
-        width: 1.25rem;
-        left: calc(50% - 0.625rem);
-        top: calc(50% - 0.625rem);
-    }
+.hidden-loading {
+    visibility: hidden;
+}
+.loading-btn {
+    position: relative;
+}
+.loading-spinner {
+    position: absolute;
+    height: 1.25rem;
+    width: 1.25rem;
+    left: calc(50% - 0.625rem);
+    top: calc(50% - 0.625rem);
+}
 </style>

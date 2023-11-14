@@ -69,7 +69,7 @@ describe("Advanced Settings", () => {
 
     const expectValueAndPlaceholder = (
         input: VueWrapper<any>,
-        value: number | null | (number|null)[],
+        value: number | null | (number | null)[],
         defaults: number | number[] | string
     ) => {
         expect(input.props("value")).toStrictEqual(value);
@@ -107,8 +107,10 @@ describe("Advanced Settings", () => {
         inputs[0].vm.$emit("update", 2);
 
         expect(mockUpdateAdvancedSettings).toBeCalledTimes(1);
-        expect(mockUpdateAdvancedSettings.mock.calls[0][1])
-            .toStrictEqual({ newVal: 2, option: AdvancedOptions.maxSteps });
+        expect(mockUpdateAdvancedSettings.mock.calls[0][1]).toStrictEqual({
+            newVal: 2,
+            option: AdvancedOptions.maxSteps
+        });
     });
 
     it("commits update advanced settings with standard form", () => {
@@ -118,8 +120,10 @@ describe("Advanced Settings", () => {
         inputs[0].vm.$emit("update", [2, 3]);
 
         expect(mockUpdateAdvancedSettings).toBeCalledTimes(1);
-        expect(mockUpdateAdvancedSettings.mock.calls[0][1])
-            .toStrictEqual({ newVal: [2, 3], option: AdvancedOptions.tol });
+        expect(mockUpdateAdvancedSettings.mock.calls[0][1]).toStrictEqual({
+            newVal: [2, 3],
+            option: AdvancedOptions.tol
+        });
     });
 
     it("commits update required to both fit and sensitivity when on fit app", () => {

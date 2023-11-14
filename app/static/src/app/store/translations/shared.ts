@@ -1,7 +1,7 @@
 import { TranslationLocales } from "../../types/languageTypes";
 
 interface SharedTranslations extends TranslationLocales {
-    sharedExample: string
+    sharedExample: string;
 }
 
 const en: SharedTranslations = {

@@ -4,5 +4,5 @@ export enum Language {
 }
 
 export interface TranslationLocales {
-    [key: string]: string
+    [key: string]: string;
 }

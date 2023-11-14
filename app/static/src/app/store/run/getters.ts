@@ -13,7 +13,7 @@ export enum RunGetter {
 }
 
 export interface RunGetters {
-    [RunGetter.lineStylesForParameterSets]: Getter<RunState, AppState>
+    [RunGetter.lineStylesForParameterSets]: Getter<RunState, AppState>;
 }
 
 export const getters: RunGetters & GetterTree<RunState, AppState> = {

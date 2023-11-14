@@ -11,8 +11,12 @@ import VersionMenu from "../../../../src/app/components/header/VersionMenu.vue";
 import { LanguageSwitcher } from "../../../../translationPackage";
 
 describe("AppHeader", () => {
-    const getWrapper = (appName: string | null = "test", sessionLabel: string | null = null,
-        sessionId = "testSessionId", persisted = true) => {
+    const getWrapper = (
+        appName: string | null = "test",
+        sessionLabel: string | null = null,
+        sessionId = "testSessionId",
+        persisted = true
+    ) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
                 appName,

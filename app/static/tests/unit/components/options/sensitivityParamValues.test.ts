@@ -6,10 +6,12 @@ describe("SensitivityParamValues", () => {
     const getWrapper = (values: number[]) => {
         const paramName = "beta";
         const batchPars = {
-            varying: [{
-                name: paramName,
-                values
-            }]
+            varying: [
+                {
+                    name: paramName,
+                    values
+                }
+            ]
         };
         return mount(SensitivityParamValues, { props: { batchPars, paramName } });
     };

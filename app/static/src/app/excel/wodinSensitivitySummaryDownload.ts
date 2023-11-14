@@ -5,9 +5,9 @@ import { OdinUserType, OdinUserTypeSeriesSet } from "../types/responseTypes";
 import { OdinSensitivityResult } from "../types/wrapperTypes";
 
 interface ExtremeSummarySheetSettings {
-    name: string,
-    extremePrefix: SensitivityPlotExtremePrefix
-    extreme: SensitivityPlotExtreme
+    name: string;
+    extremePrefix: SensitivityPlotExtremePrefix;
+    extreme: SensitivityPlotExtreme;
 }
 
 const extremeSummarySheets: ExtremeSummarySheetSettings[] = [
@@ -21,9 +21,7 @@ export class WodinSensitivitySummaryDownload extends WodinExcelDownload {
         const sheetData = data.x.map((x: OdinUserType, index: number) => {
             return {
                 ...x,
-                ...Object.fromEntries([
-                    ...data.values.map((v) => [v.name, v.y[index]])
-                ])
+                ...Object.fromEntries([...data.values.map((v) => [v.name, v.y[index]])])
             };
         });
         const worksheet = XLSX.utils.json_to_sheet(sheetData);

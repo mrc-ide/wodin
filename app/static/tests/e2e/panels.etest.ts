@@ -1,9 +1,4 @@
-import {
-    expect,
-    test,
-    Page,
-    Locator
-} from "@playwright/test";
+import { expect, test, Page, Locator } from "@playwright/test";
 
 test.describe("Wodin App panels tests", () => {
     test.beforeEach(async ({ page }) => {
@@ -18,8 +13,9 @@ test.describe("Wodin App panels tests", () => {
     const rightBoundary = windowWidth - widthToleranceRight;
 
     const expectBothMode = async (page: Page) => {
-        await expect(await page.innerText(".wodin-mode-both .wodin-left .wodin-content .nav-tabs .active"))
-            .toBe("Code");
+        await expect(await page.innerText(".wodin-mode-both .wodin-left .wodin-content .nav-tabs .active")).toBe(
+            "Code"
+        );
         await expect(await page.locator(".wodin-mode-both .wodin-right .wodin-content .js-plotly-plot")).toBeVisible();
         await expect(await page.locator(".wodin-collapse-controls #resize-panel-control")).toBeVisible();
         await expect(await page.locator(".wodin-left .view-left").isHidden()).toBe(true);
@@ -29,8 +25,9 @@ test.describe("Wodin App panels tests", () => {
     };
 
     const expectBothModeLeftHidden = async (page: Page) => {
-        await expect(await page.innerText(".wodin-mode-both .wodin-left .wodin-content .nav-tabs .active"))
-            .toBe("Code");
+        await expect(await page.innerText(".wodin-mode-both .wodin-left .wodin-content .nav-tabs .active")).toBe(
+            "Code"
+        );
         await expect(await page.locator(".wodin-mode-both .wodin-right .wodin-content .js-plotly-plot")).toBeVisible();
         await expect(await page.locator(".wodin-collapse-controls #resize-panel-control")).toBeVisible();
         await expect(await page.locator(".wodin-left .view-left").isHidden()).toBe(false);
@@ -40,10 +37,12 @@ test.describe("Wodin App panels tests", () => {
     };
 
     const expectBothModeRightHidden = async (page: Page) => {
-        await expect(await page.innerText(".wodin-mode-both .wodin-left .wodin-content .nav-tabs .active"))
-            .toBe("Code");
-        await expect(await page.locator(".wodin-mode-both .wodin-right .wodin-content .js-plotly-plot").isHidden())
-            .toBe(true);
+        await expect(await page.innerText(".wodin-mode-both .wodin-left .wodin-content .nav-tabs .active")).toBe(
+            "Code"
+        );
+        await expect(
+            await page.locator(".wodin-mode-both .wodin-right .wodin-content .js-plotly-plot").isHidden()
+        ).toBe(true);
         await expect(await page.locator(".wodin-collapse-controls #resize-panel-control")).toBeVisible();
         await expect(await page.locator(".wodin-left .view-left").isHidden()).toBe(true);
         await expect(await page.locator(".wodin-right .view-right").isHidden()).toBe(false);
@@ -68,22 +67,16 @@ test.describe("Wodin App panels tests", () => {
     };
 
     interface Point {
-        x: number,
-        y:number
+        x: number;
+        y: number;
     }
 
     const dragTo = async (page: Page, locatorToDrag: Locator, locatorDragTarget: Point, mouseUp = true) => {
         const toDragBox = await locatorToDrag.boundingBox();
 
-        await page.mouse.move(
-            toDragBox!.x + toDragBox!.width / 2,
-            toDragBox!.y + toDragBox!.height / 2
-        );
+        await page.mouse.move(toDragBox!.x + toDragBox!.width / 2, toDragBox!.y + toDragBox!.height / 2);
         await page.mouse.down();
-        await page.mouse.move(
-            locatorDragTarget.x,
-            locatorDragTarget.y
-        );
+        await page.mouse.move(locatorDragTarget.x, locatorDragTarget.y);
         if (mouseUp) {
             await page.mouse.up();
         }

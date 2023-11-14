@@ -1,8 +1,4 @@
-import {
-    expect, test,
-    chromium,
-    Page
-} from "@playwright/test";
+import { expect, test, chromium, Page } from "@playwright/test";
 import * as os from "os";
 import * as fs from "fs";
 import {
@@ -10,7 +6,8 @@ import {
     newFitCode,
     realisticFitData,
     startModelFit,
-    waitForModelFitCompletion, expectWodinPlotDataSummary,
+    waitForModelFitCompletion,
+    expectWodinPlotDataSummary,
     expectCanRunMultiSensitivity
 } from "./utils";
 import PlaywrightConfig from "../../playwright.config";
@@ -45,7 +42,8 @@ test.describe("Sessions tests", () => {
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
         await writeCode(page, newFitCode);
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to update.", {
+            "Model code has been updated. Compile code and Run Model to update.",
+            {
                 timeout
             }
         );
@@ -53,7 +51,8 @@ test.describe("Sessions tests", () => {
         // compile and re-run
         await page.click("#compile-btn");
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Plot is out of date: model code has been recompiled. Run model to update.", {
+            "Plot is out of date: model code has been recompiled. Run model to update.",
+            {
                 timeout
             }
         );
@@ -91,8 +90,9 @@ test.describe("Sessions tests", () => {
         await page.click("#all-sessions-link");
 
         await expect(await page.innerText(".container h2")).toBe("Sessions");
-        await expect(await page.innerText(":nth-match(#current-session p, 1)"))
-            .toBe("Return to the current session or make a copy of the current session.");
+        await expect(await page.innerText(":nth-match(#current-session p, 1)")).toBe(
+            "Return to the current session or make a copy of the current session."
+        );
         await expect(await page.innerText(":nth-match(.session-col-header, 1)")).toBe("Saved");
         await expect(await page.innerText(":nth-match(.session-col-header, 2)")).toBe("Label");
         await expect(await page.innerText(":nth-match(.session-col-header, 3)")).toBe("Edit Label");
@@ -105,15 +105,15 @@ test.describe("Sessions tests", () => {
 
         // Can copy code and link for a session
         await page.click(":nth-match(.session-copy-code, 2)");
-        await expect(await page.innerText(":nth-match(.session-copy-confirm, 2)"))
-            .toContain("Copied: ");
+        await expect(await page.innerText(":nth-match(.session-copy-confirm, 2)")).toContain("Copied: ");
         const copiedCodeText = await page.evaluate("navigator.clipboard.readText()");
         expect(copiedCodeText).toContain("-");
 
         await page.click(":nth-match(.session-copy-link, 2)");
-        await expect(await page.innerText(":nth-match(.session-copy-confirm, 2)"))
-            .toContain("Copied: http://localhost:3000/apps/day2/?share=");
-        const copiedLinkText = await page.evaluate("navigator.clipboard.readText()") as string;
+        await expect(await page.innerText(":nth-match(.session-copy-confirm, 2)")).toContain(
+            "Copied: http://localhost:3000/apps/day2/?share="
+        );
+        const copiedLinkText = (await page.evaluate("navigator.clipboard.readText()")) as string;
         expect(copiedLinkText).toContain("http://localhost:3000/apps/day2/?share=");
 
         // Set the current session label from the nav menu and check it updates on menu title
@@ -140,22 +140,23 @@ test.describe("Sessions tests", () => {
         await page.goto(`${appUrl}/sessions`);
         await expect(await page.isChecked("#show-duplicates-check")).toBe(false);
         await expect(await page.innerText(":nth-match(.session-label, 1)")).toBe(noLabel);
-        await expect(await page.innerText(":nth-match(.session-label, 2)"))
-            .toBe("current session label"); // the previous labelled session
+        await expect(await page.innerText(":nth-match(.session-label, 2)")).toBe("current session label"); // the previous labelled session
 
         // ... then after checking "Show duplicate sessions", all new sessions should be displayed...
         await page.check("#show-duplicates-check");
         await expect(await page.locator(":nth-match(.session-label, 1)")).toHaveText(noLabel, { timeout });
         await expect(await page.locator(":nth-match(.session-label, 2)")).toHaveText(noLabel, { timeout });
         await expect(await page.locator(":nth-match(.session-label, 3)")).toHaveText(noLabel, { timeout });
-        await expect(await page.locator(":nth-match(.session-label, 4)"))
-            .toHaveText("current session label", { timeout });
+        await expect(await page.locator(":nth-match(.session-label, 4)")).toHaveText("current session label", {
+            timeout
+        });
 
         // ...then unchecking should filter out the earlier unlabelled duplicates again
         await page.uncheck("#show-duplicates-check");
         await expect(await page.locator(":nth-match(.session-label, 1)")).toHaveText(noLabel, { timeout });
-        await expect(await page.locator(":nth-match(.session-label, 2)"))
-            .toHaveText("current session label", { timeout });
+        await expect(await page.locator(":nth-match(.session-label, 2)")).toHaveText("current session label", {
+            timeout
+        });
 
         // Adding a label to the earliest duplicate session means it should be displayed when we uncheck
         // "Show duplicates"
@@ -171,8 +172,9 @@ test.describe("Sessions tests", () => {
         // but the middle duplicate should be removed
         await expect(await page.locator(":nth-match(.session-label, 1)")).toHaveText(noLabel, { timeout });
         await expect(await page.locator(":nth-match(.session-label, 2)")).toHaveText("earlier duplicate", { timeout });
-        await expect(await page.locator(":nth-match(.session-label, 3)"))
-            .toHaveText("current session label", { timeout });
+        await expect(await page.locator(":nth-match(.session-label, 3)")).toHaveText("current session label", {
+            timeout
+        });
 
         // Load previously run session
         await page.click(":nth-match(.session-load a, 4)");
@@ -195,8 +197,9 @@ test.describe("Sessions tests", () => {
         await page.click(":nth-match(.wodin-left .nav-tabs a, 3)"); // Options tab
         await page.click(":nth-match(.wodin-right .nav-tabs a, 2)"); // Fit tab
         await expect(await page.inputValue("#link-data select")).toBe("I");
-        expect((await page.inputValue(":nth-match(#model-params .row .parameter-input, 1)")).startsWith("0.4925"))
-            .toBe(true);
+        expect((await page.inputValue(":nth-match(#model-params .row .parameter-input, 1)")).startsWith("0.4925")).toBe(
+            true
+        );
         await expect(await page.inputValue(":nth-match(#model-params .row .parameter-input, 2)")).toBe("1");
         await expect(await page.inputValue(":nth-match(#model-params .row .parameter-input, 3)")).toBe("1.5");
         await expect(await page.isChecked(":nth-match(#model-params .row .form-check-input, 1)")).toBeTruthy();
@@ -231,8 +234,18 @@ test.describe("Sessions tests", () => {
         await page.click(":nth-match(.wodin-right .nav-tabs a, 3)"); // Sensitivity tab
         expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(56);
         const sensitivitySummary = await page.locator(":nth-match(.wodin-plot-data-summary-series, 1)");
-        await expectWodinPlotDataSummary(sensitivitySummary, "S (D=0.443)", 1000, 0, 31, 154.28, 369, "lines",
-            "#2e5cb8", null);
+        await expectWodinPlotDataSummary(
+            sensitivitySummary,
+            "S (D=0.443)",
+            1000,
+            0,
+            31,
+            154.28,
+            369,
+            "lines",
+            "#2e5cb8",
+            null
+        );
         const centralSummary = await page.locator(":nth-match(.wodin-plot-data-summary-series, 51)");
         await expectWodinPlotDataSummary(centralSummary, "S", 1000, 0, 31, 154.64, 369, "lines", "#2e5cb8", null);
         const sensitivityDataSummary = await page.locator(":nth-match(.wodin-plot-data-summary-series, 56)");
@@ -240,8 +253,10 @@ test.describe("Sessions tests", () => {
 
         // Check multi-sensitivity result
         await page.click(":nth-match(.wodin-right .nav-tabs a, 4)"); // Multi-sensitivity tab
-        await expect(await page.locator(".multi-sensitivity-status"))
-            .toHaveText("Multi-sensitivity run produced 100 solutions.", { timeout });
+        await expect(await page.locator(".multi-sensitivity-status")).toHaveText(
+            "Multi-sensitivity run produced 100 solutions.",
+            { timeout }
+        );
         await expect(await page.locator("#download-summary-btn")).toBeEnabled();
         await expect(await page.locator("#run-multi-sens-btn")).toBeEnabled();
 

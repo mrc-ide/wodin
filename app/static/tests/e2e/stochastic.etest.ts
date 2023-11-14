@@ -25,7 +25,8 @@ test.describe("stochastic app", () => {
         await page.fill(":nth-match(#run-options input, 2)", "6");
 
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Plot is out of date: number of replicates has changed. Run model to update.", {
+            "Plot is out of date: number of replicates has changed. Run model to update.",
+            {
                 timeout
             }
         );
@@ -49,7 +50,8 @@ test.describe("stochastic app", () => {
     test("traces are hidden if replicates are above maxReplicatesDisplay", async ({ page }) => {
         await page.fill(":nth-match(#run-options input, 2)", "50");
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Plot is out of date: number of replicates has changed. Run model to update.", {
+            "Plot is out of date: number of replicates has changed. Run model to update.",
+            {
                 timeout
             }
         );
@@ -62,7 +64,8 @@ test.describe("stochastic app", () => {
 
         await page.fill(":nth-match(#run-options input, 2)", "51");
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Plot is out of date: number of replicates has changed. Run model to update.", {
+            "Plot is out of date: number of replicates has changed. Run model to update.",
+            {
                 timeout
             }
         );

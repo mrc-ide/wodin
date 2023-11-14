@@ -21,9 +21,7 @@ const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) =
     // This is called whenever new data is uploaded, or selected time variable changes, or the model changes, which
     // may partially or fully invalidate any existing links. We retain any we can from previous selection.
     // Empty string means no link
-    const {
-        commit, state, rootState, getters
-    } = context;
+    const { commit, state, rootState, getters } = context;
     const modelResponse = rootState.model.odinModelResponse;
     const modelVariables = modelResponse?.valid ? rootState.model.selectedVariables : [];
     const dataColumns = getters.nonTimeColumns;
@@ -31,7 +29,7 @@ const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) =
     if (dataColumns) {
         newLinks = dataColumns.reduce((links: Dict<string | null>, column: string) => {
             const existingLink = state.linkedVariables[column];
-            const value = (existingLink && modelVariables.includes(existingLink)) ? existingLink : null;
+            const value = existingLink && modelVariables.includes(existingLink) ? existingLink : null;
             return { ...links, [column]: value };
         }, {});
     }

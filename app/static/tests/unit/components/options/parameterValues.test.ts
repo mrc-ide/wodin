@@ -4,9 +4,7 @@ import { mount, shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import ParameterValues from "../../../../src/app/components/options/ParameterValues.vue";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
-import {
-    mockBasicState, mockModelFitState, mockModelState, mockRunState
-} from "../../../mocks";
+import { mockBasicState, mockModelFitState, mockModelState, mockRunState } from "../../../mocks";
 import { RunMutation, mutations as runMutations } from "../../../../src/app/store/run/mutations";
 import { AppType, VisualisationTab } from "../../../../src/app/store/appState/state";
 import Mock = jest.Mock;
@@ -31,7 +29,8 @@ describe("ParameterValues", () => {
     ) => {
         // Use mock or real mutations
         const storeMutations = mockUpdateParameterValues
-            ? { UpdateParameterValues: mockUpdateParameterValues } : runMutations;
+            ? { UpdateParameterValues: mockUpdateParameterValues }
+            : runMutations;
 
         const store = new Vuex.Store<BasicState>({
             state: {
@@ -145,16 +144,9 @@ describe("ParameterValues", () => {
             } as any
         };
         const mockUpdateParameterValues = jest.fn();
-        const wrapper = getWrapper(getStore(
-            false,
-            mockUpdateParameterValues,
-            jest.fn(),
-            jest.fn(),
-            jest.fn(),
-            [],
-            jest.fn(),
-            modelState
-        ));
+        const wrapper = getWrapper(
+            getStore(false, mockUpdateParameterValues, jest.fn(), jest.fn(), jest.fn(), [], jest.fn(), modelState)
+        );
         const input2 = wrapper.findAllComponents(NumericInput).at(1)!;
         await input2.vm.$emit("update", 3.3);
         expect(input2.props("value")).toBe(2.2);
@@ -195,16 +187,9 @@ describe("ParameterValues", () => {
             } as any
         };
         const mockUpdateParameterValues = jest.fn();
-        const wrapper = getWrapper(getStore(
-            false,
-            mockUpdateParameterValues,
-            jest.fn(),
-            jest.fn(),
-            jest.fn(),
-            [],
-            jest.fn(),
-            modelState
-        ));
+        const wrapper = getWrapper(
+            getStore(false, mockUpdateParameterValues, jest.fn(), jest.fn(), jest.fn(), [], jest.fn(), modelState)
+        );
         const reset = wrapper.find("#reset-params-btn");
         await reset.trigger("click");
         expect(mockUpdateParameterValues).toHaveBeenCalledTimes(0);
@@ -215,8 +200,15 @@ describe("ParameterValues", () => {
         const mockSetSensitivityUpdateRequired = jest.fn();
         const mockSetMultiSensitivityUpdateRequired = jest.fn();
         const mockSetFitUpdateRequired = jest.fn();
-        const wrapper = getWrapper(getStore(false, mockUpdateParameterValues, mockSetSensitivityUpdateRequired,
-            mockSetMultiSensitivityUpdateRequired, mockSetFitUpdateRequired));
+        const wrapper = getWrapper(
+            getStore(
+                false,
+                mockUpdateParameterValues,
+                mockSetSensitivityUpdateRequired,
+                mockSetMultiSensitivityUpdateRequired,
+                mockSetFitUpdateRequired
+            )
+        );
         const input2 = wrapper.findAllComponents(NumericInput).at(1)!;
         await input2.vm.$emit("update", 3.3);
         expect(mockUpdateParameterValues).toHaveBeenCalledTimes(1);
@@ -233,9 +225,18 @@ describe("ParameterValues", () => {
         const mockSetSensitivityUpdateRequired = jest.fn();
         const mockSetMultiSensitivityUpdateRequired = jest.fn();
         const mockSetFitUpdateRequired = jest.fn();
-        const store = getStore(false, mockUpdateParameterValues, mockSetSensitivityUpdateRequired,
-            mockSetMultiSensitivityUpdateRequired, mockSetFitUpdateRequired, [], jest.fn(), {},
-            AppType.Fit, true);
+        const store = getStore(
+            false,
+            mockUpdateParameterValues,
+            mockSetSensitivityUpdateRequired,
+            mockSetMultiSensitivityUpdateRequired,
+            mockSetFitUpdateRequired,
+            [],
+            jest.fn(),
+            {},
+            AppType.Fit,
+            true
+        );
         const wrapper = getWrapper(store);
         const input2 = wrapper.findAllComponents(NumericInput).at(1)!;
         await input2.vm.$emit("update", 3.3);
@@ -252,8 +253,17 @@ describe("ParameterValues", () => {
         const mockUpdateParameterValues = jest.fn();
         const mockSetSensitivityUpdateRequired = jest.fn();
         const mockSetFitUpdateRequired = jest.fn();
-        const store = getStore(false, mockUpdateParameterValues, mockSetSensitivityUpdateRequired,
-            jest.fn(), mockSetFitUpdateRequired, [], jest.fn(), {}, AppType.Basic);
+        const store = getStore(
+            false,
+            mockUpdateParameterValues,
+            mockSetSensitivityUpdateRequired,
+            jest.fn(),
+            mockSetFitUpdateRequired,
+            [],
+            jest.fn(),
+            {},
+            AppType.Basic
+        );
         const wrapper = getWrapper(store);
         const input2 = wrapper.findAllComponents(NumericInput).at(1)!;
         await input2.vm.$emit("update", 3.3);
@@ -281,8 +291,15 @@ describe("ParameterValues", () => {
     it("updates params to vary when checkbox is checked", async () => {
         const mockSetParamsToVary = jest.fn();
         const mockSetFitUpdateRequired = jest.fn();
-        const store = getStore(true, null, jest.fn(), jest.fn(), mockSetFitUpdateRequired,
-            ["param1"], mockSetParamsToVary);
+        const store = getStore(
+            true,
+            null,
+            jest.fn(),
+            jest.fn(),
+            mockSetFitUpdateRequired,
+            ["param1"],
+            mockSetParamsToVary
+        );
         const wrapper = getWrapper(store);
         const row2 = wrapper.findAll("div.row").at(1)!;
         await row2.find("input.vary-param-check").setValue(true);
@@ -295,8 +312,15 @@ describe("ParameterValues", () => {
     it("updates params to vary when checkbox is unchecked", async () => {
         const mockSetParamsToVary = jest.fn();
         const mockSetFitUpdateRequired = jest.fn();
-        const store = getStore(true, null, jest.fn(), jest.fn(), mockSetFitUpdateRequired,
-            ["param1"], mockSetParamsToVary);
+        const store = getStore(
+            true,
+            null,
+            jest.fn(),
+            jest.fn(),
+            mockSetFitUpdateRequired,
+            ["param1"],
+            mockSetParamsToVary
+        );
         const wrapper = getWrapper(store);
         const row1 = wrapper.findAll("div.row").at(0)!;
         await row1.find("input.vary-param-check").setValue(false);

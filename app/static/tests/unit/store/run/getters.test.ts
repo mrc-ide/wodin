@@ -61,13 +61,15 @@ describe("Run getters", () => {
     it("runParameterSetIsRequired returns true if any required reason except parameterValueChanged is true", () => {
         const runParameterSetIsRequired = getters[RunGetter.runParameterSetsIsRequired] as any;
         const state = mockRunState({
-            parameterSets: [{
-                name: "Set 1",
-                displayName: "Set 1",
-                displayNameErrorMsg: "",
-                parameterValues: { p1: 1 },
-                hidden: false
-            }],
+            parameterSets: [
+                {
+                    name: "Set 1",
+                    displayName: "Set 1",
+                    displayNameErrorMsg: "",
+                    parameterValues: { p1: 1 },
+                    hidden: false
+                }
+            ],
             parameterSetResults: { "Set 1": { solution: "fake solution" } as any }
         });
         expect(runParameterSetIsRequired(state)).toBe(false);
@@ -80,25 +82,23 @@ describe("Run getters", () => {
                 }
             };
         };
-        expect(runParameterSetIsRequired(getStateWithRunRequiredReason("parameterValueChanged")))
-            .toBe(false);
-        expect(runParameterSetIsRequired(getStateWithRunRequiredReason("modelChanged")))
-            .toBe(true);
-        expect(runParameterSetIsRequired(getStateWithRunRequiredReason("endTimeChanged")))
-            .toBe(true);
-        expect(runParameterSetIsRequired(getStateWithRunRequiredReason("numberOfReplicatesChanged")))
-            .toBe(true);
+        expect(runParameterSetIsRequired(getStateWithRunRequiredReason("parameterValueChanged"))).toBe(false);
+        expect(runParameterSetIsRequired(getStateWithRunRequiredReason("modelChanged"))).toBe(true);
+        expect(runParameterSetIsRequired(getStateWithRunRequiredReason("endTimeChanged"))).toBe(true);
+        expect(runParameterSetIsRequired(getStateWithRunRequiredReason("numberOfReplicatesChanged"))).toBe(true);
     });
 
     it("runParameterSetIsRequired returns true if there are missing parameter set results", () => {
         const state = mockRunState({
-            parameterSets: [{
-                name: "Set 1",
-                displayName: "Set 1",
-                displayNameErrorMsg: "",
-                parameterValues: { p1: 1 },
-                hidden: false
-            }],
+            parameterSets: [
+                {
+                    name: "Set 1",
+                    displayName: "Set 1",
+                    displayNameErrorMsg: "",
+                    parameterValues: { p1: 1 },
+                    hidden: false
+                }
+            ],
             parameterSetResults: {}
         });
         expect((getters[RunGetter.runParameterSetsIsRequired] as any)(state)).toBe(true);
@@ -106,13 +106,15 @@ describe("Run getters", () => {
 
     it("runParameterSetIsRequired returns true if parameter set result has no solution", () => {
         const state = mockRunState({
-            parameterSets: [{
-                name: "Set 1",
-                displayName: "Set 1",
-                displayNameErrorMsg: "",
-                parameterValues: { p1: 1 },
-                hidden: false
-            }],
+            parameterSets: [
+                {
+                    name: "Set 1",
+                    displayName: "Set 1",
+                    displayNameErrorMsg: "",
+                    parameterValues: { p1: 1 },
+                    hidden: false
+                }
+            ],
             parameterSetResults: { "Set 1": { solution: null } as any }
         });
         expect((getters[RunGetter.runParameterSetsIsRequired] as any)(state)).toBe(true);

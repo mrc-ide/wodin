@@ -1,21 +1,22 @@
 <template>
     <div>
-        <button v-if="defaultCodeExists"
-                class="btn btn-primary btn-sm mb-2"
-                id="reset-btn"
-                v-help="'resetCode'"
-                @click="resetCode">Reset
+        <button
+            v-if="defaultCodeExists"
+            class="btn btn-primary btn-sm mb-2"
+            id="reset-btn"
+            v-help="'resetCode'"
+            @click="resetCode"
+        >
+            Reset
         </button>
-        <div class="editor-container mb-2" style="clear:both;">
+        <div class="editor-container mb-2" style="clear: both">
             <div class="editor" ref="editor"></div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import {
-    computed, defineComponent, onMounted, ref
-} from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import loader from "@monaco-editor/loader";
 import * as monaco from "monaco-editor";
@@ -34,8 +35,8 @@ interface DecorationOptions {
     options: {
         className: string;
         glyphMarginClassName: string;
-        hoverMessage: { value: string; };
-        glyphMarginHoverMessage: { value: string; };
+        hoverMessage: { value: string };
+        glyphMarginHoverMessage: { value: string };
     };
 }
 
@@ -45,8 +46,8 @@ enum EditorStates {
 }
 
 type EditorGlyphs = {
-    [K in EditorStates]: string
-}
+    [K in EditorStates]: string;
+};
 
 export default defineComponent({
     name: "CodeEditor",
@@ -60,7 +61,7 @@ export default defineComponent({
         const currentCode = computed(() => store.state.code.currentCode);
         const readOnly = computed(() => (store.state.config as AppConfig).readOnlyCode);
         const defaultCode = computed(() => (store.state.config as AppConfig).defaultCode);
-        const defaultCodeExists = computed(() => defaultCode.value && (defaultCode.value.length && !readOnly.value));
+        const defaultCodeExists = computed(() => defaultCode.value && defaultCode.value.length && !readOnly.value);
         const odinModelResponse = computed(() => store.state.model.odinModelResponse as OdinModelResponse);
 
         let newCode: string[] | null = null;
@@ -99,10 +100,12 @@ export default defineComponent({
         };
 
         const resetDecorations = () => {
-            oldDecorations.value = editorInstance.deltaDecorations(oldDecorations.value, [{
-                range: getMonacoRange(1, true),
-                options: {}
-            }]);
+            oldDecorations.value = editorInstance.deltaDecorations(oldDecorations.value, [
+                {
+                    range: getMonacoRange(1, true),
+                    options: {}
+                }
+            ]);
         };
 
         const updateDecorations = () => {
@@ -140,8 +143,7 @@ export default defineComponent({
         };
 
         const updateCode = () => {
-            store.dispatch(`code/${CodeAction.UpdateCode}`, newCode, { root: true })
-                .then(updateDecorations);
+            store.dispatch(`code/${CodeAction.UpdateCode}`, newCode, { root: true }).then(updateDecorations);
         };
 
         const setPendingCodeUpdate = () => {
@@ -194,12 +196,12 @@ export default defineComponent({
 </script>
 <style scoped lang="scss">
 .editor-container {
-  width: 100%;
-  border: 1px solid #dee2e6;
+    width: 100%;
+    border: 1px solid #dee2e6;
 }
 
 .editor {
-  width: 100%;
-  height: 400px;
+    width: 100%;
+    height: 400px;
 }
 </style>

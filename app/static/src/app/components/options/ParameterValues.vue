@@ -1,38 +1,33 @@
 <template>
-  <div class="container">
-      <div v-if="paramNames.length" class="my-2">
-          <button class="btn btn-primary btn-sm"
-                  id="reset-params-btn"
-                  @click="reset">Reset
-          </button>
-      </div>
-    <div v-for="(paramName, index) in paramNames" class="row my-2" :key="paramKeys[index]">
-      <div class="col-5">
-        <label class="col-form-label">{{paramName}}</label>
-      </div>
-      <div class="col-6">
-        <numeric-input :value="paramValues[paramName]"
-                       @update="(n) => updateValue(n, paramName)"/>
-      </div>
-      <div v-if="fitTabIsOpen" class="col-1">
-        <input class="form-check-input align-bottom vary-param-check"
-               type="checkbox"
-               :checked="paramVaryFlags[paramName] ? 'checked' : undefined"
-               value="paramName"
-               @change="checkBoxChange(paramName, $event)"
-        >
-      </div>
+    <div class="container">
+        <div v-if="paramNames.length" class="my-2">
+            <button class="btn btn-primary btn-sm" id="reset-params-btn" @click="reset">Reset</button>
+        </div>
+        <div v-for="(paramName, index) in paramNames" class="row my-2" :key="paramKeys[index]">
+            <div class="col-5">
+                <label class="col-form-label">{{ paramName }}</label>
+            </div>
+            <div class="col-6">
+                <numeric-input :value="paramValues[paramName]" @update="(n) => updateValue(n, paramName)" />
+            </div>
+            <div v-if="fitTabIsOpen" class="col-1">
+                <input
+                    class="form-check-input align-bottom vary-param-check"
+                    type="checkbox"
+                    :checked="paramVaryFlags[paramName] ? 'checked' : undefined"
+                    value="paramName"
+                    @change="checkBoxChange(paramName, $event)"
+                />
+            </div>
+        </div>
+        <div id="select-param-msg" class="text-danger small vary-param-msg">
+            {{ selectParamToVaryMsg }}
+        </div>
     </div>
-    <div id="select-param-msg" class="text-danger small vary-param-msg">
-      {{ selectParamToVaryMsg }}
-    </div>
-  </div>
 </template>
 
 <script lang="ts">
-import {
-    defineComponent, computed, watch, ref
-} from "vue";
+import { defineComponent, computed, watch, ref } from "vue";
 import { useStore } from "vuex";
 import { RunMutation } from "../../store/run/mutations";
 import NumericInput from "./NumericInput.vue";
@@ -58,13 +53,11 @@ export default defineComponent({
         });
 
         const paramValues = computed(() => store.state.run.parameterValues);
-        const paramNames = computed(
-            () => (paramValues.value ? Object.keys(paramValues.value) : [])
-        );
+        const paramNames = computed(() => (paramValues.value ? Object.keys(paramValues.value) : []));
 
         const paramVaryFlags = computed(() => {
             return paramNames.value.reduce((values: Dict<boolean>, key: string) => {
-            // eslint-disable-next-line no-param-reassign
+                // eslint-disable-next-line no-param-reassign
                 values[key] = paramsToVary.value.includes(key);
                 return values;
             }, {} as Dict<boolean>);
@@ -98,7 +91,7 @@ export default defineComponent({
         const fitTabIsOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Fit);
 
         const selectParamToVaryMsg = computed(() => {
-            return (!fitTabIsOpen.value || paramsToVary.value.length) ? "" : userMessages.modelFit.selectParamToVary;
+            return !fitTabIsOpen.value || paramsToVary.value.length ? "" : userMessages.modelFit.selectParamToVary;
         });
 
         const odinParameters = computed(() => store.state.model.odinModelResponse.metadata.parameters);
@@ -138,7 +131,7 @@ export default defineComponent({
 });
 </script>
 <style scoped lang="scss">
- .vary-param-msg {
-   min-height: 1.4rem;
- }
+.vary-param-msg {
+    min-height: 1.4rem;
+}
 </style>

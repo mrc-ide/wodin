@@ -10,7 +10,10 @@ export function parseColour(col: string): number[] {
 }
 
 export function rgb(r: number, g: number, b: number): string {
-    const roundcolour = (x: number) => Math.round(Math.max(Math.min(x, 1), 0) * 255).toString(16).padStart(2, "0");
+    const roundcolour = (x: number) =>
+        Math.round(Math.max(Math.min(x, 1), 0) * 255)
+            .toString(16)
+            .padStart(2, "0");
     return `#${roundcolour(r)}${roundcolour(g)}${roundcolour(b)}`;
 }
 

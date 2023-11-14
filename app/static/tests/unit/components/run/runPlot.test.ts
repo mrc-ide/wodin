@@ -172,7 +172,10 @@ describe("RunPlot", () => {
         ]);
 
         expect(mockSolution).toBeCalledWith({
-            mode: "grid", tStart: 0, tEnd: 1, nPoints: 10
+            mode: "grid",
+            tStart: 0,
+            tEnd: 1,
+            nPoints: 10
         });
     });
 
@@ -335,7 +338,10 @@ describe("RunPlot", () => {
         ]);
 
         expect(mockSolution).toBeCalledWith({
-            mode: "grid", tStart: 0, tEnd: 1, nPoints: 10
+            mode: "grid",
+            tStart: 0,
+            tEnd: 1,
+            nPoints: 10
         });
     });
 
@@ -503,7 +509,10 @@ describe("RunPlot", () => {
         ]);
 
         expect(mockSolution).toBeCalledWith({
-            mode: "grid", tStart: 0, tEnd: 1, nPoints: 10
+            mode: "grid",
+            tStart: 0,
+            tEnd: 1,
+            nPoints: 10
         });
     });
 

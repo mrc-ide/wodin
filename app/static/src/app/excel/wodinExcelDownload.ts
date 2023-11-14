@@ -42,8 +42,11 @@ export abstract class WodinExcelDownload {
             buildWorkbook();
             XLSX.writeFile(this._workbook, this._fileName);
         } catch (e) {
-            this._commit(`errors/${ErrorsMutation.AddError}`,
-                { detail: `Error downloading to ${this._fileName}: ${e}` }, { root: true });
+            this._commit(
+                `errors/${ErrorsMutation.AddError}`,
+                { detail: `Error downloading to ${this._fileName}: ${e}` },
+                { root: true }
+            );
         }
     }
 }

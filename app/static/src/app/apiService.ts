@@ -9,28 +9,29 @@ import { ErrorsMutation } from "./store/errors/mutations";
 import { AppState } from "./store/appState/state";
 
 export interface ResponseWithType<T> extends ResponseSuccess {
-    data: T
+    data: T;
 }
 
 export function isAPIError(object: any): object is WodinError {
-    return typeof object.error === "string"
-        && (object.details === undefined || typeof object.details === "string");
+    return typeof object.error === "string" && (object.details === undefined || typeof object.details === "string");
 }
 
 export function isAPIResponseFailure(object: any): object is ResponseFailure {
-    return object && object.status === "failure"
-        && (Array.isArray(object.errors))
-        && object.errors.every((e: any) => isAPIError(e));
+    return (
+        object &&
+        object.status === "failure" &&
+        Array.isArray(object.errors) &&
+        object.errors.every((e: any) => isAPIError(e))
+    );
 }
 
 export interface API<S, E> {
+    withError: (type: E, root: boolean) => API<S, E>;
+    withSuccess: (type: S, root: boolean) => API<S, E>;
+    ignoreErrors: () => API<S, E>;
+    ignoreSuccess: () => API<S, E>;
 
-    withError: (type: E, root: boolean) => API<S, E>
-    withSuccess: (type: S, root: boolean) => API<S, E>
-    ignoreErrors: () => API<S, E>
-    ignoreSuccess: () => API<S, E>
-
-    get<T>(url: string): Promise<void | ResponseWithType<T>>
+    get<T>(url: string): Promise<void | ResponseWithType<T>>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -56,8 +57,9 @@ export class APIService<S extends string, E extends string> implements API<S, E>
 
     static getFirstErrorFromFailure = (failure: ResponseFailure) => {
         if (failure.errors.length === 0) {
-            return APIService
-                .createError("API response failed but did not contain any error information. Please contact support.");
+            return APIService.createError(
+                "API response failed but did not contain any error information. Please contact support."
+            );
         }
         return failure.errors[0];
     };
@@ -118,16 +120,18 @@ export class APIService<S extends string, E extends string> implements API<S, E>
     };
 
     private _handleAxiosResponse(promise: Promise<AxiosResponse>) {
-        return promise.then((axiosResponse: AxiosResponse) => {
-            const success = axiosResponse && axiosResponse.data;
-            const { data } = success;
-            if (this._onSuccess) {
-                this._onSuccess(data);
-            }
-            return axiosResponse.data;
-        }).catch((e: AxiosError) => {
-            return this._handleError(e);
-        });
+        return promise
+            .then((axiosResponse: AxiosResponse) => {
+                const success = axiosResponse && axiosResponse.data;
+                const { data } = success;
+                if (this._onSuccess) {
+                    this._onSuccess(data);
+                }
+                return axiosResponse.data;
+            })
+            .catch((e: AxiosError) => {
+                return this._handleError(e);
+            });
     }
 
     private _handleError = (e: AxiosError) => {
@@ -139,9 +143,11 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         const failure = e.response && e.response.data;
 
         if (!isAPIResponseFailure(failure)) {
-            this._commitError(APIService.createError(
-                `Could not parse API response with status ${e.response?.status}. Please contact support.`
-            ));
+            this._commitError(
+                APIService.createError(
+                    `Could not parse API response with status ${e.response?.status}. Please contact support.`
+                )
+            );
         } else if (this._onError) {
             this._onError(failure);
         } else {

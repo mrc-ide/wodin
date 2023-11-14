@@ -4,21 +4,18 @@
         :placeholder-message="placeholderMessage"
         :end-time="endTime"
         :plot-data="allPlotData"
-        :redrawWatches="solution ? [solution] : []">
+        :redrawWatches="solution ? [solution] : []"
+    >
         <slot></slot>
     </wodin-plot>
 </template>
 
 <script lang="ts">
-import {
-    computed, defineComponent
-} from "vue";
+import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
-import {
-    filterSeriesSet, fitDataToPlotly, odinToPlotly, WodinPlotData
-} from "../../plot";
+import { filterSeriesSet, fitDataToPlotly, odinToPlotly, WodinPlotData } from "../../plot";
 import WodinPlot from "../WodinPlot.vue";
 
 export default defineComponent({
@@ -42,25 +39,33 @@ export default defineComponent({
         });
 
         const solution = computed(() => {
-            return plotRehydratedFit.value ? store.state.run.resultOde?.solution
+            return plotRehydratedFit.value
+                ? store.state.run.resultOde?.solution
                 : store.state.modelFit.result?.solution;
         });
 
         const endTime = computed(() => {
-            return plotRehydratedFit.value ? store.state.modelFit.result.inputs.endTime
+            return plotRehydratedFit.value
+                ? store.state.modelFit.result.inputs.endTime
                 : store.getters[`fitData/${FitDataGetter.dataEnd}`];
         });
 
         const link = computed(() => {
-            return plotRehydratedFit.value ? store.state.modelFit.result.inputs.link
+            return plotRehydratedFit.value
+                ? store.state.modelFit.result.inputs.link
                 : store.getters[`fitData/${FitDataGetter.link}`];
         });
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
             const { data } = store.state.fitData;
-            const result = solution.value && solution.value({
-                mode: "grid", tStart: start, tEnd: end, nPoints: points
-            });
+            const result =
+                solution.value &&
+                solution.value({
+                    mode: "grid",
+                    tStart: start,
+                    tEnd: end,
+                    nPoints: points
+                });
             if (!data || !link.value || !result) {
                 return [];
             }

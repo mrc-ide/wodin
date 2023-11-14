@@ -23,8 +23,8 @@ export enum SessionsAction {
 }
 
 interface SaveSessionLabelPayload {
-    id: string,
-    label: string
+    id: string;
+    label: string;
 }
 
 export const actions: ActionTree<SessionsState, AppState> = {
@@ -71,8 +71,7 @@ export const actions: ActionTree<SessionsState, AppState> = {
                     dispatch(`sensitivity/${SensitivityAction.RunSensitivity}`, null, rootOption);
                 }
                 if (sessionData.multiSensitivity.result?.hasResult) {
-                    dispatch(`multiSensitivity/${MultiSensitivityAction.RunMultiSensitivity}`, null,
-                        rootOption);
+                    dispatch(`multiSensitivity/${MultiSensitivityAction.RunMultiSensitivity}`, null, rootOption);
                 }
             }
         }

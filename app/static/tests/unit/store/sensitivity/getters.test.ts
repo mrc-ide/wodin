@@ -34,9 +34,7 @@ describe("Sensitivity getters", () => {
         const mockSpy = jest.spyOn(odinRunnerOde, "batchParsDisplace");
 
         const result = getters[BaseSensitivityGetter.batchPars](state, getters, rootState, {} as any);
-        expect(result.varying).toStrictEqual([
-            { name: "A", values: [1, 2, 3] }
-        ]);
+        expect(result.varying).toStrictEqual([{ name: "A", values: [1, 2, 3] }]);
         expect(result.base).toBe(parameterValues);
         expect(mockSpy).toHaveBeenCalledTimes(1);
     });
@@ -67,16 +65,20 @@ describe("Sensitivity getters", () => {
         const result = getters[SensitivityGetter.parameterSetBatchPars](state, getters, rootState, {} as any);
         expect(Object.keys(result)).toStrictEqual(["Set 1", "Set 2"]);
         const pars1 = result["Set 1"];
-        expect(pars1.varying).toStrictEqual([{
-            name: "A",
-            values: [0.5, 1, 1.5]
-        }]);
+        expect(pars1.varying).toStrictEqual([
+            {
+                name: "A",
+                values: [0.5, 1, 1.5]
+            }
+        ]);
         expect(pars1.base).toStrictEqual({ A: 1 });
         const pars2 = result["Set 2"];
-        expect(pars2.varying).toStrictEqual([{
-            name: "A",
-            values: [2, 4, 6]
-        }]);
+        expect(pars2.varying).toStrictEqual([
+            {
+                name: "A",
+                values: [2, 4, 6]
+            }
+        ]);
         expect(pars2.base).toStrictEqual({ A: 4 });
         expect(mockSpy).toHaveBeenCalledTimes(2);
     });
@@ -93,13 +95,15 @@ describe("Sensitivity getters", () => {
     it("parameterSetSensitivityUpdateRequired is true if any reason except parameterValueChanged is true", () => {
         const paramSetSensUpdateRequired = getters[SensitivityGetter.parameterSetSensitivityUpdateRequired] as any;
         const runState = mockRunState({
-            parameterSets: [{
-                name: "Set 1",
-                displayName: "Set 1",
-                displayNameErrorMsg: "",
-                parameterValues: { p1: 1 },
-                hidden: false
-            }]
+            parameterSets: [
+                {
+                    name: "Set 1",
+                    displayName: "Set 1",
+                    displayNameErrorMsg: "",
+                    parameterValues: { p1: 1 },
+                    hidden: false
+                }
+            ]
         });
         const rootState = { run: runState };
 
@@ -136,36 +140,42 @@ describe("Sensitivity getters", () => {
     it("parameterSetSensitivityUpdateRequired returns false if no parameter sets", () => {
         const rootState = { run: mockRunState() };
         const state = mockSensitivityState();
-        expect((getters[SensitivityGetter.parameterSetSensitivityUpdateRequired] as any)(state, {}, rootState))
-            .toBe(false);
+        expect((getters[SensitivityGetter.parameterSetSensitivityUpdateRequired] as any)(state, {}, rootState)).toBe(
+            false
+        );
     });
 
     it("parameterSetSensitivityUpdateRequired returns true if there are missing parameter set results", () => {
         const runState = mockRunState({
-            parameterSets: [{
-                name: "Set 1",
-                displayName: "Set 1",
-                displayNameErrorMsg: "",
-                parameterValues: { p1: 1 },
-                hidden: false
-            }]
+            parameterSets: [
+                {
+                    name: "Set 1",
+                    displayName: "Set 1",
+                    displayNameErrorMsg: "",
+                    parameterValues: { p1: 1 },
+                    hidden: false
+                }
+            ]
         });
 
         const rootState = { run: runState };
         const state = mockSensitivityState({});
-        expect((getters[SensitivityGetter.parameterSetSensitivityUpdateRequired] as any)(state, {}, rootState))
-            .toBe(true);
+        expect((getters[SensitivityGetter.parameterSetSensitivityUpdateRequired] as any)(state, {}, rootState)).toBe(
+            true
+        );
     });
 
     it("parameterSetSensitivityUpdateRequired returns true if parameter set result has no batch", () => {
         const runState = mockRunState({
-            parameterSets: [{
-                name: "Set 1",
-                displayName: "Set 1",
-                displayNameErrorMsg: "",
-                parameterValues: { p1: 1 },
-                hidden: false
-            }]
+            parameterSets: [
+                {
+                    name: "Set 1",
+                    displayName: "Set 1",
+                    displayNameErrorMsg: "",
+                    parameterValues: { p1: 1 },
+                    hidden: false
+                }
+            ]
         });
         const rootState = { run: runState };
         const state = mockSensitivityState({
@@ -173,7 +183,8 @@ describe("Sensitivity getters", () => {
                 "Set 1": {} as any
             }
         });
-        expect((getters[SensitivityGetter.parameterSetSensitivityUpdateRequired] as any)(state, {}, rootState))
-            .toBe(true);
+        expect((getters[SensitivityGetter.parameterSetSensitivityUpdateRequired] as any)(state, {}, rootState)).toBe(
+            true
+        );
     });
 });
