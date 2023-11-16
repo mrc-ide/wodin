@@ -27,7 +27,6 @@ import SensitivityTab from "../../../../src/app/components/sensitivity/Sensitivi
 import MultiSensitivityTab from "../../../../src/app/components/multiSensitivity/MultiSensitivityTab.vue";
 import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
 import { ModelAction } from "../../../../src/app/store/model/actions";
-import { AppStateAction } from "../../../../src/app/store/appState/actions";
 import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
 import { VisualisationTab } from "../../../../src/app/store/appState/state";
 import { AppConfig } from "../../../../src/app/types/responseTypes";
@@ -45,9 +44,6 @@ describe("StochasticApp", () => {
     const getWrapper = (config: Partial<AppConfig> = {}) => {
         const store = new Vuex.Store<StochasticState>({
             state: mockStochasticState({ config: config as any }),
-            actions: {
-                [AppStateAction.Initialise]: jest.fn()
-            },
             mutations: {
                 [AppStateMutation.SetOpenVisualisationTab]: mockSetOpenVisualisationTab
             },

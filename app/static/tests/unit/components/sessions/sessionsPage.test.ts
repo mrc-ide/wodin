@@ -1,17 +1,23 @@
 import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
 import VueFeather from "vue-feather";
-import { RouterLink } from "vue-router";
 import { nextTick } from "vue";
 import SessionsPage from "../../../../src/app/components/sessions/SessionsPage.vue";
 import ErrorsAlert from "../../../../src/app/components/ErrorsAlert.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import { mockBasicState, mockUserPreferences } from "../../../mocks";
+import { mockBasicState, mockSessionsState, mockUserPreferences } from "../../../mocks";
 import { SessionsAction } from "../../../../src/app/store/sessions/actions";
-import { SessionMetadata } from "../../../../src/app/types/responseTypes";
 import EditSessionLabel from "../../../../src/app/components/sessions/EditSessionLabel.vue";
 import ConfirmModal from "../../../../src/app/components/ConfirmModal.vue";
 import { AppStateAction } from "../../../../src/app/store/appState/actions";
+import { SessionsState } from "../../../../src/app/store/sessions/state";
+
+const mockRouter = {
+    push: jest.fn()
+};
+jest.mock("vue-router", () => ({
+    useRouter: jest.fn().mockImplementation(() => mockRouter)
+}));
 
 describe("SessionsPage", () => {
     const mockGetSessions = jest.fn();
@@ -20,6 +26,7 @@ describe("SessionsPage", () => {
     const mockDeleteSession = jest.fn();
     const mockSaveUserPreferences = jest.fn();
     const mockLoadUserPreferences = jest.fn();
+    const mockInitialiseSession = jest.fn();
 
     Object.assign(window.navigator, {
         clipboard: {
@@ -33,7 +40,7 @@ describe("SessionsPage", () => {
 
     const currentSessionId = "abc";
 
-    const getWrapper = (sessionsMetadata: SessionMetadata[] | null, sessionId: string | undefined,
+    const getWrapper = (sessionsState: Partial<SessionsState>, sessionId: string | undefined,
         userPreferences = mockUserPreferences()) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
@@ -45,14 +52,13 @@ describe("SessionsPage", () => {
             }),
             actions: {
                 [AppStateAction.SaveUserPreferences]: mockSaveUserPreferences,
-                [AppStateAction.LoadUserPreferences]: mockLoadUserPreferences
+                [AppStateAction.LoadUserPreferences]: mockLoadUserPreferences,
+                [AppStateAction.InitialiseSession]: mockInitialiseSession
             } as any,
             modules: {
                 sessions: {
                     namespaced: true,
-                    state: {
-                        sessionsMetadata
-                    },
+                    state: mockSessionsState(sessionsState),
                     actions: {
                         [SessionsAction.GetSessions]: mockGetSessions,
                         [SessionsAction.GenerateFriendlyId]: mockGenerateFriendlyId,
@@ -84,12 +90,12 @@ describe("SessionsPage", () => {
     ];
 
     it("renders as expected", () => {
-        const wrapper = getWrapper(sessionsMetadata, currentSessionId);
+        const wrapper = getWrapper({ sessionsMetadata }, currentSessionId);
         const rows = wrapper.findAll(".container .row");
         expect(rows.at(0)!.find("h2").text()).toBe("Sessions");
 
         const currentSessionRow = rows.at(1)!;
-        expect(currentSessionRow.findComponent(RouterLink).props("to")).toBe("/");
+        expect(currentSessionRow.find("router-link").attributes("to")).toBe("/");
         expect(currentSessionRow.find("a").text()).toBe("make a copy of the current session.");
         expect(currentSessionRow.find("a").attributes("href"))
             .toBe("http://localhost:3000/apps/testApp/?sessionId=abc");
@@ -151,7 +157,7 @@ describe("SessionsPage", () => {
     });
 
     it("shows loading message when session metadata is null in store", () => {
-        const wrapper = getWrapper(null, currentSessionId);
+        const wrapper = getWrapper({ sessionsMetadata: null }, currentSessionId);
         const rows = wrapper.findAll(".container .row");
         expect(rows.length).toBe(2);
         expect(rows.at(0)!.text()).toBe("Sessions");
@@ -159,12 +165,12 @@ describe("SessionsPage", () => {
     });
 
     it("renders as expected when no current session", () => {
-        const wrapper = getWrapper(sessionsMetadata, undefined);
+        const wrapper = getWrapper({ sessionsMetadata }, undefined);
 
         expect(wrapper.find("#current-session").exists()).toBe(false);
         const noCurrent = wrapper.find("#no-current-session");
         expect(noCurrent.exists()).toBe(true);
-        expect(noCurrent.findComponent(RouterLink).props("to")).toBe("/");
+        expect(noCurrent.find("span#start-session").text()).toBe("Start a new session");
         expect(noCurrent.find("#load-previous-span").text()).toBe("or load a previous session.");
 
         expect(wrapper.find("#previous-sessions-headers").exists()).toBe(true);
@@ -173,11 +179,11 @@ describe("SessionsPage", () => {
 
     it("renders as expected when no previous sessions", () => {
         // include current session in metadata only
-        const wrapper = getWrapper([sessionsMetadata[0]], currentSessionId);
+        const wrapper = getWrapper({ sessionsMetadata: [sessionsMetadata[0]] }, currentSessionId);
         expect(wrapper.find("#no-current-session").exists()).toBe(false);
         const current = wrapper.find("#current-session");
         expect(current.exists()).toBe(true);
-        expect(current.findComponent(RouterLink).props("to")).toBe("/");
+        expect(current.find("router-link").attributes("to")).toBe("/");
         expect(current.find("a").text()).toBe("make a copy of the current session.");
 
         expect(wrapper.find("h3").text()).toBe("Previous sessions");
@@ -187,11 +193,11 @@ describe("SessionsPage", () => {
     });
 
     it("renders as expected when no current session and no previous sessions", () => {
-        const wrapper = getWrapper([], undefined);
+        const wrapper = getWrapper({ sessionsMetadata: [] }, undefined);
         expect(wrapper.find("#current-session").exists()).toBe(false);
         const noCurrent = wrapper.find("#no-current-session");
         expect(noCurrent.exists()).toBe(true);
-        expect(noCurrent.findComponent(RouterLink).props("to")).toBe("/");
+        expect(noCurrent.find("span#start-session").text()).toBe("Start a new session");
         expect(noCurrent.find("#load-previous-span").exists()).toBe(false);
 
         expect(wrapper.find("#previous-sessions-headers").exists()).toBe(false);
@@ -199,14 +205,14 @@ describe("SessionsPage", () => {
     });
 
     it("dispatches getSessions action on mount", async () => {
-        getWrapper(null, currentSessionId);
+        getWrapper({ sessionsMetadata: null }, currentSessionId);
         await nextTick();
         await nextTick();
         expect(mockGetSessions).toHaveBeenCalledTimes(1);
     });
 
     it("shows edit label dialog when click icon", async () => {
-        const wrapper = getWrapper(sessionsMetadata, currentSessionId);
+        const wrapper = getWrapper({ sessionsMetadata }, currentSessionId);
         const rows = wrapper.findAll(".previous-session-row");
         const session1Cells = rows.at(1)!.findAll("div.session-col-value");
         await session1Cells.at(2)!.findComponent(VueFeather).trigger("click");
@@ -217,7 +223,7 @@ describe("SessionsPage", () => {
     });
 
     it("copy link dispatches GenerateFriendlyId only if session has no friendly id", async () => {
-        const wrapper = getWrapper(sessionsMetadata, currentSessionId);
+        const wrapper = getWrapper({ sessionsMetadata }, currentSessionId);
         // session 1 already has a friendly id so action should not be dispatched
         await wrapper.find("#current-session .session-copy-link").trigger("click");
         expect(mockGenerateFriendlyId).not.toHaveBeenCalled();
@@ -229,7 +235,7 @@ describe("SessionsPage", () => {
     });
 
     it("copy code dispatches GenerateFriendlyId only if session has no friendly id", async () => {
-        const wrapper = getWrapper(sessionsMetadata, currentSessionId);
+        const wrapper = getWrapper({ sessionsMetadata }, currentSessionId);
         // session 1 already has a friendly id so action should not be dispatched
         await wrapper.find("#current-session .session-copy-code").trigger("click");
         expect(mockGenerateFriendlyId).not.toHaveBeenCalled();
@@ -241,7 +247,7 @@ describe("SessionsPage", () => {
     });
 
     it("copy link copies link to clipboard and updates confirmation", async () => {
-        const wrapper = getWrapper(sessionsMetadata, currentSessionId);
+        const wrapper = getWrapper({ sessionsMetadata }, currentSessionId);
 
         // current session
         await wrapper.find("#current-session .session-copy-link").trigger("click");
@@ -260,7 +266,7 @@ describe("SessionsPage", () => {
     });
 
     it("copy code copies friendly id to clipboard and updates confirmation", async () => {
-        const wrapper = getWrapper(sessionsMetadata, currentSessionId);
+        const wrapper = getWrapper({ sessionsMetadata }, currentSessionId);
 
         // current session
         await wrapper.find("#current-session .session-copy-code").trigger("click");
@@ -277,7 +283,7 @@ describe("SessionsPage", () => {
     });
 
     it("mouseleave event from copy control in previous session row clears confirm text", async () => {
-        const wrapper = getWrapper(sessionsMetadata, currentSessionId);
+        const wrapper = getWrapper({ sessionsMetadata }, currentSessionId);
         const rows = wrapper.findAll(".previous-session-row");
         const session3Cells = rows.at(1)!.findAll("div.session-col-value");
         await session3Cells.at(5)!.find(".session-copy-code").trigger("click");
@@ -288,7 +294,7 @@ describe("SessionsPage", () => {
     });
 
     it("mouseleave event from copy control for current session clears confirm text", async () => {
-        const wrapper = getWrapper(sessionsMetadata, currentSessionId);
+        const wrapper = getWrapper({ sessionsMetadata }, currentSessionId);
         await wrapper.find("#current-session .session-copy-code").trigger("click");
         expect(wrapper.find("#current-session .session-copy-confirm").text()).toBe("Copied: bad-cat");
 
@@ -300,7 +306,7 @@ describe("SessionsPage", () => {
         const runAsync = async () => {
             // the mock generate action won't mutate the state, so friendly id will still be null after it's done,
             // and the component will assume the id could not be fetched
-            const wrapper = getWrapper(sessionsMetadata, currentSessionId);
+            const wrapper = getWrapper({ sessionsMetadata }, currentSessionId);
             const rows = wrapper.findAll(".previous-session-row");
             const session2Cells = rows.at(0)!.findAll("div.session-col-value");
             await session2Cells.at(5)!.find(".session-copy-code").trigger("click");
@@ -318,7 +324,7 @@ describe("SessionsPage", () => {
     });
 
     it("opens and closes confirm delete dialog", async () => {
-        const wrapper = getWrapper(sessionsMetadata, currentSessionId);
+        const wrapper = getWrapper({ sessionsMetadata }, currentSessionId);
         const rows = wrapper.findAll(".container .row");
         const session1Cells = rows.at(3)!.findAll("div.session-col-value");
         await session1Cells.at(4)!.findComponent(VueFeather).trigger("click");
@@ -329,7 +335,7 @@ describe("SessionsPage", () => {
     });
 
     it("deletes session on confirm", async () => {
-        const wrapper = getWrapper(sessionsMetadata, currentSessionId);
+        const wrapper = getWrapper({ sessionsMetadata }, currentSessionId);
         const rows = wrapper.findAll(".container .row");
         const session1Cells = rows.at(3)!.findAll("div.session-col-value");
         await session1Cells.at(4)!.findComponent(VueFeather).trigger("click"); // set session to delete
@@ -344,7 +350,7 @@ describe("SessionsPage", () => {
         delete (window as any).location;
         window.location = { ...realLocation, assign: jest.fn() };
 
-        const wrapper = getWrapper(sessionsMetadata, currentSessionId);
+        const wrapper = getWrapper({ sessionsMetadata }, currentSessionId);
         await wrapper.find("#session-code-input").setValue("bad-dog");
         await wrapper.find("#load-session-from-code").trigger("click");
         expect(window.location.assign).toHaveBeenCalledTimes(1);
@@ -353,32 +359,27 @@ describe("SessionsPage", () => {
         window.location = realLocation;
     });
 
-    it("loads user preferences on mount", () => {
-        const wrapper = getWrapper(sessionsMetadata, currentSessionId);
-        expect(mockLoadUserPreferences).toHaveBeenCalledTimes(1);
-    });
-
     it("can save show unlabelled sessions preference", async () => {
-        const wrapper = getWrapper(sessionsMetadata, currentSessionId);
+        const wrapper = getWrapper({ sessionsMetadata }, currentSessionId);
         await wrapper.find("input#show-unlabelled-check").trigger("click");
         expect(mockSaveUserPreferences).toHaveBeenCalledTimes(1);
         expect(mockSaveUserPreferences.mock.calls[0][1]).toStrictEqual({ showUnlabelledSessions: false });
     });
 
     it("can save show duplicate sessions preference", async () => {
-        const wrapper = getWrapper(sessionsMetadata, currentSessionId);
+        const wrapper = getWrapper({ sessionsMetadata }, currentSessionId);
         await wrapper.find("input#show-duplicates-check").trigger("click");
         expect(mockSaveUserPreferences).toHaveBeenCalledTimes(1);
         expect(mockSaveUserPreferences.mock.calls[0][1]).toStrictEqual({ showDuplicateSessions: true });
     });
 
     it("when showUnlabelledSessions is false, filters out unlabelled sessions from view", () => {
-        const wrapper = getWrapper(sessionsMetadata, currentSessionId,
+        const wrapper = getWrapper({ sessionsMetadata }, currentSessionId,
             { showUnlabelledSessions: false, showDuplicateSessions: true });
         const rows = wrapper.findAll(".container .row");
 
         const currentSessionRow = rows.at(1)!;
-        expect(currentSessionRow.findComponent(RouterLink).props("to")).toBe("/");
+        expect(currentSessionRow.find("router-link").attributes("to")).toBe("/");
         expect(currentSessionRow.find("a").text()).toBe("make a copy of the current session.");
         expect(currentSessionRow.find("a").attributes("href"))
             .toBe("http://localhost:3000/apps/testApp/?sessionId=abc");
@@ -399,5 +400,24 @@ describe("SessionsPage", () => {
 
         expect((wrapper.find("input#show-unlabelled-check").element as HTMLInputElement).checked).toBe(false);
         expect((wrapper.find("input#show-duplicates-check").element as HTMLInputElement).checked).toBe(true);
+    });
+
+    it("clicking start session initialises session and navigates to app homepage", async () => {
+        const wrapper = getWrapper({ sessionsMetadata }, undefined);
+        await wrapper.find("span#start-session").trigger("click");
+        expect(mockInitialiseSession.mock.calls[0][1]).toStrictEqual({ loadSessionId: "", copySession: true });
+        expect(mockRouter.push).toHaveBeenCalledWith("/");
+    });
+
+    it("does not show reload session option if there is no latest session id", () => {
+        const wrapper = getWrapper({ sessionsMetadata }, undefined);
+        expect(wrapper.find("#reload-session").exists()).toBe(false);
+    });
+
+    it("clicking reload session initialises session and navigates to app homepage", async () => {
+        const wrapper = getWrapper({ sessionsMetadata, latestSessionId: "xyz" }, undefined);
+        await wrapper.find("#reload-session").trigger("click");
+        expect(mockInitialiseSession.mock.calls[0][1]).toStrictEqual({ loadSessionId: "xyz", copySession: false });
+        expect(mockRouter.push).toHaveBeenCalledWith("/");
     });
 });

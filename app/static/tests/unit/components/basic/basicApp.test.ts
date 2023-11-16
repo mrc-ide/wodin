@@ -27,7 +27,6 @@ import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
 import MultiSensitivityTab from "../../../../src/app/components/multiSensitivity/MultiSensitivityTab.vue";
 import { ModelAction } from "../../../../src/app/store/model/actions";
-import { AppStateAction } from "../../../../src/app/store/appState/actions";
 import { VisualisationTab } from "../../../../src/app/store/appState/state";
 import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
 import { AppConfig } from "../../../../src/app/types/responseTypes";
@@ -46,9 +45,6 @@ describe("BasicApp", () => {
 
         const store = new Vuex.Store<BasicState>({
             state,
-            actions: {
-                [AppStateAction.Initialise]: jest.fn()
-            },
             mutations: {
                 [AppStateMutation.SetOpenVisualisationTab]: mockSetOpenVisualisationTab
             },

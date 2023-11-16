@@ -7,6 +7,7 @@ import { VersionsState } from "../versions/state";
 import { GraphSettingsState } from "../graphSettings/state";
 import { LanguageState } from "../../../../translationPackage/store/state";
 import { MultiSensitivityState } from "../multiSensitivity/state";
+import { SessionsState } from "../sessions/state";
 
 export enum AppType {
     Basic = "basic",
@@ -34,6 +35,7 @@ export interface AppState {
     baseUrl: null | string,
     appsPath: null | string,
     appType: AppType
+    loadSessionId: null | string, // if sharing a session, this is the id of the session to share (copy)
     openVisualisationTab: VisualisationTab
     queuedStateUploadIntervalId: number
     stateUploadInProgress: boolean
@@ -43,6 +45,7 @@ export interface AppState {
     sensitivity: SensitivityState,
     multiSensitivity: MultiSensitivityState,
     graphSettings: GraphSettingsState,
+    sessions: SessionsState,
     versions: VersionsState,
     language: LanguageState,
     configured: boolean, // true if configuration has been loaded or rehydrated and defaults set

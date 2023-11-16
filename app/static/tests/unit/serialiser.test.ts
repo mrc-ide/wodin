@@ -14,7 +14,7 @@ import {
     mockModelFitState,
     mockModelState, mockMultiSensitivityState,
     mockRunState,
-    mockSensitivityState, mockVersionsState
+    mockSensitivityState, mockSessionsState, mockVersionsState
 } from "../mocks";
 import { defaultState as defaultGraphSettingsState } from "../../src/app/store/graphSettings/graphSettings";
 import { Language } from "../../src/app/types/languageTypes";
@@ -334,10 +334,15 @@ describe("serialise", () => {
         showDuplicateSessions: false
     };
 
+    const sessionsState = mockSessionsState({
+        sessionsMetadata: []
+    });
+
     const basicState: BasicState = {
         sessionId: "1234",
         sessionLabel: null,
         config: null,
+        loadSessionId: null,
         appName: "test app",
         baseUrl: null,
         appsPath: null,
@@ -359,13 +364,15 @@ describe("serialise", () => {
         configured: false,
         persisted: true,
         language: langaugeState,
-        userPreferences
+        userPreferences,
+        sessions: sessionsState
     };
 
     const fitState: FitState = {
         sessionId: "5678",
         sessionLabel: null,
         config: null,
+        loadSessionId: null,
         appName: "test fit app",
         baseUrl: null,
         appsPath: null,
@@ -389,7 +396,8 @@ describe("serialise", () => {
         configured: false,
         persisted: true,
         language: langaugeState,
-        userPreferences
+        userPreferences,
+        sessions: sessionsState
     };
 
     const expectedCode = { currentCode: ["some code"], loading: false };

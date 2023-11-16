@@ -1,8 +1,9 @@
 import { SessionsMutation, mutations } from "../../../../src/app/store/sessions/mutations";
+import { mockSessionsState } from "../../../mocks";
 
 describe("Sessions mutations", () => {
     it("sets sessions metadata", () => {
-        const state = { sessionsMetadata: null };
+        const state = mockSessionsState();
         const metadata = [{ id: "123", time: "09:00", label: null }];
         mutations[SessionsMutation.SetSessionsMetadata](state, metadata);
         expect(state.sessionsMetadata).toBe(metadata);
@@ -56,5 +57,11 @@ describe("Sessions mutations", () => {
             { id: "123" },
             { id: "789" }
         ]);
+    });
+
+    it("sets latestSessionId", () => {
+        const state = mockSessionsState();
+        mutations[SessionsMutation.SetLatestSessionId](state, "xyz");
+        expect(state.latestSessionId).toBe("xyz");
     });
 });

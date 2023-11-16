@@ -26,6 +26,7 @@ import { LanguageState } from "../translationPackage/store/state";
 import { Language } from "../src/app/types/languageTypes";
 import { noSensitivityUpdateRequired } from "../src/app/store/sensitivity/sensitivity";
 import { MultiSensitivityState } from "../src/app/store/multiSensitivity/state";
+import { SessionsState } from "../src/app/store/sessions/state";
 
 export const mockAxios = new MockAdapter(axios);
 
@@ -190,6 +191,14 @@ export const mockMultiSensitivityState = (state: Partial<MultiSensitivityState> 
     };
 };
 
+export const mockSessionsState = (state: Partial<SessionsState> = {}): SessionsState => {
+    return {
+        sessionsMetadata: null,
+        latestSessionId: null,
+        ...state
+    };
+};
+
 export const mockUserPreferences = () => ({ showUnlabelledSessions: true, showDuplicateSessions: false });
 
 export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
@@ -208,6 +217,7 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
             basicProp: "",
             ...mockAppConfig
         },
+        loadSessionId: null,
         code: mockCodeState(),
         model: mockModelState(),
         run: mockRunState(),
@@ -219,6 +229,7 @@ export const mockBasicState = (state: Partial<BasicState> = {}): BasicState => {
         persisted: true,
         language: mockLanguageState(),
         userPreferences: mockUserPreferences(),
+        sessions: mockSessionsState(),
         ...state
     };
 };
@@ -260,6 +271,7 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
             appType: "fit",
             ...mockAppConfig
         },
+        loadSessionId: null,
         code: mockCodeState(),
         model: mockModelState(),
         run: mockRunState(),
@@ -273,6 +285,7 @@ export const mockFitState = (state: Partial<FitState> = {}): FitState => {
         persisted: false,
         language: mockLanguageState(),
         userPreferences: mockUserPreferences(),
+        sessions: mockSessionsState(),
         ...state
     };
 };
@@ -294,6 +307,7 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
             maxReplicatesDisplay: 20,
             ...mockAppConfig
         },
+        loadSessionId: null,
         code: mockCodeState(),
         model: mockModelState(),
         run: mockRunState(),
@@ -305,6 +319,7 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
         persisted: false,
         language: mockLanguageState(),
         userPreferences: mockUserPreferences(),
+        sessions: mockSessionsState(),
         ...state
     };
 };
