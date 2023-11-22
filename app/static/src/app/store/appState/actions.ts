@@ -12,10 +12,11 @@ import { FitState } from "../fit/state";
 import { SessionsAction } from "../sessions/actions";
 import { localStorageManager } from "../../localStorageManager";
 import { AppStateGetter } from "./getters";
-import { InitialisePayload } from "../../types/payloadTypes";
+import { InitialiseAppPayload, InitialiseSessionPayload } from "../../types/payloadTypes";
 
 export enum AppStateAction {
-    Initialise = "Initialise",
+    InitialiseApp = "InitialiseApp",
+    InitialiseSession = "InitialiseSession",
     QueueStateUpload = "QueueStateUpload",
     LoadUserPreferences = "LoadUserPreferences",
     SaveUserPreferences = "SaveUserPreferences"
@@ -34,40 +35,55 @@ async function immediateUploadState(context: ActionContext<AppState, AppState>) 
 }
 
 export const appStateActions: ActionTree<AppState, AppState> = {
-    async [AppStateAction.Initialise](context, payload: InitialisePayload) {
-        const { commit, state, dispatch, getters } = context;
-        const { appName, baseUrl, loadSessionId, appsPath, enableI18n, defaultLanguage } = payload;
-        commit(AppStateMutation.SetApp, {
-            appName,
-            baseUrl,
-            appsPath,
-            enableI18n,
-            defaultLanguage
-        });
-        localStorageManager.addSessionId(appName, getters[AppStateGetter.baseUrlPath], state.sessionId);
+    async [AppStateAction.InitialiseApp](context, payload: InitialiseAppPayload) {
+        const { commit, dispatch } = context;
+        const { appName } = payload;
+        commit(AppStateMutation.SetApp, payload);
 
         const response = await api(context)
             .freezeResponse()
             .withSuccess(AppStateMutation.SetConfig)
             .withError(`errors/${ErrorsMutation.AddError}` as ErrorsMutation, true)
             .get<AppConfig>(`/config/${appName}`);
+        if (response?.data.endTime) {
+            commit(`run/${RunMutation.SetEndTime}`, response.data.endTime, { root: true });
+        }
 
-        if (response) {
-            if (loadSessionId) {
-                // Fetch and rehydrate session data
-                await dispatch(`sessions/${SessionsAction.Rehydrate}`, loadSessionId);
-            } else {
-                await dispatch(`model/${ModelAction.FetchOdinRunner}`, null, { root: true });
-                // If not loading a session, set code and end time from default in config
-                commit(`code/${CodeMutation.SetCurrentCode}`, state.config!.defaultCode, { root: true });
-                if (response.data.endTime) {
-                    commit(`run/${RunMutation.SetEndTime}`, response.data.endTime, { root: true });
-                }
-                commit(AppStateMutation.SetConfigured);
-                if (state.code.currentCode.length) {
-                    // Fetch and run model for default code
-                    await dispatch(`model/${ModelAction.DefaultModel}`);
-                }
+        // get sessions metadata so we can check latest session to reload - get user preferences first, which are needed
+        // for sessions metadata fetch
+        await dispatch(AppStateAction.LoadUserPreferences);
+        dispatch(`sessions/${SessionsAction.GetSessions}`);
+    },
+
+    async [AppStateAction.InitialiseSession](context, payload: InitialiseSessionPayload) {
+        const { commit, state, dispatch, getters } = context;
+        const { loadSessionId, copySession } = payload;
+
+        // If we're reloading a session on page refresh we want to use the same session id rather than making a copy
+        // as we do on share - otherwise we save the new session id to local storage
+        if (loadSessionId && !copySession) {
+            commit(AppStateMutation.SetSessionId, loadSessionId);
+
+            // set the session's label too, if any
+            const label = state.sessions.sessionsMetadata?.find((s) => s.id === loadSessionId)?.label;
+            if (label) {
+                commit(AppStateMutation.SetSessionLabel, label);
+            }
+        } else {
+            localStorageManager.addSessionId(state.appName!, getters[AppStateGetter.baseUrlPath], state.sessionId);
+        }
+
+        if (loadSessionId) {
+            // Fetch and rehydrate session data
+            await dispatch(`sessions/${SessionsAction.Rehydrate}`, loadSessionId);
+        } else {
+            await dispatch(`model/${ModelAction.FetchOdinRunner}`, null, { root: true });
+            // If not loading a session, set code and end time from default in config
+            commit(`code/${CodeMutation.SetCurrentCode}`, state.config!.defaultCode, { root: true });
+            commit(AppStateMutation.SetConfigured);
+            if (state.code.currentCode.length) {
+                // Fetch and run model for default code
+                await dispatch(`model/${ModelAction.DefaultModel}`);
             }
         }
     },

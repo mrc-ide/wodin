@@ -1,8 +1,48 @@
 <template>
-    <div class="container">
-        <div class="row">
-            <errors-alert></errors-alert>
-            <h2>Sessions</h2>
+  <div class="container">
+    <div class="row">
+      <errors-alert></errors-alert>
+      <h2>Sessions</h2>
+    </div>
+    <div class="row mb-3" id="no-current-session" v-if="!currentSession">
+        <span>
+          <span id="start-session" class="brand-link clickable" @click="newSession">Start a new session</span>
+          <span v-if="latestSessionId">,
+            <span id="reload-session" class="brand-link clickable" @click="reloadSession">
+              reload the most recent session
+            </span>
+          </span>
+          <span v-if="previousSessions && previousSessions.length" id="load-previous-span">
+            or load a previous session.
+          </span>
+        </span>
+    </div>
+    <div class="row mb-3" id="current-session" v-else>
+      <p>
+        <router-link to="/" class="brand-link">
+          Return to the current session
+        </router-link>
+        or
+        <a class="brand-link" :href="sessionUrl(currentSessionId)">
+          make a copy of the current session.
+        </a>
+      </p>
+      <div>
+        <span class="session-copy-link clickable brand"
+              @click="copyLink(currentSession)"
+              @mouseleave="clearLastCopied">
+          <vue-feather class="inline-icon" type="copy"></vue-feather>
+          Copy link for current session
+        </span>
+        <span class="session-copy-code clickable brand ms-2"
+              @click="copyCode(currentSession)"
+              @mouseleave="clearLastCopied">
+          <vue-feather class="inline-icon" type="copy"></vue-feather>
+          Copy code for current session
+        </span>
+        <br/>
+        <div class="session-copy-confirm small text-muted text-nowrap float-start" style="height:0.8rem;">
+          {{getCopyMsg(currentSession)}}
         </div>
         <div class="row mb-3" id="no-current-session" v-if="!currentSession">
             <span>
@@ -169,7 +209,7 @@ import { utc } from "moment";
 import { onMounted, defineComponent, computed, ref, nextTick } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import { AppStateAction } from "../../store/appState/actions";
 import { SessionsAction } from "../../store/sessions/actions";
 import userMessages from "../../userMessages";
@@ -189,6 +229,8 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
+        const router = useRouter();
+
         const namespace = "sessions";
         const sessionCode = ref("");
 
@@ -197,6 +239,7 @@ export default defineComponent({
         const appName = computed(() => store.state.appName);
         const appsPath = computed(() => store.state.appsPath);
         const currentSessionId = computed(() => store.state.sessionId);
+        const latestSessionId = computed(() => store.state.sessions.latestSessionId);
 
         const editSessionLabelOpen = ref(false);
         const selectedSessionId = ref<string | null>(null);
@@ -316,14 +359,25 @@ export default defineComponent({
             store.dispatch(`${namespace}/${SessionsAction.DeleteSession}`, sessionIdToDelete.value);
         };
 
+        const initialiseSession = (loadSessionId: string, copySession: boolean) => {
+            store.dispatch(AppStateAction.InitialiseSession, { loadSessionId, copySession });
+            router.push("/");
+        };
+
+        const newSession = () => {
+            initialiseSession("", true);
+        };
+        const reloadSession = () => {
+            initialiseSession(latestSessionId.value, false);
+        };
+
         const loadSessionFromCode = () => {
             const link = getShareSessionLink(sessionCode.value);
             window.location.assign(link);
         };
 
         onMounted(async () => {
-            await store.dispatch(AppStateAction.LoadUserPreferences);
-            store.dispatch(`${namespace}/${SessionsAction.GetSessions}`);
+            store.dispatch(`${namespace}/${SessionsAction.GetSessions}`); // get latest sessions
         });
 
         const messages = userMessages.sessions;
@@ -340,6 +394,7 @@ export default defineComponent({
             lastCopySessionId,
             lastCopyMsg,
             confirmDeleteSessionOpen,
+            latestSessionId,
             editSessionLabel,
             toggleEditSessionLabelOpen,
             copyLink,
@@ -349,6 +404,8 @@ export default defineComponent({
             confirmDeleteSession,
             toggleConfirmDeleteSessionOpen,
             deleteSession,
+            newSession,
+            reloadSession,
             showUnlabelledSessions,
             showDuplicateSessions,
             sessionCode,

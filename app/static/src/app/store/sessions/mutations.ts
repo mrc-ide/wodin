@@ -5,7 +5,8 @@ import { SessionMetadata } from "../../types/responseTypes";
 export enum SessionsMutation {
     SetSessionsMetadata = "SetSessionsMetadata",
     SetSessionFriendlyId = "SetSessionFriendlyId",
-    RemoveSessionId = "RemoveSessionId"
+    RemoveSessionId = "RemoveSessionId",
+    SetLatestSessionId = "SetLatestSessionId"
 }
 
 export interface SetSessionFriendlyIdPayload {
@@ -29,5 +30,9 @@ export const mutations: MutationTree<SessionsState> = {
         if (state.sessionsMetadata) {
             state.sessionsMetadata = state.sessionsMetadata.filter((s) => s.id !== payload);
         }
+    },
+
+    [SessionsMutation.SetLatestSessionId](state: SessionsState, payload: string) {
+        state.latestSessionId = payload;
     }
 };

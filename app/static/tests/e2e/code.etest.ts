@@ -1,6 +1,6 @@
 import { expect, test, Page } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
-import { writeCode } from "./utils";
+import { saveSessionTimeout, writeCode } from "./utils";
 
 export const newValidCode = `## Derivatives
 deriv(y1) <- sigma * (y2 - y1)
@@ -229,6 +229,7 @@ test.describe("Code Tab tests", () => {
     });
 
     test("can reset code editor ", async ({ page }) => {
+        await page.waitForTimeout(saveSessionTimeout);
         const defaultCode = await page.innerText(".wodin-left .wodin-content .editor-container");
         const invalidCode = "faker\n";
         await writeCode(page, invalidCode);
@@ -243,6 +244,7 @@ test.describe("Code Tab tests", () => {
         await expect(await page.innerText(".wodin-left .wodin-content #code-status")).toContain("Code is not valid");
         await page.click("#reset-btn");
         await page.waitForResponse((response) => response.url().includes("/odin"));
+        await page.waitForTimeout(saveSessionTimeout);
         expect(await page.innerText(".wodin-left .wodin-content .editor-container")).toBe(defaultCode);
         await expect(page.getByText("Code is valid")).toBeVisible();
     });

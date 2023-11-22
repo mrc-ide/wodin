@@ -19,7 +19,6 @@ import { mount } from "@vue/test-utils";
 import { expectLeftWodinTabs, expectRightWodinTabs } from "../../../testUtils";
 import FitApp from "../../../../src/app/components/fit/FitApp.vue";
 import { FitState } from "../../../../src/app/store/fit/state";
-import { AppStateAction } from "../../../../src/app/store/appState/actions";
 import {
     mockFitDataState,
     mockFitState,
@@ -57,9 +56,6 @@ describe("FitApp", () => {
             state,
             mutations: {
                 [AppStateMutation.SetOpenVisualisationTab]: mockSetOpenVisualisationTab
-            },
-            actions: {
-                [AppStateAction.Initialise]: jest.fn()
             },
             modules: {
                 model: {
