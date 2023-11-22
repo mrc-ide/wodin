@@ -65,14 +65,7 @@ export default defineComponent({
         };
 
         const draggableRect = () =>
-            draggable.value
-                ? draggable.value.getBoundingClientRect()
-                : {
-                      left: 0,
-                      top: 0,
-                      width: 0,
-                      height: 0
-                  };
+            draggable.value ? draggable.value.getBoundingClientRect() : { left: 0, top: 0, width: 0, height: 0 };
 
         const getViewportSize = () => ({ width: window.innerWidth, height: window.innerHeight });
 
