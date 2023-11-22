@@ -10,8 +10,7 @@ const versions = {
 };
 describe("versions actions", () => {
     it("gets versions", async () => {
-        mockAxios.onGet("/odin/versions")
-            .reply(200, mockSuccess(versions));
+        mockAxios.onGet("/odin/versions").reply(200, mockSuccess(versions));
 
         const commit = jest.fn();
         await (actions[VersionsAction.GetVersions] as any)({ commit, rootState: { baseUrl: "" } });

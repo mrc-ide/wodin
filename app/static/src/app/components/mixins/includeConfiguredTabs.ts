@@ -3,9 +3,9 @@ import { computed, ComputedRef } from "vue";
 import { AppState, VisualisationTab } from "../../store/appState/state";
 
 export interface IncludeConfiguredTabsMixin {
-    helpTabName: ComputedRef<string | null>,
-    multiSensitivityTabName: ComputedRef<string | null>,
-    rightTabNames: ComputedRef<string[]>
+    helpTabName: ComputedRef<string | null>;
+    multiSensitivityTabName: ComputedRef<string | null>;
+    rightTabNames: ComputedRef<string[]>;
 }
 
 export default (store: Store<AppState>, fixedTabNames: string[]): IncludeConfiguredTabsMixin => {

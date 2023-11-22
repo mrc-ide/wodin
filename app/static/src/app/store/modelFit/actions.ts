@@ -25,9 +25,7 @@ const prepareData = (fitData: FitData, nameTime: string, nameValue: string) => {
 
 export const actions: ActionTree<ModelFitState, FitState> = {
     [ModelFitAction.FitModel](context) {
-        const {
-            commit, dispatch, state, rootState, getters, rootGetters
-        } = context;
+        const { commit, dispatch, state, rootState, getters, rootGetters } = context;
 
         if (allTrue(getters[ModelFitGetter.fitRequirements])) {
             commit(ModelFitMutation.SetFitting, true);
@@ -51,14 +49,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
             const advancedSettingsOdin = convertAdvancedSettingsToOdin(advancedSettings, pars.base);
 
             try {
-                const simplex = odinRunnerOde!.wodinFit(
-                    odin!,
-                    data,
-                    pars,
-                    linkedVariable,
-                    advancedSettingsOdin,
-                    {}
-                );
+                const simplex = odinRunnerOde!.wodinFit(odin!, data, pars, linkedVariable, advancedSettingsOdin, {});
 
                 const inputs = {
                     data,
@@ -76,9 +67,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
     },
 
     [ModelFitAction.FitModelStep](context, simplex) {
-        const {
-            commit, dispatch, state, rootState
-        } = context;
+        const { commit, dispatch, state, rootState } = context;
 
         // Exit if fit has been cancelled
         if (!state.fitting) {
@@ -136,12 +125,7 @@ export const actions: ActionTree<ModelFitState, FitState> = {
     },
 
     [ModelFitAction.UpdateSumOfSquares](context) {
-        const {
-            rootState,
-            state,
-            commit,
-            rootGetters
-        } = context;
+        const { rootState, state, commit, rootGetters } = context;
         // Don't do anything if we are fitting; as the fit itself will
         // set this element.
         if (state.fitting) {

@@ -1,26 +1,30 @@
 <template>
-  <div class="container">
-    <template v-if="dataColumns && modelSuccess">
-      <div v-for="dataColumn in dataColumns" :key="dataColumn" class="row my-2">
-        <div class="col-5">
-          <label class="col-form-label">{{ dataColumn }}</label>
-        </div>
-        <div class="col-6">
-            <select class="form-select"
-                    @change="updateLinkedVariable(dataColumn, $event)"
-                    :value="linkedVariables[dataColumn] || ''">
-              <option value="">-- no link --</option>
-              <option v-for="modelVar in selectedVariables" :value="modelVar" :key="modelVar">{{modelVar}}</option>
-            </select>
-        </div>
-      </div>
-    </template>
-    <template v-else>
-      <div class="row my-2">
-        {{ linkPrerequisitesMessage }}
-      </div>
-    </template>
-  </div>
+    <div class="container">
+        <template v-if="dataColumns && modelSuccess">
+            <div v-for="dataColumn in dataColumns" :key="dataColumn" class="row my-2">
+                <div class="col-5">
+                    <label class="col-form-label">{{ dataColumn }}</label>
+                </div>
+                <div class="col-6">
+                    <select
+                        class="form-select"
+                        @change="updateLinkedVariable(dataColumn, $event)"
+                        :value="linkedVariables[dataColumn] || ''"
+                    >
+                        <option value="">-- no link --</option>
+                        <option v-for="modelVar in selectedVariables" :value="modelVar" :key="modelVar">
+                            {{ modelVar }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </template>
+        <template v-else>
+            <div class="row my-2">
+                {{ linkPrerequisitesMessage }}
+            </div>
+        </template>
+    </div>
 </template>
 
 <script lang="ts">
@@ -57,8 +61,10 @@ export default defineComponent({
 
         const updateLinkedVariable = (dataColumn: string, event: Event) => {
             const selectValue = (event.target as HTMLSelectElement).value;
-            store.dispatch(`${namespace}/${FitDataAction.UpdateLinkedVariable}`,
-                { column: dataColumn, variable: selectValue || null });
+            store.dispatch(`${namespace}/${FitDataAction.UpdateLinkedVariable}`, {
+                column: dataColumn,
+                variable: selectValue || null
+            });
         };
 
         return {

@@ -37,7 +37,11 @@ describe("multiSensitivity actions", () => {
         const dispatch = jest.fn();
 
         (actions[MultiSensitivityAction.RunMultiSensitivity] as any)({
-            rootState, getters: testGetters, commit, dispatch, rootGetters
+            rootState,
+            getters: testGetters,
+            commit,
+            dispatch,
+            rootGetters
         });
 
         expect(commit).toHaveBeenCalledTimes(2);

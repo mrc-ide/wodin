@@ -100,8 +100,9 @@ export const startModelFit = async (page: Page, data: string = realisticFitData)
     // select param to vary
     await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
     await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Fit");
-    await expect(await page.innerText("#select-param-msg"))
-        .toBe("Please select at least one parameter to vary during model fit.");
+    await expect(await page.innerText("#select-param-msg")).toBe(
+        "Please select at least one parameter to vary during model fit."
+    );
     await page.click(":nth-match(input.vary-param-check, 1)");
     await expect(await page.innerText("#select-param-msg")).toBe("");
 
@@ -114,26 +115,45 @@ export const waitForModelFitCompletion = async (page: Page) => {
     await expect(await page.getAttribute(".wodin-plot-container .vue-feather", "data-type")).toBe("check");
 };
 
-export const expectWodinPlotDataSummary = async (summaryLocator: Locator, name: string, count: number, xMin: number,
-    xMax: number, yMin: number, yMax: number, mode: string, lineColor: string | null,
-    markerColor: string | null) => {
+export const expectWodinPlotDataSummary = async (
+    summaryLocator: Locator,
+    name: string,
+    count: number,
+    xMin: number,
+    xMax: number,
+    yMin: number,
+    yMax: number,
+    mode: string,
+    lineColor: string | null,
+    markerColor: string | null
+) => {
     expect(await summaryLocator.getAttribute("name")).toBe(name);
     expect(await summaryLocator.getAttribute("count")).toBe(count.toString());
-    const attrXMin = await summaryLocator.getAttribute("x-min") as string;
+    const attrXMin = (await summaryLocator.getAttribute("x-min")) as string;
     expect(parseFloat(attrXMin)).toBeCloseTo(xMin);
-    const attrXMax = await summaryLocator.getAttribute("x-max") as string;
+    const attrXMax = (await summaryLocator.getAttribute("x-max")) as string;
     expect(parseFloat(attrXMax)).toBeCloseTo(xMax);
-    const attrYMin = await summaryLocator.getAttribute("y-min") as string;
+    const attrYMin = (await summaryLocator.getAttribute("y-min")) as string;
     expect(parseFloat(attrYMin)).toBeCloseTo(yMin);
-    const attrYMax = await summaryLocator.getAttribute("y-max") as string;
+    const attrYMax = (await summaryLocator.getAttribute("y-max")) as string;
     expect(parseFloat(attrYMax)).toBeCloseTo(yMax);
     expect(await summaryLocator.getAttribute("mode")).toBe(mode);
     expect(await summaryLocator.getAttribute("line-color")).toBe(lineColor);
     expect(await summaryLocator.getAttribute("marker-color")).toBe(markerColor);
 };
 
-export const expectSummaryValues = async (page: Page, idx: number, name: string, count: number, color: string,
-    dash: string | null = null, xMin = "0", xMax = "100", yMin: string | null = null, yMax: string | null = null) => {
+export const expectSummaryValues = async (
+    page: Page,
+    idx: number,
+    name: string,
+    count: number,
+    color: string,
+    dash: string | null = null,
+    xMin = "0",
+    xMax = "100",
+    yMin: string | null = null,
+    yMax: string | null = null
+) => {
     const summary = ".wodin-plot-data-summary-series";
     const locator = `:nth-match(${summary}, ${idx})`;
     expect(await page.getAttribute(locator, "name")).toBe(name);
@@ -161,7 +181,9 @@ export const expectCanRunMultiSensitivity = async (page: Page, timeout = 10000) 
     await expect(await page.innerText(".multi-sensitivity-status")).toBe("Multi-sensitivity has not been run.");
     await page.click("#run-multi-sens-btn");
     await expect(await page.locator("#run-multi-sens-btn")).toBeEnabled();
-    await expect(await page.locator(".multi-sensitivity-status"))
-        .toHaveText("Multi-sensitivity run produced 100 solutions.", { timeout });
+    await expect(await page.locator(".multi-sensitivity-status")).toHaveText(
+        "Multi-sensitivity run produced 100 solutions.",
+        { timeout }
+    );
     await expect(await page.locator("#download-summary-btn")).toBeEnabled();
 };

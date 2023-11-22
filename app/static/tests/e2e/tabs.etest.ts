@@ -55,7 +55,6 @@ test.describe("Wodin App tabs tests", () => {
     test("can change to Sensitivity tab and back", async ({ page }) => {
         await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
         await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Sensitivity");
-        await expect(await page.innerText(".wodin-right .wodin-content div.mt-4 button"))
-            .toBe("Run sensitivity");
+        await expect(await page.innerText(".wodin-right .wodin-content div.mt-4 button")).toBe("Run sensitivity");
     });
 });

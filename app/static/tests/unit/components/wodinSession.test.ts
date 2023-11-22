@@ -19,8 +19,8 @@ const realLocation = window.location;
 describe("WodinSession", () => {
     const mockInitialiseApp = jest.fn();
     const mockAddError = jest.fn();
-    const mockGetSessionIds = (sessionIds = ["1234", "5678"]) => jest.spyOn(localStorageManager, "getSessionIds")
-        .mockReturnValue(sessionIds);
+    const mockGetSessionIds = (sessionIds = ["1234", "5678"]) =>
+        jest.spyOn(localStorageManager, "getSessionIds").mockReturnValue(sessionIds);
     const mockSetLatestSessionId = jest.fn();
 
     const defaultBaseUrl = "http://localhost:3000/site1";
@@ -35,13 +35,13 @@ describe("WodinSession", () => {
     });
 
     interface StoreOptions {
-        appName: string | null,
-        shareNotFound: string,
-        baseUrl: string,
-        appsPath: string,
-        language: LanguageState,
-        config: Partial<AppConfigBase> | null,
-        sessionsMetadata: Partial<SessionMetadata>[] | null
+        appName: string | null;
+        shareNotFound: string;
+        baseUrl: string;
+        appsPath: string;
+        language: LanguageState;
+        config: Partial<AppConfigBase> | null;
+        sessionsMetadata: Partial<SessionMetadata>[] | null;
     }
 
     const defaultStoreOptions = {
@@ -59,13 +59,7 @@ describe("WodinSession", () => {
             ...defaultStoreOptions,
             ...storeOptions
         };
-        const {
-            appName,
-            baseUrl,
-            appsPath,
-            language,
-            config
-        } = options;
+        const { appName, baseUrl, appsPath, language, config } = options;
         return new Vuex.Store<BasicState>({
             state: mockBasicState({
                 appName,
@@ -125,8 +119,11 @@ describe("WodinSession", () => {
         await nextTick();
     };
 
-    const expectCheckedLatestSessionId = (wrapper: VueWrapper<any>, getSessionIds: jest.SpyInstance,
-        expectCommitLatestSessionId: boolean) => {
+    const expectCheckedLatestSessionId = (
+        wrapper: VueWrapper<any>,
+        getSessionIds: jest.SpyInstance,
+        expectCommitLatestSessionId: boolean
+    ) => {
         expect(getSessionIds).toHaveBeenCalledWith("test", "site1");
         if (expectCommitLatestSessionId) {
             expect(mockSetLatestSessionId.mock.calls[0][1]).toBe("1234");

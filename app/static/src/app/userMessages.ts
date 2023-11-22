@@ -21,8 +21,9 @@ export default {
         tooFewRows: `File must contain at least ${settings.minFitDataRows} data rows.`,
         tooFewColumns: `File must contain at least ${settings.minFitDataColumns} columns.`,
         nonNumericValues: "Data contains non-numeric values",
-        noTimeVariables: "Data contains no suitable time variable. A time variable must strictly increase per row,"
-            + " with no negative values.",
+        noTimeVariables:
+            "Data contains no suitable time variable. A time variable must strictly increase per row," +
+            " with no negative values.",
         linkPrerequisites: {
             prefix: "Please complete the following in order to select links:",
             data: "Upload valid data",
@@ -86,18 +87,18 @@ export default {
         }
     },
     sensitivity: {
-        compileRequiredForOptions: (multiSens: boolean): string => "Please compile a valid model in order to set "
-            + `${sensType(multiSens)} options.`,
-        compileRequiredForUpdate: (multiSens: boolean): string => "Model code has been updated. "
-            + `Compile code and Run ${sensType(multiSens)} to update.`,
+        compileRequiredForOptions: (multiSens: boolean): string =>
+            "Please compile a valid model in order to set " + `${sensType(multiSens)} options.`,
+        compileRequiredForUpdate: (multiSens: boolean): string =>
+            "Model code has been updated. " + `Compile code and Run ${sensType(multiSens)} to update.`,
         invalidSettings: "Invalid settings",
         notRunYet: (multiSens: boolean): string => `${sensType(multiSens)} has not been run.`,
         updateReasons: {
             prefix: "Plot is out of date:",
             modelChanged: "model code has been recompiled",
             parameterValueChanged: "parameters have been changed",
-            sensitivityOptionsChanged:
-                (multiSens: boolean): string => `${sensType(multiSens)} options have been changed`,
+            sensitivityOptionsChanged: (multiSens: boolean): string =>
+                `${sensType(multiSens)} options have been changed`,
             endTimeChanged: "end time has changed",
             numberOfReplicatesChanged: "number of replicates has changed",
             advancedSettingsChanged: "advanced settings have been changed",

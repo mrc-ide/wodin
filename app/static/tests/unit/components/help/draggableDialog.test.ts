@@ -32,8 +32,7 @@ describe("DraggableDialog", () => {
         expect(wrapper.find("div.draggable-content h1").text()).toBe("TEST SLOT CONTENT");
     });
 
-    const testHandlesDrag = async (touch = false, moveTo = { x: 15, y: 28 },
-        expectedEndPosition = { x: 5, y: 8 }) => {
+    const testHandlesDrag = async (touch = false, moveTo = { x: 15, y: 28 }, expectedEndPosition = { x: 5, y: 8 }) => {
         const wrapper = getWrapper();
 
         // Start drag
@@ -110,8 +109,11 @@ describe("DraggableDialog", () => {
         expect(wrapper.emitted("close")!.length).toBe(1);
     });
 
-    const testHandlesResize = async (touch = false, resizeTo = { x: 200, y: 300 },
-        expectedEndSize = { width: 190, height: 280 }) => {
+    const testHandlesResize = async (
+        touch = false,
+        resizeTo = { x: 200, y: 300 },
+        expectedEndSize = { width: 190, height: 280 }
+    ) => {
         const wrapper = getWrapper();
         // Start resize
         const startEvent = touch ? "touchstart" : "mousedown";

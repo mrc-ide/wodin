@@ -15,7 +15,7 @@ export enum BaseSensitivityMutation {
     SetResult = "SetResult",
     SetUpdateRequired = "SetUpdateRequired",
     SetUserSummaryDownloadFileName = "SetUserSummaryDownloadFileName",
-    SetDownloading = "SetDownloading",
+    SetDownloading = "SetDownloading"
 }
 
 export enum SensitivityMutation {
@@ -37,8 +37,10 @@ export const baseSensitivityMutations: MutationTree<BaseSensitivityState> = {
         state.result = payload;
     },
 
-    [BaseSensitivityMutation.SetUpdateRequired](state: BaseSensitivityState,
-        payload: Partial<SensitivityUpdateRequiredReasons>) {
+    [BaseSensitivityMutation.SetUpdateRequired](
+        state: BaseSensitivityState,
+        payload: Partial<SensitivityUpdateRequiredReasons>
+    ) {
         state.sensitivityUpdateRequired = {
             ...state.sensitivityUpdateRequired,
             ...payload

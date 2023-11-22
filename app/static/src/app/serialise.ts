@@ -21,14 +21,14 @@ import { GraphSettingsState } from "./store/graphSettings/state";
 import { Dict } from "./types/utilTypes";
 import { MultiSensitivityState } from "./store/multiSensitivity/state";
 
-function serialiseCode(code: CodeState) : CodeState {
+function serialiseCode(code: CodeState): CodeState {
     return {
         currentCode: code.currentCode,
         loading: code.loading
     };
 }
 
-function serialiseModel(model: ModelState) : SerialisedModelState {
+function serialiseModel(model: ModelState): SerialisedModelState {
     return {
         compileRequired: model.compileRequired,
         odinModelResponse: model.odinModelResponse,
@@ -41,19 +41,23 @@ function serialiseModel(model: ModelState) : SerialisedModelState {
 }
 
 function serialiseSolutionResult(result: OdinRunResultOde | OdinFitResult | null): SerialisedRunResult | null {
-    return result ? {
-        inputs: result.inputs,
-        hasResult: !!result.solution,
-        error: result.error
-    } : null;
+    return result
+        ? {
+              inputs: result.inputs,
+              hasResult: !!result.solution,
+              error: result.error
+          }
+        : null;
 }
 
 function serialiseDiscreteResult(result: OdinRunResultDiscrete | null): SerialisedRunResult | null {
-    return result ? {
-        inputs: result.inputs,
-        hasResult: !!result.solution,
-        error: result.error
-    } : null;
+    return result
+        ? {
+              inputs: result.inputs,
+              hasResult: !!result.solution,
+              error: result.error
+          }
+        : null;
 }
 
 function serialiseRun(run: RunState): SerialisedRunState {
@@ -80,10 +84,12 @@ function serialiseBaseSensitivity(sensitivity: BaseSensitivityState) {
     return {
         running: false,
         sensitivityUpdateRequired: sensitivity.sensitivityUpdateRequired,
-        result: sensitivity.result ? {
-            hasResult: !!sensitivity.result.batch,
-            error: sensitivity.result.error
-        } : null
+        result: sensitivity.result
+            ? {
+                  hasResult: !!sensitivity.result.batch,
+                  error: sensitivity.result.error
+              }
+            : null
     };
 }
 
@@ -112,7 +118,7 @@ function serialiseMultiSensitivity(multiSensitivity: MultiSensitivityState): Ser
     };
 }
 
-function serialiseFitData(fitData: FitDataState) : FitDataState {
+function serialiseFitData(fitData: FitDataState): FitDataState {
     return {
         data: fitData.data,
         columns: fitData.columns,
@@ -169,8 +175,11 @@ export const deserialiseState = (targetState: AppState, serialised: SerialisedAp
 
     // Initialise selected variables if required
     const { model } = targetState;
-    if (model.odinModelResponse?.metadata?.variables && !model.selectedVariables?.length
-        && !model.unselectedVariables?.length) {
+    if (
+        model.odinModelResponse?.metadata?.variables &&
+        !model.selectedVariables?.length &&
+        !model.unselectedVariables?.length
+    ) {
         /* eslint-disable no-param-reassign */
         targetState.model.selectedVariables = [...model.odinModelResponse.metadata.variables];
         targetState.model.unselectedVariables = [];

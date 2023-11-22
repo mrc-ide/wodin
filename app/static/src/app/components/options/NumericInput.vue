@@ -1,18 +1,18 @@
 <template>
-  <input class="form-control parameter-input"
-         type="text"
-         :value="textValue"
-         @input="updateValue"
-         @blur="formatTextValue(true)"
-         v-tooltip="tooltipProps"
-         :placeholder="`${placeholder}`"/>
+    <input
+        class="form-control parameter-input"
+        type="text"
+        :value="textValue"
+        @input="updateValue"
+        @blur="formatTextValue(true)"
+        v-tooltip="tooltipProps"
+        :placeholder="`${placeholder}`"
+    />
 </template>
 
 <script lang="ts">
 import { formatLocale } from "d3-format";
-import {
-    defineComponent, ref, onMounted, watch, PropType
-} from "vue";
+import { defineComponent, ref, onMounted, watch, PropType } from "vue";
 import { ToolTipSettings } from "../../directives/tooltip";
 
 // Provide a d3 format which uses hyphen for negatives rather than minus sign
@@ -25,9 +25,9 @@ const d3Locale = formatLocale({
 });
 
 export type BoundTooltip = {
-    error: { number: number, message?: string },
-    warning: { number: number, message: string }
-}
+    error: { number: number; message?: string };
+    warning: { number: number; message: string };
+};
 
 export default defineComponent({
     name: "NumericInput",
@@ -55,7 +55,7 @@ export default defineComponent({
         // We want to correct user's poor formatting e.g. insert comma separators, but bad UX to do
         // this on every keystroke, so update text value on blur, mounted, and external value change (a change
         // to a value which wasn't the last one changed to here e.g. caused by model fit)
-        const lastNumericValueSet = ref<null|number>(null);
+        const lastNumericValueSet = ref<null | number>(null);
         const textValue = ref("");
 
         const tooltipProps = ref<ToolTipSettings>({
@@ -88,9 +88,8 @@ export default defineComponent({
             msg: string | undefined = undefined,
             variant: ToolTipSettings["variant"] = "error"
         ) => {
-            const defaultMsg = (min === 0)
-                ? "Please enter a non-negative number"
-                : `Please enter a value no less than ${min}`;
+            const defaultMsg =
+                min === 0 ? "Please enter a non-negative number" : `Please enter a value no less than ${min}`;
             tooltipProps.value.content = msg || defaultMsg;
             tooltipProps.value.variant = variant;
         };
@@ -121,7 +120,8 @@ export default defineComponent({
                 if (numeric > error.number) {
                     setMaxTooltip(error.number, error.message);
                     return error.number;
-                } if (numeric > warning.number) {
+                }
+                if (numeric > warning.number) {
                     setMaxTooltip(warning.number, warning.message, "warning");
                     return numeric;
                 }
@@ -132,7 +132,8 @@ export default defineComponent({
                 if (numeric < error.number) {
                     setMaxTooltip(error.number, error.message);
                     return error.number;
-                } if (numeric < warning.number) {
+                }
+                if (numeric < warning.number) {
                     setMaxTooltip(warning.number, warning.message, "warning");
                     return numeric;
                 }
@@ -171,11 +172,14 @@ export default defineComponent({
         };
 
         onMounted(formatTextValue);
-        watch(() => props.value, (newVal) => {
-            if (newVal !== lastNumericValueSet.value) {
-                formatTextValue();
+        watch(
+            () => props.value,
+            (newVal) => {
+                if (newVal !== lastNumericValueSet.value) {
+                    formatTextValue();
+                }
             }
-        });
+        );
 
         return {
             textValue,

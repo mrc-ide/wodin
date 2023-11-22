@@ -396,8 +396,14 @@ const mockParameterSetCentralResults = {
 const mockSetLoading = jest.fn();
 
 describe("SensitivityTracesPlot", () => {
-    const getWrapper = (sensitivityHasSolutions = true, fadePlot = false, sensitivityHasData = false,
-        stochastic = false, hasSelectedVariables = true, hasParameterSets = false) => {
+    const getWrapper = (
+        sensitivityHasSolutions = true,
+        fadePlot = false,
+        sensitivityHasData = false,
+        stochastic = false,
+        hasSelectedVariables = true,
+        hasParameterSets = false
+    ) => {
         const store = new Vuex.Store<AppState>({
             state: {
                 appType: stochastic ? AppType.Stochastic : AppType.Basic,
@@ -439,10 +445,12 @@ describe("SensitivityTracesPlot", () => {
                                 solutions: sensitivityHasSolutions ? mockSolutions : null,
                                 allFitData: sensitivityHasData ? mockAllFitData : undefined,
                                 pars: {
-                                    varying: [{
-                                        name: "alpha",
-                                        values: [1.11111, 2.22222]
-                                    }]
+                                    varying: [
+                                        {
+                                            name: "alpha",
+                                            values: [1.11111, 2.22222]
+                                        }
+                                    ]
                                 }
                             }
                         },
@@ -464,7 +472,10 @@ describe("SensitivityTracesPlot", () => {
     };
 
     const slnArgs = {
-        mode: "grid", tStart: 0, tEnd: 1, nPoints: 100
+        mode: "grid",
+        tStart: 0,
+        tEnd: 1,
+        nPoints: 100
     };
 
     afterEach(() => {
@@ -548,12 +559,7 @@ describe("SensitivityTracesPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Sensitivity has not been run.");
         expect(wodinPlot.props("endTime")).toBe(1);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([
-            undefined,
-            selectedVariables,
-            {},
-            []
-        ]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([undefined, selectedVariables, {}, []]);
 
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 1, 100);

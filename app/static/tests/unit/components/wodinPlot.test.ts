@@ -38,7 +38,6 @@ describe("WodinPlot", () => {
             marker: {
                 color: "#ff0000"
             }
-
         },
         {
             name: "test lines",

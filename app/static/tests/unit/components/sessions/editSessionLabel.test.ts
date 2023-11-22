@@ -49,8 +49,9 @@ describe("EditSessionLabel", () => {
         expect(wrapper.find(".modal").classes()).toContain("show");
         expect(wrapper.find(".modal-content .modal-header h5").text()).toBe("Edit Session Label");
         expect(wrapper.find(".modal-body #edit-session-label label").text()).toBe("Label");
-        expect((wrapper.find(".modal-body #edit-session-label input").element as HTMLInputElement).value)
-            .toBe("testSessionLabel");
+        expect((wrapper.find(".modal-body #edit-session-label input").element as HTMLInputElement).value).toBe(
+            "testSessionLabel"
+        );
         expect(wrapper.find(".modal-footer #ok-session-label").text()).toBe("OK");
         expect(wrapper.find(".modal-footer #cancel-session-label").text()).toBe("Cancel");
     });

@@ -1,6 +1,4 @@
-import {
-    ActionContext, ActionTree, Commit, Dispatch
-} from "vuex";
+import { ActionContext, ActionTree, Commit, Dispatch } from "vuex";
 import { AppState, AppType } from "../appState/state";
 import { BaseSensitivityState, SensitivityState } from "./state";
 import { BaseSensitivityGetter, SensitivityGetter } from "./getters";
@@ -8,9 +6,7 @@ import { BaseSensitivityMutation, SensitivityMutation } from "./mutations";
 import { RunAction } from "../run/actions";
 import userMessages from "../../userMessages";
 import { OdinSensitivityResult } from "../../types/wrapperTypes";
-import {
-    Batch, BatchPars, Odin, OdinRunnerDiscrete, OdinRunnerOde, OdinUserType
-} from "../../types/responseTypes";
+import { Batch, BatchPars, Odin, OdinRunnerDiscrete, OdinRunnerOde, OdinUserType } from "../../types/responseTypes";
 import { ModelGetter } from "../model/getters";
 import { Dict } from "../../types/utilTypes";
 import { AdvancedSettings } from "../run/state";
@@ -33,25 +29,29 @@ const runModelIfRequired = (rootState: AppState, dispatch: Dispatch) => {
     }
 };
 
-const batchRunOde = (runner: OdinRunnerOde,
+const batchRunOde = (
+    runner: OdinRunnerOde,
     odin: Odin,
     pars: BatchPars,
     endTime: number,
     advancedSettings: AdvancedSettings,
-    paramValues: OdinUserType | null): Batch => {
+    paramValues: OdinUserType | null
+): Batch => {
     const advancedSettingsOdin = convertAdvancedSettingsToOdin(advancedSettings, paramValues);
     const batch = runner.batchRun(odin, pars, 0, endTime, advancedSettingsOdin);
     return batch;
 };
 
-const batchRunDiscrete = (runner: OdinRunnerDiscrete,
+const batchRunDiscrete = (
+    runner: OdinRunnerDiscrete,
     odin: Odin,
     pars: BatchPars,
     endTime: number,
     dt: number,
     replicates: number,
     dispatch: Dispatch,
-    commit: Commit): Batch => {
+    commit: Commit
+): Batch => {
     const batch = runner.batchRunDiscrete(odin, pars, 0, endTime, dt, replicates);
     commit(BaseSensitivityMutation.SetRunning, true);
     dispatch(BaseSensitivityAction.ComputeNext, batch);
@@ -64,19 +64,15 @@ export const runSensitivity = (
     context: ActionContext<BaseSensitivityState, AppState>,
     multiSensitivity = false
 ): void => {
-    const {
-        rootState, commit, dispatch, getters, rootGetters
-    } = context;
-    const {
-        odinRunnerOde, odinRunnerDiscrete, odin, odinModelResponse
-    } = rootState.model;
+    const { rootState, commit, dispatch, getters, rootGetters } = context;
+    const { odinRunnerOde, odinRunnerDiscrete, odin, odinModelResponse } = rootState.model;
     const replicates = rootState.run.numberOfReplicates;
     const { dt } = odinModelResponse!.metadata!;
     const isStochastic = rootState.appType === AppType.Stochastic;
     const hasRunner = rootGetters[`model/${ModelGetter.hasRunner}`];
 
     if (hasRunner && odin && batchPars) {
-        const payload : OdinSensitivityResult = {
+        const payload: OdinSensitivityResult = {
             inputs: { endTime, pars: batchPars },
             batch: null,
             error: null
@@ -103,7 +99,7 @@ export const runSensitivity = (
             const parameterSetNames = Object.keys(parameterSetBatchPars);
             const parameterSetResults = {} as Dict<OdinSensitivityResult>;
             parameterSetNames.forEach((name: string) => {
-                const setResult : OdinSensitivityResult = {
+                const setResult: OdinSensitivityResult = {
                     inputs: { endTime, pars: batchPars },
                     batch: null,
                     error: null
@@ -144,9 +140,7 @@ export const runSensitivity = (
 
 export const baseSensitivityActions: ActionTree<BaseSensitivityState, AppState> = {
     [BaseSensitivityAction.ComputeNext](context, batch: Batch) {
-        const {
-            commit, dispatch, state
-        } = context;
+        const { commit, dispatch, state } = context;
         const isComplete = batch.compute();
         commit(BaseSensitivityMutation.SetResult, { ...state.result, batch });
         if (isComplete) {
@@ -162,8 +156,7 @@ export const baseSensitivityActions: ActionTree<BaseSensitivityState, AppState> 
         const { commit, state } = context;
         commit(BaseSensitivityMutation.SetDownloading, true);
         setTimeout(() => {
-            new WodinSensitivitySummaryDownload(context, filename)
-                .download(state.result!);
+            new WodinSensitivitySummaryDownload(context, filename).download(state.result!);
             commit(BaseSensitivityMutation.SetDownloading, false);
         }, 5);
     }

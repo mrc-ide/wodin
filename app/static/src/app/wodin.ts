@@ -23,27 +23,27 @@ declare let appType: AppType;
 const { Basic, Fit, Stochastic } = AppType;
 const getStore = () => {
     switch (appType) {
-    case Basic:
-        return new Vuex.Store<BasicState>(basicStoreOptions);
-    case Fit:
-        return new Vuex.Store<FitState>(fitStoreOptions);
-    case Stochastic:
-        return new Vuex.Store<StochasticState>(stochasticStoreOptions);
-    default:
-        throw new Error("Unknown app type");
+        case Basic:
+            return new Vuex.Store<BasicState>(basicStoreOptions);
+        case Fit:
+            return new Vuex.Store<FitState>(fitStoreOptions);
+        case Stochastic:
+            return new Vuex.Store<StochasticState>(stochasticStoreOptions);
+        default:
+            throw new Error("Unknown app type");
     }
 };
 
 const getComponent = () => {
     switch (appType) {
-    case Basic:
-        return BasicApp;
-    case Fit:
-        return FitApp;
-    case Stochastic:
-        return StochasticApp;
-    default:
-        throw new Error("Unknown app type");
+        case Basic:
+            return BasicApp;
+        case Fit:
+            return FitApp;
+        case Stochastic:
+            return StochasticApp;
+        default:
+            throw new Error("Unknown app type");
     }
 };
 

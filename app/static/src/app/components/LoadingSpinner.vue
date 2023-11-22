@@ -1,5 +1,5 @@
 <template>
-  <span class="spinner-border" :style="{...style, color: '#0d6efd'}"></span>
+    <span class="spinner-border" :style="{ ...style, color: '#0d6efd' }"></span>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";

@@ -1,12 +1,9 @@
 <template>
-  <router-view v-if="initialised"></router-view>
+    <router-view v-if="initialised"></router-view>
 </template>
 
 <script lang="ts">
-import {
-    computed,
-    defineComponent, onMounted, ref, watch
-} from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { RouterView } from "vue-router";
 import { useStore } from "vuex";
 import { AppStateAction } from "../store/appState/actions";
@@ -38,14 +35,7 @@ export default defineComponent({
 
         // These props won't change as provided by server
         // eslint-disable-next-line vue/no-setup-props-destructure
-        const {
-            appName,
-            baseUrl,
-            loadSessionId,
-            appsPath,
-            enableI18n,
-            defaultLanguage
-        } = props;
+        const { appName, baseUrl, loadSessionId, appsPath, enableI18n, defaultLanguage } = props;
 
         store.dispatch(AppStateAction.InitialiseApp, {
             appName,
@@ -58,8 +48,9 @@ export default defineComponent({
 
         onMounted(() => {
             if (props.shareNotFound) {
-                store.commit(`errors/${ErrorsMutation.AddError}`,
-                    { detail: `Share id not found: ${props.shareNotFound}` });
+                store.commit(`errors/${ErrorsMutation.AddError}`, {
+                    detail: `Share id not found: ${props.shareNotFound}`
+                });
             }
         });
 
@@ -70,8 +61,8 @@ export default defineComponent({
             const sessions = localStorageManager.getSessionIds(store.state.appName, baseUrlPath);
             const sessionId = sessions.length ? sessions[0] : null;
             // check latest session id is actually available from the back end
-            const sessionAvailable = sessionId
-                && !!store.state.sessions.sessionsMetadata.find((s: SessionMetadata) => s.id === sessionId);
+            const sessionAvailable =
+                sessionId && !!store.state.sessions.sessionsMetadata.find((s: SessionMetadata) => s.id === sessionId);
             if (sessionAvailable) {
                 store.commit(`sessions/${SessionsMutation.SetLatestSessionId}`, sessionId);
             }

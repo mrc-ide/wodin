@@ -1,38 +1,38 @@
 <template>
-  <wodin-app>
-    <template v-slot:left>
-      <wodin-tabs id="left-tabs" :tabNames="['Data', 'Code', 'Options']">
-        <template v-slot:Data>
-          <data-tab></data-tab>
+    <wodin-app>
+        <template v-slot:left>
+            <wodin-tabs id="left-tabs" :tabNames="['Data', 'Code', 'Options']">
+                <template v-slot:Data>
+                    <data-tab></data-tab>
+                </template>
+                <template v-slot:Code>
+                    <code-tab></code-tab>
+                </template>
+                <template v-slot:Options>
+                    <options-tab></options-tab>
+                </template>
+            </wodin-tabs>
         </template>
-        <template v-slot:Code>
-          <code-tab></code-tab>
+        <template v-slot:right>
+            <wodin-tabs id="right-tabs" :tabNames="rightTabNames" @tabSelected="rightTabSelected">
+                <template v-if="helpTabName" v-slot:[helpTabName]>
+                    <help-tab></help-tab>
+                </template>
+                <template v-slot:Run>
+                    <run-tab></run-tab>
+                </template>
+                <template v-slot:Fit>
+                    <fit-tab></fit-tab>
+                </template>
+                <template v-slot:Sensitivity>
+                    <sensitivity-tab></sensitivity-tab>
+                </template>
+                <template v-slot:Multi-sensitivity>
+                    <multi-sensitivity-tab></multi-sensitivity-tab>
+                </template>
+            </wodin-tabs>
         </template>
-        <template v-slot:Options>
-          <options-tab></options-tab>
-        </template>
-      </wodin-tabs>
-    </template>
-    <template v-slot:right>
-      <wodin-tabs id="right-tabs" :tabNames="rightTabNames" @tabSelected="rightTabSelected">
-        <template v-if="helpTabName" v-slot:[helpTabName]>
-          <help-tab></help-tab>
-        </template>
-        <template v-slot:Run>
-          <run-tab></run-tab>
-        </template>
-        <template v-slot:Fit>
-          <fit-tab></fit-tab>
-        </template>
-        <template v-slot:Sensitivity>
-          <sensitivity-tab></sensitivity-tab>
-        </template>
-        <template v-slot:Multi-sensitivity>
-          <multi-sensitivity-tab></multi-sensitivity-tab>
-        </template>
-      </wodin-tabs>
-    </template>
-  </wodin-app>
+    </wodin-app>
 </template>
 
 <script lang="ts">
@@ -72,8 +72,11 @@ export default defineComponent({
         const rightTabSelected = (tab: string) => {
             store.commit(AppStateMutation.SetOpenVisualisationTab, tab);
         };
-        const { helpTabName, rightTabNames } = includeConfiguredTabs(store,
-            [VisualisationTab.Run, VisualisationTab.Fit, VisualisationTab.Sensitivity]);
+        const { helpTabName, rightTabNames } = includeConfiguredTabs(store, [
+            VisualisationTab.Run,
+            VisualisationTab.Fit,
+            VisualisationTab.Sensitivity
+        ]);
 
         return {
             helpTabName,

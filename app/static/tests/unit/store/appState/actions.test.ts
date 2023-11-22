@@ -6,7 +6,8 @@ import {
     mockFailure,
     mockFitState,
     mockModelFitState,
-    mockSensitivityState, mockSessionsState,
+    mockSensitivityState,
+    mockSessionsState,
     mockSuccess
 } from "../../../mocks";
 import { AppStateAction, appStateActions } from "../../../../src/app/store/appState/actions";
@@ -29,7 +30,8 @@ describe("AppState actions", () => {
     const enableI18n = true;
 
     const spyOnAddSessionId = jest.spyOn(localStorageManager, "addSessionId");
-    const mockGetUserPreferences = jest.spyOn(localStorageManager, "getUserPreferences")
+    const mockGetUserPreferences = jest
+        .spyOn(localStorageManager, "getUserPreferences")
         .mockReturnValue({ showUnlabelledSessions: false, showDuplicateSessions: false });
     const mockSetUserPreferences = jest.spyOn(localStorageManager, "setUserPreferences");
 
@@ -64,8 +66,7 @@ describe("AppState actions", () => {
             readOnlyCode: false
         };
         const url = `${baseUrl}/config/test-app`;
-        mockAxios.onGet(url)
-            .reply(200, mockSuccess(config));
+        mockAxios.onGet(url).reply(200, mockSuccess(config));
 
         const store = getStore();
         const commit = jest.fn();
@@ -73,12 +74,24 @@ describe("AppState actions", () => {
         const { state } = store;
         const rootState = state;
         const payload = {
-            appName: "test-app", loadSessionId: "", baseUrl, appsPath, defaultLanguage, enableI18n
+            appName: "test-app",
+            loadSessionId: "",
+            baseUrl,
+            appsPath,
+            defaultLanguage,
+            enableI18n
         };
 
-        await (appStateActions[AppStateAction.InitialiseApp] as any)({
-            commit, state, dispatch, rootState, getters
-        }, payload);
+        await (appStateActions[AppStateAction.InitialiseApp] as any)(
+            {
+                commit,
+                state,
+                dispatch,
+                rootState,
+                getters
+            },
+            payload
+        );
         expect(commit.mock.calls.length).toBe(3);
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
         expect(commit.mock.calls[0][1]).toStrictEqual({
@@ -109,8 +122,7 @@ describe("AppState actions", () => {
             defaultCode: [],
             readOnlyCode: false
         };
-        mockAxios.onGet(`${baseUrl}/config/test-app`)
-            .reply(200, mockSuccess(config));
+        mockAxios.onGet(`${baseUrl}/config/test-app`).reply(200, mockSuccess(config));
 
         const store = getStore();
         const commit = jest.fn();
@@ -118,9 +130,16 @@ describe("AppState actions", () => {
         const { state } = store;
         const rootState = state;
         const payload = { appName: "test-app", loadSessionId: "", baseUrl };
-        await (appStateActions[AppStateAction.InitialiseApp] as any)({
-            commit, state, dispatch, rootState, getters
-        }, payload);
+        await (appStateActions[AppStateAction.InitialiseApp] as any)(
+            {
+                commit,
+                state,
+                dispatch,
+                rootState,
+                getters
+            },
+            payload
+        );
         expect(commit.mock.calls.length).toBe(2);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
@@ -128,8 +147,7 @@ describe("AppState actions", () => {
     });
 
     it("InitialiseApp fetches config and commits error", async () => {
-        mockAxios.onGet(`${baseUrl}/config/test-app`)
-            .reply(500, mockFailure("Test Error Msg"));
+        mockAxios.onGet(`${baseUrl}/config/test-app`).reply(500, mockFailure("Test Error Msg"));
 
         const store = getStore({
             config: { defaultCode: [] } as any,
@@ -143,11 +161,23 @@ describe("AppState actions", () => {
         const rootState = state;
 
         const payload = {
-            appName: "test-app", loadSessionId: "xyz", baseUrl, appsPath, defaultLanguage, enableI18n
+            appName: "test-app",
+            loadSessionId: "xyz",
+            baseUrl,
+            appsPath,
+            defaultLanguage,
+            enableI18n
         };
-        await (appStateActions[AppStateAction.InitialiseApp] as any)({
-            commit, state, dispatch, rootState, getters
-        }, payload);
+        await (appStateActions[AppStateAction.InitialiseApp] as any)(
+            {
+                commit,
+                state,
+                dispatch,
+                rootState,
+                getters
+            },
+            payload
+        );
         expect(commit.mock.calls.length).toBe(2);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetApp);
@@ -177,9 +207,16 @@ describe("AppState actions", () => {
 
         const payload = { loadSessionId: "", copySession: true };
 
-        await (appStateActions[AppStateAction.InitialiseSession] as any)({
-            commit, state, dispatch, rootState, getters
-        }, payload);
+        await (appStateActions[AppStateAction.InitialiseSession] as any)(
+            {
+                commit,
+                state,
+                dispatch,
+                rootState,
+                getters
+            },
+            payload
+        );
 
         expect(spyOnAddSessionId).toHaveBeenCalledWith("test-app", "testInstance", "1234");
 
@@ -206,9 +243,16 @@ describe("AppState actions", () => {
 
         const payload = { loadSessionId: "", copySession: true };
 
-        await (appStateActions[AppStateAction.InitialiseSession] as any)({
-            commit, state, dispatch, rootState, getters
-        }, payload);
+        await (appStateActions[AppStateAction.InitialiseSession] as any)(
+            {
+                commit,
+                state,
+                dispatch,
+                rootState,
+                getters
+            },
+            payload
+        );
 
         expect(dispatch).toHaveBeenCalledTimes(2);
         expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.FetchOdinRunner}`);
@@ -232,9 +276,16 @@ describe("AppState actions", () => {
         const rootState = state;
 
         const payload = { loadSessionId: "1234", copySession: true };
-        await (appStateActions[AppStateAction.InitialiseSession] as any)({
-            commit, state, rootState, dispatch, getters
-        }, payload);
+        await (appStateActions[AppStateAction.InitialiseSession] as any)(
+            {
+                commit,
+                state,
+                rootState,
+                dispatch,
+                getters
+            },
+            payload
+        );
 
         expect(spyOnAddSessionId).toHaveBeenCalledWith("test-app", "testInstance", "1234");
 
@@ -260,9 +311,16 @@ describe("AppState actions", () => {
         const rootState = state;
 
         const payload = { loadSessionId: "1234", copySession: false };
-        await (appStateActions[AppStateAction.InitialiseSession] as any)({
-            commit, state, rootState, dispatch, getters
-        }, payload);
+        await (appStateActions[AppStateAction.InitialiseSession] as any)(
+            {
+                commit,
+                state,
+                rootState,
+                dispatch,
+                getters
+            },
+            payload
+        );
 
         expect(spyOnAddSessionId).not.toHaveBeenCalled();
 
@@ -306,12 +364,14 @@ describe("AppState actions", () => {
         jest.useFakeTimers();
         const mockSetInterval = jest.spyOn(window, "setInterval");
         const state = mockFitState({
-            sessionId: "1234", appName: "testApp", baseUrl, appsPath
+            sessionId: "1234",
+            appName: "testApp",
+            baseUrl,
+            appsPath
         });
         const rootState = state;
         const commit = jest.fn();
-        mockAxios.onPost(`${baseUrl}/apps/testApp/sessions/1234`)
-            .reply(200, "");
+        mockAxios.onPost(`${baseUrl}/apps/testApp/sessions/1234`).reply(200, "");
 
         (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state, rootState });
         expect(commit).toHaveBeenCalledTimes(2);
@@ -355,8 +415,7 @@ describe("AppState actions", () => {
             } as any
         });
         const commit = jest.fn();
-        mockAxios.onPost("/apps/testApp/sessions/1234")
-            .reply(200, "");
+        mockAxios.onPost("/apps/testApp/sessions/1234").reply(200, "");
 
         (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
         expect(commit).toHaveBeenCalledTimes(2);
@@ -369,8 +428,7 @@ describe("AppState actions", () => {
         const mockSetInterval = jest.spyOn(window, "setInterval");
         const state = mockFitState({ sessionId: "1234", appName: "testApp" });
         const commit = jest.fn();
-        mockAxios.onPost("/apps/testApp/sessions/1234")
-            .reply(200);
+        mockAxios.onPost("/apps/testApp/sessions/1234").reply(200);
 
         await (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
         expect(commit).toHaveBeenCalledTimes(2);
@@ -392,8 +450,7 @@ describe("AppState actions", () => {
         const mockSetInterval = jest.spyOn(window, "setInterval");
         const state = mockFitState({ sessionId: "1234", appName: "testApp" });
         const commit = jest.fn();
-        mockAxios.onPost("/apps/testApp/sessions/1234")
-            .reply(200);
+        mockAxios.onPost("/apps/testApp/sessions/1234").reply(200);
 
         await (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
         expect(commit).toHaveBeenCalledTimes(2);
@@ -415,8 +472,7 @@ describe("AppState actions", () => {
         const mockSetInterval = jest.spyOn(window, "setInterval");
         const state = mockFitState({ sessionId: "1234", appName: "testApp" });
         const commit = jest.fn();
-        mockAxios.onPost("/apps/testApp/sessions/1234")
-            .reply(200);
+        mockAxios.onPost("/apps/testApp/sessions/1234").reply(200);
 
         await (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
         expect(commit).toHaveBeenCalledTimes(2);
@@ -436,12 +492,14 @@ describe("AppState actions", () => {
     it("QueueStatusUpload callback commits api error", (done) => {
         jest.useFakeTimers();
         const state = mockFitState({
-            sessionId: "1234", appName: "testApp", baseUrl, appsPath
+            sessionId: "1234",
+            appName: "testApp",
+            baseUrl,
+            appsPath
         });
         const rootState = state;
         const commit = jest.fn();
-        mockAxios.onPost(`${baseUrl}/apps/testApp/sessions/1234`)
-            .reply(500, mockFailure("upload failure"));
+        mockAxios.onPost(`${baseUrl}/apps/testApp/sessions/1234`).reply(500, mockFailure("upload failure"));
 
         (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state, rootState });
         jest.advanceTimersByTime(2000);
@@ -483,8 +541,10 @@ describe("AppState actions", () => {
                 showDuplicateSessions: true
             }
         };
-        await (appStateActions[AppStateAction.SaveUserPreferences] as any)({ commit, dispatch, state },
-            { showUnlabelledSessions: true });
+        await (appStateActions[AppStateAction.SaveUserPreferences] as any)(
+            { commit, dispatch, state },
+            { showUnlabelledSessions: true }
+        );
         const expectedPrefs = {
             somePref: "something",
             showUnlabelledSessions: true,
@@ -505,8 +565,10 @@ describe("AppState actions", () => {
                 showDuplicateSessions: true
             }
         };
-        await (appStateActions[AppStateAction.SaveUserPreferences] as any)({ commit, dispatch, state },
-            { showDuplicateSessions: false });
+        await (appStateActions[AppStateAction.SaveUserPreferences] as any)(
+            { commit, dispatch, state },
+            { showDuplicateSessions: false }
+        );
         expect(commit).toHaveBeenCalledTimes(1);
         expect(dispatch).toHaveBeenCalledWith(`sessions/${SessionsAction.GetSessions}`);
     });

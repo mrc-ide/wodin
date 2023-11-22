@@ -50,8 +50,7 @@ describe("version menu component", () => {
         const wrapper = getWrapper();
         expect(wrapper.props("wodinVersion")).toBe("1.2.3");
         expect(wrapper.find(".dropdown a").text()).toBe("WODIN v1.2.3");
-        expect(wrapper.find(".dropdown ul").classes())
-            .toEqual(["dropdown-menu", "dropdown-menu-end"]);
+        expect(wrapper.find(".dropdown ul").classes()).toEqual(["dropdown-menu", "dropdown-menu-end"]);
 
         const lists = wrapper.findAll("li span");
         expect(lists.length).toBe(5);

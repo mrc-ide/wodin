@@ -2,11 +2,7 @@ import { mockBookNew, mockBookAppendSheet, mockWriteFile } from "./mocks";
 import { mockBasicState, mockRunState, mockSensitivityState } from "../../mocks";
 import { WodinSensitivitySummaryDownload } from "../../../src/app/excel/wodinSensitivitySummaryDownload";
 
-const xValues = [
-    { beta: 1 },
-    { beta: 1.1 },
-    { beta: 1.2 }
-];
+const xValues = [{ beta: 1 }, { beta: 1.1 }, { beta: 1.2 }];
 const mockBatch = {
     successfulVaryingParams: xValues,
     valueAtTime: jest.fn().mockImplementation(() => {
@@ -21,9 +17,7 @@ const mockBatch = {
     extreme: jest.fn().mockImplementation((extremeType: string) => {
         return {
             x: xValues,
-            values: [
-                { name: extremeType, y: [10, 20, 30] }
-            ]
+            values: [{ name: extremeType, y: [10, 20, 30] }]
         };
     })
 };
@@ -49,9 +43,7 @@ const mockBatchMulti = {
     extreme: jest.fn().mockImplementation((extremeType: string) => {
         return {
             x: xValuesMulti,
-            values: [
-                { name: extremeType, y: [11, 22, 33, 44] }
-            ]
+            values: [{ name: extremeType, y: [11, 22, 33, 44] }]
         };
     })
 };
@@ -180,16 +172,28 @@ describe("WodinSensitivitySummaryDownload", () => {
         expect(mockBookAppendSheet.mock.calls[0][1]).toStrictEqual({
             data: [
                 {
-                    beta: 1, N: 100, S: 10, I: 50
+                    beta: 1,
+                    N: 100,
+                    S: 10,
+                    I: 50
                 },
                 {
-                    beta: 1, N: 1000, S: 20, I: 60
+                    beta: 1,
+                    N: 1000,
+                    S: 20,
+                    I: 60
                 },
                 {
-                    beta: 2, N: 100, S: 30, I: 70
+                    beta: 2,
+                    N: 100,
+                    S: 30,
+                    I: 70
                 },
                 {
-                    beta: 2, N: 1000, S: 40, I: 80
+                    beta: 2,
+                    N: 1000,
+                    S: 40,
+                    I: 80
                 }
             ],
             type: "json"
@@ -241,9 +245,7 @@ describe("WodinSensitivitySummaryDownload", () => {
         expect(mockBookAppendSheet.mock.calls[4][2]).toStrictEqual("TimeAtMax");
 
         expect(mockBookAppendSheet.mock.calls[5][1]).toStrictEqual({
-            data: [
-                { name: "D", value: 3 }
-            ],
+            data: [{ name: "D", value: 3 }],
             type: "json"
         });
         expect(mockBookAppendSheet.mock.calls[5][2]).toStrictEqual("Parameters");

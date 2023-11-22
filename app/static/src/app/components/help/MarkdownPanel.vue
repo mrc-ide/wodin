@@ -1,5 +1,5 @@
 <template>
-  <div class="markdown-panel" v-html="rendered"></div>
+    <div class="markdown-panel" v-html="rendered"></div>
 </template>
 
 <script lang="ts">
@@ -11,9 +11,9 @@ import * as Renderer from "markdown-it/lib/renderer";
 import MarkdownIt from "./MarkdownItImport";
 
 interface MathJaxWindow {
-  MathJax: {
-    typeset: () => void
-  }
+    MathJax: {
+        typeset: () => void;
+    };
 }
 
 export default defineComponent({
@@ -46,7 +46,7 @@ export default defineComponent({
             const attrIdx = token.attrIndex("src");
             const src = token.attrs![attrIdx][1];
             if (!isAbsoluteUrl(src)) {
-              token.attrs![attrIdx][1] = `${appHelpUrl.value}/${src}`;
+                token.attrs![attrIdx][1] = `${appHelpUrl.value}/${src}`;
             }
             return slf.renderToken(tokens, idx, options);
         };

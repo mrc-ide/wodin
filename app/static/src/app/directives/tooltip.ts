@@ -2,11 +2,11 @@ import { DirectiveBinding } from "vue";
 import { Tooltip } from "bootstrap";
 
 export interface ToolTipSettings {
-    content?: string,
-    trigger?: bootstrap.Tooltip.Options["trigger"],
-    variant?: "text" | "error"| "warning" | "success",
-    placement?: bootstrap.Tooltip.PopoverPlacement,
-    delayMs?: number
+    content?: string;
+    trigger?: bootstrap.Tooltip.Options["trigger"];
+    variant?: "text" | "error" | "warning" | "success";
+    placement?: bootstrap.Tooltip.PopoverPlacement;
+    delayMs?: number;
 }
 
 export default {
@@ -32,7 +32,7 @@ export default {
                 title: value?.content || "",
                 placement: value?.placement || "top",
                 trigger: value?.trigger || "hover",
-                customClass: (variant === "text") ? "" : `tooltip-${variant}`,
+                customClass: variant === "text" ? "" : `tooltip-${variant}`,
                 animation: false,
                 delay: { show: value?.delayMs || 0, hide: 0 }
             });
@@ -45,7 +45,7 @@ export default {
 
         if (typeof value !== "string" && tooltip) {
             const variant = value?.variant || "text";
-            const oldCustomClass = (variant === "text") ? "" : `tooltip-${variant}`;
+            const oldCustomClass = variant === "text" ? "" : `tooltip-${variant}`;
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const isVariantSame = (tooltip as any)._config.customClass === oldCustomClass;
@@ -56,16 +56,14 @@ export default {
                     title: value?.content || "",
                     placement: value?.placement || "top",
                     trigger: value?.trigger || "hover",
-                    customClass: (variant === "text") ? "" : `tooltip-${variant}`,
+                    customClass: variant === "text" ? "" : `tooltip-${variant}`,
                     animation: false,
                     delay: { show: value?.delayMs || 0, hide: 0 }
                 });
             }
         }
 
-        const content = (typeof value === "string")
-            ? value
-            : value?.content || "";
+        const content = typeof value === "string" ? value : value?.content || "";
 
         if (tooltip) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -5,8 +5,10 @@ module.exports = {
     outputDir: "./dist",
     runtimeCompiler: true,
     configureWebpack: {
-        plugins: [new MonacoWebpackPlugin({
-            languages: ["r"]
-        })]
+        plugins: [
+            new MonacoWebpackPlugin({
+                languages: ["r"]
+            })
+        ]
     }
 };

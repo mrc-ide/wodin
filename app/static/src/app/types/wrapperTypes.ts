@@ -1,11 +1,4 @@
-import {
-    Batch,
-    BatchPars,
-    FilteredDiscreteSolution,
-    OdinSolution,
-    OdinUserType,
-    WodinError
-} from "./responseTypes";
+import { Batch, BatchPars, FilteredDiscreteSolution, OdinSolution, OdinUserType, WodinError } from "./responseTypes";
 import { FitData, FitDataLink } from "../store/fitData/state";
 
 export interface OdinRunInputs {
@@ -14,7 +7,7 @@ export interface OdinRunInputs {
 }
 
 export interface OdinRunDiscreteInputs extends OdinRunInputs {
-    numberOfReplicates: number
+    numberOfReplicates: number;
 }
 
 export interface OdinRunResultOde {

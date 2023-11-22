@@ -1,5 +1,5 @@
 <template>
-  <markdown-panel :markdown="appHelp"></markdown-panel>
+    <markdown-panel :markdown="appHelp"></markdown-panel>
 </template>
 
 <script lang="ts">

@@ -1,21 +1,21 @@
 <template>
     <div v-if="appIsConfigured" class="code-tab">
         <generic-help title="Write odin code" :markdown="codeHelp"></generic-help>
-        <code-editor/>
+        <code-editor />
         <button class="btn btn-primary mt-2" id="compile-btn" :disabled="!codeIsValid" @click="compile">Compile</button>
         <div class="mt-2" id="code-status" :class="codeValidating ? 'code-validating-text' : ''">
-            <vue-feather class="inline-icon me-1"
-                         :class="iconClass"
-                         :type="validIcon"
-                         :size="20"
-                         :stroke-width="4"></vue-feather>
+            <vue-feather
+                class="inline-icon me-1"
+                :class="iconClass"
+                :type="validIcon"
+                :size="20"
+                :stroke-width="4"
+            ></vue-feather>
             {{ validMsg }}
         </div>
         <error-info :error="error"></error-info>
         <div class="mt-3">
-            <vertical-collapse v-if="showSelectedVariables"
-            title="Select variables"
-            collapse-id="select-variables">
+            <vertical-collapse v-if="showSelectedVariables" title="Select variables" collapse-id="select-variables">
                 <selected-variables></selected-variables>
             </vertical-collapse>
         </div>
@@ -78,10 +78,10 @@ export default defineComponent({
 });
 </script>
 <style>
-    .code-validating-icon {
-        color: gray;
-    }
-    .code-validating-text {
-        color: rgba(0, 0, 0, 0.7);
-    }
+.code-validating-icon {
+    color: gray;
+}
+.code-validating-text {
+    color: rgba(0, 0, 0, 0.7);
+}
 </style>

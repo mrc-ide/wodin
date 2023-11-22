@@ -32,8 +32,7 @@ describe("OptionsTab", () => {
     const fitAppState = {
         appType: AppType.Fit,
         openVisualisationTab: VisualisationTab.Run,
-        model: {
-        },
+        model: {},
         run: mockRunState({
             parameterValues: {}
         }),
@@ -142,8 +141,7 @@ describe("OptionsTab", () => {
             state: {
                 appType: AppType.Fit,
                 openVisualisationTab: VisualisationTab.Fit,
-                model: {
-                },
+                model: {},
                 modelFit: {
                     paramsToVary: []
                 },

@@ -1,17 +1,17 @@
 <template>
-  <wodin-plot
-     :fade-plot="fadePlot"
-     :placeholder-message="placeholderMessage"
-     :end-time="endTime"
-     :plot-data="allPlotData"
-     :redrawWatches="solutions ? [
-        ...solutions,
-        allFitData,
-        selectedVariables,
-        parameterSetBatches,
-        parameterSetDisplayNames] : []">
-    <slot></slot>
-  </wodin-plot>
+    <wodin-plot
+        :fade-plot="fadePlot"
+        :placeholder-message="placeholderMessage"
+        :end-time="endTime"
+        :plot-data="allPlotData"
+        :redrawWatches="
+            solutions
+                ? [...solutions, allFitData, selectedVariables, parameterSetBatches, parameterSetDisplayNames]
+                : []
+        "
+    >
+        <slot></slot>
+    </wodin-plot>
 </template>
 
 <script lang="ts">
@@ -21,12 +21,14 @@ import { PlotData } from "plotly.js-basic-dist-min";
 import { FitDataGetter } from "../../store/fitData/getters";
 import WodinPlot from "../WodinPlot.vue";
 import {
-    allFitDataToPlotly, filterSeriesSet, odinToPlotly, PlotlyOptions, updatePlotTraceName, WodinPlotData
+    allFitDataToPlotly,
+    filterSeriesSet,
+    odinToPlotly,
+    PlotlyOptions,
+    updatePlotTraceName,
+    WodinPlotData
 } from "../../plot";
-import {
-    Batch,
-    DiscreteSeriesValues, OdinSeriesSet, OdinSolution, VaryingPar
-} from "../../types/responseTypes";
+import { Batch, DiscreteSeriesValues, OdinSeriesSet, OdinSolution, VaryingPar } from "../../types/responseTypes";
 import { AppType } from "../../store/appState/state";
 import { runPlaceholderMessage } from "../../utils";
 import { RunGetter } from "../../store/run/getters";
@@ -45,7 +47,7 @@ export default defineComponent({
     setup() {
         const store = useStore();
 
-        const solutions = computed(() => (store.state.sensitivity.result?.batch?.solutions || []));
+        const solutions = computed(() => store.state.sensitivity.result?.batch?.solutions || []);
 
         const visibleParameterSetNames = computed(() => store.getters[`run/${RunGetter.visibleParameterSetNames}`]);
         const parameterSets = computed(() => store.state.run.parameterSets as ParameterSet[]);
@@ -87,7 +89,10 @@ export default defineComponent({
             if (solutions.value.length) {
                 const { pars } = store.state.sensitivity.result!.batch!;
                 const time = {
-                    mode: "grid" as const, tStart: start, tEnd: end, nPoints: points
+                    mode: "grid" as const,
+                    tStart: start,
+                    tEnd: end,
+                    nPoints: points
                 };
                 const varyingParamName = paramSettings.value.parameterToVary;
                 const varyingPar = pars.varying.filter((v: VaryingPar) => v.name === varyingParamName);
@@ -123,8 +128,9 @@ export default defineComponent({
                         lineWidth: 1,
                         showLegend: false
                     };
-                    addSolutionOutputToResult(sln, plotlyOptions,
-                        (plotTrace) => updatePlotTraceName(plotTrace, varyingParamName, parValues[slnIdx]));
+                    addSolutionOutputToResult(sln, plotlyOptions, (plotTrace) =>
+                        updatePlotTraceName(plotTrace, varyingParamName, parValues[slnIdx])
+                    );
                 });
 
                 if (centralSolution.value) {
@@ -132,11 +138,16 @@ export default defineComponent({
                     const filterStochasticCentralOutput = (centralOutput: OdinSeriesSet) => {
                         // Only show summary and deterministic values as central for stochastic
                         // eslint-disable-next-line no-param-reassign
-                        centralOutput.values = centralOutput.values
-                            .filter((v: DiscreteSeriesValues) => v.description !== "Individual");
+                        centralOutput.values = centralOutput.values.filter(
+                            (v: DiscreteSeriesValues) => v.description !== "Individual"
+                        );
                     };
-                    addSolutionOutputToResult(centralSolution.value, plotlyOptions, undefined,
-                        isStochastic.value ? filterStochasticCentralOutput : undefined);
+                    addSolutionOutputToResult(
+                        centralSolution.value,
+                        plotlyOptions,
+                        undefined,
+                        isStochastic.value ? filterStochasticCentralOutput : undefined
+                    );
                 }
 
                 // Plot sensitivity for parameter sets
@@ -152,26 +163,23 @@ export default defineComponent({
                     };
                     const currentParamSet = parameterSets.value.find((paramSet) => paramSet.name === name);
                     setSolutions.forEach((sln: OdinSolution, slnIdx: number) => {
-                        addSolutionOutputToResult(sln, plotlyOptions,
-                            (plotTrace) => updatePlotTraceName(
+                        addSolutionOutputToResult(sln, plotlyOptions, (plotTrace) =>
+                            updatePlotTraceName(
                                 plotTrace,
                                 varyingParamName,
                                 parValues[slnIdx],
                                 currentParamSet!.displayName
-                            ));
+                            )
+                        );
                     });
 
                     // Also plot the centrals
                     const setCentralSolution = parameterSetCentralResults.value[name]?.solution;
                     const centralOptions = { showLegend: false, includeLegendGroup: true, dash };
                     if (setCentralSolution) {
-                        addSolutionOutputToResult(setCentralSolution, centralOptions,
-                            (plotTrace) => updatePlotTraceName(
-                                plotTrace,
-                                null,
-                                null,
-                                currentParamSet!.displayName
-                            ));
+                        addSolutionOutputToResult(setCentralSolution, centralOptions, (plotTrace) =>
+                            updatePlotTraceName(plotTrace, null, null, currentParamSet!.displayName)
+                        );
                     }
                 });
 

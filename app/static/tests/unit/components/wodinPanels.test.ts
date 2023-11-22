@@ -6,7 +6,9 @@ const docAddListenerSpy = jest.spyOn(document, "addEventListener");
 const docRemoveListenerSpy = jest.spyOn(document, "removeEventListener");
 
 enum PanelsMode {
-    Left, Right, Both
+    Left,
+    Right,
+    Both
 }
 
 const modeClassMap: Record<PanelsMode, string> = {
@@ -16,11 +18,14 @@ const modeClassMap: Record<PanelsMode, string> = {
 };
 
 enum HidePanelContent {
-    Left, Right, None
+    Left,
+    Right,
+    None
 }
 
 enum DragStart {
-    Icon, Edge
+    Icon,
+    Edge
 }
 
 const mockObserve = jest.fn();
@@ -46,14 +51,18 @@ describe("WodinPanels", () => {
     const getWrapper = () => {
         return shallowMount(WodinPanels, {
             slots: {
-                left: "<div id=\"l-slot-content\">LEFT</div>",
-                right: "<div id=\"r-slot-content\">RIGHT</div>"
+                left: '<div id="l-slot-content">LEFT</div>',
+                right: '<div id="r-slot-content">RIGHT</div>'
             }
         });
     };
 
-    const testMode = (wrapper: VueWrapper, containerClass: string, collapsibleLeft: boolean,
-        collapsibleRight: boolean) => {
+    const testMode = (
+        wrapper: VueWrapper,
+        containerClass: string,
+        collapsibleLeft: boolean,
+        collapsibleRight: boolean
+    ) => {
         const containerDiv = wrapper.find(`div.${containerClass}`);
         expect(containerDiv.exists()).toBe(true);
         expect(containerDiv.find(".wodin-right .wodin-content").isVisible()).toBe(collapsibleRight);
@@ -71,34 +80,21 @@ describe("WodinPanels", () => {
         dragStart: DragStart,
         position: number | null = null
     ) => {
-        const {
-            mode,
-            modeClass,
-            optionsWidth,
-            chartsWidth,
-            hidePanelMode
-        } = (wrapper.vm as any);
+        const { mode, modeClass, optionsWidth, chartsWidth, hidePanelMode } = wrapper.vm as any;
         expect(mode).toBe(expectedMode);
         expect(modeClass).toBe(modeClassMap[expectedMode]);
         expect(hidePanelMode).toBe(expectedHideContent);
         if (position) {
-            expect(optionsWidth)
-                .toStrictEqual({ width: `calc(${position}px + ${dragStart === DragStart.Icon ? 1.4 : -1}rem)` });
-            expect(chartsWidth)
-                .toStrictEqual({ width: `calc(100% - ${optionsWidth.width})` });
+            expect(optionsWidth).toStrictEqual({
+                width: `calc(${position}px + ${dragStart === DragStart.Icon ? 1.4 : -1}rem)`
+            });
+            expect(chartsWidth).toStrictEqual({ width: `calc(100% - ${optionsWidth.width})` });
         }
         expect(mockPreventDefault).toBeCalledTimes(expectedPreventDefault);
     };
 
-    const expectDragMoveEndResult = (
-        wrapper: VueWrapper,
-        expectedMode: PanelsMode
-    ) => {
-        const {
-            mode,
-            modeClass,
-            dragStart
-        } = (wrapper.vm as any);
+    const expectDragMoveEndResult = (wrapper: VueWrapper, expectedMode: PanelsMode) => {
+        const { mode, modeClass, dragStart } = wrapper.vm as any;
         expect(mode).toBe(expectedMode);
         expect(modeClass).toBe(modeClassMap[expectedMode]);
         expect(dragStart).toBe(null);
@@ -172,8 +168,8 @@ describe("WodinPanels", () => {
 
     it("has expected slot content", () => {
         const wrapper = getWrapper();
-        expect(wrapper.find("#wodin-content-left").html()).toContain("<div id=\"l-slot-content\">LEFT</div>");
-        expect(wrapper.find("#wodin-content-right").html()).toContain("<div id=\"r-slot-content\">RIGHT</div>");
+        expect(wrapper.find("#wodin-content-left").html()).toContain('<div id="l-slot-content">LEFT</div>');
+        expect(wrapper.find("#wodin-content-right").html()).toContain('<div id="r-slot-content">RIGHT</div>');
     });
 
     it("defaults to Both mode", () => {
@@ -186,7 +182,7 @@ describe("WodinPanels", () => {
     it("handleDragStart adds correct listeners", () => {
         const wrapper = getWrapper();
         (wrapper.vm as any).handleDragStart({ preventDefault: mockPreventDefault });
-        const { handleDragMove, handleDragEnd } = (wrapper.vm as any);
+        const { handleDragMove, handleDragEnd } = wrapper.vm as any;
         expect(docAddListenerSpy).toHaveBeenCalledTimes(4);
         expect(docAddListenerSpy.mock.calls[0][0]).toBe("mousemove");
         expect(docAddListenerSpy.mock.calls[0][1]).toBe(handleDragMove);
@@ -205,7 +201,7 @@ describe("WodinPanels", () => {
             clientX: windowWidth / 2,
             preventDefault: mockPreventDefault
         });
-        const { handleDragMove, handleDragEnd } = (wrapper.vm as any);
+        const { handleDragMove, handleDragEnd } = wrapper.vm as any;
         expect(docRemoveListenerSpy).toHaveBeenCalledTimes(4);
         expect(docRemoveListenerSpy.mock.calls[0][0]).toBe("mousemove");
         expect(docRemoveListenerSpy.mock.calls[0][1]).toBe(handleDragMove);

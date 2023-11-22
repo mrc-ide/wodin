@@ -1,20 +1,23 @@
 <template>
-  <div class="multi-sensitivity-tab">
-    <div>
-      <loading-button class="btn btn-primary"
-                      id="run-multi-sens-btn"
-                      :loading="running"
-                      :is-disabled="!canRunMultiSensitivity"
-                      @click="runMultiSensitivity">Run Multi-sensitivity</loading-button>
+    <div class="multi-sensitivity-tab">
+        <div>
+            <loading-button
+                class="btn btn-primary"
+                id="run-multi-sens-btn"
+                :loading="running"
+                :is-disabled="!canRunMultiSensitivity"
+                @click="runMultiSensitivity"
+                >Run Multi-sensitivity</loading-button
+            >
+        </div>
+        <action-required-message :message="updateMsg"></action-required-message>
+        <div class="multi-sensitivity-status p-4" :class="updateMsg || error ? 'text-muted' : ''">
+            {{ multiSensitivityRunStatusMsg }}
+        </div>
+        <error-info :error="error"></error-info>
+        <sensitivity-summary-download :multi-sensitivity="true" :download-type="'Multi-sensitivity Summary'">
+        </sensitivity-summary-download>
     </div>
-    <action-required-message :message="updateMsg"></action-required-message>
-    <div class="multi-sensitivity-status p-4" :class="updateMsg || error ? 'text-muted' : ''">
-      {{ multiSensitivityRunStatusMsg }}
-    </div>
-    <error-info :error="error"></error-info>
-    <sensitivity-summary-download :multi-sensitivity="true" :download-type="'Multi-sensitivity Summary'">
-    </sensitivity-summary-download>
-  </div>
 </template>
 <script lang="ts">
 import { computed, defineComponent } from "vue";
@@ -46,8 +49,10 @@ export default defineComponent({
         const running = computed(() => store.state.multiSensitivity.running);
 
         const canRunMultiSensitivity = computed(() => {
-            return sensitivityPrerequisitesReady.value
-            && !!store.getters[`${namespace}/${BaseSensitivityGetter.batchPars}`];
+            return (
+                sensitivityPrerequisitesReady.value &&
+                !!store.getters[`${namespace}/${BaseSensitivityGetter.batchPars}`]
+            );
         });
 
         const runMultiSensitivity = () => {
@@ -78,7 +83,7 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-  .multi-sensitivity-status {
+.multi-sensitivity-status {
     background-color: #eee;
-  }
+}
 </style>

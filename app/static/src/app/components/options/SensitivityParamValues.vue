@@ -1,8 +1,8 @@
 <template>
-  <div v-if="batchPars" class="alert alert-success mt-2" role="alert">
-    <vue-feather type="check" style="vertical-align: bottom;"></vue-feather>
-    {{ valuesText }}
-  </div>
+    <div v-if="batchPars" class="alert alert-success mt-2" role="alert">
+        <vue-feather type="check" style="vertical-align: bottom"></vue-feather>
+        {{ valuesText }}
+    </div>
 </template>
 
 <script lang="ts">

@@ -1,8 +1,6 @@
 import resetAllMocks = jest.resetAllMocks;
 import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
-import {
-    mockFitDataState, mockModelFitState, mockModelState, mockRunState
-} from "../../../mocks";
+import { mockFitDataState, mockModelFitState, mockModelState, mockRunState } from "../../../mocks";
 import { actions, ModelFitAction } from "../../../../src/app/store/modelFit/actions";
 import { RunMutation } from "../../../../src/app/store/run/mutations";
 import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
@@ -21,14 +19,14 @@ describe("ModelFit actions", () => {
     const parameterValues = { p1: 1.1, p2: 2.2 };
     const advancedSettings = {
         [AdvancedOptions.tol]: {
-            val: [null, null] as [number|null, number|null],
+            val: [null, null] as [number | null, number | null],
             default: [1, -6] as [number, number],
             type: AdvancedComponentType.stdf as const
         },
         [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num as const },
         [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num as const },
         [AdvancedOptions.stepSizeMin]: {
-            val: [null, null] as [number|null, number|null],
+            val: [null, null] as [number | null, number | null],
             default: [1, -8] as [number, number],
             type: AdvancedComponentType.stdf as const
         },
@@ -84,7 +82,12 @@ describe("ModelFit actions", () => {
         };
 
         (actions[ModelFitAction.FitModel] as any)({
-            commit, dispatch, state, rootState, rootGetters, getters
+            commit,
+            dispatch,
+            state,
+            rootState,
+            rootGetters,
+            getters
         });
 
         expect(commit).toHaveBeenCalledTimes(3);
@@ -128,7 +131,11 @@ describe("ModelFit actions", () => {
         const dispatch = jest.fn();
 
         (actions[ModelFitAction.FitModel] as any)({
-            commit, dispatch, state, rootState, getters
+            commit,
+            dispatch,
+            state,
+            rootState,
+            getters
         });
         expect(commit).not.toHaveBeenCalled();
         expect(dispatch).not.toHaveBeenCalled();
@@ -137,7 +144,9 @@ describe("ModelFit actions", () => {
 
     it("FitModel commits error thrown during wodinFit", () => {
         const runner = {
-            wodinFit: jest.fn().mockImplementation(() => { throw new Error("TEST ERROR"); }),
+            wodinFit: jest.fn().mockImplementation(() => {
+                throw new Error("TEST ERROR");
+            }),
             wodinFitValue: mockWodinFitValue
         } as any;
         const errorModelState = mockModelState({
@@ -156,7 +165,12 @@ describe("ModelFit actions", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
         (actions[ModelFitAction.FitModel] as any)({
-            commit, dispatch, state, rootState: errorRootState, rootGetters, getters
+            commit,
+            dispatch,
+            state,
+            rootState: errorRootState,
+            rootGetters,
+            getters
         });
 
         expect(commit).toHaveBeenCalledTimes(3);
@@ -188,9 +202,15 @@ describe("ModelFit actions", () => {
 
         const commit = jest.fn();
         const dispatch = jest.fn();
-        (actions[ModelFitAction.FitModelStep] as any)({
-            commit, dispatch, rootState, state: testState
-        }, simplex);
+        (actions[ModelFitAction.FitModelStep] as any)(
+            {
+                commit,
+                dispatch,
+                rootState,
+                state: testState
+            },
+            simplex
+        );
 
         setTimeout(() => {
             expect(simplex.step).toHaveBeenCalledTimes(1);
@@ -233,9 +253,15 @@ describe("ModelFit actions", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
         const testState = mockModelFitState({ fitting: true });
-        (actions[ModelFitAction.FitModelStep] as any)({
-            commit, dispatch, rootState, state: testState
-        }, simplex);
+        (actions[ModelFitAction.FitModelStep] as any)(
+            {
+                commit,
+                dispatch,
+                rootState,
+                state: testState
+            },
+            simplex
+        );
 
         setTimeout(() => {
             expect(simplex.step).toHaveBeenCalledTimes(1);
@@ -259,9 +285,15 @@ describe("ModelFit actions", () => {
         const testRootState = {
             config: { multiSensitivity: true }
         };
-        (actions[ModelFitAction.FitModelStep] as any)({
-            commit, dispatch, state: testState, rootState: testRootState
-        }, simplex);
+        (actions[ModelFitAction.FitModelStep] as any)(
+            {
+                commit,
+                dispatch,
+                state: testState,
+                rootState: testRootState
+            },
+            simplex
+        );
 
         setTimeout(() => {
             expect(simplex.step).toHaveBeenCalledTimes(1);
@@ -312,7 +344,10 @@ describe("ModelFit actions", () => {
         const testState = mockModelFitState({ fitting: true });
         const rootGetters = null;
         const context = {
-            commit, state: testState, rootState, rootGetters: {}
+            commit,
+            state: testState,
+            rootState,
+            rootGetters: {}
         };
         (actions[ModelFitAction.UpdateSumOfSquares] as any)(context);
         expect(commit).not.toHaveBeenCalled();
@@ -337,7 +372,10 @@ describe("ModelFit actions", () => {
         const rootStateWithSolution = { ...rootState, run: runStateWithSolution };
 
         const context = {
-            commit, state: testState, rootState: rootStateWithSolution, rootGetters
+            commit,
+            state: testState,
+            rootState: rootStateWithSolution,
+            rootGetters
         };
         (actions[ModelFitAction.UpdateSumOfSquares] as any)(context);
         expect(commit).toHaveBeenCalledTimes(1);

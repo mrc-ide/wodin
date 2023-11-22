@@ -20,8 +20,9 @@ test.describe("Sensitivity tests", () => {
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 3)")).toBe("Scale Type: Arithmetic");
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 4)")).toBe("Variation (%): 10");
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 5)")).toBe("Number of runs: 10");
-        await expect(await page.innerText("#sensitivity-options .alert-success"))
-            .toBe(" 3.600, 3.689, 3.778, ..., 4.400");
+        await expect(await page.innerText("#sensitivity-options .alert-success")).toBe(
+            " 3.600, 3.689, 3.778, ..., 4.400"
+        );
 
         // Edit settings
         await expect(await page.isVisible(".modal")).toBe(false);
@@ -29,8 +30,9 @@ test.describe("Sensitivity tests", () => {
         await expect(await page.locator("#edit-param .modal")).toBeVisible();
         await expect(await page.innerText("#edit-param .modal-title")).toBe("Vary Parameter");
         await expect(await page.locator("#invalid-msg").count()).toBe(0);
-        await expect(await page.innerText("#edit-param .modal .alert-success"))
-            .toBe(" 3.600, 3.689, 3.778, ..., 4.400");
+        await expect(await page.innerText("#edit-param .modal .alert-success")).toBe(
+            " 3.600, 3.689, 3.778, ..., 4.400"
+        );
 
         const paramSelect = await page.locator("#edit-param-to-vary select");
         await paramSelect.selectOption("sigma");
@@ -38,8 +40,9 @@ test.describe("Sensitivity tests", () => {
         await scaleSelect.selectOption("Logarithmic");
         const varSelect = await page.locator("#edit-variation-type select");
         await varSelect.selectOption("Range");
-        await expect(await page.innerText("#invalid-msg"))
-            .toBe("Invalid settings: Expected upper bound to be no less than 2");
+        await expect(await page.innerText("#invalid-msg")).toBe(
+            "Invalid settings: Expected upper bound to be no less than 2"
+        );
         await expect(await page.innerText(":nth-match(.modal #param-central div, 1)")).toBe("Central value");
         await expect(await page.innerText(":nth-match(.modal #param-central div, 2)")).toBe("2");
 
@@ -59,8 +62,9 @@ test.describe("Sensitivity tests", () => {
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 4)")).toBe("From: 1");
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 5)")).toBe("To: 5");
         await expect(await page.innerText(":nth-match(#sensitivity-options li, 6)")).toBe("Number of runs: 12");
-        await expect(await page.innerText("#sensitivity-options .alert-success"))
-            .toBe(" 1.000, 1.158, 1.340, ..., 5.000");
+        await expect(await page.innerText("#sensitivity-options .alert-success")).toBe(
+            " 1.000, 1.158, 1.340, ..., 5.000"
+        );
     });
 
     test("can edit sensitivity plot settings", async ({ page }) => {
@@ -115,8 +119,9 @@ test.describe("Sensitivity tests", () => {
 
         // change parameter - should see update required message
         await page.fill("#model-params .parameter-input", "5");
-        await expect(await page.innerText(".action-required-msg"))
-            .toBe("Plot is out of date: parameters have been changed. Run Sensitivity to update.");
+        await expect(await page.innerText(".action-required-msg")).toBe(
+            "Plot is out of date: parameters have been changed. Run Sensitivity to update."
+        );
 
         // re-run - message should be removed
         await page.click("#run-sens-btn");
@@ -235,8 +240,9 @@ test.describe("Sensitivity tests", () => {
         await expect(await page.locator("#edit-param .modal")).toBeVisible();
         const varSelect = await page.locator("#edit-variation-type select");
         await varSelect.selectOption("Custom");
-        await expect(await page.innerText("#invalid-msg"))
-            .toBe("Invalid settings: Must include at least 2 traces in the batch");
+        await expect(await page.innerText("#invalid-msg")).toBe(
+            "Invalid settings: Must include at least 2 traces in the batch"
+        );
 
         await expect(await page.innerText(":nth-match(.modal #param-central div, 1)")).toBe("Central value");
         await expect(await page.innerText(":nth-match(.modal #param-central div, 2)")).toBe("4");

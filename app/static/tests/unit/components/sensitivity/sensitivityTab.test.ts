@@ -23,8 +23,13 @@ describe("SensitivityTab", () => {
     const mockSetLoading = jest.fn();
     const mockSetPlotTime = jest.fn();
 
-    const getWrapper = (appType = AppType.Basic, modelState: Partial<ModelState> = {},
-        sensitivityState: Partial<SensitivityState> = {}, batchPars: any = {}, hasRunner = true) => {
+    const getWrapper = (
+        appType = AppType.Basic,
+        modelState: Partial<ModelState> = {},
+        sensitivityState: Partial<SensitivityState> = {},
+        batchPars: any = {},
+        hasRunner = true
+    ) => {
         const store = new Vuex.Store<AppState>({
             state: {
                 appType
@@ -203,8 +208,9 @@ describe("SensitivityTab", () => {
             }
         } as any;
         const wrapper = getWrapper(AppType.Basic, { compileRequired: true }, sensitivityState);
-        expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Model code has been updated. Compile code and Run Sensitivity to update.");
+        expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
+            "Model code has been updated. Compile code and Run Sensitivity to update."
+        );
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);
     });
 
@@ -218,8 +224,9 @@ describe("SensitivityTab", () => {
             }
         } as any;
         const wrapper = getWrapper(AppType.Basic, { selectedVariables: [] }, sensitivityState);
-        expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Please select at least one variable.");
+        expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
+            "Please select at least one variable."
+        );
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);
     });
 
@@ -234,8 +241,9 @@ describe("SensitivityTab", () => {
             }
         } as any;
         const wrapper = getWrapper(AppType.Basic, {}, sensitivityState);
-        expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Plot is out of date: model code has been recompiled. Run Sensitivity to update.");
+        expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
+            "Plot is out of date: model code has been recompiled. Run Sensitivity to update."
+        );
         expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);
     });
 
@@ -252,8 +260,9 @@ describe("SensitivityTab", () => {
             }
         } as any;
         const wrapper = getWrapper(AppType.Basic, {}, sensitivityState);
-        expect(wrapper.findComponent(ActionRequiredMessage).props("message"))
-            .toBe("Plot is out of date: parameters have been changed. Run Sensitivity to update.");
+        expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
+            "Plot is out of date: parameters have been changed. Run Sensitivity to update."
+        );
         expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(true);
     });
 

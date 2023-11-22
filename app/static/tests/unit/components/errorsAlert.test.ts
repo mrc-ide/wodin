@@ -37,8 +37,14 @@ describe("ErrorsAlert", () => {
     it("renders as expected with one error", () => {
         const wrapper = getWrapper([{ error: "TEST_CODE", detail: "Test Error Message" }]);
         const alert = wrapper.find(".alert");
-        expect(alert.classes())
-            .toStrictEqual(["alert", "alert-danger", "text-danger", "alert-dismissible", "fade", "show"]);
+        expect(alert.classes()).toStrictEqual([
+            "alert",
+            "alert-danger",
+            "text-danger",
+            "alert-dismissible",
+            "fade",
+            "show"
+        ]);
         expect(alert.attributes("role")).toBe("alert");
         expect(alert.find("strong").text()).toBe("An error occurred:");
         const listItems = alert.findAll("ul li");

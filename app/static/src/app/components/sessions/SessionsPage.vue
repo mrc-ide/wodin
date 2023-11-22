@@ -1,148 +1,178 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <errors-alert></errors-alert>
-      <h2>Sessions</h2>
-    </div>
-    <div class="row mb-3" id="no-current-session" v-if="!currentSession">
-        <span>
-          <span id="start-session" class="brand-link clickable" @click="newSession">Start a new session</span>
-          <span v-if="latestSessionId">,
-            <span id="reload-session" class="brand-link clickable" @click="reloadSession">
-              reload the most recent session
+    <div class="container">
+        <div class="row">
+            <errors-alert></errors-alert>
+            <h2>Sessions</h2>
+        </div>
+        <div class="row mb-3" id="no-current-session" v-if="!currentSession">
+            <span>
+                <span id="start-session" class="brand-link clickable" @click="newSession">Start a new session</span>
+                <span v-if="latestSessionId"
+                    >,
+                    <span id="reload-session" class="brand-link clickable" @click="reloadSession">
+                        reload the most recent session
+                    </span>
+                </span>
+                <span v-if="previousSessions && previousSessions.length" id="load-previous-span">
+                    or load a previous session.
+                </span>
             </span>
-          </span>
-          <span v-if="previousSessions && previousSessions.length" id="load-previous-span">
-            or load a previous session.
-          </span>
-        </span>
-    </div>
-    <div class="row mb-3" id="current-session" v-else>
-      <p>
-        <router-link to="/" class="brand-link">
-          Return to the current session
-        </router-link>
-        or
-        <a class="brand-link" :href="sessionUrl(currentSessionId)">
-          make a copy of the current session.
-        </a>
-      </p>
-      <div>
-        <span class="session-copy-link clickable brand"
-              @click="copyLink(currentSession)"
-              @mouseleave="clearLastCopied">
-          <vue-feather class="inline-icon" type="copy"></vue-feather>
-          Copy link for current session
-        </span>
-        <span class="session-copy-code clickable brand ms-2"
-              @click="copyCode(currentSession)"
-              @mouseleave="clearLastCopied">
-          <vue-feather class="inline-icon" type="copy"></vue-feather>
-          Copy code for current session
-        </span>
-        <br/>
-        <div class="session-copy-confirm small text-muted text-nowrap float-start" style="height:0.8rem;">
-          {{getCopyMsg(currentSession)}}
         </div>
-      </div>
-    </div>
-    <div class="mb-4">
-      <label for="session-code-input" class="">Load session from code:</label>
-      <input id="session-code-input"
-             v-model="sessionCode"
-             type="text"
-             placeholder="Session code"
-             class="form-control d-inline mx-2"
-             style="width: 20rem;"/>
-      <button id="load-session-from-code"
-              class="btn btn-primary"
-              @click="loadSessionFromCode"
-              :disabled="!sessionCode">Load</button>
-    </div>
-    <h3>Previous sessions</h3>
-    <p>
-      <input id="show-unlabelled-check" type="checkbox" class="form-check-input" v-model="showUnlabelledSessions" />
-      <label for="show-unlabelled-check" class="form-check-label ms-2">Show unlabelled sessions</label>
-      <input id="show-duplicates-check" type="checkbox" class="form-check-input ms-4" v-model="showDuplicateSessions" />
-      <label for="show-duplicates-check" class="form-check-label ms-2">Show duplicate sessions</label>
-    </p>
-    <template v-if="previousSessions && previousSessions.length">
-        <div class="row fw-bold py-2" id="previous-sessions-headers">
-          <div class="col-2 session-col-header">Saved</div>
-          <div class="col-2 session-col-header">Label</div>
-          <div class="col-2 text-center session-col-header">Edit Label</div>
-          <div class="col-1 text-center session-col-header">Load</div>
-          <div class="col-1 text-center session-col-header">Delete</div>
-          <div class="col-4 text-center session-col-header">Shareable Link</div>
-        </div>
-        <div class="row py-2 previous-session-row" v-for="session in previousSessions" :key="session.id">
-          <div class="col-2 session-col-value session-time">
-            {{formatDateTime(session.time)}}
-          </div>
-          <div class="col-2 session-col-value session-label" :class="session.label ? '' : 'text-muted'">
-            {{session.label || "--no label--"}}
-          </div>
-          <div class="col-2 text-center session-col-value session-edit-label">
-            <vue-feather class="inline-icon brand clickable"
-                         type="edit-2"
-                         @click="editSessionLabel(session.id, session.label)"></vue-feather>
-          </div>
-          <div class="col-1 text-center session-col-value session-load">
-            <a class="ms-2" :href="sessionUrl(session.id)" title="Load as new session">
-              <vue-feather class="inline-icon brand" type="upload"></vue-feather>
-            </a>
-          </div>
-          <div class="col-1 text-center session-col-value session-delete">
-            <vue-feather class="inline-icon brand clickable"
-                         type="trash-2"
-                         @click="confirmDeleteSession(session.id)"></vue-feather>
-          </div>
-          <div class="col-4 session-col-value session-share brand">
-              <div class="mx-auto" style="width: 16rem">
-                <span class="session-copy-link clickable" @click="copyLink(session)" @mouseleave="clearLastCopied">
-                  <vue-feather class="inline-icon" type="copy"></vue-feather>
-                  Copy link
+        <div class="row mb-3" id="current-session" v-else>
+            <p>
+                <router-link to="/" class="brand-link"> Return to the current session </router-link>
+                or
+                <a class="brand-link" :href="sessionUrl(currentSessionId)"> make a copy of the current session. </a>
+            </p>
+            <div>
+                <span
+                    class="session-copy-link clickable brand"
+                    @click="copyLink(currentSession)"
+                    @mouseleave="clearLastCopied"
+                >
+                    <vue-feather class="inline-icon" type="copy"></vue-feather>
+                    Copy link for current session
                 </span>
-                <span class="session-copy-code clickable ms-2" @click="copyCode(session)" @mouseleave="clearLastCopied">
-                  <vue-feather class="inline-icon" type="copy"></vue-feather>
-                  Copy code
+                <span
+                    class="session-copy-code clickable brand ms-2"
+                    @click="copyCode(currentSession)"
+                    @mouseleave="clearLastCopied"
+                >
+                    <vue-feather class="inline-icon" type="copy"></vue-feather>
+                    Copy code for current session
                 </span>
-                <br/>
-                <div class="session-copy-confirm small text-muted text-nowrap float-start" style="height:0.8rem;">
-                  {{getCopyMsg(session)}}
+                <br />
+                <div class="session-copy-confirm small text-muted text-nowrap float-start" style="height: 0.8rem">
+                    {{ getCopyMsg(currentSession) }}
                 </div>
-              </div>
-          </div>
+            </div>
         </div>
-    </template>
-    <p v-else id="previous-sessions-placeholder">
-      Saved sessions will appear here.
-    </p>
-    <div id="loading-sessions" v-if="!previousSessions">
-      {{ messages.loading }}
+        <div class="mb-4">
+            <label for="session-code-input" class="">Load session from code:</label>
+            <input
+                id="session-code-input"
+                v-model="sessionCode"
+                type="text"
+                placeholder="Session code"
+                class="form-control d-inline mx-2"
+                style="width: 20rem"
+            />
+            <button
+                id="load-session-from-code"
+                class="btn btn-primary"
+                @click="loadSessionFromCode"
+                :disabled="!sessionCode"
+            >
+                Load
+            </button>
+        </div>
+        <h3>Previous sessions</h3>
+        <p>
+            <input
+                id="show-unlabelled-check"
+                type="checkbox"
+                class="form-check-input"
+                v-model="showUnlabelledSessions"
+            />
+            <label for="show-unlabelled-check" class="form-check-label ms-2">Show unlabelled sessions</label>
+            <input
+                id="show-duplicates-check"
+                type="checkbox"
+                class="form-check-input ms-4"
+                v-model="showDuplicateSessions"
+            />
+            <label for="show-duplicates-check" class="form-check-label ms-2">Show duplicate sessions</label>
+        </p>
+        <template v-if="previousSessions && previousSessions.length">
+            <div class="row fw-bold py-2" id="previous-sessions-headers">
+                <div class="col-2 session-col-header">Saved</div>
+                <div class="col-2 session-col-header">Label</div>
+                <div class="col-2 text-center session-col-header">Edit Label</div>
+                <div class="col-1 text-center session-col-header">Load</div>
+                <div class="col-1 text-center session-col-header">Delete</div>
+                <div class="col-4 text-center session-col-header">Shareable Link</div>
+            </div>
+            <div class="row py-2 previous-session-row" v-for="session in previousSessions" :key="session.id">
+                <div class="col-2 session-col-value session-time">
+                    {{ formatDateTime(session.time) }}
+                </div>
+                <div class="col-2 session-col-value session-label" :class="session.label ? '' : 'text-muted'">
+                    {{ session.label || "--no label--" }}
+                </div>
+                <div class="col-2 text-center session-col-value session-edit-label">
+                    <vue-feather
+                        class="inline-icon brand clickable"
+                        type="edit-2"
+                        @click="editSessionLabel(session.id, session.label)"
+                    ></vue-feather>
+                </div>
+                <div class="col-1 text-center session-col-value session-load">
+                    <a class="ms-2" :href="sessionUrl(session.id)" title="Load as new session">
+                        <vue-feather class="inline-icon brand" type="upload"></vue-feather>
+                    </a>
+                </div>
+                <div class="col-1 text-center session-col-value session-delete">
+                    <vue-feather
+                        class="inline-icon brand clickable"
+                        type="trash-2"
+                        @click="confirmDeleteSession(session.id)"
+                    ></vue-feather>
+                </div>
+                <div class="col-4 session-col-value session-share brand">
+                    <div class="mx-auto" style="width: 16rem">
+                        <span
+                            class="session-copy-link clickable"
+                            @click="copyLink(session)"
+                            @mouseleave="clearLastCopied"
+                        >
+                            <vue-feather class="inline-icon" type="copy"></vue-feather>
+                            Copy link
+                        </span>
+                        <span
+                            class="session-copy-code clickable ms-2"
+                            @click="copyCode(session)"
+                            @mouseleave="clearLastCopied"
+                        >
+                            <vue-feather class="inline-icon" type="copy"></vue-feather>
+                            Copy code
+                        </span>
+                        <br />
+                        <div
+                            class="session-copy-confirm small text-muted text-nowrap float-start"
+                            style="height: 0.8rem"
+                        >
+                            {{ getCopyMsg(session) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <p v-else id="previous-sessions-placeholder">Saved sessions will appear here.</p>
+        <div id="loading-sessions" v-if="!previousSessions">
+            {{ messages.loading }}
+        </div>
+        <edit-session-label
+            id="page-edit-session-label"
+            :open="editSessionLabelOpen"
+            :session-id="selectedSessionId"
+            :session-label="selectedSessionLabel"
+            @close="toggleEditSessionLabelOpen(false)"
+            @confirm="deleteSession"
+        ></edit-session-label>
+        <confirm-modal
+            id="confirm-delete-session"
+            :title="'Delete session'"
+            :text="'Do you want to delete this session?'"
+            :open="confirmDeleteSessionOpen"
+            @close="toggleConfirmDeleteSessionOpen(false)"
+            @confirm="deleteSession"
+        ></confirm-modal>
     </div>
-    <edit-session-label id="page-edit-session-label"
-                        :open="editSessionLabelOpen"
-                        :session-id="selectedSessionId"
-                        :session-label="selectedSessionLabel"
-                        @close="toggleEditSessionLabelOpen(false)"
-                        @confirm="deleteSession"
-    ></edit-session-label>
-    <confirm-modal id="confirm-delete-session"
-                   :title="'Delete session'"
-                   :text="'Do you want to delete this session?'"
-                   :open="confirmDeleteSessionOpen"
-                   @close="toggleConfirmDeleteSessionOpen(false)"
-                   @confirm="deleteSession"
-                  ></confirm-modal>
-  </div>
 </template>
 
 <script lang="ts">
 import { utc } from "moment";
-import {
-    onMounted, defineComponent, computed, ref, nextTick
-} from "vue";
+import { onMounted, defineComponent, computed, ref, nextTick } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import { RouterLink, useRouter } from "vue-router";
@@ -353,7 +383,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-  .container {
+.container {
     max-width: 1140px;
-  }
+}
 </style>

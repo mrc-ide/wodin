@@ -5,7 +5,12 @@ import { FitState } from "../src/app/store/fit/state";
 import { StochasticState } from "../src/app/store/stochastic/state";
 import {
     AdvancedOptions,
-    BatchPars, OdinUserType, ResponseFailure, ResponseSuccess, VaryingPar, WodinError
+    BatchPars,
+    OdinUserType,
+    ResponseFailure,
+    ResponseSuccess,
+    VaryingPar,
+    WodinError
 } from "../src/app/types/responseTypes";
 import { ModelState } from "../src/app/store/model/state";
 import { AdvancedComponentType, RunState } from "../src/app/store/run/state";
@@ -137,7 +142,7 @@ export const mockLanguageState = (state: Partial<LanguageState> = {}): LanguageS
     };
 };
 
-export const mockFitDataState = (state:Partial<FitDataState> = {}): FitDataState => {
+export const mockFitDataState = (state: Partial<FitDataState> = {}): FitDataState => {
     return {
         data: null,
         columns: null,
@@ -324,9 +329,14 @@ export const mockStochasticState = (state: Partial<StochasticState> = {}): Stoch
     };
 };
 
-export const mockBatchParsRange = (base: OdinUserType, name: string, count: number,
+export const mockBatchParsRange = (
+    base: OdinUserType,
+    name: string,
+    count: number,
     logarithmic: boolean,
-    min: number, max: number): VaryingPar => {
+    min: number,
+    max: number
+): VaryingPar => {
     if (count < 2) {
         throw new Error("Mock error: count must be 2 or more");
     }
@@ -348,12 +358,16 @@ export const mockBatchParsRange = (base: OdinUserType, name: string, count: numb
     return { name, values };
 };
 
-export const mockBatchParsDisplace = (base: OdinUserType, name: string, count: number,
+export const mockBatchParsDisplace = (
+    base: OdinUserType,
+    name: string,
+    count: number,
     logarithmic: boolean,
-    displace: number): VaryingPar => {
+    displace: number
+): VaryingPar => {
     const paramValue = base[name]!;
-    const max = paramValue * (1 + (displace / 100));
-    const min = paramValue * (1 - (displace / 100));
+    const max = paramValue * (1 + displace / 100);
+    const min = paramValue * (1 - displace / 100);
     return mockBatchParsRange(base, name, count, logarithmic, min, max);
 };
 

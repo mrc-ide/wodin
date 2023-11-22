@@ -3,7 +3,7 @@ import { FitDataLink, FitDataState, AllFitData } from "./state";
 import { FitState } from "../fit/state";
 
 export enum FitDataGetter {
-    nonTimeColumns ="nonTimeColumns",
+    nonTimeColumns = "nonTimeColumns",
     dataStart = "dataStart",
     dataEnd = "dataEnd",
     link = "link",
@@ -11,7 +11,7 @@ export enum FitDataGetter {
 }
 
 export interface FitDataGetters {
-    [FitDataGetter.nonTimeColumns]: Getter<FitDataState, FitState>
+    [FitDataGetter.nonTimeColumns]: Getter<FitDataState, FitState>;
 }
 
 export const getters: FitDataGetters & GetterTree<FitDataState, FitState> = {
@@ -39,8 +39,7 @@ export const getters: FitDataGetters & GetterTree<FitDataState, FitState> = {
 
     [FitDataGetter.link]: (state: FitDataState): null | FitDataLink => {
         let result = null;
-        const modelVariableToFit = state.columnToFit
-            ? state.linkedVariables[state.columnToFit] : null;
+        const modelVariableToFit = state.columnToFit ? state.linkedVariables[state.columnToFit] : null;
         // The state.timeVariable not null constraint is automatically
         // satisfied if state.columnToFit is, but there's no way that the
         // type system can know that.

@@ -17,10 +17,12 @@ export class WodinModelOutputDownload extends WodinExcelDownload {
 
     // Shared method to generate both Modelled and Modelled with Data - provide empty nonTimeColumns param to omit data
     // for Modelled only
-    private static _generateModelledOutput(selectedVariables: string[],
+    private static _generateModelledOutput(
+        selectedVariables: string[],
         solutionOutput: OdinSeriesSet,
         nonTimeColumns: string[],
-        fitData: FitData | null) {
+        fitData: FitData | null
+    ) {
         const outputData = [];
         outputData.push(["t", ...selectedVariables, ...nonTimeColumns]); // headers
         solutionOutput.x.forEach((x: number, xIdx: number) => {
@@ -38,12 +40,18 @@ export class WodinModelOutputDownload extends WodinExcelDownload {
         if (solution) {
             const end = this._state.run.endTime;
             const solutionOutput = solution({
-                mode: "grid", tStart: 0, tEnd: end, nPoints: this._points
+                mode: "grid",
+                tStart: 0,
+                tEnd: end,
+                nPoints: this._points
             });
             const { selectedVariables } = this._state.model;
 
             const worksheet = WodinModelOutputDownload._generateModelledOutput(
-                selectedVariables, solutionOutput, [], null
+                selectedVariables,
+                solutionOutput,
+                [],
+                null
             );
             XLSX.utils.book_append_sheet(this._workbook, worksheet, "Modelled");
         }
@@ -62,7 +70,10 @@ export class WodinModelOutputDownload extends WodinExcelDownload {
                 const { selectedVariables } = this._state.model;
 
                 const worksheet = WodinModelOutputDownload._generateModelledOutput(
-                    selectedVariables, solutionOutput, nonTimeColumns, fitData
+                    selectedVariables,
+                    solutionOutput,
+                    nonTimeColumns,
+                    fitData
                 );
                 XLSX.utils.book_append_sheet(this._workbook, worksheet, "Modelled with Data");
             }

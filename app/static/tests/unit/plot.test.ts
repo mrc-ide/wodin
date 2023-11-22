@@ -1,7 +1,9 @@
 import { Dash } from "plotly.js-basic-dist-min";
 import {
-    allFitDataToPlotly, discreteSeriesSetToPlotly,
-    fitDataToPlotly, paramSetLineStyle,
+    allFitDataToPlotly,
+    discreteSeriesSetToPlotly,
+    fitDataToPlotly,
+    paramSetLineStyle,
     odinToPlotly
 } from "../../src/app/plot";
 
@@ -207,14 +209,16 @@ describe("fitDataToPlotly", () => {
     };
     it("creates series", () => {
         const res = fitDataToPlotly(data, link, palette, 0, 4);
-        expect(res).toEqual([{
-            marker: { color: "#ff0000" },
-            mode: "markers",
-            name: "a",
-            type: "scatter",
-            x: [0, 1, 2, 3, 4],
-            y: [1, 2, 3, 4, 5]
-        }]);
+        expect(res).toEqual([
+            {
+                marker: { color: "#ff0000" },
+                mode: "markers",
+                name: "a",
+                type: "scatter",
+                x: [0, 1, 2, 3, 4],
+                y: [1, 2, 3, 4, 5]
+            }
+        ]);
     });
 });
 

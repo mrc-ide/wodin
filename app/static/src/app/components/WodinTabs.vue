@@ -2,17 +2,19 @@
     <div>
         <ul class="nav nav-tabs">
             <li v-for="tabName in tabNames" :key="tabName">
-                <a class="nav-link"
-                   :class="tabName === selectedTabName ? 'active' : ''"
-                   aria-current="page"
-                   href="#"
-                   @click="tabSelected(tabName)">
+                <a
+                    class="nav-link"
+                    :class="tabName === selectedTabName ? 'active' : ''"
+                    aria-current="page"
+                    href="#"
+                    @click="tabSelected(tabName)"
+                >
                     {{ tabName }}
                 </a>
             </li>
         </ul>
         <div class="mt-4 px-2">
-            <slot :name="selectedTabName"/>
+            <slot :name="selectedTabName" />
         </div>
     </div>
 </template>
@@ -21,7 +23,7 @@
 import { defineComponent, ref, PropType } from "vue";
 
 interface Props {
-    tabNames: string[]
+    tabNames: string[];
 }
 
 export default defineComponent({

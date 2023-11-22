@@ -11,18 +11,17 @@ test.describe("Data tab tests", () => {
 
     test("can upload valid csv file", async ({ page }) => {
         await uploadCSVData(page, "a,b\n1,2\n3,4\n5,6\n7,8\n9,10");
-        await expect(await page.locator("#data-upload-success")).toHaveText(
-            "Uploaded 5 rows and 2 columns", {
-                timeout
-            }
-        );
+        await expect(await page.locator("#data-upload-success")).toHaveText("Uploaded 5 rows and 2 columns", {
+            timeout
+        });
         await expect(await page.innerText("#left-tabs .text-danger")).toBe("");
     });
 
     test("can see expected error when upload invalid csv file", async ({ page }) => {
         await uploadCSVData(page, "a,b\n1,hello\n3,4\n5,6\n7,8\n9,10\n");
         await expect(await page.locator("#left-tabs .text-danger")).toHaveText(
-            "An error occurred when loading data: Data contains non-numeric values: 'hello'", {
+            "An error occurred when loading data: Data contains non-numeric values: 'hello'",
+            {
                 timeout
             }
         );
@@ -31,11 +30,9 @@ test.describe("Data tab tests", () => {
 
     test("can select time variable", async ({ page }) => {
         await uploadCSVData(page, "a,b,c\n1,2,10\n3,4,9\n5,6,10\n7,8,11\n9,10,12");
-        await expect(await page.locator("#data-upload-success")).toHaveText(
-            "Uploaded 5 rows and 3 columns", {
-                timeout
-            }
-        );
+        await expect(await page.locator("#data-upload-success")).toHaveText("Uploaded 5 rows and 3 columns", {
+            timeout
+        });
 
         const options = await page.locator("#select-time-variable option");
         await expect(options).toHaveCount(2);

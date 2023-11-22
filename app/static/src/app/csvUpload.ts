@@ -13,7 +13,7 @@ type OnSuccess = (success: SetDataPayload) => void;
 type PostSuccess = () => void;
 
 interface ParseError {
-    message: string
+    message: string;
 }
 
 export class CSVUpload<S extends string, E extends string> {
@@ -99,7 +99,7 @@ export class CSVUpload<S extends string, E extends string> {
 
             reader.readAsText(file, "UTF-8");
         }
-    }
+    };
 }
 
 export const csvUpload = <S extends string, E extends string>(ctx: AppCtx): CSVUpload<S, E> => new CSVUpload<S, E>(ctx);

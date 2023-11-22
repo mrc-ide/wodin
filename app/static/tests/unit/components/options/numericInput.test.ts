@@ -3,9 +3,9 @@ import { nextTick } from "vue";
 import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
 
 export type BoundTooltip = {
-    error: { number: number, message?: string },
-    warning: { number: number, message: string }
-}
+    error: { number: number; message?: string };
+    warning: { number: number; message: string };
+};
 
 const mockTooltipDirective = jest.fn();
 

@@ -5,7 +5,7 @@ import { ModelAction } from "../model/actions";
 import { AppState } from "../appState/state";
 
 export enum CodeAction {
-    UpdateCode= "UpdateCode"
+    UpdateCode = "UpdateCode"
 }
 
 export const actions: ActionTree<CodeState, AppState> = {

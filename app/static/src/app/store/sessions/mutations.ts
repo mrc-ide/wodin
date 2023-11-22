@@ -10,8 +10,8 @@ export enum SessionsMutation {
 }
 
 export interface SetSessionFriendlyIdPayload {
-    sessionId: string,
-    friendlyId: string
+    sessionId: string;
+    friendlyId: string;
 }
 
 export const mutations: MutationTree<SessionsState> = {

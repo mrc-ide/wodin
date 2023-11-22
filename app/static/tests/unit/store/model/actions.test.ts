@@ -43,10 +43,7 @@ describe("Model actions", () => {
             }
         },
         multiSensitivity: {
-            paramSettings: [
-                { parameterToVary: "p1" },
-                { parameterToVary: "p2" }
-            ]
+            paramSettings: [{ parameterToVary: "p1" }, { parameterToVary: "p2" }]
         },
         run: {
             runRequired: {
@@ -59,9 +56,8 @@ describe("Model actions", () => {
     };
 
     it("fetches odin runner ode when not stochastic", async () => {
-        const mockRunnerScript = "() => \"runner\"";
-        mockAxios.onGet("/odin/runner/ode")
-            .reply(200, mockSuccess(mockRunnerScript));
+        const mockRunnerScript = '() => "runner"';
+        mockAxios.onGet("/odin/runner/ode").reply(200, mockSuccess(mockRunnerScript));
 
         const commit = jest.fn();
         await (actions[ModelAction.FetchOdinRunner] as any)({ commit, rootState });
@@ -73,12 +69,10 @@ describe("Model actions", () => {
 
     it("fetches odin runner ode and discrete when stochastic", async () => {
         const stochasticRootState = { ...rootState, appType: AppType.Stochastic };
-        const mockRunnerOdeScript = "() => \"runnerOde\"";
-        const mockRunnerDiscreteScript = "() => \"runnerDiscrete\"";
-        mockAxios.onGet("/odin/runner/ode")
-            .reply(200, mockSuccess(mockRunnerOdeScript));
-        mockAxios.onGet("/odin/runner/discrete")
-            .reply(200, mockSuccess(mockRunnerDiscreteScript));
+        const mockRunnerOdeScript = '() => "runnerOde"';
+        const mockRunnerDiscreteScript = '() => "runnerDiscrete"';
+        mockAxios.onGet("/odin/runner/ode").reply(200, mockSuccess(mockRunnerOdeScript));
+        mockAxios.onGet("/odin/runner/discrete").reply(200, mockSuccess(mockRunnerDiscreteScript));
 
         const commit = jest.fn();
         await (actions[ModelAction.FetchOdinRunner] as any)({ commit, rootState: stochasticRootState });
@@ -91,8 +85,7 @@ describe("Model actions", () => {
     });
 
     it("commits error from fetch odin runner", async () => {
-        mockAxios.onGet("/odin/runner/ode")
-            .reply(500, mockFailure("server error"));
+        mockAxios.onGet("/odin/runner/ode").reply(500, mockFailure("server error"));
 
         const commit = jest.fn();
         await (actions[ModelAction.FetchOdinRunner] as any)({ commit, rootState });
@@ -103,8 +96,7 @@ describe("Model actions", () => {
 
     it("fetches odin model", async () => {
         const testModel = { model: "test" };
-        mockAxios.onPost("/odin/model")
-            .reply(200, mockSuccess(testModel));
+        mockAxios.onPost("/odin/model").reply(200, mockSuccess(testModel));
 
         const commit = jest.fn();
         await (actions[ModelAction.FetchOdin] as any)({ commit, rootState });
@@ -126,8 +118,7 @@ describe("Model actions", () => {
 
     it("fetches odin model for stochastic", async () => {
         const testModel = { model: "test" };
-        mockAxios.onPost("/odin/model")
-            .reply(200, mockSuccess(testModel));
+        mockAxios.onPost("/odin/model").reply(200, mockSuccess(testModel));
 
         const stochasticRootState = { ...rootState, appType: AppType.Stochastic };
         const commit = jest.fn();
@@ -145,8 +136,7 @@ describe("Model actions", () => {
     });
 
     it("commits error from fetch odin model", async () => {
-        mockAxios.onPost("/odin/model")
-            .reply(500, mockFailure("server error"));
+        mockAxios.onPost("/odin/model").reply(500, mockFailure("server error"));
 
         const commit = jest.fn();
         await (actions[ModelAction.FetchOdin] as any)({ commit, rootState });
@@ -176,7 +166,10 @@ describe("Model actions", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
         (actions[ModelAction.CompileModel] as any)({
-            commit, dispatch, state: updatedParamState, rootState
+            commit,
+            dispatch,
+            state: updatedParamState,
+            rootState
         });
         expect(commit.mock.calls.length).toBe(10);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
@@ -222,7 +215,10 @@ describe("Model actions", () => {
             }
         };
         (actions[ModelAction.CompileModel] as any)({
-            commit, dispatch, state: updatedParamState, rootState: noMultiRootState
+            commit,
+            dispatch,
+            state: updatedParamState,
+            rootState: noMultiRootState
         });
         expect(commit.mock.calls.length).toBe(8);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
@@ -245,7 +241,10 @@ describe("Model actions", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
         (actions[ModelAction.CompileModel] as any)({
-            commit, dispatch, state: updatedParamState, rootState: noMultiSensRootState
+            commit,
+            dispatch,
+            state: updatedParamState,
+            rootState: noMultiSensRootState
         });
         expect(commit.mock.calls.length).toBe(8);
         expect(commit.mock.calls[7][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
@@ -256,9 +255,7 @@ describe("Model actions", () => {
         const oldMultiSensRootState = {
             ...rootState,
             multiSensitivity: {
-                paramSettings: [
-                    { parameterToVary: "p1" }
-                ]
+                paramSettings: [{ parameterToVary: "p1" }]
             }
         };
         const commit = jest.fn();
@@ -269,8 +266,9 @@ describe("Model actions", () => {
         });
         expect(commit.mock.calls.length).toBe(10);
         expect(commit.mock.calls[9][0]).toBe(`multiSensitivity/${MultiSensitivityMutation.SetParamSettings}`);
-        expect(commit.mock.calls[9][1])
-            .toStrictEqual([{ ...defaultSensitivityParamSettings(), parameterToVary: "p2" }]);
+        expect(commit.mock.calls[9][1]).toStrictEqual([
+            { ...defaultSensitivityParamSettings(), parameterToVary: "p2" }
+        ]);
         expect(commit.mock.calls[9][2]).toStrictEqual({ root: true });
     });
 
@@ -298,7 +296,10 @@ describe("Model actions", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
         (actions[ModelAction.CompileModel] as any)({
-            commit, dispatch, state, rootState: fitRootState
+            commit,
+            dispatch,
+            state,
+            rootState: fitRootState
         });
         expect(commit.mock.calls.length).toBe(9);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
@@ -355,14 +356,14 @@ describe("Model actions", () => {
                 }
             },
             multiSensitivity: {
-                paramSettings: [
-                    { parameterToVary: "p2" },
-                    { parameterToVary: "p3" }
-                ]
+                paramSettings: [{ parameterToVary: "p2" }, { parameterToVary: "p3" }]
             }
         } as any;
         (actions[ModelAction.CompileModel] as any)({
-            commit, dispatch, state, rootState: testRootState
+            commit,
+            dispatch,
+            state,
+            rootState: testRootState
         });
         expect(commit.mock.calls.length).toBe(9);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
@@ -474,8 +475,7 @@ describe("Model actions", () => {
                 variables: ["x", "y"]
             }
         };
-        mockAxios.onPost("/odin/model")
-            .reply(200, mockSuccess(testModel));
+        mockAxios.onPost("/odin/model").reply(200, mockSuccess(testModel));
 
         const commit = jest.spyOn(store, "commit");
 
@@ -542,9 +542,15 @@ describe("Model actions", () => {
         const dispatch = jest.fn();
         const fitRootState = mockFitState();
 
-        (actions[ModelAction.UpdateSelectedVariables] as any)({
-            commit, dispatch, state, rootState: fitRootState
-        }, ["a", "b"]);
+        (actions[ModelAction.UpdateSelectedVariables] as any)(
+            {
+                commit,
+                dispatch,
+                state,
+                rootState: fitRootState
+            },
+            ["a", "b"]
+        );
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetSelectedVariables);
         expect(commit.mock.calls[0][1]).toStrictEqual(["a", "b"]);
@@ -559,9 +565,15 @@ describe("Model actions", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
 
-        (actions[ModelAction.UpdateSelectedVariables] as any)({
-            commit, dispatch, state, rootState
-        }, ["a", "b"]);
+        (actions[ModelAction.UpdateSelectedVariables] as any)(
+            {
+                commit,
+                dispatch,
+                state,
+                rootState
+            },
+            ["a", "b"]
+        );
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetSelectedVariables);
         expect(commit.mock.calls[0][1]).toStrictEqual(["a", "b"]);

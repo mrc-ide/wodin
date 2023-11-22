@@ -103,13 +103,15 @@ test.describe("Link Variables tests", () => {
         await page.fill(".monaco-editor textarea", newVariableCode);
 
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Model code has been updated. Compile code and Run Model to update.", {
+            "Model code has been updated. Compile code and Run Model to update.",
+            {
                 timeout
             }
         );
         await page.click("#compile-btn");
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Plot is out of date: model code has been recompiled. Run model to update.", {
+            "Plot is out of date: model code has been recompiled. Run model to update.",
+            {
                 timeout
             }
         );

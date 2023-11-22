@@ -1,6 +1,6 @@
 const path = require("path");
 const baseConfig = require("../vue.config");
-const WebpackShellPlugin = require('webpack-shell-plugin');
+const WebpackShellPlugin = require("webpack-shell-plugin");
 
 module.exports = {
     ...baseConfig,

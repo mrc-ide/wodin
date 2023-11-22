@@ -13,8 +13,12 @@ import SensitivitySummaryDownload from "../../../../src/app/components/sensitivi
 describe("MultiSensitivityTab", () => {
     const mockRunMultiSensitivity = jest.fn();
 
-    const getWrapper = (running = false, modelState: Partial<ModelState> = {}, batchPars: any = {},
-        multiSensitivityState: Partial<MultiSensitivityState> = {}) => {
+    const getWrapper = (
+        running = false,
+        modelState: Partial<ModelState> = {},
+        batchPars: any = {},
+        multiSensitivityState: Partial<MultiSensitivityState> = {}
+    ) => {
         const store = new Vuex.Store<AppState>({
             state: {} as any,
             modules: {
@@ -106,26 +110,31 @@ describe("MultiSensitivityTab", () => {
     });
 
     it("renders multi-sensitivity run result status message when there are no results yet", () => {
-        const wrapper = getWrapper(false, {}, {}, {
-            result: null
-        });
+        const wrapper = getWrapper(
+            false,
+            {},
+            {},
+            {
+                result: null
+            }
+        );
         expect(wrapper.find("div.multi-sensitivity-status").text()).toBe("Multi-sensitivity has not been run.");
     });
 
     it("renders multi-sensitivity run result status message when there are some results", () => {
-        const wrapper = getWrapper(false, {}, {}, {
-            result: {
-                batch: {
-                    solutions: [
-                        { values: [1] },
-                        { values: [2] },
-                        { values: [3] }
-                    ]
-                }
-            } as any
-        });
-        expect(wrapper.find("div.multi-sensitivity-status").text())
-            .toBe("Multi-sensitivity run produced 3 solutions.");
+        const wrapper = getWrapper(
+            false,
+            {},
+            {},
+            {
+                result: {
+                    batch: {
+                        solutions: [{ values: [1] }, { values: [2] }, { values: [3] }]
+                    }
+                } as any
+            }
+        );
+        expect(wrapper.find("div.multi-sensitivity-status").text()).toBe("Multi-sensitivity run produced 3 solutions.");
     });
 
     it("renders ErrorInfo as expected when no result error", () => {
@@ -135,11 +144,16 @@ describe("MultiSensitivityTab", () => {
 
     it("renders ErrorInfo as expected when there is a result error", () => {
         const error = { error: "test error", detail: "test detail" };
-        const wrapper = getWrapper(false, {}, {}, {
-            result: {
-                error
-            } as any
-        });
+        const wrapper = getWrapper(
+            false,
+            {},
+            {},
+            {
+                result: {
+                    error
+                } as any
+            }
+        );
         expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(error);
     });
 

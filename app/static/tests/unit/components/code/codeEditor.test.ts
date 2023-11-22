@@ -44,14 +44,18 @@ const expectDeltaDecorationInputs = (line: number, state: string, message: strin
             // 1 for resetting all decorations and 1 for adding state decorations
             // x2 (these trigger on mount too)
             expect(mockMonacoEditor.deltaDecorations).toHaveBeenCalledTimes(4);
-            expect(mockMonacoEditor.deltaDecorations.mock.calls[0][1]).toStrictEqual([{
-                range: monacoLineRange(1, true),
-                options: {}
-            }]);
-            expect(mockMonacoEditor.deltaDecorations.mock.calls[1][1]).toStrictEqual([{
-                range: monacoLineRange(line),
-                options: monacoOptions(state, message)
-            }]);
+            expect(mockMonacoEditor.deltaDecorations.mock.calls[0][1]).toStrictEqual([
+                {
+                    range: monacoLineRange(1, true),
+                    options: {}
+                }
+            ]);
+            expect(mockMonacoEditor.deltaDecorations.mock.calls[1][1]).toStrictEqual([
+                {
+                    range: monacoLineRange(line),
+                    options: monacoOptions(state, message)
+                }
+            ]);
             done();
         }, 700);
     });
@@ -67,10 +71,12 @@ import { mockBasicState, mockCodeState, mockModelState } from "../../../mocks";
 
 describe("CodeEditor", () => {
     const mockHelpDirective = jest.fn();
-    const getWrapper = (readOnlyCode = false,
+    const getWrapper = (
+        readOnlyCode = false,
         mockUpdateCode = jest.fn(),
         defaultCode = ["default code"],
-        odinModelResponse = { valid: true }) => {
+        odinModelResponse = { valid: true }
+    ) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
                 config: {

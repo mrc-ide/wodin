@@ -11,11 +11,11 @@ export interface RunUpdateRequiredReasons {
 }
 
 export interface ParameterSet {
-    name: string,
-    displayName: string,
-    displayNameErrorMsg: string,
-    parameterValues: OdinUserType,
-    hidden: boolean
+    name: string;
+    displayName: string;
+    displayNameErrorMsg: string;
+    parameterValues: OdinUserType;
+    hidden: boolean;
 }
 
 export enum AdvancedComponentType {
@@ -25,28 +25,28 @@ export enum AdvancedComponentType {
 }
 
 type AdvancedConfigStandardForm = {
-    val: [number|null, number|null],
-    default: [number, number],
-    type: AdvancedComponentType.stdf
-}
+    val: [number | null, number | null];
+    default: [number, number];
+    type: AdvancedComponentType.stdf;
+};
 
 type AdvancedConfigNumeric = {
-    val: number | null,
-    default?: number,
-    type: AdvancedComponentType.num
-}
+    val: number | null;
+    default?: number;
+    type: AdvancedComponentType.num;
+};
 
-export type Tag = number | string
+export type Tag = number | string;
 
 type AdvancedConfigTCrit = {
-    val: Tag[] | null,
-    default: number[],
-    type: AdvancedComponentType.tag
-}
+    val: Tag[] | null;
+    default: number[];
+    type: AdvancedComponentType.tag;
+};
 
-export type AdvancedConfig = AdvancedConfigNumeric | AdvancedConfigStandardForm | AdvancedConfigTCrit
+export type AdvancedConfig = AdvancedConfigNumeric | AdvancedConfigStandardForm | AdvancedConfigTCrit;
 
-export type AdvancedSettings = Record<AdvancedOptions, AdvancedConfig>
+export type AdvancedSettings = Record<AdvancedOptions, AdvancedConfig>;
 
 export interface RunState {
     // Contains reasons why the run might be out of date

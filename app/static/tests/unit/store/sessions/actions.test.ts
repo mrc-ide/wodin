@@ -1,7 +1,5 @@
 import { actions, SessionsAction } from "../../../../src/app/store/sessions/actions";
-import {
-    mockAxios, mockBasicState, mockFailure, mockSuccess, mockUserPreferences
-} from "../../../mocks";
+import { mockAxios, mockBasicState, mockFailure, mockSuccess, mockUserPreferences } from "../../../mocks";
 import { SessionsMutation } from "../../../../src/app/store/sessions/mutations";
 import { localStorageManager } from "../../../../src/app/localStorageManager";
 import { ErrorsMutation } from "../../../../src/app/store/errors/mutations";
@@ -13,8 +11,7 @@ import { AppStateGetter } from "../../../../src/app/store/appState/getters";
 import { MultiSensitivityAction } from "../../../../src/app/store/multiSensitivity/actions";
 
 describe("SessionsActions", () => {
-    const getSessionIdsSpy = jest.spyOn(localStorageManager, "getSessionIds")
-        .mockReturnValue(["123", "456"]);
+    const getSessionIdsSpy = jest.spyOn(localStorageManager, "getSessionIds").mockReturnValue(["123", "456"]);
     const deleteSessionIdSpy = jest.spyOn(localStorageManager, "deleteSessionId");
 
     afterEach(() => {
@@ -22,9 +19,14 @@ describe("SessionsActions", () => {
         mockAxios.reset();
     });
 
-    const getSessionData = (hasOdin: boolean, compileRequired: boolean,
-        runHasResultOde: boolean, runHasResultDiscrete: boolean, sensitivityHasResult: boolean,
-        multiSensitivityHasResult: boolean) => {
+    const getSessionData = (
+        hasOdin: boolean,
+        compileRequired: boolean,
+        runHasResultOde: boolean,
+        runHasResultDiscrete: boolean,
+        sensitivityHasResult: boolean,
+        multiSensitivityHasResult: boolean
+    ) => {
         return {
             code: {
                 currentCode: ["some saved code"]
@@ -61,8 +63,7 @@ describe("SessionsActions", () => {
 
     const testRehydrate = async (stochastic: boolean) => {
         const mockSessionData = getSessionData(true, false, !stochastic, stochastic, true, true);
-        mockAxios.onGet("/apps/testApp/sessions/1234")
-            .reply(200, mockSuccess(mockSessionData));
+        mockAxios.onGet("/apps/testApp/sessions/1234").reply(200, mockSuccess(mockSessionData));
 
         const commit = jest.fn();
         const dispatch = jest.fn();
@@ -84,8 +85,7 @@ describe("SessionsActions", () => {
         expect(dispatch.mock.calls[3][0]).toBe(`sensitivity/${SensitivityAction.RunSensitivity}`);
         expect(dispatch.mock.calls[3][1]).toBe(null);
         expect(dispatch.mock.calls[3][2]).toStrictEqual({ root: true });
-        expect(dispatch.mock.calls[4][0])
-            .toBe(`multiSensitivity/${MultiSensitivityAction.RunMultiSensitivity}`);
+        expect(dispatch.mock.calls[4][0]).toBe(`multiSensitivity/${MultiSensitivityAction.RunMultiSensitivity}`);
         expect(dispatch.mock.calls[4][1]).toBe(null);
         expect(dispatch.mock.calls[4][2]).toStrictEqual({ root: true });
     };
@@ -100,8 +100,7 @@ describe("SessionsActions", () => {
 
     it("Rehydrate does not compile or run if no odin model", async () => {
         const mockSessionData = getSessionData(false, false, true, false, true, false);
-        mockAxios.onGet("/apps/testApp/sessions/1234")
-            .reply(200, mockSuccess(mockSessionData));
+        mockAxios.onGet("/apps/testApp/sessions/1234").reply(200, mockSuccess(mockSessionData));
 
         const commit = jest.fn();
         const dispatch = jest.fn();
@@ -118,8 +117,7 @@ describe("SessionsActions", () => {
 
     it("Rehydrate does not compile or run if compile required is true", async () => {
         const mockSessionData = getSessionData(true, true, true, false, true, false);
-        mockAxios.onGet("/apps/testApp/sessions/1234")
-            .reply(200, mockSuccess(mockSessionData));
+        mockAxios.onGet("/apps/testApp/sessions/1234").reply(200, mockSuccess(mockSessionData));
 
         const commit = jest.fn();
         const dispatch = jest.fn();
@@ -136,8 +134,7 @@ describe("SessionsActions", () => {
 
     it("Rehydrate does not run model if run has no result", async () => {
         const mockSessionData = getSessionData(true, false, false, false, true, false);
-        mockAxios.onGet("/apps/testApp/sessions/1234")
-            .reply(200, mockSuccess(mockSessionData));
+        mockAxios.onGet("/apps/testApp/sessions/1234").reply(200, mockSuccess(mockSessionData));
 
         const commit = jest.fn();
         const dispatch = jest.fn();
@@ -160,8 +157,7 @@ describe("SessionsActions", () => {
 
     it("Rehydrate does not run sensitivity if sensitivity has no result", async () => {
         const mockSessionData = getSessionData(true, false, true, false, false, true);
-        mockAxios.onGet("/apps/testApp/sessions/1234")
-            .reply(200, mockSuccess(mockSessionData));
+        mockAxios.onGet("/apps/testApp/sessions/1234").reply(200, mockSuccess(mockSessionData));
 
         const commit = jest.fn();
         const dispatch = jest.fn();
@@ -180,16 +176,14 @@ describe("SessionsActions", () => {
         expect(dispatch.mock.calls[2][0]).toBe(`run/${RunAction.RunModelOnRehydrate}`);
         expect(dispatch.mock.calls[2][1]).toBe(null);
         expect(dispatch.mock.calls[2][2]).toStrictEqual({ root: true });
-        expect(dispatch.mock.calls[3][0])
-            .toBe(`multiSensitivity/${MultiSensitivityAction.RunMultiSensitivity}`);
+        expect(dispatch.mock.calls[3][0]).toBe(`multiSensitivity/${MultiSensitivityAction.RunMultiSensitivity}`);
         expect(dispatch.mock.calls[3][1]).toBe(null);
         expect(dispatch.mock.calls[3][2]).toStrictEqual({ root: true });
     });
 
     it("Rehydrate does not run multiSensitivity if sensitivity has no result", async () => {
         const mockSessionData = getSessionData(true, false, true, false, true, false);
-        mockAxios.onGet("/apps/testApp/sessions/1234")
-            .reply(200, mockSuccess(mockSessionData));
+        mockAxios.onGet("/apps/testApp/sessions/1234").reply(200, mockSuccess(mockSessionData));
 
         const commit = jest.fn();
         const dispatch = jest.fn();
@@ -251,7 +245,8 @@ describe("SessionsActions", () => {
     });
 
     it("GetSessions commits error", async () => {
-        mockAxios.onGet("/apps/test-app/sessions/metadata?sessionIds=123,456&removeDuplicates=true")
+        mockAxios
+            .onGet("/apps/test-app/sessions/metadata?sessionIds=123,456&removeDuplicates=true")
             .reply(500, mockFailure("TEST ERROR"));
 
         const userPreferences = mockUserPreferences();
@@ -266,8 +261,7 @@ describe("SessionsActions", () => {
 
     it("saves session label", async () => {
         const url = "/apps/testApp/sessions/testSessionId/label";
-        mockAxios.onPost(url)
-            .reply(200, mockSuccess(null));
+        mockAxios.onPost(url).reply(200, mockSuccess(null));
 
         const rootState = mockBasicState({
             appName: "testApp",
@@ -294,8 +288,7 @@ describe("SessionsActions", () => {
 
     it("save session label commits error from api", async () => {
         const url = "/apps/testApp/sessions/testSessionId/label";
-        mockAxios.onPost(url)
-            .reply(500, mockFailure("TEST ERROR"));
+        mockAxios.onPost(url).reply(500, mockFailure("TEST ERROR"));
 
         const rootState = mockBasicState({
             appName: "testApp",
@@ -319,8 +312,7 @@ describe("SessionsActions", () => {
 
     it("save session label does not update root state when saving non-current session's label", async () => {
         const url = "/apps/testApp/sessions/testSessionId/label";
-        mockAxios.onPost(url)
-            .reply(200, mockSuccess(null));
+        mockAxios.onPost(url).reply(200, mockSuccess(null));
 
         const rootState = mockBasicState({
             appName: "testApp",
@@ -344,8 +336,7 @@ describe("SessionsActions", () => {
 
     it("GenerateFriendlyId posts to endpoint and commits id", async () => {
         const url = "apps/testApp/sessions/testSessionId/friendly";
-        mockAxios.onPost(url)
-            .reply(200, mockSuccess("good-dog"));
+        mockAxios.onPost(url).reply(200, mockSuccess("good-dog"));
         const rootState = mockBasicState({
             appName: "testApp",
             appsPath: "apps"
@@ -360,8 +351,7 @@ describe("SessionsActions", () => {
 
     it("GenerateFriendId commits error response", async () => {
         const url = "apps/testApp/sessions/testSessionId/friendly";
-        mockAxios.onPost(url)
-            .reply(500, mockFailure("Test Error"));
+        mockAxios.onPost(url).reply(500, mockFailure("Test Error"));
         const rootState = mockBasicState({
             appName: "testApp",
             appsPath: "apps"

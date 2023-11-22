@@ -3,8 +3,7 @@
         <drop-down :text="languagesKeys[currentLanguage]">
             <template v-slot:items>
                 <li v-for="(language, i18n, index) in languagesKeys" :key="index">
-                    <span class="dropdown-item"
-                    @click="changeLang(i18n)">{{ language }}</span>
+                    <span class="dropdown-item" @click="changeLang(i18n)">{{ language }}</span>
                 </li>
             </template>
         </drop-down>
@@ -17,7 +16,7 @@ import VueFeather from "vue-feather";
 import { useStore } from "vuex";
 import { LanguageAction } from "../store/actions";
 
-type LanguageKeys = Record<string, string>
+type LanguageKeys = Record<string, string>;
 
 export default defineComponent({
     name: "LanguageSwitcher",
@@ -44,7 +43,7 @@ export default defineComponent({
             changeLang,
             currentLanguage,
             enableI18n
-        }
+        };
     }
 });
 </script>

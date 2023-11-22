@@ -37,9 +37,7 @@ async function immediateUploadState(context: ActionContext<AppState, AppState>) 
 export const appStateActions: ActionTree<AppState, AppState> = {
     async [AppStateAction.InitialiseApp](context, payload: InitialiseAppPayload) {
         const { commit, dispatch } = context;
-        const {
-            appName
-        } = payload;
+        const { appName } = payload;
         commit(AppStateMutation.SetApp, payload);
 
         const response = await api(context)
@@ -58,13 +56,8 @@ export const appStateActions: ActionTree<AppState, AppState> = {
     },
 
     async [AppStateAction.InitialiseSession](context, payload: InitialiseSessionPayload) {
-        const {
-            commit, state, dispatch, getters
-        } = context;
-        const {
-            loadSessionId,
-            copySession
-        } = payload;
+        const { commit, state, dispatch, getters } = context;
+        const { loadSessionId, copySession } = payload;
 
         // If we're reloading a session on page refresh we want to use the same session id rather than making a copy
         // as we do on share - otherwise we save the new session id to local storage
@@ -72,8 +65,7 @@ export const appStateActions: ActionTree<AppState, AppState> = {
             commit(AppStateMutation.SetSessionId, loadSessionId);
 
             // set the session's label too, if any
-            const label = state.sessions
-                .sessionsMetadata?.find((s) => s.id === loadSessionId)?.label;
+            const label = state.sessions.sessionsMetadata?.find((s) => s.id === loadSessionId)?.label;
             if (label) {
                 commit(AppStateMutation.SetSessionLabel, label);
             }
@@ -99,7 +91,7 @@ export const appStateActions: ActionTree<AppState, AppState> = {
     async [AppStateAction.QueueStateUpload](context) {
         const { state, commit } = context;
         const isBusy = () => {
-            const isFitting = (state.appType === AppType.Fit) && ((state as FitState).modelFit.fitting);
+            const isFitting = state.appType === AppType.Fit && (state as FitState).modelFit.fitting;
             const isRunningSensitivity = state.sensitivity.running;
             return isFitting || isRunningSensitivity;
         };
@@ -109,14 +101,17 @@ export const appStateActions: ActionTree<AppState, AppState> = {
             // remove any existing queued upload, as this request should supersede it
             commit(AppStateMutation.ClearQueuedStateUpload);
 
-            const queuedId: number = window.setInterval(() => {
-                // wait for any ongoing uploads to finish before starting a new one
-                // and do not actually upload while fitting or runningSensitivity is true
-                if (!state.stateUploadInProgress && !isBusy()) {
-                    commit(AppStateMutation.ClearQueuedStateUpload);
-                    immediateUploadState(context);
-                }
-            }, state.config?.stateUploadIntervalMillis);
+            const queuedId: number = window.setInterval(
+                () => {
+                    // wait for any ongoing uploads to finish before starting a new one
+                    // and do not actually upload while fitting or runningSensitivity is true
+                    if (!state.stateUploadInProgress && !isBusy()) {
+                        commit(AppStateMutation.ClearQueuedStateUpload);
+                        immediateUploadState(context);
+                    }
+                },
+                state.config?.stateUploadIntervalMillis
+            );
 
             // record the newly queued upload
             commit(AppStateMutation.SetQueuedStateUpload, queuedId);

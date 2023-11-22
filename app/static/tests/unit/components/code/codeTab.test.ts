@@ -19,7 +19,6 @@ describe("CodeTab", () => {
             },
             valid: true
         } as any
-
     };
 
     beforeEach(() => {

@@ -18,15 +18,15 @@ export interface FitUpdateRequiredReasons {
 }
 
 export interface ModelFitState {
-    fitting: boolean,
-    fitUpdateRequired: FitUpdateRequiredReasons,
-    iterations: number | null,
-    converged: boolean | null,
-    sumOfSquares: number | null,
-    paramsToVary: string[],
-    inputs: ModelFitInputs | null, // all inputs except parameters, which vary
-    result: OdinFitResult | null, // full solution for current best fit,
-    error: null | WodinError
+    fitting: boolean;
+    fitUpdateRequired: FitUpdateRequiredReasons;
+    iterations: number | null;
+    converged: boolean | null;
+    sumOfSquares: number | null;
+    paramsToVary: string[];
+    inputs: ModelFitInputs | null; // all inputs except parameters, which vary
+    result: OdinFitResult | null; // full solution for current best fit,
+    error: null | WodinError;
 }
 
 export interface ModelFitRequirements {

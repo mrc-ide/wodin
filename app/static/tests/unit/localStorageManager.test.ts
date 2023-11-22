@@ -3,10 +3,10 @@ import { mockUserPreferences } from "../mocks";
 
 describe("localStorageManager for sessions", () => {
     let spyOnGetItem: any;
-    let spyOnSetItem : any;
+    let spyOnSetItem: any;
 
     beforeAll(() => {
-        spyOnGetItem = jest.spyOn(Storage.prototype, "getItem").mockReturnValue("[\"session1\", \"session2\"]");
+        spyOnGetItem = jest.spyOn(Storage.prototype, "getItem").mockReturnValue('["session1", "session2"]');
         spyOnSetItem = jest.spyOn(Storage.prototype, "setItem");
     });
 
@@ -58,8 +58,9 @@ describe("localStorageManager gets and saves user preferences", () => {
     let spyOnSetItem: any;
 
     beforeAll(() => {
-        spyOnGetItem = jest.spyOn(Storage.prototype, "getItem")
-            .mockReturnValue("{\"showUnlabelledSessions\": false, \"showDuplicateSessions\": true}");
+        spyOnGetItem = jest
+            .spyOn(Storage.prototype, "getItem")
+            .mockReturnValue('{"showUnlabelledSessions": false, "showDuplicateSessions": true}');
         spyOnSetItem = jest.spyOn(Storage.prototype, "setItem");
     });
 
@@ -84,8 +85,7 @@ describe("localStorageManager gets default user preferences", () => {
     let spyOnGetItem: any;
 
     beforeAll(() => {
-        spyOnGetItem = jest.spyOn(Storage.prototype, "getItem")
-            .mockReturnValue(null);
+        spyOnGetItem = jest.spyOn(Storage.prototype, "getItem").mockReturnValue(null);
     });
 
     beforeEach(() => {

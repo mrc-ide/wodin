@@ -1,9 +1,5 @@
 import { SensitivityScaleType, SensitivityVariationType } from "../../../../src/app/store/sensitivity/state";
-import {
-    mockBatchParsDisplace,
-    mockBatchParsRange,
-    mockMultiSensitivityState
-} from "../../../mocks";
+import { mockBatchParsDisplace, mockBatchParsRange, mockMultiSensitivityState } from "../../../mocks";
 import { getters } from "../../../../src/app/store/multiSensitivity/getters";
 import { BaseSensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
 

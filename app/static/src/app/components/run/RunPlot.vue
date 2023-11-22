@@ -1,12 +1,13 @@
 <template>
-  <wodin-plot
-      :fade-plot="fadePlot"
-      :placeholder-message="placeholderMessage"
-      :end-time="endTime"
-      :plot-data="allPlotData"
-      :redrawWatches="solution ? [solution, allFitData, selectedVariables, parameterSetSolutions, displayNames] : []">
-    <slot></slot>
-  </wodin-plot>
+    <wodin-plot
+        :fade-plot="fadePlot"
+        :placeholder-message="placeholderMessage"
+        :end-time="endTime"
+        :plot-data="allPlotData"
+        :redrawWatches="solution ? [solution, allFitData, selectedVariables, parameterSetSolutions, displayNames] : []"
+    >
+        <slot></slot>
+    </wodin-plot>
 </template>
 
 <script lang="ts">
@@ -14,9 +15,7 @@ import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import { PlotData } from "plotly.js-basic-dist-min";
 import { FitDataGetter } from "../../store/fitData/getters";
-import {
-    odinToPlotly, allFitDataToPlotly, WodinPlotData, filterSeriesSet
-} from "../../plot";
+import { odinToPlotly, allFitDataToPlotly, WodinPlotData, filterSeriesSet } from "../../plot";
 import WodinPlot from "../WodinPlot.vue";
 import { RunGetter } from "../../store/run/getters";
 import { OdinSolution, Times } from "../../types/responseTypes";
@@ -35,7 +34,7 @@ export default defineComponent({
     setup() {
         const store = useStore();
 
-        const solution = computed(() => (store.state.run.resultOde?.solution));
+        const solution = computed(() => store.state.run.resultOde?.solution);
         const visibleParameterSetNames = computed(() => store.getters[`run/${RunGetter.visibleParameterSetNames}`]);
         const parameterSets = computed(() => store.state.run.parameterSets as ParameterSet[]);
         const displayNames = computed(() => {
@@ -64,7 +63,10 @@ export default defineComponent({
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
             const options = {
-                mode: "grid", tStart: start, tEnd: end, nPoints: points
+                mode: "grid",
+                tStart: start,
+                tEnd: end,
+                nPoints: points
             };
             const result = solution.value && solution.value(options);
             if (!result) {

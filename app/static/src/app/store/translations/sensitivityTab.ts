@@ -1,7 +1,7 @@
 import { TranslationLocales } from "../../types/languageTypes";
 
 interface SensitivityTabTranslations extends TranslationLocales {
-    sensitivityTabExample: string
+    sensitivityTabExample: string;
 }
 
 const en: SensitivityTabTranslations = {

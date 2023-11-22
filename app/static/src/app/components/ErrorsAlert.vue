@@ -1,11 +1,8 @@
 <template>
     <div>
-        <div v-if="errors.length > 0"
-             class="alert alert-danger text-danger alert-dismissible fade show"
-             role="alert">
-            <button type="button" class="btn-close float-end" aria-label="Close" @click="dismissErrors">
-            </button>
-            <strong>{{errors.length > 1 ? "Errors occurred:" : "An error occurred:"}}</strong>
+        <div v-if="errors.length > 0" class="alert alert-danger text-danger alert-dismissible fade show" role="alert">
+            <button type="button" class="btn-close float-end" aria-label="Close" @click="dismissErrors"></button>
+            <strong>{{ errors.length > 1 ? "Errors occurred:" : "An error occurred:" }}</strong>
             <ul class="mb-0">
                 <li v-for="(error, idx) in errors" :key="idx">
                     {{ error.detail || error.error }}

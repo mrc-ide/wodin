@@ -7,15 +7,18 @@ export enum ModelFitGetter {
 }
 
 export interface ModelFitGetters {
-    [ModelFitGetter.fitRequirements]: Getter<ModelFitState, FitState>
+    [ModelFitGetter.fitRequirements]: Getter<ModelFitState, FitState>;
 }
 
 export const getters: ModelFitGetters & GetterTree<ModelFitState, FitState> = {
-    [ModelFitGetter.fitRequirements]: (state: ModelFitState, _: ModelFitGetters,
-        rootState: FitState): ModelFitRequirements => {
+    [ModelFitGetter.fitRequirements]: (
+        state: ModelFitState,
+        _: ModelFitGetters,
+        rootState: FitState
+    ): ModelFitRequirements => {
         const linkedVariables = rootState.fitData?.linkedVariables;
-        const hasLinkedVariables = linkedVariables !== null
-            && Object.values(linkedVariables).some((el: string | null) => el !== null);
+        const hasLinkedVariables =
+            linkedVariables !== null && Object.values(linkedVariables).some((el: string | null) => el !== null);
         return {
             hasModel: !!rootState.model.odin,
             hasData: !!rootState.fitData.data,

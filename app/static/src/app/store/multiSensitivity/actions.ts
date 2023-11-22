@@ -1,9 +1,6 @@
 import { ActionTree } from "vuex";
 import { AppState } from "../appState/state";
-import {
-    baseSensitivityActions,
-    runSensitivity
-} from "../sensitivity/actions";
+import { baseSensitivityActions, runSensitivity } from "../sensitivity/actions";
 import { MultiSensitivityState } from "./state";
 import { BaseSensitivityGetter } from "../sensitivity/getters";
 

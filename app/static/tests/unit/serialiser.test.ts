@@ -10,11 +10,15 @@ import { deserialiseState, serialiseState } from "../../src/app/serialise";
 import { FitState } from "../../src/app/store/fit/state";
 import {
     mockCodeState,
-    mockFitDataState, mockGraphSettingsState,
+    mockFitDataState,
+    mockGraphSettingsState,
     mockModelFitState,
-    mockModelState, mockMultiSensitivityState,
+    mockModelState,
+    mockMultiSensitivityState,
     mockRunState,
-    mockSensitivityState, mockSessionsState, mockVersionsState
+    mockSensitivityState,
+    mockSessionsState,
+    mockVersionsState
 } from "../mocks";
 import { defaultState as defaultGraphSettingsState } from "../../src/app/store/graphSettings/graphSettings";
 import { Language } from "../../src/app/types/languageTypes";
@@ -49,10 +53,20 @@ describe("serialise", () => {
                 variables: ["S", "I", "R"],
                 parameters: [
                     {
-                        name: "alpha", default: 1, min: 0, max: 2, is_integer: true, rank: 0
+                        name: "alpha",
+                        default: 1,
+                        min: 0,
+                        max: 2,
+                        is_integer: true,
+                        rank: 0
                     },
                     {
-                        name: "beta", default: 0.1, min: -1, max: 10.5, is_integer: false, rank: 1
+                        name: "beta",
+                        default: 0.1,
+                        min: -1,
+                        max: 10.5,
+                        is_integer: false,
+                        rank: 1
                     }
                 ],
                 messages: [{ message: "a test message", line: [1] }]
@@ -120,14 +134,14 @@ describe("serialise", () => {
         numberOfReplicates: 5,
         advancedSettings: {
             [AdvancedOptions.tol]: {
-                val: [null, null] as [number|null, number|null],
+                val: [null, null] as [number | null, number | null],
                 default: [1, -6] as [number, number],
                 type: AdvancedComponentType.stdf as const
             },
             [AdvancedOptions.maxSteps]: { val: null, default: 10000, type: AdvancedComponentType.num as const },
             [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num as const },
             [AdvancedOptions.stepSizeMin]: {
-                val: [null, null] as [number|null, number|null],
+                val: [null, null] as [number | null, number | null],
                 default: [1, -8] as [number, number],
                 type: AdvancedComponentType.stdf as const
             },
@@ -137,18 +151,22 @@ describe("serialise", () => {
 
     const sensitivityBatchPars = {
         base: { alpha: 1, beta: 1.1 },
-        varying: [{
-            name: "alpha",
-            values: [0.5, 0.75, 1, 1.25, 1.5]
-        }]
+        varying: [
+            {
+                name: "alpha",
+                values: [0.5, 0.75, 1, 1.25, 1.5]
+            }
+        ]
     };
 
     const sensitivityParamSetBatchPars = {
         base: { alpha: 2, beta: 3.3 },
-        varying: [{
-            name: "alpha",
-            values: [1.5, 1.75, 2, 2.25, 2.5]
-        }]
+        varying: [
+            {
+                name: "alpha",
+                values: [1.5, 1.75, 2, 2.25, 2.5]
+            }
+        ]
     };
     const sensitivityState = {
         running: true,
@@ -282,7 +300,10 @@ describe("serialise", () => {
     };
 
     const fitDataState = {
-        data: [{ time: 0, cases: 0 }, { time: 1, cases: 2 }],
+        data: [
+            { time: 0, cases: 0 },
+            { time: 1, cases: 2 }
+        ],
         columns: ["time", "cases"],
         timeVariableCandidates: ["time"],
         timeVariable: "time",
@@ -307,7 +328,10 @@ describe("serialise", () => {
         sumOfSquares: 21.43,
         paramsToVary: ["beta"],
         inputs: {
-            data: [{ t: 0, cases: 1 }, { t: 1, cases: 3 }],
+            data: [
+                { t: 0, cases: 1 },
+                { t: 1, cases: 3 }
+            ],
             endTime: 5,
             link: { time: "t", data: "cases", model: "S" }
         },
@@ -315,7 +339,10 @@ describe("serialise", () => {
             inputs: {
                 parameterValues: { alpha: 0, beta: 3.2 },
                 endTime: 15,
-                data: [{ t: 0, cases: 2 }, { t: 2, cases: 4 }],
+                data: [
+                    { t: 0, cases: 2 },
+                    { t: 2, cases: 4 }
+                ],
                 link: { time: "t", data: "cases", model: "R" }
             },
             solution: jest.fn(),

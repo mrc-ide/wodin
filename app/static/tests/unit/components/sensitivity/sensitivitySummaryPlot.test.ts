@@ -111,22 +111,30 @@ describe("SensitivitySummaryPlot", () => {
 
     const defaultSelectedVariables = ["S", "I"];
 
-    const getWrapper = (hasData = true, plotSettings: SensitivityPlotSettings = defaultPlotSettings,
-        fadePlot = false, paramSettings: SensitivityParameterSettings = defaultParamSettings,
-        logScaleYAxis = false, selectedVariables = defaultSelectedVariables, includeParameterSets = false,
-        isLoading = false) => {
+    const getWrapper = (
+        hasData = true,
+        plotSettings: SensitivityPlotSettings = defaultPlotSettings,
+        fadePlot = false,
+        paramSettings: SensitivityParameterSettings = defaultParamSettings,
+        logScaleYAxis = false,
+        selectedVariables = defaultSelectedVariables,
+        includeParameterSets = false,
+        isLoading = false
+    ) => {
         const visibleParameterSetNames = includeParameterSets ? ["Set1", "Set2"] : [];
-        const parameterSetResults = includeParameterSets ? {
-            Set1: {
-                batch: mockBatchSet1
-            },
-            Set2: {
-                batch: mockBatchSet2
-            },
-            Set3: {
-                batch: mockBatchSet3
-            }
-        } : [];
+        const parameterSetResults = includeParameterSets
+            ? {
+                  Set1: {
+                      batch: mockBatchSet1
+                  },
+                  Set2: {
+                      batch: mockBatchSet2
+                  },
+                  Set3: {
+                      batch: mockBatchSet3
+                  }
+              }
+            : [];
         const parameterSets = [
             {
                 name: "Set1",
@@ -340,8 +348,15 @@ describe("SensitivitySummaryPlot", () => {
     });
 
     it("plots ValueAtTime with parameter set traces", () => {
-        const wrapper = getWrapper(true, defaultPlotSettings, false, defaultParamSettings, false,
-            defaultSelectedVariables, true);
+        const wrapper = getWrapper(
+            true,
+            defaultPlotSettings,
+            false,
+            defaultParamSettings,
+            false,
+            defaultSelectedVariables,
+            true
+        );
         expect(wrapper.find(".plot-placeholder").exists()).toBe(false);
         expect(mockValueAtTime).toHaveBeenCalledWith(99);
         expect(mockBatchSet1.valueAtTime).toHaveBeenCalledWith(99);
@@ -378,8 +393,15 @@ describe("SensitivitySummaryPlot", () => {
             extreme: SensitivityPlotExtreme.Min,
             time: null
         };
-        const wrapper = getWrapper(true, plotSettings, false, defaultParamSettings, false,
-            defaultSelectedVariables, true);
+        const wrapper = getWrapper(
+            true,
+            plotSettings,
+            false,
+            defaultParamSettings,
+            false,
+            defaultSelectedVariables,
+            true
+        );
         expect(mockExtreme).toHaveBeenCalledWith("tMin");
         expect(mockBatchSet1.extreme).toHaveBeenCalledWith("tMin");
         expect(mockBatchSet2.extreme).toHaveBeenCalledWith("tMin");
@@ -415,8 +437,15 @@ describe("SensitivitySummaryPlot", () => {
             extreme: SensitivityPlotExtreme.Max,
             time: null
         };
-        const wrapper = getWrapper(true, plotSettings, false, defaultParamSettings, false,
-            defaultSelectedVariables, true);
+        const wrapper = getWrapper(
+            true,
+            plotSettings,
+            false,
+            defaultParamSettings,
+            false,
+            defaultSelectedVariables,
+            true
+        );
         expect(mockExtreme).toHaveBeenCalledWith("yMax");
         expect(mockBatchSet1.extreme).toHaveBeenCalledWith("yMax");
         expect(mockBatchSet2.extreme).toHaveBeenCalledWith("yMax");
@@ -527,8 +556,16 @@ describe("SensitivitySummaryPlot", () => {
     });
 
     it("commits set loading when plotData is computed, if loading is true", async () => {
-        const wrapper = getWrapper(true, defaultPlotSettings, false,
-            defaultParamSettings, false, defaultSelectedVariables, false, true);
+        const wrapper = getWrapper(
+            true,
+            defaultPlotSettings,
+            false,
+            defaultParamSettings,
+            false,
+            defaultSelectedVariables,
+            false,
+            true
+        );
         // drawPlot on mount
         expect(mockSetLoading).toHaveBeenCalledTimes(1);
         store!.state.sensitivity.plotSettings.time = 50;

@@ -1,12 +1,13 @@
 <template>
-  <wodin-plot
-      :fade-plot="fadePlot"
-      :placeholder-message="placeholderMessage"
-      :end-time="endTime"
-      :plot-data="allPlotData"
-      :redrawWatches="solution ? [solution] : []">
-    <slot></slot>
-  </wodin-plot>
+    <wodin-plot
+        :fade-plot="fadePlot"
+        :placeholder-message="placeholderMessage"
+        :end-time="endTime"
+        :plot-data="allPlotData"
+        :redrawWatches="solution ? [solution] : []"
+    >
+        <slot></slot>
+    </wodin-plot>
 </template>
 
 <script lang="ts">
@@ -31,16 +32,21 @@ export default defineComponent({
         const selectedVariables = computed(() => store.state.model.selectedVariables);
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, false));
 
-        const solution = computed(() => (store.state.run.resultDiscrete?.solution));
+        const solution = computed(() => store.state.run.resultDiscrete?.solution);
 
         const endTime = computed(() => store.state.run.endTime);
 
         const palette = computed(() => store.state.model.paletteModel);
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
-            const result = solution.value && solution.value({
-                mode: "grid", tStart: start, tEnd: end, nPoints: points
-            });
+            const result =
+                solution.value &&
+                solution.value({
+                    mode: "grid",
+                    tStart: start,
+                    tEnd: end,
+                    nPoints: points
+                });
             if (!result) {
                 return [];
             }

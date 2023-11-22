@@ -6,7 +6,7 @@ export enum AppStateGetter {
 }
 
 export interface AppStateGetters {
-    [AppStateGetter.baseUrlPath]: Getter<AppState, AppState>
+    [AppStateGetter.baseUrlPath]: Getter<AppState, AppState>;
 }
 
 export const getters: AppStateGetters & GetterTree<AppState, AppState> = {

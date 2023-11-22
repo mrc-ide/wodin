@@ -1,7 +1,7 @@
 import { TranslationLocales } from "../../types/languageTypes";
 
 interface FitTabTranslations extends TranslationLocales {
-    fitTabExample: string
+    fitTabExample: string;
 }
 
 const en: FitTabTranslations = {

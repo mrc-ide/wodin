@@ -16,10 +16,13 @@ describe("LinkData", () => {
                     state: mockFitDataState({
                         columns: includeColumns ? ["Day", "Cases", "Admissions"] : null,
                         timeVariable: includeColumns ? "Day" : null,
-                        linkedVariables: includeColumns && includeColumns ? {
-                            Cases: "I",
-                            Admissions: null
-                        } : {}
+                        linkedVariables:
+                            includeColumns && includeColumns
+                                ? {
+                                      Cases: "I",
+                                      Admissions: null
+                                  }
+                                : {}
                     }),
                     getters,
                     actions: {
@@ -108,19 +111,19 @@ describe("LinkData", () => {
 
     it("renders as expected when data has not been uploaded", () => {
         const wrapper = getWrapper(false, true);
-        checkCannotLink(wrapper,
-            "Please complete the following in order to select links: Upload valid data");
+        checkCannotLink(wrapper, "Please complete the following in order to select links: Upload valid data");
     });
 
     it("renders as expected when model has not been compiled", () => {
         const wrapper = getWrapper(true, false);
-        checkCannotLink(wrapper,
-            "Please complete the following in order to select links: Compile model");
+        checkCannotLink(wrapper, "Please complete the following in order to select links: Compile model");
     });
 
     it("renders as expected without neither data nor compiled data", () => {
         const wrapper = getWrapper(false, false);
-        checkCannotLink(wrapper,
-            "Please complete the following in order to select links: Upload valid data, Compile model");
+        checkCannotLink(
+            wrapper,
+            "Please complete the following in order to select links: Upload valid data, Compile model"
+        );
     });
 });

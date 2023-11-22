@@ -1,7 +1,5 @@
 import { ActionContext, ActionTree, Commit } from "vuex";
-import {
-    AdvancedSettings, ParameterSet, RunState
-} from "./state";
+import { AdvancedSettings, ParameterSet, RunState } from "./state";
 import { RunMutation } from "./mutations";
 import { AppState, AppType } from "../appState/state";
 import userMessages from "../../userMessages";
@@ -22,9 +20,15 @@ export enum RunAction {
     SwapParameterSet = "SwapParameterSet"
 }
 
-const runOdeModel = (parameterValues: OdinUserType, startTime: number, endTime: number, runner: OdinRunnerOde,
-    odin: Odin, advancedSettings: AdvancedSettings) => {
-    const payload : OdinRunResultOde = {
+const runOdeModel = (
+    parameterValues: OdinUserType,
+    startTime: number,
+    endTime: number,
+    runner: OdinRunnerOde,
+    odin: Odin,
+    advancedSettings: AdvancedSettings
+) => {
+    const payload: OdinRunResultOde = {
         inputs: { endTime, parameterValues },
         solution: null,
         error: null
@@ -44,8 +48,16 @@ const runOdeModel = (parameterValues: OdinUserType, startTime: number, endTime: 
     return payload;
 };
 
-const runOde = (parameterValues: OdinUserType, parameterSets: ParameterSet[], startTime: number, endTime: number,
-    rootState: AppState, commit: Commit, runParameterSets: boolean, advancedSettings: AdvancedSettings) => {
+const runOde = (
+    parameterValues: OdinUserType,
+    parameterSets: ParameterSet[],
+    startTime: number,
+    endTime: number,
+    rootState: AppState,
+    commit: Commit,
+    runParameterSets: boolean,
+    advancedSettings: AdvancedSettings
+) => {
     if (rootState.model.odinRunnerOde) {
         const runner = rootState.model.odinRunnerOde;
         const odin = rootState.model.odin!;
@@ -68,10 +80,16 @@ const runOde = (parameterValues: OdinUserType, parameterSets: ParameterSet[], st
     }
 };
 
-const runDiscrete = (parameterValues: OdinUserType, startTime: number, endTime: number, numberOfReplicates: number,
-    rootState: AppState, commit: Commit) => {
+const runDiscrete = (
+    parameterValues: OdinUserType,
+    startTime: number,
+    endTime: number,
+    numberOfReplicates: number,
+    rootState: AppState,
+    commit: Commit
+) => {
     if (rootState.model.odinRunnerDiscrete) {
-        const payload : OdinRunResultDiscrete = {
+        const payload: OdinRunResultDiscrete = {
             inputs: { endTime, parameterValues, numberOfReplicates },
             solution: null,
             error: null
@@ -79,8 +97,14 @@ const runDiscrete = (parameterValues: OdinUserType, startTime: number, endTime: 
 
         try {
             const dt = rootState.model.odinModelResponse!.metadata!.dt || 0.1;
-            const solution = rootState.model.odinRunnerDiscrete.wodinRunDiscrete(rootState.model.odin!,
-                parameterValues, startTime, endTime, dt, numberOfReplicates);
+            const solution = rootState.model.odinRunnerDiscrete.wodinRunDiscrete(
+                rootState.model.odin!,
+                parameterValues,
+                startTime,
+                endTime,
+                dt,
+                numberOfReplicates
+            );
             payload.solution = solution;
         } catch (e) {
             payload.error = {
@@ -92,10 +116,14 @@ const runDiscrete = (parameterValues: OdinUserType, startTime: number, endTime: 
     }
 };
 
-const runModel = (parameterValues: OdinUserType | null, parameterSets: ParameterSet[], endTime: number,
+const runModel = (
+    parameterValues: OdinUserType | null,
+    parameterSets: ParameterSet[],
+    endTime: number,
     numberOfReplicates: number | null,
     context: ActionContext<RunState, AppState>,
-    advancedSettings: AdvancedSettings) => {
+    advancedSettings: AdvancedSettings
+) => {
     const { rootState, commit, getters } = context;
     const startTime = 0;
     const isStochastic = rootState.appType === AppType.Stochastic;
@@ -105,23 +133,29 @@ const runModel = (parameterValues: OdinUserType | null, parameterSets: Parameter
         if (isStochastic) {
             runDiscrete(parameterValues, startTime, endTime, numberOfReplicates!, rootState, commit);
         } else {
-            runOde(parameterValues, parameterSets, startTime, endTime,
-                rootState, commit, runParameterSetsRequired, advancedSettings);
+            runOde(
+                parameterValues,
+                parameterSets,
+                startTime,
+                endTime,
+                rootState,
+                commit,
+                runParameterSetsRequired,
+                advancedSettings
+            );
         }
     }
 };
 
 export interface DownloadOutputPayload {
-    fileName: string,
-    points: number
+    fileName: string;
+    points: number;
 }
 
 export const actions: ActionTree<RunState, AppState> = {
     [RunAction.RunModel](context) {
         const { dispatch, state, rootState } = context;
-        const {
-            parameterValues, endTime, numberOfReplicates, parameterSets, advancedSettings
-        } = state;
+        const { parameterValues, endTime, numberOfReplicates, parameterSets, advancedSettings } = state;
         const isFit = rootState.appType === AppType.Fit;
         runModel(parameterValues, parameterSets, endTime, numberOfReplicates, context, advancedSettings);
         if (isFit) {
@@ -150,8 +184,7 @@ export const actions: ActionTree<RunState, AppState> = {
         const { commit } = context;
         commit(RunMutation.SetDownloading, true);
         setTimeout(() => {
-            new WodinModelOutputDownload(context, payload.fileName, payload.points)
-                .download();
+            new WodinModelOutputDownload(context, payload.fileName, payload.points).download();
             commit(RunMutation.SetDownloading, false);
         }, 5);
     },
