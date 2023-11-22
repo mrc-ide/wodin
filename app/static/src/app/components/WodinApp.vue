@@ -1,7 +1,9 @@
 <template>
-    <session-initialise-modal v-if="!sessionInitialised && !immediateInitialise"
-                            @new-session="newSession"
-                            @reload-session="reloadSession"></session-initialise-modal>
+    <session-initialise-modal
+        v-if="!sessionInitialised && !immediateInitialise"
+        @new-session="newSession"
+        @reload-session="reloadSession"
+    ></session-initialise-modal>
     <div class="container">
         <div class="row">
             <div class="col-12">
@@ -24,9 +26,7 @@
 </template>
 
 <script lang="ts">
-import {
-    computed, defineComponent
-} from "vue";
+import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import SessionInitialiseModal from "./SessionInitialiseModal.vue";
 import { AppStateAction } from "../store/appState/actions";

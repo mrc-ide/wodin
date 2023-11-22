@@ -10,8 +10,9 @@ describe("SessionInitialiseModal", () => {
         const wrapper = getWrapper();
         expect(wrapper.find("#session-initialise-modal .modal").classes()).toContain("show");
         expect(wrapper.find(".modal-backdrop").exists()).toBe(true);
-        expect(wrapper.find(".modal-body").text())
-            .toBe("Would you like to reload the most recent session or start a new session?");
+        expect(wrapper.find(".modal-body").text()).toBe(
+            "Would you like to reload the most recent session or start a new session?"
+        );
         expect(wrapper.find("button#reload-session").text()).toBe("Reload session");
         expect(wrapper.find("button#new-session").text()).toBe("New session");
     });

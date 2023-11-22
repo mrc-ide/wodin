@@ -86,50 +86,43 @@ describe("WodinApp", () => {
     });
 
     it("shows modal when session is not initialised, latest session id exists, and no load id", () => {
-        const wrapper = getWrapper({ configured: false, loadSessionId: null },
-            { latestSessionId: "1234" });
+        const wrapper = getWrapper({ configured: false, loadSessionId: null }, { latestSessionId: "1234" });
         expect(wrapper.findComponent(SessionInitialiseModal).exists()).toBe(true);
     });
 
     it("does not show modal when session is initialised", () => {
-        const wrapper = getWrapper({ configured: true, loadSessionId: null },
-            { latestSessionId: "1234" });
+        const wrapper = getWrapper({ configured: true, loadSessionId: null }, { latestSessionId: "1234" });
         expect(wrapper.findComponent(SessionInitialiseModal).exists()).toBe(false);
     });
 
     it("does not show modal, and immediately initialises new session when there is no latest session id", () => {
-        const wrapper = getWrapper({ configured: false, loadSessionId: null },
-            { latestSessionId: null });
+        const wrapper = getWrapper({ configured: false, loadSessionId: null }, { latestSessionId: null });
         expect(wrapper.findComponent(SessionInitialiseModal).exists()).toBe(false);
         expect(mockInitialiseSession).toHaveBeenCalledTimes(1);
         expect(mockInitialiseSession.mock.calls[0][1]).toStrictEqual({ loadSessionId: "", copySession: true });
     });
 
     it("does not show modal and immediately initialises shared session when there is a load id", () => {
-        const wrapper = getWrapper({ configured: false, loadSessionId: "abcd" },
-            { latestSessionId: "1234" });
+        const wrapper = getWrapper({ configured: false, loadSessionId: "abcd" }, { latestSessionId: "1234" });
         expect(wrapper.findComponent(SessionInitialiseModal).exists()).toBe(false);
         expect(mockInitialiseSession).toHaveBeenCalledTimes(1);
         expect(mockInitialiseSession.mock.calls[0][1]).toStrictEqual({ loadSessionId: "abcd", copySession: true });
     });
 
     it("does not immediately initialise if session is already initialised", () => {
-        const wrapper = getWrapper({ configured: true, loadSessionId: "abcd" },
-            { latestSessionId: "1234" });
+        const wrapper = getWrapper({ configured: true, loadSessionId: "abcd" }, { latestSessionId: "1234" });
         expect(wrapper.findComponent(SessionInitialiseModal).exists()).toBe(false);
         expect(mockInitialiseSession).not.toHaveBeenCalled();
     });
 
     it("initialises new session when selected in modal", async () => {
-        const wrapper = getWrapper({ configured: false, loadSessionId: null },
-            { latestSessionId: "1234" });
+        const wrapper = getWrapper({ configured: false, loadSessionId: null }, { latestSessionId: "1234" });
         await wrapper.findComponent(SessionInitialiseModal).vm.$emit("newSession");
         expect(mockInitialiseSession.mock.calls[0][1]).toStrictEqual({ loadSessionId: "", copySession: true });
     });
 
     it("initialises reload of most recent session when selected in modal", async () => {
-        const wrapper = getWrapper({ configured: false, loadSessionId: null },
-            { latestSessionId: "1234" });
+        const wrapper = getWrapper({ configured: false, loadSessionId: null }, { latestSessionId: "1234" });
         await wrapper.findComponent(SessionInitialiseModal).vm.$emit("reloadSession");
         expect(mockInitialiseSession.mock.calls[0][1]).toStrictEqual({ loadSessionId: "1234", copySession: false });
     });
