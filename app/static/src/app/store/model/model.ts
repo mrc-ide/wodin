@@ -14,7 +14,7 @@ export const defaultState: ModelState = {
     //selectedVariables: [],
     //unselectedVariables: []
     graphs: {
-        graph1: {
+        "Graph 1": {
             selectedVariables: [],
             unselectedVariables: []
         }

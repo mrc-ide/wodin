@@ -44,6 +44,12 @@ export const mutations: MutationTree<ModelState> = {
     },
 
     [ModelMutation.SetSelectedVariables](state: ModelState, payload: { key: string; selectedVariables: string[] }) {
+        if (!Object.keys(state.graphs).includes(payload.key)) {
+            state.graphs[payload.key] = {
+                selectedVariables: [],
+                unselectedVariables: []
+            };
+        }
         state.graphs[payload.key].selectedVariables = payload.selectedVariables;
         // Maintain unselected variables too, so we know which variables had been explicitly unselected when model
         // updates

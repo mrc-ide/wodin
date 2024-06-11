@@ -179,15 +179,15 @@ export const deserialiseState = (targetState: AppState, serialised: SerialisedAp
     // TODO: tweak for multiple graphs
     if (
         model.odinModelResponse?.metadata?.variables &&
-        !model.graphs["graph1"].selectedVariables.length &&
-        !model.graphs["graph1"].unselectedVariables?.length
+        !model.graphs["Graph 1"].selectedVariables.length &&
+        !model.graphs["Graph 1"].unselectedVariables?.length
     ) {
         /* eslint-disable no-param-reassign */
         const selectedVariables = [...(model.odinModelResponse?.metadata?.variables || [])];
         const unselectedVariables: string[] = [];
 
         targetState.model.graphs = {
-            graph1: {
+            "Graph 1": {
                 selectedVariables,
                 unselectedVariables
             }

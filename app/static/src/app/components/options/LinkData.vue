@@ -42,7 +42,7 @@ export default defineComponent({
         const dataColumns = computed(() => store.getters[`${namespace}/${FitDataGetter.nonTimeColumns}`]);
         const modelSuccess = computed(() => store.state.model.odinModelResponse?.valid);
         // TODO: will need to tweak this to use combined set
-        const selectedVariables = computed(() => store.state.model.graphs["graph1"].selectedVariables);
+        const selectedVariables = computed(() => store.state.model.graphs["Graph 1"].selectedVariables);
         const linkedVariables = computed(() => store.state.fitData.linkedVariables);
         const linkPrerequisitesMessage = computed(() => {
             const messages = [];

@@ -70,8 +70,8 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
 
         // Retain variable selections. Newly added variables will be selected by default
         // TODO: tweak for multiple graphs
-        const select = variables.filter((s) => !state.graphs["graph1"].unselectedVariables.includes(s));
-        commit(ModelMutation.SetSelectedVariables, { key: "graph1", selectedVariables: select });
+        const select = variables.filter((s) => !state.graphs["Graph 1"].unselectedVariables.includes(s));
+        commit(ModelMutation.SetSelectedVariables, { key: "Graph 1", selectedVariables: select });
 
         if (state.compileRequired) {
             commit(ModelMutation.SetCompileRequired, false);

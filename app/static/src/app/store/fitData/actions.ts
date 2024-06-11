@@ -24,7 +24,7 @@ const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) =
     const { commit, state, rootState, getters } = context;
     const modelResponse = rootState.model.odinModelResponse;
     // TODO: tweak for multiple graphs
-    const modelVariables = modelResponse?.valid ? rootState.model.graphs["graph1"].selectedVariables : [];
+    const modelVariables = modelResponse?.valid ? rootState.model.graphs["Graph 1"].selectedVariables : [];
     const dataColumns = getters.nonTimeColumns;
     let newLinks = {};
     if (dataColumns) {

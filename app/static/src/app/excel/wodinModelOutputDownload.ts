@@ -46,7 +46,7 @@ export class WodinModelOutputDownload extends WodinExcelDownload {
                 nPoints: this._points
             });
             // TODO: tweak for multiple graphs
-            const { selectedVariables } = this._state.model.graphs["graph1"];
+            const { selectedVariables } = this._state.model.graphs["Graph 1"];
 
             const worksheet = WodinModelOutputDownload._generateModelledOutput(
                 selectedVariables,
@@ -69,7 +69,7 @@ export class WodinModelOutputDownload extends WodinExcelDownload {
                 const times = fitData.map((row: Dict<number>) => row[timeVariable]);
                 const solutionOutput = solution({ mode: "given", times });
                 // TODO: Tweak for multiple graphs
-                const { selectedVariables } = this._state.model.graphs["graph1"];
+                const { selectedVariables } = this._state.model.graphs["Graph 1"];
 
                 const worksheet = WodinModelOutputDownload._generateModelledOutput(
                     selectedVariables,

@@ -1,6 +1,6 @@
 <template>
-    <div class="ms-2">Click to toggle variables to include in graphs.</div>
     <div class="selected-variables-panel m-2">
+        <h5>{{ graphKey }}</h5>
         <span
             v-for="variable in allVariables"
             class="badge variable me-2 mb-2"
@@ -23,10 +23,16 @@ import { ModelAction } from "../../store/model/actions";
 
 export default defineComponent({
     name: "SelectedVariables",
-    setup() {
+    props: {
+        graphKey: {
+            type: String,
+            required: true
+        }
+    },
+    setup(props) {
         const store = useStore();
         const allVariables = computed<string[]>(() => store.state.model.odinModelResponse?.metadata?.variables || []);
-        const selectedVariables = computed<string[]>(() => store.state.model.graphs["graph1"].selectedVariables);
+        const selectedVariables = computed<string[]>(() => store.state.model.graphs[props.graphKey].selectedVariables);
         const palette = computed(() => store.state.model.paletteModel!);
 
         const getStyle = (variable: string) => {
@@ -39,7 +45,7 @@ export default defineComponent({
 
         const updateSelectedVariables = (newVariables: string[]) => {
             store.dispatch(`model/${ModelAction.UpdateSelectedVariables}`, {
-                key: "graph1",
+                key: props.graphKey,
                 selectedVariables: newVariables
             });
         };

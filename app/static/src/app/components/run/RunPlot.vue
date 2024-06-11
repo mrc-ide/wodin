@@ -1,4 +1,5 @@
 <template>
+    <h5>{{ graphKey }}</h5>
     <wodin-plot
         :fade-plot="fadePlot"
         :placeholder-message="placeholderMessage"
@@ -26,12 +27,16 @@ import { ParameterSet } from "../../store/run/state";
 export default defineComponent({
     name: "RunPlot",
     props: {
-        fadePlot: Boolean
+        fadePlot: Boolean,
+        graphKey: {
+            type: String,
+            default: "Graph 1"
+        }
     },
     components: {
         WodinPlot
     },
-    setup() {
+    setup(props) {
         const store = useStore();
 
         const solution = computed(() => store.state.run.resultOde?.solution);
@@ -58,8 +63,7 @@ export default defineComponent({
 
         const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData}`]);
 
-        // TODO: tweak for multiple plots
-        const selectedVariables = computed(() => store.state.model.graphs["graph1"].selectedVariables);
+        const selectedVariables = computed(() => store.state.model.graphs[props.graphKey].selectedVariables);
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, false));
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {

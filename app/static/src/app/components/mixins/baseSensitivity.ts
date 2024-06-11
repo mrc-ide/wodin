@@ -37,7 +37,7 @@ export default (store: Store<AppState>, multiSensitivity: boolean): BaseSensitiv
             }
 
             // TODO: will need to tweak this to use combined set
-            if (!store.state.model.graphs["graph1"].selectedVariables.length) {
+            if (!store.state.model.graphs["Graph 1"].selectedVariables.length) {
                 return userMessages.model.selectAVariable;
             }
 
