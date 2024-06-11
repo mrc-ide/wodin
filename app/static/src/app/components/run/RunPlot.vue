@@ -58,7 +58,8 @@ export default defineComponent({
 
         const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData}`]);
 
-        const selectedVariables = computed(() => store.state.model.selectedVariables);
+        // TODO: tweak for multiple plots
+        const selectedVariables = computed(() => store.state.model.graphs["graph1"].selectedVariables);
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, false));
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {

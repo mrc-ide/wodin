@@ -26,7 +26,7 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const allVariables = computed<string[]>(() => store.state.model.odinModelResponse?.metadata?.variables || []);
-        const selectedVariables = computed<string[]>(() => store.state.model.selectedVariables);
+        const selectedVariables = computed<string[]>(() => store.state.model.graphs["graph1"].selectedVariables);
         const palette = computed(() => store.state.model.paletteModel!);
 
         const getStyle = (variable: string) => {
@@ -38,7 +38,10 @@ export default defineComponent({
         };
 
         const updateSelectedVariables = (newVariables: string[]) => {
-            store.dispatch(`model/${ModelAction.UpdateSelectedVariables}`, newVariables);
+            store.dispatch(`model/${ModelAction.UpdateSelectedVariables}`, {
+                key: "graph1",
+                selectedVariables: newVariables
+            });
         };
 
         const toggleVariable = (variable: string) => {

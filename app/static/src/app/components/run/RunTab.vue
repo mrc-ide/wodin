@@ -99,7 +99,8 @@ export default defineComponent({
             if (store.state.model.compileRequired) {
                 return userMessages.run.compileRequired;
             }
-            if (!store.state.model.selectedVariables.length) {
+            // TODO: tweak for multiple graphs
+            if (!store.state.model.graphs["graph1"].selectedVariables.length) {
                 return userMessages.model.selectAVariable;
             }
             // TODO: eventually make runRequired to runUpdateRequired I think?

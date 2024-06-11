@@ -39,7 +39,7 @@ export default defineComponent({
         const batch = computed(() => store.state.sensitivity.result?.batch);
         const plotSettings = computed(() => store.state.sensitivity.plotSettings);
         const palette = computed(() => store.state.model.paletteModel);
-        const selectedVariables = computed(() => store.state.model.selectedVariables);
+        const selectedVariables = computed(() => store.state.model.graphs["graph1"].selectedVariables);
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, true));
 
         const xAxisSettings = computed(() => {

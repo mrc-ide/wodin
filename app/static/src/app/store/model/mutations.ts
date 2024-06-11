@@ -43,11 +43,11 @@ export const mutations: MutationTree<ModelState> = {
         state.paletteModel = payload;
     },
 
-    [ModelMutation.SetSelectedVariables](state: ModelState, payload: string[]) {
-        state.selectedVariables = payload;
+    [ModelMutation.SetSelectedVariables](state: ModelState, payload: { key: string; selectedVariables: string[] }) {
+        state.graphs[payload.key].selectedVariables = payload.selectedVariables;
         // Maintain unselected variables too, so we know which variables had been explicitly unselected when model
         // updates
-        state.unselectedVariables =
-            state.odinModelResponse?.metadata?.variables.filter((s) => !payload.includes(s)) || [];
+        state.graphs[payload.key].unselectedVariables =
+            state.odinModelResponse?.metadata?.variables.filter((s) => !payload.selectedVariables.includes(s)) || [];
     }
 };

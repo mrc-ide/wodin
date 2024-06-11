@@ -69,8 +69,9 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
         commit(ModelMutation.SetPaletteModel, paletteModel(variables));
 
         // Retain variable selections. Newly added variables will be selected by default
-        const select = variables.filter((s) => !state.unselectedVariables.includes(s));
-        commit(ModelMutation.SetSelectedVariables, select);
+        // TODO: tweak for multiple graphs
+        const select = variables.filter((s) => !state.graphs["graph1"].unselectedVariables.includes(s));
+        commit(ModelMutation.SetSelectedVariables, { key: "graph1", selectedVariables: select });
 
         if (state.compileRequired) {
             commit(ModelMutation.SetCompileRequired, false);
@@ -147,7 +148,7 @@ export const actions: ActionTree<ModelState, AppState> = {
         context.dispatch(`run/${RunAction.RunModel}`, null, { root: true });
     },
 
-    UpdateSelectedVariables(context, payload: string[]) {
+    UpdateSelectedVariables(context, payload: { key: string; selectedVariables: string[] }) {
         const { commit, dispatch, rootState } = context;
         commit(ModelMutation.SetSelectedVariables, payload);
         if (rootState.appType === AppType.Fit) {
