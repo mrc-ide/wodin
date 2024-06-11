@@ -1,14 +1,16 @@
 <template>
-    <div class="selected-variables-panel m-2">
+    <div class="selected-variables-panel m-2" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
         <h5>{{ graphKey }}</h5>
         <span
             v-for="variable in allVariables"
             class="badge variable me-2 mb-2"
             :style="getStyle(variable)"
             :key="variable"
-            @click="toggleVariable(variable)"
-            >{{ variable }}</span
+            draggable="true"
+            @dragstart="startDrag($event, variable)"
         >
+            {{ variable }}
+        </span>
     </div>
     <div class="ms-2">
         <span class="clickable text-primary" id="select-variables-all" @click="selectAll">Select all</span> |
@@ -68,12 +70,26 @@ export default defineComponent({
             updateSelectedVariables([]);
         };
 
+        const startDrag = (evt: DragEvent, variable: string) => {
+            console.log(`started dragging ${variable}`);
+            evt!!.dataTransfer!!.dropEffect = "move";
+            evt!!.dataTransfer!!.effectAllowed = "move";
+            evt!!.dataTransfer!!.setData("variable", variable);
+        };
+
+        const onDrop = (evt: DragEvent) => {
+            const variable = evt.dataTransfer!!.getData("variable");
+            console.log(`${variable} got dropped!`);
+        };
+
         return {
             allVariables,
             getStyle,
             toggleVariable,
             selectAll,
-            selectNone
+            selectNone,
+            startDrag,
+            onDrop
         };
     }
 });
