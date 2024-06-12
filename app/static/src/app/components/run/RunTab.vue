@@ -5,7 +5,13 @@
         </div>
         <action-required-message :message="updateMsg"></action-required-message>
         <run-stochastic-plot v-if="isStochastic" :fade-plot="!!updateMsg"></run-stochastic-plot>
-        <run-plot v-else :fade-plot="!!updateMsg" :model-fit="false">
+        <run-plot
+            v-for="graphKey in graphKeys"
+            v-else
+            :fade-plot="!!updateMsg"
+            :model-fit="false"
+            :graph-key="graphKey"
+        >
             <div v-if="sumOfSquares">
                 <span>Sum of squares: {{ sumOfSquares }}</span>
             </div>
@@ -99,7 +105,8 @@ export default defineComponent({
             if (store.state.model.compileRequired) {
                 return userMessages.run.compileRequired;
             }
-            if (!store.state.model.selectedVariables.length) {
+            // TODO: tweak for multiple graphs
+            if (!store.state.model.graphs["Graph 1"].selectedVariables.length) {
                 return userMessages.model.selectAVariable;
             }
             // TODO: eventually make runRequired to runUpdateRequired I think?
@@ -118,6 +125,8 @@ export default defineComponent({
         const download = (payload: { fileName: string; points: number }) =>
             store.dispatch(`run/${RunAction.DownloadOutput}`, payload);
 
+        const graphKeys = computed(() => Object.keys(store.state.model.graphs));
+
         return {
             canRunModel,
             isStochastic,
@@ -130,7 +139,8 @@ export default defineComponent({
             canDownloadOutput,
             downloadUserFileName,
             toggleShowDownloadOutput,
-            download
+            download,
+            graphKeys
         };
     }
 });

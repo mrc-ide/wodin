@@ -16,7 +16,11 @@
         <error-info :error="error"></error-info>
         <div class="mt-3">
             <vertical-collapse v-if="showSelectedVariables" title="Select variables" collapse-id="select-variables">
-                <selected-variables></selected-variables>
+                <div class="ms-2">
+                    Click to toggle variables to include in graphs. Drag variable to move to another graph.
+                </div>
+                <selected-variables v-for="graphKey in graphKeys" :graph-key="graphKey"></selected-variables>
+                <button class="btn btn-primary mt-2" id="add-graph-btn" @click="addGraph">Add Graph</button>
             </vertical-collapse>
         </div>
     </div>
@@ -60,6 +64,11 @@ export default defineComponent({
         const appIsConfigured = computed(() => store.state.configured);
         const compile = () => store.dispatch(`model/${ModelAction.CompileModel}`);
         const loadingMessage = userMessages.code.isValidating;
+        const graphKeys = computed(() => Object.keys(store.state.model.graphs));
+        const addGraph = () => {
+            const newGraphKey = `Graph ${Object.keys(store.state.model.graphs).length + 1}`;
+            store.dispatch(`model/${ModelAction.UpdateSelectedVariables}`, { key: newGraphKey, selectedVariables: [] });
+        };
 
         return {
             appIsConfigured,
@@ -72,7 +81,9 @@ export default defineComponent({
             showSelectedVariables,
             codeHelp,
             codeValidating,
-            loadingMessage
+            loadingMessage,
+            graphKeys,
+            addGraph
         };
     }
 });
