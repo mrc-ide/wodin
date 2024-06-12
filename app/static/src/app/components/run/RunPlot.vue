@@ -1,5 +1,4 @@
 <template>
-    <h5>{{ graphKey }}</h5>
     <wodin-plot
         :fade-plot="fadePlot"
         :placeholder-message="placeholderMessage"

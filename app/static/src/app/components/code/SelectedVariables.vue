@@ -1,13 +1,28 @@
 <template>
     <div class="selected-variables-panel m-2" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
-        <h5>{{ graphKey }}</h5>
+        <h5>
+            {{ graphKey }}
+            <button
+                type="button"
+                class="btn btn-light mx-2"
+                v-if="graphKey !== 'Graph 1'"
+                @click="deleteGraph"
+                v-tooltip="'Delete Graph'"
+            >
+                <vue-feather
+                    class="inline-icon clickable delete-param-set ms-2 param-set-icon"
+                    type="trash-2"
+                ></vue-feather>
+            </button>
+        </h5>
         <span
             v-for="variable in allVariables"
             class="badge variable me-2 mb-2"
             :style="getStyle(variable)"
             :key="variable"
-            draggable="true"
+            :draggable="selectedVariables.includes(variable) ? true : false"
             @dragstart="startDrag($event, variable)"
+            @click="toggleVariable(variable)"
         >
             {{ variable }}
         </span>
@@ -22,9 +37,18 @@
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import { ModelAction } from "../../store/model/actions";
+import VueFeather from "vue-feather";
+import tooltip from "../../directives/tooltip";
+import { ModelMutation } from "../../store/model/mutations";
 
 export default defineComponent({
     name: "SelectedVariables",
+    computed: {
+        tooltip() {
+            return tooltip;
+        }
+    },
+    components: { VueFeather },
     props: {
         graphKey: {
             type: String,
@@ -52,6 +76,10 @@ export default defineComponent({
             });
         };
 
+        const deleteGraph = () => {
+            store.commit(`model/${ModelMutation.DeleteGraph}`, props.graphKey);
+        };
+
         const toggleVariable = (variable: string) => {
             let newVars: string[];
             if (selectedVariables.value.includes(variable)) {
@@ -72,24 +100,44 @@ export default defineComponent({
 
         const startDrag = (evt: DragEvent, variable: string) => {
             console.log(`started dragging ${variable}`);
-            evt!!.dataTransfer!!.dropEffect = "move";
-            evt!!.dataTransfer!!.effectAllowed = "move";
-            evt!!.dataTransfer!!.setData("variable", variable);
+            const { dataTransfer } = evt;
+            dataTransfer!!.dropEffect = "move";
+            dataTransfer!!.effectAllowed = "move";
+            dataTransfer!!.setData("variable", variable);
+            dataTransfer!!.setData("srcGraph", props.graphKey);
         };
 
         const onDrop = (evt: DragEvent) => {
-            const variable = evt.dataTransfer!!.getData("variable");
-            console.log(`${variable} got dropped!`);
+            const { dataTransfer } = evt;
+            const variable = dataTransfer!!.getData("variable");
+            const srcGraph = dataTransfer!!.getData("srcGraph");
+            if (srcGraph !== props.graphKey) {
+                // remove from source graph
+                const srcVariables = [...store.state.model.graphs[srcGraph].selectedVariables].filter(
+                    (v) => v !== variable
+                );
+                store.dispatch(`model/${ModelAction.UpdateSelectedVariables}`, {
+                    key: srcGraph,
+                    selectedVariables: srcVariables
+                });
+
+                // add to this graph if necessary
+                if (!selectedVariables.value.includes(variable)) {
+                    toggleVariable(variable);
+                }
+            }
         };
 
         return {
             allVariables,
+            selectedVariables,
             getStyle,
             toggleVariable,
             selectAll,
             selectNone,
             startDrag,
-            onDrop
+            onDrop,
+            deleteGraph
         };
     }
 });

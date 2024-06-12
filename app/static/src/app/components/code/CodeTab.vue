@@ -16,7 +16,9 @@
         <error-info :error="error"></error-info>
         <div class="mt-3">
             <vertical-collapse v-if="showSelectedVariables" title="Select variables" collapse-id="select-variables">
-                <div class="ms-2">Click to toggle variables to include in graphs.</div>
+                <div class="ms-2">
+                    Click to toggle variables to include in graphs. Drag variable to move to another graph.
+                </div>
                 <selected-variables v-for="graphKey in graphKeys" :graph-key="graphKey"></selected-variables>
                 <button class="btn btn-primary mt-2" id="add-graph-btn" @click="addGraph">Add Graph</button>
             </vertical-collapse>

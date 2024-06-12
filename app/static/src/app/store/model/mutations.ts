@@ -11,7 +11,8 @@ export enum ModelMutation {
     SetOdin = "SetOdin",
     SetCompileRequired = "SetCompileRequired",
     SetPaletteModel = "SetPaletteModel",
-    SetSelectedVariables = "SetSelectedVariables"
+    SetSelectedVariables = "SetSelectedVariables",
+    DeleteGraph = "DeleteGraph"
 }
 
 export const mutations: MutationTree<ModelState> = {
@@ -55,5 +56,10 @@ export const mutations: MutationTree<ModelState> = {
         // updates
         state.graphs[payload.key].unselectedVariables =
             state.odinModelResponse?.metadata?.variables.filter((s) => !payload.selectedVariables.includes(s)) || [];
+    },
+
+    [ModelMutation.DeleteGraph](state: ModelState, payload: string) {
+        console.log(`deleting ${payload}`);
+        delete state.graphs[payload];
     }
 };
