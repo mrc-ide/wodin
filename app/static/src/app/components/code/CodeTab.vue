@@ -16,11 +16,10 @@
         <error-info :error="error"></error-info>
         <div class="mt-3">
             <vertical-collapse v-if="showSelectedVariables" title="Select variables" collapse-id="select-variables">
-                <div class="ms-2">
-                    Click to toggle variables to include in graphs. Drag variable to move to another graph.
-                </div>
+                <div class="ms-2">Drag variables to move to another graph, or to hide variable.</div>
                 <selected-variables v-for="graphKey in graphKeys" :graph-key="graphKey"></selected-variables>
-                <button class="btn btn-primary mt-2" id="add-graph-btn" @click="addGraph">Add Graph</button>
+                <hidden-variables style="clear: both"></hidden-variables>
+                <button class="btn btn-primary mt-2 float-end" id="add-graph-btn" @click="addGraph">Add Graph</button>
             </vertical-collapse>
         </div>
     </div>
@@ -37,6 +36,7 @@ import { ModelAction } from "../../store/model/actions";
 import userMessages from "../../userMessages";
 import ErrorInfo from "../ErrorInfo.vue";
 import SelectedVariables from "./SelectedVariables.vue";
+import HiddenVariables from "./HiddenVariables.vue";
 import VerticalCollapse from "../VerticalCollapse.vue";
 import GenericHelp from "../help/GenericHelp.vue";
 
@@ -45,6 +45,7 @@ export default defineComponent({
     components: {
         GenericHelp,
         SelectedVariables,
+        HiddenVariables,
         ErrorInfo,
         CodeEditor,
         VueFeather,

@@ -15,21 +15,20 @@
                 ></vue-feather>
             </button>
         </h5>
-        <span
-            v-for="variable in allVariables"
-            class="badge variable me-2 mb-2"
-            :style="getStyle(variable)"
-            :key="variable"
-            :draggable="selectedVariables.includes(variable) ? true : false"
-            @dragstart="startDrag($event, variable)"
-            @click="toggleVariable(variable)"
-        >
-            {{ variable }}
-        </span>
-    </div>
-    <div class="ms-2">
-        <span class="clickable text-primary" id="select-variables-all" @click="selectAll">Select all</span> |
-        <span class="clickable text-primary" id="select-variables-none" @click="selectNone">Select none</span>
+        <template v-for="variable in allVariables" :key="variable">
+            <span
+                v-if="selectedVariables.includes(variable)"
+                class="badge variable me-2 mb-2"
+                :style="getStyle(variable)"
+                :draggable="selectedVariables.includes(variable) ? true : false"
+                @dragstart="startDrag($event, variable)"
+            >
+                {{ variable }}
+            </span>
+        </template>
+        <div v-if="!selectedVariables.length" style="height: 3rem; background-color: #eee" class="p-2 me-4">
+            Drag variables here to select them for this graph.
+        </div>
     </div>
 </template>
 
@@ -113,13 +112,15 @@ export default defineComponent({
             const srcGraph = dataTransfer!!.getData("srcGraph");
             if (srcGraph !== props.graphKey) {
                 // remove from source graph
-                const srcVariables = [...store.state.model.graphs[srcGraph].selectedVariables].filter(
-                    (v) => v !== variable
-                );
-                store.dispatch(`model/${ModelAction.UpdateSelectedVariables}`, {
-                    key: srcGraph,
-                    selectedVariables: srcVariables
-                });
+                if (srcGraph !== "hidden") {
+                    const srcVariables = [...store.state.model.graphs[srcGraph].selectedVariables].filter(
+                        (v) => v !== variable
+                    );
+                    store.dispatch(`model/${ModelAction.UpdateSelectedVariables}`, {
+                        key: srcGraph,
+                        selectedVariables: srcVariables
+                    });
+                }
 
                 // add to this graph if necessary
                 if (!selectedVariables.value.includes(variable)) {
