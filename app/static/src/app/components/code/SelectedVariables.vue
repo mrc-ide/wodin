@@ -5,6 +5,7 @@
             <button
                 type="button"
                 class="btn btn-light mx-2"
+                style="background-color: #fff; border-width: 0"
                 v-if="graphKey !== 'Graph 1'"
                 @click="deleteGraph"
                 v-tooltip="'Delete Graph'"
@@ -98,21 +99,25 @@ export default defineComponent({
         };
 
         const startDrag = (evt: DragEvent, variable: string) => {
-            console.log(`started dragging ${variable}`);
             const { dataTransfer } = evt;
+            const copy = evt.ctrlKey;
+            console.log(`started dragging ${variable} with ctrlKey ${copy}`);
             dataTransfer!!.dropEffect = "move";
             dataTransfer!!.effectAllowed = "move";
             dataTransfer!!.setData("variable", variable);
             dataTransfer!!.setData("srcGraph", props.graphKey);
+            dataTransfer!!.setData("copyVar", copy.toString());
         };
 
         const onDrop = (evt: DragEvent) => {
             const { dataTransfer } = evt;
             const variable = dataTransfer!!.getData("variable");
             const srcGraph = dataTransfer!!.getData("srcGraph");
+            console.log(`copy on drop is ${dataTransfer!!.getData("copyVar")}`);
+            const copy = dataTransfer!!.getData("copyVar") === "true";
             if (srcGraph !== props.graphKey) {
-                // remove from source graph
-                if (srcGraph !== "hidden") {
+                // remove from source graph - but not if ctrl key was held on start drag
+                if (srcGraph !== "hidden" && !copy) {
                     const srcVariables = [...store.state.model.graphs[srcGraph].selectedVariables].filter(
                         (v) => v !== variable
                     );

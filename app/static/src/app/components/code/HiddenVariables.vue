@@ -45,7 +45,6 @@ export default defineComponent({
         };
 
         const startDrag = (evt: DragEvent, variable: string) => {
-            console.log(`started dragging ${variable}`);
             const { dataTransfer } = evt;
             dataTransfer!!.dropEffect = "move";
             dataTransfer!!.effectAllowed = "move";
