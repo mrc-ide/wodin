@@ -12,7 +12,8 @@ export enum ModelMutation {
     SetCompileRequired = "SetCompileRequired",
     SetPaletteModel = "SetPaletteModel",
     SetSelectedVariables = "SetSelectedVariables",
-    DeleteGraph = "DeleteGraph"
+    DeleteGraph = "DeleteGraph",
+    SetDraggingVariable = "DraggingVariable"
 }
 
 export const mutations: MutationTree<ModelState> = {
@@ -59,7 +60,10 @@ export const mutations: MutationTree<ModelState> = {
     },
 
     [ModelMutation.DeleteGraph](state: ModelState, payload: string) {
-        console.log(`deleting ${payload}`);
         delete state.graphs[payload];
+    },
+
+    [ModelMutation.SetDraggingVariable](state: ModelState, payload: boolean) {
+        state.draggingVariable = payload;
     }
 };

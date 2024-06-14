@@ -1,18 +1,21 @@
 <template>
     <div class="selected-variables-panel m-2" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
         <h5>Hidden variables</h5>
-        <template v-for="variable in hiddenVariables" :key="variable">
-            <span
-                class="badge variable me-2 mb-2"
-                :style="getStyle(variable)"
-                draggable="true"
-                @dragstart="startDrag($event, variable)"
-            >
-                {{ variable }}
-            </span>
-        </template>
-        <div v-if="!hiddenVariables.length" style="height: 3rem; background-color: #eee" class="p-2 me-4">
-            Drag variables here to hide them on all graphs.
+        <div class="drop-zone" :class="draggingVar ? 'drop-zone-active' : 'drop-zone-inactive'">
+            <template v-for="variable in hiddenVariables" :key="variable">
+                <span
+                    class="badge variable me-2 mb-2"
+                    :style="getStyle(variable)"
+                    draggable="true"
+                    @dragstart="startDrag($event, variable)"
+                    @dragend="endDrag"
+                >
+                    {{ variable }}
+                </span>
+            </template>
+            <div v-if="!hiddenVariables.length" style="height: 3rem; background-color: #eee" class="p-2 me-4">
+                Drag variables here to hide them on all graphs.
+            </div>
         </div>
     </div>
 </template>
@@ -39,6 +42,7 @@ export default defineComponent({
         const store = useStore();
         const hiddenVariables = computed<string[]>(() => store.getters[`model/${ModelGetter.unselectedVariables}`]);
         const palette = computed(() => store.state.model.paletteModel!);
+        const draggingVar = computed(() => store.state.model.draggingVariable);
 
         const getStyle = (variable: string) => {
             const bgcolor = palette.value ? palette.value[variable] : "#eee";
@@ -52,6 +56,12 @@ export default defineComponent({
             dataTransfer!!.effectAllowed = "move";
             dataTransfer!!.setData("variable", variable);
             dataTransfer!!.setData("srcGraph", "hidden");
+
+            store.commit(`model/${ModelMutation.SetDraggingVariable}`, true);
+        };
+
+        const endDrag = () => {
+            store.commit(`model/${ModelMutation.SetDraggingVariable}`, false);
         };
 
         const onDrop = (evt: DragEvent) => {
@@ -74,7 +84,9 @@ export default defineComponent({
             hiddenVariables,
             getStyle,
             startDrag,
-            onDrop
+            endDrag,
+            onDrop,
+            draggingVar
         };
     }
 });

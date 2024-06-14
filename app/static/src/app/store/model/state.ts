@@ -23,4 +23,5 @@ export interface ModelState {
     //unselectedVariables: string[]; // We keep track of unselected variables too so we can retain on model update
     // TODO: This is just for POC - this may get moved into another module
     graphs: Dict<GraphConfig>;
+    draggingVariable: boolean;
 }

@@ -18,7 +18,8 @@ export const defaultState: ModelState = {
             selectedVariables: [],
             unselectedVariables: []
         }
-    }
+    },
+    draggingVariable: false
 };
 
 export const model = {

@@ -16,19 +16,22 @@
                 ></vue-feather>
             </button>
         </h5>
-        <template v-for="variable in allVariables" :key="variable">
-            <span
-                v-if="selectedVariables.includes(variable)"
-                class="badge variable me-2 mb-2"
-                :style="getStyle(variable)"
-                :draggable="selectedVariables.includes(variable) ? true : false"
-                @dragstart="startDrag($event, variable)"
-            >
-                {{ variable }}
-            </span>
-        </template>
-        <div v-if="!selectedVariables.length" style="height: 3rem; background-color: #eee" class="p-2 me-4">
-            Drag variables here to select them for this graph.
+        <div class="drop-zone" :class="draggingVar ? 'drop-zone-active' : 'drop-zone-inactive'">
+            <template v-for="variable in allVariables" :key="variable">
+                <span
+                    v-if="selectedVariables.includes(variable)"
+                    class="badge variable me-2 mb-2"
+                    :style="getStyle(variable)"
+                    :draggable="selectedVariables.includes(variable) ? true : false"
+                    @dragstart="startDrag($event, variable)"
+                    @dragend="endDrag"
+                >
+                    {{ variable }}
+                </span>
+            </template>
+            <div v-if="!selectedVariables.length" style="height: 3rem; background-color: #eee" class="p-2 me-4">
+                Drag variables here to select them for this graph.
+            </div>
         </div>
     </div>
 </template>
@@ -60,6 +63,7 @@ export default defineComponent({
         const allVariables = computed<string[]>(() => store.state.model.odinModelResponse?.metadata?.variables || []);
         const selectedVariables = computed<string[]>(() => store.state.model.graphs[props.graphKey].selectedVariables);
         const palette = computed(() => store.state.model.paletteModel!);
+        const draggingVar = computed(() => store.state.model.draggingVariable);
 
         const getStyle = (variable: string) => {
             let bgcolor = "#bbb"; // grey out unselected variables
@@ -107,6 +111,12 @@ export default defineComponent({
             dataTransfer!!.setData("variable", variable);
             dataTransfer!!.setData("srcGraph", props.graphKey);
             dataTransfer!!.setData("copyVar", copy.toString());
+
+            store.commit(`model/${ModelMutation.SetDraggingVariable}`, true);
+        };
+
+        const endDrag = () => {
+            store.commit(`model/${ModelMutation.SetDraggingVariable}`, false);
         };
 
         const onDrop = (evt: DragEvent) => {
@@ -142,8 +152,10 @@ export default defineComponent({
             selectAll,
             selectNone,
             startDrag,
+            endDrag,
             onDrop,
-            deleteGraph
+            deleteGraph,
+            draggingVar
         };
     }
 });
