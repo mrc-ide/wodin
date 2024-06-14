@@ -25,6 +25,7 @@ import VueFeather from "vue-feather";
 import tooltip from "../../directives/tooltip";
 import { ModelMutation } from "../../store/model/mutations";
 import { ModelGetter } from "../../store/model/getters";
+import * as Color from "color";
 
 export default defineComponent({
     name: "SelectedVariables",
@@ -41,7 +42,8 @@ export default defineComponent({
 
         const getStyle = (variable: string) => {
             const bgcolor = palette.value ? palette.value[variable] : "#eee";
-            return { "background-color": bgcolor };
+            const desatBgColor = Color(bgcolor).desaturate(0.6).fade(0.4).rgb().string();
+            return { "background-color": desatBgColor };
         };
 
         const startDrag = (evt: DragEvent, variable: string) => {
