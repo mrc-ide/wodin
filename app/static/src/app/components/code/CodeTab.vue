@@ -16,7 +16,10 @@
         <error-info :error="error"></error-info>
         <div class="mt-3">
             <vertical-collapse v-if="showSelectedVariables" title="Select variables" collapse-id="select-variables">
-                <div class="ms-2">Drag variables to move to another graph, or to hide variable.</div>
+                <div class="ms-2">
+                    Drag variables to move to another graph, or to hide variable. Press the Ctrl key on drag to make a
+                    copy of a variable.
+                </div>
                 <selected-variables v-for="graphKey in graphKeys" :graph-key="graphKey"></selected-variables>
                 <hidden-variables style="clear: both"></hidden-variables>
                 <button class="btn btn-primary mt-2 float-end" id="add-graph-btn" @click="addGraph">Add Graph</button>

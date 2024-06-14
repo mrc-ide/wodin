@@ -27,6 +27,9 @@
                     @dragend="endDrag"
                 >
                     {{ variable }}
+                    <span v-if="duplicateVariables.includes(variable)">
+                        | <button class="variable-delete-button" @click="deleteVariable(variable)">×</button>
+                    </span>
                 </span>
             </template>
             <div v-if="!selectedVariables.length" style="height: 3rem; background-color: #eee" class="p-2 me-4">
@@ -43,6 +46,7 @@ import { ModelAction } from "../../store/model/actions";
 import VueFeather from "vue-feather";
 import tooltip from "../../directives/tooltip";
 import { ModelMutation } from "../../store/model/mutations";
+import { ModelGetter } from "../../store/model/getters";
 
 export default defineComponent({
     name: "SelectedVariables",
@@ -64,6 +68,7 @@ export default defineComponent({
         const selectedVariables = computed<string[]>(() => store.state.model.graphs[props.graphKey].selectedVariables);
         const palette = computed(() => store.state.model.paletteModel!);
         const draggingVar = computed(() => store.state.model.draggingVariable);
+        const duplicateVariables = computed(() => store.getters[`model/${ModelGetter.duplicateVariables}`]);
 
         const getStyle = (variable: string) => {
             let bgcolor = "#bbb"; // grey out unselected variables
@@ -119,6 +124,18 @@ export default defineComponent({
             store.commit(`model/${ModelMutation.SetDraggingVariable}`, false);
         };
 
+        const removeVariable = (graph: string, variable: string) => {
+            const srcVariables = [...store.state.model.graphs[graph].selectedVariables].filter((v) => v !== variable);
+            store.dispatch(`model/${ModelAction.UpdateSelectedVariables}`, {
+                key: graph,
+                selectedVariables: srcVariables
+            });
+        };
+
+        const deleteVariable = (variable: string) => {
+            removeVariable(props.graphKey, variable);
+        };
+
         const onDrop = (evt: DragEvent) => {
             const { dataTransfer } = evt;
             const variable = dataTransfer!!.getData("variable");
@@ -128,13 +145,7 @@ export default defineComponent({
             if (srcGraph !== props.graphKey) {
                 // remove from source graph - but not if ctrl key was held on start drag
                 if (srcGraph !== "hidden" && !copy) {
-                    const srcVariables = [...store.state.model.graphs[srcGraph].selectedVariables].filter(
-                        (v) => v !== variable
-                    );
-                    store.dispatch(`model/${ModelAction.UpdateSelectedVariables}`, {
-                        key: srcGraph,
-                        selectedVariables: srcVariables
-                    });
+                    removeVariable(srcGraph, variable);
                 }
 
                 // add to this graph if necessary
@@ -155,7 +166,9 @@ export default defineComponent({
             endDrag,
             onDrop,
             deleteGraph,
-            draggingVar
+            draggingVar,
+            duplicateVariables,
+            deleteVariable
         };
     }
 });
@@ -169,5 +182,12 @@ export default defineComponent({
         font-size: large;
         cursor: pointer;
     }
+}
+
+.variable-delete-button {
+    background-color: transparent;
+    border-width: 0;
+    color: white;
+    font-weight: bold;
 }
 </style>
