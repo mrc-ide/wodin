@@ -11,7 +11,9 @@ export enum ModelMutation {
     SetOdin = "SetOdin",
     SetCompileRequired = "SetCompileRequired",
     SetPaletteModel = "SetPaletteModel",
-    SetSelectedVariables = "SetSelectedVariables"
+    SetSelectedVariables = "SetSelectedVariables",
+    DeleteGraph = "DeleteGraph",
+    SetDraggingVariable = "DraggingVariable"
 }
 
 export const mutations: MutationTree<ModelState> = {
@@ -43,11 +45,25 @@ export const mutations: MutationTree<ModelState> = {
         state.paletteModel = payload;
     },
 
-    [ModelMutation.SetSelectedVariables](state: ModelState, payload: string[]) {
-        state.selectedVariables = payload;
+    [ModelMutation.SetSelectedVariables](state: ModelState, payload: { key: string; selectedVariables: string[] }) {
+        if (!Object.keys(state.graphs).includes(payload.key)) {
+            state.graphs[payload.key] = {
+                selectedVariables: [],
+                unselectedVariables: []
+            };
+        }
+        state.graphs[payload.key].selectedVariables = payload.selectedVariables;
         // Maintain unselected variables too, so we know which variables had been explicitly unselected when model
         // updates
-        state.unselectedVariables =
-            state.odinModelResponse?.metadata?.variables.filter((s) => !payload.includes(s)) || [];
+        state.graphs[payload.key].unselectedVariables =
+            state.odinModelResponse?.metadata?.variables.filter((s) => !payload.selectedVariables.includes(s)) || [];
+    },
+
+    [ModelMutation.DeleteGraph](state: ModelState, payload: string) {
+        delete state.graphs[payload];
+    },
+
+    [ModelMutation.SetDraggingVariable](state: ModelState, payload: boolean) {
+        state.draggingVariable = payload;
     }
 };

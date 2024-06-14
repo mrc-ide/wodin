@@ -11,8 +11,15 @@ export const defaultState: ModelState = {
     odin: null,
     paletteModel: null,
     odinModelCodeError: null,
-    selectedVariables: [],
-    unselectedVariables: []
+    //selectedVariables: [],
+    //unselectedVariables: []
+    graphs: {
+        "Graph 1": {
+            selectedVariables: [],
+            unselectedVariables: []
+        }
+    },
+    draggingVariable: false
 };
 
 export const model = {

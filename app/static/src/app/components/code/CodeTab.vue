@@ -16,7 +16,13 @@
         <error-info :error="error"></error-info>
         <div class="mt-3">
             <vertical-collapse v-if="showSelectedVariables" title="Select variables" collapse-id="select-variables">
-                <selected-variables></selected-variables>
+                <div class="ms-2">
+                    Drag variables to move to another graph, or to hide variable. Press the Ctrl key on drag to make a
+                    copy of a variable.
+                </div>
+                <selected-variables v-for="graphKey in graphKeys" :graph-key="graphKey"></selected-variables>
+                <hidden-variables style="clear: both"></hidden-variables>
+                <button class="btn btn-primary mt-2 float-end" id="add-graph-btn" @click="addGraph">Add Graph</button>
             </vertical-collapse>
         </div>
     </div>
@@ -33,6 +39,7 @@ import { ModelAction } from "../../store/model/actions";
 import userMessages from "../../userMessages";
 import ErrorInfo from "../ErrorInfo.vue";
 import SelectedVariables from "./SelectedVariables.vue";
+import HiddenVariables from "./HiddenVariables.vue";
 import VerticalCollapse from "../VerticalCollapse.vue";
 import GenericHelp from "../help/GenericHelp.vue";
 
@@ -41,6 +48,7 @@ export default defineComponent({
     components: {
         GenericHelp,
         SelectedVariables,
+        HiddenVariables,
         ErrorInfo,
         CodeEditor,
         VueFeather,
@@ -60,6 +68,11 @@ export default defineComponent({
         const appIsConfigured = computed(() => store.state.configured);
         const compile = () => store.dispatch(`model/${ModelAction.CompileModel}`);
         const loadingMessage = userMessages.code.isValidating;
+        const graphKeys = computed(() => Object.keys(store.state.model.graphs));
+        const addGraph = () => {
+            const newGraphKey = `Graph ${Object.keys(store.state.model.graphs).length + 1}`;
+            store.dispatch(`model/${ModelAction.UpdateSelectedVariables}`, { key: newGraphKey, selectedVariables: [] });
+        };
 
         return {
             appIsConfigured,
@@ -72,7 +85,9 @@ export default defineComponent({
             showSelectedVariables,
             codeHelp,
             codeValidating,
-            loadingMessage
+            loadingMessage,
+            graphKeys,
+            addGraph
         };
     }
 });

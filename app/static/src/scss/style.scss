@@ -116,3 +116,18 @@ $grey: #ccc;
     padding-top: 0;
     padding-bottom: 0;
 }
+
+.drop-zone {
+    border-width: 4px;
+    padding: 4px;
+    border-style: dashed;
+    margin-right: 6px;
+}
+
+.drop-zone-active {
+    border-color: #eee;
+}
+
+.drop-zone-inactive {
+    border-color: #fff;
+}

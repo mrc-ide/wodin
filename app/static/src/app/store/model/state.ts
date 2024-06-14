@@ -1,5 +1,11 @@
 import { Odin, OdinModelResponse, OdinRunnerDiscrete, OdinRunnerOde, WodinError } from "../../types/responseTypes";
 import type { Palette } from "../../palette";
+import { Dict } from "../../types/utilTypes";
+
+export interface GraphConfig {
+    selectedVariables: string[];
+    unselectedVariables: string[];
+}
 
 export interface ModelState {
     compileRequired: boolean;
@@ -13,6 +19,9 @@ export interface ModelState {
     paletteModel: null | Palette;
     // TODO: rename to simply error
     odinModelCodeError: WodinError | null;
-    selectedVariables: string[];
-    unselectedVariables: string[]; // We keep track of unselected variables too so we can retain on model update
+    //selectedVariables: string[];
+    //unselectedVariables: string[]; // We keep track of unselected variables too so we can retain on model update
+    // TODO: This is just for POC - this may get moved into another module
+    graphs: Dict<GraphConfig>;
+    draggingVariable: boolean;
 }
