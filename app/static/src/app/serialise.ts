@@ -17,7 +17,7 @@ import {
     SerialisedModelFitState,
     SerialisedMultiSensitivityState
 } from "./types/serialisationTypes";
-import { GraphSettingsState } from "./store/graphs/state";
+import { GraphsState} from "./store/graphs/state";
 import { Dict } from "./types/utilTypes";
 import { MultiSensitivityState } from "./store/multiSensitivity/state";
 
@@ -34,10 +34,7 @@ function serialiseModel(model: ModelState): SerialisedModelState {
         odinModelResponse: model.odinModelResponse,
         hasOdin: !!model.odin,
         odinModelCodeError: model.odinModelCodeError,
-        paletteModel: model.paletteModel,
-        //selectedVariables: model.selectedVariables,
-        //unselectedVariables: model.unselectedVariables
-        graphs: model.graphs
+        paletteModel: model.paletteModel
     };
 }
 
@@ -143,7 +140,7 @@ function serialiseModelFit(modelFit: ModelFitState): SerialisedModelFitState {
     };
 }
 
-export const serialiseGraphSettings = (state: GraphSettingsState): GraphSettingsState => {
+export const serialiseGraphs = (state: GraphsState): GraphsState => {
     return { ...state };
 };
 
@@ -155,7 +152,7 @@ export const serialiseState = (state: AppState): string => {
         run: serialiseRun(state.run),
         sensitivity: serialiseSensitivity(state.sensitivity),
         multiSensitivity: serialiseMultiSensitivity(state.multiSensitivity),
-        graphSettings: serialiseGraphSettings(state.graphSettings)
+        graphs: serialiseGraphs(state.graphs)
     };
 
     if (state.appType === AppType.Fit) {
@@ -175,22 +172,21 @@ export const deserialiseState = (targetState: AppState, serialised: SerialisedAp
     });
 
     // Initialise selected variables if required
-    const { model } = targetState;
-    // TODO: tweak for multiple graphs
+    const { model, graphs } = targetState;
     if (
         model.odinModelResponse?.metadata?.variables &&
-        !model.graphs["Graph 1"].selectedVariables.length &&
-        !model.graphs["Graph 1"].unselectedVariables?.length
+        !graphs.config[0].selectedVariables.length &&
+        !graphs.config[0].unselectedVariables?.length
     ) {
         /* eslint-disable no-param-reassign */
         const selectedVariables = [...(model.odinModelResponse?.metadata?.variables || [])];
         const unselectedVariables: string[] = [];
 
-        targetState.model.graphs = {
-            "Graph 1": {
+        targetState.graphs.config = [
+            {
                 selectedVariables,
                 unselectedVariables
             }
-        };
+        ];
     }
 };

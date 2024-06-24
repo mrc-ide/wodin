@@ -19,14 +19,14 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
-import { ModelAction } from "../../store/model/actions";
+import {GraphsAction} from "../../store/graphs/actions";
 
 export default defineComponent({
     name: "SelectedVariables",
     setup() {
         const store = useStore();
         const allVariables = computed<string[]>(() => store.state.model.odinModelResponse?.metadata?.variables || []);
-        const selectedVariables = computed<string[]>(() => store.state.model.selectedVariables);
+        const selectedVariables = computed<string[]>(() => store.state.graphs.config[0].selectedVariables);
         const palette = computed(() => store.state.model.paletteModel!);
 
         const getStyle = (variable: string) => {
@@ -38,7 +38,7 @@ export default defineComponent({
         };
 
         const updateSelectedVariables = (newVariables: string[]) => {
-            store.dispatch(`model/${ModelAction.UpdateSelectedVariables}`, newVariables);
+            store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {index: 0, selectedVariables: newVariables});
         };
 
         const toggleVariable = (variable: string) => {
