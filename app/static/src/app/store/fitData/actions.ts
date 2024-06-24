@@ -23,7 +23,7 @@ const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) =
     // Empty string means no link
     const { commit, state, rootState, getters } = context;
     const modelResponse = rootState.model.odinModelResponse;
-    const modelVariables = modelResponse?.valid ? rootState.model.selectedVariables : [];
+    const modelVariables = modelResponse?.valid ? rootState.graphs.config.flatMap((c) => c.selectedVariables) : [];
     const dataColumns = getters.nonTimeColumns;
     let newLinks = {};
     if (dataColumns) {

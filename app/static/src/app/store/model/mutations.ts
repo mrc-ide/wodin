@@ -10,8 +10,7 @@ export enum ModelMutation {
     SetOdinResponse = "SetOdinResponse",
     SetOdin = "SetOdin",
     SetCompileRequired = "SetCompileRequired",
-    SetPaletteModel = "SetPaletteModel",
-    SetSelectedVariables = "SetSelectedVariables"
+    SetPaletteModel = "SetPaletteModel"
 }
 
 export const mutations: MutationTree<ModelState> = {
@@ -41,13 +40,5 @@ export const mutations: MutationTree<ModelState> = {
 
     [ModelMutation.SetPaletteModel](state: ModelState, payload: Palette | null) {
         state.paletteModel = payload;
-    },
-
-    [ModelMutation.SetSelectedVariables](state: ModelState, payload: string[]) {
-        state.selectedVariables = payload;
-        // Maintain unselected variables too, so we know which variables had been explicitly unselected when model
-        // updates
-        state.unselectedVariables =
-            state.odinModelResponse?.metadata?.variables.filter((s) => !payload.includes(s)) || [];
     }
 };

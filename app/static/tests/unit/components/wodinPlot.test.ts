@@ -15,7 +15,7 @@ import Vuex, { Store } from "vuex";
 import WodinPlot from "../../../src/app/components/WodinPlot.vue";
 import WodinPlotDataSummary from "../../../src/app/components/WodinPlotDataSummary.vue";
 import { BasicState } from "../../../src/app/store/basic/state";
-import { GraphSettingsMutation } from "../../../src/app/store/graphSettings/mutations";
+import { GraphsMutation } from "../../../src/app/store/graphs/mutations";
 
 describe("WodinPlot", () => {
     const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");
@@ -71,7 +71,7 @@ describe("WodinPlot", () => {
                         yAxisRange: [10, 20]
                     },
                     mutations: {
-                        [GraphSettingsMutation.SetYAxisRange]: mockSetYAxisRange
+                        [GraphsMutation.SetYAxisRange]: mockSetYAxisRange
                     }
                 }
             }

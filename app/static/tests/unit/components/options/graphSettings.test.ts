@@ -2,7 +2,7 @@ import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import GraphSettings from "../../../../src/app/components/options/GraphSettings.vue";
-import { GraphSettingsMutation } from "../../../../src/app/store/graphSettings/mutations";
+import { GraphsMutation } from "../../../../src/app/store/graphs/mutations";
 
 describe("GraphSettings", () => {
     const mockSetLogScaleYAxis = jest.fn();
@@ -18,8 +18,8 @@ describe("GraphSettings", () => {
                         lockYAxis
                     } as any,
                     mutations: {
-                        [GraphSettingsMutation.SetLogScaleYAxis]: mockSetLogScaleYAxis,
-                        [GraphSettingsMutation.SetLockYAxis]: mockSetLockYAxis
+                        [GraphsMutation.SetLogScaleYAxis]: mockSetLogScaleYAxis,
+                        [GraphsMutation.SetLockYAxis]: mockSetLockYAxis
                     }
                 }
             }

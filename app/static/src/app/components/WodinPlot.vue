@@ -16,8 +16,8 @@ import { EventEmitter } from "events";
 import { newPlot, react, PlotRelayoutEvent, Plots, AxisType, Layout, Config } from "plotly.js-basic-dist-min";
 import { WodinPlotData, fadePlotStyle, margin, config } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
-import { GraphSettingsMutation } from "../store/graphSettings/mutations";
-import { YAxisRange } from "../store/graphSettings/state";
+import { GraphsMutation } from "../store/graphs/mutations";
+import { YAxisRange } from "../store/graphs/state";
 
 export default defineComponent({
     name: "WodinPlot",
@@ -68,7 +68,7 @@ export default defineComponent({
             const plotLayout = (plot.value as any).layout;
             const yRange = plotLayout.yaxis?.range;
             if (plotLayout) {
-                store.commit(`graphSettings/${GraphSettingsMutation.SetYAxisRange}`, yRange);
+                store.commit(`graphSettings/${GraphsMutation.SetYAxisRange}`, yRange);
             }
         };
 

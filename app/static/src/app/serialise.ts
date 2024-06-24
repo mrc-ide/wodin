@@ -17,7 +17,7 @@ import {
     SerialisedModelFitState,
     SerialisedMultiSensitivityState
 } from "./types/serialisationTypes";
-import { GraphSettingsState } from "./store/graphSettings/state";
+import { GraphSettingsState } from "./store/graphs/state";
 import { Dict } from "./types/utilTypes";
 import { MultiSensitivityState } from "./store/multiSensitivity/state";
 
@@ -35,8 +35,9 @@ function serialiseModel(model: ModelState): SerialisedModelState {
         hasOdin: !!model.odin,
         odinModelCodeError: model.odinModelCodeError,
         paletteModel: model.paletteModel,
-        selectedVariables: model.selectedVariables,
-        unselectedVariables: model.unselectedVariables
+        //selectedVariables: model.selectedVariables,
+        //unselectedVariables: model.unselectedVariables
+        graphs: model.graphs
     };
 }
 
@@ -175,13 +176,21 @@ export const deserialiseState = (targetState: AppState, serialised: SerialisedAp
 
     // Initialise selected variables if required
     const { model } = targetState;
+    // TODO: tweak for multiple graphs
     if (
         model.odinModelResponse?.metadata?.variables &&
-        !model.selectedVariables?.length &&
-        !model.unselectedVariables?.length
+        !model.graphs["Graph 1"].selectedVariables.length &&
+        !model.graphs["Graph 1"].unselectedVariables?.length
     ) {
         /* eslint-disable no-param-reassign */
-        targetState.model.selectedVariables = [...model.odinModelResponse.metadata.variables];
-        targetState.model.unselectedVariables = [];
+        const selectedVariables = [...(model.odinModelResponse?.metadata?.variables || [])];
+        const unselectedVariables: string[] = [];
+
+        targetState.model.graphs = {
+            "Graph 1": {
+                selectedVariables,
+                unselectedVariables
+            }
+        };
     }
 };

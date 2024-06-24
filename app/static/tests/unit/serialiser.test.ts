@@ -20,7 +20,7 @@ import {
     mockSessionsState,
     mockVersionsState
 } from "../mocks";
-import { defaultState as defaultGraphSettingsState } from "../../src/app/store/graphSettings/graphSettings";
+import { defaultState as defaultGraphSettingsState } from "../../src/app/store/graphs/graphs";
 import { Language } from "../../src/app/types/languageTypes";
 import { AdvancedOptions } from "../../src/app/types/responseTypes";
 import { AdvancedComponentType } from "../../src/app/store/run/state";

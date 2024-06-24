@@ -15,14 +15,14 @@ import { ErrorsMutation } from "../errors/mutations";
 import { BaseSensitivityMutation, SensitivityMutation } from "../sensitivity/mutations";
 import { defaultSensitivityParamSettings } from "../sensitivity/sensitivity";
 import { MultiSensitivityMutation } from "../multiSensitivity/mutations";
+import { GraphsAction } from "../graphs/actions";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
     FetchOdin = "FetchOdin",
     CompileModel = "CompileModel",
     CompileModelOnRehydrate = "CompileModelOnRehydrate",
-    DefaultModel = "DefaultModel",
-    UpdateSelectedVariables = "UpdateSelectedVariables"
+    DefaultModel = "DefaultModel"
 }
 
 const fetchOdin = async (context: ActionContext<ModelState, AppState>) => {
@@ -68,9 +68,9 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
         const variables = state.odinModelResponse.metadata?.variables || [];
         commit(ModelMutation.SetPaletteModel, paletteModel(variables));
 
-        // Retain variable selections. Newly added variables will be selected by default
-        const select = variables.filter((s) => !state.unselectedVariables.includes(s));
-        commit(ModelMutation.SetSelectedVariables, select);
+        // Retain variable selections. Newly added variables will be selected by default in the first graph
+        const selectedVariables = variables.filter((s) => !rootState.graphs.config[0].unselectedVariables.includes(s));
+        dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, { index: 0, selectedVariables });
 
         if (state.compileRequired) {
             commit(ModelMutation.SetCompileRequired, false);
@@ -145,13 +145,5 @@ export const actions: ActionTree<ModelState, AppState> = {
         await fetchOdin(context);
         compileModelAndUpdateStore(context);
         context.dispatch(`run/${RunAction.RunModel}`, null, { root: true });
-    },
-
-    UpdateSelectedVariables(context, payload: string[]) {
-        const { commit, dispatch, rootState } = context;
-        commit(ModelMutation.SetSelectedVariables, payload);
-        if (rootState.appType === AppType.Fit) {
-            dispatch(`fitData/${FitDataAction.UpdateLinkedVariables}`, null, { root: true });
-        }
     }
 };

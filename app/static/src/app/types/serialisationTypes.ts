@@ -11,8 +11,9 @@ import { VisualisationTab } from "../store/appState/state";
 import { CodeState } from "../store/code/state";
 import { FitDataState } from "../store/fitData/state";
 import { Palette } from "../palette";
-import { GraphSettingsState } from "../store/graphSettings/state";
+import { GraphSettingsState } from "../store/graphs/state";
 import { Dict } from "./utilTypes";
+import { GraphConfig } from "../store/model/state";
 
 export interface SerialisedRunResult {
     inputs: OdinRunInputs | OdinFitInputs;
@@ -26,8 +27,9 @@ export interface SerialisedModelState {
     hasOdin: boolean;
     odinModelCodeError: WodinError | null;
     paletteModel: Palette | null;
-    selectedVariables: string[];
-    unselectedVariables: string[];
+    //selectedVariables: string[];
+    //unselectedVariables: string[];
+    graphs: Dict<GraphConfig>;
 }
 
 export interface SerialisedRunState {

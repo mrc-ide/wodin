@@ -1,5 +1,5 @@
-import { mutations } from "../../../../src/app/store/graphSettings/mutations";
-import { GraphSettingsState } from "../../../../src/app/store/graphSettings/state";
+import { mutations } from "../../../../src/app/store/graphs/mutations";
+import { GraphSettingsState } from "../../../../src/app/store/graphs/state";
 
 describe("GraphSettings mutations", () => {
     const state: GraphSettingsState = {
