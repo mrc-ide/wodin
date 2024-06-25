@@ -29,7 +29,7 @@ export default defineComponent({
     setup() {
         const store = useStore();
 
-        const selectedVariables = computed(() => store.state.model.selectedVariables);
+        const selectedVariables = computed(() => store.state.graphs.config[0].selectedVariables);
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, false));
 
         const solution = computed(() => store.state.run.resultDiscrete?.solution);

@@ -35,19 +35,19 @@ export default defineComponent({
         const store = useStore();
         const logScaleYAxis = computed({
             get() {
-                return store.state.graphSettings.logScaleYAxis;
+                return store.state.graphs.settings.logScaleYAxis;
             },
             set(newValue) {
-                store.commit(`graphSettings/${GraphsMutation.SetLogScaleYAxis}`, newValue);
+                store.commit(`graphs/${GraphsMutation.SetLogScaleYAxis}`, newValue);
             }
         });
 
         const lockYAxis = computed({
             get() {
-                return store.state.graphSettings.lockYAxis;
+                return store.state.graphs.settings.lockYAxis;
             },
             set(newValue) {
-                store.commit(`graphSettings/${GraphsMutation.SetLockYAxis}`, newValue);
+                store.commit(`graphs/${GraphsMutation.SetLockYAxis}`, newValue);
             }
         });
 

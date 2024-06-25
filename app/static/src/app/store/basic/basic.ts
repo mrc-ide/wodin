@@ -52,7 +52,7 @@ export const storeOptions: StoreOptions<BasicState> = {
         multiSensitivity,
         sessions,
         versions,
-        graphSettings: graphs,
+        graphs,
         language
     },
     plugins: [logMutations, persistState]

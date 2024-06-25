@@ -55,6 +55,7 @@ import LoadingSpinner from "../LoadingSpinner.vue";
 import { AppType } from "../../store/appState/state";
 import { ModelGetter } from "../../store/model/getters";
 import RunStochasticPlot from "./RunStochasticPlot.vue";
+import {GraphsGetter} from "../../store/graphs/getters";
 
 export default defineComponent({
     name: "RunTab",
@@ -81,6 +82,7 @@ export default defineComponent({
         const sumOfSquares = computed(() => store.state.modelFit?.sumOfSquares);
 
         const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
+        const allSelectedVariables = computed(() => store.getters[`graphs/${GraphsGetter.allSelectedVariables}`]);
 
         // Enable run button if model has initialised and compile is not required
         const canRunModel = computed(() => {
@@ -99,7 +101,7 @@ export default defineComponent({
             if (store.state.model.compileRequired) {
                 return userMessages.run.compileRequired;
             }
-            if (!store.state.model.selectedVariables.length) {
+            if (!allSelectedVariables.value.length) {
                 return userMessages.model.selectAVariable;
             }
             // TODO: eventually make runRequired to runUpdateRequired I think?

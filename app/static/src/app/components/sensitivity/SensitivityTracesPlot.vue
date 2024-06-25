@@ -78,7 +78,7 @@ export default defineComponent({
 
         const palette = computed(() => store.state.model.paletteModel);
 
-        const selectedVariables = computed(() => store.state.model.selectedVariables);
+        const selectedVariables = computed(() => store.state.graphs.config[0].selectedVariables);
 
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, true));
 
