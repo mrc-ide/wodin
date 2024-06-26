@@ -1,8 +1,8 @@
+import { ActionTree } from "vuex";
 import { GraphsMutation } from "./mutations";
 import { AppState, AppType } from "../appState/state";
 import { FitDataAction } from "../fitData/actions";
 import { GraphsState } from "./state";
-import { ActionTree } from "vuex";
 
 export enum GraphsAction {
     UpdateSelectedVariables = "UpdateSelectedVariables"

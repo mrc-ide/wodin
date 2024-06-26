@@ -1,6 +1,5 @@
 import { MutationTree } from "vuex";
 import { YAxisRange, GraphsState } from "./state";
-import { ModelState } from "../model/state";
 
 export enum GraphsMutation {
     SetLogScaleYAxis = "SetLogScaleYAxis",

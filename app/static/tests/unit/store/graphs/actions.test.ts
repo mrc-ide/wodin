@@ -38,7 +38,8 @@ describe("Graphs actions", () => {
         );
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(GraphsMutation.SetSelectedVariables);
-        expect(commit.mock.calls[0][1]).toStrictEqual({index: 1, selectedVariables: ["a", "b"], unselectedVariables: ["c"]});
+        expect(commit.mock.calls[0][1]).toStrictEqual(
+            {index: 1, selectedVariables: ["a", "b"], unselectedVariables: ["c"]});
         expect(dispatch).not.toHaveBeenCalled();
     });
 
@@ -61,7 +62,8 @@ describe("Graphs actions", () => {
         );
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(GraphsMutation.SetSelectedVariables);
-        expect(commit.mock.calls[0][1]).toStrictEqual({index: 1, selectedVariables: ["a", "b"], unselectedVariables: ["c"]});
+        expect(commit.mock.calls[0][1]).toStrictEqual(
+            {index: 1, selectedVariables: ["a", "b"], unselectedVariables: ["c"]});
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch.mock.calls[0][0]).toBe(`fitData/${FitDataAction.UpdateLinkedVariables}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);

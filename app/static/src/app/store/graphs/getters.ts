@@ -1,5 +1,5 @@
-import {GraphsState} from "./state";
 import {Getter, GetterTree} from "vuex";
+import {GraphsState} from "./state";
 import {AppState} from "../appState/state";
 
 export enum GraphsGetter {

@@ -33,7 +33,8 @@ describe("Graphs mutations", () => {
                 { selectedVariables: [], unselectedVariables: [] }
             ]
         });
-        mutations.SetSelectedVariables(testState, {index: 1, selectedVariables: ["x", "z"], unselectedVariables: ["y"]});
+        mutations.SetSelectedVariables(testState,
+            {index: 1, selectedVariables: ["x", "z"], unselectedVariables: ["y"]});
         expect(testState.config[1]).toStrictEqual({selectedVariables: ["x", "z"], unselectedVariables: ["y"]});
         expect(testState.config[0]).toStrictEqual({ selectedVariables: [], unselectedVariables: [] });
     });
