@@ -408,8 +408,12 @@ describe("SensitivityTracesPlot", () => {
             state: {
                 appType: stochastic ? AppType.Stochastic : AppType.Basic,
                 model: {
-                    paletteModel: mockPalette,
-                    selectedVariables: hasSelectedVariables ? selectedVariables : []
+                    paletteModel: mockPalette
+                },
+                graphs: {
+                    config: [
+                        { selectedVariables: hasSelectedVariables ? selectedVariables : [] }
+                    ]
                 }
             } as any,
             modules: {

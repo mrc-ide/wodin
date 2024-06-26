@@ -11,7 +11,7 @@ import { FitState } from "../../src/app/store/fit/state";
 import {
     mockCodeState,
     mockFitDataState,
-    mockGraphSettingsState,
+    mockGraphsState,
     mockModelFitState,
     mockModelState,
     mockMultiSensitivityState,
@@ -20,7 +20,7 @@ import {
     mockSessionsState,
     mockVersionsState
 } from "../mocks";
-import { defaultState as defaultGraphSettingsState } from "../../src/app/store/graphs/graphs";
+import { defaultState as defaultGraphsState } from "../../src/app/store/graphs/graphs";
 import { Language } from "../../src/app/types/languageTypes";
 import { AdvancedOptions } from "../../src/app/types/responseTypes";
 import { AdvancedComponentType } from "../../src/app/store/run/state";
@@ -76,9 +76,7 @@ describe("serialise", () => {
         },
         odin: jest.fn(),
         paletteModel: { S: "#f00", I: "#0f0", R: "#00f" },
-        odinModelCodeError: { error: "odin error", detail: "test odin error" },
-        selectedVariables: ["S", "I"],
-        unselectedVariables: ["R"]
+        odinModelCodeError: { error: "odin error", detail: "test odin error" }
     };
 
     const runState = {
@@ -365,6 +363,20 @@ describe("serialise", () => {
         sessionsMetadata: []
     });
 
+    const graphsState = mockGraphsState({
+        settings: {
+            logScaleYAxis: true,
+            lockYAxis: true,
+            yAxisRange: [1, 2]
+        },
+        config: [
+            {
+                selectedVariables: ["S", "I"],
+                unselectedVariables: ["R"]
+            }
+        ]
+    });
+
     const basicState: BasicState = {
         sessionId: "1234",
         sessionLabel: null,
@@ -383,11 +395,7 @@ describe("serialise", () => {
         sensitivity: sensitivityState,
         multiSensitivity: multiSensitivityState,
         versions: { versions: null },
-        graphSettings: {
-            logScaleYAxis: true,
-            lockYAxis: true,
-            yAxisRange: [1, 2]
-        },
+        graphs: graphsState,
         configured: false,
         persisted: true,
         language: langaugeState,
@@ -415,11 +423,7 @@ describe("serialise", () => {
         fitData: fitDataState,
         modelFit: modelFitState,
         versions: { versions: null },
-        graphSettings: {
-            logScaleYAxis: true,
-            lockYAxis: true,
-            yAxisRange: [1, 2]
-        },
+        graphs: graphsState,
         configured: false,
         persisted: true,
         language: langaugeState,
@@ -433,9 +437,7 @@ describe("serialise", () => {
         odinModelResponse: modelState.odinModelResponse,
         hasOdin: true,
         odinModelCodeError: modelState.odinModelCodeError,
-        paletteModel: modelState.paletteModel,
-        selectedVariables: modelState.selectedVariables,
-        unselectedVariables: modelState.unselectedVariables
+        paletteModel: modelState.paletteModel
     };
     const expectedRun = {
         runRequired: {
@@ -503,12 +505,6 @@ describe("serialise", () => {
         }
     };
 
-    const expectedGraphSettings = {
-        logScaleYAxis: true,
-        lockYAxis: true,
-        yAxisRange: [1, 2]
-    };
-
     const expectedFitData = {
         data: fitDataState.data,
         columns: ["time", "cases"],
@@ -549,7 +545,7 @@ describe("serialise", () => {
             run: expectedRun,
             sensitivity: expectedSensitivity,
             multiSensitivity: expectedMultiSensitivity,
-            graphSettings: expectedGraphSettings
+            graphs: graphsState
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
     });
@@ -565,7 +561,7 @@ describe("serialise", () => {
             multiSensitivity: expectedMultiSensitivity,
             fitData: expectedFitData,
             modelFit: expectedModelFit,
-            graphSettings: expectedGraphSettings
+            graphs: graphsState
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
     });
@@ -630,7 +626,7 @@ describe("serialise", () => {
                 ...expectedModelFit,
                 result: { ...expectedModelFit.result, hasResult: false }
             },
-            graphSettings: expectedGraphSettings
+            graphs: graphsState
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
     });
@@ -655,7 +651,7 @@ describe("serialise", () => {
             multiSensitivity: { ...expectedMultiSensitivity, result: null },
             fitData: expectedFitData,
             modelFit: { ...expectedModelFit, result: null },
-            graphSettings: expectedGraphSettings
+            graphs: graphsState
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
     });
@@ -671,7 +667,7 @@ describe("serialise", () => {
             fitData: mockFitDataState(),
             modelFit: mockModelFitState(),
             versions: mockVersionsState(),
-            graphSettings: mockGraphSettingsState()
+            graphs: mockGraphsState()
         } as any;
 
         const target = {
@@ -686,7 +682,7 @@ describe("serialise", () => {
             fitData: {},
             modelFit: {},
             versions: null,
-            graphSettings: {}
+            graphs: {}
         } as any;
 
         deserialiseState(target, serialised);
@@ -704,7 +700,7 @@ describe("serialise", () => {
             fitData: mockFitDataState(),
             modelFit: mockModelFitState(),
             versions: mockVersionsState(),
-            graphSettings: mockGraphSettingsState()
+            graphs: mockGraphsState()
         });
     });
 
@@ -740,11 +736,12 @@ describe("serialise", () => {
             sensitivity: {},
             fitData: {},
             modelFit: {},
+            graphs: defaultGraphsState,
             versions: null
         } as any;
         deserialiseState(target, serialised);
-        expect(target.model.selectedVariables).toStrictEqual(["S", "I", "R"]);
-        expect(target.model.unselectedVariables).toStrictEqual([]);
+        expect(target.graphs.config[0].selectedVariables).toStrictEqual(["S", "I", "R"]);
+        expect(target.graphs.config[0].unselectedVariables).toStrictEqual([]);
     });
 
     it("deserialises default graph settings when undefined in serialised state", () => {
@@ -774,12 +771,12 @@ describe("serialise", () => {
             fitData: {},
             modelFit: {},
             versions: null,
-            graphSettings: defaultGraphSettingsState
+            graphs: defaultGraphsState
         } as any;
         // sanity check
-        expect(target.graphSettings.logScaleYAxis).toBe(false);
+        expect(target.graphs.settings.logScaleYAxis).toBe(false);
 
         deserialiseState(target, serialised);
-        expect(target.graphSettings.logScaleYAxis).toBe(false);
+        expect(target.graphs.settings.logScaleYAxis).toBe(false);
     });
 });

@@ -9,7 +9,7 @@ import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
 import { getters as runGetters } from "../../../../src/app/store/run/getters";
-import { mockBasicState, mockRunState } from "../../../mocks";
+import {mockBasicState, mockGraphsState, mockRunState} from "../../../mocks";
 
 describe("RunPlot", () => {
     const mockSolution = jest.fn().mockReturnValue({
@@ -83,6 +83,10 @@ describe("RunPlot", () => {
 
     const selectedVariables = ["S", "I"];
 
+    const graphsState = {
+        config: [ { selectedVariables, unselectedVariables: [] } ]
+    };
+
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -90,9 +94,9 @@ describe("RunPlot", () => {
     it("renders as expected when model has solution", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
+                graphs: graphsState,
                 model: {
-                    paletteModel,
-                    selectedVariables
+                    paletteModel
                 },
                 run: mockRunState({
                     endTime: 99,
@@ -182,9 +186,9 @@ describe("RunPlot", () => {
     it("renders as expected when there are parameter set solutions", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
+                graphs: graphsState,
                 model: {
-                    paletteModel,
-                    selectedVariables
+                    paletteModel
                 }
             } as any,
             modules: {
@@ -348,9 +352,9 @@ describe("RunPlot", () => {
     it("renders as expected when model has no solution", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
+                graphs: graphsState,
                 model: {
-                    paletteModel,
-                    selectedVariables
+                    paletteModel
                 },
                 run: mockRunState({
                     endTime: 99
@@ -379,9 +383,7 @@ describe("RunPlot", () => {
     it("fades plot when fadePlot prop is true", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
-                model: {
-                    selectedVariables
-                },
+                graphs: graphsState,
                 run: mockRunState()
             } as any
         });
@@ -411,9 +413,9 @@ describe("RunPlot", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 model: {
-                    paletteModel,
-                    selectedVariables
+                    paletteModel
                 },
+                graphs: graphsState,
                 run: mockRunState({
                     endTime: 99,
                     resultOde: mockResult,
@@ -519,9 +521,9 @@ describe("RunPlot", () => {
     it("placeholder message indicates no variables selected", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
-                model: {
-                    selectedVariables: []
-                },
+                graphs: mockGraphsState({
+                    config: [ { selectedVariables: [] } ]
+                } as any),
                 run: mockRunState()
             } as any
         });

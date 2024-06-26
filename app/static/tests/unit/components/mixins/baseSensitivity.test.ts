@@ -1,5 +1,4 @@
 import Vuex from "vuex";
-import { nextTick } from "vue";
 import { ModelState } from "../../../../src/app/store/model/state";
 import baseSensitivity, { BaseSensitivityMixin } from "../../../../src/app/components/mixins/baseSensitivity";
 import { BaseSensitivityState } from "../../../../src/app/store/sensitivity/state";
@@ -7,7 +6,9 @@ import { noSensitivityUpdateRequired } from "../../../../src/app/store/sensitivi
 import { AppState } from "../../../../src/app/store/appState/state";
 import { BaseSensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import { BaseSensitivityAction } from "../../../../src/app/store/sensitivity/actions";
+import { getters as graphGetters } from "../../../../src/app/store/graphs/getters";
 import mock = jest.mock;
+import {mockGraphsState} from "../../../mocks";
 
 describe("baseSensitivity mixin", () => {
     const mockSensSetUserSummaryDownloadFileName = jest.fn();
@@ -20,11 +21,19 @@ describe("baseSensitivity mixin", () => {
         hasRunner = true,
         modelState: Partial<ModelState> = {},
         sensitivityState: Partial<BaseSensitivityState> = {},
-        multiSensitivityState: Partial<BaseSensitivityState> = {}
+        multiSensitivityState: Partial<BaseSensitivityState> = {},
+        selectedVariables: string[] = ["A"]
     ) => {
         return new Vuex.Store<AppState>({
             state: {} as any,
             modules: {
+                graphs: {
+                    namespaced: true,
+                    state: mockGraphsState({
+                        config: [ { selectedVariables, unselectedVariables: [] } ]
+                    }),
+                    getters: graphGetters
+                },
                 model: {
                     namespaced: true,
                     state: {
@@ -121,23 +130,24 @@ describe("baseSensitivity mixin", () => {
         hasRunner: true,
         modelState: Partial<ModelState>,
         sensState: Partial<BaseSensitivityState>,
+        selectedVariables: string[],
         expectedSensMsg: string,
-        expectedMultiSensMsg: string
+        expectedMultiSensMsg: string,
     ) => {
-        const sensStore = getStore(hasRunner, modelState, sensState);
+        const sensStore = getStore(hasRunner, modelState, sensState, {}, selectedVariables);
         const sensSut = baseSensitivity(sensStore, false);
         expect(sensSut.updateMsg.value).toBe(expectedSensMsg);
-        const multiSensStore = getStore(hasRunner, modelState, {}, sensState);
+        const multiSensStore = getStore(hasRunner, modelState, {}, sensState, selectedVariables);
         const multiSensSut = baseSensitivity(multiSensStore, true);
         expect(multiSensSut.updateMsg.value).toBe(expectedMultiSensMsg);
     };
 
     it("returns empty update message when no update required", () => {
-        expectUpdateMsgForSensAndMultiSens(true, {}, {}, "", "");
+        expectUpdateMsgForSensAndMultiSens(true, {}, {}, ["A"], "", "");
     });
 
     it("returns empty update message when update required, but there has been no run yet", () => {
-        expectUpdateMsgForSensAndMultiSens(true, { compileRequired: true }, { result: null }, "", "");
+        expectUpdateMsgForSensAndMultiSens(true, { compileRequired: true }, { result: null }, ["A"], "", "");
     });
 
     it("returns expected update message when compile required", () => {
@@ -145,6 +155,7 @@ describe("baseSensitivity mixin", () => {
             true,
             { compileRequired: true },
             {},
+            ["A"],
             "Model code has been updated. Compile code and Run Sensitivity to update.",
             "Model code has been updated. Compile code and Run Multi-sensitivity to update."
         );
@@ -153,8 +164,9 @@ describe("baseSensitivity mixin", () => {
     it("returns expected update message when there are no selected variables", () => {
         expectUpdateMsgForSensAndMultiSens(
             true,
-            { selectedVariables: [] },
             {},
+            {},
+            [],
             "Please select at least one variable.",
             "Please select at least one variable."
         );
@@ -173,6 +185,7 @@ describe("baseSensitivity mixin", () => {
             true,
             {},
             { sensitivityUpdateRequired },
+            ["A"],
             "Plot is out of date: model code has been recompiled. Run Sensitivity to update.",
             "Status is out of date: model code has been recompiled. Run Multi-sensitivity to update."
         );

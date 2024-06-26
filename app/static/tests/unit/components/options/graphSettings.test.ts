@@ -11,11 +11,13 @@ describe("GraphSettings", () => {
     const getWrapper = (logScaleYAxis = true, lockYAxis = true) => {
         const store = new Vuex.Store<BasicState>({
             modules: {
-                graphSettings: {
+                graphs: {
                     namespaced: true,
                     state: {
-                        logScaleYAxis,
-                        lockYAxis
+                        settings: {
+                            logScaleYAxis,
+                            lockYAxis
+                        }
                     } as any,
                     mutations: {
                         [GraphsMutation.SetLogScaleYAxis]: mockSetLogScaleYAxis,

@@ -22,7 +22,7 @@ import { FitState } from "../../../../src/app/store/fit/state";
 import {
     mockFitDataState,
     mockFitState,
-    mockGraphSettingsState,
+    mockGraphsState,
     mockModelFitState,
     mockModelState,
     mockSensitivityState
@@ -40,6 +40,7 @@ import { VisualisationTab } from "../../../../src/app/store/appState/state";
 import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
 import { ModelFitGetter } from "../../../../src/app/store/modelFit/getters";
 import { AppConfig } from "../../../../src/app/types/responseTypes";
+import { getters as graphsGetters } from "../../../../src/app/store/graphs/getters";
 
 function mockResizeObserver(this: any) {
     this.observe = jest.fn();
@@ -86,9 +87,10 @@ describe("FitApp", () => {
                         errors: []
                     }
                 },
-                graphSettings: {
+                graphs: {
                     namespaced: true,
-                    state: mockGraphSettingsState()
+                    state: mockGraphsState(),
+                    getters: graphsGetters
                 }
             }
         });

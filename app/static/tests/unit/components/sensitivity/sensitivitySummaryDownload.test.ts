@@ -13,6 +13,8 @@ import { BaseSensitivityAction, SensitivityAction } from "../../../../src/app/st
 import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import { ModelGetter } from "../../../../src/app/store/model/getters";
+import { getters as graphsGetters } from "../../../../src/app/store/graphs/getters";
+import {mockGraphsState} from "../../../mocks";
 
 describe("SensitivitySummaryDownload", () => {
     const mockSetUserSummaryDownloadFileName = jest.fn();
@@ -78,7 +80,18 @@ describe("SensitivitySummaryDownload", () => {
                     }
                 },
                 multiSensitivity: multiSens ? sensMod : ({} as any),
-                sensitivity: multiSens ? minimalSensitivity : sensMod
+                sensitivity: multiSens ? minimalSensitivity : sensMod,
+                graphs: {
+                    namespaced: true,
+                    state: mockGraphsState({
+                        config: [
+                            {
+                                selectedVariables: ["S"], unselectedVariables: []
+                            }
+                        ]
+                    }),
+                    getters: graphsGetters
+                }
             }
         });
 

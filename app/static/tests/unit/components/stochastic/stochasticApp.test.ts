@@ -17,7 +17,7 @@ import { mount } from "@vue/test-utils";
 import { expectLeftWodinTabs, expectRightWodinTabs } from "../../../testUtils";
 import StochasticApp from "../../../../src/app/components/stochastic/StochasticApp.vue";
 import { StochasticState } from "../../../../src/app/store/stochastic/state";
-import { mockModelState, mockGraphSettingsState, mockStochasticState } from "../../../mocks";
+import { mockModelState, mockGraphsState, mockStochasticState } from "../../../mocks";
 import WodinApp from "../../../../src/app/components/WodinApp.vue";
 import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
 import CodeTab from "../../../../src/app/components/code/CodeTab.vue";
@@ -30,6 +30,7 @@ import { ModelAction } from "../../../../src/app/store/model/actions";
 import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
 import { VisualisationTab } from "../../../../src/app/store/appState/state";
 import { AppConfig } from "../../../../src/app/types/responseTypes";
+import { getters as graphsGetters } from "../../../../src/app/store/graphs/getters";
 
 const mockSetOpenVisualisationTab = jest.fn();
 const mockTooltipDirective = jest.fn();
@@ -59,9 +60,10 @@ describe("StochasticApp", () => {
                         [ModelAction.FetchOdinRunner]: jest.fn()
                     }
                 },
-                graphSettings: {
+                graphs: {
                     namespaced: true,
-                    state: mockGraphSettingsState()
+                    state: mockGraphsState(),
+                    getters: graphsGetters
                 }
             }
         });

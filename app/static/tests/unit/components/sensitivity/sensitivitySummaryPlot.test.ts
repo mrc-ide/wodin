@@ -165,8 +165,7 @@ describe("SensitivitySummaryPlot", () => {
                             S: "#ff0000",
                             I: "#0000ff",
                             R: "#00ff00"
-                        },
-                        selectedVariables
+                        }
                     }
                 },
                 run: {
@@ -200,10 +199,13 @@ describe("SensitivitySummaryPlot", () => {
                         [SensitivityMutation.SetLoading]: mockSetLoading
                     }
                 },
-                graphSettings: {
+                graphs: {
                     namespaced: true,
                     state: {
-                        logScaleYAxis
+                        settings: { logScaleYAxis },
+                        config: [
+                            { selectedVariables }
+                        ]
                     }
                 }
             }
@@ -530,7 +532,7 @@ describe("SensitivitySummaryPlot", () => {
 
     it("redraws plot if graph setting changes", async () => {
         const wrapper = getWrapper();
-        (store!.state as any).graphSettings.logScaleYAxis = true;
+        (store!.state as any).graphs.settings.logScaleYAxis = true;
         await nextTick();
         expect(mockPlotlyNewPlot).toHaveBeenCalledTimes(2);
     });

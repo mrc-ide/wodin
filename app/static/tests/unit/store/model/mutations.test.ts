@@ -1,4 +1,4 @@
-import { mutations } from "../../../../src/app/store/model/mutations";
+ import { mutations } from "../../../../src/app/store/model/mutations";
 import { mockError, mockModelState } from "../../../mocks";
 
 describe("Model mutations", () => {
@@ -67,18 +67,5 @@ describe("Model mutations", () => {
         expect(state.compileRequired).toBe(true);
         mutations.SetCompileRequired(state, false);
         expect(state.compileRequired).toBe(false);
-    });
-
-    it("SetSelectedVariables sets selected and unselected variables", () => {
-        const state = mockModelState({
-            odinModelResponse: {
-                metadata: {
-                    variables: ["x", "y", "z"]
-                }
-            } as any
-        });
-        mutations.SetSelectedVariables(state, ["x", "z"]);
-        expect(state.selectedVariables).toStrictEqual(["x", "z"]);
-        expect(state.unselectedVariables).toStrictEqual(["y"]);
     });
 });

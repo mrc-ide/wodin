@@ -19,7 +19,7 @@ import { expectLeftWodinTabs, expectRightWodinTabs } from "../../../testUtils";
 import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
 import BasicApp from "../../../../src/app/components/basic/BasicApp.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import { mockBasicState, mockGraphSettingsState, mockModelState, mockSensitivityState } from "../../../mocks";
+import { mockBasicState, mockGraphsState, mockModelState, mockSensitivityState } from "../../../mocks";
 import WodinApp from "../../../../src/app/components/WodinApp.vue";
 import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
 import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
@@ -28,6 +28,7 @@ import { ModelAction } from "../../../../src/app/store/model/actions";
 import { VisualisationTab } from "../../../../src/app/store/appState/state";
 import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
 import { AppConfig } from "../../../../src/app/types/responseTypes";
+import { getters as graphsGetters } from "../../../../src/app/store/graphs/getters";
 
 const mockTooltipDirective = jest.fn();
 
@@ -64,9 +65,10 @@ describe("BasicApp", () => {
                         errors: []
                     }
                 },
-                graphSettings: {
+                graphs: {
                     namespaced: true,
-                    state: mockGraphSettingsState()
+                    state: mockGraphsState(),
+                    getters: graphsGetters
                 }
             }
         });

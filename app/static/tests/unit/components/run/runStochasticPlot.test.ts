@@ -8,7 +8,7 @@ import RunStochasticPlot from "../../../../src/app/components/run/RunStochasticP
 import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import { StochasticState } from "../../../../src/app/store/stochastic/state";
 import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
-import { mockModelState, mockRunState } from "../../../mocks";
+import {mockGraphsState, mockModelState, mockRunState} from "../../../mocks";
 
 describe("RunPlot for stochastic", () => {
     const mockSolution = jest.fn().mockReturnValue({
@@ -32,6 +32,8 @@ describe("RunPlot for stochastic", () => {
 
     const selectedVariables = ["S", "I", "R"];
 
+    const graphsState = mockGraphsState( { config: [ { selectedVariables, unselectedVariables: [] } ] } );
+
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -39,7 +41,8 @@ describe("RunPlot for stochastic", () => {
     it("renders as expected when model has stochastic result", () => {
         const store = new Vuex.Store<StochasticState>({
             state: {
-                model: mockModelState({ paletteModel, selectedVariables }),
+                graphs: graphsState,
+                model: mockModelState({ paletteModel }),
                 run: {
                     endTime: 99,
                     numberOfReplicates: 20,
@@ -102,7 +105,8 @@ describe("RunPlot for stochastic", () => {
     it("renders as expected when model has no stochastic result", () => {
         const store = new Vuex.Store<StochasticState>({
             state: {
-                model: mockModelState({ paletteModel, selectedVariables }),
+                graphs: graphsState,
+                model: mockModelState({ paletteModel }),
                 run: mockRunState({
                     endTime: 99
                 })
@@ -130,7 +134,8 @@ describe("RunPlot for stochastic", () => {
     it("renders as expected when solution returns no data", () => {
         const store = new Vuex.Store<StochasticState>({
             state: {
-                model: mockModelState({ paletteModel, selectedVariables }),
+                graphs: graphsState,
+                model: mockModelState({ paletteModel }),
                 run: {
                     endTime: 99,
                     resultDiscrete: {
@@ -159,7 +164,8 @@ describe("RunPlot for stochastic", () => {
     it("fades plot when fadePlot prop is true", () => {
         const store = new Vuex.Store<StochasticState>({
             state: {
-                model: mockModelState({ selectedVariables }),
+                graphs: graphsState,
+                model: mockModelState(),
                 run: mockRunState()
             } as any
         });
@@ -178,7 +184,8 @@ describe("RunPlot for stochastic", () => {
     it("doesn't show individual traces when replicates > maxReplicatesDisplay", () => {
         const store = new Vuex.Store<StochasticState>({
             state: {
-                model: mockModelState({ paletteModel, selectedVariables }),
+                graphs: graphsState,
+                model: mockModelState({ paletteModel }),
                 run: {
                     endTime: 99,
                     numberOfReplicates: 51,

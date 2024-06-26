@@ -1,7 +1,7 @@
-import { ErrorsMutation } from "../../../src/app/store/errors/mutations";
 import { mockBookNew, mockWriteFile } from "./mocks";
-import { mockBasicState, mockFitDataState, mockFitState, mockModelState, mockRunState } from "../../mocks";
+import { mockFitDataState, mockFitState, mockBasicState, mockRunState } from "../../mocks";
 import { WodinModelOutputDownload } from "../../../src/app/excel/wodinModelOutputDownload";
+import { ErrorsMutation } from "../../../src/app/store/errors/mutations";
 
 const mockSolution = jest.fn().mockImplementation((options) => {
     const x = options.mode === "grid" ? [options.tStart, options.tEnd] : options.times;
@@ -20,9 +20,10 @@ describe("WodinModelOutputDownload", () => {
         parameterValues: { v1: 1.1, v2: 2.2 }
     });
 
-    const modelState = mockModelState({
-        selectedVariables: ["A", "B"]
-    });
+    const rootGetters = {
+        "graphs/allSelectedVariables": ["A", "B"],
+        "fitData/nonTimeColumns": ["cases", "deaths"]
+    }
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -47,14 +48,14 @@ describe("WodinModelOutputDownload", () => {
         ]
     };
 
+
     it("downloads expected workbook for Basic app", () => {
         const rootState = mockBasicState({
-            run: runState,
-            model: modelState
+            run: runState
         });
         const commit = jest.fn();
 
-        const sut = new WodinModelOutputDownload({ rootState, commit } as any, "myFile.xlsx", 101);
+        const sut = new WodinModelOutputDownload({ rootState, rootGetters, commit } as any, "myFile.xlsx", 101);
         sut.download();
 
         expect(commit).not.toHaveBeenCalled();
@@ -74,10 +75,11 @@ describe("WodinModelOutputDownload", () => {
         expect(mockWriteFile.mock.calls[0][1]).toBe("myFile.xlsx");
     });
 
+
+
     it("downloads expected workbook for Fit app", () => {
         const rootState = mockFitState({
             run: runState,
-            model: modelState,
             fitData: mockFitDataState({
                 data: [
                     { time: 0, cases: 1, deaths: 2 },
@@ -86,10 +88,6 @@ describe("WodinModelOutputDownload", () => {
                 timeVariable: "time"
             })
         });
-
-        const rootGetters = {
-            "fitData/nonTimeColumns": ["cases", "deaths"]
-        };
 
         const commit = jest.fn();
 
@@ -139,12 +137,11 @@ describe("WodinModelOutputDownload", () => {
             } as any
         };
         const rootState = mockBasicState({
-            run: errorRunState,
-            model: modelState
+            run: errorRunState
         });
         const commit = jest.fn();
 
-        const sut = new WodinModelOutputDownload({ rootState, commit } as any, "myFile.xlsx", 101);
+        const sut = new WodinModelOutputDownload({ rootState, commit, rootGetters } as any, "myFile.xlsx", 101);
         sut.download();
 
         expect(commit).toHaveBeenCalledTimes(1);

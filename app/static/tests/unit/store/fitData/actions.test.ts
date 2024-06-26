@@ -28,6 +28,10 @@ describe("Fit Data actions", () => {
 
     const updateSumOfSquaresArgs = [`modelFit/${ModelFitAction.UpdateSumOfSquares}`, null, { root: true }];
 
+    const rootGetters = {
+        "graphs/allSelectedVariables": ["X", "Y"]
+    };
+
     afterEach(() => {
         resetAllMocks();
     });
@@ -75,7 +79,8 @@ describe("Fit Data actions", () => {
             dispatch,
             state: mockState,
             rootState: mockRootState,
-            getters: mockGetters
+            getters: mockGetters,
+            rootGetters
         };
         (actions[FitDataAction.Upload] as any)(context, file);
         expectFileRead(mockFileReader);
@@ -117,7 +122,7 @@ describe("Fit Data actions", () => {
 
         const commit = jest.fn();
         const dispatch = jest.fn();
-        (actions[FitDataAction.Upload] as any)({ commit, dispatch }, file);
+        (actions[FitDataAction.Upload] as any)({ commit, dispatch, rootGetters }, file);
         expectFileRead(mockFileReader);
         setTimeout(() => {
             expect(commit).toHaveBeenCalledTimes(2);
@@ -140,7 +145,7 @@ describe("Fit Data actions", () => {
 
         const commit = jest.fn();
         const dispatch = jest.fn();
-        (actions[FitDataAction.Upload] as any)({ commit, dispatch }, file);
+        (actions[FitDataAction.Upload] as any)({ commit, dispatch, rootGetters }, file);
         expectFileRead(mockFileReader);
         setTimeout(() => {
             expect(commit).toHaveBeenCalledTimes(2);
@@ -170,7 +175,7 @@ describe("Fit Data actions", () => {
 
         const commit = jest.fn();
         const dispatch = jest.fn();
-        (actions[FitDataAction.Upload] as any)({ commit, dispatch }, file);
+        (actions[FitDataAction.Upload] as any)({ commit, dispatch, rootGetters }, file);
         expectFileRead(mockFileReader);
         setTimeout(() => {
             expect(commit).toHaveBeenCalledTimes(2);
@@ -194,7 +199,7 @@ describe("Fit Data actions", () => {
 
         const commit = jest.fn();
         const dispatch = jest.fn();
-        (actions[FitDataAction.Upload] as any)({ commit, dispatch }, null);
+        (actions[FitDataAction.Upload] as any)({ commit, dispatch, rootGetters }, null);
         expect(mockFileReader.readAsText).not.toHaveBeenCalled();
         setTimeout(() => {
             expect(commit).toHaveBeenCalledTimes(1);
@@ -223,9 +228,12 @@ describe("Fit Data actions", () => {
             model: {
                 odinModelResponse: {
                     valid: true
-                },
-                selectedVariables: ["B", "C", "D"]
+                }
             }
+        };
+
+        const testRootGetters = {
+            "graphs/allSelectedVariables": ["B", "C", "D"]
         };
 
         const commit = jest.fn();
@@ -236,7 +244,8 @@ describe("Fit Data actions", () => {
             dispatch,
             state,
             rootState,
-            getters
+            getters,
+            rootGetters: testRootGetters
         });
 
         expect(commit).toHaveBeenCalledTimes(1);
@@ -267,7 +276,8 @@ describe("Fit Data actions", () => {
             dispatch,
             state,
             rootState,
-            getters
+            getters,
+            rootGetters
         });
 
         expect(commit).toHaveBeenCalledTimes(1);
@@ -301,18 +311,17 @@ describe("Fit Data actions", () => {
             model: {
                 odinModelResponse: {
                     valid: true,
-                    metadata: {
-                        variables: ["A", "B", "C"]
-                    }
-                },
-                selectedVariables: ["A", "B", "C"],
-                unselectedVariables: []
+                }
             }
         };
 
         // mock the getter result we should get after the mutation has been committed
         const testGetters = {
             nonTimeColumns: ["Day1", "Cases"]
+        };
+
+        const testRootGetters = {
+            "graphs/allSelectedVariables": ["A", "B", "C"]
         };
 
         const commit = jest.fn().mockImplementation((type: FitDataMutation, payload: string) => {
@@ -327,7 +336,8 @@ describe("Fit Data actions", () => {
                 dispatch,
                 state: testState,
                 rootState,
-                getters: testGetters
+                getters: testGetters,
+                rootGetters: testRootGetters
             },
             "Day2"
         );
@@ -358,7 +368,7 @@ describe("Fit Data actions", () => {
         };
 
         const payload = { column: "a", variable: "I" };
-        (actions[FitDataAction.UpdateLinkedVariable] as any)({ commit, dispatch, state: testState }, payload);
+        (actions[FitDataAction.UpdateLinkedVariable] as any)({ commit, dispatch, state: testState, rootGetters }, payload);
         expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetLinkedVariable);
         expect(commit.mock.calls[0][1]).toBe(payload);
@@ -378,7 +388,7 @@ describe("Fit Data actions", () => {
         };
 
         const payload = { column: "b", variable: "I" };
-        (actions[FitDataAction.UpdateLinkedVariable] as any)({ commit, dispatch, state: testState }, payload);
+        (actions[FitDataAction.UpdateLinkedVariable] as any)({ commit, dispatch, state: testState, rootGetters }, payload);
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetLinkedVariable);
         expect(commit.mock.calls[0][1]).toBe(payload);
@@ -389,7 +399,7 @@ describe("Fit Data actions", () => {
     it("updates column to fit", () => {
         const commit = jest.fn();
         const dispatch = jest.fn();
-        (actions[FitDataAction.UpdateColumnToFit] as any)({ commit, dispatch }, "col1");
+        (actions[FitDataAction.UpdateColumnToFit] as any)({ commit, dispatch, rootGetters }, "col1");
         expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetColumnToFit);
         expect(commit.mock.calls[0][1]).toBe("col1");
