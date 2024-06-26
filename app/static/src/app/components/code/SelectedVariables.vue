@@ -19,7 +19,7 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
-import {GraphsAction} from "../../store/graphs/actions";
+import { GraphsAction } from "../../store/graphs/actions";
 
 export default defineComponent({
     name: "SelectedVariables",
@@ -38,8 +38,10 @@ export default defineComponent({
         };
 
         const updateSelectedVariables = (newVariables: string[]) => {
-            store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`,
-                {index: 0, selectedVariables: newVariables});
+            store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
+                index: 0,
+                selectedVariables: newVariables
+            });
         };
 
         const toggleVariable = (variable: string) => {

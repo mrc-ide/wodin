@@ -8,7 +8,7 @@ import { BaseSensitivityMutation } from "../../../../src/app/store/sensitivity/m
 import { BaseSensitivityAction } from "../../../../src/app/store/sensitivity/actions";
 import { getters as graphGetters } from "../../../../src/app/store/graphs/getters";
 import mock = jest.mock;
-import {mockGraphsState} from "../../../mocks";
+import { mockGraphsState } from "../../../mocks";
 
 describe("baseSensitivity mixin", () => {
     const mockSensSetUserSummaryDownloadFileName = jest.fn();
@@ -30,7 +30,7 @@ describe("baseSensitivity mixin", () => {
                 graphs: {
                     namespaced: true,
                     state: mockGraphsState({
-                        config: [ { selectedVariables, unselectedVariables: [] } ]
+                        config: [{ selectedVariables, unselectedVariables: [] }]
                     }),
                     getters: graphGetters
                 },
@@ -132,7 +132,7 @@ describe("baseSensitivity mixin", () => {
         sensState: Partial<BaseSensitivityState>,
         selectedVariables: string[],
         expectedSensMsg: string,
-        expectedMultiSensMsg: string,
+        expectedMultiSensMsg: string
     ) => {
         const sensStore = getStore(hasRunner, modelState, sensState, {}, selectedVariables);
         const sensSut = baseSensitivity(sensStore, false);

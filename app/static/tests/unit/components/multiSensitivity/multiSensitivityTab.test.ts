@@ -9,7 +9,7 @@ import ActionRequiredMessage from "../../../../src/app/components/ActionRequired
 import { MultiSensitivityState } from "../../../../src/app/store/multiSensitivity/state";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 import SensitivitySummaryDownload from "../../../../src/app/components/sensitivity/SensitivitySummaryDownload.vue";
-import { getters as graphsGetters} from "../../../../src/app/store/graphs/getters";
+import { getters as graphsGetters } from "../../../../src/app/store/graphs/getters";
 
 describe("MultiSensitivityTab", () => {
     const mockRunMultiSensitivity = jest.fn();

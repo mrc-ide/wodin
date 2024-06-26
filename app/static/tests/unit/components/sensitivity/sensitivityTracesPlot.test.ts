@@ -411,9 +411,7 @@ describe("SensitivityTracesPlot", () => {
                     paletteModel: mockPalette
                 },
                 graphs: {
-                    config: [
-                        { selectedVariables: hasSelectedVariables ? selectedVariables : [] }
-                    ]
+                    config: [{ selectedVariables: hasSelectedVariables ? selectedVariables : [] }]
                 }
             } as any,
             modules: {

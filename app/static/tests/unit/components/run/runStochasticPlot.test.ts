@@ -8,7 +8,7 @@ import RunStochasticPlot from "../../../../src/app/components/run/RunStochasticP
 import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import { StochasticState } from "../../../../src/app/store/stochastic/state";
 import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
-import {mockGraphsState, mockModelState, mockRunState} from "../../../mocks";
+import { mockGraphsState, mockModelState, mockRunState } from "../../../mocks";
 
 describe("RunPlot for stochastic", () => {
     const mockSolution = jest.fn().mockReturnValue({
@@ -32,7 +32,7 @@ describe("RunPlot for stochastic", () => {
 
     const selectedVariables = ["S", "I", "R"];
 
-    const graphsState = mockGraphsState( { config: [ { selectedVariables, unselectedVariables: [] } ] } );
+    const graphsState = mockGraphsState({ config: [{ selectedVariables, unselectedVariables: [] }] });
 
     afterEach(() => {
         jest.clearAllMocks();

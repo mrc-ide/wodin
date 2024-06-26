@@ -3,7 +3,7 @@ import { shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import SelectedVariables from "../../../../src/app/components/code/SelectedVariables.vue";
 import { ModelAction } from "../../../../src/app/store/model/actions";
-import {GraphsAction} from "../../../../src/app/store/graphs/actions";
+import { GraphsAction } from "../../../../src/app/store/graphs/actions";
 
 describe("SelectedVariables", () => {
     const mockUpdateSelectedVariables = jest.fn();
@@ -17,7 +17,7 @@ describe("SelectedVariables", () => {
                     state: {
                         config: [
                             {
-                                selectedVariables: ["S", "R"],
+                                selectedVariables: ["S", "R"]
                             }
                         ]
                     },
@@ -73,7 +73,7 @@ describe("SelectedVariables", () => {
         const s = wrapper.findAll(".selected-variables-panel span.variable").at(0)!;
         await s.trigger("click");
         expect(mockUpdateSelectedVariables).toBeCalledTimes(1);
-        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({index: 0, selectedVariables: ["R"]});
+        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({ index: 0, selectedVariables: ["R"] });
     });
 
     it("clicking an unselected variables selects it", async () => {
@@ -81,22 +81,26 @@ describe("SelectedVariables", () => {
         const i = wrapper.findAll(".selected-variables-panel span.variable").at(1)!;
         await i.trigger("click");
         expect(mockUpdateSelectedVariables).toBeCalledTimes(1);
-        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual(
-            {index: 0, selectedVariables: ["S", "R", "I"]});
+        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({
+            index: 0,
+            selectedVariables: ["S", "R", "I"]
+        });
     });
 
     it("clicking select all link selects all variables", async () => {
         const wrapper = getWrapper();
         wrapper.find("span#select-variables-all").trigger("click");
         expect(mockUpdateSelectedVariables).toBeCalledTimes(1);
-        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual(
-            {index: 0, selectedVariables: ["S", "I", "R"]});
+        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({
+            index: 0,
+            selectedVariables: ["S", "I", "R"]
+        });
     });
 
     it("clicking select none link unselects all variables", async () => {
         const wrapper = getWrapper();
         wrapper.find("span#select-variables-none").trigger("click");
         expect(mockUpdateSelectedVariables).toBeCalledTimes(1);
-        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({index: 0, selectedVariables: []});
+        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({ index: 0, selectedVariables: [] });
     });
 });

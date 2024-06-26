@@ -1,14 +1,14 @@
-import {mockAxios, mockFitState, mockModelState} from "../../../mocks";
-import {actions, GraphsAction} from "../../../../src/app/store/graphs/actions";
-import {GraphsMutation} from "../../../../src/app/store/graphs/mutations";
-import {AppType} from "../../../../src/app/store/appState/state";
-import {FitDataAction} from "../../../../src/app/store/fitData/actions";
+import { mockAxios, mockFitState, mockModelState } from "../../../mocks";
+import { actions, GraphsAction } from "../../../../src/app/store/graphs/actions";
+import { GraphsMutation } from "../../../../src/app/store/graphs/mutations";
+import { AppType } from "../../../../src/app/store/appState/state";
+import { FitDataAction } from "../../../../src/app/store/fitData/actions";
 
 describe("Graphs actions", () => {
     const modelState = {
         odinModelResponse: {
             metadata: {
-                variables: [ "a", "b", "c" ]
+                variables: ["a", "b", "c"]
             }
         }
     } as any;
@@ -38,8 +38,11 @@ describe("Graphs actions", () => {
         );
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(GraphsMutation.SetSelectedVariables);
-        expect(commit.mock.calls[0][1]).toStrictEqual(
-            {index: 1, selectedVariables: ["a", "b"], unselectedVariables: ["c"]});
+        expect(commit.mock.calls[0][1]).toStrictEqual({
+            index: 1,
+            selectedVariables: ["a", "b"],
+            unselectedVariables: ["c"]
+        });
         expect(dispatch).not.toHaveBeenCalled();
     });
 
@@ -62,8 +65,11 @@ describe("Graphs actions", () => {
         );
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(GraphsMutation.SetSelectedVariables);
-        expect(commit.mock.calls[0][1]).toStrictEqual(
-            {index: 1, selectedVariables: ["a", "b"], unselectedVariables: ["c"]});
+        expect(commit.mock.calls[0][1]).toStrictEqual({
+            index: 1,
+            selectedVariables: ["a", "b"],
+            unselectedVariables: ["c"]
+        });
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch.mock.calls[0][0]).toBe(`fitData/${FitDataAction.UpdateLinkedVariables}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);

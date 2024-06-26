@@ -3,7 +3,7 @@ import Vuex from "vuex";
 import LinkData from "../../../../src/app/components/options/LinkData.vue";
 import { FitState } from "../../../../src/app/store/fit/state";
 import { getters } from "../../../../src/app/store/fitData/getters";
-import {mockFitDataState, mockFitState, mockGraphsState, mockModelState} from "../../../mocks";
+import { mockFitDataState, mockFitState, mockGraphsState, mockModelState } from "../../../mocks";
 import { FitDataAction } from "../../../../src/app/store/fitData/actions";
 import { getters as graphGetters } from "../../../../src/app/store/graphs/getters";
 
@@ -32,8 +32,8 @@ describe("LinkData", () => {
                 },
                 graphs: {
                     namespaced: true,
-                    state:  mockGraphsState({
-                        config: [ { selectedVariables: ["I", "R"], unselectedVariables: [] } ]
+                    state: mockGraphsState({
+                        config: [{ selectedVariables: ["I", "R"], unselectedVariables: [] }]
                     }),
                     getters: graphGetters
                 },

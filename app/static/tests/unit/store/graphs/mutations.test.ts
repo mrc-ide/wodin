@@ -1,6 +1,6 @@
 import { mutations } from "../../../../src/app/store/graphs/mutations";
 import { GraphsState } from "../../../../src/app/store/graphs/state";
-import {mockGraphsState, mockModelState} from "../../../mocks";
+import { mockGraphsState, mockModelState } from "../../../mocks";
 
 describe("Graphs mutations", () => {
     const state: GraphsState = mockGraphsState();
@@ -33,9 +33,12 @@ describe("Graphs mutations", () => {
                 { selectedVariables: [], unselectedVariables: [] }
             ]
         });
-        mutations.SetSelectedVariables(testState,
-            {index: 1, selectedVariables: ["x", "z"], unselectedVariables: ["y"]});
-        expect(testState.config[1]).toStrictEqual({selectedVariables: ["x", "z"], unselectedVariables: ["y"]});
+        mutations.SetSelectedVariables(testState, {
+            index: 1,
+            selectedVariables: ["x", "z"],
+            unselectedVariables: ["y"]
+        });
+        expect(testState.config[1]).toStrictEqual({ selectedVariables: ["x", "z"], unselectedVariables: ["y"] });
         expect(testState.config[0]).toStrictEqual({ selectedVariables: [], unselectedVariables: [] });
     });
 });

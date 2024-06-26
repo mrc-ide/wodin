@@ -1,4 +1,4 @@
- import { mutations } from "../../../../src/app/store/model/mutations";
+import { mutations } from "../../../../src/app/store/model/mutations";
 import { mockError, mockModelState } from "../../../mocks";
 
 describe("Model mutations", () => {

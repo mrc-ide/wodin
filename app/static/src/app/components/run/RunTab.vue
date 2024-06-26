@@ -55,7 +55,7 @@ import LoadingSpinner from "../LoadingSpinner.vue";
 import { AppType } from "../../store/appState/state";
 import { ModelGetter } from "../../store/model/getters";
 import RunStochasticPlot from "./RunStochasticPlot.vue";
-import {GraphsGetter} from "../../store/graphs/getters";
+import { GraphsGetter } from "../../store/graphs/getters";
 
 export default defineComponent({
     name: "RunTab",

@@ -310,7 +310,7 @@ describe("Fit Data actions", () => {
         const rootState = {
             model: {
                 odinModelResponse: {
-                    valid: true,
+                    valid: true
                 }
             }
         };
@@ -369,7 +369,9 @@ describe("Fit Data actions", () => {
 
         const payload = { column: "a", variable: "I" };
         (actions[FitDataAction.UpdateLinkedVariable] as any)(
-            { commit, dispatch, state: testState, rootGetters }, payload);
+            { commit, dispatch, state: testState, rootGetters },
+            payload
+        );
         expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetLinkedVariable);
         expect(commit.mock.calls[0][1]).toBe(payload);
@@ -390,7 +392,9 @@ describe("Fit Data actions", () => {
 
         const payload = { column: "b", variable: "I" };
         (actions[FitDataAction.UpdateLinkedVariable] as any)(
-            { commit, dispatch, state: testState, rootGetters }, payload);
+            { commit, dispatch, state: testState, rootGetters },
+            payload
+        );
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetLinkedVariable);
         expect(commit.mock.calls[0][1]).toBe(payload);

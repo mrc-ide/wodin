@@ -70,7 +70,7 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
 
         // Retain variable selections. Newly added variables will be selected by default in the first graph
         const selectedVariables = variables.filter((s) => !rootState.graphs.config[0].unselectedVariables.includes(s));
-        dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, { index: 0, selectedVariables }, { root: true});
+        dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, { index: 0, selectedVariables }, { root: true });
 
         if (state.compileRequired) {
             commit(ModelMutation.SetCompileRequired, false);

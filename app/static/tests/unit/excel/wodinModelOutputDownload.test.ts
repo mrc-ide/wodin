@@ -23,7 +23,7 @@ describe("WodinModelOutputDownload", () => {
     const rootGetters = {
         "graphs/allSelectedVariables": ["A", "B"],
         "fitData/nonTimeColumns": ["cases", "deaths"]
-    }
+    };
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -47,7 +47,6 @@ describe("WodinModelOutputDownload", () => {
             { name: "v2", value: 2.2 }
         ]
     };
-
 
     it("downloads expected workbook for Basic app", () => {
         const rootState = mockBasicState({
@@ -74,8 +73,6 @@ describe("WodinModelOutputDownload", () => {
         });
         expect(mockWriteFile.mock.calls[0][1]).toBe("myFile.xlsx");
     });
-
-
 
     it("downloads expected workbook for Fit app", () => {
         const rootState = mockFitState({

@@ -8,7 +8,7 @@ import { sensitivityUpdateRequiredExplanation, verifyValidPlotSettingsTime } fro
 import { Dict } from "../../types/utilTypes";
 import { BaseSensitivityMutation } from "../../store/sensitivity/mutations";
 import { BaseSensitivityAction } from "../../store/sensitivity/actions";
-import {GraphsGetter} from "../../store/graphs/getters";
+import { GraphsGetter } from "../../store/graphs/getters";
 
 export interface BaseSensitivityMixin {
     sensitivityPrerequisitesReady: ComputedRef<boolean>;
@@ -23,7 +23,7 @@ export default (store: Store<AppState>, multiSensitivity: boolean): BaseSensitiv
     const namespace = multiSensitivity ? "multiSensitivity" : "sensitivity";
 
     const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
-    const allSelectedVariables = computed(() =>  store.getters[`graphs/${GraphsGetter.allSelectedVariables}`]);
+    const allSelectedVariables = computed(() => store.getters[`graphs/${GraphsGetter.allSelectedVariables}`]);
 
     const sensitivityPrerequisitesReady = computed(() => {
         return hasRunner.value && !!store.state.model.odin && !store.state.model.compileRequired;

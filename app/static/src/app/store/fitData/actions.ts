@@ -8,7 +8,7 @@ import { RunMutation } from "../run/mutations";
 import { ModelFitMutation } from "../modelFit/mutations";
 import { ModelFitAction } from "../modelFit/actions";
 import { SensitivityMutation } from "../sensitivity/mutations";
-import {GraphsGetter} from "../graphs/getters";
+import { GraphsGetter } from "../graphs/getters";
 
 export enum FitDataAction {
     Upload = "Upload",

@@ -203,9 +203,7 @@ describe("SensitivitySummaryPlot", () => {
                     namespaced: true,
                     state: {
                         settings: { logScaleYAxis },
-                        config: [
-                            { selectedVariables }
-                        ]
+                        config: [{ selectedVariables }]
                     }
                 }
             }

@@ -33,7 +33,7 @@ import { useStore } from "vuex";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
 import { FitDataAction } from "../../store/fitData/actions";
-import {GraphsGetter} from "../../store/graphs/getters";
+import { GraphsGetter } from "../../store/graphs/getters";
 
 export default defineComponent({
     name: "LinkData",

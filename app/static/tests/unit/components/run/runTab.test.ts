@@ -8,7 +8,7 @@ import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { nextTick } from "vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import {mockBasicState, mockGraphsState, mockModelState, mockRunState, mockStochasticState} from "../../../mocks";
+import { mockBasicState, mockGraphsState, mockModelState, mockRunState, mockStochasticState } from "../../../mocks";
 import { ModelState } from "../../../../src/app/store/model/state";
 import { RunState } from "../../../../src/app/store/run/state";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
@@ -65,7 +65,7 @@ describe("RunTab", () => {
                 graphs: {
                     namespaced: true,
                     state: mockGraphsState({
-                        config: [ { selectedVariables, unselectedVariables: [] } ]
+                        config: [{ selectedVariables, unselectedVariables: [] }]
                     }),
                     getters: graphGetters
                 },
@@ -108,7 +108,7 @@ describe("RunTab", () => {
                 graphs: {
                     namespaced: true,
                     state: mockGraphsState({
-                        config: [ { selectedVariables: ["S"], unselectedVariables: [] } ]
+                        config: [{ selectedVariables: ["S"], unselectedVariables: [] }]
                     }),
                     getters: graphGetters
                 },
@@ -243,7 +243,7 @@ describe("RunTab", () => {
     });
 
     it("fades plot and show message when no selected variables", () => {
-        const wrapper = getWrapper( defaultModelState, defaultRunState, true, AppType.Basic, []);
+        const wrapper = getWrapper(defaultModelState, defaultRunState, true, AppType.Basic, []);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Please select at least one variable."
         );

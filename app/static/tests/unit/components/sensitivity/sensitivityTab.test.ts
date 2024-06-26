@@ -15,7 +15,7 @@ import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import SensitivitySummaryDownload from "../../../../src/app/components/sensitivity/SensitivitySummaryDownload.vue";
 import LoadingButton from "../../../../src/app/components/LoadingButton.vue";
-import { getters as graphsGetters} from "../../../../src/app/store/graphs/getters";
+import { getters as graphsGetters } from "../../../../src/app/store/graphs/getters";
 
 jest.mock("plotly.js-basic-dist-min", () => {});
 
@@ -235,14 +235,7 @@ describe("SensitivityTab", () => {
                 }
             }
         } as any;
-        const wrapper = getWrapper(
-            AppType.Basic,
-            {},
-            sensitivityState,
-            {},
-            true,
-            []
-        );
+        const wrapper = getWrapper(AppType.Basic, {}, sensitivityState, {}, true, []);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Please select at least one variable."
         );

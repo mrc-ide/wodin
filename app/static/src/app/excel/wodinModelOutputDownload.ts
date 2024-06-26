@@ -6,7 +6,7 @@ import { FitData } from "../store/fitData/state";
 import { AppType } from "../store/appState/state";
 import { FitState } from "../store/fit/state";
 import { FitDataGetter } from "../store/fitData/getters";
-import {GraphsGetter} from "../store/graphs/getters";
+import { GraphsGetter } from "../store/graphs/getters";
 
 export class WodinModelOutputDownload extends WodinExcelDownload {
     private readonly _points: number;
@@ -47,7 +47,7 @@ export class WodinModelOutputDownload extends WodinExcelDownload {
                 nPoints: this._points
             });
             const selectedVariables = this._rootGetters[`graphs/${GraphsGetter.allSelectedVariables}`];
-            console.log(`selectedVariables are ${JSON.stringify(selectedVariables)}`)
+            console.log(`selectedVariables are ${JSON.stringify(selectedVariables)}`);
 
             const worksheet = WodinModelOutputDownload._generateModelledOutput(
                 selectedVariables,

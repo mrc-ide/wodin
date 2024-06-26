@@ -14,7 +14,7 @@ import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/ap
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import { ModelGetter } from "../../../../src/app/store/model/getters";
 import { getters as graphsGetters } from "../../../../src/app/store/graphs/getters";
-import {mockGraphsState} from "../../../mocks";
+import { mockGraphsState } from "../../../mocks";
 
 describe("SensitivitySummaryDownload", () => {
     const mockSetUserSummaryDownloadFileName = jest.fn();
@@ -86,7 +86,8 @@ describe("SensitivitySummaryDownload", () => {
                     state: mockGraphsState({
                         config: [
                             {
-                                selectedVariables: ["S"], unselectedVariables: []
+                                selectedVariables: ["S"],
+                                unselectedVariables: []
                             }
                         ]
                     }),
