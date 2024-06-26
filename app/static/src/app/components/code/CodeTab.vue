@@ -16,14 +16,30 @@
         <error-info :error="error"></error-info>
         <div class="mt-3">
             <vertical-collapse v-if="showSelectedVariables" title="Select variables" collapse-id="select-variables">
-                <selected-variables></selected-variables>
+                <div class="ms-2">
+                    Drag variables to move to another graph, or to hide variable. Press the Ctrl key on drag to make a
+                    copy of a variable.
+                </div>
+                <selected-variables
+                    v-for="(_, index) in graphsConfig"
+                    :graph-index="index"
+                    :key="index"
+                    :dragging="draggingVariable"
+                    @setDragging="setDraggingVariable"
+                ></selected-variables>
+                <hidden-variables
+                    @setDragging="setDraggingVariable"
+                    :dragging="draggingVariable"
+                    style="clear: both"
+                ></hidden-variables>
+                <button class="btn btn-primary mt-2 float-end" id="add-graph-btn" @click="addGraph">Add Graph</button>
             </vertical-collapse>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, ref } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 // eslint-disable-next-line import/no-webpack-loader-syntax
@@ -33,20 +49,25 @@ import { ModelAction } from "../../store/model/actions";
 import userMessages from "../../userMessages";
 import ErrorInfo from "../ErrorInfo.vue";
 import SelectedVariables from "./SelectedVariables.vue";
+import HiddenVariables from "./HiddenVariables.vue";
 import VerticalCollapse from "../VerticalCollapse.vue";
 import GenericHelp from "../help/GenericHelp.vue";
+import { GraphsAction } from "@/app/store/graphs/actions";
 
 export default defineComponent({
     name: "CodeTab",
     components: {
         GenericHelp,
         SelectedVariables,
+        HiddenVariables,
         ErrorInfo,
         CodeEditor,
         VueFeather,
         VerticalCollapse
     },
     setup() {
+        // TODO: move all graphs stuff into another component
+        const draggingVariable = ref(false); // indicates whether a child component is dragging a variable
         const store = useStore();
         const codeIsValid = computed(() => store.state.model.odinModelResponse?.valid);
         const codeValidating = computed(() => store.state.code.loading);
@@ -58,8 +79,13 @@ export default defineComponent({
         const allVariables = computed<string[]>(() => store.state.model.odinModelResponse?.metadata?.variables || []);
         const showSelectedVariables = computed(() => allVariables.value.length && !store.state.model.compileRequired);
         const appIsConfigured = computed(() => store.state.configured);
+        const graphsConfig = computed(() => store.state.graphs.config);
         const compile = () => store.dispatch(`model/${ModelAction.CompileModel}`);
+        const addGraph = () => {
+            store.commit(`graphs/${GraphsAction.NewGraph}`);
+        };
         const loadingMessage = userMessages.code.isValidating;
+        const setDraggingVariable = (value: boolean) => (draggingVariable.value = value);
 
         return {
             appIsConfigured,
@@ -72,7 +98,11 @@ export default defineComponent({
             showSelectedVariables,
             codeHelp,
             codeValidating,
-            loadingMessage
+            loadingMessage,
+            graphsConfig,
+            addGraph,
+            draggingVariable,
+            setDraggingVariable
         };
     }
 });

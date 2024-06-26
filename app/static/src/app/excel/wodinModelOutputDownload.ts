@@ -47,7 +47,6 @@ export class WodinModelOutputDownload extends WodinExcelDownload {
                 nPoints: this._points
             });
             const selectedVariables = this._rootGetters[`graphs/${GraphsGetter.allSelectedVariables}`];
-            console.log(`selectedVariables are ${JSON.stringify(selectedVariables)}`);
 
             const worksheet = WodinModelOutputDownload._generateModelledOutput(
                 selectedVariables,

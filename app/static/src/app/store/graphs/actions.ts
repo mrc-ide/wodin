@@ -5,7 +5,8 @@ import { FitDataAction } from "../fitData/actions";
 import { GraphsState } from "./state";
 
 export enum GraphsAction {
-    UpdateSelectedVariables = "UpdateSelectedVariables"
+    UpdateSelectedVariables = "UpdateSelectedVariables",
+    NewGraph = "AddGraph"
 }
 
 export const actions: ActionTree<GraphsState, AppState> = {
@@ -21,5 +22,10 @@ export const actions: ActionTree<GraphsState, AppState> = {
         if (rootState.appType === AppType.Fit) {
             dispatch(`fitData/${FitDataAction.UpdateLinkedVariables}`, null, { root: true });
         }
+    },
+    NewGraph(context) {
+        const { rootState, commit } = context;
+        const unselectedVariables = [...(rootState.model.odinModelResponse?.metadata?.variables || [])];
+        commit(GraphsMutation.AddGraph, { selectedVariables: [], unselectedVariables });
     }
 };

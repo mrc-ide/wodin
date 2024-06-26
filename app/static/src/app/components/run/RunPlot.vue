@@ -26,12 +26,16 @@ import { ParameterSet } from "../../store/run/state";
 export default defineComponent({
     name: "RunPlot",
     props: {
-        fadePlot: Boolean
+        fadePlot: Boolean,
+      graphIndex: {
+        type: Number,
+        default: 0
+      }
     },
     components: {
         WodinPlot
     },
-    setup() {
+    setup(props) {
         const store = useStore();
 
         const solution = computed(() => store.state.run.resultOde?.solution);
@@ -58,7 +62,7 @@ export default defineComponent({
 
         const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData}`]);
 
-        const selectedVariables = computed(() => store.state.graphs.config[0].selectedVariables);
+        const selectedVariables = computed(() => store.state.graphs.config[props.graphIndex].selectedVariables);
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, false));
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {

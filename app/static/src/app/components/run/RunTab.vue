@@ -4,12 +4,14 @@
             <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
         </div>
         <action-required-message :message="updateMsg"></action-required-message>
-        <run-stochastic-plot v-if="isStochastic" :fade-plot="!!updateMsg"></run-stochastic-plot>
-        <run-plot v-else :fade-plot="!!updateMsg" :model-fit="false">
-            <div v-if="sumOfSquares">
-                <span>Sum of squares: {{ sumOfSquares }}</span>
-            </div>
-        </run-plot>
+        <template v-for="(_, index) in graphConfigs" :key="index">
+          <run-stochastic-plot v-if="isStochastic" :fade-plot="!!updateMsg" :graph-index="index"></run-stochastic-plot>
+          <run-plot v-else :fade-plot="!!updateMsg" :model-fit="false" :graph-index="index">
+              <div v-if="sumOfSquares">
+                  <span>Sum of squares: {{ sumOfSquares }}</span>
+              </div>
+          </run-plot>
+        </template>
         <error-info :error="error"></error-info>
         <div>
             <button
@@ -83,6 +85,7 @@ export default defineComponent({
 
         const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
         const allSelectedVariables = computed(() => store.getters[`graphs/${GraphsGetter.allSelectedVariables}`]);
+        const graphConfigs = computed(() => store.state.graphs.config);
 
         // Enable run button if model has initialised and compile is not required
         const canRunModel = computed(() => {
@@ -132,7 +135,8 @@ export default defineComponent({
             canDownloadOutput,
             downloadUserFileName,
             toggleShowDownloadOutput,
-            download
+            download,
+          graphConfigs
         };
     }
 });

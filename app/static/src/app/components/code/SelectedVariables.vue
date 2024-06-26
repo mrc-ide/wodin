@@ -1,18 +1,22 @@
 <template>
-    <div class="ms-2">Click to toggle variables to include in graphs.</div>
-    <div class="selected-variables-panel m-2">
-        <span
-            v-for="variable in allVariables"
-            class="badge variable me-2 mb-2"
-            :style="getStyle(variable)"
-            :key="variable"
-            @click="toggleVariable(variable)"
-            >{{ variable }}</span
-        >
-    </div>
-    <div class="ms-2">
-        <span class="clickable text-primary" id="select-variables-all" @click="selectAll">Select all</span> |
-        <span class="clickable text-primary" id="select-variables-none" @click="selectNone">Select none</span>
+    <div class="selected-variables-panel m-2" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
+        <h5>Graph {{ graphIndex + 1 }}</h5>
+        <div class="drop-zone" :class="dragging ? 'drop-zone-active' : 'drop-zone-inactive'">
+            <template v-for="variable in selectedVariables" :key="variable">
+                <span
+                    class="badge variable me-2 mb-2"
+                    :style="getStyle(variable)"
+                    :draggable="true"
+                    @dragstart="startDrag($event, variable)"
+                    @dragend="endDrag"
+                >
+                    {{ variable }}
+                </span>
+            </template>
+            <div v-if="!selectedVariables.length" style="height: 3rem; background-color: #eee" class="p-2 me-4">
+                Drag variables here to select them for this graph.
+            </div>
+        </div>
     </div>
 </template>
 
@@ -21,12 +25,24 @@ import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import { GraphsAction } from "../../store/graphs/actions";
 
+// TODO: rename this component?
 export default defineComponent({
     name: "SelectedVariables",
-    setup() {
+    props: {
+        dragging: {
+            type: Boolean,
+            required: true
+        },
+        graphIndex: {
+            type: Number,
+            required: true
+        }
+    },
+    setup(props, { emit }) {
         const store = useStore();
-        const allVariables = computed<string[]>(() => store.state.model.odinModelResponse?.metadata?.variables || []);
-        const selectedVariables = computed<string[]>(() => store.state.graphs.config[0].selectedVariables);
+        const selectedVariables = computed<string[]>(
+            () => store.state.graphs.config[props.graphIndex].selectedVariables
+        );
         const palette = computed(() => store.state.model.paletteModel!);
 
         const getStyle = (variable: string) => {
@@ -37,37 +53,58 @@ export default defineComponent({
             return { "background-color": bgcolor };
         };
 
-        const updateSelectedVariables = (newVariables: string[]) => {
+        const updateSelectedVariables = (index: number, newVariables: string[]) => {
             store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
-                index: 0,
+                index,
                 selectedVariables: newVariables
             });
         };
 
-        const toggleVariable = (variable: string) => {
-            let newVars: string[];
-            if (selectedVariables.value.includes(variable)) {
-                newVars = selectedVariables.value.filter((v) => v !== variable);
-            } else {
-                newVars = [...selectedVariables.value, variable];
+        const startDrag = (evt: DragEvent, variable: string) => {
+            const { dataTransfer } = evt;
+            dataTransfer!!.dropEffect = "move";
+            dataTransfer!!.effectAllowed = "move";
+            dataTransfer!!.setData("variable", variable);
+            dataTransfer!!.setData("srcGraph", props.graphIndex.toString());
+            emit("setDragging", true);
+        };
+
+        // TODO: share the drag stuff with HiddenVariables
+        const endDrag = () => {
+            emit("setDragging", false);
+        };
+
+        // Remove variable from the graph it was dragged from
+        const removeVariable = (srcGraphIdx: number, variable: string) => {
+            const srcVariables = [...store.state.graphs.config[srcGraphIdx].selectedVariables].filter(
+                (v) => v !== variable
+            );
+            updateSelectedVariables(srcGraphIdx, srcVariables);
+        };
+
+        const onDrop = (evt: DragEvent) => {
+            const { dataTransfer } = evt;
+            const variable = dataTransfer!!.getData("variable");
+            const srcGraph = dataTransfer!!.getData("srcGraph");
+            if (srcGraph !== props.graphIndex.toString()) {
+                // remove from source graph
+                if (srcGraph !== "hidden") {
+                    removeVariable(parseInt(srcGraph), variable);
+                }
+                // add to this graph if necessary
+                if (!selectedVariables.value.includes(variable)) {
+                    const newVars = [...selectedVariables.value, variable];
+                    updateSelectedVariables(props.graphIndex, newVars);
+                }
             }
-            updateSelectedVariables(newVars);
-        };
-
-        const selectAll = () => {
-            updateSelectedVariables([...allVariables.value]);
-        };
-
-        const selectNone = () => {
-            updateSelectedVariables([]);
         };
 
         return {
-            allVariables,
+            selectedVariables,
             getStyle,
-            toggleVariable,
-            selectAll,
-            selectNone
+            startDrag,
+            endDrag,
+            onDrop
         };
     }
 });

@@ -21,15 +21,19 @@ import { StochasticConfig } from "../../types/responseTypes";
 export default defineComponent({
     name: "RunStochasticPlot",
     props: {
-        fadePlot: Boolean
+        fadePlot: Boolean,
+      graphIndex: {
+        type: Number,
+        default: 0
+      }
     },
     components: {
         WodinPlot
     },
-    setup() {
+    setup(props) {
         const store = useStore();
 
-        const selectedVariables = computed(() => store.state.graphs.config[0].selectedVariables);
+        const selectedVariables = computed(() => store.state.graphs.config[props.graphIndex].selectedVariables);
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, false));
 
         const solution = computed(() => store.state.run.resultDiscrete?.solution);
