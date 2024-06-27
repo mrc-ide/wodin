@@ -14,7 +14,7 @@ import { logMutations, persistState } from "../plugins";
 import { newSessionId } from "../../utils";
 import { sessions } from "../sessions/sessions";
 import { versions } from "../versions/versions";
-import { graphSettings } from "../graphSettings/graphSettings";
+import { graphs } from "../graphs/graphs";
 import { getters } from "../appState/getters";
 import { getStoreModule } from "../../../../translationPackage";
 import { multiSensitivity } from "../multiSensitivity/multiSensitivity";
@@ -56,7 +56,7 @@ export const storeOptions: StoreOptions<FitState> = {
         multiSensitivity,
         sessions,
         versions,
-        graphSettings,
+        graphs,
         language
     },
     plugins: [logMutations, persistState]

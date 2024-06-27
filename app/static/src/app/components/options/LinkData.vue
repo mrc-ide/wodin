@@ -33,6 +33,7 @@ import { useStore } from "vuex";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
 import { FitDataAction } from "../../store/fitData/actions";
+import { GraphsGetter } from "../../store/graphs/getters";
 
 export default defineComponent({
     name: "LinkData",
@@ -41,7 +42,7 @@ export default defineComponent({
         const store = useStore();
         const dataColumns = computed(() => store.getters[`${namespace}/${FitDataGetter.nonTimeColumns}`]);
         const modelSuccess = computed(() => store.state.model.odinModelResponse?.valid);
-        const selectedVariables = computed(() => store.state.model.selectedVariables);
+        const selectedVariables = computed(() => store.getters[`graphs/${GraphsGetter.allSelectedVariables}`]);
         const linkedVariables = computed(() => store.state.fitData.linkedVariables);
         const linkPrerequisitesMessage = computed(() => {
             const messages = [];

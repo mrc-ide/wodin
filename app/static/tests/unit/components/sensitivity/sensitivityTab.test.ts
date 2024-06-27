@@ -15,6 +15,7 @@ import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import SensitivitySummaryDownload from "../../../../src/app/components/sensitivity/SensitivitySummaryDownload.vue";
 import LoadingButton from "../../../../src/app/components/LoadingButton.vue";
+import { getters as graphsGetters } from "../../../../src/app/store/graphs/getters";
 
 jest.mock("plotly.js-basic-dist-min", () => {});
 
@@ -28,19 +29,30 @@ describe("SensitivityTab", () => {
         modelState: Partial<ModelState> = {},
         sensitivityState: Partial<SensitivityState> = {},
         batchPars: any = {},
-        hasRunner = true
+        hasRunner = true,
+        selectedVariables = ["S"]
     ) => {
         const store = new Vuex.Store<AppState>({
             state: {
                 appType
             } as any,
             modules: {
+                graphs: {
+                    namespaced: true,
+                    state: {
+                        config: [
+                            {
+                                selectedVariables
+                            }
+                        ]
+                    },
+                    getters: graphsGetters
+                },
                 model: {
                     namespaced: true,
                     state: {
                         odinRunnerOde: {},
                         odin: {},
-                        selectedVariables: ["S"],
                         ...modelState
                     },
                     getters: {
@@ -223,7 +235,7 @@ describe("SensitivityTab", () => {
                 }
             }
         } as any;
-        const wrapper = getWrapper(AppType.Basic, { selectedVariables: [] }, sensitivityState);
+        const wrapper = getWrapper(AppType.Basic, {}, sensitivityState, {}, true, []);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Please select at least one variable."
         );

@@ -9,6 +9,7 @@ import ActionRequiredMessage from "../../../../src/app/components/ActionRequired
 import { MultiSensitivityState } from "../../../../src/app/store/multiSensitivity/state";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 import SensitivitySummaryDownload from "../../../../src/app/components/sensitivity/SensitivitySummaryDownload.vue";
+import { getters as graphsGetters } from "../../../../src/app/store/graphs/getters";
 
 describe("MultiSensitivityTab", () => {
     const mockRunMultiSensitivity = jest.fn();
@@ -22,12 +23,22 @@ describe("MultiSensitivityTab", () => {
         const store = new Vuex.Store<AppState>({
             state: {} as any,
             modules: {
+                graphs: {
+                    namespaced: true,
+                    state: {
+                        config: [
+                            {
+                                selectedVariables: ["A"]
+                            }
+                        ]
+                    },
+                    getters: graphsGetters
+                },
                 model: {
                     namespaced: true,
                     state: {
                         odin: {},
                         compileRequired: false,
-                        selectedVariables: ["A"],
                         ...modelState
                     },
                     getters: {

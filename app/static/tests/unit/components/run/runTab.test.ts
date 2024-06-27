@@ -8,7 +8,7 @@ import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { nextTick } from "vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import { mockBasicState, mockModelState, mockRunState, mockStochasticState } from "../../../mocks";
+import { mockBasicState, mockGraphsState, mockModelState, mockRunState, mockStochasticState } from "../../../mocks";
 import { ModelState } from "../../../../src/app/store/model/state";
 import { RunState } from "../../../../src/app/store/run/state";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
@@ -19,19 +19,19 @@ import ActionRequiredMessage from "../../../../src/app/components/ActionRequired
 import DownloadOutput from "../../../../src/app/components/DownloadOutput.vue";
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import { StochasticState } from "../../../../src/app/store/stochastic/state";
-import { DiscreteSeriesSet, OdinRunnerDiscrete } from "../../../../src/app/types/responseTypes";
+import { OdinRunnerDiscrete } from "../../../../src/app/types/responseTypes";
 import { OdinRunResultDiscrete } from "../../../../src/app/types/wrapperTypes";
 import { ModelGetter } from "../../../../src/app/store/model/getters";
 import { AppType } from "../../../../src/app/store/appState/state";
 import { RunMutation } from "../../../../src/app/store/run/mutations";
 import { RunAction } from "../../../../src/app/store/run/actions";
+import { getters as graphGetters } from "../../../../src/app/store/graphs/getters";
 
 describe("RunTab", () => {
     const defaultModelState = {
         odinRunnerOde: {} as any,
         odin: {} as any,
-        compileRequired: false,
-        selectedVariables: ["S"]
+        compileRequired: false
     };
 
     const defaultRunState = {
@@ -56,11 +56,19 @@ describe("RunTab", () => {
         modelState: Partial<ModelState> = defaultModelState,
         runState: Partial<RunState> = defaultRunState,
         hasRunner = true,
-        appType = AppType.Basic
+        appType = AppType.Basic,
+        selectedVariables: string[] = ["S"]
     ) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({ appType }),
             modules: {
+                graphs: {
+                    namespaced: true,
+                    state: mockGraphsState({
+                        config: [{ selectedVariables, unselectedVariables: [] }]
+                    }),
+                    getters: graphGetters
+                },
                 model: {
                     namespaced: true,
                     state: mockModelState(modelState),
@@ -97,12 +105,18 @@ describe("RunTab", () => {
         const store = new Vuex.Store<StochasticState>({
             state: mockStochasticState(),
             modules: {
+                graphs: {
+                    namespaced: true,
+                    state: mockGraphsState({
+                        config: [{ selectedVariables: ["S"], unselectedVariables: [] }]
+                    }),
+                    getters: graphGetters
+                },
                 model: {
                     namespaced: true,
                     state: mockModelState({
                         odin: {} as any,
                         odinRunnerDiscrete: runner as any,
-                        selectedVariables: ["S"],
                         compileRequired
                     }),
                     getters: {
@@ -229,7 +243,7 @@ describe("RunTab", () => {
     });
 
     it("fades plot and show message when no selected variables", () => {
-        const wrapper = getWrapper({ selectedVariables: [] });
+        const wrapper = getWrapper(defaultModelState, defaultRunState, true, AppType.Basic, []);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Please select at least one variable."
         );

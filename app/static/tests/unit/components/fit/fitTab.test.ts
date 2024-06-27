@@ -10,7 +10,7 @@ import { FitState } from "../../../../src/app/store/fit/state";
 import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
 import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import FitPlot from "../../../../src/app/components/fit/FitPlot.vue";
-import { mockFitState, mockGraphSettingsState } from "../../../mocks";
+import { mockFitState, mockGraphsState } from "../../../mocks";
 import { WodinError } from "../../../../src/app/types/responseTypes";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 
@@ -38,7 +38,7 @@ describe("Fit Tab", () => {
                 },
                 graphSettings: {
                     namespaced: true,
-                    state: mockGraphSettingsState()
+                    state: mockGraphsState()
                 },
                 modelFit: {
                     namespaced: true,

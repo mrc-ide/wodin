@@ -39,7 +39,7 @@ export default defineComponent({
         const batch = computed(() => store.state.sensitivity.result?.batch);
         const plotSettings = computed(() => store.state.sensitivity.plotSettings);
         const palette = computed(() => store.state.model.paletteModel);
-        const selectedVariables = computed(() => store.state.model.selectedVariables);
+        const selectedVariables = computed(() => store.state.graphs.config[0].selectedVariables);
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, true));
 
         const xAxisSettings = computed(() => {
@@ -54,7 +54,7 @@ export default defineComponent({
 
         const yAxisSettings = computed(() => {
             const isNotTimePlot = plotSettings.value.plotType !== SensitivityPlotType.TimeAtExtreme;
-            const logScale = store.state.graphSettings.logScaleYAxis && isNotTimePlot;
+            const logScale = store.state.graphs.settings.logScaleYAxis && isNotTimePlot;
             const type = logScale ? "log" : ("linear" as AxisType);
             return { type };
         });

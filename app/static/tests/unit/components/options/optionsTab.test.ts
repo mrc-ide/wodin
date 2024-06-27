@@ -42,8 +42,10 @@ describe("OptionsTab", () => {
         sensitivity: {
             paramSettings: {}
         },
-        graphSettings: {
-            logScaleYAxis: false
+        graphs: {
+            settings: {
+                logScaleYAxis: false
+            }
         }
     } as any;
 
@@ -53,8 +55,10 @@ describe("OptionsTab", () => {
                 appType: AppType.Basic,
                 openVisualisationTab: VisualisationTab.Run,
                 model: mockModelState(),
-                graphSettings: {
-                    logScaleYAxis: false
+                graphs: {
+                    settings: {
+                        logScaleYAxis: false
+                    }
                 }
             } as any,
             modules: {
@@ -97,8 +101,10 @@ describe("OptionsTab", () => {
             state: {
                 appType: AppType.Basic,
                 openVisualisationTab: VisualisationTab.Run,
-                graphSettings: {
-                    logScaleYAxis: false
+                graphs: {
+                    settings: {
+                        logScaleYAxis: false
+                    }
                 }
             } as any,
             modules: {
@@ -148,8 +154,10 @@ describe("OptionsTab", () => {
                 fitData: {
                     columnToFit: null
                 },
-                graphSettings: {
-                    logScaleYAxis: false
+                graphs: {
+                    settings: {
+                        logScaleYAxis: false
+                    }
                 }
             } as any,
             modules: {
@@ -202,8 +210,10 @@ describe("OptionsTab", () => {
                 run: mockRunState({
                     parameterValues: { param1: 1, param2: 2.2 }
                 }),
-                graphSettings: {
-                    logScaleYAxis: false
+                graphs: {
+                    settings: {
+                        logScaleYAxis: false
+                    }
                 }
             } as any
         });

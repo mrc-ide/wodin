@@ -27,7 +27,7 @@
 <script lang="ts">
 import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
-import { GraphSettingsMutation } from "../../store/graphSettings/mutations";
+import { GraphsMutation } from "../../store/graphs/mutations";
 
 export default defineComponent({
     name: "GraphSettings",
@@ -35,19 +35,19 @@ export default defineComponent({
         const store = useStore();
         const logScaleYAxis = computed({
             get() {
-                return store.state.graphSettings.logScaleYAxis;
+                return store.state.graphs.settings.logScaleYAxis;
             },
             set(newValue) {
-                store.commit(`graphSettings/${GraphSettingsMutation.SetLogScaleYAxis}`, newValue);
+                store.commit(`graphs/${GraphsMutation.SetLogScaleYAxis}`, newValue);
             }
         });
 
         const lockYAxis = computed({
             get() {
-                return store.state.graphSettings.lockYAxis;
+                return store.state.graphs.settings.lockYAxis;
             },
             set(newValue) {
-                store.commit(`graphSettings/${GraphSettingsMutation.SetLockYAxis}`, newValue);
+                store.commit(`graphs/${GraphsMutation.SetLockYAxis}`, newValue);
             }
         });
 

@@ -4,7 +4,7 @@ import { RunState } from "../run/state";
 import { AppConfig } from "../../types/responseTypes";
 import { SensitivityState } from "../sensitivity/state";
 import { VersionsState } from "../versions/state";
-import { GraphSettingsState } from "../graphSettings/state";
+import { GraphsState } from "../graphs/state";
 import { LanguageState } from "../../../../translationPackage/store/state";
 import { MultiSensitivityState } from "../multiSensitivity/state";
 import { SessionsState } from "../sessions/state";
@@ -44,7 +44,7 @@ export interface AppState {
     run: RunState;
     sensitivity: SensitivityState;
     multiSensitivity: MultiSensitivityState;
-    graphSettings: GraphSettingsState;
+    graphs: GraphsState;
     sessions: SessionsState;
     versions: VersionsState;
     language: LanguageState;

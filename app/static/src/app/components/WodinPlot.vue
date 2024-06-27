@@ -16,8 +16,8 @@ import { EventEmitter } from "events";
 import { newPlot, react, PlotRelayoutEvent, Plots, AxisType, Layout, Config } from "plotly.js-basic-dist-min";
 import { WodinPlotData, fadePlotStyle, margin, config } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
-import { GraphSettingsMutation } from "../store/graphSettings/mutations";
-import { YAxisRange } from "../store/graphSettings/state";
+import { GraphsMutation } from "../store/graphs/mutations";
+import { YAxisRange } from "../store/graphs/state";
 
 export default defineComponent({
     name: "WodinPlot",
@@ -59,16 +59,16 @@ export default defineComponent({
 
         const hasPlotData = computed(() => !!baseData.value?.length);
 
-        const yAxisType = computed(() => (store.state.graphSettings.logScaleYAxis ? "log" : ("linear" as AxisType)));
-        const lockYAxis = computed(() => store.state.graphSettings.lockYAxis);
-        const yAxisRange = computed(() => store.state.graphSettings.yAxisRange as YAxisRange);
+        const yAxisType = computed(() => (store.state.graphs.settings.logScaleYAxis ? "log" : ("linear" as AxisType)));
+        const lockYAxis = computed(() => store.state.graphs.settings.lockYAxis);
+        const yAxisRange = computed(() => store.state.graphs.settings.yAxisRange as YAxisRange);
 
         const updateAxesRange = () => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const plotLayout = (plot.value as any).layout;
             const yRange = plotLayout.yaxis?.range;
             if (plotLayout) {
-                store.commit(`graphSettings/${GraphSettingsMutation.SetYAxisRange}`, yRange);
+                store.commit(`graphs/${GraphsMutation.SetYAxisRange}`, yRange);
             }
         };
 

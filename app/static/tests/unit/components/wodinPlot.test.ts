@@ -15,7 +15,7 @@ import Vuex, { Store } from "vuex";
 import WodinPlot from "../../../src/app/components/WodinPlot.vue";
 import WodinPlotDataSummary from "../../../src/app/components/WodinPlotDataSummary.vue";
 import { BasicState } from "../../../src/app/store/basic/state";
-import { GraphSettingsMutation } from "../../../src/app/store/graphSettings/mutations";
+import { GraphsMutation } from "../../../src/app/store/graphs/mutations";
 
 describe("WodinPlot", () => {
     const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");
@@ -63,15 +63,17 @@ describe("WodinPlot", () => {
     const getStore = (logScaleYAxis = false, lockYAxis = false) => {
         return new Vuex.Store<BasicState>({
             modules: {
-                graphSettings: {
+                graphs: {
                     namespaced: true,
                     state: {
-                        logScaleYAxis,
-                        lockYAxis,
-                        yAxisRange: [10, 20]
+                        settings: {
+                            logScaleYAxis,
+                            lockYAxis,
+                            yAxisRange: [10, 20]
+                        }
                     },
                     mutations: {
-                        [GraphSettingsMutation.SetYAxisRange]: mockSetYAxisRange
+                        [GraphsMutation.SetYAxisRange]: mockSetYAxisRange
                     }
                 }
             }
@@ -437,7 +439,7 @@ describe("WodinPlot", () => {
         expect(mockOn).toBeCalledTimes(1);
 
         const store = (wrapper.vm as any).$store;
-        store.state.graphSettings.logScaleYAxis = true;
+        store.state.graphs.settings.logScaleYAxis = true;
         await nextTick();
 
         expect(mockPlotDataFn).toBeCalledTimes(2);
@@ -456,7 +458,7 @@ describe("WodinPlot", () => {
 
         await wrapper.setProps({ fadePlot: true });
         const store = (wrapper.vm as any).$store;
-        store.state.graphSettings.logScaleYAxis = true;
+        store.state.graphs.settings.logScaleYAxis = true;
         await nextTick();
 
         expect(mockPlotDataFn).toBeCalledTimes(1);
