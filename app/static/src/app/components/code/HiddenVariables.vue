@@ -75,11 +75,12 @@ export default defineComponent({
             const srcGraph = dataTransfer!!.getData("srcGraph");
             if (srcGraph !== "hidden") {
                 // remove from source graph
-                const srcVariables = [...store.state.model.graphs[srcGraph].selectedVariables].filter(
+                const srcGraphInt = parseInt(srcGraph);
+                const srcVariables = [...store.state.graphs.config[srcGraphInt].selectedVariables].filter(
                     (v) => v !== variable
                 );
-                store.dispatch(`model/${GraphsAction.UpdateSelectedVariables}`, {
-                    index: srcGraph,
+                store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
+                    graphIndex: srcGraphInt,
                     selectedVariables: srcVariables
                 });
             }

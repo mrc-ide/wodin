@@ -17,8 +17,7 @@
         <div class="mt-3">
             <vertical-collapse v-if="showSelectedVariables" title="Select variables" collapse-id="select-variables">
                 <div class="ms-2">
-                    Drag variables to move to another graph, or to hide variable. Press the Ctrl key on drag to make a
-                    copy of a variable.
+                    Drag variables to move to another graph, or to hide variable.
                 </div>
                 <selected-variables
                     v-for="(_, index) in graphsConfig"
@@ -52,7 +51,7 @@ import SelectedVariables from "./SelectedVariables.vue";
 import HiddenVariables from "./HiddenVariables.vue";
 import VerticalCollapse from "../VerticalCollapse.vue";
 import GenericHelp from "../help/GenericHelp.vue";
-import { GraphsAction } from "@/app/store/graphs/actions";
+import { GraphsAction } from "../../store/graphs/actions";
 
 export default defineComponent({
     name: "CodeTab",
@@ -82,7 +81,7 @@ export default defineComponent({
         const graphsConfig = computed(() => store.state.graphs.config);
         const compile = () => store.dispatch(`model/${ModelAction.CompileModel}`);
         const addGraph = () => {
-            store.commit(`graphs/${GraphsAction.NewGraph}`);
+            store.dispatch(`graphs/${GraphsAction.NewGraph}`);
         };
         const loadingMessage = userMessages.code.isValidating;
         const setDraggingVariable = (value: boolean) => (draggingVariable.value = value);

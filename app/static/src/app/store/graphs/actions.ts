@@ -6,7 +6,7 @@ import { GraphsState } from "./state";
 
 export enum GraphsAction {
     UpdateSelectedVariables = "UpdateSelectedVariables",
-    NewGraph = "AddGraph"
+    NewGraph = "NewGraph"
 }
 
 export const actions: ActionTree<GraphsState, AppState> = {
