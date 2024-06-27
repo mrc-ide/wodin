@@ -28,6 +28,7 @@ import tooltip from "../../directives/tooltip";
 import * as Color from "color";
 import { GraphsGetter } from "../../store/graphs/getters";
 import { GraphsAction } from "../../store/graphs/actions";
+import DragVariables from "../mixins/dragVariables";
 
 export default defineComponent({
     name: "HiddenVariables",
@@ -45,6 +46,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore();
+        const  { startDrag, endDrag } = DragVariables(store, emit, true);
         const hiddenVariables = computed<string[]>(() => store.getters[`graphs/${GraphsGetter.hiddenVariables}`]);
         const palette = computed(() => store.state.model.paletteModel!);
 
@@ -52,21 +54,6 @@ export default defineComponent({
             const bgcolor = palette.value ? palette.value[variable] : "#eee";
             const desatBgColor = Color(bgcolor).desaturate(0.6).fade(0.4).rgb().string();
             return { "background-color": desatBgColor };
-        };
-
-        // TODO: share code with selectedVariables - but remember hidden won't need copy but Selected will, and some other differences
-        const startDrag = (evt: DragEvent, variable: string) => {
-            const { dataTransfer } = evt;
-            dataTransfer!!.dropEffect = "move";
-            dataTransfer!!.effectAllowed = "move";
-            dataTransfer!!.setData("variable", variable);
-            dataTransfer!!.setData("srcGraph", "hidden");
-
-            emit("setDragging", true);
-        };
-
-        const endDrag = () => {
-            emit("setDragging", false);
         };
 
         const onDrop = (evt: DragEvent) => {

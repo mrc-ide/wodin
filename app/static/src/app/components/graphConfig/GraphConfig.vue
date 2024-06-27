@@ -27,6 +27,7 @@
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import { GraphsAction } from "../../store/graphs/actions";
+import DragVariables from "../mixins/dragVariables";
 
 export default defineComponent({
     name: "GraphConfig",
@@ -42,6 +43,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore();
+        const { startDrag, endDrag } = DragVariables(store, emit, false, props.graphIndex);
         const selectedVariables = computed<string[]>(
             () => store.state.graphs.config[props.graphIndex].selectedVariables
         );
@@ -60,20 +62,6 @@ export default defineComponent({
                 graphIndex,
                 selectedVariables: newVariables
             });
-        };
-
-        const startDrag = (evt: DragEvent, variable: string) => {
-            const { dataTransfer } = evt;
-            dataTransfer!!.dropEffect = "move";
-            dataTransfer!!.effectAllowed = "move";
-            dataTransfer!!.setData("variable", variable);
-            dataTransfer!!.setData("srcGraph", props.graphIndex.toString());
-            emit("setDragging", true);
-        };
-
-        // TODO: share the drag stuff with HiddenVariables
-        const endDrag = () => {
-            emit("setDragging", false);
         };
 
         // Remove variable from the graph it was dragged from
