@@ -1,5 +1,5 @@
 <template>
-    <div class="selected-variables-panel m-2" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
+    <div class="hidden-variables-panel m-2" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
         <h5>Hidden variables</h5>
         <div class="drop-zone" :class="dragging ? 'drop-zone-active' : 'drop-zone-inactive'">
             <template v-for="variable in hiddenVariables" :key="variable">
@@ -13,7 +13,7 @@
                     {{ variable }}
                 </span>
             </template>
-            <div v-if="!hiddenVariables.length" style="height: 3rem; background-color: #eee" class="p-2 me-4">
+            <div v-if="!hiddenVariables.length" class="drop-zone-instruction p-2 me-4">
                 Drag variables here to hide them on all graphs.
             </div>
         </div>

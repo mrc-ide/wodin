@@ -1,5 +1,5 @@
 <template>
-    <div class="selected-variables-panel m-2" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
+    <div class="graph-config-panel m-2" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
         <h5>Graph {{ graphIndex + 1 }}</h5>
         <div class="drop-zone" :class="dragging ? 'drop-zone-active' : 'drop-zone-inactive'">
             <template v-for="variable in selectedVariables" :key="variable">
@@ -10,13 +10,13 @@
                     @dragstart="startDrag($event, variable)"
                     @dragend="endDrag"
                 >
-                    {{ variable }}
+                    <span class="variable-name">{{ variable }}</span>
                     <span class="variable-delete">
                       <button @click="removeVariable(graphIndex, variable)" v-tooltip="'Remove variable'">×</button>
                     </span>
                 </span>
             </template>
-            <div v-if="!selectedVariables.length" style="height: 3rem; background-color: #eee" class="p-2 me-4">
+            <div v-if="!selectedVariables.length" class="drop-zone-instruction p-2 me-4">
                 Drag variables here to select them for this graph.
             </div>
         </div>
