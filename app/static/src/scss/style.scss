@@ -131,3 +131,18 @@ $grey: #ccc;
 .drop-zone-inactive {
     border-color: #fff;
 }
+
+.variable-delete {
+    font-weight: normal;
+    margin-left: 0.3rem;
+    span {
+        opacity: 0.5;
+    }
+
+    button {
+        background-color: transparent;
+        border-width: 0;
+        color: white;
+        padding: 0;
+    }
+}

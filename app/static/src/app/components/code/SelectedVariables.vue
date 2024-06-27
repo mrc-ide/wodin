@@ -11,6 +11,9 @@
                     @dragend="endDrag"
                 >
                     {{ variable }}
+                    <span class="variable-delete">
+                      <button @click="removeVariable(graphIndex, variable)" v-tooltip="'Remove variable'">×</button>
+                    </span>
                 </span>
             </template>
             <div v-if="!selectedVariables.length" style="height: 3rem; background-color: #eee" class="p-2 me-4">
@@ -101,6 +104,7 @@ export default defineComponent({
 
         return {
             selectedVariables,
+            removeVariable,
             getStyle,
             startDrag,
             endDrag,

@@ -15,9 +15,10 @@
         </div>
         <error-info :error="error"></error-info>
         <div class="mt-3">
-            <vertical-collapse v-if="showSelectedVariables" title="Select variables" collapse-id="select-variables">
+            <vertical-collapse v-if="showSelectedVariables" title="Graphs" collapse-id="select-variables">
                 <div class="ms-2">
-                    Drag variables to move to another graph, or to hide variable.
+                  Drag variables to 'Hidden variables' to remove them from your graph, or click 'Add Graph' to create a
+                  new graph to move them to.
                 </div>
                 <selected-variables
                     v-for="(_, index) in graphsConfig"
@@ -26,12 +27,14 @@
                     :dragging="draggingVariable"
                     @setDragging="setDraggingVariable"
                 ></selected-variables>
+                <button class="btn btn-primary mt-2 ms-2" id="add-graph-btn" @click="addGraph">
+                  <vue-feather size="20" class="inline-icon" type="plus"></vue-feather>
+                  Add Graph
+                </button>
                 <hidden-variables
                     @setDragging="setDraggingVariable"
                     :dragging="draggingVariable"
-                    style="clear: both"
                 ></hidden-variables>
-                <button class="btn btn-primary mt-2 float-end" id="add-graph-btn" @click="addGraph">Add Graph</button>
             </vertical-collapse>
         </div>
     </div>
