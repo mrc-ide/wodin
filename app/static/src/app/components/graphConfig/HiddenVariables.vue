@@ -27,8 +27,7 @@ import VueFeather from "vue-feather";
 import tooltip from "../../directives/tooltip";
 import * as Color from "color";
 import { GraphsGetter } from "../../store/graphs/getters";
-import { GraphsAction } from "../../store/graphs/actions";
-import DragVariables from "../mixins/dragVariables";
+import SelectVariables from "../mixins/selectVariables";
 
 export default defineComponent({
     name: "HiddenVariables",
@@ -46,7 +45,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore();
-        const  { startDrag, endDrag } = DragVariables(store, emit, true);
+        const  { startDrag, endDrag, onDrop } = SelectVariables(store, emit, true);
         const hiddenVariables = computed<string[]>(() => store.getters[`graphs/${GraphsGetter.hiddenVariables}`]);
         const palette = computed(() => store.state.model.paletteModel!);
 
@@ -54,23 +53,6 @@ export default defineComponent({
             const bgcolor = palette.value ? palette.value[variable] : "#eee";
             const desatBgColor = Color(bgcolor).desaturate(0.6).fade(0.4).rgb().string();
             return { "background-color": desatBgColor };
-        };
-
-        const onDrop = (evt: DragEvent) => {
-            const { dataTransfer } = evt;
-            const variable = dataTransfer!!.getData("variable");
-            const srcGraph = dataTransfer!!.getData("srcGraph");
-            if (srcGraph !== "hidden") {
-                // remove from source graph
-                const srcGraphInt = parseInt(srcGraph);
-                const srcVariables = [...store.state.graphs.config[srcGraphInt].selectedVariables].filter(
-                    (v) => v !== variable
-                );
-                store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
-                    graphIndex: srcGraphInt,
-                    selectedVariables: srcVariables
-                });
-            }
         };
 
         return {

@@ -26,8 +26,7 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
-import { GraphsAction } from "../../store/graphs/actions";
-import DragVariables from "../mixins/dragVariables";
+import SelectVariables from "../mixins/selectVariables";
 
 export default defineComponent({
     name: "GraphConfig",
@@ -43,7 +42,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore();
-        const { startDrag, endDrag } = DragVariables(store, emit, false, props.graphIndex);
+        const { startDrag, endDrag, onDrop, removeVariable } = SelectVariables(store, emit, false, props.graphIndex);
         const selectedVariables = computed<string[]>(
             () => store.state.graphs.config[props.graphIndex].selectedVariables
         );
@@ -55,38 +54,6 @@ export default defineComponent({
                 bgcolor = palette.value[variable]!;
             }
             return { "background-color": bgcolor };
-        };
-
-        const updateSelectedVariables = (graphIndex: number, newVariables: string[]) => {
-            store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
-                graphIndex,
-                selectedVariables: newVariables
-            });
-        };
-
-        // Remove variable from the graph it was dragged from
-        const removeVariable = (srcGraphIdx: number, variable: string) => {
-            const srcVariables = [...store.state.graphs.config[srcGraphIdx].selectedVariables].filter(
-                (v) => v !== variable
-            );
-            updateSelectedVariables(srcGraphIdx, srcVariables);
-        };
-
-        const onDrop = (evt: DragEvent) => {
-            const { dataTransfer } = evt;
-            const variable = dataTransfer!!.getData("variable");
-            const srcGraph = dataTransfer!!.getData("srcGraph");
-            if (srcGraph !== props.graphIndex.toString()) {
-                // remove from source graph
-                if (srcGraph !== "hidden") {
-                    removeVariable(parseInt(srcGraph), variable);
-                }
-                // add to this graph if necessary
-                if (!selectedVariables.value.includes(variable)) {
-                    const newVars = [...selectedVariables.value, variable];
-                    updateSelectedVariables(props.graphIndex, newVars);
-                }
-            }
         };
 
         return {
