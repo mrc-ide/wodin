@@ -9,7 +9,7 @@ export enum GraphsAction {
 }
 
 export const actions: ActionTree<GraphsState, AppState> = {
-    UpdateSelectedVariables(context, payload: { index: number; selectedVariables: string[] }) {
+    UpdateSelectedVariables(context, payload: { graphIndex: number; selectedVariables: string[] }) {
         const { commit, dispatch, rootState } = context;
         // Maintain unselected variables too, so we know which variables had been explicitly unselected when model
         // updates

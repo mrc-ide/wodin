@@ -34,7 +34,7 @@ describe("Graphs mutations", () => {
             ]
         });
         mutations.SetSelectedVariables(testState, {
-            index: 1,
+            graphIndex: 1,
             selectedVariables: ["x", "z"],
             unselectedVariables: ["y"]
         });

@@ -39,7 +39,7 @@ export default defineComponent({
 
         const updateSelectedVariables = (newVariables: string[]) => {
             store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
-                index: 0,
+                graphIndex: 0,
                 selectedVariables: newVariables
             });
         };

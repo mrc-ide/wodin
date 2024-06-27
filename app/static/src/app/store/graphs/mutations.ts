@@ -9,7 +9,7 @@ export enum GraphsMutation {
 }
 
 export interface SetSelectedVariablesPayload {
-    index: number;
+    graphIndex: number;
     selectedVariables: string[];
     unselectedVariables: string[];
 }
@@ -29,7 +29,7 @@ export const mutations: MutationTree<GraphsState> = {
 
     [GraphsMutation.SetSelectedVariables](state: GraphsState, payload: SetSelectedVariablesPayload) {
         // We don't simply replace the GraphConfig in the index here, as that will eventually include GraphSettings too
-        state.config[payload.index].selectedVariables = payload.selectedVariables;
-        state.config[payload.index].unselectedVariables = payload.unselectedVariables;
+        state.config[payload.graphIndex].selectedVariables = payload.selectedVariables;
+        state.config[payload.graphIndex].unselectedVariables = payload.unselectedVariables;
     }
 };
