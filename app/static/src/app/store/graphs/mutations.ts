@@ -30,7 +30,7 @@ export const mutations: MutationTree<GraphsState> = {
 
     [GraphsMutation.SetSelectedVariables](state: GraphsState, payload: SetSelectedVariablesPayload) {
         // We don't simply replace the GraphConfig in the index here, as that will eventually include GraphSettings too
-        state.config[payload.graphIndex].selectedVariables = payload.selectedVariables.sort();
+        state.config[payload.graphIndex].selectedVariables = payload.selectedVariables;
         state.config[payload.graphIndex].unselectedVariables = payload.unselectedVariables;
     },
 
