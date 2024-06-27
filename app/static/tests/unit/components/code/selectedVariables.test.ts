@@ -73,7 +73,7 @@ describe("SelectedVariables", () => {
         const s = wrapper.findAll(".selected-variables-panel span.variable").at(0)!;
         await s.trigger("click");
         expect(mockUpdateSelectedVariables).toBeCalledTimes(1);
-        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({ index: 0, selectedVariables: ["R"] });
+        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({ graphIndex: 0, selectedVariables: ["R"] });
     });
 
     it("clicking an unselected variables selects it", async () => {
@@ -82,7 +82,7 @@ describe("SelectedVariables", () => {
         await i.trigger("click");
         expect(mockUpdateSelectedVariables).toBeCalledTimes(1);
         expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({
-            index: 0,
+            graphIndex: 0,
             selectedVariables: ["S", "R", "I"]
         });
     });
@@ -92,7 +92,7 @@ describe("SelectedVariables", () => {
         wrapper.find("span#select-variables-all").trigger("click");
         expect(mockUpdateSelectedVariables).toBeCalledTimes(1);
         expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({
-            index: 0,
+            graphIndex: 0,
             selectedVariables: ["S", "I", "R"]
         });
     });
@@ -101,6 +101,6 @@ describe("SelectedVariables", () => {
         const wrapper = getWrapper();
         wrapper.find("span#select-variables-none").trigger("click");
         expect(mockUpdateSelectedVariables).toBeCalledTimes(1);
-        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({ index: 0, selectedVariables: [] });
+        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({ graphIndex: 0, selectedVariables: [] });
     });
 });

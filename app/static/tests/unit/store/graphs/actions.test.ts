@@ -34,12 +34,12 @@ describe("Graphs actions", () => {
                 state,
                 rootState
             },
-            { index: 1, selectedVariables: ["a", "b"] }
+            { graphIndex: 1, selectedVariables: ["a", "b"] }
         );
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(GraphsMutation.SetSelectedVariables);
         expect(commit.mock.calls[0][1]).toStrictEqual({
-            index: 1,
+            graphIndex: 1,
             selectedVariables: ["a", "b"],
             unselectedVariables: ["c"]
         });
@@ -61,12 +61,12 @@ describe("Graphs actions", () => {
                 state,
                 rootState: fitRootState
             },
-            { index: 1, selectedVariables: ["a", "b"] }
+            { graphIndex: 1, selectedVariables: ["a", "b"] }
         );
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(GraphsMutation.SetSelectedVariables);
         expect(commit.mock.calls[0][1]).toStrictEqual({
-            index: 1,
+            graphIndex: 1,
             selectedVariables: ["a", "b"],
             unselectedVariables: ["c"]
         });

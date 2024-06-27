@@ -53,9 +53,9 @@ export default defineComponent({
             return { "background-color": bgcolor };
         };
 
-        const updateSelectedVariables = (index: number, newVariables: string[]) => {
+        const updateSelectedVariables = (graphIndex: number, newVariables: string[]) => {
             store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
-                index,
+                graphIndex,
                 selectedVariables: newVariables
             });
         };
