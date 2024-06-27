@@ -28,9 +28,8 @@ import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import { GraphsAction } from "../../store/graphs/actions";
 
-// TODO: rename this component?
 export default defineComponent({
-    name: "SelectedVariables",
+    name: "GraphConfig",
     props: {
         dragging: {
             type: Boolean,

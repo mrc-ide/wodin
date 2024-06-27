@@ -1,7 +1,7 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import SelectedVariables from "../../../../src/app/components/code/SelectedVariables.vue";
+import SelectedVariables from "../../../../src/app/components/graphConfig/SelectedVariables.vue";
 import { ModelAction } from "../../../../src/app/store/model/actions";
 import { GraphsAction } from "../../../../src/app/store/graphs/actions";
 

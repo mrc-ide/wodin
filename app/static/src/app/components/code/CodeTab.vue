@@ -15,27 +15,7 @@
         </div>
         <error-info :error="error"></error-info>
         <div class="mt-3">
-            <vertical-collapse v-if="showSelectedVariables" title="Graphs" collapse-id="select-variables">
-                <div class="ms-2">
-                  Drag variables to 'Hidden variables' to remove them from your graph, or click 'Add Graph' to create a
-                  new graph to move them to.
-                </div>
-                <selected-variables
-                    v-for="(_, index) in graphsConfig"
-                    :graph-index="index"
-                    :key="index"
-                    :dragging="draggingVariable"
-                    @setDragging="setDraggingVariable"
-                ></selected-variables>
-                <button class="btn btn-primary mt-2 ms-2" id="add-graph-btn" @click="addGraph">
-                  <vue-feather size="20" class="inline-icon" type="plus"></vue-feather>
-                  Add Graph
-                </button>
-                <hidden-variables
-                    @setDragging="setDraggingVariable"
-                    :dragging="draggingVariable"
-                ></hidden-variables>
-            </vertical-collapse>
+            <graph-configs></graph-configs>
         </div>
     </div>
 </template>
@@ -50,26 +30,19 @@ import CodeEditor from "./CodeEditor.vue";
 import { ModelAction } from "../../store/model/actions";
 import userMessages from "../../userMessages";
 import ErrorInfo from "../ErrorInfo.vue";
-import SelectedVariables from "./SelectedVariables.vue";
-import HiddenVariables from "./HiddenVariables.vue";
-import VerticalCollapse from "../VerticalCollapse.vue";
+import GraphConfigs from "../graphConfig/GraphConfigs.vue";
 import GenericHelp from "../help/GenericHelp.vue";
-import { GraphsAction } from "../../store/graphs/actions";
 
 export default defineComponent({
     name: "CodeTab",
     components: {
         GenericHelp,
-        SelectedVariables,
-        HiddenVariables,
+        GraphConfigs,
         ErrorInfo,
         CodeEditor,
-        VueFeather,
-        VerticalCollapse
+        VueFeather
     },
     setup() {
-        // TODO: move all graphs stuff into another component
-        const draggingVariable = ref(false); // indicates whether a child component is dragging a variable
         const store = useStore();
         const codeIsValid = computed(() => store.state.model.odinModelResponse?.valid);
         const codeValidating = computed(() => store.state.code.loading);
@@ -78,16 +51,9 @@ export default defineComponent({
         const validIcon = computed(() => (codeIsValid.value ? "check" : "x"));
         const iconValidatedClass = computed(() => (codeIsValid.value ? "text-success" : "text-danger"));
         const iconClass = computed(() => (codeValidating.value ? "code-validating-icon" : iconValidatedClass.value));
-        const allVariables = computed<string[]>(() => store.state.model.odinModelResponse?.metadata?.variables || []);
-        const showSelectedVariables = computed(() => allVariables.value.length && !store.state.model.compileRequired);
         const appIsConfigured = computed(() => store.state.configured);
-        const graphsConfig = computed(() => store.state.graphs.config);
         const compile = () => store.dispatch(`model/${ModelAction.CompileModel}`);
-        const addGraph = () => {
-            store.dispatch(`graphs/${GraphsAction.NewGraph}`);
-        };
         const loadingMessage = userMessages.code.isValidating;
-        const setDraggingVariable = (value: boolean) => (draggingVariable.value = value);
 
         return {
             appIsConfigured,
@@ -97,14 +63,9 @@ export default defineComponent({
             iconClass,
             compile,
             error,
-            showSelectedVariables,
             codeHelp,
             codeValidating,
             loadingMessage,
-            graphsConfig,
-            addGraph,
-            draggingVariable,
-            setDraggingVariable
         };
     }
 });
