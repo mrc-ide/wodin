@@ -134,4 +134,8 @@ describe("CodeTab", () => {
         });
         expect(wrapper.findAll("div").length).toBe(0);
     });
+
+    // TODO
+    // Graphs renders nothing if no variables
+    // Graphs renders nothing if compile required
 });

@@ -24,18 +24,12 @@
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
-import tooltip from "../../directives/tooltip";
 import * as Color from "color";
 import { GraphsGetter } from "../../store/graphs/getters";
 import SelectVariables from "../mixins/selectVariables";
 
 export default defineComponent({
     name: "HiddenVariables",
-    computed: {
-        tooltip() {
-            return tooltip;
-        }
-    },
     components: { VueFeather },
     props: {
         dragging: {

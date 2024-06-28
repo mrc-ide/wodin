@@ -15,7 +15,9 @@
         </div>
         <error-info :error="error"></error-info>
         <div class="mt-3">
-            <graph-configs></graph-configs>
+            <vertical-collapse v-if="showGraphs" title="Graphs" collapse-id="graphs">
+                <graph-configs></graph-configs>
+            </vertical-collapse>
         </div>
     </div>
 </template>
@@ -32,10 +34,12 @@ import userMessages from "../../userMessages";
 import ErrorInfo from "../ErrorInfo.vue";
 import GraphConfigs from "../graphConfig/GraphConfigs.vue";
 import GenericHelp from "../help/GenericHelp.vue";
+import VerticalCollapse from "@/app/components/VerticalCollapse.vue";
 
 export default defineComponent({
     name: "CodeTab",
     components: {
+      VerticalCollapse,
         GenericHelp,
         GraphConfigs,
         ErrorInfo,
@@ -54,6 +58,8 @@ export default defineComponent({
         const appIsConfigured = computed(() => store.state.configured);
         const compile = () => store.dispatch(`model/${ModelAction.CompileModel}`);
         const loadingMessage = userMessages.code.isValidating;
+        const allVariables = computed<string[]>(() => store.state.model.odinModelResponse?.metadata?.variables || []);
+        const showGraphs = computed(() => allVariables.value.length && !store.state.model.compileRequired);
 
         return {
             appIsConfigured,
@@ -66,6 +72,7 @@ export default defineComponent({
             codeHelp,
             codeValidating,
             loadingMessage,
+            showGraphs
         };
     }
 });
