@@ -331,7 +331,7 @@ test.describe("Code Tab tests", () => {
         await expectGraphVariables(page, 0, ["I", "R"]);
     });
 
-    test("can add a graph, and drag variable onto it", async ({ page }) => {
+    test("can add a graph, drag a variable onto it and delete it", async ({ page }) => {
         // Add graph
         await page.click("#add-graph-btn");
 
@@ -350,7 +350,15 @@ test.describe("Code Tab tests", () => {
 
         await expectGraphVariables(page, 0, ["I", "R"]);
         await expectGraphVariables(page, 1, ["S"]);
-        await expect(page.locator(".hiden-variables-panel .variable")).toHaveCount(0);
+        await expect(page.locator(".hidden-variables-panel .variable")).toHaveCount(0);
+
+        // Delete second graph
+        await page.click(":nth-match(.graph-config-panel .delete-graph, 2)")
+        await expect(page.locator(".graph-config-panel")).toHaveCount(1);
+        await expect(page.locator(".graph-config-panel h5")).toHaveText("Graph 1");
+
+        // First graph should not be deletable
+        await expect(page.locator(".delete-graph")).toHaveCount(0);
     });
 
     test("can display help dialog", async ({ page }) => {
