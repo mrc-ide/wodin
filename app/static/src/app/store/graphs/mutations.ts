@@ -6,6 +6,7 @@ export enum GraphsMutation {
     SetLockYAxis = "SetLockYAxis",
     SetYAxisRange = "SetYAxisRange",
     AddGraph = "AddGraph",
+    DeleteGraph = "DeleteGraph",
     SetSelectedVariables = "SetSelectedVariables"
 }
 
@@ -36,5 +37,9 @@ export const mutations: MutationTree<GraphsState> = {
 
     [GraphsMutation.AddGraph](state: GraphsState, payload: GraphConfig) {
         state.config.push(payload);
+    },
+
+    [GraphsMutation.DeleteGraph](state: GraphsState, payload: number) {
+        state.config.splice(payload, 1);
     }
 };
