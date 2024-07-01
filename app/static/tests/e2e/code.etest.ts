@@ -293,6 +293,20 @@ test.describe("Code Tab tests", () => {
         );
     });
 
+    const expectGraphVariables = async (page: Page, graphIndex: number, expectedVariables: string[]) => {
+        // expect to find these variables in config panel and on plot series
+        const configPanel = await page.locator(`:nth-match(.graph-config-panel, ${graphIndex+1})`);
+        const configVars = await configPanel.locator(".variable .variable-name");
+        await expect(configVars).toHaveCount(expectedVariables.length);
+
+        const plotSummary = await page.locator(`:nth-match(.wodin-plot-container .wodin-plot-data-summary, ${graphIndex+1})`);
+        for(let i = 0; i < expectedVariables.length; i++) {
+            await expect(configVars.nth(i)).toHaveText(expectedVariables[i]);
+            await expect(plotSummary.locator(`:nth-match(.wodin-plot-data-summary-series, ${i+1})`))
+                .toHaveAttribute("name", expectedVariables[i]);
+        }
+    };
+
     test("can hide and unhide variables", async ({ page }) => {
         // drag I to Hidden Variables
         const iVariable = await page.locator(":nth-match(.graph-config-panel span.variable, 2)");
@@ -300,28 +314,17 @@ test.describe("Code Tab tests", () => {
         await iVariable.dragTo(hiddenVariables);
 
         // check plot no longer contains R series
-        await expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(2);
-        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 1)").getAttribute("name")).toBe(
-            "S"
-        );
-        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 2)").getAttribute("name")).toBe(
-            "R"
-        );
+        await expectGraphVariables(page, 0, ["S", "R"]);
 
         // drag I back to Graph panel
         const iVariableHidden = await page.locator(".hidden-variables-panel .variable");
         const graphVariablesPanel = await page.locator(".graph-config-panel .drop-zone");
         await iVariableHidden.dragTo(graphVariablesPanel);
-        await expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(3);
-        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 1)").getAttribute("name")).toBe(
-            "S"
-        );
-        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 2)").getAttribute("name")).toBe(
-            "I"
-        );
-        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 3)").getAttribute("name")).toBe(
-            "R"
-        );
+        await expectGraphVariables(page, 0, ["S", "I", "R"]);
+
+        // Can also click x button to hide variable
+        await page.click(":nth-match(.graph-config-panel .variable-delete, 1)");
+        await expectGraphVariables(page, 0, ["I", "R"]);
     });
 
     test("can add a graph, and drag variable onto it", async ({ page }) => {
@@ -341,27 +344,9 @@ test.describe("Code Tab tests", () => {
         const sVariable = await page.locator(":nth-match(.graph-config-panel .variable, 1)");
         await sVariable.dragTo(page.locator(":nth-match(.graph-config-panel .drop-zone, 2)"));
 
-        // Check correct variables on first and second config panels, none in Hidden
-        const configPanel1 = await page.locator(":nth-match(.graph-config-panel, 1)");
-        const panel1Vars = await configPanel1.locator(".variable .variable-name");
-        await expect(panel1Vars).toHaveCount(2);
-        await expect(panel1Vars.nth(0)).toHaveText("I");
-        await expect(panel1Vars.nth(1)).toHaveText("R");
-        const configPanel2 = await page.locator(":nth-match(.graph-config-panel, 2)");
-        const panel2Vars = await configPanel2.locator(".variable .variable-name");
-        await expect(panel2Vars).toHaveCount(1);
-        await expect(panel2Vars.nth(0)).toHaveText("S");
-
-        // Check correct variables on first and second graphs
-        const plotSummaries = await page.locator(".wodin-plot-container .wodin-plot-data-summary");
-        await expect(plotSummaries).toHaveCount(2);
-        const plot1Series = await plotSummaries.nth(0).locator(".wodin-plot-data-summary-series");
-        await expect(plot1Series).toHaveCount(2);
-        await expect(plot1Series.nth(0)).toHaveAttribute("name", "I");
-        await expect(plot1Series.nth(1)).toHaveAttribute("name", "R");
-        const plot2Series = await plotSummaries.nth(1).locator(".wodin-plot-data-summary-series");
-        await expect(plot2Series).toHaveCount(1);
-        await expect(plot2Series.nth(0)).toHaveAttribute("name", "S");
+        await expectGraphVariables(page, 0, ["I", "R"]);
+        await expectGraphVariables(page, 1, ["S"]);
+        await expect(page.locator(".hiden-variables-panel .variable")).toHaveCount(0);
     });
 
     test("can display help dialog", async ({ page }) => {
