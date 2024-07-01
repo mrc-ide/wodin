@@ -1,6 +1,7 @@
 import { expect, test, Page } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
 import { saveSessionTimeout, writeCode } from "./utils";
+import {plot} from "plotly.js-basic-dist-min";
 
 export const newValidCode = `## Derivatives
 deriv(y1) <- sigma * (y2 - y1)
@@ -292,10 +293,11 @@ test.describe("Code Tab tests", () => {
         );
     });
 
-    test("can select and unselect variables", async ({ page }) => {
-        // unselect I
-        const iVariable = await page.locator(":nth-match(.selected-variables-panel span.variable, 2)");
-        await iVariable.click();
+    test("can hide and unhide variables", async ({ page }) => {
+        // drag I to Hidden Variables
+        const iVariable = await page.locator(":nth-match(.graph-config-panel span.variable, 2)");
+        const hiddenVariables = await page.locator(".hidden-variables-panel");
+        await iVariable.dragTo(hiddenVariables);
 
         // check plot no longer contains R series
         await expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(2);
@@ -306,8 +308,10 @@ test.describe("Code Tab tests", () => {
             "R"
         );
 
-        // re-select I
-        await iVariable.click();
+        // drag I back to Graph panel
+        const iVariableHidden = await page.locator(".hidden-variables-panel .variable");
+        const graphVariablesPanel = await page.locator(".graph-config-panel .drop-zone");
+        await iVariableHidden.dragTo(graphVariablesPanel);
         await expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(3);
         await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 1)").getAttribute("name")).toBe(
             "S"
@@ -318,6 +322,43 @@ test.describe("Code Tab tests", () => {
         await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 3)").getAttribute("name")).toBe(
             "R"
         );
+    });
+
+    test("can add a graph, and drag variable onto it", async ({ page }) => {
+        // Add graph
+        await page.click("#add-graph-btn");
+
+        // Check second graph has appeared with placeholder text, and second graph config panel is there
+        expect(await page.locator(":nth-match(.wodin-plot-container, 2)").textContent()).toBe("No variables are selected.");
+        expect(await page.locator(":nth-match(.graph-config-panel h5, 2)").textContent()).toBe("Graph 2");
+        expect(await page.locator(":nth-match(.graph-config-panel .drop-zone, 2)").textContent())
+            .toContain("Drag variables here to select them for this graph.");
+
+        // Drag variable to second graph
+        const sVariable = await page.locator(":nth-match(.graph-config-panel .variable, 1)");
+        await sVariable.dragTo(page.locator(":nth-match(.graph-config-panel .drop-zone, 2)"));
+
+        // Check correct variables on first and second config panels, none in Hidden
+        const configPanel1 = await page.locator(":nth-match(.graph-config-panel, 1)");
+        const panel1Vars = await configPanel1.locator(".variable .variable-name");
+        await expect(panel1Vars).toHaveCount(2);
+        await expect(panel1Vars.nth(0)).toHaveText("I");
+        await expect(panel1Vars.nth(1)).toHaveText("R");
+        const configPanel2 = await page.locator(":nth-match(.graph-config-panel, 2)");
+        const panel2Vars = await configPanel2.locator(".variable .variable-name");
+        await expect(panel2Vars).toHaveCount(1);
+        await expect(panel2Vars.nth(0)).toHaveText("S");
+
+        // Check correct variables on first and second graphs
+        const plotSummaries = await page.locator(".wodin-plot-container .wodin-plot-data-summary");
+        await expect(plotSummaries).toHaveCount(2);
+        const plot1Series = await plotSummaries.nth(0).locator(".wodin-plot-data-summary-series");
+        await expect(plot1Series).toHaveCount(2);
+        await expect(plot1Series.nth(0)).toHaveAttribute("name", "I");
+        await expect(plot1Series.nth(1)).toHaveAttribute("name", "R");
+        const plot2Series = await plotSummaries.nth(1).locator(".wodin-plot-data-summary-series");
+        await expect(plot2Series).toHaveCount(1);
+        await expect(plot2Series.nth(0)).toHaveAttribute("name", "S");
     });
 
     test("can display help dialog", async ({ page }) => {
