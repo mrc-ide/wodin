@@ -3,29 +3,39 @@ import { shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import GraphConfig from "../../../../src/app/components/graphConfig/GraphConfig.vue";
 import { GraphsAction } from "../../../../src/app/store/graphs/actions";
+import {GraphsState} from "../../../../src/app/store/graphs/state";
+import {GraphsMutation} from "../../../../src/app/store/graphs/mutations";
 
 describe("GraphConfig", () => {
     const mockUpdateSelectedVariables = jest.fn();
+    const mockDeleteGraph = jest.fn();
     const mockTooltipDirective = jest.fn();
+    const defaultGraphState = {
+        config: [
+            {
+                selectedVariables: ["S", "R"]
+            },
+            {
+                selectedVariables: ["I", "J"]
+            }
+        ]
+    } as any;
 
-    const getWrapper = (props = {}, selectedVariables: null | string[] = null) => {
+    const getWrapper = (props = {}, graphState: Partial<GraphsState> = {}) => {
         const store = new Vuex.Store<BasicState>({
             state: {} as any,
             modules: {
                 graphs: {
                     namespaced: true,
                     state: {
-                        config: [
-                            {
-                                selectedVariables: selectedVariables || ["S", "R"]
-                            },
-                            {
-                                selectedVariables: ["I", "J"]
-                            }
-                        ]
+                        ...defaultGraphState,
+                        ...graphState
                     },
                     actions: {
                         [GraphsAction.UpdateSelectedVariables]: mockUpdateSelectedVariables
+                    },
+                    mutations: {
+                        [GraphsMutation.DeleteGraph]: mockDeleteGraph
                     }
                 },
                 model: {
@@ -63,6 +73,7 @@ describe("GraphConfig", () => {
         const varBadges = wrapper.findAll(".graph-config-panel .badge");
         const varNames = wrapper.findAll(".graph-config-panel span.variable-name");
         expect(wrapper.find("h5").text()).toBe("Graph 1");
+        expect(wrapper.find("h5 button.delete-graph").exists()).toBe(true);
         expect(varBadges.length).toBe(2);
         expect(varNames.length).toBe(2);
         expect(varNames.at(0)!.text()).toBe("S");
@@ -145,9 +156,33 @@ describe("GraphConfig", () => {
     });
 
     it("shows instruction if no selected variables", () => {
-        const wrapper = getWrapper({}, []);
+        const wrapper = getWrapper({}, {
+            config: [
+                {
+                    selectedVariables: []
+                }
+            ]
+        } as any);
         expect(wrapper.find(".drop-zone-instruction").text()).toBe(
             "Drag variables here to select them for this graph."
         );
+    });
+
+    it("does not render delete button if there is only one graph", () => {
+        const wrapper = getWrapper({}, {
+            config: [
+                {
+                    selectedVariables: ["S", "R"]
+                }
+            ]
+        } as any);
+        expect(wrapper.find("h5 button.delete-graph").exists()).toBe(false);
+    });
+
+    it("delete button commits mutation", async () => {
+        const wrapper = getWrapper();
+        await wrapper.find("button.delete-graph").trigger("click");
+        expect(mockDeleteGraph).toHaveBeenCalledTimes(1);
+        expect(mockDeleteGraph.mock.calls[0][1]).toBe(0);
     });
 });

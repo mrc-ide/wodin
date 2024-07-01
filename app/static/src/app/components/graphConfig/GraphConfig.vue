@@ -4,7 +4,7 @@
           Graph {{ graphIndex + 1 }}
           <button
               type="button"
-              class="btn btn-light mx-2"
+              class="btn btn-light mx-2 delete-graph"
               v-if="canDelete"
               @click="deleteGraph"
               v-tooltip="'Delete Graph'"
