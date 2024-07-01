@@ -1,19 +1,16 @@
 <template>
     <div class="graph-config-panel m-2" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
         <h5>
-          Graph {{ graphIndex + 1 }}
-          <button
-              type="button"
-              class="btn btn-light mx-2 delete-graph"
-              v-if="canDelete"
-              @click="deleteGraph"
-              v-tooltip="'Delete Graph'"
-          >
-            <vue-feather
-                class="inline-icon clickable ms-2"
-                type="trash-2"
-            ></vue-feather>
-          </button>
+            Graph {{ graphIndex + 1 }}
+            <button
+                type="button"
+                class="btn btn-light mx-2 delete-graph"
+                v-if="canDelete"
+                @click="deleteGraph"
+                v-tooltip="'Delete Graph'"
+            >
+                <vue-feather class="inline-icon clickable ms-2" type="trash-2"></vue-feather>
+            </button>
         </h5>
         <div class="drop-zone" :class="dragging ? 'drop-zone-active' : 'drop-zone-inactive'">
             <template v-for="variable in selectedVariables" :key="variable">
@@ -42,12 +39,12 @@ import VueFeather from "vue-feather";
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import SelectVariables from "../mixins/selectVariables";
-import {GraphsMutation} from "../../store/graphs/mutations";
+import { GraphsMutation } from "../../store/graphs/mutations";
 
 export default defineComponent({
     name: "GraphConfig",
     components: {
-      VueFeather
+        VueFeather
     },
     props: {
         dragging: {
@@ -77,7 +74,7 @@ export default defineComponent({
         };
 
         const deleteGraph = () => {
-           store.commit(`graphs/${GraphsMutation.DeleteGraph}`, props.graphIndex);
+            store.commit(`graphs/${GraphsMutation.DeleteGraph}`, props.graphIndex);
         };
 
         return {

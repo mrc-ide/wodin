@@ -3,8 +3,8 @@ import { shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import GraphConfig from "../../../../src/app/components/graphConfig/GraphConfig.vue";
 import { GraphsAction } from "../../../../src/app/store/graphs/actions";
-import {GraphsState} from "../../../../src/app/store/graphs/state";
-import {GraphsMutation} from "../../../../src/app/store/graphs/mutations";
+import { GraphsState } from "../../../../src/app/store/graphs/state";
+import { GraphsMutation } from "../../../../src/app/store/graphs/mutations";
 
 describe("GraphConfig", () => {
     const mockUpdateSelectedVariables = jest.fn();

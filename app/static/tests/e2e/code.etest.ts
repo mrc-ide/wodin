@@ -339,7 +339,7 @@ test.describe("Code Tab tests", () => {
         expect(await page.locator(":nth-match(.wodin-plot-container, 2)").textContent()).toBe(
             "No variables are selected."
         );
-        expect(await page.locator(":nth-match(.graph-config-panel h5, 2)").textContent()).toBe("Graph 2");
+        expect(await page.locator(":nth-match(.graph-config-panel h5, 2)").textContent()).toContain("Graph 2");
         expect(await page.locator(":nth-match(.graph-config-panel .drop-zone, 2)").textContent()).toContain(
             "Drag variables here to select them for this graph."
         );
@@ -353,9 +353,10 @@ test.describe("Code Tab tests", () => {
         await expect(page.locator(".hidden-variables-panel .variable")).toHaveCount(0);
 
         // Delete second graph
-        await page.click(":nth-match(.graph-config-panel .delete-graph, 2)")
+        await page.click(":nth-match(.graph-config-panel .delete-graph, 2)");
         await expect(page.locator(".graph-config-panel")).toHaveCount(1);
         await expect(page.locator(".graph-config-panel h5")).toHaveText("Graph 1");
+        await expectGraphVariables(page, 0, ["I", "R"]);
 
         // First graph should not be deletable
         await expect(page.locator(".delete-graph")).toHaveCount(0);
