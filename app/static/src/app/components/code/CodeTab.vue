@@ -15,9 +15,7 @@
         </div>
         <error-info :error="error"></error-info>
         <div class="mt-3">
-            <vertical-collapse v-if="showGraphs" title="Graphs" collapse-id="graphs">
-                <graph-configs></graph-configs>
-            </vertical-collapse>
+          <graph-configs-collapsible></graph-configs-collapsible>
         </div>
     </div>
 </template>
@@ -32,16 +30,15 @@ import CodeEditor from "./CodeEditor.vue";
 import { ModelAction } from "../../store/model/actions";
 import userMessages from "../../userMessages";
 import ErrorInfo from "../ErrorInfo.vue";
-import GraphConfigs from "../graphConfig/GraphConfigs.vue";
 import GenericHelp from "../help/GenericHelp.vue";
-import VerticalCollapse from "@/app/components/VerticalCollapse.vue";
+import GraphConfigsCollapsible from "../graphConfig/GraphConfigsCollapsible.vue";
 
 export default defineComponent({
     name: "CodeTab",
     components: {
-      VerticalCollapse,
+      GraphConfigsCollapsible,
         GenericHelp,
-        GraphConfigs,
+
         ErrorInfo,
         CodeEditor,
         VueFeather
@@ -58,8 +55,6 @@ export default defineComponent({
         const appIsConfigured = computed(() => store.state.configured);
         const compile = () => store.dispatch(`model/${ModelAction.CompileModel}`);
         const loadingMessage = userMessages.code.isValidating;
-        const allVariables = computed<string[]>(() => store.state.model.odinModelResponse?.metadata?.variables || []);
-        const showGraphs = computed(() => allVariables.value.length && !store.state.model.compileRequired);
 
         return {
             appIsConfigured,
@@ -71,8 +66,7 @@ export default defineComponent({
             error,
             codeHelp,
             codeValidating,
-            loadingMessage,
-            showGraphs
+            loadingMessage
         };
     }
 });

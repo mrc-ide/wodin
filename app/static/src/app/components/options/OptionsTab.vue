@@ -30,7 +30,7 @@
         <vertical-collapse v-if="!isStochastic" title="Saved Parameter Sets" collapse-id="parameter-sets">
             <parameter-sets></parameter-sets>
         </vertical-collapse>
-        <graph-configs></graph-configs>
+        <graph-configs-collapsible></graph-configs-collapsible>
     </div>
 </template>
 
@@ -48,10 +48,12 @@ import GraphSettings from "./GraphSettings.vue";
 import ParameterSets from "./ParameterSets.vue";
 import AdvancedSettings from "./AdvancedSettings.vue";
 import GraphConfigs from "@/app/components/graphConfig/GraphConfigs.vue";
+import GraphConfigsCollapsible from "@/app/components/graphConfig/GraphConfigsCollapsible.vue";
 
 export default defineComponent({
     name: "OptionsTab",
     components: {
+      GraphConfigsCollapsible,
       GraphConfigs,
         ParameterSets,
         LinkData,

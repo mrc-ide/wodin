@@ -1,3 +1,17 @@
+// Mock the fadeColor util which uses color package, which doesn't play nicely with jest
+function mockfun() { return "Hello"; };
+jest.mock("../../../../src/app/components/graphConfig/utils", () => {
+    return {
+        fadeColor: (input: string) => {
+            console.log(`calling fade w ${input}`)
+            const match = input.match(/rgb\(([0-9]*), ([0-9]*), ([0-9]*)\)/);
+            const result =  `rgba(${match![1]}, ${match![2]}, ${match![3]}, 0.5)`;
+            console.log(result);
+            return result;
+        }
+    }
+});
+
 import Vuex from "vuex";
 import {BasicState} from "../../../../src/app/store/basic/state";
 import {GraphsAction} from "../../../../src/app/store/graphs/actions";
@@ -12,7 +26,7 @@ describe("HiddenVariables", () => {
 
     const mockUpdateSelectedVariables = jest.fn();
 
-    const getWrapper = () => {
+    const getWrapper = (hiddenVariables = ["I", "R"]) => {
         const store = new Vuex.Store<BasicState>({
             state: {} as any,
             modules: {
@@ -21,7 +35,7 @@ describe("HiddenVariables", () => {
                     state: {
                         config: [
                             {
-                                selectedVariables: ["S"]
+                                selectedVariables: ["S", "J"]
                             }
                         ]
                     },
@@ -29,16 +43,17 @@ describe("HiddenVariables", () => {
                         [GraphsAction.UpdateSelectedVariables]: mockUpdateSelectedVariables
                     },
                     getters: {
-                        [GraphsGetter.hiddenVariables]: ["I", "R"]
+                        [GraphsGetter.hiddenVariables]: () => hiddenVariables
                     } as any
                 },
                 model: {
                     namespaced: true,
                     state: {
                         paletteModel: {
-                            S: "#ff0000",
-                            I: "#00ff00",
-                            R: "#0000ff"
+                            S: "rgb(255, 0, 0)",
+                            I: "rgb(0, 255, 0)",
+                            R: "rgb(0, 0, 255)",
+                            J: "rgb(0, 255, 255)"
                         }
                     }
                 }
@@ -58,22 +73,61 @@ describe("HiddenVariables", () => {
 
     it("renders as expected", () => {
         const wrapper = getWrapper();
+        expect(wrapper.find("h5").text()).toBe("Hidden variables");
+        expect(wrapper.find(".drop-zone").classes()).toStrictEqual(["drop-zone", "drop-zone-inactive"]);
+        const variables = wrapper.findAll(".hidden-variables-panel .variable");
+        expect(variables.length).toBe(2);
+        expect(variables.at(0)!.text()).toBe("I");
+        expect((variables.at(0)!.element as HTMLElement).style.backgroundColor).toBe("rgba(0, 255, 0, 0.5)");
+        expect(variables.at(1)!.text()).toBe("R");
+        expect((variables.at(1)!.element as HTMLElement).style.backgroundColor).toBe("rgba(0, 0, 255, 0.5)");
     });
 
-    /*
-    it("starting drag sets values in event and emits setDragging");
 
-    it("ending drag emits setDragging");
+    it("starting drag sets values in event and emits setDragging", async () => {
+        const wrapper = getWrapper();
+        const s = wrapper.findAll(".hidden-variables-panel .variable").at(0)!;
+        const setData = jest.fn();
+        await s.trigger("dragstart", { dataTransfer: { setData } });
+        expect(setData.mock.calls[0][0]).toBe("variable");
+        expect(setData.mock.calls[0][1]).toStrictEqual("I");
+        expect(setData.mock.calls[1][0]).toStrictEqual("srcGraph");
+        expect(setData.mock.calls[1][1]).toStrictEqual("hidden");
+        expect(wrapper.emitted("setDragging")![0]).toStrictEqual([true]);
+    });
 
-    it("onDrop removes variable from source");
+    it("ending drag emits setDragging", async () => {
+        const wrapper = getWrapper();
+        const s = wrapper.findAll(".hidden-variables-panel .variable").at(0)!;
+        await s.trigger("dragend");
+        expect(wrapper.emitted("setDragging")![0]).toStrictEqual([false]);
+    });
 
-    it("shows drop zone when dragging", () => {
-        const wrapper = getWrapper({dragging: true});
+
+    it("onDrop removes variable from source", async () => {
+        const wrapper = getWrapper();
+        const dataTransfer = {
+            getData: (s: string) => {
+                if (s === "variable") return "S";
+                if (s === "srcGraph") return "0";
+                return null;
+            }
+        };
+        const dropPanel = wrapper.find(".hidden-variables-panel");
+        await dropPanel.trigger("drop", { dataTransfer });
+        expect(mockUpdateSelectedVariables.mock.calls.length).toBe(1);
+        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({ graphIndex: 0, selectedVariables: ["J"] });
+    });
+
+
+    it("shows drop zone when dragging", async () => {
+        const wrapper = getWrapper();
+        await wrapper.setProps({dragging: true});
         expect(wrapper.find(".drop-zone").classes()).toStrictEqual(["drop-zone", "drop-zone-active"]);
     });
 
     it("shows instruction if no hidden variables", () =>{
-        const wrapper = getWrapper({}, []);
-        expect(wrapper.find(".drop-zone-instruction").text()).toBe("Drag variables here to select them for this graph.");
-    });*/
+        const wrapper = getWrapper([]);
+        expect(wrapper.find(".drop-zone-instruction").text()).toBe("Drag variables here to hide them on all graphs.");
+    });
 });

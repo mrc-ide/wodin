@@ -56,7 +56,8 @@ describe("RunPlot for stochastic", () => {
         });
         const wrapper = shallowMount(RunStochasticPlot, {
             props: {
-                fadePlot: false
+                fadePlot: false,
+                graphIndex: 0
             },
             global: {
                 plugins: [store]

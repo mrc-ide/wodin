@@ -16,6 +16,7 @@ import GraphSettings from "../../../../src/app/components/options/GraphSettings.
 import ParameterSets from "../../../../src/app/components/options/ParameterSets.vue";
 import { getters as runGetters } from "../../../../src/app/store/run/getters";
 import AdvancedSettings from "../../../../src/app/components/options/AdvancedSettings.vue";
+import GraphConfigsCollapsible from "../../../../src/app/components/graphConfig/GraphConfigsCollapsible.vue";
 
 describe("OptionsTab", () => {
     const mockTooltipDirective = jest.fn();
@@ -93,6 +94,7 @@ describe("OptionsTab", () => {
         expect(collapses.at(4)!.findComponent(ParameterSets).exists()).toBe(true);
         expect(wrapper.find("#reset-params-btn").exists()).toBe(true);
         expect(wrapper.find("#reset-params-btn").text()).toBe("Reset");
+        expect(wrapper.findComponent(GraphConfigsCollapsible).exists()).toBe(true);
     });
 
     it("can reset model parameters", async () => {

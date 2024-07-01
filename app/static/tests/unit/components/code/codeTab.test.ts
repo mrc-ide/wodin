@@ -7,8 +7,8 @@ import { BasicState } from "../../../../src/app/store/basic/state";
 import { mockBasicState, mockCodeState, mockModelState } from "../../../mocks";
 import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
 import { ModelState } from "../../../../src/app/store/model/state";
-import VerticalCollapse from "../../../../src/app/components/VerticalCollapse.vue";
 import GenericHelp from "../../../../src/app/components/help/GenericHelp.vue";
+import GraphConfigsCollapsible from "../../../../src/app/components/graphConfig/GraphConfigsCollapsible.vue";
 
 describe("CodeTab", () => {
     const defaultModelState = {
@@ -63,7 +63,7 @@ describe("CodeTab", () => {
         const statusIcon = wrapper.find("#code-status").findComponent(VueFeather);
         expect(statusIcon.attributes("type")).toBe("check");
         expect(statusIcon.classes()).toContain("text-success");
-        expect(wrapper.findComponent(VerticalCollapse).props("collapseId")).toBe("select-variables");
+        expect(wrapper.findComponent(GraphConfigsCollapsible).exists()).toBe(true);
         expect(wrapper.findComponent(GenericHelp).props("title")).toBe("Write odin code");
         expect(wrapper.findComponent(GenericHelp).props("markdown")).toContain("Write code in this editor");
     });
@@ -101,27 +101,6 @@ describe("CodeTab", () => {
         expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(odinModelResponseError);
     });
 
-    it("does not render selected variables when no variables in model", () => {
-        const wrapper = getWrapper({
-            ...defaultModelState,
-            odinModelResponse: {
-                metadata: {
-                    variables: []
-                },
-                valid: true
-            } as any
-        });
-        expect(wrapper.findComponent(VerticalCollapse).exists()).toBe(false);
-    });
-
-    it("does not render selected variables when compile required", () => {
-        const wrapper = getWrapper({
-            ...defaultModelState,
-            compileRequired: true
-        });
-        expect(wrapper.findComponent(VerticalCollapse).exists()).toBe(false);
-    });
-
     it("renders nothing when app state is not configured", () => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState()
@@ -134,8 +113,4 @@ describe("CodeTab", () => {
         });
         expect(wrapper.findAll("div").length).toBe(0);
     });
-
-    // TODO
-    // Graphs renders nothing if no variables
-    // Graphs renders nothing if compile required
 });

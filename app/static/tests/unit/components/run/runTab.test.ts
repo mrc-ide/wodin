@@ -65,7 +65,10 @@ describe("RunTab", () => {
                 graphs: {
                     namespaced: true,
                     state: mockGraphsState({
-                        config: [{ selectedVariables, unselectedVariables: [] }]
+                        config: [
+                            { selectedVariables, unselectedVariables: [] },
+                            { selectedVariables: [], unselectedVariables: [] }
+                        ]
                     }),
                     getters: graphGetters
                 },
@@ -108,7 +111,10 @@ describe("RunTab", () => {
                 graphs: {
                     namespaced: true,
                     state: mockGraphsState({
-                        config: [{ selectedVariables: ["S"], unselectedVariables: [] }]
+                        config: [
+                            { selectedVariables: ["S"], unselectedVariables: [] },
+                            { selectedVariables: [], unselectedVariables: [] }
+                        ]
                     }),
                     getters: graphGetters
                 },
@@ -144,7 +150,12 @@ describe("RunTab", () => {
         expect(wrapper.find("button#run-btn").text()).toBe("Run model");
         expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
-        expect(wrapper.findComponent(RunPlot).props("fadePlot")).toBe(false);
+        const plots = wrapper.findAllComponents(RunPlot);
+        expect(plots.length).toBe(2);
+        expect(plots.at(0)!.props("graphIndex")).toBe(0);
+        expect(plots.at(0)!.props("fadePlot")).toBe(false);
+        expect(plots.at(1)!.props("graphIndex")).toBe(1);
+        expect(plots.at(1)!.props("fadePlot")).toBe(false);
 
         // Download button disabled because there is no model solution
         const downloadBtn = wrapper.find("button#download-btn");
@@ -168,7 +179,12 @@ describe("RunTab", () => {
                 solution: jest.fn()
             }
         );
-        expect(wrapper.findComponent(RunStochasticPlot).props("fadePlot")).toBe(false);
+        const plots = wrapper.findAllComponents(RunStochasticPlot);
+        expect(plots.length).toBe(2);
+        expect(plots.at(0)!.props("graphIndex")).toBe(0);
+        expect(plots.at(0)!.props("fadePlot")).toBe(false);
+        expect(plots.at(1)!.props("graphIndex")).toBe(1);
+        expect(plots.at(1)!.props("fadePlot")).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         expect(wrapper.findComponent(RunPlot).exists()).toBe(false);
         expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(false);
@@ -224,7 +240,9 @@ describe("RunTab", () => {
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Model code has been updated. Compile code and Run Model to update."
         );
-        expect(wrapper.findComponent(RunPlot).props("fadePlot")).toBe(true);
+        const plots = wrapper.findAllComponents(RunPlot);
+        expect(plots.at(0)!.props("fadePlot")).toBe(true);
+        expect(plots.at(1)!.props("fadePlot")).toBe(true);
     });
 
     it("fades plot and shows message when model run required", () => {
@@ -239,7 +257,9 @@ describe("RunTab", () => {
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Plot is out of date: model code has been recompiled. Run model to update."
         );
-        expect(wrapper.findComponent(RunPlot).props("fadePlot")).toBe(true);
+        const plots = wrapper.findAllComponents(RunPlot);
+        expect(plots.at(0)!.props("fadePlot")).toBe(true);
+        expect(plots.at(1)!.props("fadePlot")).toBe(true);
     });
 
     it("fades plot and show message when no selected variables", () => {
@@ -247,12 +267,16 @@ describe("RunTab", () => {
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Please select at least one variable."
         );
-        expect(wrapper.findComponent(RunPlot).props("fadePlot")).toBe(true);
+        const plots = wrapper.findAllComponents(RunPlot);
+        expect(plots.at(0)!.props("fadePlot")).toBe(true);
+        expect(plots.at(1)!.props("fadePlot")).toBe(true);
     });
 
     it("fades plot when compile required when stochastic", () => {
         const wrapper = getStochasticWrapper({}, {}, true);
-        expect(wrapper.findComponent(RunStochasticPlot).props("fadePlot")).toBe(true);
+        const plots = wrapper.findAllComponents(RunStochasticPlot);
+        expect(plots.at(0)!.props("fadePlot")).toBe(true);
+        expect(plots.at(1)!.props("fadePlot")).toBe(true);
     });
 
     it("invokes run model action when run button is clicked", () => {

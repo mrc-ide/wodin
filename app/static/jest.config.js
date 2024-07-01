@@ -9,6 +9,7 @@ module.exports = {
     coveragePathIgnorePatterns: ["./tests/mocks.ts"],
     transformIgnorePatterns: ["node_modules/(?!(d3-format))"],
     moduleNameMapper: {
+        //"^color$": "<rootDir>/tests/color-shim.js",
         "raw-loader!.*/help/(.*)$": "<rootDir>/src/app/help/$1"
     }
 };

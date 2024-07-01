@@ -24,9 +24,9 @@
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
-import * as Color from "color";
 import { GraphsGetter } from "../../store/graphs/getters";
 import SelectVariables from "../mixins/selectVariables";
+import {fadeColor} from "./utils";
 
 export default defineComponent({
     name: "HiddenVariables",
@@ -45,8 +45,7 @@ export default defineComponent({
 
         const getStyle = (variable: string) => {
             const bgcolor = palette.value ? palette.value[variable] : "#eee";
-            const desatBgColor = Color(bgcolor).desaturate(0.6).fade(0.4).rgb().string();
-            return { "background-color": desatBgColor };
+            return { "background-color": fadeColor(bgcolor)};
         };
 
         return {
