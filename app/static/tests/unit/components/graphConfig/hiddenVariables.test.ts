@@ -1,4 +1,3 @@
-// Mock the fadeColor util which uses color package, which doesn't play nicely with jest
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../../src/app/store/basic/state";
@@ -6,16 +5,12 @@ import { GraphsAction } from "../../../../src/app/store/graphs/actions";
 import HiddenVariables from "../../../../src/app/components/graphConfig/HiddenVariables.vue";
 import { GraphsGetter } from "../../../../src/app/store/graphs/getters";
 
-function mockfun() {
-    return "Hello";
-}
+// Mock the fadeColor util which uses color package, which doesn't play nicely with jest
 jest.mock("../../../../src/app/components/graphConfig/utils", () => {
     return {
         fadeColor: (input: string) => {
-            console.log(`calling fade w ${input}`);
             const match = input.match(/rgb\(([0-9]*), ([0-9]*), ([0-9]*)\)/);
             const result = `rgba(${match![1]}, ${match![2]}, ${match![3]}, 0.5)`;
-            console.log(result);
             return result;
         }
     };

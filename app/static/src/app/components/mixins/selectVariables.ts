@@ -34,7 +34,7 @@ export default (
 
     const updateSelectedVariables = (graphIdx: number, newVariables: string[]) => {
         store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
-            graphIdx,
+            graphIndex: graphIdx,
             selectedVariables: newVariables
         });
     };
