@@ -350,7 +350,7 @@ test.describe("Code Tab tests", () => {
 
         await expectGraphVariables(page, 0, ["I", "R"]);
         await expectGraphVariables(page, 1, ["S"]);
-        await expect(page.locator(".hiden-variables-panel .variable")).toHaveCount(0);
+        await expect(page.locator(".hidden-variables-panel .variable")).toHaveCount(0);
     });
 
     test("can display help dialog", async ({ page }) => {
