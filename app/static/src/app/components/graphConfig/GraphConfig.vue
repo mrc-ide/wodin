@@ -12,7 +12,7 @@
                 >
                     <span class="variable-name">{{ variable }}</span>
                     <span class="variable-delete">
-                      <button @click="removeVariable(graphIndex, variable)" v-tooltip="'Remove variable'">×</button>
+                        <button @click="removeVariable(graphIndex, variable)" v-tooltip="'Remove variable'">×</button>
                     </span>
                 </span>
             </template>

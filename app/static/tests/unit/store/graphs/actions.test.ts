@@ -78,12 +78,10 @@ describe("Graphs actions", () => {
     it("NewGraph adds empty graph", () => {
         const commit = jest.fn();
 
-        (actions[GraphsAction.NewGraph] as any)(
-            {
-                commit,
-                rootState
-            }
-        );
+        (actions[GraphsAction.NewGraph] as any)({
+            commit,
+            rootState
+        });
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(GraphsMutation.AddGraph);
         expect(commit.mock.calls[0][1]).toStrictEqual({

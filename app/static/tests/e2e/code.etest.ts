@@ -1,7 +1,7 @@
 import { expect, test, Page } from "@playwright/test";
+import { plot } from "plotly.js-basic-dist-min";
 import PlaywrightConfig from "../../playwright.config";
 import { saveSessionTimeout, writeCode } from "./utils";
-import {plot} from "plotly.js-basic-dist-min";
 
 export const newValidCode = `## Derivatives
 deriv(y1) <- sigma * (y2 - y1)
@@ -84,8 +84,8 @@ test.describe("Code Tab tests", () => {
     const { timeout } = PlaywrightConfig;
 
     const getRunPlotOpacity = async (page: Page) => {
-        const plot = await page.locator(".wodin-plot-container");
-        return plot.evaluate((el) => window.getComputedStyle(el).getPropertyValue("opacity"));
+        const plotEl = await page.locator(".wodin-plot-container");
+        return plotEl.evaluate((el) => window.getComputedStyle(el).getPropertyValue("opacity"));
     };
 
     test("can update code, compile and run model", async ({ page }) => {
@@ -329,10 +329,13 @@ test.describe("Code Tab tests", () => {
         await page.click("#add-graph-btn");
 
         // Check second graph has appeared with placeholder text, and second graph config panel is there
-        expect(await page.locator(":nth-match(.wodin-plot-container, 2)").textContent()).toBe("No variables are selected.");
+        expect(await page.locator(":nth-match(.wodin-plot-container, 2)").textContent()).toBe(
+            "No variables are selected."
+        );
         expect(await page.locator(":nth-match(.graph-config-panel h5, 2)").textContent()).toBe("Graph 2");
-        expect(await page.locator(":nth-match(.graph-config-panel .drop-zone, 2)").textContent())
-            .toContain("Drag variables here to select them for this graph.");
+        expect(await page.locator(":nth-match(.graph-config-panel .drop-zone, 2)").textContent()).toContain(
+            "Drag variables here to select them for this graph."
+        );
 
         // Drag variable to second graph
         const sVariable = await page.locator(":nth-match(.graph-config-panel .variable, 1)");

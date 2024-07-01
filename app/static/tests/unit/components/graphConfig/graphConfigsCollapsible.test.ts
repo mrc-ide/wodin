@@ -1,8 +1,8 @@
-import {ModelState} from "../../../../src/app/store/model/state";
 import Vuex from "vuex";
-import {BasicState} from "../../../../src/app/store/basic/state";
-import {mockBasicState, mockCodeState, mockModelState} from "../../../mocks";
-import {shallowMount} from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
+import { ModelState } from "../../../../src/app/store/model/state";
+import { BasicState } from "../../../../src/app/store/basic/state";
+import { mockBasicState, mockCodeState, mockModelState } from "../../../mocks";
 import GraphConfigsCollapsible from "../../../../src/app/components/graphConfig/GraphConfigsCollapsible.vue";
 import VerticalCollapse from "../../../../src/app/components/VerticalCollapse.vue";
 
@@ -25,7 +25,7 @@ describe("GraphConfigsCollapsible", () => {
             modules: {
                 model: {
                     namespaced: true,
-                    state: mockModelState({...defaultModelState, ...modelState})
+                    state: mockModelState({ ...defaultModelState, ...modelState })
                 }
             }
         });
@@ -60,5 +60,4 @@ describe("GraphConfigsCollapsible", () => {
         });
         expect(wrapper.findComponent(VerticalCollapse).exists()).toBe(false);
     });
-
 });

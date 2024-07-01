@@ -1,5 +1,5 @@
-import {mockGraphsState} from "../../../mocks";
-import {getters, GraphsGetter} from "../../../../src/app/store/graphs/getters";
+import { mockGraphsState } from "../../../mocks";
+import { getters, GraphsGetter } from "../../../../src/app/store/graphs/getters";
 
 describe("GraphsGetters", () => {
     it("gets allSelectedVariables", () => {

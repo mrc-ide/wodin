@@ -1,23 +1,25 @@
 // Mock the fadeColor util which uses color package, which doesn't play nicely with jest
-function mockfun() { return "Hello"; };
+import Vuex from "vuex";
+import { shallowMount } from "@vue/test-utils";
+import { BasicState } from "../../../../src/app/store/basic/state";
+import { GraphsAction } from "../../../../src/app/store/graphs/actions";
+import HiddenVariables from "../../../../src/app/components/graphConfig/HiddenVariables.vue";
+import { GraphsGetter } from "../../../../src/app/store/graphs/getters";
+
+function mockfun() {
+    return "Hello";
+}
 jest.mock("../../../../src/app/components/graphConfig/utils", () => {
     return {
         fadeColor: (input: string) => {
-            console.log(`calling fade w ${input}`)
+            console.log(`calling fade w ${input}`);
             const match = input.match(/rgb\(([0-9]*), ([0-9]*), ([0-9]*)\)/);
-            const result =  `rgba(${match![1]}, ${match![2]}, ${match![3]}, 0.5)`;
+            const result = `rgba(${match![1]}, ${match![2]}, ${match![3]}, 0.5)`;
             console.log(result);
             return result;
         }
-    }
+    };
 });
-
-import Vuex from "vuex";
-import {BasicState} from "../../../../src/app/store/basic/state";
-import {GraphsAction} from "../../../../src/app/store/graphs/actions";
-import {shallowMount} from "@vue/test-utils";
-import HiddenVariables from "../../../../src/app/components/graphConfig/HiddenVariables.vue";
-import {GraphsGetter} from "../../../../src/app/store/graphs/getters";
 
 describe("HiddenVariables", () => {
     beforeEach(() => {
@@ -70,7 +72,6 @@ describe("HiddenVariables", () => {
         });
     };
 
-
     it("renders as expected", () => {
         const wrapper = getWrapper();
         expect(wrapper.find("h5").text()).toBe("Hidden variables");
@@ -82,7 +83,6 @@ describe("HiddenVariables", () => {
         expect(variables.at(1)!.text()).toBe("R");
         expect((variables.at(1)!.element as HTMLElement).style.backgroundColor).toBe("rgba(0, 0, 255, 0.5)");
     });
-
 
     it("starting drag sets values in event and emits setDragging", async () => {
         const wrapper = getWrapper();
@@ -103,7 +103,6 @@ describe("HiddenVariables", () => {
         expect(wrapper.emitted("setDragging")![0]).toStrictEqual([false]);
     });
 
-
     it("onDrop removes variable from source", async () => {
         const wrapper = getWrapper();
         const dataTransfer = {
@@ -119,14 +118,13 @@ describe("HiddenVariables", () => {
         expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({ graphIndex: 0, selectedVariables: ["J"] });
     });
 
-
     it("shows drop zone when dragging", async () => {
         const wrapper = getWrapper();
-        await wrapper.setProps({dragging: true});
+        await wrapper.setProps({ dragging: true });
         expect(wrapper.find(".drop-zone").classes()).toStrictEqual(["drop-zone", "drop-zone-active"]);
     });
 
-    it("shows instruction if no hidden variables", () =>{
+    it("shows instruction if no hidden variables", () => {
         const wrapper = getWrapper([]);
         expect(wrapper.find(".drop-zone-instruction").text()).toBe("Drag variables here to hide them on all graphs.");
     });

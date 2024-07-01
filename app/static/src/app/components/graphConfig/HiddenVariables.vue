@@ -23,14 +23,12 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
-import VueFeather from "vue-feather";
 import { GraphsGetter } from "../../store/graphs/getters";
 import SelectVariables from "../mixins/selectVariables";
-import {fadeColor} from "./utils";
+import { fadeColor } from "./utils";
 
 export default defineComponent({
     name: "HiddenVariables",
-    components: { VueFeather },
     props: {
         dragging: {
             type: Boolean,
@@ -39,13 +37,13 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore();
-        const  { startDrag, endDrag, onDrop } = SelectVariables(store, emit, true);
+        const { startDrag, endDrag, onDrop } = SelectVariables(store, emit, true);
         const hiddenVariables = computed<string[]>(() => store.getters[`graphs/${GraphsGetter.hiddenVariables}`]);
         const palette = computed(() => store.state.model.paletteModel!);
 
         const getStyle = (variable: string) => {
             const bgcolor = palette.value ? palette.value[variable] : "#eee";
-            return { "background-color": fadeColor(bgcolor)};
+            return { "background-color": fadeColor(bgcolor) };
         };
 
         return {

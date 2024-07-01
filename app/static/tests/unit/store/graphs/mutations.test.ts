@@ -44,9 +44,7 @@ describe("Graphs mutations", () => {
 
     it("AddGraph pushed new graph to config", () => {
         const testState = mockGraphsState({
-            config: [
-                { selectedVariables: ["a"], unselectedVariables: ["b", "c"] }
-            ]
+            config: [{ selectedVariables: ["a"], unselectedVariables: ["b", "c"] }]
         });
         mutations.AddGraph(testState, { selectedVariables: [], unselectedVariables: ["b", "a", "c"] });
         expect(testState.config).toStrictEqual([

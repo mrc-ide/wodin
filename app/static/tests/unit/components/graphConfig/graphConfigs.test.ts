@@ -1,12 +1,12 @@
 import Vuex from "vuex";
-import {BasicState} from "../../../../src/app/store/basic/state";
-import {mockBasicState} from "../../../mocks";
-import {GraphsAction} from "../../../../src/app/store/graphs/actions";
-import {shallowMount} from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
+import { nextTick } from "vue";
+import { BasicState } from "../../../../src/app/store/basic/state";
+import { mockBasicState } from "../../../mocks";
+import { GraphsAction } from "../../../../src/app/store/graphs/actions";
 import GraphConfigs from "../../../../src/app/components/graphConfig/GraphConfigs.vue";
 import GraphConfig from "../../../../src/app/components/graphConfig/GraphConfig.vue";
 import HiddenVariables from "../../../../src/app/components/graphConfig/HiddenVariables.vue";
-import {nextTick} from "vue";
 
 describe("GraphConfigs", () => {
     beforeEach(() => {
@@ -44,11 +44,13 @@ describe("GraphConfigs", () => {
 
     it("renders as expected", () => {
         const wrapper = getWrapper();
-        expect(wrapper.find("#graph-configs-instruction").text()).toContain("Drag variables to 'Hidden variables' to remove");
+        expect(wrapper.find("#graph-configs-instruction").text()).toContain(
+            "Drag variables to 'Hidden variables' to remove"
+        );
         const graphConfigComps = wrapper.findAllComponents(GraphConfig);
         expect(graphConfigComps.length).toBe(2);
         expect(graphConfigComps.at(0)!.props("graphIndex")).toBe(0);
-        expect(graphConfigComps.at(0)!.props("dragging")).toBe(false)
+        expect(graphConfigComps.at(0)!.props("dragging")).toBe(false);
         expect(graphConfigComps.at(1)!.props("graphIndex")).toBe(1);
         expect(graphConfigComps.at(1)!.props("dragging")).toBe(false);
         expect(wrapper.find("button").text()).toBe("Add Graph");
@@ -79,5 +81,4 @@ describe("GraphConfigs", () => {
         await wrapper.find("button").trigger("click");
         expect(mockNewGraph).toHaveBeenCalledTimes(1);
     });
-
 });

@@ -5,12 +5,16 @@
         </div>
         <action-required-message :message="updateMsg"></action-required-message>
         <template v-for="(_, index) in graphConfigs" :key="index">
-          <run-stochastic-plot v-if="isStochastic" :fade-plot="!!updateMsg" :graph-index="index"></run-stochastic-plot>
-          <run-plot v-else :fade-plot="!!updateMsg" :model-fit="false" :graph-index="index">
-              <div v-if="sumOfSquares">
-                  <span>Sum of squares: {{ sumOfSquares }}</span>
-              </div>
-          </run-plot>
+            <run-stochastic-plot
+                v-if="isStochastic"
+                :fade-plot="!!updateMsg"
+                :graph-index="index"
+            ></run-stochastic-plot>
+            <run-plot v-else :fade-plot="!!updateMsg" :model-fit="false" :graph-index="index">
+                <div v-if="sumOfSquares">
+                    <span>Sum of squares: {{ sumOfSquares }}</span>
+                </div>
+            </run-plot>
         </template>
         <error-info :error="error"></error-info>
         <div>
@@ -136,7 +140,7 @@ export default defineComponent({
             downloadUserFileName,
             toggleShowDownloadOutput,
             download,
-          graphConfigs
+            graphConfigs
         };
     }
 });

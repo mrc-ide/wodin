@@ -15,13 +15,13 @@
         </div>
         <error-info :error="error"></error-info>
         <div class="mt-3">
-          <graph-configs-collapsible></graph-configs-collapsible>
+            <graph-configs-collapsible></graph-configs-collapsible>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from "vue";
+import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 // eslint-disable-next-line import/no-webpack-loader-syntax
@@ -36,7 +36,7 @@ import GraphConfigsCollapsible from "../graphConfig/GraphConfigsCollapsible.vue"
 export default defineComponent({
     name: "CodeTab",
     components: {
-      GraphConfigsCollapsible,
+        GraphConfigsCollapsible,
         GenericHelp,
 
         ErrorInfo,

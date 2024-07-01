@@ -27,10 +27,10 @@ export default defineComponent({
     name: "RunPlot",
     props: {
         fadePlot: Boolean,
-      graphIndex: {
-        type: Number,
-        default: 0
-      }
+        graphIndex: {
+            type: Number,
+            default: 0
+        }
     },
     components: {
         WodinPlot

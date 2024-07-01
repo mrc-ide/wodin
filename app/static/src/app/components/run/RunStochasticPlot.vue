@@ -22,10 +22,10 @@ export default defineComponent({
     name: "RunStochasticPlot",
     props: {
         fadePlot: Boolean,
-      graphIndex: {
-        type: Number,
-        default: 0
-      }
+        graphIndex: {
+            type: Number,
+            default: 0
+        }
     },
     components: {
         WodinPlot

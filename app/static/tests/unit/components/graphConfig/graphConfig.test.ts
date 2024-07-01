@@ -107,7 +107,10 @@ describe("GraphConfig", () => {
         await dropPanel.trigger("drop", { dataTransfer });
         expect(mockUpdateSelectedVariables.mock.calls.length).toBe(2);
         expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({ graphIndex: 1, selectedVariables: ["J"] });
-        expect(mockUpdateSelectedVariables.mock.calls[1][1]).toStrictEqual({ graphIndex: 0, selectedVariables: ["S", "R", "I"] });
+        expect(mockUpdateSelectedVariables.mock.calls[1][1]).toStrictEqual({
+            graphIndex: 0,
+            selectedVariables: ["S", "R", "I"]
+        });
     });
 
     it("onDrop does not attempt to remove variable if source was hidden variables", async () => {
@@ -122,7 +125,10 @@ describe("GraphConfig", () => {
         const dropPanel = wrapper.find(".graph-config-panel");
         await dropPanel.trigger("drop", { dataTransfer });
         expect(mockUpdateSelectedVariables.mock.calls.length).toBe(1);
-        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({ graphIndex: 0, selectedVariables: ["S", "R", "I"] });
+        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({
+            graphIndex: 0,
+            selectedVariables: ["S", "R", "I"]
+        });
     });
 
     it("clicking remove button removes variable from graph", async () => {
@@ -134,12 +140,14 @@ describe("GraphConfig", () => {
     });
 
     it("shows drop zone when dragging", () => {
-        const wrapper = getWrapper({dragging: true});
+        const wrapper = getWrapper({ dragging: true });
         expect(wrapper.find(".drop-zone").classes()).toStrictEqual(["drop-zone", "drop-zone-active"]);
     });
 
-    it("shows instruction if no selected variables", () =>{
+    it("shows instruction if no selected variables", () => {
         const wrapper = getWrapper({}, []);
-        expect(wrapper.find(".drop-zone-instruction").text()).toBe("Drag variables here to select them for this graph.");
+        expect(wrapper.find(".drop-zone-instruction").text()).toBe(
+            "Drag variables here to select them for this graph."
+        );
     });
 });

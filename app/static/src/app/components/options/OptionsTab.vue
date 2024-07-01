@@ -37,6 +37,7 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
+import GraphConfigsCollapsible from "@/app/components/graphConfig/GraphConfigsCollapsible.vue";
 import VerticalCollapse from "../VerticalCollapse.vue";
 import ParameterValues from "./ParameterValues.vue";
 import RunOptions from "./RunOptions.vue";
@@ -47,14 +48,11 @@ import { AppType, VisualisationTab } from "../../store/appState/state";
 import GraphSettings from "./GraphSettings.vue";
 import ParameterSets from "./ParameterSets.vue";
 import AdvancedSettings from "./AdvancedSettings.vue";
-import GraphConfigs from "@/app/components/graphConfig/GraphConfigs.vue";
-import GraphConfigsCollapsible from "@/app/components/graphConfig/GraphConfigsCollapsible.vue";
 
 export default defineComponent({
     name: "OptionsTab",
     components: {
-      GraphConfigsCollapsible,
-      GraphConfigs,
+        GraphConfigsCollapsible,
         ParameterSets,
         LinkData,
         OptimisationOptions,

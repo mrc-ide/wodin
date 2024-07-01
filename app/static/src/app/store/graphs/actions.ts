@@ -20,8 +20,9 @@ export const actions: ActionTree<GraphsState, AppState> = {
                 (s) => !payload.selectedVariables.includes(s)
             ) || [];
         // sort the selected variables to match the order in the model
-        const selectedVariables = payload.selectedVariables
-            .sort((a, b) => allVariables.indexOf(a) > allVariables.indexOf(b) ? 1 : -1);
+        const selectedVariables = payload.selectedVariables.sort((a, b) =>
+            allVariables.indexOf(a) > allVariables.indexOf(b) ? 1 : -1
+        );
 
         commit(GraphsMutation.SetSelectedVariables, { ...payload, selectedVariables, unselectedVariables });
         if (rootState.appType === AppType.Fit) {

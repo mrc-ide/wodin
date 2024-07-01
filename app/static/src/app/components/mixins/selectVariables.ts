@@ -1,29 +1,29 @@
-import {AppState} from "../../store/appState/state";
-import {Store} from "vuex";
-import {GraphsAction} from "../../store/graphs/actions";
-import {computed} from "vue";
+import { Store } from "vuex";
+import { computed } from "vue";
+import { AppState } from "../../store/appState/state";
+import { GraphsAction } from "../../store/graphs/actions";
 
 export interface SelectVariablesMixin {
     startDrag: (evt: DragEvent, variable: string) => void;
-    endDrag: () => void,
-    onDrop: (evt: DragEvent) => void,
-    removeVariable: (srcGraphIdx: number, variable: string) => void
+    endDrag: () => void;
+    onDrop: (evt: DragEvent) => void;
+    removeVariable: (srcGraphIdx: number, variable: string) => void;
 }
 
 export default (
     store: Store<AppState>,
-    emit: (event: string, ...args: any[]) => void,
+    emit: (event: string, ...args: unknown[]) => void,
     hiddenVariables: boolean,
-    graphIndex?: number): SelectVariablesMixin  => {
-
+    graphIndex?: number
+): SelectVariablesMixin => {
     const thisSrcGraph = hiddenVariables ? "hidden" : graphIndex!.toString();
 
     const startDrag = (evt: DragEvent, variable: string) => {
         const { dataTransfer } = evt;
-        dataTransfer!!.dropEffect = "move";
-        dataTransfer!!.effectAllowed = "move";
-        dataTransfer!!.setData("variable", variable);
-        dataTransfer!!.setData("srcGraph", thisSrcGraph);
+        dataTransfer!.dropEffect = "move";
+        dataTransfer!.effectAllowed = "move";
+        dataTransfer!.setData("variable", variable);
+        dataTransfer!.setData("srcGraph", thisSrcGraph);
 
         emit("setDragging", true);
     };
@@ -32,9 +32,9 @@ export default (
         emit("setDragging", false);
     };
 
-    const updateSelectedVariables = (graphIndex: number, newVariables: string[]) => {
+    const updateSelectedVariables = (graphIdx: number, newVariables: string[]) => {
         store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
-            graphIndex,
+            graphIdx,
             selectedVariables: newVariables
         });
     };
@@ -47,18 +47,18 @@ export default (
         updateSelectedVariables(srcGraphIdx, srcVariables);
     };
 
-    const selectedVariables = computed<string[]>(
-        () => hiddenVariables ? [] : store.state.graphs.config[graphIndex!].selectedVariables
+    const selectedVariables = computed<string[]>(() =>
+        hiddenVariables ? [] : store.state.graphs.config[graphIndex!].selectedVariables
     );
 
     const onDrop = (evt: DragEvent) => {
         const { dataTransfer } = evt;
-        const variable = dataTransfer!!.getData("variable");
-        const srcGraph = dataTransfer!!.getData("srcGraph");
+        const variable = dataTransfer!.getData("variable");
+        const srcGraph = dataTransfer!.getData("srcGraph");
         if (srcGraph !== thisSrcGraph) {
             // remove from source graph
             if (srcGraph !== "hidden") {
-                removeVariable(parseInt(srcGraph), variable);
+                removeVariable(parseInt(srcGraph, 10), variable);
             }
             // add to this graph if necessary
             if (!hiddenVariables && !selectedVariables.value.includes(variable)) {
@@ -74,4 +74,4 @@ export default (
         endDrag,
         onDrop
     };
-}
+};
