@@ -5,18 +5,21 @@
         :end-time="endTime"
         :plot-data="allPlotData"
         :redrawWatches="solution ? [solution, allFitData, selectedVariables, parameterSetSolutions, displayNames] : []"
+        :has-linked-x-axis="true"
+        :linked-x-axis-options="linkedXAxisOptions"
+        @updateXAxis="updateXAxis"
     >
         <slot></slot>
     </wodin-plot>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import {computed, defineComponent, PropType} from "vue";
 import { useStore } from "vuex";
 import { PlotData } from "plotly.js-basic-dist-min";
 import { FitDataGetter } from "../../store/fitData/getters";
 import { odinToPlotly, allFitDataToPlotly, WodinPlotData, filterSeriesSet } from "../../plot";
-import WodinPlot from "../WodinPlot.vue";
+import WodinPlot, {XAxisOptions} from "../WodinPlot.vue";
 import { RunGetter } from "../../store/run/getters";
 import { OdinSolution, Times } from "../../types/responseTypes";
 import { Dict } from "../../types/utilTypes";
@@ -30,12 +33,17 @@ export default defineComponent({
         graphIndex: {
             type: Number,
             default: 0
+        },
+        linkedXAxisOptions: {
+          type: Object as PropType<XAxisOptions | null>,
+          required: true
         }
     },
     components: {
         WodinPlot
     },
-    setup(props) {
+    emits: ["updateXAxis"],
+    setup(props, {emit}) {
         const store = useStore();
 
         const solution = computed(() => store.state.run.resultOde?.solution);
@@ -111,6 +119,10 @@ export default defineComponent({
             return allData;
         };
 
+        const updateXAxis = (options: XAxisOptions) => {
+          emit("updateXAxis", options);
+        }
+
         return {
             placeholderMessage,
             endTime,
@@ -119,7 +131,8 @@ export default defineComponent({
             allPlotData,
             selectedVariables,
             parameterSetSolutions,
-            displayNames
+            displayNames,
+            updateXAxis
         };
     }
 });

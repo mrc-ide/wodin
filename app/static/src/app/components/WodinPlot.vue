@@ -18,6 +18,13 @@ import { WodinPlotData, fadePlotStyle, margin, config } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
 import { GraphsMutation } from "../store/graphs/mutations";
 import { YAxisRange } from "../store/graphs/state";
+import {GraphsGetter} from "../store/graphs/getters";
+
+export interface XAxisOptions {
+    autorange: boolean;
+    min?: number;
+    max?: number;
+}
 
 export default defineComponent({
     name: "WodinPlot",
@@ -44,9 +51,20 @@ export default defineComponent({
             type: Boolean,
             required: false,
             default: true
+        },
+        hasLinkedXAxis: {
+            type: Boolean,
+            required: false,
+            default: false
+        },
+        linkedXAxisOptions: {
+            type: Object as PropType<XAxisOptions | null>,
+            required: false,
+            default: null
         }
     },
-    setup(props) {
+    emits: ["updateXAxis"],
+    setup(props, { emit }) {
         const store = useStore();
 
         const plotStyle = computed(() => (props.fadePlot ? fadePlotStyle : ""));
@@ -62,6 +80,7 @@ export default defineComponent({
         const yAxisType = computed(() => (store.state.graphs.settings.logScaleYAxis ? "log" : ("linear" as AxisType)));
         const lockYAxis = computed(() => store.state.graphs.settings.lockYAxis);
         const yAxisRange = computed(() => store.state.graphs.settings.yAxisRange as YAxisRange);
+        const legendWidth = computed(() => store.getters[`graphs/${GraphsGetter.legendWidth}`]);
 
         const updateAxesRange = () => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -72,21 +91,16 @@ export default defineComponent({
             }
         };
 
-        const relayout = async (event: PlotRelayoutEvent) => {
+        const updateXAxisRange = async (xAxisOptions: XAxisOptions) => {
             let data;
-            if (event["xaxis.autorange"] === true) {
+            if (xAxisOptions.autorange) {
                 data = baseData.value;
             } else {
-                const t0 = event["xaxis.range[0]"];
-                const t1 = event["xaxis.range[1]"];
-                if (t0 === undefined || t1 === undefined) {
-                    return;
-                }
-                data = props.plotData(t0, t1, nPoints);
+                data = props.plotData(xAxisOptions.min!, xAxisOptions.max!, nPoints);
             }
-
+            console.log(`Legend width is ${legendWidth.value}`);
             const layout: Partial<Layout> = {
-                margin,
+                margin: {...margin, r: legendWidth.value},
                 uirevision: "true",
                 xaxis: { title: "Time", autorange: true },
                 yaxis: { autorange: true, type: yAxisType.value }
@@ -94,6 +108,32 @@ export default defineComponent({
 
             const el = plot.value as HTMLElement;
             await react(el, data, layout, config);
+        };
+
+        const relayout = async (event: PlotRelayoutEvent) => {
+            let xAxisOptions;
+            if (event["xaxis.autorange"] === true) {
+                xAxisOptions = { autorange: true };
+            } else {
+                const t0 = event["xaxis.range[0]"];
+                const t1 = event["xaxis.range[1]"];
+                if (t0 === undefined || t1 === undefined) {
+                    return;
+                }
+                xAxisOptions = {
+                    autorange: false,
+                    min: t0,
+                    max: t1
+                };
+            }
+
+            if (props.hasLinkedXAxis) {
+                // Emit the x axis change, and handle update when options are propagated through prop
+                emit("updateXAxis", xAxisOptions);
+            } else {
+                // No linked x axis, so this plot can just update itself directly
+                await updateXAxisRange(xAxisOptions);
+            }
         };
 
         const resize = () => {
@@ -110,8 +150,10 @@ export default defineComponent({
 
                 if (hasPlotData.value) {
                     const el = plot.value as unknown;
+                    // TODO: build margin in a nicer way!
+                    console.log(`Legend width is ${legendWidth.value}`);
                     const layout: Partial<Layout> = {
-                        margin,
+                        margin: {...margin, r: legendWidth.value},
                         yaxis: {
                             type: yAxisType.value
                         },
@@ -151,6 +193,11 @@ export default defineComponent({
             if (plotStyle.value !== fadePlotStyle) {
                 drawPlot(true);
             }
+        });
+        watch(() => props.linkedXAxisOptions, () => {
+          if (props.linkedXAxisOptions) {
+            updateXAxisRange(props.linkedXAxisOptions);
+          }
         });
 
         onUnmounted(() => {

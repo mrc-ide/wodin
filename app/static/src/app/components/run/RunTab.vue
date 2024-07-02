@@ -10,7 +10,12 @@
                 :fade-plot="!!updateMsg"
                 :graph-index="index"
             ></run-stochastic-plot>
-            <run-plot v-else :fade-plot="!!updateMsg" :model-fit="false" :graph-index="index">
+            <run-plot v-else
+                      :fade-plot="!!updateMsg"
+                      :model-fit="false"
+                      :graph-index="index"
+                      :linked-x-axis-options="xAxisOptions"
+                      @updateXAxis="updateXAxisOptions">
                 <div v-if="sumOfSquares">
                     <span>Sum of squares: {{ sumOfSquares }}</span>
                 </div>
@@ -46,7 +51,7 @@
 
 <script lang="ts">
 import { useStore } from "vuex";
-import { computed, defineComponent, ref } from "vue";
+import {computed, defineComponent, Ref, ref} from "vue";
 import VueFeather from "vue-feather";
 import { RunMutation } from "../../store/run/mutations";
 import RunPlot from "./RunPlot.vue";
@@ -62,6 +67,7 @@ import { AppType } from "../../store/appState/state";
 import { ModelGetter } from "../../store/model/getters";
 import RunStochasticPlot from "./RunStochasticPlot.vue";
 import { GraphsGetter } from "../../store/graphs/getters";
+import {XAxisOptions} from "../WodinPlot.vue";
 
 export default defineComponent({
     name: "RunTab",
@@ -78,6 +84,8 @@ export default defineComponent({
         const store = useStore();
 
         const showDownloadOutput = ref(false);
+        const xAxisOptions: Ref<XAxisOptions> = ref({ autorange: true });
+
         const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
 
         const error = computed(() => {
@@ -127,6 +135,10 @@ export default defineComponent({
         const download = (payload: { fileName: string; points: number }) =>
             store.dispatch(`run/${RunAction.DownloadOutput}`, payload);
 
+        const updateXAxisOptions = (options: XAxisOptions) => {
+            xAxisOptions.value = options;
+        };
+
         return {
             canRunModel,
             isStochastic,
@@ -140,7 +152,9 @@ export default defineComponent({
             downloadUserFileName,
             toggleShowDownloadOutput,
             download,
-            graphConfigs
+            graphConfigs,
+            xAxisOptions,
+            updateXAxisOptions
         };
     }
 });
