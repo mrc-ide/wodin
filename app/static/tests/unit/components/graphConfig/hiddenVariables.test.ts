@@ -86,7 +86,7 @@ describe("HiddenVariables", () => {
         await s.trigger("dragstart", { dataTransfer: { setData } });
         expect(setData.mock.calls[0][0]).toBe("variable");
         expect(setData.mock.calls[0][1]).toStrictEqual("I");
-        expect(setData.mock.calls[1][0]).toStrictEqual("srcGraph");
+        expect(setData.mock.calls[1][0]).toStrictEqual("srcGraphConfig");
         expect(setData.mock.calls[1][1]).toStrictEqual("hidden");
         expect(wrapper.emitted("setDragging")![0]).toStrictEqual([true]);
     });
@@ -103,7 +103,7 @@ describe("HiddenVariables", () => {
         const dataTransfer = {
             getData: (s: string) => {
                 if (s === "variable") return "S";
-                if (s === "srcGraph") return "0";
+                if (s === "srcGraphConfig") return "0";
                 return null;
             }
         };

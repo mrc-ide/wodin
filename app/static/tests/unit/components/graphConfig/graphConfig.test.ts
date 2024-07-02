@@ -82,7 +82,7 @@ describe("GraphConfig", () => {
         await s.trigger("dragstart", { dataTransfer: { setData } });
         expect(setData.mock.calls[0][0]).toBe("variable");
         expect(setData.mock.calls[0][1]).toStrictEqual("S");
-        expect(setData.mock.calls[1][0]).toStrictEqual("srcGraph");
+        expect(setData.mock.calls[1][0]).toStrictEqual("srcGraphConfig");
         expect(setData.mock.calls[1][1]).toStrictEqual("0");
         expect(wrapper.emitted("setDragging")![0]).toStrictEqual([true]);
     });
@@ -99,7 +99,7 @@ describe("GraphConfig", () => {
         const dataTransfer = {
             getData: (s: string) => {
                 if (s === "variable") return "I";
-                if (s === "srcGraph") return "1";
+                if (s === "srcGraphConfig") return "1";
                 return null;
             }
         };
@@ -118,7 +118,7 @@ describe("GraphConfig", () => {
         const dataTransfer = {
             getData: (s: string) => {
                 if (s === "variable") return "I";
-                if (s === "srcGraph") return "hidden";
+                if (s === "srcGraphConfig") return "hidden";
                 return null;
             }
         };

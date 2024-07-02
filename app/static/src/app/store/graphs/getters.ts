@@ -12,12 +12,17 @@ export interface GraphsGetters {
     [GraphsGetter.hiddenVariables]: Getter<GraphsState, AppState>;
 }
 
+export interface GraphsGettersValues {
+    [GraphsGetter.allSelectedVariables]: string[];
+    [GraphsGetter.hiddenVariables]: string[];
+}
+
 export const getters: GraphsGetters & GetterTree<GraphsState, AppState> = {
     [GraphsGetter.allSelectedVariables]: (state: GraphsState): string[] => {
         return state.config.flatMap((c) => c.selectedVariables); // TODO: dedupe, in mrc-5443
     },
-    [GraphsGetter.hiddenVariables]: (_, graphsGetters, rootState): string[] => {
-        const allSelected = graphsGetters[GraphsGetter.allSelectedVariables] as string[];
+    [GraphsGetter.hiddenVariables]: (_, graphsGetters: GraphsGettersValues, rootState: AppState): string[] => {
+        const allSelected = graphsGetters[GraphsGetter.allSelectedVariables];
         return rootState.model.odinModelResponse?.metadata?.variables.filter((s) => !allSelected.includes(s)) || [];
     }
 };

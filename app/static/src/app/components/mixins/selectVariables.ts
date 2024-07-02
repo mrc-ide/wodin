@@ -13,17 +13,17 @@ export interface SelectVariablesMixin {
 export default (
     store: Store<AppState>,
     emit: (event: string, ...args: unknown[]) => void,
-    hiddenVariables: boolean,
+    hasHiddenVariables: boolean,
     graphIndex?: number
 ): SelectVariablesMixin => {
-    const thisSrcGraph = hiddenVariables ? "hidden" : graphIndex!.toString();
+    const thisSrcGraphConfig = hasHiddenVariables ? "hidden" : graphIndex!.toString();
 
     const startDrag = (evt: DragEvent, variable: string) => {
         const { dataTransfer } = evt;
         dataTransfer!.dropEffect = "move";
         dataTransfer!.effectAllowed = "move";
         dataTransfer!.setData("variable", variable);
-        dataTransfer!.setData("srcGraph", thisSrcGraph);
+        dataTransfer!.setData("srcGraphConfig", thisSrcGraphConfig);
 
         emit("setDragging", true);
     };
@@ -39,29 +39,25 @@ export default (
         });
     };
 
-    // Remove variable from a given graph
     const removeVariable = (srcGraphIdx: number, variable: string) => {
-        const srcVariables = [...store.state.graphs.config[srcGraphIdx].selectedVariables].filter(
-            (v) => v !== variable
-        );
+        const srcVariables = store.state.graphs.config[srcGraphIdx].selectedVariables.filter((v) => v !== variable);
         updateSelectedVariables(srcGraphIdx, srcVariables);
     };
 
     const selectedVariables = computed<string[]>(() =>
-        hiddenVariables ? [] : store.state.graphs.config[graphIndex!].selectedVariables
+        hasHiddenVariables ? [] : store.state.graphs.config[graphIndex!].selectedVariables
     );
 
     const onDrop = (evt: DragEvent) => {
         const { dataTransfer } = evt;
         const variable = dataTransfer!.getData("variable");
-        const srcGraph = dataTransfer!.getData("srcGraph");
-        if (srcGraph !== thisSrcGraph) {
-            // remove from source graph
-            if (srcGraph !== "hidden") {
-                removeVariable(parseInt(srcGraph, 10), variable);
+        const srcGraphConfig = dataTransfer!.getData("srcGraphConfig");
+        if (srcGraphConfig !== thisSrcGraphConfig) {
+            if (srcGraphConfig !== "hidden") {
+                removeVariable(parseInt(srcGraphConfig, 10), variable);
             }
             // add to this graph if necessary
-            if (!hiddenVariables && !selectedVariables.value.includes(variable)) {
+            if (!hasHiddenVariables && !selectedVariables.value.includes(variable)) {
                 const newVars = [...selectedVariables.value, variable];
                 updateSelectedVariables(graphIndex!, newVars);
             }
