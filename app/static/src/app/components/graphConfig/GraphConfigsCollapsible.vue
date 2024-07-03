@@ -19,7 +19,7 @@ export default defineComponent({
     setup() {
         const store = useStore();
         const allVariables = computed<string[]>(() => store.state.model.odinModelResponse?.metadata?.variables || []);
-        const showGraphs = computed(() => allVariables.value.length && !store.state.model.compileRequired);
+        const showGraphs = computed(() => allVariables.value.length > 0 && !store.state.model.compileRequired);
         return {
             showGraphs
         };

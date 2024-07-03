@@ -15,10 +15,7 @@ export const actions: ActionTree<GraphsState, AppState> = {
         // Maintain unselected variables too, so we know which variables had been explicitly unselected when model
         // updates
         const allVariables = rootState.model.odinModelResponse?.metadata?.variables || [];
-        const unselectedVariables =
-            rootState.model.odinModelResponse?.metadata?.variables.filter(
-                (s) => !payload.selectedVariables.includes(s)
-            ) || [];
+        const unselectedVariables = allVariables.filter((s) => !payload.selectedVariables.includes(s)) || [];
         // sort the selected variables to match the order in the model
         const selectedVariables = payload.selectedVariables.sort((a, b) =>
             allVariables.indexOf(a) > allVariables.indexOf(b) ? 1 : -1
