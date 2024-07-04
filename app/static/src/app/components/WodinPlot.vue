@@ -108,7 +108,6 @@ export default defineComponent({
 
             //const plotLayout = (plot.value as any).layout;
             //alert("updating xaxis with " + JSON.stringify(plotLayout.yaxis))
-            //TODO: comment on unsetting autorange!
             const layout: Partial<Layout> = {
                 margin: {...margin, r: legendWidth.value},
                 uirevision: "true",
@@ -148,36 +147,35 @@ export default defineComponent({
         };
 
         const relayout = async (event: PlotRelayoutEvent) => {
-            let xAxisOptions;
-            if (event["xaxis.autorange"] === true) {
-                xAxisOptions = { autorange: true };
-            } else {
-                const t0 = event["xaxis.range[0]"];
-                const t1 = event["xaxis.range[1]"];
-                if (t0 === undefined || t1 === undefined) {
-                    return;
-                }
-                xAxisOptions = {
+            //alert("RELAYOUT! " + JSON.stringify(event))
+            if (event["xaxis.autorange"] || event["xaxis.range[0]"]) {
+                let xAxisOptions;
+                if (event["xaxis.autorange"] === true) {
+                  xAxisOptions = {autorange: true};
+                } else {
+                  const t0 = event["xaxis.range[0]"];
+                  const t1 = event["xaxis.range[1]"];
+                  xAxisOptions = {
                     autorange: false,
                     min: t0,
                     max: t1
-                };
+                  };
+                }
+                if (props.hasLinkedXAxis) {
+                  // Emit the x axis change, and handle update when options are propagated through prop
+                  emit("updateXAxis", xAxisOptions);
+                } else {
+                  // No linked x axis, so this plot can just update itself directly
+                  await updateXAxisRange(xAxisOptions);
+                }
             }
 
-            lastYAxisOptionsFromZoom.value = {
-              autorange: event["yaxis.autorange"] || false,
-              min: event["yaxis.range[0]"],
-              max: event["yaxis.range[1]"]
-            };
-            //alert("saving last y axis: " + JSON.stringify(lastYAxisOptionsFromZoom.value))
-
-            // TODO: might not be an x axis change...
-            if (props.hasLinkedXAxis) {
-                // Emit the x axis change, and handle update when options are propagated through prop
-                emit("updateXAxis", xAxisOptions);
-            } else {
-                // No linked x axis, so this plot can just update itself directly
-                await updateXAxisRange(xAxisOptions);
+          if (event["yaxis.autorange"] || event["yaxis.range[0]"]) {
+              lastYAxisOptionsFromZoom.value = {
+                autorange: event["yaxis.autorange"] || false,
+                min: event["yaxis.range[0]"],
+                max: event["yaxis.range[1]"]
+              };
             }
         };
 
