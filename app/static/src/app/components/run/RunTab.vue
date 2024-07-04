@@ -1,5 +1,6 @@
 <template>
     <div class="run-tab">
+      <div>{{JSON.stringify(xAxisOptions)}}</div>
         <div>
             <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
         </div>
@@ -67,7 +68,7 @@ import { AppType } from "../../store/appState/state";
 import { ModelGetter } from "../../store/model/getters";
 import RunStochasticPlot from "./RunStochasticPlot.vue";
 import { GraphsGetter } from "../../store/graphs/getters";
-import {XAxisOptions} from "../WodinPlot.vue";
+import {AxisOptions} from "../WodinPlot.vue";
 
 export default defineComponent({
     name: "RunTab",
@@ -84,7 +85,7 @@ export default defineComponent({
         const store = useStore();
 
         const showDownloadOutput = ref(false);
-        const xAxisOptions: Ref<XAxisOptions> = ref({ autorange: true });
+        const xAxisOptions: Ref<AxisOptions> = ref({ autorange: true });
 
         const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
 
@@ -135,7 +136,7 @@ export default defineComponent({
         const download = (payload: { fileName: string; points: number }) =>
             store.dispatch(`run/${RunAction.DownloadOutput}`, payload);
 
-        const updateXAxisOptions = (options: XAxisOptions) => {
+        const updateXAxisOptions = (options: AxisOptions) => {
             xAxisOptions.value = options;
         };
 

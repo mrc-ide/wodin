@@ -19,7 +19,7 @@ import { useStore } from "vuex";
 import { PlotData } from "plotly.js-basic-dist-min";
 import { FitDataGetter } from "../../store/fitData/getters";
 import { odinToPlotly, allFitDataToPlotly, WodinPlotData, filterSeriesSet } from "../../plot";
-import WodinPlot, {XAxisOptions} from "../WodinPlot.vue";
+import WodinPlot, {AxisOptions} from "../WodinPlot.vue";
 import { RunGetter } from "../../store/run/getters";
 import { OdinSolution, Times } from "../../types/responseTypes";
 import { Dict } from "../../types/utilTypes";
@@ -35,7 +35,7 @@ export default defineComponent({
             default: 0
         },
         linkedXAxisOptions: {
-          type: Object as PropType<XAxisOptions | null>,
+          type: Object as PropType<AxisOptions | null>,
           required: true
         }
     },
@@ -119,7 +119,7 @@ export default defineComponent({
             return allData;
         };
 
-        const updateXAxis = (options: XAxisOptions) => {
+        const updateXAxis = (options: AxisOptions) => {
           emit("updateXAxis", options);
         }
 
