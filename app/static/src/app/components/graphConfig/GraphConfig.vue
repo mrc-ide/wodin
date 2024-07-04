@@ -1,6 +1,17 @@
 <template>
     <div class="graph-config-panel m-2" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
-        <h5>Graph {{ graphIndex + 1 }}</h5>
+        <h5>
+            Graph {{ graphIndex + 1 }}
+            <button
+                type="button"
+                class="btn btn-light mx-2 delete-graph"
+                v-if="canDelete"
+                @click="deleteGraph"
+                v-tooltip="'Delete Graph'"
+            >
+                <vue-feather class="inline-icon clickable ms-2" type="trash-2"></vue-feather>
+            </button>
+        </h5>
         <div class="drop-zone" :class="dragging ? 'drop-zone-active' : 'drop-zone-inactive'">
             <template v-for="variable in selectedVariables" :key="variable">
                 <span
@@ -24,12 +35,17 @@
 </template>
 
 <script lang="ts">
+import VueFeather from "vue-feather";
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import SelectVariables from "../mixins/selectVariables";
+import { GraphsMutation } from "../../store/graphs/mutations";
 
 export default defineComponent({
     name: "GraphConfig",
+    components: {
+        VueFeather
+    },
     props: {
         dragging: {
             type: Boolean,
@@ -46,6 +62,7 @@ export default defineComponent({
         const selectedVariables = computed<string[]>(
             () => store.state.graphs.config[props.graphIndex].selectedVariables
         );
+        const canDelete = computed(() => store.state.graphs.config.length > 1);
         const palette = computed(() => store.state.model.paletteModel!);
 
         const getStyle = (variable: string) => {
@@ -56,13 +73,19 @@ export default defineComponent({
             return { "background-color": bgcolor };
         };
 
+        const deleteGraph = () => {
+            store.commit(`graphs/${GraphsMutation.DeleteGraph}`, props.graphIndex);
+        };
+
         return {
             selectedVariables,
+            canDelete,
             removeVariable,
             getStyle,
             startDrag,
             endDrag,
-            onDrop
+            onDrop,
+            deleteGraph
         };
     }
 });
