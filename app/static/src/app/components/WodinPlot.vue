@@ -14,7 +14,7 @@
 import {computed, defineComponent, ref, watch, onMounted, onUnmounted, PropType, Ref} from "vue";
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
-import { newPlot, react, PlotRelayoutEvent, Plots, AxisType, Layout, Config } from "plotly.js-basic-dist-min";
+import {newPlot, react, PlotRelayoutEvent, Plots, AxisType, Layout, Config, LayoutAxis} from "plotly.js-basic-dist-min";
 import { WodinPlotData, fadePlotStyle, margin, config } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
 import { GraphsMutation } from "../store/graphs/mutations";
@@ -83,7 +83,7 @@ export default defineComponent({
         const yAxisRange = computed(() => store.state.graphs.settings.yAxisRange as YAxisRange);
         const legendWidth = computed(() => store.getters[`graphs/${GraphsGetter.legendWidth}`]);
 
-        const lastYAxisOptionsFromZoom: Ref<AxisOptions | null> = ref(null);
+        const lastYAxisFromZoom: Ref<Partial<LayoutAxis> | null> = ref(null);
 
         const commitYAxisRange = () => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -106,8 +106,6 @@ export default defineComponent({
             }
             console.log(`Legend width is ${legendWidth.value}`);
 
-            //const plotLayout = (plot.value as any).layout;
-            //alert("updating xaxis with " + JSON.stringify(plotLayout.yaxis))
             const layout: Partial<Layout> = {
                 margin: {...margin, r: legendWidth.value},
                 uirevision: "true",
@@ -115,18 +113,6 @@ export default defineComponent({
                 yaxis: { autorange: true, type: yAxisType.value }
             };
 
-            // mrc-5485 - removed from above layout:
-            // ,
-            //  yaxis: { autorange: true, type: yAxisType.value }
-
-            // mrc-5484
-            /*if (lockYAxis.value) {
-                layout.yaxis!.range = [...yAxisRange.value];
-                layout.yaxis!.autorange = false;
-            } else if (lastYAxisOptionsFromZoom.value) {
-                layout.yaxis!.autorange = lastYAxisOptionsFromZoom.value.autorange;
-                layout.yaxis!.range = [lastYAxisOptionsFromZoom.value.min, lastYAxisOptionsFromZoom.value.max];
-            }*/
             retainYAxisRange(layout);
 
             const el = plot.value as HTMLElement;
@@ -140,14 +126,14 @@ export default defineComponent({
             if (lockYAxis.value) {
               layout.yaxis!.range = [...yAxisRange.value];
               layout.yaxis!.autorange = false;
-            } else if (lastYAxisOptionsFromZoom.value) {
-              layout.yaxis!.autorange = lastYAxisOptionsFromZoom.value.autorange;
-              layout.yaxis!.range = [lastYAxisOptionsFromZoom.value.min, lastYAxisOptionsFromZoom.value.max];
+            } else if (lastYAxisFromZoom.value) {
+              //layout.yaxis!.autorange = lastYAxisOptionsFromZoom.value.autorange;
+              //layout.yaxis!.range = [lastYAxisOptionsFromZoom.value.min, lastYAxisOptionsFromZoom.value.max];
+              layout.yaxis = {...layout.yaxis, ...lastYAxisFromZoom.value}
             }
         };
 
         const relayout = async (event: PlotRelayoutEvent) => {
-            //alert("RELAYOUT! " + JSON.stringify(event))
             if (event["xaxis.autorange"] || event["xaxis.range[0]"]) {
                 let xAxisOptions;
                 if (event["xaxis.autorange"] === true) {
@@ -171,10 +157,9 @@ export default defineComponent({
             }
 
           if (event["yaxis.autorange"] || event["yaxis.range[0]"]) {
-              lastYAxisOptionsFromZoom.value = {
-                autorange: event["yaxis.autorange"] || false,
-                min: event["yaxis.range[0]"],
-                max: event["yaxis.range[1]"]
+              lastYAxisFromZoom.value = {
+                "autorange": event["yaxis.autorange"] || false,
+                "range": [event["yaxis.range[0]"], event["yaxis.range[1]"]]
               };
             }
         };
@@ -187,28 +172,14 @@ export default defineComponent({
 
         let resizeObserver: null | ResizeObserver = null;
 
-        /*const getLayout = (toggleLogScale: boolean) => {
-            return {
-              margin: {
-                  ...margin,
-                  r: legendWidth.value
-              },
-              yaxis: {
-                type: yAxisType.value
-              },
-              xaxis: { title: "Time" }
-            };
-        };*/
-
         const drawPlot = (toggleLogScale = false) => {
-            console.log("redrawing..");
             if (props.redrawWatches.length) {
                 baseData.value = props.plotData(startTime, props.endTime, nPoints);
 
                 if (hasPlotData.value) {
                     const el = plot.value as unknown;
                     // TODO: build margin in a nicer way!
-                    console.log(`Legend width is ${legendWidth.value}`);
+
                     const layout: Partial<Layout> = {
                         margin: {...margin, r: legendWidth.value},
                         yaxis: {
@@ -219,17 +190,10 @@ export default defineComponent({
 
                     const configCopy = { ...config } as Partial<Config>;
 
-                    /*if (lockYAxis.value && !toggleLogScale) {
-                        // We're configured to lock the y axis and we're not in the process of toggling the
-                        // log scale, so lock the y axis range
-                        layout.yaxis!.range = [...yAxisRange.value];
-                        layout.yaxis!.autorange = false;
-                    }*/
                     if (!toggleLogScale) {
                       retainYAxisRange(layout);
                     }
 
-                    // mrc-5484 - set data appropriate to xAxisOptions
                     let data;
                     if (!props.linkedXAxisOptions || props.linkedXAxisOptions.autorange) {
                       data = baseData.value;
@@ -237,7 +201,6 @@ export default defineComponent({
                       data = props.plotData(props.linkedXAxisOptions.min!, props.linkedXAxisOptions.max!, nPoints);
                     }
 
-                    //newPlot(el as HTMLElement, baseData.value, layout, configCopy);
                     newPlot(el as HTMLElement, data, layout, configCopy);
 
                     // We're not locking the YAxis OR we are toggling the log scale (overriding any locked range)
@@ -260,13 +223,11 @@ export default defineComponent({
 
         watch([() => props.redrawWatches, lockYAxis], () => {
             if (plotStyle.value !== fadePlotStyle) {
-                //alert("drawing plot from redrawWatches or lockYAxis")
                 drawPlot();
             }
         });
         watch(yAxisType, () => {
             if (plotStyle.value !== fadePlotStyle) {
-                //alert("drawing plot from yAxisType")
                 drawPlot(true);
             }
         });
