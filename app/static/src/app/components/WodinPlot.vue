@@ -84,13 +84,23 @@ export default defineComponent({
             const plotLayout = (plot.value as any).layout;
             const yRange = plotLayout.yaxis?.range;
             if (plotLayout) {
-                // TODO: We do not yet have per-graph settings, so YAxisRange committed here and used when user chooses
-                // to lock range will be overwritten by each graph, and will
+                // TODO: We do not yet have per-graph settings, so YAxisRange committed here, and used when user chooses
+                // to lock range will be overwritten by each graph, and so the y range of the final graph will be used
+                // by all - to be fixed in mrc-5442
                 store.commit(`graphs/${GraphsMutation.SetYAxisRange}`, yRange);
             }
         };
 
-        const retainYAxisRange = (layout: Partial<Layout>) => {
+        const defaultLayout = (): Partial<Layout> => {
+            // Get generic layout, which will be modifed dynamically as required
+            return {
+                margin: {...margin, r: legendWidth.value},
+                xaxis: { title: "Time" },
+                yaxis: { type: yAxisType.value }
+            };
+        };
+
+        const preserveYAxisRange = (layout: Partial<Layout>) => {
           // When updating plot view in response to some data change or event, retain Y axis range in layout
           // either from the locked range, or from the last range user zoomed to.
           // (Locked range will survive re-mount and tab change, the last range from zoom will not)
@@ -109,16 +119,9 @@ export default defineComponent({
             } else {
                 data = props.plotData(xAxis.range![0], xAxis.range![1], nPoints);
             }
-            console.log(`Legend width is ${legendWidth.value}`);
 
-            const layout: Partial<Layout> = {
-                margin: {...margin, r: legendWidth.value},
-                uirevision: "true",
-                xaxis: { title: "Time", autorange: true },
-                yaxis: { autorange: true, type: yAxisType.value }
-            };
-
-            retainYAxisRange(layout);
+            const layout = defaultLayout();
+            preserveYAxisRange(layout);
 
             const el = plot.value as HTMLElement;
             await react(el, data, layout, config);
@@ -162,21 +165,11 @@ export default defineComponent({
 
                 if (hasPlotData.value) {
                     const el = plot.value as unknown;
-                    // TODO: build margin in a nicer way!
-
-                    const layout: Partial<Layout> = {
-                        margin: {...margin, r: legendWidth.value},
-                        yaxis: {
-                            type: yAxisType.value
-                        },
-                        xaxis: { title: "Time" }
-                    };
-
-                    const configCopy = { ...config } as Partial<Config>;
-
+                    const layout = defaultLayout();
                     if (!toggleLogScale) {
-                      retainYAxisRange(layout);
+                      preserveYAxisRange(layout);
                     }
+                    const configCopy = { ...config } as Partial<Config>;
 
                     let data;
                     if (!props.linkedXAxis || props.linkedXAxis.autorange) {
