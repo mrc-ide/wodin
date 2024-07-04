@@ -6,7 +6,7 @@
         :plot-data="allPlotData"
         :redrawWatches="solution ? [solution, allFitData, selectedVariables, parameterSetSolutions, displayNames] : []"
         :has-linked-x-axis="true"
-        :linked-x-axis-options="linkedXAxisOptions"
+        :linked-x-axis="linkedXAxis"
         @updateXAxis="updateXAxis"
     >
         <slot></slot>
@@ -16,10 +16,10 @@
 <script lang="ts">
 import {computed, defineComponent, PropType} from "vue";
 import { useStore } from "vuex";
-import { PlotData } from "plotly.js-basic-dist-min";
+import {LayoutAxis, PlotData} from "plotly.js-basic-dist-min";
 import { FitDataGetter } from "../../store/fitData/getters";
 import { odinToPlotly, allFitDataToPlotly, WodinPlotData, filterSeriesSet } from "../../plot";
-import WodinPlot, {AxisOptions} from "../WodinPlot.vue";
+import WodinPlot from "../WodinPlot.vue";
 import { RunGetter } from "../../store/run/getters";
 import { OdinSolution, Times } from "../../types/responseTypes";
 import { Dict } from "../../types/utilTypes";
@@ -34,8 +34,8 @@ export default defineComponent({
             type: Number,
             default: 0
         },
-        linkedXAxisOptions: {
-          type: Object as PropType<AxisOptions | null>,
+        linkedXAxis: {
+          type: Object as PropType<Partial<LayoutAxis> | null>,
           required: true
         }
     },
@@ -119,7 +119,7 @@ export default defineComponent({
             return allData;
         };
 
-        const updateXAxis = (options: AxisOptions) => {
+        const updateXAxis = (options: Partial<LayoutAxis>) => {
           emit("updateXAxis", options);
         }
 

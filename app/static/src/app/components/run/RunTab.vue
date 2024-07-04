@@ -1,6 +1,5 @@
 <template>
     <div class="run-tab">
-      <div>{{JSON.stringify(xAxisOptions)}}</div>
         <div>
             <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
         </div>
@@ -15,7 +14,7 @@
                       :fade-plot="!!updateMsg"
                       :model-fit="false"
                       :graph-index="index"
-                      :linked-x-axis-options="xAxisOptions"
+                      :linked-x-axis="xAxisOptions"
                       @updateXAxis="updateXAxisOptions">
                 <div v-if="sumOfSquares">
                     <span>Sum of squares: {{ sumOfSquares }}</span>
@@ -68,7 +67,7 @@ import { AppType } from "../../store/appState/state";
 import { ModelGetter } from "../../store/model/getters";
 import RunStochasticPlot from "./RunStochasticPlot.vue";
 import { GraphsGetter } from "../../store/graphs/getters";
-import {AxisOptions} from "../WodinPlot.vue";
+import {LayoutAxis} from "plotly.js-basic-dist-min";
 
 export default defineComponent({
     name: "RunTab",
@@ -85,7 +84,7 @@ export default defineComponent({
         const store = useStore();
 
         const showDownloadOutput = ref(false);
-        const xAxisOptions: Ref<AxisOptions> = ref({ autorange: true });
+        const xAxis: Ref<Partial<LayoutAxis>> = ref({ autorange: true });
 
         const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
 
@@ -136,8 +135,8 @@ export default defineComponent({
         const download = (payload: { fileName: string; points: number }) =>
             store.dispatch(`run/${RunAction.DownloadOutput}`, payload);
 
-        const updateXAxisOptions = (options: AxisOptions) => {
-            xAxisOptions.value = options;
+        const updateXAxisOptions = (options: Partial<LayoutAxis>) => {
+            xAxis.value = options;
         };
 
         return {
@@ -154,7 +153,7 @@ export default defineComponent({
             toggleShowDownloadOutput,
             download,
             graphConfigs,
-            xAxisOptions,
+            xAxisOptions: xAxis,
             updateXAxisOptions
         };
     }
