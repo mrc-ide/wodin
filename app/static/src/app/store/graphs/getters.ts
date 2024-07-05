@@ -29,6 +29,7 @@ export const getters: GraphsGetters & GetterTree<GraphsState, AppState> = {
         return rootState.model.odinModelResponse?.metadata?.variables.filter((s) => !allSelected.includes(s)) || [];
     },
     [GraphsGetter.legendWidth]: (_, graphsGetters): number  => {
+        // Heuristic for setting graph legend width based on string length of longest variable name
         const longestVar = graphsGetters[GraphsGetter.allSelectedVariables].sort((a: string, b: string) => a.length < b.length ? 1 : -1)[0];
         return (longestVar.length * 10) + 40;
     }
