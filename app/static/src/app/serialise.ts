@@ -184,6 +184,7 @@ export const deserialiseState = (targetState: AppState, serialised: SerialisedAp
 
         targetState.graphs.config = [
             {
+                id: graphs!.config[0].id,
                 selectedVariables,
                 unselectedVariables
             }

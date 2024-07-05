@@ -4,7 +4,7 @@
             <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
         </div>
         <action-required-message :message="updateMsg"></action-required-message>
-        <template v-for="(_, index) in graphConfigs" :key="index">
+        <template v-for="(config, index) in graphConfigs" :key="config.id">
             <run-stochastic-plot
                 v-if="isStochastic"
                 :fade-plot="!!updateMsg"
