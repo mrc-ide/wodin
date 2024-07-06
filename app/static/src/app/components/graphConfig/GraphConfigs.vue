@@ -4,9 +4,9 @@
         to move them to.
     </div>
     <graph-config
-        v-for="(config, index) in graphConfigs"
+        v-for="(_, index) in graphConfigs"
         :graph-index="index"
-        :key="config.id"
+        :key="index"
         :dragging="draggingVariable"
         @setDragging="setDraggingVariable"
     ></graph-config>

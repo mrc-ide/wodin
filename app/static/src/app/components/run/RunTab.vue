@@ -9,13 +9,15 @@
                 v-if="isStochastic"
                 :fade-plot="!!updateMsg"
                 :graph-index="index"
+                :linked-x-axis="xAxis"
+                @updateXAxis="updateXAxis"
             ></run-stochastic-plot>
             <run-plot v-else
                       :fade-plot="!!updateMsg"
                       :model-fit="false"
                       :graph-index="index"
-                      :linked-x-axis="xAxisOptions"
-                      @updateXAxis="updateXAxisOptions">
+                      :linked-x-axis="xAxis"
+                      @updateXAxis="updateXAxis">
                 <div v-if="sumOfSquares">
                     <span>Sum of squares: {{ sumOfSquares }}</span>
                 </div>
@@ -135,8 +137,8 @@ export default defineComponent({
         const download = (payload: { fileName: string; points: number }) =>
             store.dispatch(`run/${RunAction.DownloadOutput}`, payload);
 
-        const updateXAxisOptions = (options: Partial<LayoutAxis>) => {
-            xAxis.value = options;
+        const updateXAxis = (newAxis: Partial<LayoutAxis>) => {
+            xAxis.value = newAxis;
         };
 
         return {
@@ -153,8 +155,8 @@ export default defineComponent({
             toggleShowDownloadOutput,
             download,
             graphConfigs,
-            xAxisOptions: xAxis,
-            updateXAxisOptions
+            xAxis,
+            updateXAxis
         };
     }
 });
