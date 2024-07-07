@@ -93,11 +93,15 @@ export default defineComponent({
 
         const defaultLayout = (): Partial<Layout> => {
             // Get generic layout, which will be modifed dynamically as required
-            return {
-                margin: {...margin, r: legendWidth.value},
+            const result =  {
+                margin: {...margin},
                 xaxis: { title: "Time" },
                 yaxis: { type: yAxisType.value }
             };
+            if (legendWidth.value) {
+              result.margin.r = legendWidth.value;
+            }
+            return result;
         };
 
         const preserveYAxisRange = (layout: Partial<Layout>) => {
@@ -135,7 +139,7 @@ export default defineComponent({
         }
 
         const relayout = async (event: PlotRelayoutEvent) => {
-            if (event["xaxis.autorange"] || event["xaxis.range[0]"]) {
+            if (event["xaxis.autorange"] || (event["xaxis.range[0]"] && event["xaxis.range[1]"])) {
                 const xAxis = axisFromEvent(event, "x");
                 if (props.hasLinkedXAxis) {
                   // Emit the x axis change, and handle update when options are propagated through prop
@@ -146,7 +150,7 @@ export default defineComponent({
                 }
             }
 
-          if (event["yaxis.autorange"] || event["yaxis.range[0]"]) {
+          if (event["yaxis.autorange"] || (event["yaxis.range[0]"] && event["yaxis.range[1]"])) {
               lastYAxisFromZoom.value = axisFromEvent(event, "y");
             }
         };

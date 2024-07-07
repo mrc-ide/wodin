@@ -1,4 +1,6 @@
 // Mock the import of plotly so we can mock Plotly methods
+import {margin} from "../../../src/app/plot";
+
 jest.mock("plotly.js-basic-dist-min", () => ({
     newPlot: jest.fn(),
     react: jest.fn(),
@@ -201,9 +203,8 @@ describe("WodinPlot", () => {
 
     const expectedLayout = {
         margin: { t: 25 },
-        uirevision: "true",
-        xaxis: { autorange: true, title: "Time" },
-        yaxis: { autorange: true, type: "linear" }
+        xaxis: { title: "Time" },
+        yaxis: { type: "linear" }
     };
 
     it("relayout reruns plotData and calls react if not autorange", async () => {
@@ -254,6 +255,60 @@ describe("WodinPlot", () => {
         expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
         expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual(mockPlotData);
         expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual(expectedLayout);
+    });
+
+    it("relayout preserves locked y axis range", async () => {
+        const store = getStore(false, true);
+        const wrapper = getWrapper({}, store);
+        const { relayout } = wrapper.vm as any;
+        const relayoutEvent = {
+            "xaxis.autorange": false,
+            "xaxis.range[0]": 2,
+            "xaxis.range[1]": 7,
+            "yaxis.autorange": false,
+            "yaxis.range[0]": 1,
+            "yaxis.range[1]": 2
+        };
+        await relayout(relayoutEvent);
+        expect(mockPlotDataFn.mock.calls.length).toBe(1);
+        expect(mockPlotDataFn.mock.calls[0][0]).toBe(2);
+        expect(mockPlotDataFn.mock.calls[0][1]).toBe(7);
+        expect(mockPlotDataFn.mock.calls[0][2]).toBe(1000);
+
+        const divElement = wrapper.find("div.plot").element;
+        expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
+        expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual(mockPlotData);
+        expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual({
+            ...expectedLayout,
+            yaxis: { type: "linear", autorange: false, range: [10, 20] } // locked y axis range
+        });
+    });
+
+    it("relayout saves and uses y axis range from last zoom if no locked y axis", async () => {
+        const wrapper = getWrapper();
+        const { relayout } = wrapper.vm as any;
+        const relayoutEvent1 = {
+            "yaxis.autorange": false,
+            "yaxis.range[0]": 1,
+            "yaxis.range[1]": 2
+        };
+        await relayout(relayoutEvent1);
+
+        const relayoutEvent2 = {
+            "xaxis.autorange": false,
+            "xaxis.range[0]": 2,
+            "xaxis.range[1]": 7
+        };
+        await relayout(relayoutEvent2);
+
+        const divElement = wrapper.find("div.plot").element;
+        expect(mockPlotlyReact.mock.calls.length).toBe(1);
+        expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
+        expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual(mockPlotData);
+        expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual({
+            ...expectedLayout,
+            yaxis: { type: "linear", autorange: false, range: [1, 2] }
+        });
     });
 
     it("relayout does nothing on autorange false if t0 is undefined", async () => {
@@ -412,7 +467,7 @@ describe("WodinPlot", () => {
         expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual(mockPlotData);
         const expectedLogScaleLayout = {
             ...expectedLayout,
-            yaxis: { autorange: true, type: "log" }
+            yaxis: { type: "log" }
         };
         expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual(expectedLogScaleLayout);
     });
@@ -464,5 +519,61 @@ describe("WodinPlot", () => {
         expect(mockPlotDataFn).toBeCalledTimes(1);
         expect(mockPlotlyNewPlot).toBeCalledTimes(1);
         expect(mockOn).toBeCalledTimes(1);
+    });
+
+    it("relayout emits updateXAxis event, if component has linked x axis and xaxis is in event", async () => {
+        const wrapper = getWrapper({ hasLinkedXAxis: true });
+        const relayoutEvent = {
+            "xaxis.autorange": false,
+            "xaxis.range[0]": 2,
+            "xaxis.range[1]": 4
+        };
+
+        const { relayout } = wrapper.vm as any;
+        await relayout(relayoutEvent);
+        expect(wrapper.emitted("updateXAxis")![0]).toStrictEqual([{autorange: false, range: [2, 4]}]);
+    });
+
+    it("relayout does not emit updateXAxis event, if xaxis is not in event", async () => {
+        const wrapper = getWrapper({ hasLinkedXAxis: true });
+        const relayoutEvent = {
+            "yaxis.autorange": false,
+            "yaxis.range[0]": 2,
+            "yaxis.range[1]": 4
+        };
+
+        const { relayout } = wrapper.vm as any;
+        await relayout(relayoutEvent);
+        expect(wrapper.emitted("updateXAxis")).toBe(undefined);
+    });
+
+    it("update to linkedXAxis triggers relayout", async () => {
+        const wrapper = getWrapper({hasLInkedXAxis: true, linkedXAxis: {autorange: true}});
+        mockPlotElementOn(wrapper);
+        wrapper.setProps({ linkedXAxis: { autorange: false, range: [4, 6] } });
+        await nextTick();
+
+        expect(mockPlotDataFn).toHaveBeenCalledWith(4, 6, 1000);
+        expect(mockPlotlyReact).toHaveBeenCalledTimes(1);
+        const divElement = wrapper.find("div.plot").element;
+        expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
+        expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual(mockPlotData);
+        expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual(expectedLayout);
+        expect(mockPlotlyReact.mock.calls[0][3]).toStrictEqual({ responsive: true });
+    });
+
+    it("drawPlot uses linked x axis to generate data", async () => {
+        const wrapper = getWrapper({
+            hasLinkedXAxis: true,
+            linkedXAxis: { autorange: false, range: [3, 5] }
+        });
+        mockPlotElementOn(wrapper);
+
+        wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+        expect(mockPlotDataFn.mock.calls.length).toBe(2);
+        expect(mockPlotDataFn.mock.calls[1][0]).toBe(3);
+        expect(mockPlotDataFn.mock.calls[1][1]).toBe(5);
+        expect(mockPlotDataFn.mock.calls[1][2]).toBe(1000);
     });
 });
