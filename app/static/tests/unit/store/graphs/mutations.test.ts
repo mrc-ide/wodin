@@ -54,7 +54,7 @@ describe("Graphs mutations", () => {
         expect(testState.config).toStrictEqual([
             { id: "123", selectedVariables: ["a"], unselectedVariables: ["b", "c"] },
             { id: "456", selectedVariables: [], unselectedVariables: ["b", "a", "c"] }
-        ])
+        ]);
     });
 
     it("DeleteGraph removes graph from config", () => {

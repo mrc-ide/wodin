@@ -1,6 +1,6 @@
 import { expect, test, Page } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
-import { saveSessionTimeout, writeCode ,expectGraphVariables} from "./utils";
+import { saveSessionTimeout, writeCode, expectGraphVariables } from "./utils";
 
 export const newValidCode = `## Derivatives
 deriv(y1) <- sigma * (y2 - y1)

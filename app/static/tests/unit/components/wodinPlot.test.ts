@@ -529,11 +529,11 @@ describe("WodinPlot", () => {
 
         const { relayout } = wrapper.vm as any;
         await relayout(relayoutEvent);
-        expect(wrapper.emitted("updateXAxis")![0]).toStrictEqual([{autorange: false, range: [2, 4]}]);
+        expect(wrapper.emitted("updateXAxis")![0]).toStrictEqual([{ autorange: false, range: [2, 4] }]);
     });
 
     it("relayout does not emit updateXAxis event, if xaxis is not in event", async () => {
-        const wrapper = getWrapper({ linkedXAxis: {autorange: true} });
+        const wrapper = getWrapper({ linkedXAxis: { autorange: true } });
         const relayoutEvent = {
             "yaxis.autorange": false,
             "yaxis.range[0]": 2,
@@ -546,7 +546,7 @@ describe("WodinPlot", () => {
     });
 
     it("update to linkedXAxis triggers relayout", async () => {
-        const wrapper = getWrapper({linkedXAxis: {autorange: true}});
+        const wrapper = getWrapper({ linkedXAxis: { autorange: true } });
         mockPlotElementOn(wrapper);
         wrapper.setProps({ linkedXAxis: { autorange: false, range: [4, 6] } });
         await nextTick();

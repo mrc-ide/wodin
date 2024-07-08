@@ -33,11 +33,13 @@ describe("RunPlot for stochastic", () => {
     const selectedVariables = ["S", "I", "R"];
 
     const graphsState = mockGraphsState({
-            config: [{
-            id: "1234",
-            selectedVariables,
-            unselectedVariables: []
-        }]
+        config: [
+            {
+                id: "1234",
+                selectedVariables,
+                unselectedVariables: []
+            }
+        ]
     });
 
     const linkedXAxis = { autorange: false, range: [1, 2] };
@@ -140,7 +142,7 @@ describe("RunPlot for stochastic", () => {
             }
         });
         const wodinPlot = wrapper.findComponent(WodinPlot);
-        const xAxis = {autorange: false, range: [111, 222]}
+        const xAxis = { autorange: false, range: [111, 222] };
         wodinPlot.vm.$emit("updateXAxis", xAxis);
         expect(wrapper.emitted("updateXAxis")![0]).toStrictEqual([xAxis]);
     });

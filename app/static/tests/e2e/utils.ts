@@ -205,4 +205,3 @@ export const expectGraphVariables = async (page: Page, graphIndex: number, expec
         );
     }
 };
-

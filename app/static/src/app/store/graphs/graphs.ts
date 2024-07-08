@@ -2,7 +2,7 @@ import { GraphsState } from "./state";
 import { actions } from "./actions";
 import { getters } from "./getters";
 import { mutations } from "./mutations";
-import {newUid} from "../../utils";
+import { newUid } from "../../utils";
 
 export const defaultState = (): GraphsState => ({
     config: [

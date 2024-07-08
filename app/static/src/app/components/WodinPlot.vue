@@ -10,15 +10,24 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, ref, watch, onMounted, onUnmounted, PropType, Ref} from "vue";
+import { computed, defineComponent, ref, watch, onMounted, onUnmounted, PropType, Ref } from "vue";
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
-import {newPlot, react, PlotRelayoutEvent, Plots, AxisType, Layout, Config, LayoutAxis} from "plotly.js-basic-dist-min";
+import {
+    newPlot,
+    react,
+    PlotRelayoutEvent,
+    Plots,
+    AxisType,
+    Layout,
+    Config,
+    LayoutAxis
+} from "plotly.js-basic-dist-min";
 import { WodinPlotData, fadePlotStyle, margin, config } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
 import { GraphsMutation } from "../store/graphs/mutations";
 import { YAxisRange } from "../store/graphs/state";
-import {GraphsGetter} from "../store/graphs/getters";
+import { GraphsGetter } from "../store/graphs/getters";
 
 export default defineComponent({
     name: "WodinPlot",
@@ -88,35 +97,35 @@ export default defineComponent({
 
         const defaultLayout = (): Partial<Layout> => {
             // Get generic layout, which will be modifed dynamically as required
-            const result =  {
-                margin: {...margin},
+            const result = {
+                margin: { ...margin },
                 xaxis: { title: "Time" },
                 yaxis: { type: yAxisType.value }
             };
             if (legendWidth.value) {
-              result.margin.r = legendWidth.value;
+                result.margin.r = legendWidth.value;
             }
             return result;
         };
 
         const preserveYAxisRange = (layout: Partial<Layout>): Partial<Layout> => {
-          // When updating plot view in response to some data change or event, retain Y axis range in layout
-          // either from the locked range, or from the last range user zoomed to.
-          // (Locked range will survive re-mount and tab change, the last range from zoom will not)
-          const result = {...layout};
-          if (lockYAxis.value) {
-            result.yaxis = {
-              ...result.yaxis,
-              range: [...yAxisRange.value],
-              autorange: false
-            };
-          } else if (lastYAxisFromZoom.value) {
-            result.yaxis = {
-              ...result.yaxis,
-              ...lastYAxisFromZoom.value
+            // When updating plot view in response to some data change or event, retain Y axis range in layout
+            // either from the locked range, or from the last range user zoomed to.
+            // (Locked range will survive re-mount and tab change, the last range from zoom will not)
+            const result = { ...layout };
+            if (lockYAxis.value) {
+                result.yaxis = {
+                    ...result.yaxis,
+                    range: [...yAxisRange.value],
+                    autorange: false
+                };
+            } else if (lastYAxisFromZoom.value) {
+                result.yaxis = {
+                    ...result.yaxis,
+                    ...lastYAxisFromZoom.value
+                };
             }
-          }
-          return result;
+            return result;
         };
 
         const updateXAxisRange = async (xAxis: Partial<LayoutAxis>) => {
@@ -134,26 +143,26 @@ export default defineComponent({
         };
 
         const axisFromEvent = (event: PlotRelayoutEvent, axisLetter: "x" | "y"): Partial<LayoutAxis> => {
-         return {
-            "autorange": event[`${axisLetter}axis.autorange`] || false,
-            "range": [event[`${axisLetter}axis.range[0]`], event[`${axisLetter}axis.range[1]`]]
-          };
-        }
+            return {
+                autorange: event[`${axisLetter}axis.autorange`] || false,
+                range: [event[`${axisLetter}axis.range[0]`], event[`${axisLetter}axis.range[1]`]]
+            };
+        };
 
         const relayout = async (event: PlotRelayoutEvent) => {
             if (event["xaxis.autorange"] || (event["xaxis.range[0]"] && event["xaxis.range[1]"])) {
                 const xAxis = axisFromEvent(event, "x");
                 if (props.linkedXAxis) {
-                  // Emit the x axis change, and handle update when options are propagated through prop
-                  emit("updateXAxis", xAxis);
+                    // Emit the x axis change, and handle update when options are propagated through prop
+                    emit("updateXAxis", xAxis);
                 } else {
-                  // No linked x axis, so this plot can just update itself directly
-                  await updateXAxisRange(xAxis);
+                    // No linked x axis, so this plot can just update itself directly
+                    await updateXAxisRange(xAxis);
                 }
             }
 
-          if (event["yaxis.autorange"] || (event["yaxis.range[0]"] && event["yaxis.range[1]"])) {
-              lastYAxisFromZoom.value = axisFromEvent(event, "y");
+            if (event["yaxis.autorange"] || (event["yaxis.range[0]"] && event["yaxis.range[1]"])) {
+                lastYAxisFromZoom.value = axisFromEvent(event, "y");
             }
         };
 
@@ -173,15 +182,15 @@ export default defineComponent({
                     const el = plot.value as unknown;
                     let layout = defaultLayout();
                     if (!toggleLogScale) {
-                      layout = preserveYAxisRange(layout);
+                        layout = preserveYAxisRange(layout);
                     }
                     const configCopy = { ...config } as Partial<Config>;
 
                     let data;
                     if (!props.linkedXAxis || props.linkedXAxis.autorange) {
-                      data = baseData.value;
+                        data = baseData.value;
                     } else {
-                      data = props.plotData(props.linkedXAxis.range![0], props.linkedXAxis.range![1], nPoints);
+                        data = props.plotData(props.linkedXAxis.range![0], props.linkedXAxis.range![1], nPoints);
                     }
 
                     newPlot(el as HTMLElement, data, layout, configCopy);
@@ -214,11 +223,14 @@ export default defineComponent({
                 drawPlot(true);
             }
         });
-        watch(() => props.linkedXAxis, () => {
-          if (props.linkedXAxis) {
-            updateXAxisRange(props.linkedXAxis);
-          }
-        });
+        watch(
+            () => props.linkedXAxis,
+            () => {
+                if (props.linkedXAxis) {
+                    updateXAxisRange(props.linkedXAxis);
+                }
+            }
+        );
 
         onUnmounted(() => {
             if (resizeObserver) {

@@ -15,7 +15,7 @@
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
 import { useStore } from "vuex";
-import {LayoutAxis} from "plotly.js-basic-dist-min";
+import { LayoutAxis } from "plotly.js-basic-dist-min";
 import { WodinPlotData, discreteSeriesSetToPlotly, filterSeriesSet } from "../../plot";
 import WodinPlot from "../WodinPlot.vue";
 import { runPlaceholderMessage } from "../../utils";
@@ -30,15 +30,15 @@ export default defineComponent({
             default: 0
         },
         linkedXAxis: {
-          type: Object as PropType<Partial<LayoutAxis> | null>,
-          required: true
+            type: Object as PropType<Partial<LayoutAxis> | null>,
+            required: true
         }
     },
     components: {
         WodinPlot
     },
     emits: ["updateXAxis"],
-    setup(props, {emit}) {
+    setup(props, { emit }) {
         const store = useStore();
 
         const selectedVariables = computed(() => store.state.graphs.config[props.graphIndex].selectedVariables);
@@ -73,9 +73,9 @@ export default defineComponent({
             );
         };
 
-      const updateXAxis = (options: Partial<LayoutAxis>) => {
-        emit("updateXAxis", options);
-      }
+        const updateXAxis = (options: Partial<LayoutAxis>) => {
+            emit("updateXAxis", options);
+        };
 
         return {
             placeholderMessage,

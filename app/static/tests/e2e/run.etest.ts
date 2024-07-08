@@ -1,11 +1,11 @@
 import { expect, test, Page } from "@playwright/test";
-import {expectGraphVariables} from "./utils";
+import { expectGraphVariables } from "./utils";
 
 const addGraphWithVariable = async (page: Page, variableIdx: number) => {
     await page.click("#add-graph-btn");
     const count = await page.locator(".graph-config-panel").count();
     // assume we drag variable from first graph config
-    const firstGraphConfig = await page.locator(":nth-match(.graph-config-panel, 1)")
+    const firstGraphConfig = await page.locator(":nth-match(.graph-config-panel, 1)");
     const variable = await firstGraphConfig.locator(`:nth-match(.variable, ${variableIdx})`);
     await page.locator(`:nth-match(.graph-config-panel .drop-zone, ${count})`).scrollIntoViewIfNeeded();
     await variable.dragTo(page.locator(`:nth-match(.graph-config-panel .drop-zone, ${count})`));
@@ -14,11 +14,11 @@ const addGraphWithVariable = async (page: Page, variableIdx: number) => {
 const expectXTicks = async (page: Page, expectedGraphCount: number, expectedXTicks: number[]) => {
     const graphs = await page.locator(".plot-container");
     expect(await graphs.count()).toBe(expectedGraphCount);
-    for(let i = 0; i < expectedGraphCount; i++) {
+    for (let i = 0; i < expectedGraphCount; i++) {
         const graph = graphs.nth(i);
         const ticks = await graph.locator(".xtick text");
         expect(await ticks.count()).toBe(expectedXTicks.length);
-        for(let tickIdx = 0; tickIdx < expectedXTicks.length; tickIdx++) {
+        for (let tickIdx = 0; tickIdx < expectedXTicks.length; tickIdx++) {
             await expect(ticks.nth(tickIdx)).toHaveText(expectedXTicks[tickIdx].toString());
         }
     }

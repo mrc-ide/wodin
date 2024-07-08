@@ -12,12 +12,14 @@
                 :linked-x-axis="xAxis"
                 @updateXAxis="updateXAxis"
             ></run-stochastic-plot>
-            <run-plot v-else
-                      :fade-plot="!!updateMsg"
-                      :model-fit="false"
-                      :graph-index="index"
-                      :linked-x-axis="xAxis"
-                      @updateXAxis="updateXAxis">
+            <run-plot
+                v-else
+                :fade-plot="!!updateMsg"
+                :model-fit="false"
+                :graph-index="index"
+                :linked-x-axis="xAxis"
+                @updateXAxis="updateXAxis"
+            >
                 <div v-if="sumOfSquares">
                     <span>Sum of squares: {{ sumOfSquares }}</span>
                 </div>
@@ -53,9 +55,9 @@
 
 <script lang="ts">
 import { useStore } from "vuex";
-import {computed, defineComponent, Ref, ref} from "vue";
+import { computed, defineComponent, Ref, ref } from "vue";
 import VueFeather from "vue-feather";
-import {LayoutAxis} from "plotly.js-basic-dist-min";
+import { LayoutAxis } from "plotly.js-basic-dist-min";
 import { RunMutation } from "../../store/run/mutations";
 import RunPlot from "./RunPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";

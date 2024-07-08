@@ -6,7 +6,7 @@ describe("GraphsGetters", () => {
         const state = mockGraphsState({
             config: [
                 { id: "123", selectedVariables: ["a", "b"], unselectedVariables: ["c", "d"] },
-                { id: "456",selectedVariables: ["d"], unselectedVariables: ["a", "b", "c"] }
+                { id: "456", selectedVariables: ["d"], unselectedVariables: ["a", "b", "c"] }
             ]
         });
         expect((getters[GraphsGetter.allSelectedVariables] as any)(state)).toStrictEqual(["a", "b", "d"]);

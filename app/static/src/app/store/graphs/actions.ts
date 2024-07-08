@@ -3,7 +3,7 @@ import { GraphsMutation } from "./mutations";
 import { AppState, AppType } from "../appState/state";
 import { FitDataAction } from "../fitData/actions";
 import { GraphsState } from "./state";
-import {newUid} from "../../utils";
+import { newUid } from "../../utils";
 
 export enum GraphsAction {
     UpdateSelectedVariables = "UpdateSelectedVariables",

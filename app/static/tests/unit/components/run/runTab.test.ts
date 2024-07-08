@@ -154,10 +154,10 @@ describe("RunTab", () => {
         expect(plots.length).toBe(2);
         expect(plots.at(0)!.props("graphIndex")).toBe(0);
         expect(plots.at(0)!.props("fadePlot")).toBe(false);
-        expect(plots.at(0)!.props("linkedXAxis")).toStrictEqual({autorange: true});
+        expect(plots.at(0)!.props("linkedXAxis")).toStrictEqual({ autorange: true });
         expect(plots.at(1)!.props("graphIndex")).toBe(1);
         expect(plots.at(1)!.props("fadePlot")).toBe(false);
-        expect(plots.at(1)!.props("linkedXAxis")).toStrictEqual({autorange: true});
+        expect(plots.at(1)!.props("linkedXAxis")).toStrictEqual({ autorange: true });
 
         // Download button disabled because there is no model solution
         const downloadBtn = wrapper.find("button#download-btn");
@@ -175,14 +175,14 @@ describe("RunTab", () => {
     });
 
     it("propagates x axis changes to all run plots", async () => {
-       const wrapper = getWrapper();
-       const plots = wrapper.findAllComponents(RunPlot);
-       expect(plots.length).toBe(2);
-       const newXAxis = {autorange: false, range: [1, 10]};
-       plots.at(0)!.vm.$emit("updateXAxis", newXAxis);
-       await nextTick();
-       expect(plots.at(0)!.props("linkedXAxis")).toStrictEqual(newXAxis);
-       expect(plots.at(1)!.props("linkedXAxis")).toStrictEqual(newXAxis);
+        const wrapper = getWrapper();
+        const plots = wrapper.findAllComponents(RunPlot);
+        expect(plots.length).toBe(2);
+        const newXAxis = { autorange: false, range: [1, 10] };
+        plots.at(0)!.vm.$emit("updateXAxis", newXAxis);
+        await nextTick();
+        expect(plots.at(0)!.props("linkedXAxis")).toStrictEqual(newXAxis);
+        expect(plots.at(1)!.props("linkedXAxis")).toStrictEqual(newXAxis);
     });
 
     it("renders as expected when app is stochastic", () => {
@@ -196,10 +196,10 @@ describe("RunTab", () => {
         expect(plots.length).toBe(2);
         expect(plots.at(0)!.props("graphIndex")).toBe(0);
         expect(plots.at(0)!.props("fadePlot")).toBe(false);
-        expect(plots.at(0)!.props("linkedXAxis")).toStrictEqual({autorange: true});
+        expect(plots.at(0)!.props("linkedXAxis")).toStrictEqual({ autorange: true });
         expect(plots.at(1)!.props("graphIndex")).toBe(1);
         expect(plots.at(1)!.props("fadePlot")).toBe(false);
-        expect(plots.at(1)!.props("linkedXAxis")).toStrictEqual({autorange: true});
+        expect(plots.at(1)!.props("linkedXAxis")).toStrictEqual({ autorange: true });
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         expect(wrapper.findComponent(RunPlot).exists()).toBe(false);
         expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(false);
@@ -209,7 +209,7 @@ describe("RunTab", () => {
         const wrapper = getStochasticWrapper();
         const plots = wrapper.findAllComponents(RunStochasticPlot);
         expect(plots.length).toBe(2);
-        const newXAxis = {autorange: false, range: [1, 10]};
+        const newXAxis = { autorange: false, range: [1, 10] };
         plots.at(0)!.vm.$emit("updateXAxis", newXAxis);
         await nextTick();
         expect(plots.at(0)!.props("linkedXAxis")).toStrictEqual(newXAxis);
