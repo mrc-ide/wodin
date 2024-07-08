@@ -293,24 +293,6 @@ test.describe("Code Tab tests", () => {
         );
     });
 
-    const expectGraphVariables = async (page: Page, graphIndex: number, expectedVariables: string[]) => {
-        // expect to find these variables in config panel and on plot series
-        const configPanel = await page.locator(`:nth-match(.graph-config-panel, ${graphIndex + 1})`);
-        const configVars = await configPanel.locator(".variable .variable-name");
-        await expect(configVars).toHaveCount(expectedVariables.length);
-
-        const plotSummary = await page.locator(
-            `:nth-match(.wodin-plot-container .wodin-plot-data-summary, ${graphIndex + 1})`
-        );
-        for (let i = 0; i < expectedVariables.length; i++) {
-            await expect(configVars.nth(i)).toHaveText(expectedVariables[i]);
-            await expect(plotSummary.locator(`:nth-match(.wodin-plot-data-summary-series, ${i + 1})`)).toHaveAttribute(
-                "name",
-                expectedVariables[i]
-            );
-        }
-    };
-
     test("can hide and unhide variables", async ({ page }) => {
         // drag I to Hidden Variables
         const iVariable = await page.locator(":nth-match(.graph-config-panel span.variable, 2)");

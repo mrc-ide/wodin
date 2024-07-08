@@ -84,9 +84,8 @@ describe("Graphs actions", () => {
         });
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(GraphsMutation.AddGraph);
-        expect(commit.mock.calls[0][1]).toStrictEqual({
-            selectedVariables: [],
-            unselectedVariables: ["b", "a", "c"]
-        });
+        expect(commit.mock.calls[0][1].selectedVariables).toStrictEqual([]);
+        expect(commit.mock.calls[0][1].unselectedVariables).toStrictEqual(["b", "a", "c"]);
+        expect(commit.mock.calls[0][1].id.length).toBe(32);
     });
 });

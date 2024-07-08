@@ -5,7 +5,6 @@
         :end-time="endTime"
         :plot-data="allPlotData"
         :redrawWatches="solution ? [solution] : []"
-        :has-linked-x-axis="true"
         :linked-x-axis="linkedXAxis"
         @updateXAxis="updateXAxis"
     >

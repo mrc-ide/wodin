@@ -522,7 +522,7 @@ describe("WodinPlot", () => {
     });
 
     it("relayout emits updateXAxis event, if component has linked x axis and xaxis is in event", async () => {
-        const wrapper = getWrapper({ hasLinkedXAxis: true });
+        const wrapper = getWrapper({ linkedXAxis: { autorange: true } });
         const relayoutEvent = {
             "xaxis.autorange": false,
             "xaxis.range[0]": 2,
@@ -535,7 +535,7 @@ describe("WodinPlot", () => {
     });
 
     it("relayout does not emit updateXAxis event, if xaxis is not in event", async () => {
-        const wrapper = getWrapper({ hasLinkedXAxis: true });
+        const wrapper = getWrapper({ linkedXAxis: {autorange: true} });
         const relayoutEvent = {
             "yaxis.autorange": false,
             "yaxis.range[0]": 2,
@@ -548,7 +548,7 @@ describe("WodinPlot", () => {
     });
 
     it("update to linkedXAxis triggers relayout", async () => {
-        const wrapper = getWrapper({hasLInkedXAxis: true, linkedXAxis: {autorange: true}});
+        const wrapper = getWrapper({linkedXAxis: {autorange: true}});
         mockPlotElementOn(wrapper);
         wrapper.setProps({ linkedXAxis: { autorange: false, range: [4, 6] } });
         await nextTick();
@@ -564,7 +564,6 @@ describe("WodinPlot", () => {
 
     it("drawPlot uses linked x axis to generate data", async () => {
         const wrapper = getWrapper({
-            hasLinkedXAxis: true,
             linkedXAxis: { autorange: false, range: [3, 5] }
         });
         mockPlotElementOn(wrapper);

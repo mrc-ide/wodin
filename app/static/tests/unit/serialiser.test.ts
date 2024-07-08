@@ -371,6 +371,7 @@ describe("serialise", () => {
         },
         config: [
             {
+                id: "123",
                 selectedVariables: ["S", "I"],
                 unselectedVariables: ["R"]
             }
@@ -709,8 +710,6 @@ describe("serialise", () => {
             openVisualisationTab: VisualisationTab.Fit,
             code: mockCodeState(),
             model: mockModelState({
-                selectedVariables: undefined,
-                unselectedVariables: undefined,
                 odinModelResponse: {
                     metadata: {
                         variables: ["S", "I", "R"]
@@ -736,12 +735,13 @@ describe("serialise", () => {
             sensitivity: {},
             fitData: {},
             modelFit: {},
-            graphs: defaultGraphsState,
+            graphs: defaultGraphsState(),
             versions: null
         } as any;
         deserialiseState(target, serialised);
         expect(target.graphs.config[0].selectedVariables).toStrictEqual(["S", "I", "R"]);
         expect(target.graphs.config[0].unselectedVariables).toStrictEqual([]);
+        expect(target.graphs.config[0].id.length).toBe(32);
     });
 
     it("deserialises default graph settings when undefined in serialised state", () => {
@@ -771,7 +771,7 @@ describe("serialise", () => {
             fitData: {},
             modelFit: {},
             versions: null,
-            graphs: defaultGraphsState
+            graphs: defaultGraphsState()
         } as any;
         // sanity check
         expect(target.graphs.settings.logScaleYAxis).toBe(false);

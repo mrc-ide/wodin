@@ -46,11 +46,6 @@ export default defineComponent({
             required: false,
             default: true
         },
-        hasLinkedXAxis: {
-            type: Boolean,
-            required: false,
-            default: false
-        },
         linkedXAxis: {
             type: Object as PropType<Partial<LayoutAxis> | null>,
             required: false,
@@ -141,7 +136,7 @@ export default defineComponent({
         const relayout = async (event: PlotRelayoutEvent) => {
             if (event["xaxis.autorange"] || (event["xaxis.range[0]"] && event["xaxis.range[1]"])) {
                 const xAxis = axisFromEvent(event, "x");
-                if (props.hasLinkedXAxis) {
+                if (props.linkedXAxis) {
                   // Emit the x axis change, and handle update when options are propagated through prop
                   emit("updateXAxis", xAxis);
                 } else {
