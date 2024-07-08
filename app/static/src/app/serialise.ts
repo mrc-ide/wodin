@@ -188,7 +188,7 @@ export const deserialiseState = (targetState: AppState, serialised: SerialisedAp
     Object.assign(targetState, {
         ...targetState,
         ...serialised,
-        graphs: deserialiseGraphs(serialised.graphs),
+        graphs: serialised.graphs ? deserialiseGraphs(serialised.graphs) : targetState.graphs,
         persisted: true
     });
 

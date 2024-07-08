@@ -26,6 +26,12 @@ import { AdvancedOptions } from "../../src/app/types/responseTypes";
 import { AdvancedComponentType } from "../../src/app/store/run/state";
 import { noSensitivityUpdateRequired } from "../../src/app/store/sensitivity/sensitivity";
 
+jest.mock("../../src/app/utils", () => {
+    return {
+        newUid: jest.fn().mockReturnValue("12345")
+    };
+});
+
 describe("serialise", () => {
     const codeState = {
         currentCode: ["some code"],
@@ -537,6 +543,20 @@ describe("serialise", () => {
         }
     };
 
+    const expectedGraphs = {
+        settings: {
+            logScaleYAxis: true,
+            lockYAxis: true,
+            yAxisRange: [1, 2]
+        },
+        config: [
+            {
+                selectedVariables: ["S", "I"],
+                unselectedVariables: ["R"]
+            }
+        ]
+    };
+
     it("serialises BasicState as expected", () => {
         const serialised = serialiseState(basicState);
         const expected = {
@@ -546,7 +566,7 @@ describe("serialise", () => {
             run: expectedRun,
             sensitivity: expectedSensitivity,
             multiSensitivity: expectedMultiSensitivity,
-            graphs: graphsState
+            graphs: expectedGraphs
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
     });
@@ -562,7 +582,7 @@ describe("serialise", () => {
             multiSensitivity: expectedMultiSensitivity,
             fitData: expectedFitData,
             modelFit: expectedModelFit,
-            graphs: graphsState
+            graphs: expectedGraphs
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
     });
@@ -627,7 +647,7 @@ describe("serialise", () => {
                 ...expectedModelFit,
                 result: { ...expectedModelFit.result, hasResult: false }
             },
-            graphs: graphsState
+            graphs: expectedGraphs
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
     });
@@ -652,7 +672,7 @@ describe("serialise", () => {
             multiSensitivity: { ...expectedMultiSensitivity, result: null },
             fitData: expectedFitData,
             modelFit: { ...expectedModelFit, result: null },
-            graphs: graphsState
+            graphs: expectedGraphs
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
     });
@@ -701,7 +721,15 @@ describe("serialise", () => {
             fitData: mockFitDataState(),
             modelFit: mockModelFitState(),
             versions: mockVersionsState(),
-            graphs: mockGraphsState()
+            graphs: mockGraphsState({
+                config: [
+                    {
+                        id: "12345", // id from mocked newUid
+                        selectedVariables: [],
+                        unselectedVariables: []
+                    }
+                ]
+            })
         });
     });
 
@@ -739,9 +767,13 @@ describe("serialise", () => {
             versions: null
         } as any;
         deserialiseState(target, serialised);
-        expect(target.graphs.config[0].selectedVariables).toStrictEqual(["S", "I", "R"]);
-        expect(target.graphs.config[0].unselectedVariables).toStrictEqual([]);
-        expect(target.graphs.config[0].id.length).toBe(32);
+        expect(target.graphs.config).toStrictEqual([
+            {
+                id: "12345",
+                selectedVariables: ["S", "I", "R"],
+                unselectedVariables: []
+            }
+        ]);
     });
 
     it("deserialises default graph settings when undefined in serialised state", () => {
