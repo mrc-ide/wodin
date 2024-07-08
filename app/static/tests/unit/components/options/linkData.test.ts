@@ -33,7 +33,7 @@ describe("LinkData", () => {
                 graphs: {
                     namespaced: true,
                     state: mockGraphsState({
-                        config: [{ selectedVariables: ["I", "R"], unselectedVariables: [] }]
+                        config: [{ id: "123", selectedVariables: ["I", "R"], unselectedVariables: [] }]
                     }),
                     getters: graphGetters
                 },
