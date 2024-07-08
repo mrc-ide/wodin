@@ -1,7 +1,6 @@
 import { expect, test, Page } from "@playwright/test";
-import { plot } from "plotly.js-basic-dist-min";
 import PlaywrightConfig from "../../playwright.config";
-import { saveSessionTimeout, writeCode } from "./utils";
+import { saveSessionTimeout, writeCode ,expectGraphVariables} from "./utils";
 
 export const newValidCode = `## Derivatives
 deriv(y1) <- sigma * (y2 - y1)

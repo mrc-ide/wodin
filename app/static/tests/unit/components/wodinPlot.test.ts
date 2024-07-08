@@ -1,6 +1,4 @@
 // Mock the import of plotly so we can mock Plotly methods
-import {margin} from "../../../src/app/plot";
-
 jest.mock("plotly.js-basic-dist-min", () => ({
     newPlot: jest.fn(),
     react: jest.fn(),

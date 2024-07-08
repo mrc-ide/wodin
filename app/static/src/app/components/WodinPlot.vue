@@ -99,16 +99,24 @@ export default defineComponent({
             return result;
         };
 
-        const preserveYAxisRange = (layout: Partial<Layout>) => {
+        const preserveYAxisRange = (layout: Partial<Layout>): Partial<Layout> => {
           // When updating plot view in response to some data change or event, retain Y axis range in layout
           // either from the locked range, or from the last range user zoomed to.
           // (Locked range will survive re-mount and tab change, the last range from zoom will not)
+          const result = {...layout};
           if (lockYAxis.value) {
-            layout.yaxis!.range = [...yAxisRange.value];
-            layout.yaxis!.autorange = false;
+            result.yaxis = {
+              ...result.yaxis,
+              range: [...yAxisRange.value],
+              autorange: false
+            };
           } else if (lastYAxisFromZoom.value) {
-            layout.yaxis = {...layout.yaxis, ...lastYAxisFromZoom.value}
+            result.yaxis = {
+              ...result.yaxis,
+              ...lastYAxisFromZoom.value
+            }
           }
+          return result;
         };
 
         const updateXAxisRange = async (xAxis: Partial<LayoutAxis>) => {
@@ -119,8 +127,7 @@ export default defineComponent({
                 data = props.plotData(xAxis.range![0], xAxis.range![1], nPoints);
             }
 
-            const layout = defaultLayout();
-            preserveYAxisRange(layout);
+            const layout = preserveYAxisRange(defaultLayout());
 
             const el = plot.value as HTMLElement;
             await react(el, data, layout, config);
@@ -164,9 +171,9 @@ export default defineComponent({
 
                 if (hasPlotData.value) {
                     const el = plot.value as unknown;
-                    const layout = defaultLayout();
+                    let layout = defaultLayout();
                     if (!toggleLogScale) {
-                      preserveYAxisRange(layout);
+                      layout = preserveYAxisRange(layout);
                     }
                     const configCopy = { ...config } as Partial<Config>;
 

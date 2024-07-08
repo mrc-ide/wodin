@@ -55,6 +55,7 @@
 import { useStore } from "vuex";
 import {computed, defineComponent, Ref, ref} from "vue";
 import VueFeather from "vue-feather";
+import {LayoutAxis} from "plotly.js-basic-dist-min";
 import { RunMutation } from "../../store/run/mutations";
 import RunPlot from "./RunPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
@@ -69,7 +70,6 @@ import { AppType } from "../../store/appState/state";
 import { ModelGetter } from "../../store/model/getters";
 import RunStochasticPlot from "./RunStochasticPlot.vue";
 import { GraphsGetter } from "../../store/graphs/getters";
-import {LayoutAxis} from "plotly.js-basic-dist-min";
 
 export default defineComponent({
     name: "RunTab",

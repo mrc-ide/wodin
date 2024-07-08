@@ -38,7 +38,11 @@ describe("Graphs mutations", () => {
             selectedVariables: ["x", "z"],
             unselectedVariables: ["y"]
         });
-        expect(testState.config[1]).toStrictEqual({ id: "456", selectedVariables: ["x", "z"], unselectedVariables: ["y"] });
+        expect(testState.config[1]).toStrictEqual({
+            id: "456",
+            selectedVariables: ["x", "z"],
+            unselectedVariables: ["y"]
+        });
         expect(testState.config[0]).toStrictEqual({ id: "123", selectedVariables: [], unselectedVariables: [] });
     });
 

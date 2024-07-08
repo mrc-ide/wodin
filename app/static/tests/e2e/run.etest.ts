@@ -34,14 +34,14 @@ test.describe("Run Tab", () => {
         await expectGraphVariables(page, 0, ["R"]);
         await expectGraphVariables(page, 1, ["S"]);
         await expectGraphVariables(page, 2, ["I"]);
-        //Sanity check that each graph has expected initial x axis ticks for full 0-100 time range
+        // Sanity check that each graph has expected initial x axis ticks for full 0-100 time range
         await expectXTicks(page, 3, [0, 20, 40, 60, 80, 100]);
 
         // 2. Drag to zoom to an area on the first graph
-        const firstGraphBoundingBox = await page.locator(":nth-match(.plot-container .draglayer .xy .nsewdrag, 1)").boundingBox()!;
-        await page.mouse.move(firstGraphBoundingBox.x + 100, firstGraphBoundingBox.y + 50);
+        const graphBounds = await page.locator(":nth-match(.plot .draglayer .xy .nsewdrag, 1)").boundingBox()!;
+        await page.mouse.move(graphBounds.x + 100, graphBounds.y + 50);
         await page.mouse.down();
-        await page.mouse.move(firstGraphBoundingBox.x + 300, firstGraphBoundingBox.y + 100);
+        await page.mouse.move(graphBounds.x + 300, graphBounds.y + 100);
         await page.mouse.up();
 
         // 3. Check - using x axis ticks - that the expected x axis values are shown on all three graphs.
