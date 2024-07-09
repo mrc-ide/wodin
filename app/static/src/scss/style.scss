@@ -121,7 +121,6 @@ $grey: #ccc;
     border-width: 4px;
     padding: 4px;
     border-style: dashed;
-    margin-right: 6px;
 }
 
 .drop-zone-active {
@@ -133,8 +132,9 @@ $grey: #ccc;
 }
 
 .drop-zone-instruction {
-    height: 3rem;
+    min-height: 3rem;
     background-color: #eee;
+    width: 100%;
 }
 
 .variable {
