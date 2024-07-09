@@ -18,7 +18,7 @@ import {
     SerialisedMultiSensitivityState,
     SerialisedGraphsState
 } from "./types/serialisationTypes";
-import { GraphConfig, GraphsState } from "./store/graphs/state";
+import { GraphConfig, GraphsState, defaultGraphSettings } from "./store/graphs/state";
 import { Dict } from "./types/utilTypes";
 import { MultiSensitivityState } from "./store/multiSensitivity/state";
 import { newUid } from "./utils";
@@ -148,7 +148,8 @@ export const serialiseGraphs = (state: GraphsState): SerialisedGraphsState => {
         ...state,
         config: state.config.map((c: GraphConfig) => ({
             selectedVariables: c.selectedVariables,
-            unselectedVariables: c.unselectedVariables
+            unselectedVariables: c.unselectedVariables,
+            settings: c.settings
         }))
     };
 };
@@ -159,7 +160,8 @@ export const deserialiseGraphs = (serialised: SerialisedGraphsState): GraphsStat
         config: serialised.config.map((s) => ({
             id: newUid(),
             selectedVariables: s.selectedVariables,
-            unselectedVariables: s.unselectedVariables
+            unselectedVariables: s.unselectedVariables,
+            settings: s.settings
         }))
     };
 };
@@ -207,7 +209,8 @@ export const deserialiseState = (targetState: AppState, serialised: SerialisedAp
             {
                 id: graphs!.config[0].id,
                 selectedVariables,
-                unselectedVariables
+                unselectedVariables,
+                settings: defaultGraphSettings()
             }
         ];
     }

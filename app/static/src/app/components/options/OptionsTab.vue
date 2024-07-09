@@ -16,8 +16,8 @@
         <vertical-collapse v-if="fitTabIsOpen" title="Optimisation" collapse-id="optimisation">
             <optimisation-options></optimisation-options>
         </vertical-collapse>
-        <vertical-collapse v-if="!multiSensitivityOpen" title="Graph Settings" collapse-id="graph-settings">
-            <graph-settings></graph-settings>
+        <vertical-collapse v-if="fitTabIsOpen" title="Graph Settings" collapse-id="graph-settings">
+            <graph-settings :fit-plot="true"></graph-settings>
         </vertical-collapse>
         <vertical-collapse
             v-if="!isStochastic"
@@ -45,7 +45,7 @@ import LinkData from "./LinkData.vue";
 import SensitivityOptions from "./SensitivityOptions.vue";
 import OptimisationOptions from "./OptimisationOptions.vue";
 import { AppType, VisualisationTab } from "../../store/appState/state";
-import GraphSettings from "./GraphSettings.vue";
+import GraphSettings from "../GraphSettings.vue";
 import ParameterSets from "./ParameterSets.vue";
 import AdvancedSettings from "./AdvancedSettings.vue";
 

@@ -12,6 +12,7 @@
                 <vue-feather class="inline-icon clickable ms-2" type="trash-2"></vue-feather>
             </button>
         </h5>
+        <graph-settings :fit-plot="false" :graph-index="graphIndex"></graph-settings>
         <div class="drop-zone" :class="dragging ? 'drop-zone-active' : 'drop-zone-inactive'">
             <template v-for="variable in selectedVariables" :key="variable">
                 <span
@@ -40,10 +41,12 @@ import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import SelectVariables from "../mixins/selectVariables";
 import { GraphsMutation } from "../../store/graphs/mutations";
+import GraphSettings from "@/app/components/GraphSettings.vue";
 
 export default defineComponent({
     name: "GraphConfig",
     components: {
+      GraphSettings,
         VueFeather
     },
     props: {

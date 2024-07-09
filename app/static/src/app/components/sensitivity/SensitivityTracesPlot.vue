@@ -9,6 +9,8 @@
                 ? [...solutions, allFitData, selectedVariables, parameterSetBatches, parameterSetDisplayNames]
                 : []
         "
+        :fit-plot="false"
+        :graph-index="0"
     >
         <slot></slot>
     </wodin-plot>

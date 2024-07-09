@@ -5,6 +5,7 @@
         :end-time="endTime"
         :plot-data="allPlotData"
         :redrawWatches="solution ? [solution] : []"
+        :fit-plot="true"
     >
         <slot></slot>
     </wodin-plot>

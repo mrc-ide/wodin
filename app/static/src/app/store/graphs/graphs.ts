@@ -1,4 +1,4 @@
-import { GraphsState } from "./state";
+import {defaultGraphSettings, GraphsState} from "./state";
 import { actions } from "./actions";
 import { getters } from "./getters";
 import { mutations } from "./mutations";
@@ -9,14 +9,11 @@ export const defaultState = (): GraphsState => ({
         {
             id: newUid(),
             selectedVariables: [],
-            unselectedVariables: []
+            unselectedVariables: [],
+            settings: defaultGraphSettings()
         }
     ],
-    settings: {
-        logScaleYAxis: false,
-        lockYAxis: false,
-        yAxisRange: [0, 0]
-    }
+    fitGraphSettings: defaultGraphSettings()
 });
 
 export const graphs = {

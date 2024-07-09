@@ -1,7 +1,7 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import GraphSettings from "../../../../src/app/components/options/GraphSettings.vue";
+import GraphSettings from "../../../../src/app/components/GraphSettings.vue";
 import { GraphsMutation } from "../../../../src/app/store/graphs/mutations";
 
 describe("GraphSettings", () => {

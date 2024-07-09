@@ -2,7 +2,7 @@ import { ActionTree } from "vuex";
 import { GraphsMutation } from "./mutations";
 import { AppState, AppType } from "../appState/state";
 import { FitDataAction } from "../fitData/actions";
-import { GraphsState } from "./state";
+import { GraphsState, defaultGraphSettings } from "./state";
 import { newUid } from "../../utils";
 
 export enum GraphsAction {
@@ -30,6 +30,11 @@ export const actions: ActionTree<GraphsState, AppState> = {
     NewGraph(context) {
         const { rootState, commit } = context;
         const unselectedVariables = [...(rootState.model.odinModelResponse?.metadata?.variables || [])];
-        commit(GraphsMutation.AddGraph, { id: newUid(), selectedVariables: [], unselectedVariables });
+        commit(GraphsMutation.AddGraph, {
+            id: newUid(),
+            settings: defaultGraphSettings(),
+            selectedVariables: [],
+            unselectedVariables
+        });
     }
 };

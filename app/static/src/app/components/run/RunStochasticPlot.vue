@@ -6,6 +6,8 @@
         :plot-data="allPlotData"
         :redrawWatches="solution ? [solution] : []"
         :linked-x-axis="linkedXAxis"
+        :fit-plot="false"
+        :graph-index="graphIndex"
         @updateXAxis="updateXAxis"
     >
         <slot></slot>

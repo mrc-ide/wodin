@@ -59,6 +59,15 @@ export default defineComponent({
             type: Object as PropType<Partial<LayoutAxis> | null>,
             required: false,
             default: null
+        },
+        graphIndex: {
+            type: Number,
+            required: false,
+            default: -1
+        },
+        fitPlot: {
+            type: Boolean,
+            required: true
         }
     },
     emits: ["updateXAxis"],
@@ -75,9 +84,11 @@ export default defineComponent({
 
         const hasPlotData = computed(() => !!baseData.value?.length);
 
-        const yAxisType = computed(() => (store.state.graphs.settings.logScaleYAxis ? "log" : ("linear" as AxisType)));
-        const lockYAxis = computed(() => store.state.graphs.settings.lockYAxis);
-        const yAxisRange = computed(() => store.state.graphs.settings.yAxisRange as YAxisRange);
+        const settings = computed(() => props.fitPlot ? store.state.graphs.fitGraphSettings :
+            store.state.graphs.config[props.graphIndex].settings);
+        const yAxisType = computed(() => (settings.value.logScaleYAxis ? "log" : ("linear" as AxisType)));
+        const lockYAxis = computed(() => settings.value.lockYAxis);
+        const yAxisRange = computed(() => settings.value.yAxisRange as YAxisRange);
         const legendWidth = computed(() => store.getters[`graphs/${GraphsGetter.legendWidth}`]);
 
         // Remember the user's last y axis zoom, when we update from x axis potentially chosen in another graph
@@ -88,10 +99,11 @@ export default defineComponent({
             const plotLayout = (plot.value as any).layout;
             const yRange = plotLayout.yaxis?.range;
             if (plotLayout) {
-                // TODO: We do not yet have per-graph settings, so YAxisRange committed here, and used when user chooses
-                // to lock range will be overwritten by each graph, and so the y range of the final graph will be used
-                // by all - to be fixed in mrc-5442
-                store.commit(`graphs/${GraphsMutation.SetYAxisRange}`, yRange);
+                if (props.fitPlot) {
+                  store.commit(`graphs/${GraphsMutation.SetFitYAxisRange}`, yRange);
+                } else {
+                  store.commit(`graphs/${GraphsMutation.SetYAxisRange}`, {graphIndex: props.graphIndex, value: yRange});
+                }
             }
         };
 

@@ -12,7 +12,7 @@ import SensitivityOptions from "../../../../src/app/components/options/Sensitivi
 import OptimisationOptions from "../../../../src/app/components/options/OptimisationOptions.vue";
 import { mockModelState, mockRunState } from "../../../mocks";
 import { RunMutation } from "../../../../src/app/store/run/mutations";
-import GraphSettings from "../../../../src/app/components/options/GraphSettings.vue";
+import GraphSettings from "../../../../src/app/components/GraphSettings.vue";
 import ParameterSets from "../../../../src/app/components/options/ParameterSets.vue";
 import { getters as runGetters } from "../../../../src/app/store/run/getters";
 import AdvancedSettings from "../../../../src/app/components/options/AdvancedSettings.vue";

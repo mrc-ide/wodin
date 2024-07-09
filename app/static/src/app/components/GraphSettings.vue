@@ -27,27 +27,50 @@
 <script lang="ts">
 import { defineComponent, computed } from "vue";
 import { useStore } from "vuex";
-import { GraphsMutation } from "../../store/graphs/mutations";
+import { GraphsMutation } from "../store/graphs/mutations";
 
 export default defineComponent({
     name: "GraphSettings",
-    setup() {
+    props: {
+      graphIndex: {
+        type: Number,
+        required: false,
+        default: -1
+      },
+      fitPlot: {
+        type: Boolean,
+        required: true
+      }
+    },
+    setup(props) {
         const store = useStore();
+        const settings = computed(() => props.fitPlot ? store.state.graphs.fitGraphSettings :
+            store.state.graphs.config[props.graphIndex].settings);
         const logScaleYAxis = computed({
             get() {
-                return store.state.graphs.settings.logScaleYAxis;
+                return settings.value.logScaleYAxis;
             },
             set(newValue) {
-                store.commit(`graphs/${GraphsMutation.SetLogScaleYAxis}`, newValue);
+                if (props.fitPlot) {
+                  store.commit(`graphs/${GraphsMutation.SetFitLogScaleYAxis}`, newValue);
+                } else {
+                  store.commit(`graphs/${GraphsMutation.SetLogScaleYAxis}`,
+                      {graphIndex: props.graphIndex, value: newValue});
+                }
             }
         });
 
         const lockYAxis = computed({
             get() {
-                return store.state.graphs.settings.lockYAxis;
+                return settings.value.lockYAxis;
             },
             set(newValue) {
-                store.commit(`graphs/${GraphsMutation.SetLockYAxis}`, newValue);
+                if (props.fitPlot) {
+                  store.commit(`graphs/${GraphsMutation.SetFitLockYAxis}`, newValue);
+                } else {
+                  store.commit(`graphs/${GraphsMutation.SetLockYAxis}`,
+                      {graphIndex: props.graphIndex, value: newValue});
+                }
             }
         });
 
