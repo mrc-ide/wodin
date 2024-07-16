@@ -7,6 +7,7 @@ export interface GraphSettings {
 }
 
 export interface GraphConfig {
+    id: string; // We need to keep a persistent id to identify configs in vue when a graph is deleted from the array
     selectedVariables: string[];
     unselectedVariables: string[]; // We keep track of unselected variables too so we can retain on model update
 }

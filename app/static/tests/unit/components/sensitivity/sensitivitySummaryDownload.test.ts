@@ -86,6 +86,7 @@ describe("SensitivitySummaryDownload", () => {
                     state: mockGraphsState({
                         config: [
                             {
+                                id: "123",
                                 selectedVariables: ["S"],
                                 unselectedVariables: []
                             }

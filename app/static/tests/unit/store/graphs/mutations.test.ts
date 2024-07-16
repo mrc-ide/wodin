@@ -29,8 +29,8 @@ describe("Graphs mutations", () => {
     it("SetSelectedVariables sets selected and unselected variables", () => {
         const testState = mockGraphsState({
             config: [
-                { selectedVariables: [], unselectedVariables: [] },
-                { selectedVariables: [], unselectedVariables: [] }
+                { id: "123", selectedVariables: [], unselectedVariables: [] },
+                { id: "456", selectedVariables: [], unselectedVariables: [] }
             ]
         });
         mutations.SetSelectedVariables(testState, {
@@ -38,33 +38,37 @@ describe("Graphs mutations", () => {
             selectedVariables: ["x", "z"],
             unselectedVariables: ["y"]
         });
-        expect(testState.config[1]).toStrictEqual({ selectedVariables: ["x", "z"], unselectedVariables: ["y"] });
-        expect(testState.config[0]).toStrictEqual({ selectedVariables: [], unselectedVariables: [] });
+        expect(testState.config[1]).toStrictEqual({
+            id: "456",
+            selectedVariables: ["x", "z"],
+            unselectedVariables: ["y"]
+        });
+        expect(testState.config[0]).toStrictEqual({ id: "123", selectedVariables: [], unselectedVariables: [] });
     });
 
     it("AddGraph pushes new graph to config", () => {
         const testState = mockGraphsState({
-            config: [{ selectedVariables: ["a"], unselectedVariables: ["b", "c"] }]
+            config: [{ id: "123", selectedVariables: ["a"], unselectedVariables: ["b", "c"] }]
         });
-        mutations.AddGraph(testState, { selectedVariables: [], unselectedVariables: ["b", "a", "c"] });
+        mutations.AddGraph(testState, { id: "456", selectedVariables: [], unselectedVariables: ["b", "a", "c"] });
         expect(testState.config).toStrictEqual([
-            { selectedVariables: ["a"], unselectedVariables: ["b", "c"] },
-            { selectedVariables: [], unselectedVariables: ["b", "a", "c"] }
+            { id: "123", selectedVariables: ["a"], unselectedVariables: ["b", "c"] },
+            { id: "456", selectedVariables: [], unselectedVariables: ["b", "a", "c"] }
         ]);
     });
 
     it("DeleteGraph removes graph from config", () => {
         const testState = mockGraphsState({
             config: [
-                { selectedVariables: ["a"], unselectedVariables: ["b", "c"] },
-                { selectedVariables: ["b"], unselectedVariables: ["a", "c"] },
-                { selectedVariables: ["c"], unselectedVariables: ["a", "b"] }
+                { id: "1", selectedVariables: ["a"], unselectedVariables: ["b", "c"] },
+                { id: "2", selectedVariables: ["b"], unselectedVariables: ["a", "c"] },
+                { id: "3", selectedVariables: ["c"], unselectedVariables: ["a", "b"] }
             ]
         });
         mutations.DeleteGraph(testState, 1);
         expect(testState.config).toStrictEqual([
-            { selectedVariables: ["a"], unselectedVariables: ["b", "c"] },
-            { selectedVariables: ["c"], unselectedVariables: ["a", "b"] }
+            { id: "1", selectedVariables: ["a"], unselectedVariables: ["b", "c"] },
+            { id: "3", selectedVariables: ["c"], unselectedVariables: ["a", "b"] }
         ]);
     });
 });

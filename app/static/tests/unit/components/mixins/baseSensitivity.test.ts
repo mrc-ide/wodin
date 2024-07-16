@@ -7,7 +7,6 @@ import { AppState } from "../../../../src/app/store/appState/state";
 import { BaseSensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
 import { BaseSensitivityAction } from "../../../../src/app/store/sensitivity/actions";
 import { getters as graphGetters } from "../../../../src/app/store/graphs/getters";
-import mock = jest.mock;
 import { mockGraphsState } from "../../../mocks";
 
 describe("baseSensitivity mixin", () => {
@@ -30,7 +29,7 @@ describe("baseSensitivity mixin", () => {
                 graphs: {
                     namespaced: true,
                     state: mockGraphsState({
-                        config: [{ selectedVariables, unselectedVariables: [] }]
+                        config: [{ id: "123", selectedVariables, unselectedVariables: [] }]
                     }),
                     getters: graphGetters
                 },

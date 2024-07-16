@@ -126,6 +126,7 @@ export const mockGraphsState = (state: Partial<GraphsState> = {}): GraphsState =
     return {
         config: [
             {
+                id: "123",
                 selectedVariables: [],
                 unselectedVariables: []
             }

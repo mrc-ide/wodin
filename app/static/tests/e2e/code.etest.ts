@@ -1,7 +1,6 @@
 import { expect, test, Page } from "@playwright/test";
-import { plot } from "plotly.js-basic-dist-min";
 import PlaywrightConfig from "../../playwright.config";
-import { saveSessionTimeout, writeCode } from "./utils";
+import { saveSessionTimeout, writeCode, expectGraphVariables } from "./utils";
 
 export const newValidCode = `## Derivatives
 deriv(y1) <- sigma * (y2 - y1)
@@ -292,24 +291,6 @@ test.describe("Code Tab tests", () => {
             "An error occurred while running the model: Integration failure: too many steps at 0"
         );
     });
-
-    const expectGraphVariables = async (page: Page, graphIndex: number, expectedVariables: string[]) => {
-        // expect to find these variables in config panel and on plot series
-        const configPanel = await page.locator(`:nth-match(.graph-config-panel, ${graphIndex + 1})`);
-        const configVars = await configPanel.locator(".variable .variable-name");
-        await expect(configVars).toHaveCount(expectedVariables.length);
-
-        const plotSummary = await page.locator(
-            `:nth-match(.wodin-plot-container .wodin-plot-data-summary, ${graphIndex + 1})`
-        );
-        for (let i = 0; i < expectedVariables.length; i++) {
-            await expect(configVars.nth(i)).toHaveText(expectedVariables[i]);
-            await expect(plotSummary.locator(`:nth-match(.wodin-plot-data-summary-series, ${i + 1})`)).toHaveAttribute(
-                "name",
-                expectedVariables[i]
-            );
-        }
-    };
 
     test("can hide and unhide variables", async ({ page }) => {
         // drag I to Hidden Variables

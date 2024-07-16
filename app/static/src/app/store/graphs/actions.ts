@@ -3,6 +3,7 @@ import { GraphsMutation } from "./mutations";
 import { AppState, AppType } from "../appState/state";
 import { FitDataAction } from "../fitData/actions";
 import { GraphsState } from "./state";
+import { newUid } from "../../utils";
 
 export enum GraphsAction {
     UpdateSelectedVariables = "UpdateSelectedVariables",
@@ -29,6 +30,6 @@ export const actions: ActionTree<GraphsState, AppState> = {
     NewGraph(context) {
         const { rootState, commit } = context;
         const unselectedVariables = [...(rootState.model.odinModelResponse?.metadata?.variables || [])];
-        commit(GraphsMutation.AddGraph, { selectedVariables: [], unselectedVariables });
+        commit(GraphsMutation.AddGraph, { id: newUid(), selectedVariables: [], unselectedVariables });
     }
 };

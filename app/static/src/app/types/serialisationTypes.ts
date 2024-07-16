@@ -11,7 +11,7 @@ import { VisualisationTab } from "../store/appState/state";
 import { CodeState } from "../store/code/state";
 import { FitDataState } from "../store/fitData/state";
 import { Palette } from "../palette";
-import { GraphsState } from "../store/graphs/state";
+import { GraphSettings } from "../store/graphs/state";
 import { Dict } from "./utilTypes";
 
 export interface SerialisedRunResult {
@@ -73,6 +73,11 @@ export interface SerialisedModelFitState {
     error: null | WodinError;
 }
 
+export interface SerialisedGraphsState {
+    config: { selectedVariables: string[]; unselectedVariables: string[] }[];
+    settings: GraphSettings; // TODO: this will be replaced by per-graph settings in mrc-5442
+}
+
 export interface SerialisedAppState {
     openVisualisationTab: VisualisationTab;
     code: CodeState;
@@ -80,7 +85,7 @@ export interface SerialisedAppState {
     run: SerialisedRunState;
     sensitivity: SerialisedSensitivityState;
     multiSensitivity: SerialisedMultiSensitivityState;
-    graphs: GraphsState;
+    graphs: SerialisedGraphsState;
     fitData?: FitDataState;
     modelFit?: SerialisedModelFitState;
 }
