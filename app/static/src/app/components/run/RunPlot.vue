@@ -8,6 +8,7 @@
         :linked-x-axis="linkedXAxis"
         :fit-plot="false"
         :graph-index="graphIndex"
+        :graph-config="graphConfig"
         @updateXAxis="updateXAxis"
     >
         <slot></slot>
@@ -26,6 +27,7 @@ import { OdinSolution, Times } from "../../types/responseTypes";
 import { Dict } from "../../types/utilTypes";
 import { runPlaceholderMessage } from "../../utils";
 import { ParameterSet } from "../../store/run/state";
+import {GraphConfig} from "../../store/graphs/state";
 
 export default defineComponent({
     name: "RunPlot",
@@ -34,6 +36,10 @@ export default defineComponent({
         graphIndex: {
             type: Number,
             default: 0
+        },
+        graphConfig: {
+          type: Object as PropType<GraphConfig>,
+          required: true
         },
         linkedXAxis: {
             type: Object as PropType<Partial<LayoutAxis> | null>,
@@ -71,7 +77,7 @@ export default defineComponent({
 
         const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData}`]);
 
-        const selectedVariables = computed(() => store.state.graphs.config[props.graphIndex].selectedVariables);
+        const selectedVariables = computed(() => props.graphConfig.selectedVariables);
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, false));
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {

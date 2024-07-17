@@ -8,6 +8,7 @@
             <run-stochastic-plot
                 v-if="isStochastic"
                 :fade-plot="!!updateMsg"
+                :graph-config="config"
                 :graph-index="index"
                 :linked-x-axis="xAxis"
                 @updateXAxis="updateXAxis"
@@ -16,6 +17,7 @@
                 v-else
                 :fade-plot="!!updateMsg"
                 :model-fit="false"
+                :graph-config="config"
                 :graph-index="index"
                 :linked-x-axis="xAxis"
                 @updateXAxis="updateXAxis"

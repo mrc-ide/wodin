@@ -26,7 +26,7 @@ import {
 import { WodinPlotData, fadePlotStyle, margin, config } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
 import { GraphsMutation } from "../store/graphs/mutations";
-import { YAxisRange } from "../store/graphs/state";
+import {GraphConfig, YAxisRange} from "../store/graphs/state";
 import { GraphsGetter } from "../store/graphs/getters";
 
 export default defineComponent({
@@ -65,6 +65,10 @@ export default defineComponent({
             required: false,
             default: -1
         },
+        graphConfig: {
+            type: Object as PropType<GraphConfig | null>,
+            required: true
+        },
         fitPlot: {
             type: Boolean,
             required: true
@@ -85,7 +89,7 @@ export default defineComponent({
         const hasPlotData = computed(() => !!baseData.value?.length);
 
         const settings = computed(() => props.fitPlot ? store.state.graphs.fitGraphSettings :
-            store.state.graphs.config[props.graphIndex].settings);
+            props.graphConfig!.settings);
         const yAxisType = computed(() => (settings.value.logScaleYAxis ? "log" : ("linear" as AxisType)));
         const lockYAxis = computed(() => settings.value.lockYAxis);
         const yAxisRange = computed(() => settings.value.yAxisRange as YAxisRange);
