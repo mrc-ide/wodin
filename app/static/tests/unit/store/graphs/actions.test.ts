@@ -3,6 +3,7 @@ import { actions, GraphsAction } from "../../../../src/app/store/graphs/actions"
 import { GraphsMutation } from "../../../../src/app/store/graphs/mutations";
 import { AppType } from "../../../../src/app/store/appState/state";
 import { FitDataAction } from "../../../../src/app/store/fitData/actions";
+import {defaultGraphSettings} from "../../../../src/app/store/graphs/state";
 
 describe("Graphs actions", () => {
     const modelState = {
@@ -87,5 +88,6 @@ describe("Graphs actions", () => {
         expect(commit.mock.calls[0][1].selectedVariables).toStrictEqual([]);
         expect(commit.mock.calls[0][1].unselectedVariables).toStrictEqual(["b", "a", "c"]);
         expect(commit.mock.calls[0][1].id.length).toBe(32);
+        expect(commit.mock.calls[0][1].settings).toStrictEqual(defaultGraphSettings());
     });
 });

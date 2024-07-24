@@ -1,4 +1,6 @@
 // Mock the import of plotly so we can mock Plotly methods
+import {defaultGraphSettings} from "../../../src/app/store/graphs/state";
+
 jest.mock("plotly.js-basic-dist-min", () => ({
     newPlot: jest.fn(),
     react: jest.fn(),
@@ -55,25 +57,28 @@ describe("WodinPlot", () => {
         endTime: 99,
         redrawWatches: [],
         plotData: mockPlotDataFn,
-        placeholderMessage: "No data available"
+        placeholderMessage: "No data available",
+        fitPlot: false,
+        graphIndex: 0,
+        graphConfig: { settings: defaultGraphSettings() }
     };
 
     const mockSetYAxisRange = jest.fn();
+    const mockSetFitYAxisRange = jest.fn();
 
-    const getStore = (logScaleYAxis = false, lockYAxis = false) => {
+    const getStore = (
+        fitGraphSettings = defaultGraphSettings()
+   ) => {
         return new Vuex.Store<BasicState>({
             modules: {
                 graphs: {
                     namespaced: true,
                     state: {
-                        settings: {
-                            logScaleYAxis,
-                            lockYAxis,
-                            yAxisRange: [10, 20]
-                        }
+                        fitGraphSettings
                     },
                     mutations: {
-                        [GraphsMutation.SetYAxisRange]: mockSetYAxisRange
+                        [GraphsMutation.SetYAxisRange]: mockSetYAxisRange,
+                        [GraphsMutation.SetFitYAxisRange]: mockSetFitYAxisRange
                     }
                 }
             }
@@ -110,7 +115,6 @@ describe("WodinPlot", () => {
     afterEach(() => {
         jest.clearAllMocks();
         jest.restoreAllMocks();
-        mockSetYAxisRange.mockReset();
     });
 
     it("renders plot ref element", () => {
@@ -256,8 +260,16 @@ describe("WodinPlot", () => {
     });
 
     it("relayout preserves locked y axis range", async () => {
-        const store = getStore(false, true);
-        const wrapper = getWrapper({}, store);
+        const store = getStore();
+        const wrapper = getWrapper({
+            graphConfig: {
+                settings: {
+                    ...defaultGraphSettings(),
+                    lockYAxis: true,
+                    yAxisRange: [10, 20]
+                }
+            }
+        }, store);
         const { relayout } = wrapper.vm as any;
         const relayoutEvent = {
             "xaxis.autorange": false,
@@ -400,8 +412,26 @@ describe("WodinPlot", () => {
     });
 
     it("renders y axis log scale if graph setting is set", async () => {
-        const store = getStore(true);
-        const wrapper = getWrapper({}, store);
+        const store = getStore();
+        const wrapper = getWrapper({
+            graphConfig: {
+                settings: {...defaultGraphSettings(), logScaleYAxis: true}
+            }
+        }, store);
+        mockPlotElementOn(wrapper);
+
+        wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+        expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({
+            margin: { t: 25 },
+            xaxis: { title: "Time" },
+            yaxis: { type: "log" }
+        });
+    });
+
+    it("renders y axis log scale if fit graph setting is set, and fitPlot is true", async () => {
+        const store = getStore({...defaultGraphSettings(), logScaleYAxis: true});
+        const wrapper = getWrapper({ fitPlot: true }, store);
         mockPlotElementOn(wrapper);
 
         wrapper.setProps({ redrawWatches: [{} as any] });
@@ -414,8 +444,34 @@ describe("WodinPlot", () => {
     });
 
     it("locks axes if graph setting is set", async () => {
-        const store = getStore(false, true);
-        const wrapper = getWrapper({}, store);
+        const store = getStore();
+        const wrapper = getWrapper({
+            graphConfig: {
+                settings: {
+                    ...defaultGraphSettings(),
+                    lockYAxis: true,
+                    yAxisRange: [10, 20]
+                }
+            }
+        }, store);
+        mockPlotElementOn(wrapper);
+
+        wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+        expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({
+            margin: { t: 25 },
+            xaxis: { title: "Time" },
+            yaxis: { type: "linear", autorange: false, range: [10, 20] }
+        });
+    });
+
+    it("locks axes if fit graph setting is set, and fitPlot is true", async () => {
+        const store = getStore({
+            ...defaultGraphSettings(),
+            lockYAxis: true,
+            yAxisRange: [10, 20]
+        });
+        const wrapper = getWrapper({ fitPlot: true }, store);
         mockPlotElementOn(wrapper);
 
         wrapper.setProps({ redrawWatches: [{} as any] });
@@ -428,7 +484,7 @@ describe("WodinPlot", () => {
     });
 
     it("commits SetYAxisRange on drawPlot", async () => {
-        const store = getStore(false, false);
+        const store = getStore();
         const wrapper = getWrapper({}, store);
         mockPlotElementOn(wrapper);
 
@@ -439,12 +495,33 @@ describe("WodinPlot", () => {
         await nextTick();
         await wrapper.setProps({ redrawWatches: [{} as any] });
         await nextTick();
-        expect(mockSetYAxisRange.mock.calls[0][1]).toStrictEqual([1, 2]);
+        expect(mockSetYAxisRange.mock.calls[0][1]).toStrictEqual({graphIndex: 0, value: [1, 2]});
+        expect(mockSetFitYAxisRange).not.toHaveBeenCalled();
+    });
+
+    it("commits SetFitYAxisRange on drawPlot, when fitPlot is true", async () => {
+        const store = getStore();
+        const wrapper = getWrapper({fitPlot: true}, store);
+        mockPlotElementOn(wrapper);
+
+        (wrapper.vm as any).plot = {
+            layout: mockLayout,
+            on: jest.fn()
+        };
+        await nextTick();
+        await wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+        expect(mockSetFitYAxisRange.mock.calls[0][1]).toStrictEqual([1, 2]);
+        expect(mockSetYAxisRange).not.toHaveBeenCalled();
     });
 
     it("relayout uses graph settings log scale y axis value", async () => {
-        const store = getStore(true);
-        const wrapper = getWrapper({}, store);
+        const store = getStore();
+        const wrapper = getWrapper({
+            graphConfig: {
+                settings: {...defaultGraphSettings(), logScaleYAxis: true}
+            }
+        }, store);
         mockPlotElementOn(wrapper);
 
         wrapper.setProps({ redrawWatches: [{} as any] });
@@ -491,8 +568,11 @@ describe("WodinPlot", () => {
         expect(mockPlotlyNewPlot).toBeCalledTimes(1);
         expect(mockOn).toBeCalledTimes(1);
 
-        const store = (wrapper.vm as any).$store;
-        store.state.graphs.settings.logScaleYAxis = true;
+        await wrapper.setProps({
+            graphConfig: {
+                settings: {...defaultGraphSettings(), logScaleYAxis: true}
+            }
+        });
         await nextTick();
 
         expect(mockPlotDataFn).toBeCalledTimes(2);
@@ -509,9 +589,12 @@ describe("WodinPlot", () => {
         expect(mockPlotlyNewPlot).toBeCalledTimes(1);
         expect(mockOn).toBeCalledTimes(1);
 
-        await wrapper.setProps({ fadePlot: true });
-        const store = (wrapper.vm as any).$store;
-        store.state.graphs.settings.logScaleYAxis = true;
+        await wrapper.setProps({
+            fadePlot: true,
+            graphConfig: {
+                settings: {...defaultGraphSettings(), logScaleYAxis: true}
+            }
+        });
         await nextTick();
 
         expect(mockPlotDataFn).toBeCalledTimes(1);
