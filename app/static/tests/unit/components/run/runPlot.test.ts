@@ -273,6 +273,7 @@ describe("RunPlot", () => {
         const wrapper = shallowMount(RunPlot, {
             props: {
                 fadePlot: false,
+                graphIndex: 0,
                 graphConfig
             },
             global: {
