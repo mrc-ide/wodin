@@ -1,6 +1,6 @@
 <template>
     <div>
-      <div id="log-scale-y-axis" class="form-check form-check-inline">
+      <div class="log-scale-y-axis form-check form-check-inline">
           <label class="form-check-label">Log scale y axis</label>
           <input
               type="checkbox"
@@ -9,7 +9,7 @@
               v-model="logScaleYAxis"
           />
       </div>
-      <div id="lock-y-axis" class="form-check form-check-inline">
+      <div class="lock-y-axis form-check form-check-inline">
           <label class="form-check-label">Lock y axis</label>
           <input type="checkbox" class="form-check-input" style="vertical-align: bottom" v-model="lockYAxis" />
 

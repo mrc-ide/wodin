@@ -189,7 +189,7 @@ test.describe("Wodin App model fit tests", () => {
         await page.click(":nth-match(input.vary-param-check, 2)");
 
         // change advanced setting to sabotage fit
-        await page.click(":nth-match(.collapse-title, 6)"); // Open Advanced Settings
+        await page.click(":nth-match(.collapse-title, 5)"); // Open Advanced Settings
         const advancedSettingPanel = await page.locator("#advanced-settings-panel");
         const input1 = await advancedSettingPanel.locator(":nth-match(input, 1)");
         const input2 = await advancedSettingPanel.locator(":nth-match(input, 2)");
