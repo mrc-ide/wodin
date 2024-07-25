@@ -20,6 +20,9 @@ export interface GraphsGettersValues {
     [GraphsGetter.legendWidth]: number;
 }
 
+const LEGEND_LINE_PADDING = 40;
+const LEGEND_WIDTH_PER_CHAR = 10;
+
 export const getters: GraphsGetters & GetterTree<GraphsState, AppState> = {
     [GraphsGetter.allSelectedVariables]: (state: GraphsState): string[] => {
         return state.config.flatMap((c) => c.selectedVariables); // TODO: dedupe, in mrc-5443
@@ -33,6 +36,6 @@ export const getters: GraphsGetters & GetterTree<GraphsState, AppState> = {
         const longestVar = graphsGetters[GraphsGetter.allSelectedVariables].sort((a: string, b: string) =>
             a.length < b.length ? 1 : -1
         )[0];
-        return longestVar.length * 10 + 40;
+        return longestVar.length * LEGEND_WIDTH_PER_CHAR + LEGEND_LINE_PADDING;
     }
 };

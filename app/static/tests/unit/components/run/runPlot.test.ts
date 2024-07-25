@@ -9,7 +9,7 @@ import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
 import { getters as runGetters } from "../../../../src/app/store/run/getters";
-import { mockGraphsState, mockRunState } from "../../../mocks";
+import { mockGraphsState, mockModelState, mockRunState } from "../../../mocks";
 import { defaultGraphSettings } from "../../../../src/app/store/graphs/state";
 
 describe("RunPlot", () => {
@@ -434,7 +434,8 @@ describe("RunPlot", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 graphs: graphsState,
-                run: mockRunState()
+                run: mockRunState(),
+                model: mockModelState()
             } as any
         });
         const wrapper = shallowMount(RunPlot, {
@@ -576,7 +577,8 @@ describe("RunPlot", () => {
                 graphs: mockGraphsState({
                     config: [{ selectedVariables: [] }]
                 } as any),
-                run: mockRunState()
+                run: mockRunState(),
+                model: mockModelState()
             } as any
         });
         const wrapper = shallowMount(RunPlot, {
