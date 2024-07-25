@@ -119,9 +119,11 @@ export default defineComponent({
 
         const defaultLayout = (): Partial<Layout> => {
             // Get generic layout, which will be modifed dynamically as required
+            // Show Time label on final graph only
+            const xAxisTitle = props.fitPlot || props.graphIndex === store.state.graphs.config.length - 1 ? "Time" : "";
             const result = {
                 margin: { ...margin },
-                xaxis: { title: "Time" },
+                xaxis: { title: xAxisTitle },
                 yaxis: { type: yAxisType.value }
             };
             if (legendWidth.value) {
