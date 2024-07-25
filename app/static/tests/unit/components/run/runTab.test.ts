@@ -155,13 +155,19 @@ describe("RunTab", () => {
         expect(plots.at(0)!.props("graphIndex")).toBe(0);
         expect(plots.at(0)!.props("fadePlot")).toBe(false);
         expect(plots.at(0)!.props("linkedXAxis")).toStrictEqual({ autorange: true });
-        expect(plots.at(0)!.props("graphConfig"))
-            .toStrictEqual({ id: "123", selectedVariables: ["S"], unselectedVariables: [] });
+        expect(plots.at(0)!.props("graphConfig")).toStrictEqual({
+            id: "123",
+            selectedVariables: ["S"],
+            unselectedVariables: []
+        });
         expect(plots.at(1)!.props("graphIndex")).toBe(1);
         expect(plots.at(1)!.props("fadePlot")).toBe(false);
         expect(plots.at(1)!.props("linkedXAxis")).toStrictEqual({ autorange: true });
-        expect(plots.at(1)!.props("graphConfig"))
-            .toStrictEqual({ id: "456", selectedVariables: [], unselectedVariables: [] });
+        expect(plots.at(1)!.props("graphConfig")).toStrictEqual({
+            id: "456",
+            selectedVariables: [],
+            unselectedVariables: []
+        });
 
         // Download button disabled because there is no model solution
         const downloadBtn = wrapper.find("button#download-btn");
@@ -201,14 +207,20 @@ describe("RunTab", () => {
         expect(plots.at(0)!.props("graphIndex")).toBe(0);
         expect(plots.at(0)!.props("fadePlot")).toBe(false);
         expect(plots.at(0)!.props("linkedXAxis")).toStrictEqual({ autorange: true });
-        expect(plots.at(0)!.props("graphConfig"))
-            .toStrictEqual({ id: "123", selectedVariables: ["S"], unselectedVariables: [] });
+        expect(plots.at(0)!.props("graphConfig")).toStrictEqual({
+            id: "123",
+            selectedVariables: ["S"],
+            unselectedVariables: []
+        });
 
         expect(plots.at(1)!.props("graphIndex")).toBe(1);
         expect(plots.at(1)!.props("fadePlot")).toBe(false);
         expect(plots.at(1)!.props("linkedXAxis")).toStrictEqual({ autorange: true });
-        expect(plots.at(1)!.props("graphConfig"))
-            .toStrictEqual({ id: "456", selectedVariables: [], unselectedVariables: [] });
+        expect(plots.at(1)!.props("graphConfig")).toStrictEqual({
+            id: "456",
+            selectedVariables: [],
+            unselectedVariables: []
+        });
 
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         expect(wrapper.findComponent(RunPlot).exists()).toBe(false);

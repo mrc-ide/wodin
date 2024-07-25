@@ -20,15 +20,15 @@ export interface SetSelectedVariablesPayload {
 }
 
 export const mutations: MutationTree<GraphsState> = {
-    [GraphsMutation.SetLogScaleYAxis](state: GraphsState, payload: {graphIndex: number, value: boolean}) {
+    [GraphsMutation.SetLogScaleYAxis](state: GraphsState, payload: { graphIndex: number; value: boolean }) {
         state.config[payload.graphIndex].settings.logScaleYAxis = payload.value;
     },
 
-    [GraphsMutation.SetLockYAxis](state: GraphsState, payload: {graphIndex: number, value: boolean}) {
+    [GraphsMutation.SetLockYAxis](state: GraphsState, payload: { graphIndex: number; value: boolean }) {
         state.config[payload.graphIndex].settings.lockYAxis = payload.value;
     },
 
-    [GraphsMutation.SetYAxisRange](state: GraphsState, payload: {graphIndex: number, value: YAxisRange}) {
+    [GraphsMutation.SetYAxisRange](state: GraphsState, payload: { graphIndex: number; value: YAxisRange }) {
         state.config[payload.graphIndex].settings.yAxisRange = payload.value;
     },
 

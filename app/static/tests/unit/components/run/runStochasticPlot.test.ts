@@ -1,6 +1,4 @@
 // Mock plotly before import RunStochasticTab, which indirectly imports plotly via WodinPlot
-import {defaultGraphSettings} from "../../../../src/app/store/graphs/state";
-
 jest.mock("plotly.js-basic-dist-min", () => {});
 
 /* eslint-disable import/first */
@@ -11,6 +9,7 @@ import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import { StochasticState } from "../../../../src/app/store/stochastic/state";
 import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
 import { mockGraphsState, mockModelState, mockRunState } from "../../../mocks";
+import { defaultGraphSettings } from "../../../../src/app/store/graphs/state";
 
 describe("RunPlot for stochastic", () => {
     const mockSolution = jest.fn().mockReturnValue({

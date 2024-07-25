@@ -3,7 +3,7 @@ import { shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../src/app/store/basic/state";
 import GraphSettings from "../../../src/app/components/GraphSettings.vue";
 import { GraphsMutation } from "../../../src/app/store/graphs/mutations";
-import {defaultGraphSettings} from "../../../src/app/store/graphs/state";
+import { defaultGraphSettings } from "../../../src/app/store/graphs/state";
 
 describe("GraphSettings", () => {
     const mockSetLogScaleYAxis = jest.fn();
@@ -65,9 +65,7 @@ describe("GraphSettings", () => {
     });
 
     it("renders as expected when fit plot", () => {
-        const wrapper = getWrapper(undefined, true, [
-            { lockYAxis: true, logScaleYAxis: true, yAxisRange: [0, 10] }
-        ]);
+        const wrapper = getWrapper(undefined, true, [{ lockYAxis: true, logScaleYAxis: true, yAxisRange: [0, 10] }]);
         const inputs = wrapper.findAll("input");
         expect((inputs[0].element as HTMLInputElement).checked).toBe(false);
         expect((inputs[1].element as HTMLInputElement).checked).toBe(false);
@@ -79,9 +77,9 @@ describe("GraphSettings", () => {
         expect((inputs[0].element as HTMLInputElement).checked).toBe(false);
         await inputs[0].setValue(true);
         expect(mockSetLogScaleYAxis).toHaveBeenCalledTimes(1);
-        expect(mockSetLogScaleYAxis.mock.calls[0][1]).toStrictEqual({graphIndex: 1, value: true});
+        expect(mockSetLogScaleYAxis.mock.calls[0][1]).toStrictEqual({ graphIndex: 1, value: true });
         expect(mockSetFitLogScaleYAxis).not.toHaveBeenCalled();
-    })
+    });
 
     it("commits change to log scale y axis setting, when fit plot", async () => {
         const wrapper = getWrapper(undefined, true);
@@ -99,7 +97,7 @@ describe("GraphSettings", () => {
         expect((inputs[1].element as HTMLInputElement).checked).toBe(false);
         await inputs[1].setValue(true);
         expect(mockSetLockYAxis).toHaveBeenCalledTimes(1);
-        expect(mockSetLockYAxis.mock.calls[0][1]).toStrictEqual({graphIndex: 1, value: true});
+        expect(mockSetLockYAxis.mock.calls[0][1]).toStrictEqual({ graphIndex: 1, value: true });
         expect(mockSetFitLockYAxis).not.toHaveBeenCalled();
     });
 

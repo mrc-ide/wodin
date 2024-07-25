@@ -27,7 +27,7 @@ import { OdinSolution, Times } from "../../types/responseTypes";
 import { Dict } from "../../types/utilTypes";
 import { runPlaceholderMessage } from "../../utils";
 import { ParameterSet } from "../../store/run/state";
-import {GraphConfig} from "../../store/graphs/state";
+import { GraphConfig } from "../../store/graphs/state";
 
 export default defineComponent({
     name: "RunPlot",
@@ -38,8 +38,8 @@ export default defineComponent({
             default: 0
         },
         graphConfig: {
-          type: Object as PropType<GraphConfig>,
-          required: true
+            type: Object as PropType<GraphConfig>,
+            required: true
         },
         linkedXAxis: {
             type: Object as PropType<Partial<LayoutAxis> | null>,

@@ -1,4 +1,4 @@
-import {defaultGraphSettings, GraphsState} from "./state";
+import { defaultGraphSettings, GraphsState } from "./state";
 import { actions } from "./actions";
 import { getters } from "./getters";
 import { mutations } from "./mutations";

@@ -23,4 +23,3 @@ export const defaultGraphSettings = (): GraphSettings => ({
     lockYAxis: false,
     yAxisRange: [0, 0]
 });
-

@@ -3,7 +3,7 @@ import { actions, GraphsAction } from "../../../../src/app/store/graphs/actions"
 import { GraphsMutation } from "../../../../src/app/store/graphs/mutations";
 import { AppType } from "../../../../src/app/store/appState/state";
 import { FitDataAction } from "../../../../src/app/store/fitData/actions";
-import {defaultGraphSettings} from "../../../../src/app/store/graphs/state";
+import { defaultGraphSettings } from "../../../../src/app/store/graphs/state";
 
 describe("Graphs actions", () => {
     const modelState = {

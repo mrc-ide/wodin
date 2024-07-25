@@ -1,6 +1,4 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via WodinPlot
-import {defaultGraphSettings} from "../../../../src/app/store/graphs/state";
-
 jest.mock("plotly.js-basic-dist-min", () => {});
 
 /* eslint-disable import/first */
@@ -11,7 +9,8 @@ import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
 import { getters as runGetters } from "../../../../src/app/store/run/getters";
-import { mockBasicState, mockGraphsState, mockRunState } from "../../../mocks";
+import { mockGraphsState, mockRunState } from "../../../mocks";
+import { defaultGraphSettings } from "../../../../src/app/store/graphs/state";
 
 describe("RunPlot", () => {
     const mockSolution = jest.fn().mockReturnValue({
@@ -583,7 +582,7 @@ describe("RunPlot", () => {
         const wrapper = shallowMount(RunPlot, {
             props: {
                 fadePlot: true,
-                graphConfig: {...graphConfig, selectedVariables: []}
+                graphConfig: { ...graphConfig, selectedVariables: [] }
             },
             global: {
                 plugins: [store]

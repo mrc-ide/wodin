@@ -26,7 +26,7 @@ import {
     SensitivityVariationType
 } from "../src/app/store/sensitivity/state";
 import { VersionsState } from "../src/app/store/versions/state";
-import {defaultGraphSettings, GraphsState} from "../src/app/store/graphs/state";
+import { defaultGraphSettings, GraphsState } from "../src/app/store/graphs/state";
 import { LanguageState } from "../translationPackage/store/state";
 import { Language } from "../src/app/types/languageTypes";
 import { noSensitivityUpdateRequired } from "../src/app/store/sensitivity/sensitivity";

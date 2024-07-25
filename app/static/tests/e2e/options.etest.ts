@@ -232,7 +232,7 @@ test.describe("Options Tab tests", () => {
     });
 
     test("overrides axes lock if log scale toggle changes", async ({ page }) => {
-         await page.locator(".lock-y-axis input").click();
+        await page.locator(".lock-y-axis input").click();
 
         const tickSelector = ":nth-match(.plotly .ytick text, 2)";
         await expect(await page.innerHTML(tickSelector)).toBe("0.2M");

@@ -25,7 +25,7 @@ import { Language } from "../../src/app/types/languageTypes";
 import { AdvancedOptions } from "../../src/app/types/responseTypes";
 import { AdvancedComponentType } from "../../src/app/store/run/state";
 import { noSensitivityUpdateRequired } from "../../src/app/store/sensitivity/sensitivity";
-import {defaultGraphSettings} from "../../src/app/store/graphs/state";
+import { defaultGraphSettings } from "../../src/app/store/graphs/state";
 
 jest.mock("../../src/app/utils", () => {
     return {
@@ -827,6 +827,5 @@ describe("serialise", () => {
         deserialiseState(target, serialised);
         expect(target.graphs.fitGraphSettings.logScaleYAxis).toBe(false);
         expect(target.graphs.config[0].settings.logScaleYAxis).toBe(false);
-
     });
 });

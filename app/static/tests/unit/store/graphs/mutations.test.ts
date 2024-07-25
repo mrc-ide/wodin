@@ -1,5 +1,5 @@
 import { mutations } from "../../../../src/app/store/graphs/mutations";
-import {defaultGraphSettings, GraphsState} from "../../../../src/app/store/graphs/state";
+import { defaultGraphSettings, GraphsState } from "../../../../src/app/store/graphs/state";
 import { mockGraphsState, mockModelState } from "../../../mocks";
 
 describe("Graphs mutations", () => {
@@ -21,12 +21,12 @@ describe("Graphs mutations", () => {
     });
 
     it("sets logScaleYAxis", () => {
-        mutations.SetLogScaleYAxis(state, {graphIndex: 1, value: true});
+        mutations.SetLogScaleYAxis(state, { graphIndex: 1, value: true });
         expect(state.config[1].settings.logScaleYAxis).toBe(true);
     });
 
     it("sets lockYAxis", () => {
-        mutations.SetLockYAxis(state, {graphIndex: 1, value: true});
+        mutations.SetLockYAxis(state, { graphIndex: 1, value: true });
         expect(state.config[1].settings.lockYAxis).toBe(true);
     });
 
@@ -72,7 +72,12 @@ describe("Graphs mutations", () => {
             unselectedVariables: ["y"],
             settings
         });
-        expect(testState.config[0]).toStrictEqual({ id: "123", selectedVariables: [], unselectedVariables: [], settings });
+        expect(testState.config[0]).toStrictEqual({
+            id: "123",
+            selectedVariables: [],
+            unselectedVariables: [],
+            settings
+        });
     });
 
     it("AddGraph pushes new graph to config", () => {
@@ -80,7 +85,12 @@ describe("Graphs mutations", () => {
         const testState = mockGraphsState({
             config: [{ id: "123", selectedVariables: ["a"], unselectedVariables: ["b", "c"], settings }]
         });
-        mutations.AddGraph(testState, { id: "456", selectedVariables: [], unselectedVariables: ["b", "a", "c"], settings });
+        mutations.AddGraph(testState, {
+            id: "456",
+            selectedVariables: [],
+            unselectedVariables: ["b", "a", "c"],
+            settings
+        });
         expect(testState.config).toStrictEqual([
             { id: "123", selectedVariables: ["a"], unselectedVariables: ["b", "c"], settings },
             { id: "456", selectedVariables: [], unselectedVariables: ["b", "a", "c"], settings }

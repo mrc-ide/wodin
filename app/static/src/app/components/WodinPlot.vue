@@ -26,7 +26,7 @@ import {
 import { WodinPlotData, fadePlotStyle, margin, config } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
 import { GraphsMutation } from "../store/graphs/mutations";
-import {GraphConfig, YAxisRange} from "../store/graphs/state";
+import { GraphConfig, YAxisRange } from "../store/graphs/state";
 import { GraphsGetter } from "../store/graphs/getters";
 
 export default defineComponent({
@@ -88,8 +88,9 @@ export default defineComponent({
 
         const hasPlotData = computed(() => !!baseData.value?.length);
 
-        const settings = computed(() => props.fitPlot ? store.state.graphs.fitGraphSettings :
-            props.graphConfig!.settings);
+        const settings = computed(() =>
+            props.fitPlot ? store.state.graphs.fitGraphSettings : props.graphConfig!.settings
+        );
         const yAxisType = computed(() => (settings.value.logScaleYAxis ? "log" : ("linear" as AxisType)));
         const lockYAxis = computed(() => settings.value.lockYAxis);
         const yAxisRange = computed(() => settings.value.yAxisRange as YAxisRange);
@@ -104,9 +105,12 @@ export default defineComponent({
             const yRange = plotLayout.yaxis?.range;
             if (plotLayout) {
                 if (props.fitPlot) {
-                  store.commit(`graphs/${GraphsMutation.SetFitYAxisRange}`, yRange);
+                    store.commit(`graphs/${GraphsMutation.SetFitYAxisRange}`, yRange);
                 } else {
-                  store.commit(`graphs/${GraphsMutation.SetYAxisRange}`, {graphIndex: props.graphIndex, value: yRange});
+                    store.commit(`graphs/${GraphsMutation.SetYAxisRange}`, {
+                        graphIndex: props.graphIndex,
+                        value: yRange
+                    });
                 }
             }
         };

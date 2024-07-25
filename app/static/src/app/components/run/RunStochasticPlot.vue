@@ -23,7 +23,7 @@ import { WodinPlotData, discreteSeriesSetToPlotly, filterSeriesSet } from "../..
 import WodinPlot from "../WodinPlot.vue";
 import { runPlaceholderMessage } from "../../utils";
 import { StochasticConfig } from "../../types/responseTypes";
-import {GraphConfig} from "../../store/graphs/state";
+import { GraphConfig } from "../../store/graphs/state";
 
 export default defineComponent({
     name: "RunStochasticPlot",
@@ -34,8 +34,8 @@ export default defineComponent({
             default: 0
         },
         graphConfig: {
-          type: Object as PropType<GraphConfig>,
-          required: true
+            type: Object as PropType<GraphConfig>,
+            required: true
         },
         linkedXAxis: {
             type: Object as PropType<Partial<LayoutAxis> | null>,
