@@ -65,6 +65,8 @@ export default defineComponent({
             required: false,
             default: -1
         },
+        // We could look up graphConfig from graphIndex - however this causes a specific reactivity bug
+        // when the last plot is deleted and the plot tries to observe the old maximum index before it is updated.
         graphConfig: {
             type: Object as PropType<GraphConfig | null>,
             required: true

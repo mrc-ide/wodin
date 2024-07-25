@@ -24,6 +24,7 @@ export default defineComponent({
             required: false,
             default: -1
         },
+        // fitPlot should be true if graphIndex is not provided - in this case we update the single fit plot settings
         fitPlot: {
             type: Boolean,
             required: true

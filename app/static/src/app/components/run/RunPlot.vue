@@ -31,7 +31,7 @@ import { GraphConfig } from "../../store/graphs/state";
 
 const props = defineProps({
     fadePlot: Boolean,
-    graphIndex: { type: Number, default: 0 },
+    graphIndex: { type: Number, required: true },
     graphConfig: { type: Object as PropType<GraphConfig>, required: true },
     linkedXAxis: { type: Object as PropType<Partial<LayoutAxis> | null>, required: true }
 });

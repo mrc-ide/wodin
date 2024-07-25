@@ -31,7 +31,7 @@ export default defineComponent({
         fadePlot: Boolean,
         graphIndex: {
             type: Number,
-            default: 0
+            required: true
         },
         graphConfig: {
             type: Object as PropType<GraphConfig>,
