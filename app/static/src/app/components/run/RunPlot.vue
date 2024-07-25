@@ -30,11 +30,10 @@ import { ParameterSet } from "../../store/run/state";
 import { GraphConfig } from "../../store/graphs/state";
 
 const props = defineProps({
-  fadePlot: Boolean,
-  graphIndex: {type: Number, default: 0},
-  graphConfig: {type: Object as PropType<GraphConfig>, required: true},
-  linkedXAxis: {type: Object as PropType<Partial<LayoutAxis> | null>, required: true}
-
+    fadePlot: Boolean,
+    graphIndex: { type: Number, default: 0 },
+    graphConfig: { type: Object as PropType<GraphConfig>, required: true },
+    linkedXAxis: { type: Object as PropType<Partial<LayoutAxis> | null>, required: true }
 });
 
 const emit = defineEmits<{
