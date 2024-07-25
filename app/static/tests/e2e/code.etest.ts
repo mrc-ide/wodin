@@ -386,4 +386,14 @@ test.describe("Code Tab tests", () => {
         const lineElement = await page.locator(`.view-overlays div:nth-child(${3}) >> div`);
         expect(lineElement).toHaveClass("cdr editor-warning-background");
     });
+
+    test("can change graph setting for log scale y axis from code tab", async ({ page }) => {
+        await page.locator(".log-scale-y-axis input").click();
+        // should update y axis tick
+        const tickSelector = ":nth-match(.plotly .ytick text, 2)";
+        await expect(await page.innerHTML(tickSelector)).toBe("10n");
+        // change back to linear
+        await page.locator(".log-scale-y-axis input").click();
+        await expect(await page.innerHTML(tickSelector)).toBe("0.2M");
+    });
 });
