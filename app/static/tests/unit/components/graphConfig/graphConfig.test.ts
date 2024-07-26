@@ -5,6 +5,7 @@ import GraphConfig from "../../../../src/app/components/graphConfig/GraphConfig.
 import { GraphsAction } from "../../../../src/app/store/graphs/actions";
 import { GraphsState } from "../../../../src/app/store/graphs/state";
 import { GraphsMutation } from "../../../../src/app/store/graphs/mutations";
+import GraphSettings from "../../../../src/app/components/GraphSettings.vue";
 
 describe("GraphConfig", () => {
     const mockUpdateSelectedVariables = jest.fn();
@@ -72,8 +73,7 @@ describe("GraphConfig", () => {
         const wrapper = getWrapper();
         const varBadges = wrapper.findAll(".graph-config-panel .badge");
         const varNames = wrapper.findAll(".graph-config-panel span.variable-name");
-        expect(wrapper.find("h5").text()).toBe("Graph 1");
-        expect(wrapper.find("h5 button.delete-graph").exists()).toBe(true);
+        expect(wrapper.find("button.delete-graph").exists()).toBe(true);
         expect(varBadges.length).toBe(2);
         expect(varNames.length).toBe(2);
         expect(varNames.at(0)!.text()).toBe("S");
@@ -84,6 +84,9 @@ describe("GraphConfig", () => {
         expect(wrapper.find(".drop-zone").classes()).toStrictEqual(["drop-zone", "drop-zone-inactive"]);
         // instruction not shown if at least one selected variable
         expect(wrapper.findAll(".drop-zone-instruction").length).toBe(0);
+        const settings = wrapper.findComponent(GraphSettings);
+        expect(settings.props("fitPlot")).toBe(false);
+        expect(settings.props("graphIndex")).toBe(0);
     });
 
     it("starting drag sets values in event and emits setDragging", async () => {

@@ -9,6 +9,7 @@ import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import { StochasticState } from "../../../../src/app/store/stochastic/state";
 import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
 import { mockGraphsState, mockModelState, mockRunState } from "../../../mocks";
+import { defaultGraphSettings } from "../../../../src/app/store/graphs/state";
 
 describe("RunPlot for stochastic", () => {
     const mockSolution = jest.fn().mockReturnValue({
@@ -37,10 +38,17 @@ describe("RunPlot for stochastic", () => {
             {
                 id: "1234",
                 selectedVariables,
-                unselectedVariables: []
+                unselectedVariables: [],
+                settings: defaultGraphSettings()
             }
         ]
     });
+
+    const graphConfig = {
+        selectedVariables,
+        unselectedVariables: [],
+        settings: defaultGraphSettings()
+    };
 
     const linkedXAxis = { autorange: false, range: [1, 2] };
 
@@ -68,7 +76,8 @@ describe("RunPlot for stochastic", () => {
             props: {
                 fadePlot: false,
                 graphIndex: 0,
-                linkedXAxis
+                linkedXAxis,
+                graphConfig
             },
             global: {
                 plugins: [store]
@@ -81,6 +90,8 @@ describe("RunPlot for stochastic", () => {
         expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution]);
         expect(wodinPlot.props("recalculateOnRelayout")).toBe(true);
         expect(wodinPlot.props("linkedXAxis")).toStrictEqual(linkedXAxis);
+        expect(wodinPlot.props("graphIndex")).toBe(0);
+        expect(wodinPlot.props("graphConfig")).toStrictEqual(graphConfig);
 
         // Generates expected plot data from model
         const plotData = wodinPlot.props("plotData");
@@ -135,7 +146,8 @@ describe("RunPlot for stochastic", () => {
             props: {
                 fadePlot: false,
                 graphIndex: 0,
-                linkedXAxis
+                linkedXAxis,
+                graphConfig
             },
             global: {
                 plugins: [store]
@@ -159,7 +171,9 @@ describe("RunPlot for stochastic", () => {
         });
         const wrapper = shallowMount(RunPlot, {
             props: {
-                fadePlot: false
+                fadePlot: false,
+                graphIndex: 0,
+                graphConfig
             },
             global: {
                 plugins: [store]
@@ -170,6 +184,8 @@ describe("RunPlot for stochastic", () => {
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
         expect(wodinPlot.props("redrawWatches")).toStrictEqual([]);
+        expect(wodinPlot.props("graphIndex")).toBe(0);
+        expect(wodinPlot.props("graphConfig")).toStrictEqual(graphConfig);
 
         const plotData = wodinPlot.props("plotData");
         const data = plotData();
@@ -193,7 +209,8 @@ describe("RunPlot for stochastic", () => {
         });
         const wrapper = shallowMount(RunStochasticPlot, {
             props: {
-                fadePlot: false
+                fadePlot: false,
+                graphConfig
             },
             global: {
                 plugins: [store]
@@ -216,7 +233,8 @@ describe("RunPlot for stochastic", () => {
         });
         const wrapper = shallowMount(RunPlot, {
             props: {
-                fadePlot: true
+                fadePlot: true,
+                graphConfig
             },
             global: {
                 plugins: [store]
@@ -240,7 +258,8 @@ describe("RunPlot for stochastic", () => {
         });
         const wrapper = shallowMount(RunStochasticPlot, {
             props: {
-                fadePlot: false
+                fadePlot: false,
+                graphConfig
             },
             global: {
                 plugins: [store]

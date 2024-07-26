@@ -1,21 +1,19 @@
 <template>
     <div class="graph-config-panel m-2" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
-        <h5>
-            Graph {{ graphIndex + 1 }}
-            <button
-                type="button"
-                class="btn btn-light mx-2 delete-graph"
-                v-if="canDelete"
-                @click="deleteGraph"
-                v-tooltip="'Delete Graph'"
-            >
-                <vue-feather class="inline-icon clickable ms-2" type="trash-2"></vue-feather>
-            </button>
-        </h5>
+        <button
+            type="button"
+            class="btn btn-sm btn-light bg-transparent border-0 float-end delete-graph"
+            v-if="canDelete"
+            @click="deleteGraph"
+            v-tooltip="'Delete Graph'"
+        >
+            <vue-feather class="inline-icon clickable ms-2" type="trash-2"></vue-feather>
+        </button>
+        <graph-settings :fit-plot="false" :graph-index="graphIndex" class="graph-config-settings mb-1"></graph-settings>
         <div class="drop-zone" :class="dragging ? 'drop-zone-active' : 'drop-zone-inactive'">
             <template v-for="variable in selectedVariables" :key="variable">
                 <span
-                    class="badge variable me-2 mb-2"
+                    class="badge variable me-2"
                     :style="getStyle(variable)"
                     :draggable="true"
                     @dragstart="startDrag($event, variable)"
@@ -38,12 +36,14 @@
 import VueFeather from "vue-feather";
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
+import GraphSettings from "@/app/components/GraphSettings.vue";
 import SelectVariables from "../mixins/selectVariables";
 import { GraphsMutation } from "../../store/graphs/mutations";
 
 export default defineComponent({
     name: "GraphConfig",
     components: {
+        GraphSettings,
         VueFeather
     },
     props: {
@@ -92,12 +92,21 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.selected-variables-panel {
-    width: 100%;
+.graph-config-panel {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ccc;
+    padding: 4px;
+    .graph-config-settings {
+        margin-left: 8px;
+    }
+    .selected-variables-panel {
+        width: 100%;
 
-    .variable {
-        font-size: large;
-        cursor: pointer;
+        .variable {
+            font-size: large;
+            cursor: pointer;
+        }
     }
 }
 </style>

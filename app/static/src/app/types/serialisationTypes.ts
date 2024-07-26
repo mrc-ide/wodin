@@ -74,8 +74,12 @@ export interface SerialisedModelFitState {
 }
 
 export interface SerialisedGraphsState {
-    config: { selectedVariables: string[]; unselectedVariables: string[] }[];
-    settings: GraphSettings; // TODO: this will be replaced by per-graph settings in mrc-5442
+    config: {
+        selectedVariables: string[];
+        unselectedVariables: string[];
+        settings: GraphSettings;
+    }[];
+    fitGraphSettings: GraphSettings;
 }
 
 export interface SerialisedAppState {

@@ -25,6 +25,7 @@ import { Language } from "../../src/app/types/languageTypes";
 import { AdvancedOptions } from "../../src/app/types/responseTypes";
 import { AdvancedComponentType } from "../../src/app/store/run/state";
 import { noSensitivityUpdateRequired } from "../../src/app/store/sensitivity/sensitivity";
+import { defaultGraphSettings } from "../../src/app/store/graphs/state";
 
 jest.mock("../../src/app/utils", () => {
     return {
@@ -370,7 +371,7 @@ describe("serialise", () => {
     });
 
     const graphsState = mockGraphsState({
-        settings: {
+        fitGraphSettings: {
             logScaleYAxis: true,
             lockYAxis: true,
             yAxisRange: [1, 2]
@@ -379,7 +380,12 @@ describe("serialise", () => {
             {
                 id: "123",
                 selectedVariables: ["S", "I"],
-                unselectedVariables: ["R"]
+                unselectedVariables: ["R"],
+                settings: {
+                    logScaleYAxis: false,
+                    lockYAxis: true,
+                    yAxisRange: [10, 20]
+                }
             }
         ]
     });
@@ -544,7 +550,7 @@ describe("serialise", () => {
     };
 
     const expectedGraphs = {
-        settings: {
+        fitGraphSettings: {
             logScaleYAxis: true,
             lockYAxis: true,
             yAxisRange: [1, 2]
@@ -552,7 +558,12 @@ describe("serialise", () => {
         config: [
             {
                 selectedVariables: ["S", "I"],
-                unselectedVariables: ["R"]
+                unselectedVariables: ["R"],
+                settings: {
+                    logScaleYAxis: false,
+                    lockYAxis: true,
+                    yAxisRange: [10, 20]
+                }
             }
         ]
     };
@@ -726,9 +737,11 @@ describe("serialise", () => {
                     {
                         id: "12345", // id from mocked newUid
                         selectedVariables: [],
-                        unselectedVariables: []
+                        unselectedVariables: [],
+                        settings: defaultGraphSettings()
                     }
-                ]
+                ],
+                fitGraphSettings: defaultGraphSettings()
             })
         });
     });
@@ -771,9 +784,11 @@ describe("serialise", () => {
             {
                 id: "12345",
                 selectedVariables: ["S", "I", "R"],
-                unselectedVariables: []
+                unselectedVariables: [],
+                settings: defaultGraphSettings()
             }
         ]);
+        expect(target.graphs.fitGraphSettings).toStrictEqual(defaultGraphSettings());
     });
 
     it("deserialises default graph settings when undefined in serialised state", () => {
@@ -806,9 +821,11 @@ describe("serialise", () => {
             graphs: defaultGraphsState()
         } as any;
         // sanity check
-        expect(target.graphs.settings.logScaleYAxis).toBe(false);
+        expect(target.graphs.fitGraphSettings.logScaleYAxis).toBe(false);
+        expect(target.graphs.config[0].settings.logScaleYAxis).toBe(false);
 
         deserialiseState(target, serialised);
-        expect(target.graphs.settings.logScaleYAxis).toBe(false);
+        expect(target.graphs.fitGraphSettings.logScaleYAxis).toBe(false);
+        expect(target.graphs.config[0].settings.logScaleYAxis).toBe(false);
     });
 });

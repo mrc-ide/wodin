@@ -5,6 +5,9 @@ export enum GraphsMutation {
     SetLogScaleYAxis = "SetLogScaleYAxis",
     SetLockYAxis = "SetLockYAxis",
     SetYAxisRange = "SetYAxisRange",
+    SetFitLogScaleYAxis = "SetFitLogScaleYAxis",
+    SetFitLockYAxis = "SetFitLockYAxis",
+    SetFitYAxisRange = "SetFitYAxisRange",
     AddGraph = "AddGraph",
     DeleteGraph = "DeleteGraph",
     SetSelectedVariables = "SetSelectedVariables"
@@ -17,20 +20,31 @@ export interface SetSelectedVariablesPayload {
 }
 
 export const mutations: MutationTree<GraphsState> = {
-    [GraphsMutation.SetLogScaleYAxis](state: GraphsState, payload: boolean) {
-        state.settings.logScaleYAxis = payload;
+    [GraphsMutation.SetLogScaleYAxis](state: GraphsState, payload: { graphIndex: number; value: boolean }) {
+        state.config[payload.graphIndex].settings.logScaleYAxis = payload.value;
     },
 
-    [GraphsMutation.SetLockYAxis](state: GraphsState, payload: boolean) {
-        state.settings.lockYAxis = payload;
+    [GraphsMutation.SetLockYAxis](state: GraphsState, payload: { graphIndex: number; value: boolean }) {
+        state.config[payload.graphIndex].settings.lockYAxis = payload.value;
     },
 
-    [GraphsMutation.SetYAxisRange](state: GraphsState, payload: YAxisRange) {
-        state.settings.yAxisRange = payload;
+    [GraphsMutation.SetYAxisRange](state: GraphsState, payload: { graphIndex: number; value: YAxisRange }) {
+        state.config[payload.graphIndex].settings.yAxisRange = payload.value;
+    },
+
+    [GraphsMutation.SetFitLogScaleYAxis](state: GraphsState, payload: boolean) {
+        state.fitGraphSettings.logScaleYAxis = payload;
+    },
+
+    [GraphsMutation.SetFitLockYAxis](state: GraphsState, payload: boolean) {
+        state.fitGraphSettings.lockYAxis = payload;
+    },
+
+    [GraphsMutation.SetFitYAxisRange](state: GraphsState, payload: YAxisRange) {
+        state.fitGraphSettings.yAxisRange = payload;
     },
 
     [GraphsMutation.SetSelectedVariables](state: GraphsState, payload: SetSelectedVariablesPayload) {
-        // We don't simply replace the GraphConfig in the index here, as that will eventually include GraphSettings too
         state.config[payload.graphIndex].selectedVariables = payload.selectedVariables;
         state.config[payload.graphIndex].unselectedVariables = payload.unselectedVariables;
     },

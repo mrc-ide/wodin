@@ -9,6 +9,9 @@
                 ? [...solutions, allFitData, selectedVariables, parameterSetBatches, parameterSetDisplayNames]
                 : []
         "
+        :fit-plot="false"
+        :graph-index="0"
+        :graph-config="graphConfig"
     >
         <slot></slot>
     </wodin-plot>
@@ -48,6 +51,7 @@ export default defineComponent({
         const store = useStore();
 
         const solutions = computed(() => store.state.sensitivity.result?.batch?.solutions || []);
+        const graphConfig = computed(() => store.state.graphs.config[0]);
 
         const visibleParameterSetNames = computed(() => store.getters[`run/${RunGetter.visibleParameterSetNames}`]);
         const parameterSets = computed(() => store.state.run.parameterSets as ParameterSet[]);
@@ -193,6 +197,7 @@ export default defineComponent({
         };
 
         return {
+            graphConfig,
             placeholderMessage,
             endTime,
             solutions,

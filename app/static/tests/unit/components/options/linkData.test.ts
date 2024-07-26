@@ -6,6 +6,7 @@ import { getters } from "../../../../src/app/store/fitData/getters";
 import { mockFitDataState, mockFitState, mockGraphsState, mockModelState } from "../../../mocks";
 import { FitDataAction } from "../../../../src/app/store/fitData/actions";
 import { getters as graphGetters } from "../../../../src/app/store/graphs/getters";
+import { defaultGraphSettings } from "../../../../src/app/store/graphs/state";
 
 describe("LinkData", () => {
     const getWrapper = (includeColumns = true, includeValidModel = true, mockUpdateLinkedVariable = jest.fn()) => {
@@ -33,7 +34,14 @@ describe("LinkData", () => {
                 graphs: {
                     namespaced: true,
                     state: mockGraphsState({
-                        config: [{ id: "123", selectedVariables: ["I", "R"], unselectedVariables: [] }]
+                        config: [
+                            {
+                                id: "123",
+                                selectedVariables: ["I", "R"],
+                                unselectedVariables: [],
+                                settings: defaultGraphSettings()
+                            }
+                        ]
                     }),
                     getters: graphGetters
                 },

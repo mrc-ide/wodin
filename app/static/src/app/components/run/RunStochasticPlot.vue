@@ -6,6 +6,9 @@
         :plot-data="allPlotData"
         :redrawWatches="solution ? [solution] : []"
         :linked-x-axis="linkedXAxis"
+        :fit-plot="false"
+        :graph-index="graphIndex"
+        :graph-config="graphConfig"
         @updateXAxis="updateXAxis"
     >
         <slot></slot>
@@ -20,6 +23,7 @@ import { WodinPlotData, discreteSeriesSetToPlotly, filterSeriesSet } from "../..
 import WodinPlot from "../WodinPlot.vue";
 import { runPlaceholderMessage } from "../../utils";
 import { StochasticConfig } from "../../types/responseTypes";
+import { GraphConfig } from "../../store/graphs/state";
 
 export default defineComponent({
     name: "RunStochasticPlot",
@@ -27,7 +31,11 @@ export default defineComponent({
         fadePlot: Boolean,
         graphIndex: {
             type: Number,
-            default: 0
+            required: true
+        },
+        graphConfig: {
+            type: Object as PropType<GraphConfig>,
+            required: true
         },
         linkedXAxis: {
             type: Object as PropType<Partial<LayoutAxis> | null>,
@@ -41,7 +49,7 @@ export default defineComponent({
     setup(props, { emit }) {
         const store = useStore();
 
-        const selectedVariables = computed(() => store.state.graphs.config[props.graphIndex].selectedVariables);
+        const selectedVariables = computed(() => props.graphConfig.selectedVariables);
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, false));
 
         const solution = computed(() => store.state.run.resultDiscrete?.solution);

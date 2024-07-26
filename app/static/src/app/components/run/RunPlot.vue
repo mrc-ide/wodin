@@ -6,6 +6,9 @@
         :plot-data="allPlotData"
         :redrawWatches="solution ? [solution, allFitData, selectedVariables, parameterSetSolutions, displayNames] : []"
         :linked-x-axis="linkedXAxis"
+        :fit-plot="false"
+        :graph-index="graphIndex"
+        :graph-config="graphConfig"
         @updateXAxis="updateXAxis"
     >
         <slot></slot>
@@ -24,10 +27,12 @@ import { OdinSolution, Times } from "../../types/responseTypes";
 import { Dict } from "../../types/utilTypes";
 import { runPlaceholderMessage } from "../../utils";
 import { ParameterSet } from "../../store/run/state";
+import { GraphConfig } from "../../store/graphs/state";
 
 const props = defineProps({
     fadePlot: Boolean,
-    graphIndex: { type: Number, default: 0 },
+    graphIndex: { type: Number, required: true },
+    graphConfig: { type: Object as PropType<GraphConfig>, required: true },
     linkedXAxis: { type: Object as PropType<Partial<LayoutAxis> | null>, required: true }
 });
 
@@ -61,7 +66,7 @@ const palette = computed(() => store.state.model.paletteModel);
 
 const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData}`]);
 
-const selectedVariables = computed(() => store.state.graphs.config[props.graphIndex].selectedVariables);
+const selectedVariables = computed(() => props.graphConfig.selectedVariables);
 const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, false));
 
 const allPlotData = (start: number, end: number, points: number): WodinPlotData => {

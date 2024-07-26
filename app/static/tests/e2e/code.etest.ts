@@ -320,7 +320,6 @@ test.describe("Code Tab tests", () => {
         expect(await page.locator(":nth-match(.wodin-plot-container, 2)").textContent()).toBe(
             "No variables are selected."
         );
-        expect(await page.locator(":nth-match(.graph-config-panel h5, 2)").textContent()).toContain("Graph 2");
         expect(await page.locator(":nth-match(.graph-config-panel .drop-zone, 2)").textContent()).toContain(
             "Drag variables here to select them for this graph."
         );
@@ -336,7 +335,6 @@ test.describe("Code Tab tests", () => {
         // Delete second graph
         await page.click(":nth-match(.graph-config-panel .delete-graph, 2)");
         await expect(page.locator(".graph-config-panel")).toHaveCount(1);
-        await expect(page.locator(".graph-config-panel h5")).toHaveText("Graph 1");
         await expectGraphVariables(page, 0, ["I", "R"]);
 
         // First graph should not be deletable
@@ -387,5 +385,15 @@ test.describe("Code Tab tests", () => {
         await page.click(".nav-tabs a:has-text('Code')");
         const lineElement = await page.locator(`.view-overlays div:nth-child(${3}) >> div`);
         expect(lineElement).toHaveClass("cdr editor-warning-background");
+    });
+
+    test("can change graph setting for log scale y axis from code tab", async ({ page }) => {
+        await page.locator(".log-scale-y-axis input").click();
+        // should update y axis tick
+        const tickSelector = ":nth-match(.plotly .ytick text, 2)";
+        await expect(await page.innerHTML(tickSelector)).toBe("10n");
+        // change back to linear
+        await page.locator(".log-scale-y-axis input").click();
+        await expect(await page.innerHTML(tickSelector)).toBe("0.2M");
     });
 });

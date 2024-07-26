@@ -189,7 +189,7 @@ test.describe("Wodin App model fit tests", () => {
         await page.click(":nth-match(input.vary-param-check, 2)");
 
         // change advanced setting to sabotage fit
-        await page.click(":nth-match(.collapse-title, 6)"); // Open Advanced Settings
+        await page.click(":nth-match(.collapse-title, 5)"); // Open Advanced Settings
         const advancedSettingPanel = await page.locator("#advanced-settings-panel");
         const input1 = await advancedSettingPanel.locator(":nth-match(input, 1)");
         const input2 = await advancedSettingPanel.locator(":nth-match(input, 2)");
@@ -327,5 +327,19 @@ test.describe("Wodin App model fit tests", () => {
         await page.click(":nth-match(.wodin-right .nav-tabs a, 1)"); // change main to run tab
         const sumOfSquares = await page.innerText(":nth-match(.wodin-plot-container span, 1)");
         expect(sumOfSquares).toContain("Sum of squares:");
+    });
+
+    test("can change graph setting for log scale y axis for fit graph", async ({ page }) => {
+        await startModelFit(page);
+        await waitForModelFitCompletion(page);
+
+        await expect(await page.locator(":nth-match(.collapse-title, 7)")).toHaveText("Fit Graph Settings");
+        await page.locator(".log-scale-y-axis input").click();
+        // should update y axis tick
+        const tickSelector = ":nth-match(.plotly .ytick text, 2)";
+        await expect(await page.innerHTML(tickSelector)).toBe("4");
+        // change back to linear
+        await page.locator(".log-scale-y-axis input").click();
+        await expect(await page.innerHTML(tickSelector)).toBe("2");
     });
 });
