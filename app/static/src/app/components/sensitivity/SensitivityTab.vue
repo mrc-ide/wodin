@@ -11,8 +11,10 @@
             >
         </div>
         <action-required-message :message="updateMsg"></action-required-message>
-        <sensitivity-traces-plot v-if="tracesPlot" :fade-plot="!!updateMsg"></sensitivity-traces-plot>
-        <sensitivity-summary-plot v-else :fade-plot="!!updateMsg"></sensitivity-summary-plot>
+        <template v-for="config in graphConfigs" :key="config.id">
+          <sensitivity-traces-plot v-if="tracesPlot" :fade-plot="!!updateMsg" :graph-config="config"></sensitivity-traces-plot>
+          <sensitivity-summary-plot v-else :fade-plot="!!updateMsg" :graph-config="config"></sensitivity-summary-plot>
+        </template>
         <div id="sensitivity-running" v-if="running">
             <loading-spinner class="inline-spinner" size="xs"></loading-spinner>
             <span class="ms-2">{{ sensitivityProgressMsg }}</span>
@@ -65,6 +67,8 @@ export default defineComponent({
             );
         });
 
+        const graphConfigs = computed(() => store.state.graphs.config);
+
         const runSensitivity = () => {
             store.commit(`${namespace}/${SensitivityMutation.SetLoading}`, true);
             // All of the code for sensitivity plot happens synchronously
@@ -91,6 +95,7 @@ export default defineComponent({
         const error = computed(() => store.state.sensitivity.result?.error);
 
         return {
+            graphConfigs,
             canRunSensitivity,
             running,
             sensitivityProgressMsg,
