@@ -12,7 +12,7 @@ const config: PlaywrightTestConfig = {
             permissions: ["clipboard-read", "clipboard-write"]
         }
     },
-    retries: 1,
+    retries: 0,
     timeout: 60000
 };
 
