@@ -6,11 +6,11 @@
         :plot-data="allPlotData"
         :redrawWatches="
             solutions
-                ? [...solutions, allFitData, selectedVariables, parameterSetBatches, parameterSetDisplayNames]
+                ? [...solutions, allFitData, selectedVariables, parameterSetBatches, parameterSetDisplayNames, graphCount]
                 : []
         "
         :fit-plot="false"
-        :graph-index="0"
+        :graph-index="graphIndex"
         :graph-config="graphConfig"
     >
         <slot></slot>
@@ -44,6 +44,7 @@ export default defineComponent({
     name: "SensitivityTracesPlot",
     props: {
         fadePlot: Boolean,
+        graphIndex: { type: Number, required: true },
         graphConfig: { type: Object as PropType<GraphConfig>, required: true }
     },
     components: {
@@ -84,6 +85,9 @@ export default defineComponent({
         const palette = computed(() => store.state.model.paletteModel);
 
         const selectedVariables = computed(() => props.graphConfig.selectedVariables);
+
+        // TODO: put this in the composable in mrc-5572
+        const graphCount = computed(()=> store.state.graphs.config.length);
 
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, true));
 
@@ -205,7 +209,8 @@ export default defineComponent({
             allFitData,
             selectedVariables,
             parameterSetBatches,
-            parameterSetDisplayNames
+            parameterSetDisplayNames,
+            graphCount
         };
     }
 });

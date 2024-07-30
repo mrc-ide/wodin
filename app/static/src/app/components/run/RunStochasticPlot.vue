@@ -4,7 +4,7 @@
         :placeholder-message="placeholderMessage"
         :end-time="endTime"
         :plot-data="allPlotData"
-        :redrawWatches="solution ? [solution] : []"
+        :redrawWatches="solution ? [solution, graphCount] : []"
         :linked-x-axis="linkedXAxis"
         :fit-plot="false"
         :graph-index="graphIndex"
@@ -58,6 +58,9 @@ export default defineComponent({
 
         const palette = computed(() => store.state.model.paletteModel);
 
+        // TODO: put this in the composable in mrc-5572
+        const graphCount = computed(()=> store.state.graphs.config.length);
+
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
             const result =
                 solution.value &&
@@ -88,6 +91,7 @@ export default defineComponent({
         return {
             placeholderMessage,
             endTime,
+            graphCount,
             allPlotData,
             solution,
             updateXAxis

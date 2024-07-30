@@ -14,14 +14,14 @@ import { computed, defineComponent, ref, watch, onMounted, onUnmounted, PropType
 import { useStore } from "vuex";
 import { EventEmitter } from "events";
 import {
-    newPlot,
-    react,
-    PlotRelayoutEvent,
-    Plots,
-    AxisType,
-    Layout,
-    Config,
-    LayoutAxis
+  newPlot,
+  react,
+  PlotRelayoutEvent,
+  Plots,
+  AxisType,
+  Layout,
+  Config,
+  LayoutAxis, update
 } from "plotly.js-basic-dist-min";
 import { WodinPlotData, fadePlotStyle, margin, config } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
@@ -152,9 +152,9 @@ export default defineComponent({
             return result;
         };
 
-        const updateXAxisRange = async (xAxis: Partial<LayoutAxis>) => {
+        const updateXAxisRange = async (xAxis: Partial<LayoutAxis> | null) => {
             let data;
-            if (xAxis.autorange) {
+            if (!xAxis || xAxis.autorange) {
                 data = baseData.value;
             } else {
                 data = props.plotData(xAxis.range![0], xAxis.range![1], nPoints);
