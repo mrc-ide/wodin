@@ -6,7 +6,14 @@
         :plot-data="allPlotData"
         :redrawWatches="
             solutions
-                ? [...solutions, allFitData, selectedVariables, parameterSetBatches, parameterSetDisplayNames, graphCount]
+                ? [
+                      ...solutions,
+                      allFitData,
+                      selectedVariables,
+                      parameterSetBatches,
+                      parameterSetDisplayNames,
+                      graphCount
+                  ]
                 : []
         "
         :fit-plot="false"
@@ -18,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, PropType} from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { useStore } from "vuex";
 import { PlotData } from "plotly.js-basic-dist-min";
 import { FitDataGetter } from "../../store/fitData/getters";
@@ -38,7 +45,7 @@ import { RunGetter } from "../../store/run/getters";
 import { Dict } from "../../types/utilTypes";
 import { ParameterSet } from "../../store/run/state";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
-import {GraphConfig} from "../../store/graphs/state";
+import { GraphConfig } from "../../store/graphs/state";
 
 export default defineComponent({
     name: "SensitivityTracesPlot",
@@ -87,7 +94,7 @@ export default defineComponent({
         const selectedVariables = computed(() => props.graphConfig.selectedVariables);
 
         // TODO: put this in the composable in mrc-5572
-        const graphCount = computed(()=> store.state.graphs.config.length);
+        const graphCount = computed(() => store.state.graphs.config.length);
 
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, true));
 

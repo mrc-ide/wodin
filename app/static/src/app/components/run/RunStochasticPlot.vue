@@ -59,7 +59,7 @@ export default defineComponent({
         const palette = computed(() => store.state.model.paletteModel);
 
         // TODO: put this in the composable in mrc-5572
-        const graphCount = computed(()=> store.state.graphs.config.length);
+        const graphCount = computed(() => store.state.graphs.config.length);
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
             const result =

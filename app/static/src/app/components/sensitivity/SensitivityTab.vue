@@ -11,13 +11,14 @@
             >
         </div>
         <action-required-message :message="updateMsg"></action-required-message>
-        <template v-for="(config, index)  in graphConfigs" :key="config.id">
-          <sensitivity-traces-plot
-              v-if="tracesPlot"
-              :fade-plot="!!updateMsg"
-              :graph-config="config"
-              :graph-index="index"></sensitivity-traces-plot>
-          <sensitivity-summary-plot v-else :fade-plot="!!updateMsg" :graph-config="config"></sensitivity-summary-plot>
+        <template v-for="(config, index) in graphConfigs" :key="config.id">
+            <sensitivity-traces-plot
+                v-if="tracesPlot"
+                :fade-plot="!!updateMsg"
+                :graph-config="config"
+                :graph-index="index"
+            ></sensitivity-traces-plot>
+            <sensitivity-summary-plot v-else :fade-plot="!!updateMsg" :graph-config="config"></sensitivity-summary-plot>
         </template>
         <div id="sensitivity-running" v-if="running">
             <loading-spinner class="inline-spinner" size="xs"></loading-spinner>

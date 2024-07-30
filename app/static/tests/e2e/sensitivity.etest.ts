@@ -1,6 +1,6 @@
 import { expect, test, Page } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
-import {addGraphWithVariable, expectSummaryValues, expectXAxisTimeLabelFinalGraph} from "./utils";
+import { addGraphWithVariable, expectSummaryValues, expectXAxisTimeLabelFinalGraph } from "./utils";
 
 test.describe("Sensitivity tests", () => {
     const { timeout } = PlaywrightConfig;
@@ -277,24 +277,26 @@ test.describe("Sensitivity tests", () => {
         const containerClass = summary ? "summary-plot-container" : "wodin-plot-container";
         const firstPlot = await page.locator(`:nth-match(.${containerClass}, 1)`);
         const secondPlot = await page.locator(`:nth-match(.${containerClass}, 2)`);
-        expect(await firstPlot.locator(":nth-match(.wodin-plot-data-summary-series, 1)")
-            .getAttribute("name")).toBe(summary ? "I" : "I (beta=3.600)");
-        expect(await secondPlot.locator(":nth-match(.wodin-plot-data-summary-series, 1)")
-            .getAttribute( "name")).toBe(summary ? "S" : "S (beta=3.600)");
+        expect(await firstPlot.locator(":nth-match(.wodin-plot-data-summary-series, 1)").getAttribute("name")).toBe(
+            summary ? "I" : "I (beta=3.600)"
+        );
+        expect(await secondPlot.locator(":nth-match(.wodin-plot-data-summary-series, 1)").getAttribute("name")).toBe(
+            summary ? "S" : "S (beta=3.600)"
+        );
     };
 
-    test("can see multiple Trace over time graphs", async({page}) => {
+    test("can see multiple Trace over time graphs", async ({ page }) => {
         await page.click("#run-sens-btn");
         await addGraphWithVariable(page, 1);
         await expectMultipleSensitivityGraphs(page);
     });
 
-    test("can see Time label on final Trace over time graph only", async ({page}) => {
+    test("can see Time label on final Trace over time graph only", async ({ page }) => {
         await page.click("#run-sens-btn");
         await expectXAxisTimeLabelFinalGraph(page);
     });
 
-    test("can see multiple summary graphs", async({page}) => {
+    test("can see multiple summary graphs", async ({ page }) => {
         await page.click("#run-sens-btn");
         await page.locator("#sensitivity-plot-type select").selectOption("ValueAtTime");
         await addGraphWithVariable(page, 1);

@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, onMounted, onUnmounted, PropType, ref, watch} from "vue";
+import { computed, defineComponent, onMounted, onUnmounted, PropType, ref, watch } from "vue";
 import { AxisType, newPlot, Plots } from "plotly.js-basic-dist-min";
 import { useStore } from "vuex";
 import { config, fadePlotStyle, filterUserTypeSeriesSet, margin, odinToPlotly, updatePlotTraceName } from "../../plot";
@@ -23,7 +23,7 @@ import { Dict } from "../../types/utilTypes";
 import WodinPlotDataSummary from "../WodinPlotDataSummary.vue";
 import { ParameterSet } from "../../store/run/state";
 import { verifyValidPlotSettingsTime } from "./support";
-import {GraphConfig} from "../../store/graphs/state";
+import { GraphConfig } from "../../store/graphs/state";
 
 export default defineComponent({
     name: "SensitivitySummaryPlot",

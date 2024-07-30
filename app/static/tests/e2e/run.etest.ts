@@ -1,5 +1,5 @@
 import { expect, test, Page } from "@playwright/test";
-import {expectGraphVariables, addGraphWithVariable, expectXAxisTimeLabelFinalGraph} from "./utils";
+import { expectGraphVariables, addGraphWithVariable, expectXAxisTimeLabelFinalGraph } from "./utils";
 
 const expectXTicks = async (page: Page, expectedGraphCount: number, expectedXTicks: number[]) => {
     const graphs = await page.locator(".plot-container");
