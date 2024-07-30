@@ -51,6 +51,7 @@ describe("WodinPlot", () => {
         }
     ];
     const mockPlotDataFn = jest.fn().mockReturnValue(mockPlotData);
+    const settings = defaultGraphSettings();
     const defaultProps = {
         fadePlot: false,
         endTime: 99,
@@ -58,8 +59,8 @@ describe("WodinPlot", () => {
         plotData: mockPlotDataFn,
         placeholderMessage: "No data available",
         fitPlot: false,
-        graphIndex: 0,
-        graphConfig: { settings: defaultGraphSettings() }
+        graphIndex: 1,
+        graphConfig: { settings }
     };
 
     const mockSetYAxisRange = jest.fn();
@@ -71,7 +72,8 @@ describe("WodinPlot", () => {
                 graphs: {
                     namespaced: true,
                     state: {
-                        fitGraphSettings
+                        fitGraphSettings,
+                        config: [{ settings }, { settings }]
                     },
                     mutations: {
                         [GraphsMutation.SetYAxisRange]: mockSetYAxisRange,
@@ -501,7 +503,7 @@ describe("WodinPlot", () => {
         await nextTick();
         await wrapper.setProps({ redrawWatches: [{} as any] });
         await nextTick();
-        expect(mockSetYAxisRange.mock.calls[0][1]).toStrictEqual({ graphIndex: 0, value: [1, 2] });
+        expect(mockSetYAxisRange.mock.calls[0][1]).toStrictEqual({ graphIndex: 1, value: [1, 2] });
         expect(mockSetFitYAxisRange).not.toHaveBeenCalled();
     });
 
@@ -664,5 +666,44 @@ describe("WodinPlot", () => {
         expect(mockPlotDataFn.mock.calls[1][0]).toBe(3);
         expect(mockPlotDataFn.mock.calls[1][1]).toBe(5);
         expect(mockPlotDataFn.mock.calls[1][2]).toBe(1000);
+    });
+
+    it("does not display Time xAxis label if not final config in array", async () => {
+        const store = getStore();
+        const wrapper = getWrapper(
+            {
+                graphIndex: 0
+            },
+            store
+        );
+        mockPlotElementOn(wrapper);
+
+        wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+        expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({
+            margin: { t: 25 },
+            xaxis: { title: "" },
+            yaxis: { type: "linear" }
+        });
+    });
+
+    it("does display Time xAxis label if fitPlot is true", async () => {
+        const store = getStore();
+        const wrapper = getWrapper(
+            {
+                graphIndex: 0,
+                fitPlot: true
+            },
+            store
+        );
+        mockPlotElementOn(wrapper);
+
+        wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+        expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({
+            margin: { t: 25 },
+            xaxis: { title: "Time" },
+            yaxis: { type: "linear" }
+        });
     });
 });
