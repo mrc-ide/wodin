@@ -47,4 +47,18 @@ test.describe("Run Tab", () => {
         // 3. Check - using x axis ticks - that the expected x axis values are shown on all three graphs.
         await expectXTicks(page, 3, [15, 20, 25, 30, 35, 40]);
     });
+
+    test("x axis Time label is shown for final plot only", async ({ page }) => {
+        await page.goto("/apps/day1");
+        await addGraphWithVariable(page, 1);
+        const firstGraph = page.locator(":nth-match(.plotly, 1)");
+        const secondGraph = page.locator(":nth-match(.plotly, 2)");
+
+        await expect(await firstGraph.locator(".xtitle")).not.toBeVisible();
+        await expect(await secondGraph.locator(".xtitle").textContent()).toBe("Time");
+
+        // Delete second config - the Time label should be shown on the first graph
+        await page.locator(":nth-match(button.delete-graph, 2)").click();
+        await expect(await firstGraph.locator(".xtitle").textContent()).toBe("Time");
+    });
 });

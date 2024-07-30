@@ -145,6 +145,8 @@ test.describe("Wodin App model fit tests", () => {
 
         const plotSelector = ".wodin-right .wodin-content div.mt-4 .js-plotly-plot";
 
+        await expect(await page.locator(".plotly .xtitle").textContent()).toBe("Time");
+
         // Test line is plotted for fit trace and data points
         const linesSelector = `${plotSelector} .scatterlayer .trace .lines path`;
         await expect((await page.locator(linesSelector).getAttribute("d"))!.startsWith("M")).toBe(true);
