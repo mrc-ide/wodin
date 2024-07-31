@@ -22,11 +22,11 @@
                 :linked-x-axis="xAxis"
                 @updateXAxis="updateXAxis"
             >
-                <div v-if="sumOfSquares">
-                    <span>Sum of squares: {{ sumOfSquares }}</span>
-                </div>
             </run-plot>
         </template>
+        <div v-if="sumOfSquares">
+          <span>Sum of squares: {{ sumOfSquares }}</span>
+        </div>
         <error-info :error="error"></error-info>
         <div>
             <button
