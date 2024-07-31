@@ -53,13 +53,14 @@ export default (
         const variable = dataTransfer!.getData("variable");
         const srcGraphConfig = dataTransfer!.getData("srcGraphConfig");
         if (srcGraphConfig !== thisSrcGraphConfig) {
-            if (srcGraphConfig !== "hidden") {
-                removeVariable(parseInt(srcGraphConfig, 10), variable);
-            }
-            // add to this graph if necessary
+            // add to this graph if necessary - do this before remove so it is not unlinked if linked variables
             if (!hasHiddenVariables && !selectedVariables.value.includes(variable)) {
                 const newVars = [...selectedVariables.value, variable];
                 updateSelectedVariables(graphIndex!, newVars);
+            }
+
+            if (srcGraphConfig !== "hidden") {
+                removeVariable(parseInt(srcGraphConfig, 10), variable);
             }
         }
     };

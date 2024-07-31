@@ -141,15 +141,21 @@ export function allFitDataToPlotly(
     allFitData: AllFitData | null,
     paletteModel: Palette,
     start: number,
-    end: number
+    end: number,
+    selectedVariables: string[]
 ): WodinPlotData {
     if (!allFitData) {
         return [];
     }
     const { data, linkedVariables, timeVariable } = allFitData;
+    console.log("linked variables")
+    console.log(JSON.stringify(linkedVariables))
     const filteredData = filterData(data, timeVariable, start, end);
     const palette = paletteData(Object.keys(linkedVariables));
-    return Object.keys(linkedVariables).map((name: string) => ({
+    // Display column data if it is not linked OR if its linked variable is selected
+    const columns = Object.keys(linkedVariables)
+        .filter((column) => !linkedVariables[column] || selectedVariables.includes(linkedVariables[column]!));
+    return columns.map((name: string) => ({
         name,
         x: filteredData.map((row: Dict<number>) => row[timeVariable]),
         y: filteredData.map((row: Dict<number>) => row[name]),

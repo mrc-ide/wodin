@@ -85,7 +85,7 @@ const allPlotData = (start: number, end: number, points: number): WodinPlotData 
     const plotOptions = { showLegend: true, includeLegendGroup: true };
     const allData = [
         ...odinToPlotly(filterSeriesSet(result, selectedVariables.value), palette.value, plotOptions),
-        ...allFitDataToPlotly(allFitData.value, palette.value, start, end)
+        ...allFitDataToPlotly(allFitData.value, palette.value, start, end, props.graphConfig.selectedVariables)
     ];
 
     // 2. Parameter sets
