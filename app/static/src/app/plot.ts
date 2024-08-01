@@ -148,23 +148,30 @@ export function allFitDataToPlotly(
         return [];
     }
     const { data, linkedVariables, timeVariable } = allFitData;
-    console.log("linked variables")
-    console.log(JSON.stringify(linkedVariables))
     const filteredData = filterData(data, timeVariable, start, end);
     const palette = paletteData(Object.keys(linkedVariables));
-    // Display column data if it is not linked OR if its linked variable is selected
-    const columns = Object.keys(linkedVariables)
-        .filter((column) => !linkedVariables[column] || selectedVariables.includes(linkedVariables[column]!));
-    return columns.map((name: string) => ({
-        name,
-        x: filteredData.map((row: Dict<number>) => row[timeVariable]),
-        y: filteredData.map((row: Dict<number>) => row[name]),
-        mode: "markers",
-        type: "scatter",
-        marker: {
-            color: linkedVariables[name] ? paletteModel[linkedVariables[name]!] : palette[name]
+
+    return Object.keys(linkedVariables).map((name: string) => {
+        // Display column data if it is not linked OR if its linked variable is selected - render the series, but as
+        // transparent so that all graph x axes match
+        let color = palette[name];
+        const variable = linkedVariables[name];
+        if (variable) {
+            // If there is a linked variable, only show data if the variable is selected - if not ,render the series,
+            // but as transparent so that all graph x axes match
+            color = selectedVariables.includes(variable) ? paletteModel[variable] : "transparent";
         }
-    }));
+        return {
+            name,
+            x: filteredData.map((row: Dict<number>) => row[timeVariable]),
+            y: filteredData.map((row: Dict<number>) => row[name]),
+            mode: "markers",
+            type: "scatter",
+            marker: {
+                color
+            }
+        };
+    });
 }
 
 const lineStyles = ["dot", "dash", "longdash", "dashdot", "longdashdot"];
