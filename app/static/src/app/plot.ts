@@ -152,8 +152,6 @@ export function allFitDataToPlotly(
     const palette = paletteData(Object.keys(linkedVariables));
 
     return Object.keys(linkedVariables).map((name: string) => {
-        // Display column data if it is not linked OR if its linked variable is selected - render the series, but as
-        // transparent so that all graph x axes match
         let color = palette[name];
         const variable = linkedVariables[name];
         if (variable) {

@@ -25,7 +25,7 @@
             </run-plot>
         </template>
         <div v-if="sumOfSquares">
-          <span>Sum of squares: {{ sumOfSquares }}</span>
+          <span id="squares">Sum of squares: {{ sumOfSquares }}</span>
         </div>
         <error-info :error="error"></error-info>
         <div>
