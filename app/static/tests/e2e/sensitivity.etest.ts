@@ -104,7 +104,7 @@ test.describe("Sensitivity tests", () => {
         await expect(await page.innerText(".sensitivity-tab .plot-placeholder")).toBe("Sensitivity has not been run.");
 
         // run and see all traces
-        page.click("#run-sens-btn");
+        await page.click("#run-sens-btn");
         const linesSelector = `${plotSelector} .scatterlayer .trace .lines path`;
         expect((await page.locator(`:nth-match(${linesSelector}, 30)`).getAttribute("d"))!.startsWith("M0")).toBe(true);
 

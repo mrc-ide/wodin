@@ -1,11 +1,11 @@
-import { expect, test, Page } from "@playwright/test";
+import {expect, test, Page, Locator} from "@playwright/test";
 import {
     newFitCode,
     uploadCSVData,
     writeCode,
     startModelFit,
     waitForModelFitCompletion,
-    realisticFitData
+    realisticFitData, linkData, addGraphWithVariable, expectWodinPlotDataSummary
 } from "./utils";
 import PlaywrightConfig from "../../playwright.config";
 
@@ -327,7 +327,7 @@ test.describe("Wodin App model fit tests", () => {
         const select1 = await linkContainer.locator(":nth-match(select, 1)");
         await select1.selectOption("onset");
         await page.click(":nth-match(.wodin-right .nav-tabs a, 1)"); // change main to run tab
-        const sumOfSquares = await page.innerText(":nth-match(.wodin-plot-container span, 1)");
+        const sumOfSquares = await page.innerText("#squares");
         expect(sumOfSquares).toContain("Sum of squares:");
     });
 
@@ -343,5 +343,57 @@ test.describe("Wodin App model fit tests", () => {
         // change back to linear
         await page.locator(".log-scale-y-axis input").click();
         await expect(await page.innerHTML(tickSelector)).toBe("2");
+    });
+
+    const expectDataSummaryOnGraph = async (graph: Locator, dataSummaryIdx: number, dataColor: string) => {
+        const dataSummaryLocator = await graph.locator(`:nth-match(.wodin-plot-data-summary-series, ${dataSummaryIdx})`);
+        await expectWodinPlotDataSummary(dataSummaryLocator, "Cases", 32, 0, 31, 0, 13, "markers", null, dataColor );
+    };
+
+    test("data is displayed as expected with multiple graphs", async ({ page }) => {
+        await uploadCSVData(page, realisticFitData);
+        await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
+
+        // Add second graph and drag 'onset' and 'I' there
+        await addGraphWithVariable(page, 5); // onset
+        let iVariable = await page.locator(":nth-match(.variable, 3)");
+        await iVariable.dragTo(page.locator(":nth-match(.graph-config-panel .drop-zone, 2)"));
+
+        // Expect data to be shown on both graphs
+        const firstGraph = await page.locator(":nth-match(.wodin-plot-container, 1)");
+        const secondGraph = await page.locator(":nth-match(.wodin-plot-container, 2)");
+        const unlinkedDataColor = "#1c0a00";
+        const linkedDataColor = "#cccc00";
+        const unselectedDataColor = "transparent";
+        await expectDataSummaryOnGraph(firstGraph, 4, unlinkedDataColor);
+        await expectDataSummaryOnGraph(secondGraph, 3, unlinkedDataColor);
+
+        // Link data to 'I'
+        await linkData(page);
+
+        // Expect data to be shown on second graph with I's variable colour. Data should still be present on first graph
+        // but transparent
+        await expectDataSummaryOnGraph(firstGraph, 4, unselectedDataColor);
+        await expectDataSummaryOnGraph(secondGraph, 3, linkedDataColor);
+
+        // Drag 'I' back to first graph
+        const secondGraphConfig = page.locator(":nth-match(.graph-config-panel, 2)");
+        iVariable = secondGraphConfig.locator(":nth-match(.variable, 1)");
+        await iVariable.dragTo(page.locator(":nth-match(.graph-config-panel .drop-zone, 1)"));
+
+        // Expect data to be visible on first graph, transparent on second
+        await expectDataSummaryOnGraph(firstGraph, 5, linkedDataColor);
+        await expectDataSummaryOnGraph(secondGraph, 2, unselectedDataColor);
+
+        // SoS should be shown only once
+        const sumOfSquares = page.locator("#squares");
+        expect(await sumOfSquares.count()).toBe(1);
+        expect(await sumOfSquares.innerText()).toContain("Sum of squares:");
+
+        // Run sensitivity - expect data to be coloured on first graph, transparent on second
+        await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
+        await page.click("#run-sens-btn");
+        await expectDataSummaryOnGraph(firstGraph, 45, linkedDataColor);
+        await expectDataSummaryOnGraph(secondGraph, 12, unselectedDataColor);
     });
 });
