@@ -4,9 +4,9 @@
         :placeholder-message="placeholderMessage"
         :end-time="endTime"
         :plot-data="allPlotData"
-        :redrawWatches="solution ?
-              [solution, allFitData, selectedVariables, parameterSetSolutions, displayNames, graphCount] :
-              []"
+        :redrawWatches="
+            solution ? [solution, allFitData, selectedVariables, parameterSetSolutions, displayNames, graphCount] : []
+        "
         :linked-x-axis="linkedXAxis"
         :fit-plot="false"
         :graph-index="graphIndex"
