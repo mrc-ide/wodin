@@ -1,11 +1,14 @@
-import {expect, test, Page, Locator} from "@playwright/test";
+import { expect, test, Page, Locator } from "@playwright/test";
 import {
     newFitCode,
     uploadCSVData,
     writeCode,
     startModelFit,
     waitForModelFitCompletion,
-    realisticFitData, linkData, addGraphWithVariable, expectWodinPlotDataSummary
+    realisticFitData,
+    linkData,
+    addGraphWithVariable,
+    expectWodinPlotDataSummary
 } from "./utils";
 import PlaywrightConfig from "../../playwright.config";
 
@@ -346,8 +349,8 @@ test.describe("Wodin App model fit tests", () => {
     });
 
     const expectDataSummaryOnGraph = async (graph: Locator, dataSummaryIdx: number, dataColor: string) => {
-        const dataSummaryLocator = await graph.locator(`:nth-match(.wodin-plot-data-summary-series, ${dataSummaryIdx})`);
-        await expectWodinPlotDataSummary(dataSummaryLocator, "Cases", 32, 0, 31, 0, 13, "markers", null, dataColor );
+        const summaryLocator = await graph.locator(`:nth-match(.wodin-plot-data-summary-series, ${dataSummaryIdx})`);
+        await expectWodinPlotDataSummary(summaryLocator, "Cases", 32, 0, 31, 0, 13, "markers", null, dataColor);
     };
 
     test("data is displayed as expected with multiple graphs", async ({ page }) => {

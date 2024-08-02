@@ -199,13 +199,13 @@ describe("allFitDataToPlotly", () => {
         const selectedVariables = ["A"];
         const res = allFitDataToPlotly(allFitDataLinked, palette, 0, 4, selectedVariables);
         expect(res[1]).toStrictEqual({
-                marker: { color: "transparent" }, // Model colour
-                mode: "markers",
-                name: "b",
-                type: "scatter",
-                x: [0, 1, 2, 3, 4],
-                y: [2, 4, 6, 8, 10]
-            });
+            marker: { color: "transparent" }, // Model colour
+            mode: "markers",
+            name: "b",
+            type: "scatter",
+            x: [0, 1, 2, 3, 4],
+            y: [2, 4, 6, 8, 10]
+        });
     });
 });
 

@@ -201,7 +201,14 @@ export default defineComponent({
 
                 if (allFitData.value) {
                     result.push(
-                        ...allFitDataToPlotly(allFitData.value, palette.value, start, end, props.graphConfig.selectedVariables));
+                        ...allFitDataToPlotly(
+                            allFitData.value,
+                            palette.value,
+                            start,
+                            end,
+                            props.graphConfig.selectedVariables
+                        )
+                    );
                 }
             }
 

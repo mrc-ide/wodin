@@ -11,7 +11,8 @@ import { BasicState } from "../../../../src/app/store/basic/state";
 import {
     mockBasicState,
     mockFitState,
-    mockGraphsState, mockModelFitState,
+    mockGraphsState,
+    mockModelFitState,
     mockModelState,
     mockRunState,
     mockStochasticState
@@ -33,7 +34,7 @@ import { AppType } from "../../../../src/app/store/appState/state";
 import { RunMutation } from "../../../../src/app/store/run/mutations";
 import { RunAction } from "../../../../src/app/store/run/actions";
 import { getters as graphGetters } from "../../../../src/app/store/graphs/getters";
-import {FitState} from "../../../../src/app/store/fit/state";
+import { FitState } from "../../../../src/app/store/fit/state";
 
 describe("RunTab", () => {
     const defaultModelState = {
