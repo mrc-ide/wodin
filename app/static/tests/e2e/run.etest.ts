@@ -1,15 +1,5 @@
 import { expect, test, Page } from "@playwright/test";
-import { expectGraphVariables } from "./utils";
-
-const addGraphWithVariable = async (page: Page, variableIdx: number) => {
-    await page.click("#add-graph-btn");
-    const count = await page.locator(".graph-config-panel").count();
-    // assume we drag variable from first graph config
-    const firstGraphConfig = await page.locator(":nth-match(.graph-config-panel, 1)");
-    const variable = await firstGraphConfig.locator(`:nth-match(.variable, ${variableIdx})`);
-    await page.locator(`:nth-match(.graph-config-panel .drop-zone, ${count})`).scrollIntoViewIfNeeded();
-    await variable.dragTo(page.locator(`:nth-match(.graph-config-panel .drop-zone, ${count})`));
-};
+import { expectGraphVariables, addGraphWithVariable, expectXAxisTimeLabelFinalGraph } from "./utils";
 
 const expectXTicks = async (page: Page, expectedGraphCount: number, expectedXTicks: number[]) => {
     const graphs = await page.locator(".plot-container");
@@ -48,17 +38,14 @@ test.describe("Run Tab", () => {
         await expectXTicks(page, 3, [15, 20, 25, 30, 35, 40]);
     });
 
-    test("x axis Time label is shown for final plot only", async ({ page }) => {
+    test("x axis Time label is shown for final plot only, in Basic app", async ({ page }) => {
         await page.goto("/apps/day1");
-        await addGraphWithVariable(page, 1);
-        const firstGraph = page.locator(":nth-match(.plotly, 1)");
-        const secondGraph = page.locator(":nth-match(.plotly, 2)");
+        await expectXAxisTimeLabelFinalGraph(page);
+    });
 
-        await expect(await firstGraph.locator(".xtitle")).not.toBeVisible();
-        await expect(await secondGraph.locator(".xtitle").textContent()).toBe("Time");
-
-        // Delete second config - the Time label should be shown on the first graph
-        await page.locator(":nth-match(button.delete-graph, 2)").click();
-        await expect(await firstGraph.locator(".xtitle").textContent()).toBe("Time");
+    test("x axis Time label is shown for final plot only, in Stochastic app", async ({ page }) => {
+        await page.goto("/apps/day3");
+        await page.click(":nth-match(#right-tabs .nav-link, 2)");
+        await expectXAxisTimeLabelFinalGraph(page);
     });
 });

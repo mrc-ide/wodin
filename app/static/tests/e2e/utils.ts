@@ -205,3 +205,26 @@ export const expectGraphVariables = async (page: Page, graphIndex: number, expec
         );
     }
 };
+
+export const addGraphWithVariable = async (page: Page, variableIdx: number) => {
+    await page.click("#add-graph-btn");
+    const count = await page.locator(".graph-config-panel").count();
+    // assume we drag variable from first graph config
+    const firstGraphConfig = await page.locator(":nth-match(.graph-config-panel, 1)");
+    const variable = await firstGraphConfig.locator(`:nth-match(.variable, ${variableIdx})`);
+    await page.locator(`:nth-match(.graph-config-panel .drop-zone, ${count})`).scrollIntoViewIfNeeded();
+    await variable.dragTo(page.locator(`:nth-match(.graph-config-panel .drop-zone, ${count})`));
+};
+
+export const expectXAxisTimeLabelFinalGraph = async (page: Page) => {
+    await addGraphWithVariable(page, 1);
+    const firstGraph = page.locator(":nth-match(.plotly, 1)");
+    const secondGraph = page.locator(":nth-match(.plotly, 2)");
+
+    await expect(await firstGraph.locator(".xtitle")).not.toBeVisible();
+    await expect(await secondGraph.locator(".xtitle").textContent()).toBe("Time");
+
+    // Delete second config - the Time label should be shown on the first graph
+    await page.locator(":nth-match(button.delete-graph, 2)").click();
+    await expect(await firstGraph.locator(".xtitle").textContent()).toBe("Time");
+};
