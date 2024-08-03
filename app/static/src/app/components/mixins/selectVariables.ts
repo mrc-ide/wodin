@@ -19,8 +19,8 @@ export default (
     const thisSrcGraphConfig = hasHiddenVariables ? "hidden" : graphIndex!.toString();
 
     const startDrag = (evt: DragEvent, variable: string) => {
-        const { dataTransfer } = evt;
-        const copy = !hasHiddenVariables && evt.ctrlKey;
+        const { dataTransfer, ctrlKey } = evt;
+        const copy = !hasHiddenVariables && ctrlKey;
         dataTransfer!.dropEffect = "move";
         dataTransfer!.effectAllowed = "move";
         dataTransfer!.setData("variable", variable);
@@ -64,7 +64,17 @@ export default (
             }
 
             if (srcGraphConfig !== "hidden" && !copy) {
-                removeVariable(parseInt(srcGraphConfig, 10), variable);
+                // Remove variable from all graphs where it occurs if this is HiddenVariables, otherwise from source
+                // graph only
+                if (hasHiddenVariables) {
+                    store.state.graphs.config.forEach((config, index) => {
+                        if (config.selectedVariables.includes(variable)) {
+                            removeVariable(index, variable);
+                        }
+                    });
+                } else {
+                    removeVariable(parseInt(srcGraphConfig, 10), variable);
+                }
             }
         }
     };

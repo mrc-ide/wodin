@@ -93,12 +93,23 @@ describe("GraphConfig", () => {
         const wrapper = getWrapper();
         const s = wrapper.findAll(".graph-config-panel .badge").at(0)!;
         const setData = jest.fn();
-        await s.trigger("dragstart", { dataTransfer: { setData } });
+        await s.trigger("dragstart", { dataTransfer: { setData }, ctrlKey: false });
         expect(setData.mock.calls[0][0]).toBe("variable");
         expect(setData.mock.calls[0][1]).toStrictEqual("S");
         expect(setData.mock.calls[1][0]).toStrictEqual("srcGraphConfig");
         expect(setData.mock.calls[1][1]).toStrictEqual("0");
+        expect(setData.mock.calls[2][0]).toBe("copyVar");
+        expect(setData.mock.calls[2][1]).toBe("false");
         expect(wrapper.emitted("setDragging")![0]).toStrictEqual([true]);
+    });
+
+    it("start drag sets values copyVar to true in event when Ctrl key pressed", async () => {
+        const wrapper = getWrapper();
+        const s = wrapper.findAll(".graph-config-panel .badge").at(0)!;
+        const setData = jest.fn();
+        await s.trigger("dragstart", { dataTransfer: { setData }, ctrlKey: true });
+        expect(setData.mock.calls[2][0]).toBe("copyVar");
+        expect(setData.mock.calls[2][1]).toBe("true");
     });
 
     it("ending drag emits setDragging", async () => {
@@ -114,6 +125,7 @@ describe("GraphConfig", () => {
             getData: (s: string) => {
                 if (s === "variable") return "I";
                 if (s === "srcGraphConfig") return "1";
+                if (s === "copyVar") return "false";
                 return null;
             }
         };
@@ -133,6 +145,26 @@ describe("GraphConfig", () => {
             getData: (s: string) => {
                 if (s === "variable") return "I";
                 if (s === "srcGraphConfig") return "hidden";
+                if (s === "copyVar") return "false";
+                return null;
+            }
+        };
+        const dropPanel = wrapper.find(".graph-config-panel");
+        await dropPanel.trigger("drop", { dataTransfer });
+        expect(mockUpdateSelectedVariables.mock.calls.length).toBe(1);
+        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({
+            graphIndex: 0,
+            selectedVariables: ["S", "R", "I"]
+        });
+    });
+
+    it("onDrop does not remove variable if copyVar is true", async () => {
+        const wrapper = getWrapper();
+        const dataTransfer = {
+            getData: (s: string) => {
+                if (s === "variable") return "I";
+                if (s === "srcGraphConfig") return "1";
+                if (s === "copyVar") return "true";
                 return null;
             }
         };
@@ -167,7 +199,8 @@ describe("GraphConfig", () => {
             ]
         } as any);
         expect(wrapper.find(".drop-zone-instruction").text()).toBe(
-            "Drag variables here to select them for this graph."
+            "Drag variables here to select them for this graph. " +
+                "Press the Ctrl key on drag to make a copy of a variable."
         );
     });
 
