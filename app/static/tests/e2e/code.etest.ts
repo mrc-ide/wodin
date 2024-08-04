@@ -326,7 +326,11 @@ test.describe("Code Tab tests", () => {
 
         // Drag variable to second graph
         const sVariable = await page.locator(":nth-match(.graph-config-panel .variable, 1)");
-        await sVariable.dragTo(page.locator(":nth-match(.graph-config-panel .drop-zone, 2)"));
+        const dragPositions = {
+            sourcePosition: { x: 5, y: 5 },
+            targetPosition: { x: 5, y: 5 }
+        };
+        await sVariable.dragTo(page.locator(":nth-match(.graph-config-panel .drop-zone, 2)"), dragPositions );
 
         await expectGraphVariables(page, 0, ["I", "R"]);
         await expectGraphVariables(page, 1, ["S"]);
@@ -335,9 +339,9 @@ test.describe("Code Tab tests", () => {
         // Drag a variable with Ctrl key to make copy
         const iVariable = await page.locator(":nth-match(.graph-config-panel .variable, 1)");
         await page.keyboard.down("Control");
-        await iVariable.dragTo(page.locator(":nth-match(.graph-config-panel .drop-zone, 2)"));
+        await iVariable.dragTo(page.locator(":nth-match(.graph-config-panel .drop-zone, 2)"), dragPositions);
         await page.keyboard.up("Control");
-        await expectGraphVariables(page, 0, ["R"]);
+        await expectGraphVariables(page, 0, ["I", "R"]);
         await expectGraphVariables(page, 1, ["S", "I"]);
 
         // Delete second graph
