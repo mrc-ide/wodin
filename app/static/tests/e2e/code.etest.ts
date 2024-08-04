@@ -330,7 +330,7 @@ test.describe("Code Tab tests", () => {
             sourcePosition: { x: 5, y: 5 },
             targetPosition: { x: 5, y: 5 }
         };
-        await sVariable.dragTo(page.locator(":nth-match(.graph-config-panel .drop-zone, 2)"), dragPositions );
+        await sVariable.dragTo(page.locator(":nth-match(.graph-config-panel .drop-zone, 2)"), dragPositions);
 
         await expectGraphVariables(page, 0, ["I", "R"]);
         await expectGraphVariables(page, 1, ["S"]);
