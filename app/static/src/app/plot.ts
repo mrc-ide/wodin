@@ -155,8 +155,8 @@ export function allFitDataToPlotly(
         let color = palette[name];
         const variable = linkedVariables[name];
         if (variable) {
-            // If there is a linked variable, only show data if the variable is selected - if not selected, render the series,
-            // but as transparent so that all graph x axes are consistent
+            // If there is a linked variable, only show data if the variable is selected - if not selected, render the
+            // series, but as transparent so that all graph x axes are consistent
             color = selectedVariables.includes(variable) ? paletteModel[variable] : "transparent";
         }
         return {
