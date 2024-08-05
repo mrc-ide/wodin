@@ -20,14 +20,15 @@ import {
     Plots,
     AxisType,
     Layout,
-    Config,
-    LayoutAxis
+    LayoutAxis,
+    ModeBarDefaultButtons
 } from "plotly.js-basic-dist-min";
 import { WodinPlotData, fadePlotStyle, margin, config } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
 import { GraphsMutation } from "../store/graphs/mutations";
 import { GraphConfig, YAxisRange } from "../store/graphs/state";
 import { GraphsGetter } from "../store/graphs/getters";
+import * as Plotly from "plotly.js-basic-dist-min";
 
 export default defineComponent({
     name: "WodinPlot",
@@ -152,6 +153,21 @@ export default defineComponent({
             return result;
         };
 
+        const plotlyConfig = {
+          ...config,
+          // We provide a custom implementation of Reset Axes to truly reset the y axis, not just reset to the
+          // range we retain and provide on relayout (in layout parameter).
+          // Reset Axes will still be overriden by Lock y axis
+          modeBarButtonsToRemove: ["resetScale2d"] as ModeBarDefaultButtons[],
+          modeBarButtonsToAdd: [{
+            name: "Reset axes",
+            icon: (Plotly as any).Icons.home,  // Icons is available from plotly, but not in types
+            click: () => {
+              relayout({ "xaxis.autorange": true, "yaxis.autorange": true });
+            }
+          }]
+        } as never;
+
         const updateXAxisRange = async (xAxis: Partial<LayoutAxis>) => {
             let data;
             if (xAxis.autorange) {
@@ -163,7 +179,7 @@ export default defineComponent({
             const layout = preserveYAxisRange(defaultLayout());
 
             const el = plot.value as HTMLElement;
-            await react(el, data, layout, config);
+            await react(el, data, layout, plotlyConfig);
         };
 
         const axisFromEvent = (event: PlotRelayoutEvent, axisLetter: "x" | "y"): Partial<LayoutAxis> => {
@@ -208,7 +224,6 @@ export default defineComponent({
                     if (!toggleLogScale) {
                         layout = preserveYAxisRange(layout);
                     }
-                    const configCopy = { ...config } as Partial<Config>;
 
                     let data;
                     if (!props.linkedXAxis || props.linkedXAxis.autorange) {
@@ -217,7 +232,7 @@ export default defineComponent({
                         data = props.plotData(props.linkedXAxis.range![0], props.linkedXAxis.range![1], nPoints);
                     }
 
-                    newPlot(el as HTMLElement, data, layout, configCopy);
+                    newPlot(el as HTMLElement, data, layout, plotlyConfig);
 
                     // We're not locking the YAxis OR we are toggling the log scale (overriding any locked range)
                     // so commit whatever Y axis range the plot auto-calculates, so we can lock to that in future
