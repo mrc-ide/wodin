@@ -1,5 +1,7 @@
 // Mock the import of third party packages to prevent errors
-jest.mock("plotly.js-basic-dist-min", () => ({}));
+jest.mock("plotly.js-basic-dist-min", () => ({
+    Icons: {}
+}));
 jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
     // eslint-disable-next-line func-names
     return function () {
