@@ -153,7 +153,8 @@ describe("RunPlot", () => {
             mockAllFitData,
             selectedVariables,
             {},
-            ["Hey", "Bye"]
+            ["Hey", "Bye"],
+            1
         ]);
         expect(wodinPlot.props("linkedXAxis")).toStrictEqual(linkedXAxis);
 
@@ -292,7 +293,8 @@ describe("RunPlot", () => {
             mockAllFitData,
             selectedVariables,
             { Set1: mockParamSetResult1.solution, Set2: mockParamSetResult2.solution },
-            ["rand1", "rand2", "rand3"]
+            ["rand1", "rand2", "rand3"],
+            1
         ]);
 
         // Generates expected plot data from model
@@ -517,7 +519,8 @@ describe("RunPlot", () => {
             mockAllFitData,
             selectedVariables,
             {},
-            ["Hey", "Bye"]
+            ["Hey", "Bye"],
+            1
         ]);
 
         // Generates expected plot data from model

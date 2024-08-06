@@ -120,11 +120,11 @@ describe("GraphConfig", () => {
         const dropPanel = wrapper.find(".graph-config-panel");
         await dropPanel.trigger("drop", { dataTransfer });
         expect(mockUpdateSelectedVariables.mock.calls.length).toBe(2);
-        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({ graphIndex: 1, selectedVariables: ["J"] });
-        expect(mockUpdateSelectedVariables.mock.calls[1][1]).toStrictEqual({
+        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({
             graphIndex: 0,
             selectedVariables: ["S", "R", "I"]
         });
+        expect(mockUpdateSelectedVariables.mock.calls[1][1]).toStrictEqual({ graphIndex: 1, selectedVariables: ["J"] });
     });
 
     it("onDrop does not attempt to remove variable if source was hidden variables", async () => {

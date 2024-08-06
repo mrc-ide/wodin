@@ -8,7 +8,15 @@ import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { nextTick } from "vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import { mockBasicState, mockGraphsState, mockModelState, mockRunState, mockStochasticState } from "../../../mocks";
+import {
+    mockBasicState,
+    mockFitState,
+    mockGraphsState,
+    mockModelFitState,
+    mockModelState,
+    mockRunState,
+    mockStochasticState
+} from "../../../mocks";
 import { ModelState } from "../../../../src/app/store/model/state";
 import { RunState } from "../../../../src/app/store/run/state";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
@@ -26,6 +34,7 @@ import { AppType } from "../../../../src/app/store/appState/state";
 import { RunMutation } from "../../../../src/app/store/run/mutations";
 import { RunAction } from "../../../../src/app/store/run/actions";
 import { getters as graphGetters } from "../../../../src/app/store/graphs/getters";
+import { FitState } from "../../../../src/app/store/fit/state";
 
 describe("RunTab", () => {
     const defaultModelState = {
@@ -144,6 +153,35 @@ describe("RunTab", () => {
         });
     };
 
+    const getFitWrapper = () => {
+        const store = new Vuex.Store<FitState>({
+            state: mockFitState(),
+            modules: {
+                graphs: {
+                    namespaced: true,
+                    state: mockGraphsState({
+                        config: [
+                            { id: "123", selectedVariables: ["S"], unselectedVariables: [] },
+                            { id: "456", selectedVariables: [], unselectedVariables: [] }
+                        ]
+                    } as any),
+                    getters: graphGetters
+                },
+                modelFit: {
+                    namespaced: true,
+                    state: mockModelFitState({
+                        sumOfSquares: 21.2
+                    })
+                }
+            }
+        });
+        return shallowMount(RunTab, {
+            global: {
+                plugins: [store]
+            }
+        });
+    };
+
     it("renders as expected when can run model", () => {
         const runState = { ...defaultRunState, userDownloadFileName: "test.xlsx" };
         const wrapper = getWrapper(defaultModelState, runState);
@@ -182,6 +220,12 @@ describe("RunTab", () => {
 
         expect(wrapper.find("#downloading").exists()).toBe(false);
         expect(wrapper.findComponent(RunStochasticPlot).exists()).toBe(false);
+    });
+
+    it("renders sumOfSquares for Fit app", () => {
+        const wrapper = getFitWrapper();
+        expect(wrapper.findAll("#squares").length).toBe(1);
+        expect(wrapper.find("#squares").text()).toBe("Sum of squares: 21.2");
     });
 
     it("propagates x axis changes to all run plots", async () => {

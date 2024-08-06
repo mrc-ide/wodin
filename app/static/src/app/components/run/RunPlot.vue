@@ -4,7 +4,9 @@
         :placeholder-message="placeholderMessage"
         :end-time="endTime"
         :plot-data="allPlotData"
-        :redrawWatches="solution ? [solution, allFitData, selectedVariables, parameterSetSolutions, displayNames] : []"
+        :redrawWatches="
+            solution ? [solution, allFitData, selectedVariables, parameterSetSolutions, displayNames, graphCount] : []
+        "
         :linked-x-axis="linkedXAxis"
         :fit-plot="false"
         :graph-index="graphIndex"
@@ -69,6 +71,9 @@ const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData
 const selectedVariables = computed(() => props.graphConfig.selectedVariables);
 const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, false));
 
+// TODO: put this in the composable in mrc-5572
+const graphCount = computed(() => store.state.graphs.config.length);
+
 const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
     const options = {
         mode: "grid",
@@ -85,7 +90,7 @@ const allPlotData = (start: number, end: number, points: number): WodinPlotData 
     const plotOptions = { showLegend: true, includeLegendGroup: true };
     const allData = [
         ...odinToPlotly(filterSeriesSet(result, selectedVariables.value), palette.value, plotOptions),
-        ...allFitDataToPlotly(allFitData.value, palette.value, start, end)
+        ...allFitDataToPlotly(allFitData.value, palette.value, start, end, props.graphConfig.selectedVariables)
     ];
 
     // 2. Parameter sets

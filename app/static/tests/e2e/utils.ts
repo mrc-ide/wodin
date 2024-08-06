@@ -81,20 +81,22 @@ export const writeCode = async (page: Page, code: string) => {
     await page.fill(".monaco-editor textarea", code);
 };
 
+export const linkData = async (page: Page) => {
+    const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
+    const select1 = await linkContainer.locator(":nth-match(select, 1)");
+    await select1.selectOption("I");
+};
+
 export const startModelFit = async (page: Page, data: string = realisticFitData) => {
     // Upload data
     await uploadCSVData(page, data);
     await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
 
-    // link variables
     await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
     await expect(await page.innerText("#optimisation")).toBe(
         "Please link at least one column in order to set target to fit."
     );
-    const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
-    const select1 = await linkContainer.locator(":nth-match(select, 1)");
-    await select1.selectOption("I");
-
+    await linkData(page);
     await expect(await page.innerText("#optimisation label#target-fit-label")).toBe("Cases ~ I");
 
     // select param to vary
