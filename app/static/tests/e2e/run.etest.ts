@@ -55,7 +55,7 @@ test.describe("Run Tab", () => {
         await expectXTicks(page, 3, [15, 20, 25, 30, 35, 40]);
     });
 
-    test("Reset axes button reset both axes", async ({page}) => {
+    test("Reset axes button reset both axes", async ({ page }) => {
         const initialXTicks = [0, 20, 40, 60, 80, 100];
         const initialYTicks = ["0", "0.2M", "0.4M", "0.6M", "0.8M", "1M"];
         // Sanity check initial x and y axes

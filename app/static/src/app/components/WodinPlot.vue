@@ -23,12 +23,12 @@ import {
     LayoutAxis,
     ModeBarDefaultButtons
 } from "plotly.js-basic-dist-min";
+import * as Plotly from "plotly.js-basic-dist-min";
 import { WodinPlotData, fadePlotStyle, margin, config } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
 import { GraphsMutation } from "../store/graphs/mutations";
 import { GraphConfig, YAxisRange } from "../store/graphs/state";
 import { GraphsGetter } from "../store/graphs/getters";
-import * as Plotly from "plotly.js-basic-dist-min";
 
 export default defineComponent({
     name: "WodinPlot",
@@ -154,18 +154,23 @@ export default defineComponent({
         };
 
         const plotlyConfig = {
-          ...config,
-          // We provide a custom implementation of Reset Axes to truly reset the y axis, not just reset to the
-          // range we retain and provide on relayout (in layout parameter).
-          // Reset Axes will still be overriden by Lock y axis
-          modeBarButtonsToRemove: ["resetScale2d"] as ModeBarDefaultButtons[],
-          modeBarButtonsToAdd: [{
-            name: "Reset axes",
-            icon: (Plotly as any).Icons.home,  // Icons is available from plotly, but not in types
-            click: () => {
-              relayout({ "xaxis.autorange": true, "yaxis.autorange": true });
-            }
-          }]
+            ...config,
+            // We provide a custom implementation of Reset Axes to truly reset the y axis, not just reset to the
+            // range we retain and provide on relayout (in layout parameter).
+            // Reset Axes will still be overriden by Lock y axis
+            modeBarButtonsToRemove: ["resetScale2d"] as ModeBarDefaultButtons[],
+            modeBarButtonsToAdd: [
+                {
+                    name: "Reset axes",
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    icon: (Plotly as any).Icons.home, // Icons is available from plotly, but not defined in types
+                    click: () => {
+                        // This is necessarily circular, unfortunately
+                        // eslint-disable-next-line no-use-before-define
+                        relayout({ "xaxis.autorange": true, "yaxis.autorange": true });
+                    }
+                }
+            ]
         } as never;
 
         const updateXAxisRange = async (xAxis: Partial<LayoutAxis>) => {
