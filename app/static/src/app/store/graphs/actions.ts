@@ -2,10 +2,12 @@ import { ActionTree } from "vuex";
 import { GraphsMutation } from "./mutations";
 import { AppState, AppType } from "../appState/state";
 import { FitDataAction } from "../fitData/actions";
-import { GraphsState } from "./state";
+import { GraphsState, defaultGraphSettings } from "./state";
+import { newUid } from "../../utils";
 
 export enum GraphsAction {
-    UpdateSelectedVariables = "UpdateSelectedVariables"
+    UpdateSelectedVariables = "UpdateSelectedVariables",
+    NewGraph = "NewGraph"
 }
 
 export const actions: ActionTree<GraphsState, AppState> = {
@@ -13,13 +15,26 @@ export const actions: ActionTree<GraphsState, AppState> = {
         const { commit, dispatch, rootState } = context;
         // Maintain unselected variables too, so we know which variables had been explicitly unselected when model
         // updates
-        const unselectedVariables =
-            rootState.model.odinModelResponse?.metadata?.variables.filter(
-                (s) => !payload.selectedVariables.includes(s)
-            ) || [];
-        commit(GraphsMutation.SetSelectedVariables, { ...payload, unselectedVariables });
+        const allVariables = rootState.model.odinModelResponse?.metadata?.variables || [];
+        const unselectedVariables = allVariables.filter((s) => !payload.selectedVariables.includes(s)) || [];
+        // sort the selected variables to match the order in the model
+        const selectedVariables = payload.selectedVariables.sort((a, b) =>
+            allVariables.indexOf(a) > allVariables.indexOf(b) ? 1 : -1
+        );
+
+        commit(GraphsMutation.SetSelectedVariables, { ...payload, selectedVariables, unselectedVariables });
         if (rootState.appType === AppType.Fit) {
             dispatch(`fitData/${FitDataAction.UpdateLinkedVariables}`, null, { root: true });
         }
+    },
+    NewGraph(context) {
+        const { rootState, commit } = context;
+        const unselectedVariables = [...(rootState.model.odinModelResponse?.metadata?.variables || [])];
+        commit(GraphsMutation.AddGraph, {
+            id: newUid(),
+            settings: defaultGraphSettings(),
+            selectedVariables: [],
+            unselectedVariables
+        });
     }
 };

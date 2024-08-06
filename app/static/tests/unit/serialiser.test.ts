@@ -25,6 +25,13 @@ import { Language } from "../../src/app/types/languageTypes";
 import { AdvancedOptions } from "../../src/app/types/responseTypes";
 import { AdvancedComponentType } from "../../src/app/store/run/state";
 import { noSensitivityUpdateRequired } from "../../src/app/store/sensitivity/sensitivity";
+import { defaultGraphSettings } from "../../src/app/store/graphs/state";
+
+jest.mock("../../src/app/utils", () => {
+    return {
+        newUid: jest.fn().mockReturnValue("12345")
+    };
+});
 
 describe("serialise", () => {
     const codeState = {
@@ -364,15 +371,21 @@ describe("serialise", () => {
     });
 
     const graphsState = mockGraphsState({
-        settings: {
+        fitGraphSettings: {
             logScaleYAxis: true,
             lockYAxis: true,
             yAxisRange: [1, 2]
         },
         config: [
             {
+                id: "123",
                 selectedVariables: ["S", "I"],
-                unselectedVariables: ["R"]
+                unselectedVariables: ["R"],
+                settings: {
+                    logScaleYAxis: false,
+                    lockYAxis: true,
+                    yAxisRange: [10, 20]
+                }
             }
         ]
     });
@@ -536,6 +549,25 @@ describe("serialise", () => {
         }
     };
 
+    const expectedGraphs = {
+        fitGraphSettings: {
+            logScaleYAxis: true,
+            lockYAxis: true,
+            yAxisRange: [1, 2]
+        },
+        config: [
+            {
+                selectedVariables: ["S", "I"],
+                unselectedVariables: ["R"],
+                settings: {
+                    logScaleYAxis: false,
+                    lockYAxis: true,
+                    yAxisRange: [10, 20]
+                }
+            }
+        ]
+    };
+
     it("serialises BasicState as expected", () => {
         const serialised = serialiseState(basicState);
         const expected = {
@@ -545,7 +577,7 @@ describe("serialise", () => {
             run: expectedRun,
             sensitivity: expectedSensitivity,
             multiSensitivity: expectedMultiSensitivity,
-            graphs: graphsState
+            graphs: expectedGraphs
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
     });
@@ -561,7 +593,7 @@ describe("serialise", () => {
             multiSensitivity: expectedMultiSensitivity,
             fitData: expectedFitData,
             modelFit: expectedModelFit,
-            graphs: graphsState
+            graphs: expectedGraphs
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
     });
@@ -626,7 +658,7 @@ describe("serialise", () => {
                 ...expectedModelFit,
                 result: { ...expectedModelFit.result, hasResult: false }
             },
-            graphs: graphsState
+            graphs: expectedGraphs
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
     });
@@ -651,7 +683,7 @@ describe("serialise", () => {
             multiSensitivity: { ...expectedMultiSensitivity, result: null },
             fitData: expectedFitData,
             modelFit: { ...expectedModelFit, result: null },
-            graphs: graphsState
+            graphs: expectedGraphs
         };
         expect(JSON.parse(serialised)).toStrictEqual(expected);
     });
@@ -700,7 +732,17 @@ describe("serialise", () => {
             fitData: mockFitDataState(),
             modelFit: mockModelFitState(),
             versions: mockVersionsState(),
-            graphs: mockGraphsState()
+            graphs: mockGraphsState({
+                config: [
+                    {
+                        id: "12345", // id from mocked newUid
+                        selectedVariables: [],
+                        unselectedVariables: [],
+                        settings: defaultGraphSettings()
+                    }
+                ],
+                fitGraphSettings: defaultGraphSettings()
+            })
         });
     });
 
@@ -709,8 +751,6 @@ describe("serialise", () => {
             openVisualisationTab: VisualisationTab.Fit,
             code: mockCodeState(),
             model: mockModelState({
-                selectedVariables: undefined,
-                unselectedVariables: undefined,
                 odinModelResponse: {
                     metadata: {
                         variables: ["S", "I", "R"]
@@ -736,12 +776,19 @@ describe("serialise", () => {
             sensitivity: {},
             fitData: {},
             modelFit: {},
-            graphs: defaultGraphsState,
+            graphs: defaultGraphsState(),
             versions: null
         } as any;
         deserialiseState(target, serialised);
-        expect(target.graphs.config[0].selectedVariables).toStrictEqual(["S", "I", "R"]);
-        expect(target.graphs.config[0].unselectedVariables).toStrictEqual([]);
+        expect(target.graphs.config).toStrictEqual([
+            {
+                id: "12345",
+                selectedVariables: ["S", "I", "R"],
+                unselectedVariables: [],
+                settings: defaultGraphSettings()
+            }
+        ]);
+        expect(target.graphs.fitGraphSettings).toStrictEqual(defaultGraphSettings());
     });
 
     it("deserialises default graph settings when undefined in serialised state", () => {
@@ -771,12 +818,14 @@ describe("serialise", () => {
             fitData: {},
             modelFit: {},
             versions: null,
-            graphs: defaultGraphsState
+            graphs: defaultGraphsState()
         } as any;
         // sanity check
-        expect(target.graphs.settings.logScaleYAxis).toBe(false);
+        expect(target.graphs.fitGraphSettings.logScaleYAxis).toBe(false);
+        expect(target.graphs.config[0].settings.logScaleYAxis).toBe(false);
 
         deserialiseState(target, serialised);
-        expect(target.graphs.settings.logScaleYAxis).toBe(false);
+        expect(target.graphs.fitGraphSettings.logScaleYAxis).toBe(false);
+        expect(target.graphs.config[0].settings.logScaleYAxis).toBe(false);
     });
 });

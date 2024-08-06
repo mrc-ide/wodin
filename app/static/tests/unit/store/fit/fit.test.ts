@@ -2,7 +2,7 @@ import { localStorageManager } from "../../../../src/app/localStorageManager";
 
 jest.mock("../../../../src/app/utils", () => {
     return {
-        newSessionId: jest.fn().mockReturnValue("12345")
+        newUid: jest.fn().mockReturnValue("12345")
     };
 });
 

@@ -8,7 +8,7 @@ import { run } from "../run/run";
 import { code } from "../code/code";
 import { sensitivity } from "../sensitivity/sensitivity";
 import { AppType, VisualisationTab } from "../appState/state";
-import { newSessionId } from "../../utils";
+import { newUid } from "../../utils";
 import { logMutations, persistState } from "../plugins";
 import { sessions } from "../sessions/sessions";
 import { versions } from "../versions/versions";
@@ -22,7 +22,7 @@ const language = getStoreModule();
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
     return {
-        sessionId: newSessionId(),
+        sessionId: newUid(),
         sessionLabel: null,
         appType: AppType.Stochastic,
         openVisualisationTab: VisualisationTab.Run,

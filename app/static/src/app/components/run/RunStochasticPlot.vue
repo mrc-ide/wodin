@@ -4,32 +4,52 @@
         :placeholder-message="placeholderMessage"
         :end-time="endTime"
         :plot-data="allPlotData"
-        :redrawWatches="solution ? [solution] : []"
+        :redrawWatches="solution ? [solution, graphCount] : []"
+        :linked-x-axis="linkedXAxis"
+        :fit-plot="false"
+        :graph-index="graphIndex"
+        :graph-config="graphConfig"
+        @updateXAxis="updateXAxis"
     >
         <slot></slot>
     </wodin-plot>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { useStore } from "vuex";
+import { LayoutAxis } from "plotly.js-basic-dist-min";
 import { WodinPlotData, discreteSeriesSetToPlotly, filterSeriesSet } from "../../plot";
 import WodinPlot from "../WodinPlot.vue";
 import { runPlaceholderMessage } from "../../utils";
 import { StochasticConfig } from "../../types/responseTypes";
+import { GraphConfig } from "../../store/graphs/state";
 
 export default defineComponent({
     name: "RunStochasticPlot",
     props: {
-        fadePlot: Boolean
+        fadePlot: Boolean,
+        graphIndex: {
+            type: Number,
+            required: true
+        },
+        graphConfig: {
+            type: Object as PropType<GraphConfig>,
+            required: true
+        },
+        linkedXAxis: {
+            type: Object as PropType<Partial<LayoutAxis> | null>,
+            required: true
+        }
     },
     components: {
         WodinPlot
     },
-    setup() {
+    emits: ["updateXAxis"],
+    setup(props, { emit }) {
         const store = useStore();
 
-        const selectedVariables = computed(() => store.state.graphs.config[0].selectedVariables);
+        const selectedVariables = computed(() => props.graphConfig.selectedVariables);
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, false));
 
         const solution = computed(() => store.state.run.resultDiscrete?.solution);
@@ -37,6 +57,9 @@ export default defineComponent({
         const endTime = computed(() => store.state.run.endTime);
 
         const palette = computed(() => store.state.model.paletteModel);
+
+        // TODO: put this in the composable in mrc-5572
+        const graphCount = computed(() => store.state.graphs.config.length);
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
             const result =
@@ -61,11 +84,17 @@ export default defineComponent({
             );
         };
 
+        const updateXAxis = (options: Partial<LayoutAxis>) => {
+            emit("updateXAxis", options);
+        };
+
         return {
             placeholderMessage,
             endTime,
+            graphCount,
             allPlotData,
-            solution
+            solution,
+            updateXAxis
         };
     }
 });

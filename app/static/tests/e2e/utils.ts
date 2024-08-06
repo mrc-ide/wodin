@@ -81,20 +81,22 @@ export const writeCode = async (page: Page, code: string) => {
     await page.fill(".monaco-editor textarea", code);
 };
 
+export const linkData = async (page: Page) => {
+    const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
+    const select1 = await linkContainer.locator(":nth-match(select, 1)");
+    await select1.selectOption("I");
+};
+
 export const startModelFit = async (page: Page, data: string = realisticFitData) => {
     // Upload data
     await uploadCSVData(page, data);
     await page.click(":nth-match(.wodin-right .nav-tabs a, 2)");
 
-    // link variables
     await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
     await expect(await page.innerText("#optimisation")).toBe(
         "Please link at least one column in order to set target to fit."
     );
-    const linkContainer = await page.locator(":nth-match(.collapse .container, 1)");
-    const select1 = await linkContainer.locator(":nth-match(select, 1)");
-    await select1.selectOption("I");
-
+    await linkData(page);
     await expect(await page.innerText("#optimisation label#target-fit-label")).toBe("Cases ~ I");
 
     // select param to vary
@@ -186,4 +188,45 @@ export const expectCanRunMultiSensitivity = async (page: Page, timeout = 10000) 
         { timeout }
     );
     await expect(await page.locator("#download-summary-btn")).toBeEnabled();
+};
+
+export const expectGraphVariables = async (page: Page, graphIndex: number, expectedVariables: string[]) => {
+    // expect to find these variables in config panel and on plot series
+    const configPanel = await page.locator(`:nth-match(.graph-config-panel, ${graphIndex + 1})`);
+    const configVars = await configPanel.locator(".variable .variable-name");
+    await expect(configVars).toHaveCount(expectedVariables.length);
+
+    const plotSummary = await page.locator(
+        `:nth-match(.wodin-plot-container .wodin-plot-data-summary, ${graphIndex + 1})`
+    );
+    for (let i = 0; i < expectedVariables.length; i++) {
+        await expect(configVars.nth(i)).toHaveText(expectedVariables[i]);
+        await expect(plotSummary.locator(`:nth-match(.wodin-plot-data-summary-series, ${i + 1})`)).toHaveAttribute(
+            "name",
+            expectedVariables[i]
+        );
+    }
+};
+
+export const addGraphWithVariable = async (page: Page, variableIdx: number) => {
+    await page.click("#add-graph-btn");
+    const count = await page.locator(".graph-config-panel").count();
+    // assume we drag variable from first graph config
+    const firstGraphConfig = await page.locator(":nth-match(.graph-config-panel, 1)");
+    const variable = await firstGraphConfig.locator(`:nth-match(.variable, ${variableIdx})`);
+    await page.locator(`:nth-match(.graph-config-panel .drop-zone, ${count})`).scrollIntoViewIfNeeded();
+    await variable.dragTo(page.locator(`:nth-match(.graph-config-panel .drop-zone, ${count})`));
+};
+
+export const expectXAxisTimeLabelFinalGraph = async (page: Page) => {
+    await addGraphWithVariable(page, 1);
+    const firstGraph = page.locator(":nth-match(.plotly, 1)");
+    const secondGraph = page.locator(":nth-match(.plotly, 2)");
+
+    await expect(await firstGraph.locator(".xtitle")).not.toBeVisible();
+    await expect(await secondGraph.locator(".xtitle").textContent()).toBe("Time");
+
+    // Delete second config - the Time label should be shown on the first graph
+    await page.locator(":nth-match(button.delete-graph, 2)").click();
+    await expect(await firstGraph.locator(".xtitle").textContent()).toBe("Time");
 };

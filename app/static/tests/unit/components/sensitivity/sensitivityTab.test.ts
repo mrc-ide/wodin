@@ -43,6 +43,9 @@ describe("SensitivityTab", () => {
                         config: [
                             {
                                 selectedVariables
+                            },
+                            {
+                                selectedVariables: []
                             }
                         ]
                     },
@@ -126,7 +129,14 @@ describe("SensitivityTab", () => {
         const wrapper = getWrapper();
         expect(wrapper.findComponent(LoadingButton).props("isDisabled")).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
-        expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(false);
+        const plots = wrapper.findAllComponents(SensitivityTracesPlot);
+        expect(plots.length).toBe(2);
+        expect(plots.at(0)!.props("fadePlot")).toBe(false);
+        expect(plots.at(0)!.props("graphConfig")).toStrictEqual({ selectedVariables: ["S"] });
+        expect(plots.at(0)!.props("graphIndex")).toStrictEqual(0);
+        expect(plots.at(1)!.props("fadePlot")).toBe(false);
+        expect(plots.at(1)!.props("graphConfig")).toStrictEqual({ selectedVariables: [] });
+        expect(plots.at(1)!.props("graphIndex")).toStrictEqual(1);
         expect(wrapper.findComponent(ErrorInfo).props("error")).toBe(null);
         expect(wrapper.find("#sensitivity-running").exists()).toBe(false);
         expect(wrapper.findComponent(SensitivitySummaryPlot).exists()).toBe(false);
@@ -150,7 +160,12 @@ describe("SensitivityTab", () => {
     it("renders as expected when Time at Extreme", () => {
         const sensitivityState = { plotSettings: { plotType: SensitivityPlotType.TimeAtExtreme } as any };
         const wrapper = getWrapper(AppType.Basic, {}, sensitivityState);
-        expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(false);
+        const plots = wrapper.findAllComponents(SensitivitySummaryPlot);
+        expect(plots.length).toBe(2);
+        expect(plots.at(0)!.props("fadePlot")).toBe(false);
+        expect(plots.at(0)!.props("graphConfig")).toStrictEqual({ selectedVariables: ["S"] });
+        expect(plots.at(1)!.props("fadePlot")).toBe(false);
+        expect(plots.at(1)!.props("graphConfig")).toStrictEqual({ selectedVariables: [] });
         expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
     });
 

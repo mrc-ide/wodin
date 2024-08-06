@@ -16,6 +16,7 @@ import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutat
 import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
 import { RunGetter } from "../../../../src/app/store/run/getters";
 import WodinPlotDataSummary from "../../../../src/app/components/WodinPlotDataSummary.vue";
+import { GraphConfig } from "../../../../src/app/store/graphs/state";
 
 jest.mock("plotly.js-basic-dist-min", () => ({
     newPlot: jest.fn(),
@@ -198,22 +199,23 @@ describe("SensitivitySummaryPlot", () => {
                         [SensitivityMutation.SetPlotTime]: mockSetPlotTime,
                         [SensitivityMutation.SetLoading]: mockSetLoading
                     }
-                },
-                graphs: {
-                    namespaced: true,
-                    state: {
-                        settings: { logScaleYAxis },
-                        config: [{ selectedVariables }]
-                    }
                 }
             }
         });
+
+        const graphConfig = {
+            selectedVariables,
+            settings: { logScaleYAxis }
+        } as any;
 
         return shallowMount(SensitivitySummaryPlot, {
             global: {
                 plugins: [store]
             },
-            props: { fadePlot }
+            props: {
+                fadePlot,
+                graphConfig
+            }
         });
     };
 
@@ -530,7 +532,13 @@ describe("SensitivitySummaryPlot", () => {
 
     it("redraws plot if graph setting changes", async () => {
         const wrapper = getWrapper();
-        (store!.state as any).graphs.settings.logScaleYAxis = true;
+        const graphConfig = wrapper.props("graphConfig");
+        await wrapper.setProps({
+            graphConfig: {
+                ...graphConfig,
+                settings: { logScaleYAxis: true } as any
+            }
+        });
         await nextTick();
         expect(mockPlotlyNewPlot).toHaveBeenCalledTimes(2);
     });

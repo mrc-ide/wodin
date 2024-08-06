@@ -203,7 +203,7 @@ export function generateBatchPars(
     };
 }
 
-export const newSessionId = (): string => uid(32);
+export const newUid = (): string => uid(32);
 
 export const joinStringsSentence = (strings: string[], last = " and ", sep = ", "): string => {
     const n = strings.length;

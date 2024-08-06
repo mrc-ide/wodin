@@ -411,7 +411,7 @@ describe("SensitivityTracesPlot", () => {
                     paletteModel: mockPalette
                 },
                 graphs: {
-                    config: [{ selectedVariables: hasSelectedVariables ? selectedVariables : [] }]
+                    config: []
                 }
             } as any,
             modules: {
@@ -466,7 +466,11 @@ describe("SensitivityTracesPlot", () => {
         });
 
         return shallowMount(SensitivityTracesPlot, {
-            props: { fadePlot },
+            props: {
+                fadePlot,
+                graphConfig: { selectedVariables: hasSelectedVariables ? selectedVariables : [] } as any,
+                graphIndex: 0
+            },
             global: {
                 plugins: [store]
             }
@@ -495,8 +499,13 @@ describe("SensitivityTracesPlot", () => {
             undefined,
             selectedVariables,
             {},
-            []
+            [],
+            0
         ]);
+        expect(wodinPlot.props("graphConfig")).toStrictEqual({
+            selectedVariables: ["y", "z"]
+        });
+        expect(wodinPlot.props("graphIndex")).toBe(0);
 
         const plotData = wodinPlot.props("plotData");
         expect(plotData(0, 1, 100)).toStrictEqual(expectedPlotData);
@@ -515,8 +524,13 @@ describe("SensitivityTracesPlot", () => {
             mockAllFitData,
             selectedVariables,
             {},
-            []
+            [],
+            0
         ]);
+        expect(wodinPlot.props("graphConfig")).toStrictEqual({
+            selectedVariables: ["y", "z"]
+        });
+        expect(wodinPlot.props("graphIndex")).toBe(0);
 
         const plotData = wodinPlot.props("plotData");
         expect(plotData(0, 1, 100)).toStrictEqual([...expectedPlotData, expectedFitPlotData]);
@@ -535,7 +549,8 @@ describe("SensitivityTracesPlot", () => {
             mockAllFitData,
             selectedVariables,
             { "Set 1": mockParameterSetBatch1 },
-            ["Hey", "Bye"]
+            ["Hey", "Bye"],
+            0
         ]);
 
         const plotData = wodinPlot.props("plotData");
@@ -561,7 +576,7 @@ describe("SensitivityTracesPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Sensitivity has not been run.");
         expect(wodinPlot.props("endTime")).toBe(1);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([undefined, selectedVariables, {}, []]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([undefined, selectedVariables, {}, [], 0]);
 
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 1, 100);

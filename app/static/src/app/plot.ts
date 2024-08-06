@@ -1,4 +1,4 @@
-import { Dash, PlotData } from "plotly.js-basic-dist-min";
+import { Dash, Margin, PlotData } from "plotly.js-basic-dist-min";
 import { format } from "d3-format";
 import { Palette, paletteData } from "./palette";
 import type { AllFitData, FitData, FitDataLink } from "./store/fitData/state";
@@ -14,7 +14,7 @@ export const fadePlotStyle = "opacity:0.5;";
 // legend.
 export const margin = {
     t: 25
-};
+} as Partial<Margin>;
 
 export const config = {
     responsive: true
@@ -141,7 +141,8 @@ export function allFitDataToPlotly(
     allFitData: AllFitData | null,
     paletteModel: Palette,
     start: number,
-    end: number
+    end: number,
+    selectedVariables: string[]
 ): WodinPlotData {
     if (!allFitData) {
         return [];
@@ -149,16 +150,26 @@ export function allFitDataToPlotly(
     const { data, linkedVariables, timeVariable } = allFitData;
     const filteredData = filterData(data, timeVariable, start, end);
     const palette = paletteData(Object.keys(linkedVariables));
-    return Object.keys(linkedVariables).map((name: string) => ({
-        name,
-        x: filteredData.map((row: Dict<number>) => row[timeVariable]),
-        y: filteredData.map((row: Dict<number>) => row[name]),
-        mode: "markers",
-        type: "scatter",
-        marker: {
-            color: linkedVariables[name] ? paletteModel[linkedVariables[name]!] : palette[name]
+
+    return Object.keys(linkedVariables).map((name: string) => {
+        let color = palette[name];
+        const variable = linkedVariables[name];
+        if (variable) {
+            // If there is a linked variable, only show data if the variable is selected - if not selected, render the
+            // series, but as transparent so that all graph x axes are consistent
+            color = selectedVariables.includes(variable) ? paletteModel[variable] : "transparent";
         }
-    }));
+        return {
+            name,
+            x: filteredData.map((row: Dict<number>) => row[timeVariable]),
+            y: filteredData.map((row: Dict<number>) => row[name]),
+            mode: "markers",
+            type: "scatter",
+            marker: {
+                color
+            }
+        };
+    });
 }
 
 const lineStyles = ["dot", "dash", "longdash", "dashdot", "longdashdot"];

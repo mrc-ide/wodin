@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, onUnmounted, PropType, ref, watch } from "vue";
 import { AxisType, newPlot, Plots } from "plotly.js-basic-dist-min";
 import { useStore } from "vuex";
 import { config, fadePlotStyle, filterUserTypeSeriesSet, margin, odinToPlotly, updatePlotTraceName } from "../../plot";
@@ -23,12 +23,14 @@ import { Dict } from "../../types/utilTypes";
 import WodinPlotDataSummary from "../WodinPlotDataSummary.vue";
 import { ParameterSet } from "../../store/run/state";
 import { verifyValidPlotSettingsTime } from "./support";
+import { GraphConfig } from "../../store/graphs/state";
 
 export default defineComponent({
     name: "SensitivitySummaryPlot",
     components: { WodinPlotDataSummary },
     props: {
-        fadePlot: Boolean
+        fadePlot: Boolean,
+        graphConfig: { type: Object as PropType<GraphConfig>, required: true }
     },
     setup(props) {
         const store = useStore();
@@ -39,7 +41,7 @@ export default defineComponent({
         const batch = computed(() => store.state.sensitivity.result?.batch);
         const plotSettings = computed(() => store.state.sensitivity.plotSettings);
         const palette = computed(() => store.state.model.paletteModel);
-        const selectedVariables = computed(() => store.state.graphs.config[0].selectedVariables);
+        const selectedVariables = computed(() => props.graphConfig.selectedVariables);
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, true));
 
         const xAxisSettings = computed(() => {
@@ -54,7 +56,8 @@ export default defineComponent({
 
         const yAxisSettings = computed(() => {
             const isNotTimePlot = plotSettings.value.plotType !== SensitivityPlotType.TimeAtExtreme;
-            const logScale = store.state.graphs.settings.logScaleYAxis && isNotTimePlot;
+
+            const logScale = props.graphConfig.settings.logScaleYAxis && isNotTimePlot;
             const type = logScale ? "log" : ("linear" as AxisType);
             return { type };
         });

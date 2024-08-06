@@ -4,7 +4,7 @@ import {
     generateBatchPars,
     getCodeErrorFromResponse,
     processFitData,
-    newSessionId,
+    newUid,
     joinStringsSentence
 } from "../../src/app/utils";
 import { SensitivityScaleType, SensitivityVariationType } from "../../src/app/store/sensitivity/state";
@@ -485,7 +485,7 @@ describe("generateBatchPars", () => {
 
 describe("newSessionId", () => {
     it("generates expected id format", () => {
-        const id = newSessionId();
+        const id = newUid();
         expect(id).toMatch(/^[a-z0-9]{32}$/);
     });
 });

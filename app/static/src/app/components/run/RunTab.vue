@@ -4,12 +4,29 @@
             <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
         </div>
         <action-required-message :message="updateMsg"></action-required-message>
-        <run-stochastic-plot v-if="isStochastic" :fade-plot="!!updateMsg"></run-stochastic-plot>
-        <run-plot v-else :fade-plot="!!updateMsg" :model-fit="false">
-            <div v-if="sumOfSquares">
-                <span>Sum of squares: {{ sumOfSquares }}</span>
-            </div>
-        </run-plot>
+        <template v-for="(config, index) in graphConfigs" :key="config.id">
+            <run-stochastic-plot
+                v-if="isStochastic"
+                :fade-plot="!!updateMsg"
+                :graph-config="config"
+                :graph-index="index"
+                :linked-x-axis="xAxis"
+                @updateXAxis="updateXAxis"
+            ></run-stochastic-plot>
+            <run-plot
+                v-else
+                :fade-plot="!!updateMsg"
+                :model-fit="false"
+                :graph-config="config"
+                :graph-index="index"
+                :linked-x-axis="xAxis"
+                @updateXAxis="updateXAxis"
+            >
+            </run-plot>
+        </template>
+        <div v-if="sumOfSquares">
+            <span id="squares">Sum of squares: {{ sumOfSquares }}</span>
+        </div>
         <error-info :error="error"></error-info>
         <div>
             <button
@@ -40,8 +57,9 @@
 
 <script lang="ts">
 import { useStore } from "vuex";
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, Ref, ref } from "vue";
 import VueFeather from "vue-feather";
+import { LayoutAxis } from "plotly.js-basic-dist-min";
 import { RunMutation } from "../../store/run/mutations";
 import RunPlot from "./RunPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
@@ -72,6 +90,8 @@ export default defineComponent({
         const store = useStore();
 
         const showDownloadOutput = ref(false);
+        const xAxis: Ref<Partial<LayoutAxis>> = ref({ autorange: true });
+
         const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
 
         const error = computed(() => {
@@ -83,6 +103,7 @@ export default defineComponent({
 
         const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
         const allSelectedVariables = computed(() => store.getters[`graphs/${GraphsGetter.allSelectedVariables}`]);
+        const graphConfigs = computed(() => store.state.graphs.config);
 
         // Enable run button if model has initialised and compile is not required
         const canRunModel = computed(() => {
@@ -120,6 +141,10 @@ export default defineComponent({
         const download = (payload: { fileName: string; points: number }) =>
             store.dispatch(`run/${RunAction.DownloadOutput}`, payload);
 
+        const updateXAxis = (newAxis: Partial<LayoutAxis>) => {
+            xAxis.value = newAxis;
+        };
+
         return {
             canRunModel,
             isStochastic,
@@ -132,7 +157,10 @@ export default defineComponent({
             canDownloadOutput,
             downloadUserFileName,
             toggleShowDownloadOutput,
-            download
+            download,
+            graphConfigs,
+            xAxis,
+            updateXAxis
         };
     }
 });

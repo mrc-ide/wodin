@@ -10,12 +10,13 @@ jest.mock("plotly.js-basic-dist-min", () => ({
 /* eslint-disable import/first */
 import { shallowMount, VueWrapper } from "@vue/test-utils";
 import { nextTick } from "vue";
-import * as plotly from "plotly.js-basic-dist-min";
 import Vuex, { Store } from "vuex";
+import * as plotly from "plotly.js-basic-dist-min";
 import WodinPlot from "../../../src/app/components/WodinPlot.vue";
 import WodinPlotDataSummary from "../../../src/app/components/WodinPlotDataSummary.vue";
 import { BasicState } from "../../../src/app/store/basic/state";
 import { GraphsMutation } from "../../../src/app/store/graphs/mutations";
+import { defaultGraphSettings } from "../../../src/app/store/graphs/state";
 
 describe("WodinPlot", () => {
     const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");
@@ -50,30 +51,33 @@ describe("WodinPlot", () => {
         }
     ];
     const mockPlotDataFn = jest.fn().mockReturnValue(mockPlotData);
+    const settings = defaultGraphSettings();
     const defaultProps = {
         fadePlot: false,
         endTime: 99,
         redrawWatches: [],
         plotData: mockPlotDataFn,
-        placeholderMessage: "No data available"
+        placeholderMessage: "No data available",
+        fitPlot: false,
+        graphIndex: 1,
+        graphConfig: { settings }
     };
 
     const mockSetYAxisRange = jest.fn();
+    const mockSetFitYAxisRange = jest.fn();
 
-    const getStore = (logScaleYAxis = false, lockYAxis = false) => {
+    const getStore = (fitGraphSettings = defaultGraphSettings()) => {
         return new Vuex.Store<BasicState>({
             modules: {
                 graphs: {
                     namespaced: true,
                     state: {
-                        settings: {
-                            logScaleYAxis,
-                            lockYAxis,
-                            yAxisRange: [10, 20]
-                        }
+                        fitGraphSettings,
+                        config: [{ settings }, { settings }]
                     },
                     mutations: {
-                        [GraphsMutation.SetYAxisRange]: mockSetYAxisRange
+                        [GraphsMutation.SetYAxisRange]: mockSetYAxisRange,
+                        [GraphsMutation.SetFitYAxisRange]: mockSetFitYAxisRange
                     }
                 }
             }
@@ -110,7 +114,6 @@ describe("WodinPlot", () => {
     afterEach(() => {
         jest.clearAllMocks();
         jest.restoreAllMocks();
-        mockSetYAxisRange.mockReset();
     });
 
     it("renders plot ref element", () => {
@@ -201,9 +204,8 @@ describe("WodinPlot", () => {
 
     const expectedLayout = {
         margin: { t: 25 },
-        uirevision: "true",
-        xaxis: { autorange: true, title: "Time" },
-        yaxis: { autorange: true, type: "linear" }
+        xaxis: { title: "Time" },
+        yaxis: { type: "linear" }
     };
 
     it("relayout reruns plotData and calls react if not autorange", async () => {
@@ -254,6 +256,71 @@ describe("WodinPlot", () => {
         expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
         expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual(mockPlotData);
         expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual(expectedLayout);
+    });
+
+    it("relayout preserves locked y axis range", async () => {
+        const store = getStore();
+        const wrapper = getWrapper(
+            {
+                graphConfig: {
+                    settings: {
+                        ...defaultGraphSettings(),
+                        lockYAxis: true,
+                        yAxisRange: [10, 20]
+                    }
+                }
+            },
+            store
+        );
+        const { relayout } = wrapper.vm as any;
+        const relayoutEvent = {
+            "xaxis.autorange": false,
+            "xaxis.range[0]": 2,
+            "xaxis.range[1]": 7,
+            "yaxis.autorange": false,
+            "yaxis.range[0]": 1,
+            "yaxis.range[1]": 2
+        };
+        await relayout(relayoutEvent);
+        expect(mockPlotDataFn.mock.calls.length).toBe(1);
+        expect(mockPlotDataFn.mock.calls[0][0]).toBe(2);
+        expect(mockPlotDataFn.mock.calls[0][1]).toBe(7);
+        expect(mockPlotDataFn.mock.calls[0][2]).toBe(1000);
+
+        const divElement = wrapper.find("div.plot").element;
+        expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
+        expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual(mockPlotData);
+        expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual({
+            ...expectedLayout,
+            yaxis: { type: "linear", autorange: false, range: [10, 20] } // locked y axis range
+        });
+    });
+
+    it("relayout saves and uses y axis range from last zoom if no locked y axis", async () => {
+        const wrapper = getWrapper();
+        const { relayout } = wrapper.vm as any;
+        const relayoutEvent1 = {
+            "yaxis.autorange": false,
+            "yaxis.range[0]": 1,
+            "yaxis.range[1]": 2
+        };
+        await relayout(relayoutEvent1);
+
+        const relayoutEvent2 = {
+            "xaxis.autorange": false,
+            "xaxis.range[0]": 2,
+            "xaxis.range[1]": 7
+        };
+        await relayout(relayoutEvent2);
+
+        const divElement = wrapper.find("div.plot").element;
+        expect(mockPlotlyReact.mock.calls.length).toBe(1);
+        expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
+        expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual(mockPlotData);
+        expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual({
+            ...expectedLayout,
+            yaxis: { type: "linear", autorange: false, range: [1, 2] }
+        });
     });
 
     it("relayout does nothing on autorange false if t0 is undefined", async () => {
@@ -347,8 +414,29 @@ describe("WodinPlot", () => {
     });
 
     it("renders y axis log scale if graph setting is set", async () => {
-        const store = getStore(true);
-        const wrapper = getWrapper({}, store);
+        const store = getStore();
+        const wrapper = getWrapper(
+            {
+                graphConfig: {
+                    settings: { ...defaultGraphSettings(), logScaleYAxis: true }
+                }
+            },
+            store
+        );
+        mockPlotElementOn(wrapper);
+
+        wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+        expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({
+            margin: { t: 25 },
+            xaxis: { title: "Time" },
+            yaxis: { type: "log" }
+        });
+    });
+
+    it("renders y axis log scale if fit graph setting is set, and fitPlot is true", async () => {
+        const store = getStore({ ...defaultGraphSettings(), logScaleYAxis: true });
+        const wrapper = getWrapper({ fitPlot: true }, store);
         mockPlotElementOn(wrapper);
 
         wrapper.setProps({ redrawWatches: [{} as any] });
@@ -361,8 +449,37 @@ describe("WodinPlot", () => {
     });
 
     it("locks axes if graph setting is set", async () => {
-        const store = getStore(false, true);
-        const wrapper = getWrapper({}, store);
+        const store = getStore();
+        const wrapper = getWrapper(
+            {
+                graphConfig: {
+                    settings: {
+                        ...defaultGraphSettings(),
+                        lockYAxis: true,
+                        yAxisRange: [10, 20]
+                    }
+                }
+            },
+            store
+        );
+        mockPlotElementOn(wrapper);
+
+        wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+        expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({
+            margin: { t: 25 },
+            xaxis: { title: "Time" },
+            yaxis: { type: "linear", autorange: false, range: [10, 20] }
+        });
+    });
+
+    it("locks axes if fit graph setting is set, and fitPlot is true", async () => {
+        const store = getStore({
+            ...defaultGraphSettings(),
+            lockYAxis: true,
+            yAxisRange: [10, 20]
+        });
+        const wrapper = getWrapper({ fitPlot: true }, store);
         mockPlotElementOn(wrapper);
 
         wrapper.setProps({ redrawWatches: [{} as any] });
@@ -375,7 +492,7 @@ describe("WodinPlot", () => {
     });
 
     it("commits SetYAxisRange on drawPlot", async () => {
-        const store = getStore(false, false);
+        const store = getStore();
         const wrapper = getWrapper({}, store);
         mockPlotElementOn(wrapper);
 
@@ -386,12 +503,36 @@ describe("WodinPlot", () => {
         await nextTick();
         await wrapper.setProps({ redrawWatches: [{} as any] });
         await nextTick();
-        expect(mockSetYAxisRange.mock.calls[0][1]).toStrictEqual([1, 2]);
+        expect(mockSetYAxisRange.mock.calls[0][1]).toStrictEqual({ graphIndex: 1, value: [1, 2] });
+        expect(mockSetFitYAxisRange).not.toHaveBeenCalled();
+    });
+
+    it("commits SetFitYAxisRange on drawPlot, when fitPlot is true", async () => {
+        const store = getStore();
+        const wrapper = getWrapper({ fitPlot: true }, store);
+        mockPlotElementOn(wrapper);
+
+        (wrapper.vm as any).plot = {
+            layout: mockLayout,
+            on: jest.fn()
+        };
+        await nextTick();
+        await wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+        expect(mockSetFitYAxisRange.mock.calls[0][1]).toStrictEqual([1, 2]);
+        expect(mockSetYAxisRange).not.toHaveBeenCalled();
     });
 
     it("relayout uses graph settings log scale y axis value", async () => {
-        const store = getStore(true);
-        const wrapper = getWrapper({}, store);
+        const store = getStore();
+        const wrapper = getWrapper(
+            {
+                graphConfig: {
+                    settings: { ...defaultGraphSettings(), logScaleYAxis: true }
+                }
+            },
+            store
+        );
         mockPlotElementOn(wrapper);
 
         wrapper.setProps({ redrawWatches: [{} as any] });
@@ -412,7 +553,7 @@ describe("WodinPlot", () => {
         expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual(mockPlotData);
         const expectedLogScaleLayout = {
             ...expectedLayout,
-            yaxis: { autorange: true, type: "log" }
+            yaxis: { type: "log" }
         };
         expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual(expectedLogScaleLayout);
     });
@@ -438,8 +579,11 @@ describe("WodinPlot", () => {
         expect(mockPlotlyNewPlot).toBeCalledTimes(1);
         expect(mockOn).toBeCalledTimes(1);
 
-        const store = (wrapper.vm as any).$store;
-        store.state.graphs.settings.logScaleYAxis = true;
+        await wrapper.setProps({
+            graphConfig: {
+                settings: { ...defaultGraphSettings(), logScaleYAxis: true }
+            }
+        });
         await nextTick();
 
         expect(mockPlotDataFn).toBeCalledTimes(2);
@@ -456,13 +600,110 @@ describe("WodinPlot", () => {
         expect(mockPlotlyNewPlot).toBeCalledTimes(1);
         expect(mockOn).toBeCalledTimes(1);
 
-        await wrapper.setProps({ fadePlot: true });
-        const store = (wrapper.vm as any).$store;
-        store.state.graphs.settings.logScaleYAxis = true;
+        await wrapper.setProps({
+            fadePlot: true,
+            graphConfig: {
+                settings: { ...defaultGraphSettings(), logScaleYAxis: true }
+            }
+        });
         await nextTick();
 
         expect(mockPlotDataFn).toBeCalledTimes(1);
         expect(mockPlotlyNewPlot).toBeCalledTimes(1);
         expect(mockOn).toBeCalledTimes(1);
+    });
+
+    it("relayout emits updateXAxis event, if component has linked x axis and xaxis is in event", async () => {
+        const wrapper = getWrapper({ linkedXAxis: { autorange: true } });
+        const relayoutEvent = {
+            "xaxis.autorange": false,
+            "xaxis.range[0]": 2,
+            "xaxis.range[1]": 4
+        };
+
+        const { relayout } = wrapper.vm as any;
+        await relayout(relayoutEvent);
+        expect(wrapper.emitted("updateXAxis")![0]).toStrictEqual([{ autorange: false, range: [2, 4] }]);
+    });
+
+    it("relayout does not emit updateXAxis event, if xaxis is not in event", async () => {
+        const wrapper = getWrapper({ linkedXAxis: { autorange: true } });
+        const relayoutEvent = {
+            "yaxis.autorange": false,
+            "yaxis.range[0]": 2,
+            "yaxis.range[1]": 4
+        };
+
+        const { relayout } = wrapper.vm as any;
+        await relayout(relayoutEvent);
+        expect(wrapper.emitted("updateXAxis")).toBe(undefined);
+    });
+
+    it("update to linkedXAxis triggers relayout", async () => {
+        const wrapper = getWrapper({ linkedXAxis: { autorange: true } });
+        mockPlotElementOn(wrapper);
+        wrapper.setProps({ linkedXAxis: { autorange: false, range: [4, 6] } });
+        await nextTick();
+
+        expect(mockPlotDataFn).toHaveBeenCalledWith(4, 6, 1000);
+        expect(mockPlotlyReact).toHaveBeenCalledTimes(1);
+        const divElement = wrapper.find("div.plot").element;
+        expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
+        expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual(mockPlotData);
+        expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual(expectedLayout);
+        expect(mockPlotlyReact.mock.calls[0][3]).toStrictEqual({ responsive: true });
+    });
+
+    it("drawPlot uses linked x axis to generate data", async () => {
+        const wrapper = getWrapper({
+            linkedXAxis: { autorange: false, range: [3, 5] }
+        });
+        mockPlotElementOn(wrapper);
+
+        wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+        expect(mockPlotDataFn.mock.calls.length).toBe(2);
+        expect(mockPlotDataFn.mock.calls[1][0]).toBe(3);
+        expect(mockPlotDataFn.mock.calls[1][1]).toBe(5);
+        expect(mockPlotDataFn.mock.calls[1][2]).toBe(1000);
+    });
+
+    it("does not display Time xAxis label if not final config in array", async () => {
+        const store = getStore();
+        const wrapper = getWrapper(
+            {
+                graphIndex: 0
+            },
+            store
+        );
+        mockPlotElementOn(wrapper);
+
+        wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+        expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({
+            margin: { t: 25 },
+            xaxis: { title: "" },
+            yaxis: { type: "linear" }
+        });
+    });
+
+    it("does display Time xAxis label if fitPlot is true", async () => {
+        const store = getStore();
+        const wrapper = getWrapper(
+            {
+                graphIndex: 0,
+                fitPlot: true
+            },
+            store
+        );
+        mockPlotElementOn(wrapper);
+
+        wrapper.setProps({ redrawWatches: [{} as any] });
+        await nextTick();
+        expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual({
+            margin: { t: 25 },
+            xaxis: { title: "Time" },
+            yaxis: { type: "linear" }
+        });
     });
 });

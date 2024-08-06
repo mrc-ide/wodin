@@ -9,7 +9,8 @@ import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
 import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
 import { getters as runGetters } from "../../../../src/app/store/run/getters";
-import { mockBasicState, mockGraphsState, mockRunState } from "../../../mocks";
+import { mockGraphsState, mockModelState, mockRunState } from "../../../mocks";
+import { defaultGraphSettings } from "../../../../src/app/store/graphs/state";
 
 describe("RunPlot", () => {
     const mockSolution = jest.fn().mockReturnValue({
@@ -87,6 +88,36 @@ describe("RunPlot", () => {
         config: [{ selectedVariables, unselectedVariables: [] }]
     };
 
+    const linkedXAxis = { autorange: false, range: [1, 2] };
+
+    const defaultRunState = () =>
+        mockRunState({
+            endTime: 99,
+            resultOde: mockResult,
+            parameterSets: [
+                {
+                    name: "Set 1",
+                    displayName: "Hey",
+                    displayNameErrorMsg: "",
+                    hidden: false,
+                    parameterValues: { a: 2 }
+                },
+                {
+                    name: "Set 2",
+                    displayName: "Bye",
+                    displayNameErrorMsg: "",
+                    hidden: false,
+                    parameterValues: { a: 4 }
+                }
+            ]
+        });
+
+    const graphConfig = {
+        selectedVariables,
+        unselectedVariables: [],
+        settings: defaultGraphSettings()
+    };
+
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -98,31 +129,15 @@ describe("RunPlot", () => {
                 model: {
                     paletteModel
                 },
-                run: mockRunState({
-                    endTime: 99,
-                    resultOde: mockResult,
-                    parameterSets: [
-                        {
-                            name: "Set 1",
-                            displayName: "Hey",
-                            displayNameErrorMsg: "",
-                            hidden: false,
-                            parameterValues: { a: 2 }
-                        },
-                        {
-                            name: "Set 2",
-                            displayName: "Bye",
-                            displayNameErrorMsg: "",
-                            hidden: false,
-                            parameterValues: { a: 4 }
-                        }
-                    ]
-                })
+                run: defaultRunState()
             } as any
         });
         const wrapper = shallowMount(RunPlot, {
             props: {
-                fadePlot: false
+                fadePlot: false,
+                graphIndex: 0,
+                linkedXAxis,
+                graphConfig
             },
             global: {
                 plugins: [store]
@@ -138,8 +153,10 @@ describe("RunPlot", () => {
             mockAllFitData,
             selectedVariables,
             {},
-            ["Hey", "Bye"]
+            ["Hey", "Bye"],
+            1
         ]);
+        expect(wodinPlot.props("linkedXAxis")).toStrictEqual(linkedXAxis);
 
         // Generates expected plot data from model
         const plotData = wodinPlot.props("plotData");
@@ -181,6 +198,33 @@ describe("RunPlot", () => {
             tEnd: 1,
             nPoints: 10
         });
+    });
+
+    it("emits updateXAxis event", () => {
+        const store = new Vuex.Store<BasicState>({
+            state: {
+                graphs: graphsState,
+                model: {
+                    paletteModel
+                },
+                run: defaultRunState()
+            } as any
+        });
+        const wrapper = shallowMount(RunPlot, {
+            props: {
+                fadePlot: false,
+                graphIndex: 0,
+                linkedXAxis,
+                graphConfig
+            },
+            global: {
+                plugins: [store]
+            }
+        });
+        const wodinPlot = wrapper.findComponent(WodinPlot);
+        const xAxis = { autorange: false, range: [111, 222] };
+        wodinPlot.vm.$emit("updateXAxis", xAxis);
+        expect(wrapper.emitted("updateXAxis")![0]).toStrictEqual([xAxis]);
     });
 
     it("renders as expected when there are parameter set solutions", () => {
@@ -229,7 +273,9 @@ describe("RunPlot", () => {
         });
         const wrapper = shallowMount(RunPlot, {
             props: {
-                fadePlot: false
+                fadePlot: false,
+                graphIndex: 0,
+                graphConfig
             },
             global: {
                 plugins: [store]
@@ -240,12 +286,15 @@ describe("RunPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
+        expect(wodinPlot.props("graphIndex")).toBe(0);
+        expect(wodinPlot.props("graphConfig")).toStrictEqual(graphConfig);
         expect(wodinPlot.props("redrawWatches")).toStrictEqual([
             mockSolution,
             mockAllFitData,
             selectedVariables,
             { Set1: mockParamSetResult1.solution, Set2: mockParamSetResult2.solution },
-            ["rand1", "rand2", "rand3"]
+            ["rand1", "rand2", "rand3"],
+            1
         ]);
 
         // Generates expected plot data from model
@@ -363,7 +412,9 @@ describe("RunPlot", () => {
         });
         const wrapper = shallowMount(RunPlot, {
             props: {
-                fadePlot: false
+                fadePlot: false,
+                graphConfig,
+                graphIndex: 0
             },
             global: {
                 plugins: [store]
@@ -374,6 +425,8 @@ describe("RunPlot", () => {
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
         expect(wodinPlot.props("redrawWatches")).toStrictEqual([]);
+        expect(wodinPlot.props("graphIndex")).toBe(0);
+        expect(wodinPlot.props("graphConfig")).toStrictEqual(graphConfig);
 
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 1, 10);
@@ -384,12 +437,14 @@ describe("RunPlot", () => {
         const store = new Vuex.Store<BasicState>({
             state: {
                 graphs: graphsState,
-                run: mockRunState()
+                run: mockRunState(),
+                model: mockModelState()
             } as any
         });
         const wrapper = shallowMount(RunPlot, {
             props: {
-                fadePlot: true
+                fadePlot: true,
+                graphConfig
             },
             global: {
                 plugins: [store]
@@ -448,7 +503,8 @@ describe("RunPlot", () => {
         });
         const wrapper = shallowMount(RunPlot, {
             props: {
-                fadePlot: false
+                fadePlot: false,
+                graphConfig
             },
             global: {
                 plugins: [store]
@@ -463,7 +519,8 @@ describe("RunPlot", () => {
             mockAllFitData,
             selectedVariables,
             {},
-            ["Hey", "Bye"]
+            ["Hey", "Bye"],
+            1
         ]);
 
         // Generates expected plot data from model
@@ -524,12 +581,14 @@ describe("RunPlot", () => {
                 graphs: mockGraphsState({
                     config: [{ selectedVariables: [] }]
                 } as any),
-                run: mockRunState()
+                run: mockRunState(),
+                model: mockModelState()
             } as any
         });
         const wrapper = shallowMount(RunPlot, {
             props: {
-                fadePlot: true
+                fadePlot: true,
+                graphConfig: { ...graphConfig, selectedVariables: [] }
             },
             global: {
                 plugins: [store]
