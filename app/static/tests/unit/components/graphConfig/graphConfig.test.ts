@@ -93,7 +93,7 @@ describe("GraphConfig", () => {
         const wrapper = getWrapper();
         const s = wrapper.findAll(".graph-config-panel .badge").at(0)!;
         const setData = jest.fn();
-        await s.trigger("dragstart", { dataTransfer: { setData }, ctrlKey: false });
+        await s.trigger("dragstart", { dataTransfer: { setData }, ctrlKey: false, metaKey: false });
         expect(setData.mock.calls[0][0]).toBe("variable");
         expect(setData.mock.calls[0][1]).toStrictEqual("S");
         expect(setData.mock.calls[1][0]).toStrictEqual("srcGraphConfig");
@@ -107,7 +107,16 @@ describe("GraphConfig", () => {
         const wrapper = getWrapper();
         const s = wrapper.findAll(".graph-config-panel .badge").at(0)!;
         const setData = jest.fn();
-        await s.trigger("dragstart", { dataTransfer: { setData }, ctrlKey: true });
+        await s.trigger("dragstart", { dataTransfer: { setData }, ctrlKey: true, metaKey: false });
+        expect(setData.mock.calls[2][0]).toBe("copyVar");
+        expect(setData.mock.calls[2][1]).toBe("true");
+    });
+
+    it("start drag sets values copyVar to true in event when meta key pressed", async () => {
+        const wrapper = getWrapper();
+        const s = wrapper.findAll(".graph-config-panel .badge").at(0)!;
+        const setData = jest.fn();
+        await s.trigger("dragstart", { dataTransfer: { setData }, ctrlKey: false, metaKey: true });
         expect(setData.mock.calls[2][0]).toBe("copyVar");
         expect(setData.mock.calls[2][1]).toBe("true");
     });
@@ -200,7 +209,7 @@ describe("GraphConfig", () => {
         } as any);
         expect(wrapper.find(".drop-zone-instruction").text()).toBe(
             "Drag variables here to select them for this graph. " +
-                "Press the Ctrl key on drag to make a copy of a variable."
+                "Press the Ctrl or ⌘ key on drag to make a copy of a variable."
         );
     });
 

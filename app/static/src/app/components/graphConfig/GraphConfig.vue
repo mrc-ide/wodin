@@ -26,7 +26,7 @@
                 </span>
             </template>
             <div v-if="!selectedVariables.length" class="drop-zone-instruction p-2 me-4">
-                Drag variables here to select them for this graph. Press the Ctrl key on drag to make a copy of a
+                Drag variables here to select them for this graph. Press the Ctrl or ⌘ key on drag to make a copy of a
                 variable.
             </div>
         </div>

@@ -19,8 +19,8 @@ export default (
     const thisSrcGraphConfig = hasHiddenVariables ? "hidden" : graphIndex!.toString();
 
     const startDrag = (evt: DragEvent, variable: string) => {
-        const { dataTransfer, ctrlKey } = evt;
-        const copy = !hasHiddenVariables && ctrlKey;
+        const { dataTransfer, ctrlKey, metaKey } = evt;
+        const copy = !hasHiddenVariables && (ctrlKey || metaKey);
         dataTransfer!.dropEffect = "move";
         dataTransfer!.effectAllowed = "move";
         dataTransfer!.setData("variable", variable);
