@@ -18,8 +18,8 @@ export default (
 ): SelectVariablesMixin => {
     const thisSrcGraphConfig = hasHiddenVariables ? "hidden" : graphIndex!.toString();
 
-    const startDrag = (evt: DragEvent, variable: string) => {
-        const { dataTransfer, ctrlKey, metaKey } = evt;
+    const startDrag = (event: DragEvent, variable: string) => {
+        const { dataTransfer, ctrlKey, metaKey } = event;
         const copy = !hasHiddenVariables && (ctrlKey || metaKey);
         dataTransfer!.dropEffect = "move";
         dataTransfer!.effectAllowed = "move";
