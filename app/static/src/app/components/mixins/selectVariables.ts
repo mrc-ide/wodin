@@ -18,12 +18,14 @@ export default (
 ): SelectVariablesMixin => {
     const thisSrcGraphConfig = hasHiddenVariables ? "hidden" : graphIndex!.toString();
 
-    const startDrag = (evt: DragEvent, variable: string) => {
-        const { dataTransfer } = evt;
+    const startDrag = (event: DragEvent, variable: string) => {
+        const { dataTransfer, ctrlKey, metaKey } = event;
+        const copy = !hasHiddenVariables && (ctrlKey || metaKey);
         dataTransfer!.dropEffect = "move";
         dataTransfer!.effectAllowed = "move";
         dataTransfer!.setData("variable", variable);
         dataTransfer!.setData("srcGraphConfig", thisSrcGraphConfig);
+        dataTransfer!.setData("copyVar", copy.toString());
 
         emit("setDragging", true);
     };
@@ -53,14 +55,26 @@ export default (
         const variable = dataTransfer!.getData("variable");
         const srcGraphConfig = dataTransfer!.getData("srcGraphConfig");
         if (srcGraphConfig !== thisSrcGraphConfig) {
+            const copy = !hasHiddenVariables && dataTransfer!.getData("copyVar") === "true";
+
             // add to this graph if necessary - do this before remove so, if a linked variable, it is not unlinked
             if (!hasHiddenVariables && !selectedVariables.value.includes(variable)) {
                 const newVars = [...selectedVariables.value, variable];
                 updateSelectedVariables(graphIndex!, newVars);
             }
 
-            if (srcGraphConfig !== "hidden") {
-                removeVariable(parseInt(srcGraphConfig, 10), variable);
+            if (srcGraphConfig !== "hidden" && !copy) {
+                // Remove variable from all graphs where it occurs if this is HiddenVariables, otherwise from source
+                // graph only
+                if (hasHiddenVariables) {
+                    store.state.graphs.config.forEach((config, index) => {
+                        if (config.selectedVariables.includes(variable)) {
+                            removeVariable(index, variable);
+                        }
+                    });
+                } else {
+                    removeVariable(parseInt(srcGraphConfig, 10), variable);
+                }
             }
         }
     };

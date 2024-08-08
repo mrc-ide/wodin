@@ -33,6 +33,9 @@ describe("HiddenVariables", () => {
                         config: [
                             {
                                 selectedVariables: ["S", "J"]
+                            },
+                            {
+                                selectedVariables: ["S"]
                             }
                         ]
                     },
@@ -88,6 +91,8 @@ describe("HiddenVariables", () => {
         expect(setData.mock.calls[0][1]).toStrictEqual("I");
         expect(setData.mock.calls[1][0]).toStrictEqual("srcGraphConfig");
         expect(setData.mock.calls[1][1]).toStrictEqual("hidden");
+        expect(setData.mock.calls[2][0]).toStrictEqual("copyVar");
+        expect(setData.mock.calls[2][1]).toStrictEqual("false");
         expect(wrapper.emitted("setDragging")![0]).toStrictEqual([true]);
     });
 
@@ -98,19 +103,21 @@ describe("HiddenVariables", () => {
         expect(wrapper.emitted("setDragging")![0]).toStrictEqual([false]);
     });
 
-    it("onDrop removes variable from source", async () => {
+    it("onDrop removes variable from all configs with variable", async () => {
         const wrapper = getWrapper();
         const dataTransfer = {
             getData: (s: string) => {
                 if (s === "variable") return "S";
                 if (s === "srcGraphConfig") return "0";
+                if (s === "copyVar") return "false";
                 return null;
             }
         };
         const dropPanel = wrapper.find(".hidden-variables-panel");
         await dropPanel.trigger("drop", { dataTransfer });
-        expect(mockUpdateSelectedVariables.mock.calls.length).toBe(1);
+        expect(mockUpdateSelectedVariables.mock.calls.length).toBe(2);
         expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({ graphIndex: 0, selectedVariables: ["J"] });
+        expect(mockUpdateSelectedVariables.mock.calls[1][1]).toStrictEqual({ graphIndex: 1, selectedVariables: [] });
     });
 
     it("shows drop zone when dragging", async () => {

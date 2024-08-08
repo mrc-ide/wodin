@@ -312,7 +312,7 @@ test.describe("Code Tab tests", () => {
         await expectGraphVariables(page, 0, ["I", "R"]);
     });
 
-    test("can add a graph, drag a variable onto it and delete it", async ({ page }) => {
+    test("can add a graph, drag variables onto it and delete it", async ({ page }) => {
         // Add graph
         await page.click("#add-graph-btn");
 
@@ -326,11 +326,23 @@ test.describe("Code Tab tests", () => {
 
         // Drag variable to second graph
         const sVariable = await page.locator(":nth-match(.graph-config-panel .variable, 1)");
-        await sVariable.dragTo(page.locator(":nth-match(.graph-config-panel .drop-zone, 2)"));
+        const dragPositions = {
+            sourcePosition: { x: 5, y: 5 },
+            targetPosition: { x: 5, y: 5 }
+        };
+        await sVariable.dragTo(page.locator(":nth-match(.graph-config-panel .drop-zone, 2)"), dragPositions);
 
         await expectGraphVariables(page, 0, ["I", "R"]);
         await expectGraphVariables(page, 1, ["S"]);
         await expect(page.locator(".hidden-variables-panel .variable")).toHaveCount(0);
+
+        // Drag a variable with Ctrl key to make copy
+        const iVariable = await page.locator(":nth-match(.graph-config-panel .variable, 1)");
+        await page.keyboard.down("Control");
+        await iVariable.dragTo(page.locator(":nth-match(.graph-config-panel .drop-zone, 2)"), dragPositions);
+        await page.keyboard.up("Control");
+        await expectGraphVariables(page, 0, ["I", "R"]);
+        await expectGraphVariables(page, 1, ["S", "I"]);
 
         // Delete second graph
         await page.click(":nth-match(.graph-config-panel .delete-graph, 2)");
