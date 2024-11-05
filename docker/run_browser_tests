@@ -9,4 +9,4 @@ fi
 npm install @playwright/test
 npx playwright install
 npx playwright install-deps
-npm run e2e-test
+npm run test:e2e

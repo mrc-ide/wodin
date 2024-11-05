@@ -9,7 +9,7 @@ export class AppsController {
     static getApp = async (req: Request, res: Response, next: NextFunction) => {
         await asyncControllerHandler(next, async () => {
             const {
-                configReader, appsPath, wodinConfig, wodinVersion
+                configReader, appsPath, wodinConfig, wodinVersion, hotReload
             } = req.app.locals as AppLocals;
             const { appName } = req.params;
             // client can pass either sessionId or share (friendly id) parameter to identify session to reload
@@ -45,7 +45,11 @@ export class AppsController {
                     enableI18n: wodinConfig.enableI18n ?? false, // if option not set then false by default
                     defaultLanguage: wodinConfig?.defaultLanguage || "en"
                 };
-                res.render("app", viewOptions);
+                if (hotReload === "true") {
+                    res.render("app-hot-reload", viewOptions);
+                } else {
+                    res.render("app", viewOptions);
+                }
             } else {
                 throw new WodinWebError(
                     `App not found: ${appName}`,

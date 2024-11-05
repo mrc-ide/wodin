@@ -58,7 +58,8 @@ Object.assign(app.locals, {
     odinApi,
     redis,
     wodinConfig,
-    wodinVersion
+    wodinVersion,
+    hotReload: options.hotReload
 });
 
 // Static content
