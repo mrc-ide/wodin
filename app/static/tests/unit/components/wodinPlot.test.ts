@@ -4,6 +4,12 @@ jest.mock("plotly.js-basic-dist-min", () => ({
     react: jest.fn(),
     Plots: {
         resize: jest.fn()
+    },
+    Icons: {
+        home: {
+            height: 1,
+            width: 1
+        }
     }
 }));
 
@@ -651,7 +657,13 @@ describe("WodinPlot", () => {
         expect(mockPlotlyReact.mock.calls[0][0]).toBe(divElement);
         expect(mockPlotlyReact.mock.calls[0][1]).toStrictEqual(mockPlotData);
         expect(mockPlotlyReact.mock.calls[0][2]).toStrictEqual(expectedLayout);
-        expect(mockPlotlyReact.mock.calls[0][3]).toStrictEqual({ responsive: true });
+        const config = mockPlotlyReact.mock.calls[0][3];
+        expect(config!.responsive).toBe(true);
+        expect(config!.modeBarButtonsToRemove).toStrictEqual(["resetScale2d"]);
+        expect(config!.modeBarButtonsToAdd!.length).toBe(1);
+        const addedButton = config!.modeBarButtonsToAdd![0] as any;
+        expect(addedButton.icon).toStrictEqual({ height: 1, width: 1 }); // from mocked plotly above
+        expect(addedButton.name).toBe("Reset axes");
     });
 
     it("drawPlot uses linked x axis to generate data", async () => {
