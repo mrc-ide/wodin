@@ -52,7 +52,8 @@ export interface AppLocals {
     appHelpReader: AppFileReader,
     wodinConfig: WodinConfig,
     wodinVersion: String,
-    redis: Redis
+    redis: Redis,
+    hotReload: String
 }
 
 export interface SessionMetadata {

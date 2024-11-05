@@ -3,10 +3,11 @@ Usage:
   server [options] <path>
 
 Options:
-  --base-url=URL   Base url for app
-  --odin-api=URL   Url to find odin api
-  --redis-url=URL  Url to find Redis
-  --port=PORT      Port to serve on
+  --base-url=URL     Base url for app
+  --odin-api=URL     Url to find odin api
+  --redis-url=URL    Url to find Redis
+  --hot-reload=true  true to enable hot reloading otherwise false
+  --port=PORT        Port to serve on
 `;
 
 const { docopt } = require("docopt");
@@ -31,8 +32,10 @@ export const processArgs = (argv: string[] = process.argv) => {
         baseUrl: opts["--base-url"] as Perhaps<string>,
         odinApi: opts["--odin-api"] as Perhaps<string>,
         redisUrl: opts["--redis-url"] as Perhaps<string>,
+        hotReload: opts["--hot-reload"] as Perhaps<string>,
         port: parseArgInteger(opts["--port"], "port")
     };
-    const overrides = Object.fromEntries(Object.entries(given).filter((o) => o[1] !== null));
-    return { path, overrides };
+    const { hotReload, ...prodGiven } = given;
+    const overrides = Object.fromEntries(Object.entries(prodGiven).filter((o) => o[1] !== null));
+    return { path, overrides, hotReload };
 };
