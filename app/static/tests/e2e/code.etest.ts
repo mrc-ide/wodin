@@ -1,6 +1,6 @@
 import { expect, test, Page } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
-import { saveSessionTimeout, writeCode } from "./utils";
+import { saveSessionTimeout, writeCode, expectGraphVariables } from "./utils";
 
 export const newValidCode = `## Derivatives
 deriv(y1) <- sigma * (y2 - y1)
@@ -83,8 +83,8 @@ test.describe("Code Tab tests", () => {
     const { timeout } = PlaywrightConfig;
 
     const getRunPlotOpacity = async (page: Page) => {
-        const plot = await page.locator(".wodin-plot-container");
-        return plot.evaluate((el) => window.getComputedStyle(el).getPropertyValue("opacity"));
+        const plotEl = await page.locator(".wodin-plot-container");
+        return plotEl.evaluate((el) => window.getComputedStyle(el).getPropertyValue("opacity"));
     };
 
     test("can update code, compile and run model", async ({ page }) => {
@@ -292,32 +292,65 @@ test.describe("Code Tab tests", () => {
         );
     });
 
-    test("can select and unselect variables", async ({ page }) => {
-        // unselect I
-        const iVariable = await page.locator(":nth-match(.selected-variables-panel span.variable, 2)");
-        await iVariable.click();
+    test("can hide and unhide variables", async ({ page }) => {
+        // drag I to Hidden Variables
+        const iVariable = await page.locator(":nth-match(.graph-config-panel span.variable, 2)");
+        const hiddenVariables = await page.locator(".hidden-variables-panel");
+        await iVariable.dragTo(hiddenVariables);
 
         // check plot no longer contains R series
-        await expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(2);
-        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 1)").getAttribute("name")).toBe(
-            "S"
+        await expectGraphVariables(page, 0, ["S", "R"]);
+
+        // drag I back to Graph panel
+        const iVariableHidden = await page.locator(".hidden-variables-panel .variable");
+        const graphVariablesPanel = await page.locator(".graph-config-panel .drop-zone");
+        await iVariableHidden.dragTo(graphVariablesPanel);
+        await expectGraphVariables(page, 0, ["S", "I", "R"]);
+
+        // Can also click x button to hide variable
+        await page.click(":nth-match(.graph-config-panel .variable-delete, 1)");
+        await expectGraphVariables(page, 0, ["I", "R"]);
+    });
+
+    test("can add a graph, drag variables onto it and delete it", async ({ page }) => {
+        // Add graph
+        await page.click("#add-graph-btn");
+
+        // Check second graph has appeared with placeholder text, and second graph config panel is there
+        expect(await page.locator(":nth-match(.wodin-plot-container, 2)").textContent()).toBe(
+            "No variables are selected."
         );
-        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 2)").getAttribute("name")).toBe(
-            "R"
+        expect(await page.locator(":nth-match(.graph-config-panel .drop-zone, 2)").textContent()).toContain(
+            "Drag variables here to select them for this graph."
         );
 
-        // re-select I
-        await iVariable.click();
-        await expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(3);
-        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 1)").getAttribute("name")).toBe(
-            "S"
-        );
-        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 2)").getAttribute("name")).toBe(
-            "I"
-        );
-        await expect(await page.locator(":nth-match(.wodin-plot-data-summary-series, 3)").getAttribute("name")).toBe(
-            "R"
-        );
+        // Drag variable to second graph
+        const sVariable = await page.locator(":nth-match(.graph-config-panel .variable, 1)");
+        const dragPositions = {
+            sourcePosition: { x: 5, y: 5 },
+            targetPosition: { x: 5, y: 5 }
+        };
+        await sVariable.dragTo(page.locator(":nth-match(.graph-config-panel .drop-zone, 2)"), dragPositions);
+
+        await expectGraphVariables(page, 0, ["I", "R"]);
+        await expectGraphVariables(page, 1, ["S"]);
+        await expect(page.locator(".hidden-variables-panel .variable")).toHaveCount(0);
+
+        // Drag a variable with Ctrl key to make copy
+        const iVariable = await page.locator(":nth-match(.graph-config-panel .variable, 1)");
+        await page.keyboard.down("Control");
+        await iVariable.dragTo(page.locator(":nth-match(.graph-config-panel .drop-zone, 2)"), dragPositions);
+        await page.keyboard.up("Control");
+        await expectGraphVariables(page, 0, ["I", "R"]);
+        await expectGraphVariables(page, 1, ["S", "I"]);
+
+        // Delete second graph
+        await page.click(":nth-match(.graph-config-panel .delete-graph, 2)");
+        await expect(page.locator(".graph-config-panel")).toHaveCount(1);
+        await expectGraphVariables(page, 0, ["I", "R"]);
+
+        // First graph should not be deletable
+        await expect(page.locator(".delete-graph")).toHaveCount(0);
     });
 
     test("can display help dialog", async ({ page }) => {
@@ -364,5 +397,15 @@ test.describe("Code Tab tests", () => {
         await page.click(".nav-tabs a:has-text('Code')");
         const lineElement = await page.locator(`.view-overlays div:nth-child(${3}) >> div`);
         expect(lineElement).toHaveClass("cdr editor-warning-background");
+    });
+
+    test("can change graph setting for log scale y axis from code tab", async ({ page }) => {
+        await page.locator(".log-scale-y-axis input").click();
+        // should update y axis tick
+        const tickSelector = ":nth-match(.plotly .ytick text, 2)";
+        await expect(await page.innerHTML(tickSelector)).toBe("10n");
+        // change back to linear
+        await page.locator(".log-scale-y-axis input").click();
+        await expect(await page.innerHTML(tickSelector)).toBe("0.2M");
     });
 });

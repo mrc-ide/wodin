@@ -9,6 +9,7 @@ import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
 import { StochasticState } from "../../../../src/app/store/stochastic/state";
 import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
 import { mockGraphsState, mockModelState, mockRunState } from "../../../mocks";
+import { defaultGraphSettings } from "../../../../src/app/store/graphs/state";
 
 describe("RunPlot for stochastic", () => {
     const mockSolution = jest.fn().mockReturnValue({
@@ -32,7 +33,24 @@ describe("RunPlot for stochastic", () => {
 
     const selectedVariables = ["S", "I", "R"];
 
-    const graphsState = mockGraphsState({ config: [{ selectedVariables, unselectedVariables: [] }] });
+    const graphsState = mockGraphsState({
+        config: [
+            {
+                id: "1234",
+                selectedVariables,
+                unselectedVariables: [],
+                settings: defaultGraphSettings()
+            }
+        ]
+    });
+
+    const graphConfig = {
+        selectedVariables,
+        unselectedVariables: [],
+        settings: defaultGraphSettings()
+    };
+
+    const linkedXAxis = { autorange: false, range: [1, 2] };
 
     afterEach(() => {
         jest.clearAllMocks();
@@ -56,7 +74,10 @@ describe("RunPlot for stochastic", () => {
         });
         const wrapper = shallowMount(RunStochasticPlot, {
             props: {
-                fadePlot: false
+                fadePlot: false,
+                graphIndex: 0,
+                linkedXAxis,
+                graphConfig
             },
             global: {
                 plugins: [store]
@@ -66,8 +87,11 @@ describe("RunPlot for stochastic", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution, 1]);
         expect(wodinPlot.props("recalculateOnRelayout")).toBe(true);
+        expect(wodinPlot.props("linkedXAxis")).toStrictEqual(linkedXAxis);
+        expect(wodinPlot.props("graphIndex")).toBe(0);
+        expect(wodinPlot.props("graphConfig")).toStrictEqual(graphConfig);
 
         // Generates expected plot data from model
         const plotData = wodinPlot.props("plotData");
@@ -102,6 +126,39 @@ describe("RunPlot for stochastic", () => {
         ]);
     });
 
+    it("emits updateXAxis event", () => {
+        const store = new Vuex.Store<StochasticState>({
+            state: {
+                graphs: graphsState,
+                model: mockModelState({ paletteModel }),
+                run: {
+                    endTime: 99,
+                    numberOfReplicates: 20,
+                    resultDiscrete: mockResult
+                },
+                config: {
+                    maxReplicatesDisplay: 50,
+                    maxReplicatesRun: 1000
+                }
+            } as any
+        });
+        const wrapper = shallowMount(RunStochasticPlot, {
+            props: {
+                fadePlot: false,
+                graphIndex: 0,
+                linkedXAxis,
+                graphConfig
+            },
+            global: {
+                plugins: [store]
+            }
+        });
+        const wodinPlot = wrapper.findComponent(WodinPlot);
+        const xAxis = { autorange: false, range: [111, 222] };
+        wodinPlot.vm.$emit("updateXAxis", xAxis);
+        expect(wrapper.emitted("updateXAxis")![0]).toStrictEqual([xAxis]);
+    });
+
     it("renders as expected when model has no stochastic result", () => {
         const store = new Vuex.Store<StochasticState>({
             state: {
@@ -114,7 +171,9 @@ describe("RunPlot for stochastic", () => {
         });
         const wrapper = shallowMount(RunPlot, {
             props: {
-                fadePlot: false
+                fadePlot: false,
+                graphIndex: 0,
+                graphConfig
             },
             global: {
                 plugins: [store]
@@ -125,6 +184,8 @@ describe("RunPlot for stochastic", () => {
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
         expect(wodinPlot.props("redrawWatches")).toStrictEqual([]);
+        expect(wodinPlot.props("graphIndex")).toBe(0);
+        expect(wodinPlot.props("graphConfig")).toStrictEqual(graphConfig);
 
         const plotData = wodinPlot.props("plotData");
         const data = plotData();
@@ -148,7 +209,8 @@ describe("RunPlot for stochastic", () => {
         });
         const wrapper = shallowMount(RunStochasticPlot, {
             props: {
-                fadePlot: false
+                fadePlot: false,
+                graphConfig
             },
             global: {
                 plugins: [store]
@@ -171,7 +233,8 @@ describe("RunPlot for stochastic", () => {
         });
         const wrapper = shallowMount(RunPlot, {
             props: {
-                fadePlot: true
+                fadePlot: true,
+                graphConfig
             },
             global: {
                 plugins: [store]
@@ -195,7 +258,8 @@ describe("RunPlot for stochastic", () => {
         });
         const wrapper = shallowMount(RunStochasticPlot, {
             props: {
-                fadePlot: false
+                fadePlot: false,
+                graphConfig
             },
             global: {
                 plugins: [store]

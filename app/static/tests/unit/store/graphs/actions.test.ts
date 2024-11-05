@@ -3,12 +3,13 @@ import { actions, GraphsAction } from "../../../../src/app/store/graphs/actions"
 import { GraphsMutation } from "../../../../src/app/store/graphs/mutations";
 import { AppType } from "../../../../src/app/store/appState/state";
 import { FitDataAction } from "../../../../src/app/store/fitData/actions";
+import { defaultGraphSettings } from "../../../../src/app/store/graphs/state";
 
 describe("Graphs actions", () => {
     const modelState = {
         odinModelResponse: {
             metadata: {
-                variables: ["a", "b", "c"]
+                variables: ["b", "a", "c"]
             }
         }
     } as any;
@@ -40,7 +41,7 @@ describe("Graphs actions", () => {
         expect(commit.mock.calls[0][0]).toBe(GraphsMutation.SetSelectedVariables);
         expect(commit.mock.calls[0][1]).toStrictEqual({
             graphIndex: 1,
-            selectedVariables: ["a", "b"],
+            selectedVariables: ["b", "a"], // should have reordered variables to match model
             unselectedVariables: ["c"]
         });
         expect(dispatch).not.toHaveBeenCalled();
@@ -67,12 +68,26 @@ describe("Graphs actions", () => {
         expect(commit.mock.calls[0][0]).toBe(GraphsMutation.SetSelectedVariables);
         expect(commit.mock.calls[0][1]).toStrictEqual({
             graphIndex: 1,
-            selectedVariables: ["a", "b"],
+            selectedVariables: ["b", "a"],
             unselectedVariables: ["c"]
         });
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch.mock.calls[0][0]).toBe(`fitData/${FitDataAction.UpdateLinkedVariables}`);
         expect(dispatch.mock.calls[0][1]).toBe(null);
         expect(dispatch.mock.calls[0][2]).toStrictEqual({ root: true });
+    });
+    it("NewGraph adds empty graph", () => {
+        const commit = jest.fn();
+
+        (actions[GraphsAction.NewGraph] as any)({
+            commit,
+            rootState
+        });
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(GraphsMutation.AddGraph);
+        expect(commit.mock.calls[0][1].selectedVariables).toStrictEqual([]);
+        expect(commit.mock.calls[0][1].unselectedVariables).toStrictEqual(["b", "a", "c"]);
+        expect(commit.mock.calls[0][1].id.length).toBe(32);
+        expect(commit.mock.calls[0][1].settings).toStrictEqual(defaultGraphSettings());
     });
 });

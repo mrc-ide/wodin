@@ -114,7 +114,7 @@ describe("allFitDataToPlotly", () => {
     };
 
     it("creates unlinked data", () => {
-        const res = allFitDataToPlotly(allFitData, palette, 0, 4);
+        const res = allFitDataToPlotly(allFitData, palette, 0, 4, ["B"]);
         expect(res).toStrictEqual([
             {
                 marker: { color: "#1c0a00" }, // first data colour
@@ -136,12 +136,12 @@ describe("allFitDataToPlotly", () => {
     });
 
     it("returns empty set if data missing", () => {
-        const res = allFitDataToPlotly(null, palette, 0, 4);
+        const res = allFitDataToPlotly(null, palette, 0, 4, ["B"]);
         expect(res).toStrictEqual([]);
     });
 
     it("filters data by time", () => {
-        const res = allFitDataToPlotly(allFitData, palette, 1, 3);
+        const res = allFitDataToPlotly(allFitData, palette, 1, 3, ["B"]);
         expect(res).toStrictEqual([
             {
                 marker: { color: "#1c0a00" },
@@ -168,7 +168,8 @@ describe("allFitDataToPlotly", () => {
             linkedVariables: { a: null, b: "B" },
             timeVariable: "t"
         };
-        const res = allFitDataToPlotly(allFitDataLinked, palette, 0, 4);
+        const selectedVariables = ["A", "B"];
+        const res = allFitDataToPlotly(allFitDataLinked, palette, 0, 4, selectedVariables);
         expect(res).toStrictEqual([
             {
                 marker: { color: "#1c0a00" }, // first data colour
@@ -187,6 +188,24 @@ describe("allFitDataToPlotly", () => {
                 y: [2, 4, 6, 8, 10]
             }
         ]);
+    });
+
+    it("adds transparent data for unselected variable", () => {
+        const allFitDataLinked = {
+            data,
+            linkedVariables: { a: null, b: "B" },
+            timeVariable: "t"
+        };
+        const selectedVariables = ["A"];
+        const res = allFitDataToPlotly(allFitDataLinked, palette, 0, 4, selectedVariables);
+        expect(res[1]).toStrictEqual({
+            marker: { color: "transparent" }, // Model colour
+            mode: "markers",
+            name: "b",
+            type: "scatter",
+            x: [0, 1, 2, 3, 4],
+            y: [2, 4, 6, 8, 10]
+        });
     });
 });
 

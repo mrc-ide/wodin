@@ -15,9 +15,7 @@
         </div>
         <error-info :error="error"></error-info>
         <div class="mt-3">
-            <vertical-collapse v-if="showSelectedVariables" title="Select variables" collapse-id="select-variables">
-                <selected-variables></selected-variables>
-            </vertical-collapse>
+            <graph-configs-collapsible></graph-configs-collapsible>
         </div>
     </div>
 </template>
@@ -31,19 +29,18 @@ import CodeEditor from "./CodeEditor.vue";
 import { ModelAction } from "../../store/model/actions";
 import userMessages from "../../userMessages";
 import ErrorInfo from "../ErrorInfo.vue";
-import SelectedVariables from "./SelectedVariables.vue";
-import VerticalCollapse from "../VerticalCollapse.vue";
 import GenericHelp from "../help/GenericHelp.vue";
+import GraphConfigsCollapsible from "../graphConfig/GraphConfigsCollapsible.vue";
 
 export default defineComponent({
     name: "CodeTab",
     components: {
+        GraphConfigsCollapsible,
         GenericHelp,
-        SelectedVariables,
+
         ErrorInfo,
         CodeEditor,
-        VueFeather,
-        VerticalCollapse
+        VueFeather
     },
     setup() {
         const store = useStore();
@@ -54,8 +51,6 @@ export default defineComponent({
         const validIcon = computed(() => (codeIsValid.value ? "check" : "x"));
         const iconValidatedClass = computed(() => (codeIsValid.value ? "text-success" : "text-danger"));
         const iconClass = computed(() => (codeValidating.value ? "code-validating-icon" : iconValidatedClass.value));
-        const allVariables = computed<string[]>(() => store.state.model.odinModelResponse?.metadata?.variables || []);
-        const showSelectedVariables = computed(() => allVariables.value.length && !store.state.model.compileRequired);
         const appIsConfigured = computed(() => store.state.configured);
         const compile = () => store.dispatch(`model/${ModelAction.CompileModel}`);
         const loadingMessage = userMessages.code.isValidating;
@@ -69,7 +64,6 @@ export default defineComponent({
             iconClass,
             compile,
             error,
-            showSelectedVariables,
             codeHelp,
             codeValidating,
             loadingMessage

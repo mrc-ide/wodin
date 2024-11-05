@@ -6,16 +6,27 @@
         :plot-data="allPlotData"
         :redrawWatches="
             solutions
-                ? [...solutions, result, allFitData, selectedVariables, parameterSetBatches, parameterSetDisplayNames]
+                ? [
+                      ...solutions,
+                      result,
+                      allFitData,
+                      selectedVariables,
+                      parameterSetBatches,
+                      parameterSetDisplayNames,
+                      graphCount
+                  ]
                 : []
         "
+        :fit-plot="false"
+        :graph-index="graphIndex"
+        :graph-config="graphConfig"
     >
         <slot></slot>
     </wodin-plot>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { useStore } from "vuex";
 import { PlotData } from "plotly.js-basic-dist-min";
 import { FitDataGetter } from "../../store/fitData/getters";
@@ -35,16 +46,19 @@ import { RunGetter } from "../../store/run/getters";
 import { Dict } from "../../types/utilTypes";
 import { ParameterSet } from "../../store/run/state";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
+import { GraphConfig } from "../../store/graphs/state";
 
 export default defineComponent({
     name: "SensitivityTracesPlot",
     props: {
-        fadePlot: Boolean
+        fadePlot: Boolean,
+        graphIndex: { type: Number, required: true },
+        graphConfig: { type: Object as PropType<GraphConfig>, required: true }
     },
     components: {
         WodinPlot
     },
-    setup() {
+    setup(props) {
         const store = useStore();
 
         const solutions = computed(() => store.state.sensitivity.result?.batch?.solutions || []);
@@ -80,7 +94,10 @@ export default defineComponent({
 
         const palette = computed(() => store.state.model.paletteModel);
 
-        const selectedVariables = computed(() => store.state.graphs.config[0].selectedVariables);
+        const selectedVariables = computed(() => props.graphConfig.selectedVariables);
+
+        // TODO: put this in the composable in mrc-5572
+        const graphCount = computed(() => store.state.graphs.config.length);
 
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, true));
 
@@ -186,7 +203,15 @@ export default defineComponent({
                 });
 
                 if (allFitData.value) {
-                    result.push(...allFitDataToPlotly(allFitData.value, palette.value, start, end));
+                    result.push(
+                        ...allFitDataToPlotly(
+                            allFitData.value,
+                            palette.value,
+                            start,
+                            end,
+                            props.graphConfig.selectedVariables
+                        )
+                    );
                 }
             }
 
@@ -203,7 +228,8 @@ export default defineComponent({
             allFitData,
             selectedVariables,
             parameterSetBatches,
-            parameterSetDisplayNames
+            parameterSetDisplayNames,
+            graphCount
         };
     }
 });
