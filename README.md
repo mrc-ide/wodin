@@ -88,7 +88,7 @@ should fix this issue.
 Front-end source can be found under `app/static/src`. The front end can be built by running `npm run build` from
 `app/static`. This builds output to be picked up by the back end at `app/server/public`.
 
-The entry point script is `app/static/src/app/wodin.ts`.
+The entry point script is `app/static/src/wodin.ts`.
 
 ### Unit Tests
 Run unit tests from `app/static` using `npm run test:unit`. Run [eslint](https://eslint.org/) with `npm run lint` or `npm run lint:fix`.
