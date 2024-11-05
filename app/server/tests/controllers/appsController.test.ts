@@ -30,7 +30,6 @@ describe("appsController", () => {
                     wodinConfig: {
                         baseUrl: "http://localhost:3000",
                         courseTitle: "Test Course Title",
-                        hotReload: false,
                         ...wodinConfig
                     },
                     wodinVersion: "1.2.3"
@@ -84,7 +83,7 @@ describe("appsController", () => {
             mathjaxSrc,
             defaultLanguage: "en",
             enableI18n: false,
-            hotReload: false
+            hotReload: undefined
         });
         expect(mockStatus).not.toBeCalled();
     });
@@ -107,7 +106,7 @@ describe("appsController", () => {
             mathjaxSrc,
             defaultLanguage: "en",
             enableI18n: false,
-            hotReload: false
+            hotReload: undefined
         });
     });
 
@@ -134,7 +133,7 @@ describe("appsController", () => {
             mathjaxSrc,
             defaultLanguage: "en",
             enableI18n: false,
-            hotReload: false
+            hotReload: undefined
         });
     });
 
@@ -159,7 +158,7 @@ describe("appsController", () => {
             mathjaxSrc,
             defaultLanguage: "en",
             enableI18n: false,
-            hotReload: false
+            hotReload: undefined
         });
     });
 
