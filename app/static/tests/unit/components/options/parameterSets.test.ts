@@ -1,18 +1,19 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
-import { BasicState } from "../../../../src/app/store/basic/state";
-import { RunState } from "../../../../src/app/store/run/state";
+import { BasicState } from "../../../../src/store/basic/state";
+import { RunState } from "../../../../src/store/run/state";
 import { mockBasicState, mockModelState, mockRunState } from "../../../mocks";
-import ParameterSets from "../../../../src/app/components/options/ParameterSets.vue";
-import ParameterSetView from "../../../../src/app/components/options/ParameterSetView.vue";
-import { ModelState } from "../../../../src/app/store/model/state";
-import { getters } from "../../../../src/app/store/run/getters";
-import { RunAction } from "../../../../src/app/store/run/actions";
-import { RunMutation } from "../../../../src/app/store/run/mutations";
+import ParameterSets from "../../../../src/components/options/ParameterSets.vue";
+import ParameterSetView from "../../../../src/components/options/ParameterSetView.vue";
+import { ModelState } from "../../../../src/store/model/state";
+import { getters } from "../../../../src/store/run/getters";
+import { RunAction } from "../../../../src/store/run/actions";
+import { RunMutation } from "../../../../src/store/run/mutations";
+import { nextTick } from "vue";
 
 describe("ParameterSets", () => {
-    const mockNewParameterSet = jest.fn();
-    const mockToggleShowUnchangedParameters = jest.fn();
+    const mockNewParameterSet = vi.fn();
+    const mockToggleShowUnchangedParameters = vi.fn();
     const getWrapper = (runState: Partial<RunState>, modelState: Partial<ModelState> = {}) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
@@ -40,7 +41,7 @@ describe("ParameterSets", () => {
     };
 
     beforeEach(() => {
-        jest.resetAllMocks();
+        vi.resetAllMocks();
     });
 
     it("renders as expected", () => {
@@ -134,7 +135,7 @@ describe("ParameterSets", () => {
     });
     it("should call ToggleShowUnchangedParameters when unchanged parameters checkbox is clicked", async () => {
         const wrapper = getWrapper({});
-        await wrapper.find("input.form-check-input").trigger("click");
+        await wrapper.find("input.form-check-input").trigger("input");
         expect(mockToggleShowUnchangedParameters).toHaveBeenCalledTimes(1);
     });
 });

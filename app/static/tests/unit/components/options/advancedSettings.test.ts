@@ -1,21 +1,21 @@
 import { VueWrapper, shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
-import AdvancedSettings from "../../../../src/app/components/options/AdvancedSettings.vue";
+import AdvancedSettings from "../../../../src/components/options/AdvancedSettings.vue";
 import { mockModelFitState, mockRunState, mockSensitivityState } from "../../../mocks";
-import { RunMutation } from "../../../../src/app/store/run/mutations";
-import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
-import StandardFormInput from "../../../../src/app/components/options/StandardFormInput.vue";
-import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
-import TagInput from "../../../../src/app/components/options/TagInput.vue";
-import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
-import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
-import { AppType } from "../../../../src/app/store/appState/state";
+import { RunMutation } from "../../../../src/store/run/mutations";
+import NumericInput from "../../../../src/components/options/NumericInput.vue";
+import StandardFormInput from "../../../../src/components/options/StandardFormInput.vue";
+import { AdvancedOptions } from "../../../../src/types/responseTypes";
+import TagInput from "../../../../src/components/options/TagInput.vue";
+import { ModelFitMutation } from "../../../../src/store/modelFit/mutations";
+import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
+import { AppType } from "../../../../src/store/appState/state";
 
 describe("Advanced Settings", () => {
-    const mockUpdateAdvancedSettings = jest.fn();
-    const mockSetFitUpdateRequired = jest.fn();
-    const mockSetSensitivityUpdateRequired = jest.fn();
-    const mockSetMultiSensitivityUpdateRequired = jest.fn();
+    const mockUpdateAdvancedSettings = vi.fn();
+    const mockSetFitUpdateRequired = vi.fn();
+    const mockSetSensitivityUpdateRequired = vi.fn();
+    const mockSetMultiSensitivityUpdateRequired = vi.fn();
 
     const getWrapper = (isFit = false, multiSensitivity = false) => {
         const store = new Vuex.Store({
@@ -64,7 +64,7 @@ describe("Advanced Settings", () => {
     };
 
     beforeEach(() => {
-        jest.resetAllMocks();
+        vi.resetAllMocks();
     });
 
     const expectValueAndPlaceholder = (

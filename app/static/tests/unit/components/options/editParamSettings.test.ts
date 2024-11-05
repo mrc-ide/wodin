@@ -4,7 +4,7 @@ import {
     SensitivityParameterSettings,
     SensitivityScaleType,
     SensitivityVariationType
-} from "../../../../src/app/store/sensitivity/state";
+} from "../../../../src/store/sensitivity/state";
 import {
     mockBasicState,
     mockBatchParsDisplace,
@@ -12,15 +12,15 @@ import {
     mockModelState,
     mockRunState
 } from "../../../mocks";
-import EditParamSettings from "../../../../src/app/components/options/EditParamSettings.vue";
-import { BasicState } from "../../../../src/app/store/basic/state";
-import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
-import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
+import EditParamSettings from "../../../../src/components/options/EditParamSettings.vue";
+import { BasicState } from "../../../../src/store/basic/state";
+import NumericInput from "../../../../src/components/options/NumericInput.vue";
+import SensitivityParamValues from "../../../../src/components/options/SensitivityParamValues.vue";
 import { expectCloseNumericArray } from "../../../testUtils";
-import TagInput from "../../../../src/app/components/options/TagInput.vue";
-import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
+import TagInput from "../../../../src/components/options/TagInput.vue";
+import ErrorInfo from "../../../../src/components/ErrorInfo.vue";
 
-const mockTooltipDirective = jest.fn();
+const mockTooltipDirective = vi.fn();
 
 describe("EditParamSettings", () => {
     const percentSettings = {
@@ -105,7 +105,7 @@ describe("EditParamSettings", () => {
     };
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("renders as expected when variation type is Percentage", async () => {
@@ -262,11 +262,11 @@ describe("EditParamSettings", () => {
     });
 
     it("renders and updates sensitivity param values", async () => {
-        const percentSpy = jest.spyOn(mockRunner, "batchParsDisplace");
-        const rangeSpy = jest.spyOn(mockRunner, "batchParsRange");
+        const percentSpy = vi.spyOn(mockRunner, "batchParsDisplace");
+        const rangeSpy = vi.spyOn(mockRunner, "batchParsRange");
         const wrapper = await getWrapper(percentSettings);
         const sensitivityValues = wrapper.findComponent(SensitivityParamValues);
-        const { values, name } = sensitivityValues.props("batchPars").varying[0];
+        const { values, name } = sensitivityValues.props("batchPars")!.varying[0];
         expectCloseNumericArray(values, [1.8, 1.9, 2, 2.1, 2.2]);
         expect(name).toBe("B");
         expect(percentSpy).toHaveBeenCalledTimes(1);
@@ -279,7 +279,7 @@ describe("EditParamSettings", () => {
         await updateSelect(wrapper, "edit-variation-type", SensitivityVariationType.Range);
         await wrapper.find("#edit-from").findComponent(NumericInput).vm.$emit("update", 1);
         await wrapper.find("#edit-to").findComponent(NumericInput).vm.$emit("update", 3);
-        const updatedValues = sensitivityValues.props("batchPars").varying[0].values;
+        const updatedValues = sensitivityValues.props("batchPars")!.varying[0].values;
         expectCloseNumericArray(updatedValues, [1, 1.5, 2, 2.5, 3]);
         expect(rangeSpy).toHaveBeenCalledTimes(3); // called on each update
         expect(rangeSpy.mock.calls[2][0]).toStrictEqual(parameterValues);

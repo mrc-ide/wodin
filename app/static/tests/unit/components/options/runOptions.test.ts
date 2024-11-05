@@ -1,21 +1,21 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
-import { BasicState } from "../../../../src/app/store/basic/state";
-import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
-import RunOptions from "../../../../src/app/components/options/RunOptions.vue";
-import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
-import { AppType } from "../../../../src/app/store/appState/state";
+import { BasicState } from "../../../../src/store/basic/state";
+import { FitDataGetter } from "../../../../src/store/fitData/getters";
+import RunOptions from "../../../../src/components/options/RunOptions.vue";
+import NumericInput from "../../../../src/components/options/NumericInput.vue";
+import { AppType } from "../../../../src/store/appState/state";
 
 describe("RunOptions", () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
-    const mockSensitivitySetEndTime = jest.fn();
-    const mockRunSetEndTime = jest.fn();
-    const mockSetSensitivityUpdateRequired = jest.fn();
-    const mockSetMultiSensitivityUpdateRequired = jest.fn();
-    const mockNumberOfReplicates = jest.fn();
+    const mockSensitivitySetEndTime = vi.fn();
+    const mockRunSetEndTime = vi.fn();
+    const mockSetSensitivityUpdateRequired = vi.fn();
+    const mockSetMultiSensitivityUpdateRequired = vi.fn();
+    const mockNumberOfReplicates = vi.fn();
 
     const getWrapper = (mockDataEnd: number | null = 0, states = {}) => {
         const modules = {
