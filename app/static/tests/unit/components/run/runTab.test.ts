@@ -8,7 +8,15 @@ import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { nextTick } from "vue";
 import { BasicState } from "../../../../src/app/store/basic/state";
-import { mockBasicState, mockGraphsState, mockModelState, mockRunState, mockStochasticState } from "../../../mocks";
+import {
+    mockBasicState,
+    mockFitState,
+    mockGraphsState,
+    mockModelFitState,
+    mockModelState,
+    mockRunState,
+    mockStochasticState
+} from "../../../mocks";
 import { ModelState } from "../../../../src/app/store/model/state";
 import { RunState } from "../../../../src/app/store/run/state";
 import RunTab from "../../../../src/app/components/run/RunTab.vue";
@@ -26,6 +34,7 @@ import { AppType } from "../../../../src/app/store/appState/state";
 import { RunMutation } from "../../../../src/app/store/run/mutations";
 import { RunAction } from "../../../../src/app/store/run/actions";
 import { getters as graphGetters } from "../../../../src/app/store/graphs/getters";
+import { FitState } from "../../../../src/app/store/fit/state";
 
 describe("RunTab", () => {
     const defaultModelState = {
@@ -65,8 +74,11 @@ describe("RunTab", () => {
                 graphs: {
                     namespaced: true,
                     state: mockGraphsState({
-                        config: [{ selectedVariables, unselectedVariables: [] }]
-                    }),
+                        config: [
+                            { id: "123", selectedVariables, unselectedVariables: [] },
+                            { id: "456", selectedVariables: [], unselectedVariables: [] }
+                        ]
+                    } as any),
                     getters: graphGetters
                 },
                 model: {
@@ -108,8 +120,11 @@ describe("RunTab", () => {
                 graphs: {
                     namespaced: true,
                     state: mockGraphsState({
-                        config: [{ selectedVariables: ["S"], unselectedVariables: [] }]
-                    }),
+                        config: [
+                            { id: "123", selectedVariables: ["S"], unselectedVariables: [] },
+                            { id: "456", selectedVariables: [], unselectedVariables: [] }
+                        ]
+                    } as any),
                     getters: graphGetters
                 },
                 model: {
@@ -138,13 +153,59 @@ describe("RunTab", () => {
         });
     };
 
+    const getFitWrapper = () => {
+        const store = new Vuex.Store<FitState>({
+            state: mockFitState(),
+            modules: {
+                graphs: {
+                    namespaced: true,
+                    state: mockGraphsState({
+                        config: [
+                            { id: "123", selectedVariables: ["S"], unselectedVariables: [] },
+                            { id: "456", selectedVariables: [], unselectedVariables: [] }
+                        ]
+                    } as any),
+                    getters: graphGetters
+                },
+                modelFit: {
+                    namespaced: true,
+                    state: mockModelFitState({
+                        sumOfSquares: 21.2
+                    })
+                }
+            }
+        });
+        return shallowMount(RunTab, {
+            global: {
+                plugins: [store]
+            }
+        });
+    };
+
     it("renders as expected when can run model", () => {
         const runState = { ...defaultRunState, userDownloadFileName: "test.xlsx" };
         const wrapper = getWrapper(defaultModelState, runState);
         expect(wrapper.find("button#run-btn").text()).toBe("Run model");
         expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
-        expect(wrapper.findComponent(RunPlot).props("fadePlot")).toBe(false);
+        const plots = wrapper.findAllComponents(RunPlot);
+        expect(plots.length).toBe(2);
+        expect(plots.at(0)!.props("graphIndex")).toBe(0);
+        expect(plots.at(0)!.props("fadePlot")).toBe(false);
+        expect(plots.at(0)!.props("linkedXAxis")).toStrictEqual({ autorange: true });
+        expect(plots.at(0)!.props("graphConfig")).toStrictEqual({
+            id: "123",
+            selectedVariables: ["S"],
+            unselectedVariables: []
+        });
+        expect(plots.at(1)!.props("graphIndex")).toBe(1);
+        expect(plots.at(1)!.props("fadePlot")).toBe(false);
+        expect(plots.at(1)!.props("linkedXAxis")).toStrictEqual({ autorange: true });
+        expect(plots.at(1)!.props("graphConfig")).toStrictEqual({
+            id: "456",
+            selectedVariables: [],
+            unselectedVariables: []
+        });
 
         // Download button disabled because there is no model solution
         const downloadBtn = wrapper.find("button#download-btn");
@@ -161,6 +222,23 @@ describe("RunTab", () => {
         expect(wrapper.findComponent(RunStochasticPlot).exists()).toBe(false);
     });
 
+    it("renders sumOfSquares for Fit app", () => {
+        const wrapper = getFitWrapper();
+        expect(wrapper.findAll("#squares").length).toBe(1);
+        expect(wrapper.find("#squares").text()).toBe("Sum of squares: 21.2");
+    });
+
+    it("propagates x axis changes to all run plots", async () => {
+        const wrapper = getWrapper();
+        const plots = wrapper.findAllComponents(RunPlot);
+        expect(plots.length).toBe(2);
+        const newXAxis = { autorange: false, range: [1, 10] };
+        plots.at(0)!.vm.$emit("updateXAxis", newXAxis);
+        await nextTick();
+        expect(plots.at(0)!.props("linkedXAxis")).toStrictEqual(newXAxis);
+        expect(plots.at(1)!.props("linkedXAxis")).toStrictEqual(newXAxis);
+    });
+
     it("renders as expected when app is stochastic", () => {
         const wrapper = getStochasticWrapper(
             {},
@@ -168,10 +246,40 @@ describe("RunTab", () => {
                 solution: jest.fn()
             }
         );
-        expect(wrapper.findComponent(RunStochasticPlot).props("fadePlot")).toBe(false);
+        const plots = wrapper.findAllComponents(RunStochasticPlot);
+        expect(plots.length).toBe(2);
+        expect(plots.at(0)!.props("graphIndex")).toBe(0);
+        expect(plots.at(0)!.props("fadePlot")).toBe(false);
+        expect(plots.at(0)!.props("linkedXAxis")).toStrictEqual({ autorange: true });
+        expect(plots.at(0)!.props("graphConfig")).toStrictEqual({
+            id: "123",
+            selectedVariables: ["S"],
+            unselectedVariables: []
+        });
+
+        expect(plots.at(1)!.props("graphIndex")).toBe(1);
+        expect(plots.at(1)!.props("fadePlot")).toBe(false);
+        expect(plots.at(1)!.props("linkedXAxis")).toStrictEqual({ autorange: true });
+        expect(plots.at(1)!.props("graphConfig")).toStrictEqual({
+            id: "456",
+            selectedVariables: [],
+            unselectedVariables: []
+        });
+
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         expect(wrapper.findComponent(RunPlot).exists()).toBe(false);
         expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(false);
+    });
+
+    it("propagates x axis changes to all run stochastic plots", async () => {
+        const wrapper = getStochasticWrapper();
+        const plots = wrapper.findAllComponents(RunStochasticPlot);
+        expect(plots.length).toBe(2);
+        const newXAxis = { autorange: false, range: [1, 10] };
+        plots.at(0)!.vm.$emit("updateXAxis", newXAxis);
+        await nextTick();
+        expect(plots.at(0)!.props("linkedXAxis")).toStrictEqual(newXAxis);
+        expect(plots.at(1)!.props("linkedXAxis")).toStrictEqual(newXAxis);
     });
 
     it("disables run button when state has no runner", () => {
@@ -224,7 +332,9 @@ describe("RunTab", () => {
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Model code has been updated. Compile code and Run Model to update."
         );
-        expect(wrapper.findComponent(RunPlot).props("fadePlot")).toBe(true);
+        const plots = wrapper.findAllComponents(RunPlot);
+        expect(plots.at(0)!.props("fadePlot")).toBe(true);
+        expect(plots.at(1)!.props("fadePlot")).toBe(true);
     });
 
     it("fades plot and shows message when model run required", () => {
@@ -239,7 +349,9 @@ describe("RunTab", () => {
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Plot is out of date: model code has been recompiled. Run model to update."
         );
-        expect(wrapper.findComponent(RunPlot).props("fadePlot")).toBe(true);
+        const plots = wrapper.findAllComponents(RunPlot);
+        expect(plots.at(0)!.props("fadePlot")).toBe(true);
+        expect(plots.at(1)!.props("fadePlot")).toBe(true);
     });
 
     it("fades plot and show message when no selected variables", () => {
@@ -247,12 +359,16 @@ describe("RunTab", () => {
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Please select at least one variable."
         );
-        expect(wrapper.findComponent(RunPlot).props("fadePlot")).toBe(true);
+        const plots = wrapper.findAllComponents(RunPlot);
+        expect(plots.at(0)!.props("fadePlot")).toBe(true);
+        expect(plots.at(1)!.props("fadePlot")).toBe(true);
     });
 
     it("fades plot when compile required when stochastic", () => {
         const wrapper = getStochasticWrapper({}, {}, true);
-        expect(wrapper.findComponent(RunStochasticPlot).props("fadePlot")).toBe(true);
+        const plots = wrapper.findAllComponents(RunStochasticPlot);
+        expect(plots.at(0)!.props("fadePlot")).toBe(true);
+        expect(plots.at(1)!.props("fadePlot")).toBe(true);
     });
 
     it("invokes run model action when run button is clicked", () => {

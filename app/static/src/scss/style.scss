@@ -116,3 +116,43 @@ $grey: #ccc;
     padding-top: 0;
     padding-bottom: 0;
 }
+
+.drop-zone {
+    border-width: 4px;
+    padding: 4px;
+    border-style: dashed;
+}
+
+.drop-zone-active {
+    border-color: #eee;
+}
+
+.drop-zone-inactive {
+    border-color: #fff;
+}
+
+.drop-zone-instruction {
+    min-height: 3rem;
+    background-color: #eee;
+    width: 100%;
+}
+
+.variable {
+    font-size: large;
+    cursor: pointer;
+}
+
+.variable-delete {
+    font-weight: normal;
+    margin-left: 0.3rem;
+    span {
+        opacity: 0.5;
+    }
+
+    button {
+        background-color: transparent;
+        border-width: 0;
+        color: white;
+        padding: 0;
+    }
+}

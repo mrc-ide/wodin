@@ -15,6 +15,7 @@ import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
 import { ModelGetter } from "../../../../src/app/store/model/getters";
 import { getters as graphsGetters } from "../../../../src/app/store/graphs/getters";
 import { mockGraphsState } from "../../../mocks";
+import { defaultGraphSettings } from "../../../../src/app/store/graphs/state";
 
 describe("SensitivitySummaryDownload", () => {
     const mockSetUserSummaryDownloadFileName = jest.fn();
@@ -86,8 +87,10 @@ describe("SensitivitySummaryDownload", () => {
                     state: mockGraphsState({
                         config: [
                             {
+                                id: "123",
                                 selectedVariables: ["S"],
-                                unselectedVariables: []
+                                unselectedVariables: [],
+                                settings: defaultGraphSettings()
                             }
                         ]
                     }),

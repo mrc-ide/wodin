@@ -128,10 +128,8 @@ The build includes a docker image build which may be easier to deploy. See [wodi
 
 ### Quickly test drive a feature branch
 
-Use the `./scripts/run-version.sh` script
+Use the `./scripts/run-version.sh` script setting the branch references for the app and api (defaults to main for both):
 
 ```
 ./scripts/run-version.sh --app mrc-1234 --api mrc-2345
 ```
-
-setting the branch references for the app and api (defaults to main for both).

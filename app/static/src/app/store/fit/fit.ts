@@ -11,7 +11,7 @@ import { fitData } from "../fitData/fitData";
 import { modelFit } from "../modelFit/modelFit";
 import { AppType, VisualisationTab } from "../appState/state";
 import { logMutations, persistState } from "../plugins";
-import { newSessionId } from "../../utils";
+import { newUid } from "../../utils";
 import { sessions } from "../sessions/sessions";
 import { versions } from "../versions/versions";
 import { graphs } from "../graphs/graphs";
@@ -24,7 +24,7 @@ const language = getStoreModule();
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
     return {
-        sessionId: newSessionId(),
+        sessionId: newUid(),
         sessionLabel: null,
         appType: AppType.Fit,
         openVisualisationTab: VisualisationTab.Run,

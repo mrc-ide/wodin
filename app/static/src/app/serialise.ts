@@ -15,11 +15,13 @@ import {
     SerialisedRunResult,
     SerialisedSensitivityResult,
     SerialisedModelFitState,
-    SerialisedMultiSensitivityState
+    SerialisedMultiSensitivityState,
+    SerialisedGraphsState
 } from "./types/serialisationTypes";
-import { GraphsState } from "./store/graphs/state";
+import { GraphConfig, GraphsState, defaultGraphSettings } from "./store/graphs/state";
 import { Dict } from "./types/utilTypes";
 import { MultiSensitivityState } from "./store/multiSensitivity/state";
+import { newUid } from "./utils";
 
 function serialiseCode(code: CodeState): CodeState {
     return {
@@ -140,8 +142,28 @@ function serialiseModelFit(modelFit: ModelFitState): SerialisedModelFitState {
     };
 }
 
-export const serialiseGraphs = (state: GraphsState): GraphsState => {
-    return { ...state };
+// Do not include graph config uids in serialised as we don't want them to contribute to duplicate checks
+export const serialiseGraphs = (state: GraphsState): SerialisedGraphsState => {
+    return {
+        ...state,
+        config: state.config.map((c: GraphConfig) => ({
+            selectedVariables: c.selectedVariables,
+            unselectedVariables: c.unselectedVariables,
+            settings: c.settings
+        }))
+    };
+};
+
+export const deserialiseGraphs = (serialised: SerialisedGraphsState): GraphsState => {
+    return {
+        ...serialised,
+        config: serialised.config.map((s) => ({
+            id: newUid(),
+            selectedVariables: s.selectedVariables,
+            unselectedVariables: s.unselectedVariables,
+            settings: s.settings
+        }))
+    };
 };
 
 export const serialiseState = (state: AppState): string => {
@@ -168,6 +190,7 @@ export const deserialiseState = (targetState: AppState, serialised: SerialisedAp
     Object.assign(targetState, {
         ...targetState,
         ...serialised,
+        graphs: serialised.graphs ? deserialiseGraphs(serialised.graphs) : targetState.graphs,
         persisted: true
     });
 
@@ -184,8 +207,10 @@ export const deserialiseState = (targetState: AppState, serialised: SerialisedAp
 
         targetState.graphs.config = [
             {
+                id: graphs!.config[0].id,
                 selectedVariables,
-                unselectedVariables
+                unselectedVariables,
+                settings: defaultGraphSettings()
             }
         ];
     }
