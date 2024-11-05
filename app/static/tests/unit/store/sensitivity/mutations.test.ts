@@ -2,8 +2,8 @@ import {
     BaseSensitivityMutation,
     mutations,
     SensitivityMutation
-} from "../../../../src/app/store/sensitivity/mutations";
-import { SensitivityPlotExtreme, SensitivityPlotType } from "../../../../src/app/store/sensitivity/state";
+} from "../../../../src/store/sensitivity/mutations";
+import { SensitivityPlotExtreme, SensitivityPlotType } from "../../../../src/store/sensitivity/state";
 import { mockSensitivityState } from "../../../mocks";
 
 describe("Sensitivity mutations", () => {

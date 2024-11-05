@@ -1,6 +1,6 @@
-import { appStateMutations } from "../../../../src/app/store/appState/mutations";
-import { VisualisationTab } from "../../../../src/app/store/appState/state";
-import { Language } from "../../../../src/app/types/languageTypes";
+import { appStateMutations } from "../../../../src/store/appState/mutations";
+import { VisualisationTab } from "../../../../src/store/appState/state";
+import { Language } from "../../../../src/types/languageTypes";
 import { mockBasicState } from "../../../mocks";
 
 describe("AppState mutations", () => {
@@ -40,7 +40,7 @@ describe("AppState mutations", () => {
     });
 
     it("clears queued state upload", () => {
-        const spyClearInterval = jest.spyOn(window, "clearInterval");
+        const spyClearInterval = vi.spyOn(window, "clearInterval");
         const state = mockBasicState({ queuedStateUploadIntervalId: 99 });
         appStateMutations.ClearQueuedStateUpload(state);
         expect(state.queuedStateUploadIntervalId).toBe(-1);
