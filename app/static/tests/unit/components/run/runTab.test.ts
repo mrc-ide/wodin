@@ -1,13 +1,12 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via RunPlot
 import VueFeather from "vue-feather";
 
-jest.mock("plotly.js-basic-dist-min", () => {});
+vi.mock("plotly.js-basic-dist-min", () => ({}));
 
-/* eslint-disable import/first */
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { nextTick } from "vue";
-import { BasicState } from "../../../../src/app/store/basic/state";
+import { BasicState } from "../../../../src/store/basic/state";
 import {
     mockBasicState,
     mockFitState,
@@ -17,24 +16,24 @@ import {
     mockRunState,
     mockStochasticState
 } from "../../../mocks";
-import { ModelState } from "../../../../src/app/store/model/state";
-import { RunState } from "../../../../src/app/store/run/state";
-import RunTab from "../../../../src/app/components/run/RunTab.vue";
-import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
-import RunStochasticPlot from "../../../../src/app/components/run/RunStochasticPlot.vue";
-import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
-import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
-import DownloadOutput from "../../../../src/app/components/DownloadOutput.vue";
-import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
-import { StochasticState } from "../../../../src/app/store/stochastic/state";
-import { OdinRunnerDiscrete } from "../../../../src/app/types/responseTypes";
-import { OdinRunResultDiscrete } from "../../../../src/app/types/wrapperTypes";
-import { ModelGetter } from "../../../../src/app/store/model/getters";
-import { AppType } from "../../../../src/app/store/appState/state";
-import { RunMutation } from "../../../../src/app/store/run/mutations";
-import { RunAction } from "../../../../src/app/store/run/actions";
-import { getters as graphGetters } from "../../../../src/app/store/graphs/getters";
-import { FitState } from "../../../../src/app/store/fit/state";
+import { ModelState } from "../../../../src/store/model/state";
+import { RunState } from "../../../../src/store/run/state";
+import RunTab from "../../../../src/components/run/RunTab.vue";
+import RunPlot from "../../../../src/components/run/RunPlot.vue";
+import RunStochasticPlot from "../../../../src/components/run/RunStochasticPlot.vue";
+import ErrorInfo from "../../../../src/components/ErrorInfo.vue";
+import ActionRequiredMessage from "../../../../src/components/ActionRequiredMessage.vue";
+import DownloadOutput from "../../../../src/components/DownloadOutput.vue";
+import LoadingSpinner from "../../../../src/components/LoadingSpinner.vue";
+import { StochasticState } from "../../../../src/store/stochastic/state";
+import { OdinRunnerDiscrete } from "../../../../src/types/responseTypes";
+import { OdinRunResultDiscrete } from "../../../../src/types/wrapperTypes";
+import { ModelGetter } from "../../../../src/store/model/getters";
+import { AppType } from "../../../../src/store/appState/state";
+import { RunMutation } from "../../../../src/store/run/mutations";
+import { RunAction } from "../../../../src/store/run/actions";
+import { getters as graphGetters } from "../../../../src/store/graphs/getters";
+import { FitState } from "../../../../src/store/fit/state";
 
 describe("RunTab", () => {
     const defaultModelState = {
@@ -54,12 +53,12 @@ describe("RunTab", () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
-    const mockRunModel = jest.fn();
-    const mockDownloadOutput = jest.fn();
-    const mockSetUserDownloadFileName = jest.fn();
+    const mockRunModel = vi.fn();
+    const mockDownloadOutput = vi.fn();
+    const mockSetUserDownloadFileName = vi.fn();
 
     const getWrapper = (
         modelState: Partial<ModelState> = defaultModelState,
@@ -243,7 +242,7 @@ describe("RunTab", () => {
         const wrapper = getStochasticWrapper(
             {},
             {
-                solution: jest.fn()
+                solution: vi.fn()
             }
         );
         const plots = wrapper.findAllComponents(RunStochasticPlot);
@@ -305,7 +304,7 @@ describe("RunTab", () => {
         expect((wrapper.find("button#download-btn").element as HTMLButtonElement).disabled).toBe(false);
     });
 
-    it("disables download button when run is required ", () => {
+    it("disables download button when run is required", () => {
         const runState = {
             result: { solution: {} } as any,
             runRequired: { modelChanged: true } as any

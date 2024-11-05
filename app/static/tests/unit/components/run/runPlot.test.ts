@@ -1,19 +1,18 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via WodinPlot
-jest.mock("plotly.js-basic-dist-min", () => {});
+vi.mock("plotly.js-basic-dist-min", () => ({}));
 
-/* eslint-disable import/first */
-import { shallowMount, VueWrapper } from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
-import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
-import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
-import { BasicState } from "../../../../src/app/store/basic/state";
-import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
-import { getters as runGetters } from "../../../../src/app/store/run/getters";
+import RunPlot from "../../../../src/components/run/RunPlot.vue";
+import WodinPlot from "../../../../src/components/WodinPlot.vue";
+import { BasicState } from "../../../../src/store/basic/state";
+import { FitDataGetter } from "../../../../src/store/fitData/getters";
+import { getters as runGetters } from "../../../../src/store/run/getters";
 import { mockGraphsState, mockModelState, mockRunState } from "../../../mocks";
-import { defaultGraphSettings } from "../../../../src/app/store/graphs/state";
+import { defaultGraphSettings } from "../../../../src/store/graphs/state";
 
 describe("RunPlot", () => {
-    const mockSolution = jest.fn().mockReturnValue({
+    const mockSolution = vi.fn().mockReturnValue({
         names: ["S", "I"],
         x: [0, 1],
         values: [
@@ -28,7 +27,7 @@ describe("RunPlot", () => {
         error: null
     } as any;
 
-    const mockParamSetSolution1 = jest.fn().mockReturnValue({
+    const mockParamSetSolution1 = vi.fn().mockReturnValue({
         names: ["S", "I"],
         x: [0, 1],
         values: [
@@ -44,7 +43,7 @@ describe("RunPlot", () => {
         error: null
     };
 
-    const mockParamSetSolution2 = jest.fn().mockReturnValue({
+    const mockParamSetSolution2 = vi.fn().mockReturnValue({
         names: ["S", "I"],
         x: [0, 1],
         values: [
@@ -60,7 +59,7 @@ describe("RunPlot", () => {
         error: null
     };
 
-    const mockParamSetSolution3 = jest.fn().mockReturnValue({
+    const mockParamSetSolution3 = vi.fn().mockReturnValue({
         names: ["S", "I"],
         x: [0, 1],
         values: [
@@ -116,10 +115,10 @@ describe("RunPlot", () => {
         selectedVariables,
         unselectedVariables: [],
         settings: defaultGraphSettings()
-    };
+    } as any;
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("renders as expected when model has solution", () => {
@@ -276,7 +275,7 @@ describe("RunPlot", () => {
                 fadePlot: false,
                 graphIndex: 0,
                 graphConfig
-            },
+            } as any,
             global: {
                 plugins: [store]
             }
@@ -415,7 +414,7 @@ describe("RunPlot", () => {
                 fadePlot: false,
                 graphConfig,
                 graphIndex: 0
-            },
+            } as any,
             global: {
                 plugins: [store]
             }
@@ -445,7 +444,7 @@ describe("RunPlot", () => {
             props: {
                 fadePlot: true,
                 graphConfig
-            },
+            } as any,
             global: {
                 plugins: [store]
             }
@@ -505,7 +504,7 @@ describe("RunPlot", () => {
             props: {
                 fadePlot: false,
                 graphConfig
-            },
+            } as any,
             global: {
                 plugins: [store]
             }
@@ -589,7 +588,7 @@ describe("RunPlot", () => {
             props: {
                 fadePlot: true,
                 graphConfig: { ...graphConfig, selectedVariables: [] }
-            },
+            } as any,
             global: {
                 plugins: [store]
             }

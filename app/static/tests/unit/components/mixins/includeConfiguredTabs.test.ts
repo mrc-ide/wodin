@@ -1,7 +1,7 @@
 import Vuex from "vuex";
-import { BasicState } from "../../../../src/app/store/basic/state";
+import { BasicState } from "../../../../src/store/basic/state";
 import { mockBasicState } from "../../../mocks";
-import includeConfiguredTabs from "../../../../src/app/components/mixins/includeConfiguredTabs";
+import includeConfiguredTabs from "../../../../src/components/mixins/includeConfiguredTabs";
 
 describe("includeConfiguredTabs mixin", () => {
     const getStore = (helpConfig: any, multiSensitivity: boolean | undefined = undefined) => {

@@ -1,21 +1,21 @@
 import Vuex from "vuex";
-import { ModelState } from "../../../../src/app/store/model/state";
-import baseSensitivity, { BaseSensitivityMixin } from "../../../../src/app/components/mixins/baseSensitivity";
-import { BaseSensitivityState } from "../../../../src/app/store/sensitivity/state";
-import { noSensitivityUpdateRequired } from "../../../../src/app/store/sensitivity/sensitivity";
-import { AppState } from "../../../../src/app/store/appState/state";
-import { BaseSensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
-import { BaseSensitivityAction } from "../../../../src/app/store/sensitivity/actions";
-import { getters as graphGetters } from "../../../../src/app/store/graphs/getters";
+import { ModelState } from "../../../../src/store/model/state";
+import baseSensitivity, { BaseSensitivityMixin } from "../../../../src/components/mixins/baseSensitivity";
+import { BaseSensitivityState } from "../../../../src/store/sensitivity/state";
+import { noSensitivityUpdateRequired } from "../../../../src/store/sensitivity/sensitivity";
+import { AppState } from "../../../../src/store/appState/state";
+import { BaseSensitivityMutation } from "../../../../src/store/sensitivity/mutations";
+import { BaseSensitivityAction } from "../../../../src/store/sensitivity/actions";
+import { getters as graphGetters } from "../../../../src/store/graphs/getters";
 import { mockGraphsState } from "../../../mocks";
-import { defaultGraphSettings } from "../../../../src/app/store/graphs/state";
+import { defaultGraphSettings } from "../../../../src/store/graphs/state";
 
 describe("baseSensitivity mixin", () => {
-    const mockSensSetUserSummaryDownloadFileName = jest.fn();
-    const mockMultiSensSetUserSummaryDownloadFileName = jest.fn();
+    const mockSensSetUserSummaryDownloadFileName = vi.fn();
+    const mockMultiSensSetUserSummaryDownloadFileName = vi.fn();
 
-    const mockSensDownloadSummary = jest.fn();
-    const mockMultiSensDownloadSummary = jest.fn();
+    const mockSensDownloadSummary = vi.fn();
+    const mockMultiSensDownloadSummary = vi.fn();
 
     const getStore = (
         hasRunner = true,
@@ -106,7 +106,7 @@ describe("baseSensitivity mixin", () => {
     };
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("sensitivityPrerequisitesReady returns true when all prerequisites have been met", () => {

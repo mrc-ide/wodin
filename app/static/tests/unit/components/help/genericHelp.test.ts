@@ -1,9 +1,9 @@
 import { mount } from "@vue/test-utils";
 import VueFeather from "vue-feather";
-import GenericHelp from "../../../../src/app/components/help/GenericHelp.vue";
-import DraggableDialog from "../../../../src/app/components/help/DraggableDialog.vue";
+import GenericHelp from "../../../../src/components/help/GenericHelp.vue";
+import DraggableDialog from "../../../../src/components/help/DraggableDialog.vue";
 
-const mockTooltipDirective = jest.fn();
+const mockTooltipDirective = vi.fn();
 describe("GenericHelp", () => {
     const getWrapper = () => {
         return mount(GenericHelp, {
@@ -23,7 +23,7 @@ describe("GenericHelp", () => {
     };
 
     beforeEach(() => {
-        jest.resetAllMocks();
+        vi.resetAllMocks();
     });
 
     it("renders as expected", () => {

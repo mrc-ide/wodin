@@ -1,9 +1,9 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
-import { BasicState } from "../../../../src/app/store/basic/state";
+import { BasicState } from "../../../../src/store/basic/state";
 import { mockBasicState } from "../../../mocks";
-import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
-import MarkdownPanel from "../../../../src/app/components/help/MarkdownPanel.vue";
+import HelpTab from "../../../../src/components/help/HelpTab.vue";
+import MarkdownPanel from "../../../../src/components/help/MarkdownPanel.vue";
 
 describe("HelpTab", () => {
     it("renders markdown panel with markdown from state", () => {

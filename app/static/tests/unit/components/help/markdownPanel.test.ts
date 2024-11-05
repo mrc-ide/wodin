@@ -1,7 +1,7 @@
 // Mock imports of third party packages so we can mock their methods before importing component
 const mockMarkdownItMathjaxPlugin = {};
 const mockRenderOutput = "<span>mockRenderOutput</span>";
-const mockRender = jest.fn().mockReturnValue(mockRenderOutput);
+const mockRender = vi.fn().mockReturnValue(mockRenderOutput);
 const mockMarkdownIt = {
     renderer: {
         rules: {
@@ -10,25 +10,28 @@ const mockMarkdownIt = {
     },
     render: mockRender
 } as any;
-const mockMarkdownItUse = jest.fn().mockReturnValue(mockMarkdownIt);
-jest.mock("markdown-it-mathjax", () => ({ __esModule: true, default: () => mockMarkdownItMathjaxPlugin }));
+const mockMarkdownItUse = vi.fn().mockReturnValue(mockMarkdownIt);
+vi.mock("markdown-it-mathjax", () => ({ __esModule: true, default: () => mockMarkdownItMathjaxPlugin }));
 
-jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
-    // mock constructor - this cannot be an arrow function, see
-    // https://stackoverflow.com/questions/47402005
-    // eslint-disable-next-line func-names
-    return function () {
-        return {
-            use: mockMarkdownItUse
-        };
-    };
+vi.mock("../../../../src/components/help/MarkdownItImport.ts", () => {
+  class MarkDownItClass {
+      constructor() {
+          return {
+              use: mockMarkdownItUse
+          }
+      }
+  };
+  return {
+      default: {
+          default: MarkDownItClass
+      }
+  }
 });
 
-/* eslint-disable import/first */
 import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
-import MarkdownPanel from "../../../../src/app/components/help/MarkdownPanel.vue";
-import { BasicState } from "../../../../src/app/store/basic/state";
+import MarkdownPanel from "../../../../src/components/help/MarkdownPanel.vue";
+import { BasicState } from "../../../../src/store/basic/state";
 import { mockBasicState } from "../../../mocks";
 
 describe("MarkdownPanel", () => {
@@ -47,10 +50,10 @@ describe("MarkdownPanel", () => {
     };
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     const testImageRewriteRule = (rule: Function, imgSrc: string, expectedOutputSrc: string) => {
         const tokens = [
             {
@@ -59,7 +62,7 @@ describe("MarkdownPanel", () => {
             }
         ];
         const idx = 0;
-        const mockRenderToken = jest.fn();
+        const mockRenderToken = vi.fn();
         const slf = {
             renderToken: mockRenderToken
         };
@@ -101,7 +104,7 @@ describe("MarkdownPanel", () => {
     });
 
     it("calls Mathjax.typeset when mounted", () => {
-        const mockTypeset = jest.fn();
+        const mockTypeset = vi.fn();
         (window as any).MathJax = {
             typeset: mockTypeset
         };
