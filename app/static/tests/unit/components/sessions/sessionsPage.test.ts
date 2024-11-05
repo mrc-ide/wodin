@@ -2,31 +2,32 @@ import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
 import VueFeather from "vue-feather";
 import { nextTick } from "vue";
-import SessionsPage from "../../../../src/app/components/sessions/SessionsPage.vue";
-import ErrorsAlert from "../../../../src/app/components/ErrorsAlert.vue";
-import { BasicState } from "../../../../src/app/store/basic/state";
+import SessionsPage from "../../../../src/components/sessions/SessionsPage.vue";
+import ErrorsAlert from "../../../../src/components/ErrorsAlert.vue";
+import { BasicState } from "../../../../src/store/basic/state";
 import { mockBasicState, mockSessionsState, mockUserPreferences } from "../../../mocks";
-import { SessionsAction } from "../../../../src/app/store/sessions/actions";
-import EditSessionLabel from "../../../../src/app/components/sessions/EditSessionLabel.vue";
-import ConfirmModal from "../../../../src/app/components/ConfirmModal.vue";
-import { AppStateAction } from "../../../../src/app/store/appState/actions";
-import { SessionsState } from "../../../../src/app/store/sessions/state";
+import { SessionsAction } from "../../../../src/store/sessions/actions";
+import EditSessionLabel from "../../../../src/components/sessions/EditSessionLabel.vue";
+import ConfirmModal from "../../../../src/components/ConfirmModal.vue";
+import { AppStateAction } from "../../../../src/store/appState/actions";
+import { SessionsState } from "../../../../src/store/sessions/state";
 
 const mockRouter = {
-    push: jest.fn()
+    push: vi.fn()
 };
-jest.mock("vue-router", () => ({
-    useRouter: jest.fn().mockImplementation(() => mockRouter)
+vi.mock("vue-router", () => ({
+    useRouter: vi.fn().mockImplementation(() => mockRouter),
+    RouterLink: null
 }));
 
 describe("SessionsPage", () => {
-    const mockGetSessions = jest.fn();
-    const mockGenerateFriendlyId = jest.fn();
-    const mockClipboardWriteText = jest.fn();
-    const mockDeleteSession = jest.fn();
-    const mockSaveUserPreferences = jest.fn();
-    const mockLoadUserPreferences = jest.fn();
-    const mockInitialiseSession = jest.fn();
+    const mockGetSessions = vi.fn();
+    const mockGenerateFriendlyId = vi.fn();
+    const mockClipboardWriteText = vi.fn();
+    const mockDeleteSession = vi.fn();
+    const mockSaveUserPreferences = vi.fn();
+    const mockLoadUserPreferences = vi.fn();
+    const mockInitialiseSession = vi.fn();
 
     Object.assign(window.navigator, {
         clipboard: {
@@ -35,7 +36,7 @@ describe("SessionsPage", () => {
     });
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     const currentSessionId = "abc";
@@ -317,25 +318,19 @@ describe("SessionsPage", () => {
         expect(wrapper.find("#current-session .session-copy-confirm").text()).toBe("");
     });
 
-    it("copy confirmation indicates if friendly id is being fetched, and could not be generated", (done) => {
-        const runAsync = async () => {
-            // the mock generate action won't mutate the state, so friendly id will still be null after it's done,
-            // and the component will assume the id could not be fetched
-            const wrapper = getWrapper({ sessionsMetadata }, currentSessionId);
-            const rows = wrapper.findAll(".previous-session-row");
-            const session2Cells = rows.at(0)!.findAll("div.session-col-value");
-            await session2Cells.at(5)!.find(".session-copy-code").trigger("click");
-            // message will update to 'Fetching code...' while it calls the action
-            const confirm = session2Cells.at(5)!.find(".session-copy-confirm");
-            expect(confirm.text()).toBe("Fetching code...");
-
-            // when action is completed, id has not been successfully updated
-            setTimeout(() => {
-                expect(confirm.text()).toBe("Error fetching code");
-                done();
-            });
-        };
-        runAsync();
+    it("copy confirmation indicates if friendly id is being fetched, and could not be generated", async () => {
+        // the mock generate action won't mutate the state, so friendly id will still be null after it's done,
+        // and the component will assume the id could not be fetched
+        const wrapper = getWrapper({ sessionsMetadata }, currentSessionId);
+        const rows = wrapper.findAll(".previous-session-row");
+        const session2Cells = rows.at(0)!.findAll("div.session-col-value");
+        await session2Cells.at(5)!.find(".session-copy-code").trigger("click");
+        // message will update to 'Fetching code...' while it calls the action
+        const confirm = session2Cells.at(5)!.find(".session-copy-confirm");
+        expect(confirm.text()).toBe("Fetching code...");
+        await nextTick();
+        // when action is completed, id has not been successfully updated
+        expect(confirm.text()).toBe("Error fetching code");
     });
 
     it("opens and closes confirm delete dialog", async () => {
@@ -363,7 +358,7 @@ describe("SessionsPage", () => {
     it("loads session from code", async () => {
         const realLocation = window.location;
         delete (window as any).location;
-        window.location = { ...realLocation, assign: jest.fn() };
+        window.location = { ...realLocation, assign: vi.fn() };
 
         const wrapper = getWrapper({ sessionsMetadata }, currentSessionId);
         await wrapper.find("#session-code-input").setValue("bad-dog");
@@ -376,14 +371,18 @@ describe("SessionsPage", () => {
 
     it("can save show unlabelled sessions preference", async () => {
         const wrapper = getWrapper({ sessionsMetadata }, currentSessionId);
-        await wrapper.find("input#show-unlabelled-check").trigger("click");
+        const checkbox = wrapper.find("input#show-unlabelled-check");
+        (checkbox.element as HTMLInputElement).checked = false;
+        await checkbox.trigger("change");
         expect(mockSaveUserPreferences).toHaveBeenCalledTimes(1);
         expect(mockSaveUserPreferences.mock.calls[0][1]).toStrictEqual({ showUnlabelledSessions: false });
     });
 
     it("can save show duplicate sessions preference", async () => {
         const wrapper = getWrapper({ sessionsMetadata }, currentSessionId);
-        await wrapper.find("input#show-duplicates-check").trigger("click");
+        const checkbox = wrapper.find("input#show-duplicates-check");
+        (checkbox.element as HTMLInputElement).checked = true;
+        await checkbox.trigger("change");
         expect(mockSaveUserPreferences).toHaveBeenCalledTimes(1);
         expect(mockSaveUserPreferences.mock.calls[0][1]).toStrictEqual({ showDuplicateSessions: true });
     });

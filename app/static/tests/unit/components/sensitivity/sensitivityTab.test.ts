@@ -1,28 +1,28 @@
 import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
-import { ModelState } from "../../../../src/app/store/model/state";
-import SensitivityTab from "../../../../src/app/components/sensitivity/SensitivityTab.vue";
-import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
-import { BaseSensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
-import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/SensitivityTracesPlot.vue";
-import { SensitivityPlotType, SensitivityState } from "../../../../src/app/store/sensitivity/state";
-import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
-import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
-import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
-import { AppState, AppType } from "../../../../src/app/store/appState/state";
-import { ModelGetter } from "../../../../src/app/store/model/getters";
-import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
-import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
-import SensitivitySummaryDownload from "../../../../src/app/components/sensitivity/SensitivitySummaryDownload.vue";
-import LoadingButton from "../../../../src/app/components/LoadingButton.vue";
-import { getters as graphsGetters } from "../../../../src/app/store/graphs/getters";
+import { ModelState } from "../../../../src/store/model/state";
+import SensitivityTab from "../../../../src/components/sensitivity/SensitivityTab.vue";
+import ActionRequiredMessage from "../../../../src/components/ActionRequiredMessage.vue";
+import { BaseSensitivityGetter } from "../../../../src/store/sensitivity/getters";
+import SensitivityTracesPlot from "../../../../src/components/sensitivity/SensitivityTracesPlot.vue";
+import { SensitivityPlotType, SensitivityState } from "../../../../src/store/sensitivity/state";
+import { SensitivityAction } from "../../../../src/store/sensitivity/actions";
+import SensitivitySummaryPlot from "../../../../src/components/sensitivity/SensitivitySummaryPlot.vue";
+import ErrorInfo from "../../../../src/components/ErrorInfo.vue";
+import { AppState, AppType } from "../../../../src/store/appState/state";
+import { ModelGetter } from "../../../../src/store/model/getters";
+import LoadingSpinner from "../../../../src/components/LoadingSpinner.vue";
+import { SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
+import SensitivitySummaryDownload from "../../../../src/components/sensitivity/SensitivitySummaryDownload.vue";
+import LoadingButton from "../../../../src/components/LoadingButton.vue";
+import { getters as graphsGetters } from "../../../../src/store/graphs/getters";
 
-jest.mock("plotly.js-basic-dist-min", () => {});
+vi.mock("plotly.js-basic-dist-min", () => ({}));
 
 describe("SensitivityTab", () => {
-    const mockRunSensitivity = jest.fn();
-    const mockSetLoading = jest.fn();
-    const mockSetPlotTime = jest.fn();
+    const mockRunSensitivity = vi.fn();
+    const mockSetLoading = vi.fn();
+    const mockSetPlotTime = vi.fn();
 
     const getWrapper = (
         appType = AppType.Basic,
@@ -122,7 +122,7 @@ describe("SensitivityTab", () => {
     };
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("renders as expected when Trace over Time", () => {

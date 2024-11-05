@@ -1,9 +1,9 @@
 import {
     sensitivityUpdateRequiredExplanation,
     verifyValidPlotSettingsTime
-} from "../../../../src/app/components/sensitivity/support";
+} from "../../../../src/components/sensitivity/support";
 import { mockBasicState, mockRunState, mockSensitivityState } from "../../../mocks";
-import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import { SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
 
 describe("construct actionable fit update messages from fit state changes", () => {
     const base = {
@@ -90,10 +90,10 @@ describe("verifies valid plot settings time", () => {
         });
     };
 
-    const commit = jest.fn();
+    const commit = vi.fn();
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     const expectPlotSettingsCommit = (expectedValue: number) => {
