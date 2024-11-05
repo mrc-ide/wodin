@@ -1,4 +1,4 @@
-import { mutations } from "../../../../src/app/store/fitData/mutations";
+import { mutations } from "../../../../src/store/fitData/mutations";
 import { mockFitDataState } from "../../../mocks";
 
 describe("FitData mutations", () => {

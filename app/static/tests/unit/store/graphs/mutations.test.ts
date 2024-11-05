@@ -1,6 +1,6 @@
-import { mutations } from "../../../../src/app/store/graphs/mutations";
-import { defaultGraphSettings, GraphsState } from "../../../../src/app/store/graphs/state";
-import { mockGraphsState, mockModelState } from "../../../mocks";
+import { mutations } from "../../../../src/store/graphs/mutations";
+import { defaultGraphSettings, GraphsState } from "../../../../src/store/graphs/state";
+import { mockGraphsState } from "../../../mocks";
 
 describe("Graphs mutations", () => {
     const state: GraphsState = mockGraphsState({
@@ -48,7 +48,7 @@ describe("Graphs mutations", () => {
         expect(state.fitGraphSettings.lockYAxis).toBe(true);
     });
 
-    it("sets yAxisRange", () => {
+    it("sets fitYAxisRange", () => {
         mutations.SetFitYAxisRange(state, [3, 4]);
         expect(state.fitGraphSettings.yAxisRange).toStrictEqual([3, 4]);
     });

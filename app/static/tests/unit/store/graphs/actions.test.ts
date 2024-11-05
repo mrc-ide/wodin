@@ -1,9 +1,9 @@
 import { mockAxios, mockFitState, mockModelState } from "../../../mocks";
-import { actions, GraphsAction } from "../../../../src/app/store/graphs/actions";
-import { GraphsMutation } from "../../../../src/app/store/graphs/mutations";
-import { AppType } from "../../../../src/app/store/appState/state";
-import { FitDataAction } from "../../../../src/app/store/fitData/actions";
-import { defaultGraphSettings } from "../../../../src/app/store/graphs/state";
+import { actions, GraphsAction } from "../../../../src/store/graphs/actions";
+import { GraphsMutation } from "../../../../src/store/graphs/mutations";
+import { AppType } from "../../../../src/store/appState/state";
+import { FitDataAction } from "../../../../src/store/fitData/actions";
+import { defaultGraphSettings } from "../../../../src/store/graphs/state";
 
 describe("Graphs actions", () => {
     const modelState = {
@@ -25,8 +25,8 @@ describe("Graphs actions", () => {
 
     it("Updates selected variables commits selection only, if not fit model", () => {
         const state = mockModelState();
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
 
         (actions[GraphsAction.UpdateSelectedVariables] as any)(
             {
@@ -49,8 +49,8 @@ describe("Graphs actions", () => {
 
     it("Updates selected variables commits selection and updates linked variables if fit app", () => {
         const state = mockModelState();
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const fitRootState = mockFitState({
             model: modelState
         });
@@ -77,7 +77,7 @@ describe("Graphs actions", () => {
         expect(dispatch.mock.calls[0][2]).toStrictEqual({ root: true });
     });
     it("NewGraph adds empty graph", () => {
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         (actions[GraphsAction.NewGraph] as any)({
             commit,

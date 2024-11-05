@@ -1,5 +1,5 @@
 import { mockCodeState } from "../../../mocks";
-import { mutations } from "../../../../src/app/store/code/mutations";
+import { mutations } from "../../../../src/store/code/mutations";
 
 describe("Code mutations", () => {
     it("sets current code", () => {

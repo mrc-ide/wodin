@@ -1,4 +1,4 @@
-import { getters, RunGetter } from "../../../../src/app/store/run/getters";
+import { getters, RunGetter } from "../../../../src/store/run/getters";
 import { mockRunState } from "../../../mocks";
 
 describe("Run getters", () => {
