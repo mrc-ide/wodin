@@ -37,7 +37,7 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
-import GraphConfigsCollapsible from "@/app/components/graphConfig/GraphConfigsCollapsible.vue";
+import GraphConfigsCollapsible from "@/components/graphConfig/GraphConfigsCollapsible.vue";
 import VerticalCollapse from "../VerticalCollapse.vue";
 import ParameterValues from "./ParameterValues.vue";
 import RunOptions from "./RunOptions.vue";

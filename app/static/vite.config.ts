@@ -32,14 +32,14 @@ export default defineConfig({
       output: {
         entryFileNames: "wodin.js",
         assetFileNames: "wodin.css",
-        chunkFileNames: "chunk.[name].js",
-        manualChunks: (id) => {
-          if (id.includes("plotly")) return "plotly"
-          if (id.includes("xlsx")) return "xlsx"
-          if (id.includes("bootstrap")) return "bootstrap"
-          if (id.includes("i18next")) return "i18next"
-          if (id.includes("feather-icons")) return "feather-icons"
-        }
+        // chunkFileNames: "chunk.[name].js",
+        // manualChunks: (id) => {
+        //   if (id.includes("plotly")) return "plotly"
+        //   if (id.includes("xlsx")) return "xlsx"
+        //   if (id.includes("bootstrap")) return "bootstrap"
+        //   if (id.includes("i18next")) return "i18next"
+        //   if (id.includes("feather-icons")) return "feather-icons"
+        // }
       }
     }
   },

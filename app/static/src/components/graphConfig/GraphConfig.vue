@@ -37,7 +37,7 @@
 import VueFeather from "vue-feather";
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
-import GraphSettings from "@/app/components/GraphSettings.vue";
+import GraphSettings from "@/components/GraphSettings.vue";
 import SelectVariables from "../mixins/selectVariables";
 import { GraphsMutation } from "../../store/graphs/mutations";
 

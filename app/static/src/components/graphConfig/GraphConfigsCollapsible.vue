@@ -5,8 +5,8 @@
 </template>
 
 <script lang="ts">
-import GraphConfigs from "@/app/components/graphConfig/GraphConfigs.vue";
-import VerticalCollapse from "@/app/components/VerticalCollapse.vue";
+import GraphConfigs from "@/components/graphConfig/GraphConfigs.vue";
+import VerticalCollapse from "@/components/VerticalCollapse.vue";
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 
