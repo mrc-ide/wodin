@@ -3,7 +3,7 @@ import { shallowMount, mount } from "@vue/test-utils";
 import LanguageSwitcher from "../../src/LanguageSwitcher.vue";
 
 describe("languageSwitcher component", () => {
-    const mockUpdateLanguage = jest.fn();
+    const mockUpdateLanguage = vi.fn();
 
     const createStore = (enableI18n: boolean) => {
         return new Vuex.Store({
