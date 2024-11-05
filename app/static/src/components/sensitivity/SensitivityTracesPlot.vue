@@ -5,7 +5,7 @@
         :end-time="endTime"
         :plot-data="allPlotData"
         :redrawWatches="
-            solutions
+            result && solutions
                 ? [
                       ...solutions,
                       result,

@@ -1,6 +1,6 @@
 import { TranslationLocales } from "../../types/languageTypes";
 
-export interface HeaderTranslations extends TranslationLocales {
+interface HeaderTranslations extends TranslationLocales {
     headerExample: string;
 }
 

@@ -53,7 +53,7 @@ export interface AppLocals {
     wodinConfig: WodinConfig,
     wodinVersion: String,
     redis: Redis,
-    hotReload: String
+    hotReload: Boolean
 }
 
 export interface SessionMetadata {

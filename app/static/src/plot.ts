@@ -5,7 +5,8 @@ import type { AllFitData, FitData, FitDataLink } from "./store/fitData/state";
 import { DiscreteSeriesSet, OdinSeriesSet, OdinSeriesSetValues, OdinUserTypeSeriesSet } from "./types/responseTypes";
 import { Dict } from "./types/utilTypes";
 
-export type WodinPlotData = Partial<PlotData>[];
+type NumberArrayPlotData = Omit<PlotData, "x" | "y"> & { x: number[], y: number[] }
+export type WodinPlotData = Partial<NumberArrayPlotData>[];
 
 export const fadePlotStyle = "opacity:0.5;";
 
@@ -61,7 +62,7 @@ export function odinToPlotly(s: OdinSeriesSet, palette: Palette, options: Partia
     };
 
     return s.values.map(
-        (el): Partial<PlotData> => ({
+        (el): Partial<NumberArrayPlotData> => ({
             mode: "lines",
             line: {
                 color: palette[el.name],

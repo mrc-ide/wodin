@@ -25,6 +25,16 @@ const parseArgInteger = (arg: string | null, name: string): Perhaps<number> => {
     return parseInt(arg, 10);
 };
 
+const parseArgBoolean = (arg: string | null, name: string): Perhaps<boolean> => {
+    if (arg === null) {
+        return null;
+    }
+    if (arg.toLowerCase() !== "true" && arg.toLowerCase() !== "false") {
+        throw Error(`Expected a boolean for ${name}`);
+    }
+    return arg.toLowerCase() === "true";
+};
+
 export const processArgs = (argv: string[] = process.argv) => {
     const opts = docopt(doc, { argv: argv.slice(2), version, exit: false });
     const path = opts["<path>"] as string;
@@ -32,7 +42,7 @@ export const processArgs = (argv: string[] = process.argv) => {
         baseUrl: opts["--base-url"] as Perhaps<string>,
         odinApi: opts["--odin-api"] as Perhaps<string>,
         redisUrl: opts["--redis-url"] as Perhaps<string>,
-        hotReload: opts["--hot-reload"] as Perhaps<string>,
+        hotReload: parseArgBoolean(opts["--hot-reload"], "hot-reload"),
         port: parseArgInteger(opts["--port"], "port")
     };
     const { hotReload, ...prodGiven } = given;

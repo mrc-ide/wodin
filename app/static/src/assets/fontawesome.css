@@ -31,12 +31,6 @@
 .fa-regular {
   font-family: 'Font Awesome 6 Free'; }
 
-.fa-triangle-exclamation::before {
-  content: "\f071"; }
-
-.fa-circle-xmark::before {
-  content: "\f057"; }
-
 :root, :host {
   --fa-style-family-classic: 'Font Awesome 6 Free';
   --fa-font-solid: normal 900 1em/1 'Font Awesome 6 Free'; }
@@ -51,3 +45,11 @@
 .fas,
 .fa-solid {
   font-weight: 900; }
+
+/* current icons that we use, to add more see Fontawesome section in the README */
+
+.fa-triangle-exclamation::before {
+  content: "\f071"; }
+
+.fa-circle-xmark::before {
+  content: "\f057"; }

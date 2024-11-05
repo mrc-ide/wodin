@@ -182,7 +182,7 @@ import ErrorsAlert from "../ErrorsAlert.vue";
 import EditSessionLabel from "./EditSessionLabel.vue";
 import { SessionMetadata } from "../../types/responseTypes";
 import ConfirmModal from "../ConfirmModal.vue";
-import { parseTime } from "@/utils";
+import { parseDateTime } from "@/utils";
 
 export default defineComponent({
     name: "SessionsPage",
@@ -218,7 +218,7 @@ export default defineComponent({
 
         const formatDateTime = (isoUTCString: string) => {
             const date = new Date(isoUTCString);
-            const { year, month, day, hour, minute, second } = parseTime(date);
+            const { year, month, day, hour, minute, second } = parseDateTime(date);
             return `${day}/${month}/${year} ${hour}:${minute}:${second}`;
         };
 

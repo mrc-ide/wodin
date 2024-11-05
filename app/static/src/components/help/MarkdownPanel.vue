@@ -6,12 +6,8 @@
 import { computed, defineComponent, onMounted } from "vue";
 import MarkdownItMathjax from "markdown-it-mathjax";
 import { useStore } from "vuex";
-import * as Token from "markdown-it/lib/token";
-import * as Renderer from "markdown-it/lib/renderer";
+import type { Token, Renderer } from "markdown-it/index.d.ts";
 import MarkdownIt from "./MarkdownItImport";
-
-type TokenType = typeof Token;
-type RendererType = typeof Renderer;
 
 interface MathJaxWindow {
     MathJax: {
@@ -39,11 +35,11 @@ export default defineComponent({
         const markdownIt = new MarkdownIt.default().use(mathjaxPlugin);
         // Adapt default rendering to fetch images from base help url
         markdownIt.renderer.rules.image = (
-            tokens: TokenType[],
+            tokens: Token[],
             idx: number,
             options: MarkdownIt.Options,
             env: unknown,
-            slf: RendererType
+            slf: Renderer
         ) => {
             const token = tokens[idx];
             const attrIdx = token.attrIndex("src");

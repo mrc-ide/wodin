@@ -1,6 +1,6 @@
 import { TranslationLocales } from "../../types/languageTypes";
 
-export interface IndexPageTranslations extends TranslationLocales {
+interface IndexPageTranslations extends TranslationLocales {
     indexPageExample: string;
 }
 
