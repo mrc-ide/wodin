@@ -1,43 +1,48 @@
 // Mock the import of third party packages to prevent errors
-jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
-    // eslint-disable-next-line func-names
-    return function () {
-        return {
-            use: jest.fn().mockReturnValue({
-                renderer: { rules: {} },
-                render: jest.fn()
-            })
-        };
+vi.mock("../../../../src/components/help/MarkdownItImport.ts", () => {
+    class MarkDownItClass {
+        constructor() {
+            return {
+                use: vi.fn().mockReturnValue({
+                    renderer: { rules: {} },
+                    render: vi.fn()
+                })
+            }
+        }
     };
+    return {
+        default: {
+            default: MarkDownItClass
+        }
+    }
 });
 
-/* eslint-disable import/first */
 import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
 import { expectLeftWodinTabs, expectRightWodinTabs } from "../../../testUtils";
-import StochasticApp from "../../../../src/app/components/stochastic/StochasticApp.vue";
-import { StochasticState } from "../../../../src/app/store/stochastic/state";
+import StochasticApp from "../../../../src/components/stochastic/StochasticApp.vue";
+import { StochasticState } from "../../../../src/store/stochastic/state";
 import { mockModelState, mockGraphsState, mockStochasticState } from "../../../mocks";
-import WodinApp from "../../../../src/app/components/WodinApp.vue";
-import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
-import CodeTab from "../../../../src/app/components/code/CodeTab.vue";
-import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
-import RunTab from "../../../../src/app/components/run/RunTab.vue";
-import SensitivityTab from "../../../../src/app/components/sensitivity/SensitivityTab.vue";
-import MultiSensitivityTab from "../../../../src/app/components/multiSensitivity/MultiSensitivityTab.vue";
-import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
-import { ModelAction } from "../../../../src/app/store/model/actions";
-import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
-import { VisualisationTab } from "../../../../src/app/store/appState/state";
-import { AppConfig } from "../../../../src/app/types/responseTypes";
-import { getters as graphsGetters } from "../../../../src/app/store/graphs/getters";
+import WodinApp from "../../../../src/components/WodinApp.vue";
+import WodinPanels from "../../../../src/components/WodinPanels.vue";
+import CodeTab from "../../../../src/components/code/CodeTab.vue";
+import OptionsTab from "../../../../src/components/options/OptionsTab.vue";
+import RunTab from "../../../../src/components/run/RunTab.vue";
+import SensitivityTab from "../../../../src/components/sensitivity/SensitivityTab.vue";
+import MultiSensitivityTab from "../../../../src/components/multiSensitivity/MultiSensitivityTab.vue";
+import HelpTab from "../../../../src/components/help/HelpTab.vue";
+import { ModelAction } from "../../../../src/store/model/actions";
+import { AppStateMutation } from "../../../../src/store/appState/mutations";
+import { VisualisationTab } from "../../../../src/store/appState/state";
+import { AppConfig } from "../../../../src/types/responseTypes";
+import { getters as graphsGetters } from "../../../../src/store/graphs/getters";
 
-const mockSetOpenVisualisationTab = jest.fn();
-const mockTooltipDirective = jest.fn();
+const mockSetOpenVisualisationTab = vi.fn();
+const mockTooltipDirective = vi.fn();
 
 function mockResizeObserver(this: any) {
-    this.observe = jest.fn();
-    this.disconnect = jest.fn();
+    this.observe = vi.fn();
+    this.disconnect = vi.fn();
 }
 (global.ResizeObserver as any) = mockResizeObserver;
 
@@ -57,7 +62,7 @@ describe("StochasticApp", () => {
                     namespaced: true,
                     state: mockModelState(),
                     actions: {
-                        [ModelAction.FetchOdinRunner]: jest.fn()
+                        [ModelAction.FetchOdinRunner]: vi.fn()
                     }
                 },
                 graphs: {
@@ -79,7 +84,7 @@ describe("StochasticApp", () => {
     };
 
     afterEach(() => {
-        jest.resetAllMocks();
+        vi.resetAllMocks();
     });
 
     it("renders content as expected", () => {

@@ -1,6 +1,7 @@
 import { mount } from "@vue/test-utils";
 import VueFeather from "vue-feather";
-import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
+import SensitivityParamValues from "../../../../src/components/options/SensitivityParamValues.vue";
+import { BatchPars } from "@/types/responseTypes";
 
 describe("SensitivityParamValues", () => {
     const getWrapper = (values: number[]) => {
@@ -12,7 +13,7 @@ describe("SensitivityParamValues", () => {
                     values
                 }
             ]
-        };
+        } as BatchPars;
         return mount(SensitivityParamValues, { props: { batchPars, paramName } });
     };
 
@@ -34,7 +35,7 @@ describe("SensitivityParamValues", () => {
     });
 
     it("renders nothing if batchPars is null", () => {
-        const wrapper = mount(SensitivityParamValues, { props: { batchPars: null } });
+        const wrapper = mount(SensitivityParamValues, { props: { batchPars: undefined } });
         expect(wrapper.find("div").exists()).toBe(false);
     });
 });

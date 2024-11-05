@@ -4,20 +4,20 @@ import {
     SensitivityParameterSettings,
     SensitivityScaleType,
     SensitivityVariationType
-} from "../../../../src/app/store/sensitivity/state";
-import { BasicState } from "../../../../src/app/store/basic/state";
-import SensitivityOptions from "../../../../src/app/components/options/SensitivityOptions.vue";
-import VerticalCollapse from "../../../../src/app/components/VerticalCollapse.vue";
-import EditParamSettings from "../../../../src/app/components/options/EditParamSettings.vue";
-import { BaseSensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
-import SensitivityParamValues from "../../../../src/app/components/options/SensitivityParamValues.vue";
-import SensitivityPlotOptions from "../../../../src/app/components/options/SensitivityPlotOptions.vue";
-import { BatchPars } from "../../../../src/app/types/responseTypes";
-import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
-import { MultiSensitivityMutation } from "../../../../src/app/store/multiSensitivity/mutations";
-import { defaultSensitivityParamSettings } from "../../../../src/app/store/sensitivity/sensitivity";
+} from "../../../../src/store/sensitivity/state";
+import { BasicState } from "../../../../src/store/basic/state";
+import SensitivityOptions from "../../../../src/components/options/SensitivityOptions.vue";
+import VerticalCollapse from "../../../../src/components/VerticalCollapse.vue";
+import EditParamSettings from "../../../../src/components/options/EditParamSettings.vue";
+import { BaseSensitivityGetter } from "../../../../src/store/sensitivity/getters";
+import SensitivityParamValues from "../../../../src/components/options/SensitivityParamValues.vue";
+import SensitivityPlotOptions from "../../../../src/components/options/SensitivityPlotOptions.vue";
+import { BatchPars } from "../../../../src/types/responseTypes";
+import { SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
+import { MultiSensitivityMutation } from "../../../../src/store/multiSensitivity/mutations";
+import { defaultSensitivityParamSettings } from "../../../../src/store/sensitivity/sensitivity";
 
-const mockTooltipDirective = jest.fn();
+const mockTooltipDirective = vi.fn();
 
 describe("SensitivityOptions", () => {
     const mockBatchPars = {
@@ -37,8 +37,8 @@ describe("SensitivityOptions", () => {
         ]
     } as any;
 
-    const mockSensitivitySetParamSettings = jest.fn();
-    const mockMultiSensitivitySetParamSettings = jest.fn();
+    const mockSensitivitySetParamSettings = vi.fn();
+    const mockMultiSensitivitySetParamSettings = vi.fn();
 
     const getWrapper = (paramSettings: SensitivityParameterSettings, multiSensitivityEnabled = false) => {
         const store = new Vuex.Store<BasicState>({
@@ -176,7 +176,7 @@ describe("SensitivityOptions", () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     const expectPercentSettings = (wrapper: DOMWrapper<Element>, batchPars: BatchPars) => {
