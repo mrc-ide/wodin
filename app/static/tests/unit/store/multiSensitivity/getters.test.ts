@@ -1,7 +1,7 @@
-import { SensitivityScaleType, SensitivityVariationType } from "../../../../src/app/store/sensitivity/state";
+import { SensitivityScaleType, SensitivityVariationType } from "../../../../src/store/sensitivity/state";
 import { mockBatchParsDisplace, mockBatchParsRange, mockMultiSensitivityState } from "../../../mocks";
-import { getters } from "../../../../src/app/store/multiSensitivity/getters";
-import { BaseSensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
+import { getters } from "../../../../src/store/multiSensitivity/getters";
+import { BaseSensitivityGetter } from "../../../../src/store/sensitivity/getters";
 
 describe("MultiSensitivity getters", () => {
     const paramSettings = [
@@ -45,8 +45,8 @@ describe("MultiSensitivity getters", () => {
             }
         } as any;
 
-        const mockSpyDisplace = jest.spyOn(odinRunnerOde, "batchParsDisplace");
-        const mockSpyRange = jest.spyOn(odinRunnerOde, "batchParsRange");
+        const mockSpyDisplace = vi.spyOn(odinRunnerOde, "batchParsDisplace");
+        const mockSpyRange = vi.spyOn(odinRunnerOde, "batchParsRange");
 
         const result = getters[BaseSensitivityGetter.batchPars](state, getters, rootState, {} as any);
         expect(result).toStrictEqual({

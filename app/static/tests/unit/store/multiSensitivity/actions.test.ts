@@ -1,4 +1,4 @@
-import { actions, MultiSensitivityAction } from "../../../../src/app/store/multiSensitivity/actions";
+import { actions, MultiSensitivityAction } from "../../../../src/store/multiSensitivity/actions";
 import {
     defaultAdvanced,
     mockBatch,
@@ -8,15 +8,12 @@ import {
     rootGetters,
     testCommonRunSensitivity
 } from "../sensitivity/actions.test";
-import { AppType } from "../../../../src/app/store/appState/state";
-import { BaseSensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
-import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
-
-jest.mock("../../../../src/app/excel/wodinSensitivitySummaryDownload");
+import { AppType } from "../../../../src/store/appState/state";
+import { BaseSensitivityMutation } from "../../../../src/store/sensitivity/mutations";
 
 describe("multiSensitivity actions", () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     testCommonRunSensitivity(actions[MultiSensitivityAction.RunMultiSensitivity]);
@@ -33,8 +30,8 @@ describe("multiSensitivity actions", () => {
             batchPars: mockBatchPars
         };
 
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
 
         (actions[MultiSensitivityAction.RunMultiSensitivity] as any)({
             rootState,

@@ -1,5 +1,5 @@
 import { mockMultiSensitivityState } from "../../../mocks";
-import { mutations, MultiSensitivityMutation } from "../../../../src/app/store/multiSensitivity/mutations";
+import { mutations, MultiSensitivityMutation } from "../../../../src/store/multiSensitivity/mutations";
 
 describe("MultiSensitivity mutations", () => {
     it("Sets parameter settings", () => {
