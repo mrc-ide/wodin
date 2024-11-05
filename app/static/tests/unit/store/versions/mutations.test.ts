@@ -1,4 +1,4 @@
-import { mutations, VersionsMutation } from "../../../../src/app/store/versions/mutations";
+import { mutations, VersionsMutation } from "../../../../src/store/versions/mutations";
 
 describe("versions mutations", () => {
     it("can set versions", () => {

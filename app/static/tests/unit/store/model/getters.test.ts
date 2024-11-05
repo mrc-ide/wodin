@@ -1,4 +1,4 @@
-import { ModelGetter, getters } from "../../../../src/app/store/model/getters";
+import { ModelGetter, getters } from "../../../../src/store/model/getters";
 import { mockBasicState, mockModelState, mockStochasticState } from "../../../mocks";
 
 describe("ModelGetters", () => {
