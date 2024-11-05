@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import LoadingButton from "../../../src/app/components/LoadingButton.vue";
+import LoadingButton from "../../../src/components/LoadingButton.vue";
 
 describe("LoadingButton", () => {
     const getWrapper = (loading = false, isDisabled = false) => {

@@ -1,23 +1,23 @@
 import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
 import { mockBasicState, mockSessionsState } from "../../mocks";
-import { BasicState } from "../../../src/app/store/basic/state";
-import LoadingSpinner from "../../../src/app/components/LoadingSpinner.vue";
-import WodinPanels from "../../../src/app/components/WodinPanels.vue";
-import ErrorsAlert from "../../../src/app/components/ErrorsAlert.vue";
-import WodinApp from "../../../src/app/components/WodinApp.vue";
-import { SessionsState } from "../../../src/app/store/sessions/state";
-import SessionInitialiseModal from "../../../src/app/components/SessionInitialiseModal.vue";
-import { AppStateAction } from "../../../src/app/store/appState/actions";
+import { BasicState } from "../../../src/store/basic/state";
+import LoadingSpinner from "../../../src/components/LoadingSpinner.vue";
+import WodinPanels from "../../../src/components/WodinPanels.vue";
+import ErrorsAlert from "../../../src/components/ErrorsAlert.vue";
+import WodinApp from "../../../src/components/WodinApp.vue";
+import { SessionsState } from "../../../src/store/sessions/state";
+import SessionInitialiseModal from "../../../src/components/SessionInitialiseModal.vue";
+import { AppStateAction } from "../../../src/store/appState/actions";
 
 function mockResizeObserver(this: any) {
-    this.observe = jest.fn();
-    this.disconnect = jest.fn();
+    this.observe = vi.fn();
+    this.disconnect = vi.fn();
 }
 (global.ResizeObserver as any) = mockResizeObserver;
 
 describe("WodinApp", () => {
-    const mockInitialiseSession = jest.fn();
+    const mockInitialiseSession = vi.fn();
     const getWrapper = (appState: Partial<BasicState> = {}, sessionsState: Partial<SessionsState> = {}) => {
         const state = mockBasicState(appState);
         const props = {
@@ -58,7 +58,7 @@ describe("WodinApp", () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("renders as expected when config is set", () => {

@@ -1,5 +1,5 @@
 import { shallowMount } from "@vue/test-utils";
-import SessionInitialiseModal from "../../../src/app/components/SessionInitialiseModal.vue";
+import SessionInitialiseModal from "../../../src/components/SessionInitialiseModal.vue";
 
 describe("SessionInitialiseModal", () => {
     const getWrapper = (open = true) => {
