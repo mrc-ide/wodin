@@ -5,7 +5,7 @@ import {
     fitDataToPlotly,
     paramSetLineStyle,
     odinToPlotly
-} from "../../src/app/plot";
+} from "../../src/plot";
 
 describe("odinToPlotly", () => {
     const palette = {

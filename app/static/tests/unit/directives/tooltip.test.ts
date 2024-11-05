@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { mount } from "@vue/test-utils";
 import { Tooltip } from "bootstrap";
-import tooltip from "../../../src/app/directives/tooltip";
+import tooltip from "../../../src/directives/tooltip";
 
 const expectTooltipConfig = (
     el: HTMLElement,
@@ -115,7 +115,7 @@ describe("tooltip directive", () => {
         const tooltipInstance = Tooltip.getInstance(div.element) as any;
         expect(tooltipInstance._config.title).toBe("hey");
         expect(tooltipInstance._config.customClass).toBe("tooltip-success");
-        const spyDispose = jest.spyOn(tooltipInstance, "dispose");
+        const spyDispose = vi.spyOn(tooltipInstance, "dispose");
         await div.trigger("click");
         const divClick = wrapper.find("div");
         const tooltipClick = Tooltip.getInstance(divClick.element) as any;
@@ -152,7 +152,7 @@ describe("tooltip directive", () => {
         const wrapper = mountTemplate();
         const el = wrapper.find("div").element;
         const tooltipInstance = Tooltip.getInstance(el)!;
-        const spyDispose = jest.spyOn(tooltipInstance, "dispose");
+        const spyDispose = vi.spyOn(tooltipInstance, "dispose");
         wrapper.unmount();
         expect(spyDispose).toHaveBeenCalled();
     });
@@ -161,7 +161,7 @@ describe("tooltip directive", () => {
         const wrapper = mountTemplate();
         const el = wrapper.find("div").element;
         const tooltipInstance = Tooltip.getInstance(el)!;
-        const spyDispose = jest.spyOn(tooltipInstance, "dispose");
+        const spyDispose = vi.spyOn(tooltipInstance, "dispose");
         tooltipInstance.dispose();
         wrapper.unmount();
         // my dispose above rather than disposing when unmount
@@ -184,9 +184,9 @@ describe("tooltip directive", () => {
         const div = wrapper.find("div");
         const el = div.element;
         const tooltipInstance = Tooltip.getInstance(el)!;
-        const spyDispose = jest.spyOn(tooltipInstance, "dispose");
-        const spyHide = jest.spyOn(tooltipInstance, "hide");
-        const spyShow = jest.spyOn(tooltipInstance, "show");
+        const spyDispose = vi.spyOn(tooltipInstance, "dispose");
+        const spyHide = vi.spyOn(tooltipInstance, "hide");
+        const spyShow = vi.spyOn(tooltipInstance, "show");
         tooltipInstance.dispose();
         await div.trigger("click");
         // my dispose above rather than disposing when unmount
@@ -209,7 +209,7 @@ describe("tooltip directive", () => {
             }
         );
         const div = wrapper.find("div");
-        const spyHide = jest.spyOn(Tooltip.getInstance(div.element) as any, "hide");
+        const spyHide = vi.spyOn(Tooltip.getInstance(div.element) as any, "hide");
         expect((Tooltip.getInstance(div.element) as any)._config.title).toBe("hey");
         await div.trigger("click");
         expect(spyHide).toHaveBeenCalled();
@@ -231,7 +231,7 @@ describe("tooltip directive", () => {
             }
         );
         const div = wrapper.find("div");
-        const spyShow = jest.spyOn(Tooltip.getInstance(div.element) as any, "show");
+        const spyShow = vi.spyOn(Tooltip.getInstance(div.element) as any, "show");
         expect((Tooltip.getInstance(div.element) as any)._config.title).toBe("");
         await div.trigger("click");
         expect(spyShow).toHaveBeenCalled();
