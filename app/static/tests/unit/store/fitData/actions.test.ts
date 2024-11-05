@@ -1,19 +1,18 @@
-import { actions, FitDataAction } from "../../../../src/app/store/fitData/actions";
-import { FitDataMutation } from "../../../../src/app/store/fitData/mutations";
-import resetAllMocks = jest.resetAllMocks;
+import { actions, FitDataAction } from "../../../../src/store/fitData/actions";
+import { FitDataMutation } from "../../../../src/store/fitData/mutations";
 import { mockFitDataState } from "../../../mocks";
 import { fileTimeout } from "../../../testUtils";
-import { ModelFitAction } from "../../../../src/app/store/modelFit/actions";
-import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
-import { RunMutation } from "../../../../src/app/store/run/mutations";
-import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import { ModelFitAction } from "../../../../src/store/modelFit/actions";
+import { ModelFitMutation } from "../../../../src/store/modelFit/mutations";
+import { RunMutation } from "../../../../src/store/run/mutations";
+import { SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
 
 describe("Fit Data actions", () => {
     const file = { name: "testFile" } as any;
 
     const getMockFileReader = (csvData: string) => {
         const mockFileReader = {} as any;
-        const readAsText = jest.fn().mockImplementation(() => {
+        const readAsText = vi.fn().mockImplementation(() => {
             mockFileReader.onload({
                 target: {
                     result: csvData
@@ -21,7 +20,7 @@ describe("Fit Data actions", () => {
             });
         });
         mockFileReader.readAsText = readAsText;
-        jest.spyOn(global, "FileReader").mockImplementation(() => mockFileReader);
+        vi.spyOn(global, "FileReader").mockImplementation(() => mockFileReader);
 
         return mockFileReader;
     };
@@ -33,7 +32,7 @@ describe("Fit Data actions", () => {
     };
 
     afterEach(() => {
-        resetAllMocks();
+        vi.resetAllMocks();
     });
 
     const expectFileRead = (mockFileReader: any) => {
@@ -42,7 +41,7 @@ describe("Fit Data actions", () => {
         expect(mockFileReader.readAsText.mock.calls[0][1]).toBe("UTF-8");
     };
 
-    it("Upload commits data and updates linked variables on success", (done) => {
+    it("Upload commits data and updates linked variables on success", async () => {
         const mockFileReader = getMockFileReader("a,b\n1,2\n3,4\n5,6\n7,8\n9,1");
         const mockGetters = {
             nonTimeColumns: ["a"]
@@ -72,8 +71,8 @@ describe("Fit Data actions", () => {
             timeVariable: "a"
         };
 
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const context = {
             commit,
             dispatch,
@@ -84,131 +83,121 @@ describe("Fit Data actions", () => {
         };
         (actions[FitDataAction.Upload] as any)(context, file);
         expectFileRead(mockFileReader);
-        setTimeout(() => {
-            expect(commit).toHaveBeenCalledTimes(7);
-            expect(commit.mock.calls[0][0]).toBe(`modelFit/${ModelFitMutation.SetSumOfSquares}`);
-            expect(commit.mock.calls[0][1]).toStrictEqual(null);
-            expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
-            expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetData);
-            const expectedSetDataPayload = {
-                data: mockData,
-                columns: ["a", "b"],
-                timeVariableCandidates: ["a"]
-            };
-            expect(commit.mock.calls[1][1]).toStrictEqual(expectedSetDataPayload);
-            expect(commit.mock.calls[2][0]).toBe(FitDataMutation.SetLinkedVariables);
-            expect(commit.mock.calls[2][1]).toStrictEqual({ a: "X" });
-            expect(commit.mock.calls[3][0]).toBe(`run/${RunMutation.SetEndTime}`);
-            expect(commit.mock.calls[3][1]).toBe(9);
-            expect(commit.mock.calls[3][2]).toStrictEqual({ root: true });
-            expect(commit.mock.calls[4][0]).toBe(`sensitivity/${SensitivityMutation.SetEndTime}`);
-            expect(commit.mock.calls[4][1]).toStrictEqual(9);
-            expect(commit.mock.calls[4][2]).toStrictEqual({ root: true });
-            expect(commit.mock.calls[5][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
-            expect(commit.mock.calls[5][1]).toStrictEqual({ linkChanged: true });
-            expect(commit.mock.calls[5][2]).toStrictEqual({ root: true });
-            expect(commit.mock.calls[6][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
-            expect(commit.mock.calls[6][1]).toStrictEqual({ dataChanged: true });
-            expect(commit.mock.calls[6][2]).toStrictEqual({ root: true });
+        await new Promise(res => setTimeout(res, fileTimeout));
+        expect(commit).toHaveBeenCalledTimes(7);
+        expect(commit.mock.calls[0][0]).toBe(`modelFit/${ModelFitMutation.SetSumOfSquares}`);
+        expect(commit.mock.calls[0][1]).toStrictEqual(null);
+        expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
+        expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetData);
+        const expectedSetDataPayload = {
+            data: mockData,
+            columns: ["a", "b"],
+            timeVariableCandidates: ["a"]
+        };
+        expect(commit.mock.calls[1][1]).toStrictEqual(expectedSetDataPayload);
+        expect(commit.mock.calls[2][0]).toBe(FitDataMutation.SetLinkedVariables);
+        expect(commit.mock.calls[2][1]).toStrictEqual({ a: "X" });
+        expect(commit.mock.calls[3][0]).toBe(`run/${RunMutation.SetEndTime}`);
+        expect(commit.mock.calls[3][1]).toBe(9);
+        expect(commit.mock.calls[3][2]).toStrictEqual({ root: true });
+        expect(commit.mock.calls[4][0]).toBe(`sensitivity/${SensitivityMutation.SetEndTime}`);
+        expect(commit.mock.calls[4][1]).toStrictEqual(9);
+        expect(commit.mock.calls[4][2]).toStrictEqual({ root: true });
+        expect(commit.mock.calls[5][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
+        expect(commit.mock.calls[5][1]).toStrictEqual({ linkChanged: true });
+        expect(commit.mock.calls[5][2]).toStrictEqual({ root: true });
+        expect(commit.mock.calls[6][0]).toBe(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`);
+        expect(commit.mock.calls[6][1]).toStrictEqual({ dataChanged: true });
+        expect(commit.mock.calls[6][2]).toStrictEqual({ root: true });
 
-            expect(dispatch).toHaveBeenCalledTimes(1);
-            expect(dispatch.mock.calls[0]).toEqual(updateSumOfSquaresArgs);
-            done();
-        }, fileTimeout);
+        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(dispatch.mock.calls[0]).toEqual(updateSumOfSquaresArgs);
     });
 
-    it("Upload commits csv parse error", (done) => {
+    it("Upload commits csv parse error", async () => {
         const mockFileReader = getMockFileReader("a,b\n1,2,3");
 
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         (actions[FitDataAction.Upload] as any)({ commit, dispatch, rootGetters }, file);
         expectFileRead(mockFileReader);
-        setTimeout(() => {
-            expect(commit).toHaveBeenCalledTimes(2);
-            expect(commit.mock.calls[0][0]).toBe(`modelFit/${ModelFitMutation.SetSumOfSquares}`);
-            expect(commit.mock.calls[0][1]).toStrictEqual(null);
-            expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
-            expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetError);
-            const expectedError = {
-                error: "An error occurred when loading data",
-                detail: "Invalid Record Length: columns length is 2, got 3 on line 2"
-            };
-            expect(commit.mock.calls[1][1]).toStrictEqual(expectedError);
-            expect(dispatch).not.toHaveBeenCalled();
-            done();
-        }, fileTimeout);
+        await new Promise(res => setTimeout(res, fileTimeout));
+        expect(commit).toHaveBeenCalledTimes(2);
+        expect(commit.mock.calls[0][0]).toBe(`modelFit/${ModelFitMutation.SetSumOfSquares}`);
+        expect(commit.mock.calls[0][1]).toStrictEqual(null);
+        expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
+        expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetError);
+        const expectedError = {
+            error: "An error occurred when loading data",
+            detail: "Invalid Record Length: columns length is 2, got 3 on line 2"
+        };
+        expect(commit.mock.calls[1][1]).toStrictEqual(expectedError);
+        expect(dispatch).not.toHaveBeenCalled();
     });
 
-    it("Upload commits csv processing error", (done) => {
+    it("Upload commits csv processing error", async () => {
         const mockFileReader = getMockFileReader("a,b\n1,2\n3,4");
 
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         (actions[FitDataAction.Upload] as any)({ commit, dispatch, rootGetters }, file);
         expectFileRead(mockFileReader);
-        setTimeout(() => {
-            expect(commit).toHaveBeenCalledTimes(2);
-            expect(commit.mock.calls[0][0]).toBe(`modelFit/${ModelFitMutation.SetSumOfSquares}`);
-            expect(commit.mock.calls[0][1]).toStrictEqual(null);
-            expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
-            expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetError);
-            const expectedError = {
-                error: "An error occurred when loading data",
-                detail: "File must contain at least 5 data rows."
-            };
-            expect(commit.mock.calls[1][1]).toStrictEqual(expectedError);
+        await new Promise(res => setTimeout(res, fileTimeout));
+        expect(commit).toHaveBeenCalledTimes(2);
+        expect(commit.mock.calls[0][0]).toBe(`modelFit/${ModelFitMutation.SetSumOfSquares}`);
+        expect(commit.mock.calls[0][1]).toStrictEqual(null);
+        expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
+        expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetError);
+        const expectedError = {
+            error: "An error occurred when loading data",
+            detail: "File must contain at least 5 data rows."
+        };
+        expect(commit.mock.calls[1][1]).toStrictEqual(expectedError);
 
-            expect(dispatch).not.toHaveBeenCalled();
-            done();
-        }, fileTimeout);
+        expect(dispatch).not.toHaveBeenCalled();
     });
 
-    it("Upload commits file read error", (done) => {
+    it("Upload commits file read error", async () => {
         const mockFileReader = {} as any;
-        const readAsText = jest.fn().mockImplementation(() => {
+        const readAsText = vi.fn().mockImplementation(() => {
             mockFileReader.error = { message: "File cannot be read" };
             mockFileReader.onerror();
         });
         mockFileReader.readAsText = readAsText;
-        jest.spyOn(global, "FileReader").mockImplementation(() => mockFileReader);
+        vi.spyOn(global, "FileReader").mockImplementation(() => mockFileReader);
 
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         (actions[FitDataAction.Upload] as any)({ commit, dispatch, rootGetters }, file);
         expectFileRead(mockFileReader);
-        setTimeout(() => {
-            expect(commit).toHaveBeenCalledTimes(2);
-            expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetError);
-            const expectedError = {
-                error: "An error occurred when reading data file",
-                detail: "File cannot be read"
-            };
-            expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
-            expect(commit.mock.calls[1][0]).toBe(`modelFit/${ModelFitMutation.SetSumOfSquares}`);
-            expect(commit.mock.calls[1][1]).toStrictEqual(null);
-            expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
+        await new Promise(res => setTimeout(res, fileTimeout));
+        expect(commit).toHaveBeenCalledTimes(2);
+        expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetError);
+        const expectedError = {
+            error: "An error occurred when reading data file",
+            detail: "File cannot be read"
+        };
+        expect(commit.mock.calls[0][1]).toStrictEqual(expectedError);
+        expect(commit.mock.calls[1][0]).toBe(`modelFit/${ModelFitMutation.SetSumOfSquares}`);
+        expect(commit.mock.calls[1][1]).toStrictEqual(null);
+        expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
 
-            expect(dispatch).not.toHaveBeenCalled();
-            done();
-        }, fileTimeout);
+        expect(dispatch).not.toHaveBeenCalled();
     });
 
-    it("Upload does nothing if file is not set", (done) => {
+    it("Upload does nothing if file is not set", async () => {
         const mockFileReader = getMockFileReader("a,b\n1,2\n3,4\n");
 
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         (actions[FitDataAction.Upload] as any)({ commit, dispatch, rootGetters }, null);
         expect(mockFileReader.readAsText).not.toHaveBeenCalled();
-        setTimeout(() => {
-            expect(commit).toHaveBeenCalledTimes(1);
-            expect(commit.mock.calls[0][0]).toBe(`modelFit/${ModelFitMutation.SetSumOfSquares}`);
-            expect(commit.mock.calls[0][1]).toStrictEqual(null);
-            expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
-            expect(dispatch).not.toHaveBeenCalled();
-            done();
-        }, fileTimeout);
+        await new Promise(res => setTimeout(res, fileTimeout));
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit.mock.calls[0][0]).toBe(`modelFit/${ModelFitMutation.SetSumOfSquares}`);
+        expect(commit.mock.calls[0][1]).toStrictEqual(null);
+        expect(commit.mock.calls[0][2]).toStrictEqual({ root: true });
+        expect(dispatch).not.toHaveBeenCalled();
     });
 
     const getters = {
@@ -236,8 +225,8 @@ describe("Fit Data actions", () => {
             "graphs/allSelectedVariables": ["B", "C", "D"]
         };
 
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
 
         (actions[FitDataAction.UpdateLinkedVariables] as any)({
             commit,
@@ -268,8 +257,8 @@ describe("Fit Data actions", () => {
             }
         };
 
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
 
         (actions[FitDataAction.UpdateLinkedVariables] as any)({
             commit,
@@ -324,12 +313,12 @@ describe("Fit Data actions", () => {
             "graphs/allSelectedVariables": ["A", "B", "C"]
         };
 
-        const commit = jest.fn().mockImplementation((type: FitDataMutation, payload: string) => {
+        const commit = vi.fn().mockImplementation((type: FitDataMutation, payload: string) => {
             if (type === FitDataMutation.SetTimeVariable) {
                 state.timeVariable = payload;
             }
         });
-        const dispatch = jest.fn();
+        const dispatch = vi.fn();
         (actions[FitDataAction.UpdateTimeVariable] as any)(
             {
                 commit,
@@ -361,8 +350,8 @@ describe("Fit Data actions", () => {
     });
 
     it("UpdateLinkedVariable sets link and sets fitUpdate required if column is columnToFit", () => {
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const testState = {
             columnToFit: "a"
         };
@@ -384,8 +373,8 @@ describe("Fit Data actions", () => {
     });
 
     it("UpdateLinkedVariable does not set fitUpdate required if column is not columnToFit", () => {
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const testState = {
             columnToFit: "a"
         };
@@ -403,8 +392,8 @@ describe("Fit Data actions", () => {
     });
 
     it("updates column to fit", () => {
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         (actions[FitDataAction.UpdateColumnToFit] as any)({ commit, dispatch, rootGetters }, "col1");
         expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetColumnToFit);
