@@ -1,5 +1,5 @@
 import { mockModelFitState } from "../../../mocks";
-import { getters, ModelFitGetter } from "../../../../src/app/store/modelFit/getters";
+import { getters, ModelFitGetter } from "../../../../src/store/modelFit/getters";
 
 describe("ModelFit getters", () => {
     const model = {

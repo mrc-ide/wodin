@@ -10,20 +10,20 @@ import {
     mockSuccess,
     mockFitState
 } from "../../../mocks";
-import { actions, ModelAction } from "../../../../src/app/store/model/actions";
-import { ModelMutation, mutations } from "../../../../src/app/store/model/mutations";
-import { BasicState } from "../../../../src/app/store/basic/state";
-import { AppType } from "../../../../src/app/store/appState/state";
-import { actions as runActions, RunAction } from "../../../../src/app/store/run/actions";
-import { FitDataAction } from "../../../../src/app/store/fitData/actions";
-import { ModelFitAction } from "../../../../src/app/store/modelFit/actions";
-import { RunMutation, mutations as runMutations } from "../../../../src/app/store/run/mutations";
-import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
-import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
-import { MultiSensitivityMutation } from "../../../../src/app/store/multiSensitivity/mutations";
-import { defaultSensitivityParamSettings } from "../../../../src/app/store/sensitivity/sensitivity";
-import { GraphsMutation } from "../../../../src/app/store/graphs/mutations";
-import { GraphsAction } from "../../../../src/app/store/graphs/actions";
+import { actions, ModelAction } from "../../../../src/store/model/actions";
+import { ModelMutation, mutations } from "../../../../src/store/model/mutations";
+import { BasicState } from "../../../../src/store/basic/state";
+import { AppType } from "../../../../src/store/appState/state";
+import { actions as runActions, RunAction } from "../../../../src/store/run/actions";
+import { FitDataAction } from "../../../../src/store/fitData/actions";
+import { ModelFitAction } from "../../../../src/store/modelFit/actions";
+import { RunMutation, mutations as runMutations } from "../../../../src/store/run/mutations";
+import { ModelFitMutation } from "../../../../src/store/modelFit/mutations";
+import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
+import { MultiSensitivityMutation } from "../../../../src/store/multiSensitivity/mutations";
+import { defaultSensitivityParamSettings } from "../../../../src/store/sensitivity/sensitivity";
+import { GraphsMutation } from "../../../../src/store/graphs/mutations";
+import { GraphsAction } from "../../../../src/store/graphs/actions";
 
 describe("Model actions", () => {
     beforeEach(() => {
@@ -64,7 +64,7 @@ describe("Model actions", () => {
         const mockRunnerScript = '() => "runner"';
         mockAxios.onGet("/odin/runner/ode").reply(200, mockSuccess(mockRunnerScript));
 
-        const commit = jest.fn();
+        const commit = vi.fn();
         await (actions[ModelAction.FetchOdinRunner] as any)({ commit, rootState });
 
         expect(commit.mock.calls.length).toBe(1);
@@ -79,7 +79,7 @@ describe("Model actions", () => {
         mockAxios.onGet("/odin/runner/ode").reply(200, mockSuccess(mockRunnerOdeScript));
         mockAxios.onGet("/odin/runner/discrete").reply(200, mockSuccess(mockRunnerDiscreteScript));
 
-        const commit = jest.fn();
+        const commit = vi.fn();
         await (actions[ModelAction.FetchOdinRunner] as any)({ commit, rootState: stochasticRootState });
 
         expect(commit.mock.calls.length).toBe(2);
@@ -92,7 +92,7 @@ describe("Model actions", () => {
     it("commits error from fetch odin runner", async () => {
         mockAxios.onGet("/odin/runner/ode").reply(500, mockFailure("server error"));
 
-        const commit = jest.fn();
+        const commit = vi.fn();
         await (actions[ModelAction.FetchOdinRunner] as any)({ commit, rootState });
 
         expect(commit.mock.calls[0][0]).toBe("errors/AddError");
@@ -103,7 +103,7 @@ describe("Model actions", () => {
         const testModel = { model: "test" };
         mockAxios.onPost("/odin/model").reply(200, mockSuccess(testModel));
 
-        const commit = jest.fn();
+        const commit = vi.fn();
         await (actions[ModelAction.FetchOdin] as any)({ commit, rootState });
 
         const postData = JSON.parse(mockAxios.history.post[0].data);
@@ -126,7 +126,7 @@ describe("Model actions", () => {
         mockAxios.onPost("/odin/model").reply(200, mockSuccess(testModel));
 
         const stochasticRootState = { ...rootState, appType: AppType.Stochastic };
-        const commit = jest.fn();
+        const commit = vi.fn();
         await (actions[ModelAction.FetchOdin] as any)({ commit, rootState: stochasticRootState });
 
         const postData = JSON.parse(mockAxios.history.post[0].data);
@@ -143,7 +143,7 @@ describe("Model actions", () => {
     it("commits error from fetch odin model", async () => {
         mockAxios.onPost("/odin/model").reply(500, mockFailure("server error"));
 
-        const commit = jest.fn();
+        const commit = vi.fn();
         await (actions[ModelAction.FetchOdin] as any)({ commit, rootState });
 
         expect(commit.mock.calls[0][0]).toBe("errors/AddError");
@@ -168,8 +168,8 @@ describe("Model actions", () => {
     };
 
     it("compiles model, sets parameter values and updates required action", () => {
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         (actions[ModelAction.CompileModel] as any)({
             commit,
             dispatch,
@@ -211,8 +211,8 @@ describe("Model actions", () => {
     });
 
     it("does not set multi-sensitivity update required or parameter to vary when multiSensitivity not enabled", () => {
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const noMultiRootState = {
             config: { multiSensitivity: false },
             sensitivity: {
@@ -247,8 +247,8 @@ describe("Model actions", () => {
                 multiSensitivity: undefined
             }
         };
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         (actions[ModelAction.CompileModel] as any)({
             commit,
             dispatch,
@@ -267,8 +267,8 @@ describe("Model actions", () => {
                 paramSettings: [{ parameterToVary: "p1" }]
             }
         };
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         (actions[ModelAction.CompileModel] as any)({
             commit,
             dispatch,
@@ -307,8 +307,8 @@ describe("Model actions", () => {
                 config: [{ selectedVariables: ["x", "y"], unselectedVariables: [] }]
             }
         };
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         (actions[ModelAction.CompileModel] as any)({
             commit,
             dispatch,
@@ -361,8 +361,8 @@ describe("Model actions", () => {
             parameterValues: { p2: 1, p3: 2 }
         };
 
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const testRootState = {
             ...rootState,
             sensitivity: {
@@ -407,8 +407,8 @@ describe("Model actions", () => {
             } as any,
             compileRequired: false
         });
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         (actions[ModelAction.CompileModel] as any)({ commit, dispatch, state, rootState });
         expect(commit.mock.calls.length).toBe(5);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
@@ -428,7 +428,7 @@ describe("Model actions", () => {
 
     it("compile model does nothing if no odin response", () => {
         const state = mockModelState();
-        const commit = jest.fn();
+        const commit = vi.fn();
         (actions[ModelAction.CompileModel] as any)({ commit, state, rootState });
         expect(commit.mock.calls.length).toBe(0);
     });
@@ -439,8 +439,8 @@ describe("Model actions", () => {
                 model: "1+2"
             }
         };
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         (actions[ModelAction.CompileModelOnRehydrate] as any)({ commit, state, rootState });
         expect(commit.mock.calls.length).toBe(1);
         expect(commit.mock.calls[0][0]).toBe(ModelMutation.SetOdin);
@@ -496,8 +496,8 @@ describe("Model actions", () => {
         };
         mockAxios.onPost("/odin/model").reply(200, mockSuccess(testModel));
 
-        const commit = jest.spyOn(store, "commit");
-        const dispatch = jest.spyOn(store, "dispatch");
+        const commit = vi.spyOn(store, "commit");
+        const dispatch = vi.spyOn(store, "dispatch");
 
         await store.dispatch(`model/${ModelAction.DefaultModel}`);
 

@@ -1,4 +1,4 @@
-import { SessionsMutation, mutations } from "../../../../src/app/store/sessions/mutations";
+import { SessionsMutation, mutations } from "../../../../src/store/sessions/mutations";
 import { mockSessionsState } from "../../../mocks";
 
 describe("Sessions mutations", () => {

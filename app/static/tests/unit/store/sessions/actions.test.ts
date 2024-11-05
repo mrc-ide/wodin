@@ -1,21 +1,21 @@
-import { actions, SessionsAction } from "../../../../src/app/store/sessions/actions";
+import { actions, SessionsAction } from "../../../../src/store/sessions/actions";
 import { mockAxios, mockBasicState, mockFailure, mockSuccess, mockUserPreferences } from "../../../mocks";
-import { SessionsMutation } from "../../../../src/app/store/sessions/mutations";
-import { localStorageManager } from "../../../../src/app/localStorageManager";
-import { ErrorsMutation } from "../../../../src/app/store/errors/mutations";
-import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
-import { ModelAction } from "../../../../src/app/store/model/actions";
-import { RunAction } from "../../../../src/app/store/run/actions";
-import { SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
-import { AppStateGetter } from "../../../../src/app/store/appState/getters";
-import { MultiSensitivityAction } from "../../../../src/app/store/multiSensitivity/actions";
+import { SessionsMutation } from "../../../../src/store/sessions/mutations";
+import { localStorageManager } from "../../../../src/localStorageManager";
+import { ErrorsMutation } from "../../../../src/store/errors/mutations";
+import { AppStateMutation } from "../../../../src/store/appState/mutations";
+import { ModelAction } from "../../../../src/store/model/actions";
+import { RunAction } from "../../../../src/store/run/actions";
+import { SensitivityAction } from "../../../../src/store/sensitivity/actions";
+import { AppStateGetter } from "../../../../src/store/appState/getters";
+import { MultiSensitivityAction } from "../../../../src/store/multiSensitivity/actions";
 
 describe("SessionsActions", () => {
-    const getSessionIdsSpy = jest.spyOn(localStorageManager, "getSessionIds").mockReturnValue(["123", "456"]);
-    const deleteSessionIdSpy = jest.spyOn(localStorageManager, "deleteSessionId");
+    const getSessionIdsSpy = vi.spyOn(localStorageManager, "getSessionIds").mockReturnValue(["123", "456"]);
+    const deleteSessionIdSpy = vi.spyOn(localStorageManager, "deleteSessionId");
 
     afterEach(() => {
-        jest.clearAllTimers();
+        vi.clearAllTimers();
         mockAxios.reset();
     });
 
@@ -65,8 +65,8 @@ describe("SessionsActions", () => {
         const mockSessionData = getSessionData(true, false, !stochastic, stochastic, true, true);
         mockAxios.onGet("/apps/testApp/sessions/1234").reply(200, mockSuccess(mockSessionData));
 
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const rootState = { appName: "testApp", baseUrl: "", appsPath: "apps" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
@@ -102,8 +102,8 @@ describe("SessionsActions", () => {
         const mockSessionData = getSessionData(false, false, true, false, true, false);
         mockAxios.onGet("/apps/testApp/sessions/1234").reply(200, mockSuccess(mockSessionData));
 
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const rootState = { appName: "testApp", baseUrl: "", appsPath: "apps" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
@@ -119,8 +119,8 @@ describe("SessionsActions", () => {
         const mockSessionData = getSessionData(true, true, true, false, true, false);
         mockAxios.onGet("/apps/testApp/sessions/1234").reply(200, mockSuccess(mockSessionData));
 
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const rootState = { appName: "testApp", baseUrl: "", appsPath: "apps" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
@@ -136,8 +136,8 @@ describe("SessionsActions", () => {
         const mockSessionData = getSessionData(true, false, false, false, true, false);
         mockAxios.onGet("/apps/testApp/sessions/1234").reply(200, mockSuccess(mockSessionData));
 
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const rootState = { appName: "testApp", baseUrl: "", appsPath: "apps" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
@@ -159,8 +159,8 @@ describe("SessionsActions", () => {
         const mockSessionData = getSessionData(true, false, true, false, false, true);
         mockAxios.onGet("/apps/testApp/sessions/1234").reply(200, mockSuccess(mockSessionData));
 
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const rootState = { appName: "testApp", baseUrl: "", appsPath: "apps" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
@@ -185,8 +185,8 @@ describe("SessionsActions", () => {
         const mockSessionData = getSessionData(true, false, true, false, true, false);
         mockAxios.onGet("/apps/testApp/sessions/1234").reply(200, mockSuccess(mockSessionData));
 
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const rootState = { appName: "testApp", baseUrl: "", appsPath: "apps" } as any;
         await (actions[SessionsAction.Rehydrate] as any)({ commit, dispatch, rootState }, "1234");
         expect(rootState.code.currentCode).toStrictEqual(["some saved code"]);
@@ -218,7 +218,7 @@ describe("SessionsActions", () => {
 
         const userPreferences = { ...mockUserPreferences(), showDuplicateSessions: false };
         const rootState = mockBasicState({ appName: "test-app", appsPath: "apps", userPreferences });
-        const commit = jest.fn();
+        const commit = vi.fn();
         await (actions[SessionsAction.GetSessions] as any)({ commit, rootState, rootGetters });
 
         expect(mockAxios.history.get[0].url).toBe(url);
@@ -238,7 +238,7 @@ describe("SessionsActions", () => {
 
         const userPreferences = { ...mockUserPreferences(), showDuplicateSessions: true };
         const rootState = mockBasicState({ appName: "test-app", appsPath: "apps", userPreferences });
-        const commit = jest.fn();
+        const commit = vi.fn();
         await (actions[SessionsAction.GetSessions] as any)({ commit, rootState, rootGetters });
 
         expect(mockAxios.history.get[0].url).toBe(url);
@@ -251,7 +251,7 @@ describe("SessionsActions", () => {
 
         const userPreferences = mockUserPreferences();
         const rootState = mockBasicState({ appName: "test-app", appsPath: "apps", userPreferences });
-        const commit = jest.fn();
+        const commit = vi.fn();
         await (actions[SessionsAction.GetSessions] as any)({ commit, rootState, rootGetters });
 
         expect(commit).toHaveBeenCalledTimes(1);
@@ -268,8 +268,8 @@ describe("SessionsActions", () => {
             appsPath: "apps",
             sessionId: "testSessionId"
         });
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
 
         const payload = { id: "testSessionId", label: "newLabel" };
         await (actions[SessionsAction.SaveSessionLabel] as any)({ commit, dispatch, rootState }, payload);
@@ -295,8 +295,8 @@ describe("SessionsActions", () => {
             appsPath: "apps",
             sessionId: "testSessionId"
         });
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
 
         const payload = { id: "testSessionId", label: "newLabel" };
         await (actions[SessionsAction.SaveSessionLabel] as any)({ commit, dispatch, rootState }, payload);
@@ -319,8 +319,8 @@ describe("SessionsActions", () => {
             appsPath: "apps",
             sessionId: "anotherSessionId"
         });
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
 
         const payload = { id: "testSessionId", label: "newLabel" };
         await (actions[SessionsAction.SaveSessionLabel] as any)({ commit, dispatch, rootState }, payload);
@@ -341,7 +341,7 @@ describe("SessionsActions", () => {
             appName: "testApp",
             appsPath: "apps"
         });
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         await (actions[SessionsAction.GenerateFriendlyId] as any)({ commit, rootState }, "testSessionId");
         expect(commit).toHaveBeenCalledTimes(1);
@@ -356,7 +356,7 @@ describe("SessionsActions", () => {
             appName: "testApp",
             appsPath: "apps"
         });
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         await (actions[SessionsAction.GenerateFriendlyId] as any)({ commit, rootState }, "testSessionId");
         expect(commit).toHaveBeenCalledTimes(1);
@@ -366,7 +366,7 @@ describe("SessionsActions", () => {
     });
 
     it("DeleteSession removes from local storage and commits remove session id", async () => {
-        const commit = jest.fn();
+        const commit = vi.fn();
         const rootState = { appName: "testApp" };
         await (actions[SessionsAction.DeleteSession] as any)({ commit, rootState, rootGetters }, "testSessionId");
         expect(deleteSessionIdSpy).toHaveBeenCalledWith("testApp", "testInstance", "testSessionId");
