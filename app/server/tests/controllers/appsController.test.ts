@@ -30,6 +30,7 @@ describe("appsController", () => {
                     wodinConfig: {
                         baseUrl: "http://localhost:3000",
                         courseTitle: "Test Course Title",
+                        hotReload: false,
                         ...wodinConfig
                     },
                     wodinVersion: "1.2.3"
@@ -82,7 +83,8 @@ describe("appsController", () => {
             shareNotFound: "",
             mathjaxSrc,
             defaultLanguage: "en",
-            enableI18n: false
+            enableI18n: false,
+            hotReload: false
         });
         expect(mockStatus).not.toBeCalled();
     });
@@ -104,7 +106,8 @@ describe("appsController", () => {
             shareNotFound: "",
             mathjaxSrc,
             defaultLanguage: "en",
-            enableI18n: false
+            enableI18n: false,
+            hotReload: false
         });
     });
 
@@ -130,7 +133,8 @@ describe("appsController", () => {
             shareNotFound: "",
             mathjaxSrc,
             defaultLanguage: "en",
-            enableI18n: false
+            enableI18n: false,
+            hotReload: false
         });
     });
 
@@ -154,7 +158,8 @@ describe("appsController", () => {
             shareNotFound: "tiny-mouse",
             mathjaxSrc,
             defaultLanguage: "en",
-            enableI18n: false
+            enableI18n: false,
+            hotReload: false
         });
     });
 
