@@ -3,6 +3,6 @@ export enum Language {
     fr = "fr"
 }
 
-export type TranslationLocales = {
+export interface TranslationLocales {
     [key: string]: string;
 }

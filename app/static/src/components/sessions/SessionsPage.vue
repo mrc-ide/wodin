@@ -171,7 +171,6 @@
 </template>
 
 <script lang="ts">
-// import { utc } from "moment";
 import { onMounted, defineComponent, computed, ref, nextTick } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";

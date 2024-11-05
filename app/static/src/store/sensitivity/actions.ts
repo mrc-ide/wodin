@@ -148,7 +148,7 @@ export const baseSensitivityActions: ActionTree<BaseSensitivityState, AppState> 
         } else {
             setTimeout(() => {
                 dispatch(BaseSensitivityAction.ComputeNext, batch);
-            }, 100);
+            }, 0);
         }
     },
 

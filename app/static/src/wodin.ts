@@ -16,7 +16,6 @@ import tooltip from "./directives/tooltip";
 import { AppState, AppType } from "./store/appState/state";
 import { translate } from "../translationPackage";
 import "./assets/fontawesome.css";
-import "bootstrap/dist/css/bootstrap.css";
 import "./scss/style.scss"
 import help from "./directives/help";
 import App from "./components/App.vue";
