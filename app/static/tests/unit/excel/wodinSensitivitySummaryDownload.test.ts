@@ -1,11 +1,11 @@
 import { mockBookNew, mockBookAppendSheet, mockWriteFile } from "./mocks";
 import { mockBasicState, mockRunState, mockSensitivityState } from "../../mocks";
-import { WodinSensitivitySummaryDownload } from "../../../src/app/excel/wodinSensitivitySummaryDownload";
+import { WodinSensitivitySummaryDownload } from "../../../src/excel/wodinSensitivitySummaryDownload";
 
 const xValues = [{ beta: 1 }, { beta: 1.1 }, { beta: 1.2 }];
 const mockBatch = {
     successfulVaryingParams: xValues,
-    valueAtTime: jest.fn().mockImplementation(() => {
+    valueAtTime: vi.fn().mockImplementation(() => {
         return {
             x: xValues,
             values: [
@@ -14,7 +14,7 @@ const mockBatch = {
             ]
         };
     }),
-    extreme: jest.fn().mockImplementation((extremeType: string) => {
+    extreme: vi.fn().mockImplementation((extremeType: string) => {
         return {
             x: xValues,
             values: [{ name: extremeType, y: [10, 20, 30] }]
@@ -31,7 +31,7 @@ const xValuesMulti = [
 
 const mockBatchMulti = {
     successfulVaryingParams: xValuesMulti,
-    valueAtTime: jest.fn().mockImplementation(() => {
+    valueAtTime: vi.fn().mockImplementation(() => {
         return {
             x: xValuesMulti,
             values: [
@@ -40,7 +40,7 @@ const mockBatchMulti = {
             ]
         };
     }),
-    extreme: jest.fn().mockImplementation((extremeType: string) => {
+    extreme: vi.fn().mockImplementation((extremeType: string) => {
         return {
             x: xValuesMulti,
             values: [{ name: extremeType, y: [11, 22, 33, 44] }]
@@ -60,7 +60,7 @@ const parameterValues = {
 
 describe("WodinSensitivitySummaryDownload", () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("downloads expected workbook for single varying parameter", () => {
@@ -76,7 +76,7 @@ describe("WodinSensitivitySummaryDownload", () => {
                 parameterValues
             })
         });
-        const commit = jest.fn();
+        const commit = vi.fn();
         const context = { rootState, commit } as any;
         const sut = new WodinSensitivitySummaryDownload(context, "test.xlsx");
         sut.download(result);
@@ -161,7 +161,7 @@ describe("WodinSensitivitySummaryDownload", () => {
                 parameterValues
             })
         });
-        const commit = jest.fn();
+        const commit = vi.fn();
         const context = { rootState, commit } as any;
         const sut = new WodinSensitivitySummaryDownload(context, "test.xlsx");
         sut.download(result);

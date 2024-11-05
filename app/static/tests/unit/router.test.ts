@@ -1,17 +1,20 @@
-/* eslint-disable import/first */
 const mockWebHistory = {} as any;
 const mockRouter = {} as any;
 
-jest.mock("vue-router", () => ({
-    createWebHistory: jest.fn(),
-    createRouter: jest.fn()
-}));
+vi.mock("vue-router", () => {
+    return {
+      createWebHistory: vi.fn(),
+      createRouter: vi.fn(),
+      RouterLink: null,
+      RouterView: null
+    }
+});
 
 import { createWebHistory, createRouter } from "vue-router";
-import Mock = jest.Mock;
-import { initialiseRouter } from "../../src/app/router";
-import WodinSession from "../../src/app/components/WodinSession.vue";
-import SessionsPage from "../../src/app/components/sessions/SessionsPage.vue";
+import { Mock } from "vitest";
+import { initialiseRouter } from "../../src/router";
+import WodinSession from "../../src/components/WodinSession.vue";
+import SessionsPage from "../../src/components/sessions/SessionsPage.vue";
 
 const mockCreateWebHistory = createWebHistory as Mock;
 mockCreateWebHistory.mockReturnValue(mockWebHistory);
@@ -19,14 +22,14 @@ mockCreateWebHistory.mockReturnValue(mockWebHistory);
 const mockCreateRouter = createRouter as Mock;
 mockCreateRouter.mockReturnValue(mockRouter);
 
-const mockPushState = jest.fn();
+const mockPushState = vi.fn();
 
 const realLocation = window.location;
 const realHistory = window.history;
 
 describe("router", () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     beforeAll(() => {

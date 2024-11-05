@@ -6,8 +6,8 @@ import {
     processFitData,
     newUid,
     joinStringsSentence
-} from "../../src/app/utils";
-import { SensitivityScaleType, SensitivityVariationType } from "../../src/app/store/sensitivity/state";
+} from "../../src/utils";
+import { SensitivityScaleType, SensitivityVariationType } from "../../src/store/sensitivity/state";
 import { mockBatchParsDisplace, mockBatchParsRange } from "../mocks";
 
 describe("freezer", () => {
@@ -318,11 +318,11 @@ describe("generateBatchPars", () => {
         }
     } as any;
 
-    const spyBatchParsRange = jest.spyOn(rootState.model.odinRunnerOde, "batchParsRange");
-    const spyBatchParsDisplace = jest.spyOn(rootState.model.odinRunnerOde, "batchParsDisplace");
+    const spyBatchParsRange = vi.spyOn(rootState.model.odinRunnerOde, "batchParsRange");
+    const spyBatchParsDisplace = vi.spyOn(rootState.model.odinRunnerOde, "batchParsDisplace");
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     const percentSettings = {
