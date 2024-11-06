@@ -207,7 +207,7 @@ export default defineComponent({
 
 .draggable-dialog {
     background-color: white;
-    position: absolute;
+    position: fixed;
     width: 60%;
     height: 80%;
     z-index: 9999;
