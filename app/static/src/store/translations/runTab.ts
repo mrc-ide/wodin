@@ -1,6 +1,6 @@
 import { TranslationLocales } from "../../types/languageTypes";
 
-export interface RunTabTranslations extends TranslationLocales {
+interface RunTabTranslations extends TranslationLocales {
     runTabExample: string;
 }
 

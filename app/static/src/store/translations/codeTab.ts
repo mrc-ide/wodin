@@ -1,6 +1,6 @@
 import { TranslationLocales } from "../../types/languageTypes";
 
-export interface CodeTabTranslations extends TranslationLocales {
+interface CodeTabTranslations extends TranslationLocales {
     codeTabExample: string;
 }
 

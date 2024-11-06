@@ -275,7 +275,7 @@ export const convertAdvancedSettingsToOdin = (
     };
 };
 
-export const parseTime = (date: Date) => {
+export const parseDateTime = (date: Date) => {
     const year = date.getFullYear();
 
     // for some reason month is 0 index

@@ -59,7 +59,7 @@
 import { computed, defineComponent, ref, watch } from "vue";
 import { useStore } from "vuex";
 import userMessages from "../userMessages";
-import { parseTime } from "@/utils";
+import { parseDateTime } from "@/utils";
 
 export default defineComponent({
     name: "DownloadOutput",
@@ -101,7 +101,7 @@ export default defineComponent({
 
         const generateDefaultFileName = () => {
             const now = new Date(Date.now());
-            const { year, month, day, hour, minute, second } = parseTime(now);
+            const { year, month, day, hour, minute, second } = parseDateTime(now);
             const timestamp = `${year}${month}${day}-${hour}${minute}${second}`
             const type = props.downloadType.toLowerCase().replace(" ", "-");
             return `${appName.value}-${type}-${timestamp}`;

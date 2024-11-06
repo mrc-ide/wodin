@@ -1,6 +1,6 @@
 import { TranslationLocales } from "../../types/languageTypes";
 
-export interface GenericHelpTranslations extends TranslationLocales {
+interface GenericHelpTranslations extends TranslationLocales {
     genericHelpExample: string;
 }
 

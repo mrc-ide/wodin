@@ -48,7 +48,7 @@ export enum HidePanelContent {
     None
 }
 
-export enum DragStart {
+enum DragStart {
     Icon,
     Edge
 }

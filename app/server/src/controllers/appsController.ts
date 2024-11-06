@@ -43,13 +43,10 @@ export class AppsController {
                     shareNotFound: shareNotFound || "",
                     mathjaxSrc: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js",
                     enableI18n: wodinConfig.enableI18n ?? false, // if option not set then false by default
-                    defaultLanguage: wodinConfig?.defaultLanguage || "en"
+                    defaultLanguage: wodinConfig?.defaultLanguage || "en",
+                    hotReload
                 };
-                if (hotReload === "true") {
-                    res.render("app-hot-reload", viewOptions);
-                } else {
-                    res.render("app", viewOptions);
-                }
+                res.render("app", viewOptions);
             } else {
                 throw new WodinWebError(
                     `App not found: ${appName}`,
