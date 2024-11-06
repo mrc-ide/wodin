@@ -28,7 +28,8 @@ jobs:
         run: npm run lint --prefix=app/static
       - name: Check versions
         run: npm run genversion --prefix=app/server -- --check-only
-      - name: Upload coverage
-        run: |
-          codecov -f app/static/coverage/*.json
-          codecov -f app/server/coverage/*.json
+      - uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: true # optional (default = false)
+          files: ./app/server/coverage/coverage-final.json,./app/static/coverage/coverage-final.json
+          token: ${{ secrets.CODECOV_TOKEN }} # required
