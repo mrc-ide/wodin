@@ -36,7 +36,7 @@ export const getters: GraphsGetters & GetterTree<GraphsState, AppState> = {
         let maxVariableLength = 0;
         const variables = graphsGetters[GraphsGetter.allSelectedVariables];
         for (let i = 0; i < variables.length; i++) {
-            maxVariableLength = Math.max(maxVariableLength, variables[i]);
+            maxVariableLength = Math.max(maxVariableLength, variables[i].length);
         }
         return maxVariableLength * LEGEND_WIDTH_PER_CHAR + LEGEND_LINE_PADDING;
     }
