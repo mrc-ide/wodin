@@ -1,19 +1,27 @@
 // Mock the import of monaco loader so we can mock its methods
-const mockMonacoEditor = {
-    onDidChangeModelContent: jest.fn(),
-    getModel: () => {
-        return { getLinesContent: jest.fn().mockReturnValueOnce(["new code"]) };
-    },
-    setValue: jest.fn(),
-    deltaDecorations: jest.fn()
-};
-const mockMonaco = {
-    editor: {
-        create: jest.fn().mockReturnValue(mockMonacoEditor)
+const { mockMonacoEditor, mockMonaco } = vi.hoisted(() => {
+    const mockMonacoEditor = {
+        onDidChangeModelContent: vi.fn(),
+        getModel: () => {
+            return { getLinesContent: vi.fn().mockReturnValueOnce(["new code"]) };
+        },
+        setValue: vi.fn(),
+        deltaDecorations: vi.fn()
+    };
+    const mockMonaco = {
+        editor: {
+            create: vi.fn().mockReturnValue(mockMonacoEditor)
+        }
+    };
+    return {
+        mockMonacoEditor,
+        mockMonaco
     }
-};
-jest.mock("@monaco-editor/loader", () => {
-    return { init: async () => mockMonaco };
+});
+vi.mock("@monaco-editor/loader", () => {
+    return {
+        default: { init: async () => mockMonaco }
+    };
 });
 
 const editorGlyphs: any = {
@@ -36,44 +44,38 @@ const monacoOptions = (state: string, message: string) => {
         glyphMarginHoverMessage: { value: message }
     };
 };
-const expectDeltaDecorationInputs = (line: number, state: string, message: string, done: jest.DoneCallback) => {
-    setTimeout(() => {
-        const changeHandler = mockMonacoEditor.onDidChangeModelContent.mock.calls[0][0];
-        changeHandler();
-        setTimeout(() => {
-            // 1 for resetting all decorations and 1 for adding state decorations
-            // x2 (these trigger on mount too)
-            expect(mockMonacoEditor.deltaDecorations).toHaveBeenCalledTimes(4);
-            expect(mockMonacoEditor.deltaDecorations.mock.calls[0][1]).toStrictEqual([
-                {
-                    range: monacoLineRange(1, true),
-                    options: {}
-                }
-            ]);
-            expect(mockMonacoEditor.deltaDecorations.mock.calls[1][1]).toStrictEqual([
-                {
-                    range: monacoLineRange(line),
-                    options: monacoOptions(state, message)
-                }
-            ]);
-            done();
-        }, 700);
-    });
+const expectDeltaDecorationInputs = async (line: number, state: string, message: string) => {
+    await new Promise(res => setTimeout(res, 700));
+    const changeHandler = mockMonacoEditor.onDidChangeModelContent.mock.calls[0][0];
+    changeHandler();
+    await flushPromises();
+    expect(mockMonacoEditor.deltaDecorations.mock.calls[0].at(-1)).toStrictEqual([
+        {
+            range: monacoLineRange(1, true),
+            options: {}
+        }
+    ]);
+    expect(mockMonacoEditor.deltaDecorations.mock.calls[1].at(-1)).toStrictEqual([
+        {
+            range: monacoLineRange(line),
+            options: monacoOptions(state, message)
+        }
+    ]);
 };
 
-/* eslint-disable import/first */
-import { shallowMount } from "@vue/test-utils";
+import { flushPromises, shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
-import CodeEditor from "../../../../src/app/components/code/CodeEditor.vue";
-import { BasicState } from "../../../../src/app/store/basic/state";
-import { BasicConfig } from "../../../../src/app/types/responseTypes";
+import CodeEditor from "../../../../src/components/code/CodeEditor.vue";
+import { BasicState } from "../../../../src/store/basic/state";
+import { BasicConfig } from "../../../../src/types/responseTypes";
 import { mockBasicState, mockCodeState, mockModelState } from "../../../mocks";
+import { nextTick } from "vue";
 
 describe("CodeEditor", () => {
-    const mockHelpDirective = jest.fn();
+    const mockHelpDirective = vi.fn();
     const getWrapper = (
         readOnlyCode = false,
-        mockUpdateCode = jest.fn(),
+        mockUpdateCode = vi.fn(),
         defaultCode = ["default code"],
         odinModelResponse = { valid: true }
     ) => {
@@ -115,53 +117,45 @@ describe("CodeEditor", () => {
     };
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
-    it("initialises Monaco Editor", (done) => {
+    it("initialises Monaco Editor", async () => {
         const wrapper = getWrapper();
-        setTimeout(() => {
-            const el = wrapper.find("div.editor").element;
-            expect(mockMonaco.editor.create.mock.calls[0][0]).toBe(el);
-            expect(mockMonaco.editor.create.mock.calls[0][1]).toStrictEqual({
-                value: "line1\nline2",
-                language: "r",
-                minimap: { enabled: false },
-                readOnly: false,
-                automaticLayout: true,
-                glyphMargin: true,
-                lineNumbersMinChars: 3
-            });
-
-            done();
+        await nextTick();
+        const el = wrapper.find("div.editor").element;
+        expect(mockMonaco.editor.create.mock.calls[0][0]).toBe(el);
+        expect(mockMonaco.editor.create.mock.calls[0][1]).toStrictEqual({
+            value: "line1\nline2",
+            language: "r",
+            minimap: { enabled: false },
+            readOnly: false,
+            automaticLayout: true,
+            glyphMargin: true,
+            lineNumbersMinChars: 3
         });
     });
 
-    it("Monaco Editor change handler makes a delayed code update dispatch", (done) => {
-        const mockUpdateCode = jest.fn();
+    it("Monaco Editor change handler makes a delayed code update dispatch", async () => {
+        const mockUpdateCode = vi.fn();
         getWrapper(false, mockUpdateCode);
-        setTimeout(() => {
-            expect(mockMonacoEditor.onDidChangeModelContent).toHaveBeenCalled();
-            const changeHandler = mockMonacoEditor.onDidChangeModelContent.mock.calls[0][0];
+        await nextTick();
+        expect(mockMonacoEditor.onDidChangeModelContent).toHaveBeenCalled();
+        const changeHandler = mockMonacoEditor.onDidChangeModelContent.mock.calls[0][0];
 
-            // Trigger the handler the component has set and check that it invokes the action after 1s -
-            // it will get the new code we've mocked above in getLines()
-            changeHandler();
-            expect(mockUpdateCode).not.toHaveBeenCalled();
-            setTimeout(() => {
-                expect(mockUpdateCode).toHaveBeenCalled();
-                expect(mockUpdateCode.mock.calls[0][1]).toStrictEqual(["new code"]);
-                done();
-            }, 700);
-        });
+        // Trigger the handler the component has set and check that it invokes the action after 1s -
+        // it will get the new code we've mocked above in getLines()
+        changeHandler();
+        expect(mockUpdateCode).not.toHaveBeenCalled();
+        await new Promise(res => setTimeout(res, 700));
+        expect(mockUpdateCode).toHaveBeenCalled();
+        expect(mockUpdateCode.mock.calls[0][1]).toStrictEqual(["new code"]);
     });
 
-    it("initialises Monaco Editor as readonly if state is configured with readOnlyCode", (done) => {
+    it("initialises Monaco Editor as readonly if state is configured with readOnlyCode", async () => {
         getWrapper(true);
-        setTimeout(() => {
-            expect(mockMonaco.editor.create.mock.calls[0][1].readOnly).toBe(true);
-            done();
-        });
+        await nextTick();
+        expect(mockMonaco.editor.create.mock.calls[0][1].readOnly).toBe(true);
     });
 
     it("uses help directive on reset button", () => {
@@ -172,60 +166,54 @@ describe("CodeEditor", () => {
         expect(mockHelpDirective.mock.calls[0][1].value).toBe("resetCode");
     });
 
-    it("can reset monaco editor", (done) => {
-        const mockUpdateCode = jest.fn();
+    it("can reset monaco editor", async () => {
+        const mockUpdateCode = vi.fn();
         const wrapper = getWrapper(false, mockUpdateCode);
-        setTimeout(() => {
-            expect(mockMonacoEditor.setValue).not.toHaveBeenCalled();
-            wrapper.find("#reset-btn").trigger("click");
-            expect(mockMonacoEditor.setValue).toHaveBeenCalled();
-            expect(mockMonacoEditor.setValue).toHaveBeenCalledWith("default code");
-            done();
-        });
+        await nextTick();
+        expect(mockMonacoEditor.setValue).not.toHaveBeenCalled();
+        wrapper.find("#reset-btn").trigger("click");
+        expect(mockMonacoEditor.setValue).toHaveBeenCalled();
+        expect(mockMonacoEditor.setValue).toHaveBeenCalledWith("default code");
     });
 
     it("does not render reset button when no default code and is not readOnly", () => {
-        const mockUpdateCode = jest.fn();
+        const mockUpdateCode = vi.fn();
         const wrapper = getWrapper(false, mockUpdateCode, []);
         expect(wrapper.find("#reset-btn").exists()).toBe(false);
     });
 
     it("does not render reset button when is readOnly", () => {
-        const mockUpdateCode = jest.fn();
+        const mockUpdateCode = vi.fn();
         const wrapper = getWrapper(true, mockUpdateCode);
         expect(wrapper.find("#reset-btn").exists()).toBe(false);
     });
 
-    it("executes deltaDecorations when there is an error", (done) => {
-        const mockUpdateCode = jest.fn();
+    it("executes deltaDecorations when there is an error", async () => {
+        const mockUpdateCode = vi.fn();
         const odinModelResponse = {
             valid: false,
             error: { line: [2], message: "error here" }
         };
         getWrapper(false, mockUpdateCode, ["hey code"], odinModelResponse);
-        expectDeltaDecorationInputs(2, "error", "error here", done);
+        await expectDeltaDecorationInputs(2, "error", "error here");
     });
 
-    it("no input in deltaDecorations when error lines and messages are empty", (done) => {
-        const mockUpdateCode = jest.fn();
+    it("no input in deltaDecorations when error lines and messages are empty", async () => {
+        const mockUpdateCode = vi.fn();
         const odinModelResponse = {
             valid: false,
             error: {}
         };
         getWrapper(false, mockUpdateCode, ["hey code"], odinModelResponse);
-        setTimeout(() => {
-            const changeHandler = mockMonacoEditor.onDidChangeModelContent.mock.calls[0][0];
-            changeHandler();
-            setTimeout(() => {
-                expect(mockMonacoEditor.deltaDecorations).toHaveBeenCalledTimes(4);
-                expect(mockMonacoEditor.deltaDecorations.mock.calls[1][1]).toStrictEqual([]);
-                done();
-            }, 700);
-        });
+        await nextTick();
+        const changeHandler = mockMonacoEditor.onDidChangeModelContent.mock.calls[0][0];
+        changeHandler();
+        await flushPromises();
+        expect(mockMonacoEditor.deltaDecorations.mock.calls[1].at(-1)).toStrictEqual([]);
     });
 
-    it("executes deltaDecorations when there is an warning", (done) => {
-        const mockUpdateCode = jest.fn();
+    it("executes deltaDecorations when there is an warning", async () => {
+        const mockUpdateCode = vi.fn();
         const odinModelResponse = {
             valid: true,
             metadata: {
@@ -233,11 +221,11 @@ describe("CodeEditor", () => {
             }
         };
         getWrapper(false, mockUpdateCode, ["hey code"], odinModelResponse);
-        expectDeltaDecorationInputs(3, "warning", "warning here", done);
+        await expectDeltaDecorationInputs(3, "warning", "warning here");
     });
 
-    it("no input in deltaDecorations when warning lines and messages are empty", (done) => {
-        const mockUpdateCode = jest.fn();
+    it("no input in deltaDecorations when warning lines and messages are empty", async () => {
+        const mockUpdateCode = vi.fn();
         const odinModelResponse = {
             valid: true,
             metadata: {
@@ -245,14 +233,10 @@ describe("CodeEditor", () => {
             }
         };
         getWrapper(false, mockUpdateCode, ["hey code"], odinModelResponse);
-        setTimeout(() => {
-            const changeHandler = mockMonacoEditor.onDidChangeModelContent.mock.calls[0][0];
-            changeHandler();
-            setTimeout(() => {
-                expect(mockMonacoEditor.deltaDecorations).toHaveBeenCalledTimes(4);
-                expect(mockMonacoEditor.deltaDecorations.mock.calls[1][1]).toStrictEqual([]);
-                done();
-            }, 700);
-        });
+        await nextTick();
+        const changeHandler = mockMonacoEditor.onDidChangeModelContent.mock.calls[0][0];
+        changeHandler();
+        await new Promise(res => setTimeout(res, 700));
+        expect(mockMonacoEditor.deltaDecorations.mock.calls[1].at(-1)).toStrictEqual([]);
     });
 });

@@ -1,18 +1,17 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via FitPlot
-jest.mock("plotly.js-basic-dist-min", () => {});
+vi.mock("plotly.js-basic-dist-min", () => ({}));
 
-/* eslint-disable import/first */
 import { mount } from "@vue/test-utils";
 import Vuex from "vuex";
 import VueFeather from "vue-feather";
-import FitTab from "../../../../src/app/components/fit/FitTab.vue";
-import { FitState } from "../../../../src/app/store/fit/state";
-import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
-import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
-import FitPlot from "../../../../src/app/components/fit/FitPlot.vue";
+import FitTab from "../../../../src/components/fit/FitTab.vue";
+import { FitState } from "../../../../src/store/fit/state";
+import ActionRequiredMessage from "../../../../src/components/ActionRequiredMessage.vue";
+import LoadingSpinner from "../../../../src/components/LoadingSpinner.vue";
+import FitPlot from "../../../../src/components/fit/FitPlot.vue";
 import { mockFitState, mockGraphsState } from "../../../mocks";
-import { WodinError } from "../../../../src/app/types/responseTypes";
-import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
+import { WodinError } from "../../../../src/types/responseTypes";
+import ErrorInfo from "../../../../src/components/ErrorInfo.vue";
 
 describe("Fit Tab", () => {
     const getWrapper = (
@@ -23,8 +22,8 @@ describe("Fit Tab", () => {
         converged: boolean | null = true,
         fitting = false,
         sumOfSquares: number | null = 2.1,
-        mockFitModel = jest.fn(),
-        mockSetFitting = jest.fn(),
+        mockFitModel = vi.fn(),
+        mockSetFitting = vi.fn(),
         error: WodinError | null = null
     ) => {
         const store = new Vuex.Store<FitState>({
@@ -50,7 +49,7 @@ describe("Fit Tab", () => {
                         fitUpdateRequired,
                         error,
                         result: {
-                            solution: jest.fn()
+                            solution: vi.fn()
                         }
                     } as any,
                     getters: {
@@ -178,7 +177,7 @@ describe("Fit Tab", () => {
 
     it("renders model fit error as expected", () => {
         const error = { error: "test error", detail: "test detail" };
-        const wrapper = getWrapper({}, false, {}, 10, true, false, 2.1, jest.fn(), jest.fn(), error);
+        const wrapper = getWrapper({}, false, {}, 10, true, false, 2.1, vi.fn(), vi.fn(), error);
         expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(error);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "An error occurred during model fit."
@@ -186,15 +185,15 @@ describe("Fit Tab", () => {
     });
 
     it("dispatches fit action on click button", async () => {
-        const mockFitModel = jest.fn();
+        const mockFitModel = vi.fn();
         const wrapper = getWrapper({}, false, false, null, null, false, null, mockFitModel);
         await wrapper.find("#fit-btn").trigger("click");
         expect(mockFitModel).toHaveBeenCalledTimes(1);
     });
 
     it("cancel button sets fitting to false", async () => {
-        const mockSetFitting = jest.fn();
-        const wrapper = getWrapper({}, false, false, 1, false, true, 25.6, jest.fn(), mockSetFitting);
+        const mockSetFitting = vi.fn();
+        const wrapper = getWrapper({}, false, false, 1, false, true, 25.6, vi.fn(), mockSetFitting);
         await wrapper.find("#cancel-fit-btn").trigger("click");
         expect(mockSetFitting).toHaveBeenCalledTimes(1);
         expect(mockSetFitting.mock.calls[0][1]).toBe(false);

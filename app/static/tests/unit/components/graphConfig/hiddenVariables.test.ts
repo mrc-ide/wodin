@@ -1,12 +1,12 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
-import { BasicState } from "../../../../src/app/store/basic/state";
-import { GraphsAction } from "../../../../src/app/store/graphs/actions";
-import HiddenVariables from "../../../../src/app/components/graphConfig/HiddenVariables.vue";
-import { GraphsGetter } from "../../../../src/app/store/graphs/getters";
+import { BasicState } from "../../../../src/store/basic/state";
+import { GraphsAction } from "../../../../src/store/graphs/actions";
+import HiddenVariables from "../../../../src/components/graphConfig/HiddenVariables.vue";
+import { GraphsGetter } from "../../../../src/store/graphs/getters";
 
 // Mock the fadeColor util which uses color package, which doesn't play nicely with jest
-jest.mock("../../../../src/app/components/graphConfig/utils", () => {
+vi.mock("../../../../src/components/graphConfig/utils", () => {
     return {
         fadeColor: (input: string) => {
             const match = input.match(/rgb\(([0-9]*), ([0-9]*), ([0-9]*)\)/);
@@ -18,10 +18,10 @@ jest.mock("../../../../src/app/components/graphConfig/utils", () => {
 
 describe("HiddenVariables", () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
-    const mockUpdateSelectedVariables = jest.fn();
+    const mockUpdateSelectedVariables = vi.fn();
 
     const getWrapper = (hiddenVariables = ["I", "R"]) => {
         const store = new Vuex.Store<BasicState>({
@@ -85,7 +85,7 @@ describe("HiddenVariables", () => {
     it("starting drag sets values in event and emits setDragging", async () => {
         const wrapper = getWrapper();
         const s = wrapper.findAll(".hidden-variables-panel .variable").at(0)!;
-        const setData = jest.fn();
+        const setData = vi.fn();
         await s.trigger("dragstart", { dataTransfer: { setData } });
         expect(setData.mock.calls[0][0]).toBe("variable");
         expect(setData.mock.calls[0][1]).toStrictEqual("I");

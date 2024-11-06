@@ -1,4 +1,4 @@
-import { fitRequirementsExplanation, fitUpdateRequiredExplanation } from "../../../../src/app/components/fit/support";
+import { fitRequirementsExplanation, fitUpdateRequiredExplanation } from "../../../../src/components/fit/support";
 
 describe("construct actionable error messages from requirements", () => {
     const reqsTrue = {

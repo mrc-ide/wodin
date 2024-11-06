@@ -1,17 +1,17 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import VueFeather from "vue-feather";
-import DataTab from "../../../../src/app/components/data/DataTab.vue";
-import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
+import DataTab from "../../../../src/components/data/DataTab.vue";
+import ErrorInfo from "../../../../src/components/ErrorInfo.vue";
 import { mockFitDataState, mockFitState } from "../../../mocks";
-import { FitState } from "../../../../src/app/store/fit/state";
-import { FitDataState } from "../../../../src/app/store/fitData/state";
+import { FitState } from "../../../../src/store/fit/state";
+import { FitDataState } from "../../../../src/store/fitData/state";
 
 describe("Data Tab", () => {
     const getWrapper = (
         state: Partial<FitDataState> = {},
-        mockUpload = jest.fn(),
-        mockUpdateTimeVariable = jest.fn()
+        mockUpload = vi.fn(),
+        mockUpdateTimeVariable = vi.fn()
     ) => {
         const store = new Vuex.Store<FitState>({
             state: mockFitState(),
@@ -78,13 +78,13 @@ describe("Data Tab", () => {
     });
 
     it("dispatches upload action", async () => {
-        const mockUpload = jest.fn();
+        const mockUpload = vi.fn();
         const wrapper = getWrapper({}, mockUpload);
         const mockFile = { name: "testFile.csv" };
 
         const input = wrapper.find("input");
         Object.defineProperty(input.element, "files", {
-            get: jest.fn().mockReturnValue([mockFile])
+            get: vi.fn().mockReturnValue([mockFile])
         });
         await input.trigger("change");
         expect(mockUpload).toHaveBeenCalledTimes(1);
@@ -99,7 +99,7 @@ describe("Data Tab", () => {
         const columns = ["a", "b", "c"];
         const timeVariableCandidates = ["a", "b"];
         const timeVariable = "b";
-        const mockUpdateTimeVar = jest.fn();
+        const mockUpdateTimeVar = vi.fn();
         const wrapper = getWrapper(
             {
                 data,
@@ -107,7 +107,7 @@ describe("Data Tab", () => {
                 timeVariableCandidates,
                 timeVariable
             },
-            jest.fn(),
+            vi.fn(),
             mockUpdateTimeVar
         );
 
@@ -123,9 +123,9 @@ describe("Data Tab", () => {
         const wrapper = getWrapper();
         const input = wrapper.find("input");
         const el = input.element as HTMLInputElement;
-        const mockSetValue = jest.fn();
+        const mockSetValue = vi.fn();
         Object.defineProperty(el, "value", {
-            get: jest.fn().mockReturnValue("testFile.csv"),
+            get: vi.fn().mockReturnValue("testFile.csv"),
             set: mockSetValue
         });
         await input.trigger("click");

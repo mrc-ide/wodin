@@ -1,10 +1,10 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
-import { ModelState } from "../../../../src/app/store/model/state";
-import { BasicState } from "../../../../src/app/store/basic/state";
-import { mockBasicState, mockCodeState, mockModelState } from "../../../mocks";
-import GraphConfigsCollapsible from "../../../../src/app/components/graphConfig/GraphConfigsCollapsible.vue";
-import VerticalCollapse from "../../../../src/app/components/VerticalCollapse.vue";
+import { ModelState } from "../../../../src/store/model/state";
+import { BasicState } from "../../../../src/store/basic/state";
+import { mockBasicState, mockModelState } from "../../../mocks";
+import GraphConfigsCollapsible from "../../../../src/components/graphConfig/GraphConfigsCollapsible.vue";
+import VerticalCollapse from "../../../../src/components/VerticalCollapse.vue";
 
 describe("GraphConfigsCollapsible", () => {
     const defaultModelState = {
