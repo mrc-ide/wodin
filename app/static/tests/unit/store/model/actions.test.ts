@@ -7,8 +7,7 @@ import {
     mockModelState,
     mockRunState,
     mockRunnerOde,
-    mockSuccess,
-    mockFitState
+    mockSuccess
 } from "../../../mocks";
 import { actions, ModelAction } from "../../../../src/store/model/actions";
 import { ModelMutation, mutations } from "../../../../src/store/model/mutations";
@@ -22,7 +21,6 @@ import { ModelFitMutation } from "../../../../src/store/modelFit/mutations";
 import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
 import { MultiSensitivityMutation } from "../../../../src/store/multiSensitivity/mutations";
 import { defaultSensitivityParamSettings } from "../../../../src/store/sensitivity/sensitivity";
-import { GraphsMutation } from "../../../../src/store/graphs/mutations";
 import { GraphsAction } from "../../../../src/store/graphs/actions";
 
 describe("Model actions", () => {

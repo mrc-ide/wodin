@@ -56,7 +56,7 @@ export interface OdinParameter {
     default: null | number;
     min: null | number;
     max: null | number;
-    // eslint-disable-next-line camelcase
+     
     is_integer: boolean;
     rank: number;
 }

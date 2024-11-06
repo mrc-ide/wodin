@@ -1,6 +1,6 @@
 import Vuex from "vuex";
 import { nextTick } from "vue";
-import { flushPromises, shallowMount } from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
 import VueFeather from "vue-feather";
 import { BasicState } from "../../../../src/store/basic/state";
 import { mockBasicState, mockRunState, mockModelState } from "../../../mocks";

@@ -1,4 +1,4 @@
-import { mount, shallowMount } from "@vue/test-utils";
+import { mount } from "@vue/test-utils";
 import VueFeather from "vue-feather";
 import { nextTick } from "vue";
 import DraggableDialog from "../../../../src/components/help/DraggableDialog.vue";

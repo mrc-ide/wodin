@@ -9,7 +9,6 @@ import { ModelState } from "../../../../src/store/model/state";
 import { getters } from "../../../../src/store/run/getters";
 import { RunAction } from "../../../../src/store/run/actions";
 import { RunMutation } from "../../../../src/store/run/mutations";
-import { nextTick } from "vue";
 
 describe("ParameterSets", () => {
     const mockNewParameterSet = vi.fn();

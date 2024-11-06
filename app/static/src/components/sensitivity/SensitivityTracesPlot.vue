@@ -156,7 +156,7 @@ export default defineComponent({
                     const plotlyOptions = { includeLegendGroup: true };
                     const filterStochasticCentralOutput = (centralOutput: OdinSeriesSet) => {
                         // Only show summary and deterministic values as central for stochastic
-                        // eslint-disable-next-line no-param-reassign
+                         
                         centralOutput.values = centralOutput.values.filter(
                             (v: DiscreteSeriesValues) => v.description !== "Individual"
                         );

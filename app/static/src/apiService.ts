@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+ 
+ 
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { Commit } from "vuex";
 import { freezer } from "./utils";
@@ -34,9 +34,9 @@ export interface API<S, E> {
     get<T>(url: string): Promise<void | ResponseWithType<T>>;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 type OnError = (failure: ResponseFailure) => void;
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 type OnSuccess = (success: ResponseSuccess) => void;
 
 export class APIService<S extends string, E extends string> implements API<S, E> {

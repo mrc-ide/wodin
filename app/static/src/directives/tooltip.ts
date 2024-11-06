@@ -18,7 +18,7 @@ export default {
         if (typeof value === "string") {
             // disabling no-new lint error as bootstrap
             // needs the new keyword
-            // eslint-disable-next-line no-new
+             
             new Tooltip(el, {
                 title: value,
                 placement: "top",
@@ -27,7 +27,7 @@ export default {
             });
         } else {
             const variant = value?.variant || "text";
-            // eslint-disable-next-line no-new
+             
             new Tooltip(el, {
                 title: value?.content || "",
                 placement: value?.placement || "top",
@@ -47,7 +47,7 @@ export default {
             const variant = value?.variant || "text";
             const oldCustomClass = variant === "text" ? "" : `tooltip-${variant}`;
 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+             
             const isVariantSame = (tooltip as any)._config.customClass === oldCustomClass;
             if (!isVariantSame) {
                 tooltip.dispose();
@@ -66,7 +66,7 @@ export default {
         const content = typeof value === "string" ? value : value?.content || "";
 
         if (tooltip) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+             
             const configuredTooltip = tooltip as any;
             configuredTooltip._config.title = content;
             const { trigger } = configuredTooltip._config;

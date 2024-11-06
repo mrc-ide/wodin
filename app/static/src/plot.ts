@@ -189,6 +189,6 @@ export const updatePlotTraceName = (
     if (parameterSetName) {
         parenthesisItems.push(parameterSetName);
     }
-    // eslint-disable-next-line no-param-reassign
+     
     plotTrace.name = `${plotTrace.name} (${parenthesisItems.join(" ")})`;
 };

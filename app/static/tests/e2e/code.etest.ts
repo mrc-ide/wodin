@@ -69,7 +69,6 @@ const expectMonacoDecoration = async (state: EditorStates, line: number, numOfLi
 };
 
 const expectMonacoHover = async (type: "glyph" | "content", line: number, message: string, page: Page) => {
-    const isGlyph = type === "glyph";
     const hoverElem = type === "content" ?
         `.view-overlays div:nth-child(${line}) >> div` :
         ".glyph-margin-widgets .fa-solid";
