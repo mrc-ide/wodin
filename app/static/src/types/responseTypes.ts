@@ -56,7 +56,6 @@ export interface OdinParameter {
     default: null | number;
     min: null | number;
     max: null | number;
-     
     is_integer: boolean;
     rank: number;
 }

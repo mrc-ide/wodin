@@ -6,9 +6,7 @@ import { WodinError } from "./types/responseTypes";
 import { processFitData, ProcessFitDataResult } from "./utils";
 import { SetDataPayload } from "./store/fitData/mutations";
 
- 
 type OnError = (error: WodinError) => void;
- 
 type OnSuccess = (success: SetDataPayload) => void;
 type PostSuccess = () => void;
 

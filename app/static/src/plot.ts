@@ -189,6 +189,5 @@ export const updatePlotTraceName = (
     if (parameterSetName) {
         parenthesisItems.push(parameterSetName);
     }
-     
     plotTrace.name = `${plotTrace.name} (${parenthesisItems.join(" ")})`;
 };

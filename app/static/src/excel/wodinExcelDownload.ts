@@ -9,7 +9,6 @@ export abstract class WodinExcelDownload {
 
     protected readonly _state: AppState;
 
-     
     protected readonly _rootGetters: any;
 
     protected readonly _commit: Commit;

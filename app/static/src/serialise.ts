@@ -201,7 +201,6 @@ export const deserialiseState = (targetState: AppState, serialised: SerialisedAp
         !graphs.config[0].selectedVariables.length &&
         !graphs.config[0].unselectedVariables?.length
     ) {
-         
         const selectedVariables = [...(model.odinModelResponse?.metadata?.variables || [])];
         const unselectedVariables: string[] = [];
 

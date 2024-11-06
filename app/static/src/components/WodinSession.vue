@@ -34,7 +34,6 @@ export default defineComponent({
         const appInitialised = computed(() => !!store.state.config && !!store.state.sessions.sessionsMetadata);
 
         // These props won't change as provided by server
-         
         const { appName, baseUrl, loadSessionId, appsPath, enableI18n, defaultLanguage } = props;
 
         store.dispatch(AppStateAction.InitialiseApp, {

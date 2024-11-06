@@ -1,5 +1,3 @@
- 
- 
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { Commit } from "vuex";
 import { freezer } from "./utils";
@@ -34,9 +32,7 @@ export interface API<S, E> {
     get<T>(url: string): Promise<void | ResponseWithType<T>>;
 }
 
- 
 type OnError = (failure: ResponseFailure) => void;
- 
 type OnSuccess = (success: ResponseSuccess) => void;
 
 export class APIService<S extends string, E extends string> implements API<S, E> {

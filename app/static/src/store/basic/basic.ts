@@ -19,7 +19,6 @@ import { multiSensitivity } from "../multiSensitivity/multiSensitivity";
 
 const language = getStoreModule();
 
- 
 const defaultState: () => any = () => {
     return {
         sessionId: newUid(),

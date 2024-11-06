@@ -57,7 +57,6 @@ export default defineComponent({
 
         const paramVaryFlags = computed(() => {
             return paramNames.value.reduce((values: Dict<boolean>, key: string) => {
-                 
                 values[key] = paramsToVary.value.includes(key);
                 return values;
             }, {} as Dict<boolean>);
