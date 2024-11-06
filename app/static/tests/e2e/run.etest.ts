@@ -28,7 +28,7 @@ test.describe("Run Tab", () => {
         await expectXTicks(page, 3, [0, 20, 40, 60, 80, 100]);
 
         // 2. Drag to zoom to an area on the first graph
-        const graphBounds = await page.locator(":nth-match(.plot .draglayer .xy .nsewdrag, 1)").boundingBox()!;
+        const graphBounds = (await page.locator(":nth-match(.plot .draglayer .xy .nsewdrag, 1)").boundingBox())!;
         await page.mouse.move(graphBounds.x + 100, graphBounds.y + 50);
         await page.mouse.down();
         await page.mouse.move(graphBounds.x + 300, graphBounds.y + 100);
