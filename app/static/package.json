@@ -14,7 +14,8 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@monaco-editor/loader": "^1.4.0",
@@ -47,6 +48,7 @@
     "@types/node": "^18.19.61",
     "@types/plotly.js-basic-dist-min": "^2.12.4",
     "@vitejs/plugin-vue": "^5.1.4",
+    "@vitest/coverage-istanbul": "^2.1.4",
     "@vitest/eslint-plugin": "1.1.7",
     "@vue/eslint-config-typescript": "^14.1.1",
     "@vue/test-utils": "^2.4.6",

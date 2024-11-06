@@ -21,7 +21,7 @@ jobs:
       - name: Test back end integration
         run: npm run integration-test --prefix=app/server
       - name: Test front end
-        run: npm run test:unit --prefix=app/static
+        run: npm run coverage --prefix=app/static
       - name: Lint back end
         run: npm run lint --prefix=app/server
       - name: Lint front end
