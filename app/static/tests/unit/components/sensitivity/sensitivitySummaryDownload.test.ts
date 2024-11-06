@@ -1,26 +1,26 @@
 import Vuex from "vuex";
 import { shallowMount, VueWrapper } from "@vue/test-utils";
 import { nextTick } from "vue";
-import DownloadOutput from "../../../../src/app/components/DownloadOutput.vue";
-import { AppState } from "../../../../src/app/store/appState/state";
+import DownloadOutput from "../../../../src/components/DownloadOutput.vue";
+import { AppState } from "../../../../src/store/appState/state";
 import {
     BaseSensitivityState,
     SensitivityPlotType,
     SensitivityState
-} from "../../../../src/app/store/sensitivity/state";
-import SensitivitySummaryDownload from "../../../../src/app/components/sensitivity/SensitivitySummaryDownload.vue";
-import { BaseSensitivityAction, SensitivityAction } from "../../../../src/app/store/sensitivity/actions";
-import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
-import LoadingSpinner from "../../../../src/app/components/LoadingSpinner.vue";
-import { ModelGetter } from "../../../../src/app/store/model/getters";
-import { getters as graphsGetters } from "../../../../src/app/store/graphs/getters";
+} from "../../../../src/store/sensitivity/state";
+import SensitivitySummaryDownload from "../../../../src/components/sensitivity/SensitivitySummaryDownload.vue";
+import { BaseSensitivityAction } from "../../../../src/store/sensitivity/actions";
+import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
+import LoadingSpinner from "../../../../src/components/LoadingSpinner.vue";
+import { ModelGetter } from "../../../../src/store/model/getters";
+import { getters as graphsGetters } from "../../../../src/store/graphs/getters";
 import { mockGraphsState } from "../../../mocks";
-import { defaultGraphSettings } from "../../../../src/app/store/graphs/state";
+import { defaultGraphSettings } from "../../../../src/store/graphs/state";
 
 describe("SensitivitySummaryDownload", () => {
-    const mockSetUserSummaryDownloadFileName = jest.fn();
-    const mockDownloadSummary = jest.fn();
-    const mockSetPlotTime = jest.fn();
+    const mockSetUserSummaryDownloadFileName = vi.fn();
+    const mockDownloadSummary = vi.fn();
+    const mockSetPlotTime = vi.fn();
 
     const getWrapper = (multiSens = false, state: Partial<BaseSensitivityState> = {}) => {
         const plotSettings = {
@@ -48,7 +48,7 @@ describe("SensitivitySummaryDownload", () => {
             },
             mutations: {
                 [BaseSensitivityMutation.SetUserSummaryDownloadFileName]: mockSetUserSummaryDownloadFileName,
-                [SensitivityMutation.SetPlotTime]: multiSens ? jest.fn() : mockSetPlotTime
+                [SensitivityMutation.SetPlotTime]: multiSens ? vi.fn() : mockSetPlotTime
             }
         };
         const minimalSensitivity = {
@@ -116,7 +116,7 @@ describe("SensitivitySummaryDownload", () => {
     ) => {
         let wrapper = getWrapper(false, state);
         test(wrapper, false);
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         wrapper = getWrapper(true, state);
         test(wrapper, true);
     };
@@ -127,13 +127,13 @@ describe("SensitivitySummaryDownload", () => {
     ) => {
         let wrapper = getWrapper(false, state);
         await test(wrapper, false);
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         wrapper = getWrapper(true, state);
         await test(wrapper, true);
     };
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("enables download button when expected", () => {

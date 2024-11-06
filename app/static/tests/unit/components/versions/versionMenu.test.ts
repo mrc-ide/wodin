@@ -1,12 +1,12 @@
 import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
-import { BasicState } from "../../../../src/app/store/basic/state";
+import { BasicState } from "../../../../src/store/basic/state";
 import { mockBasicState, mockVersionsState } from "../../../mocks";
-import VersionMenu from "../../../../src/app/components/header/VersionMenu.vue";
-import DropDown from "../../../../src/app/components/DropDown.vue";
+import VersionMenu from "../../../../src/components/header/VersionMenu.vue";
+import DropDown from "../../../../src/components/DropDown.vue";
 
 describe("version menu component", () => {
-    const mockVersionsAction = jest.fn();
+    const mockVersionsAction = vi.fn();
 
     const versions = {
         dfoptim: "0.0.5",
@@ -17,7 +17,7 @@ describe("version menu component", () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     const getWrapper = () => {

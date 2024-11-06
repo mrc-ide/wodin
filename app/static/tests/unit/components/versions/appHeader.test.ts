@@ -3,11 +3,11 @@ import { RouterLink } from "vue-router";
 import Vuex from "vuex";
 import VueFeather from "vue-feather";
 import { nextTick } from "vue";
-import AppHeader from "../../../../src/app/components/header/AppHeader.vue";
-import EditSessionLabel from "../../../../src/app/components/sessions/EditSessionLabel.vue";
-import { BasicState } from "../../../../src/app/store/basic/state";
+import AppHeader from "../../../../src/components/header/AppHeader.vue";
+import EditSessionLabel from "../../../../src/components/sessions/EditSessionLabel.vue";
+import { BasicState } from "../../../../src/store/basic/state";
 import { mockBasicState } from "../../../mocks";
-import VersionMenu from "../../../../src/app/components/header/VersionMenu.vue";
+import VersionMenu from "../../../../src/components/header/VersionMenu.vue";
 import { LanguageSwitcher } from "../../../../translationPackage";
 
 describe("AppHeader", () => {

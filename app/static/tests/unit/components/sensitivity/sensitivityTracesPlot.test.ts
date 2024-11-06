@@ -1,18 +1,17 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via WodinPlot
-/* eslint-disable import/first */
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
-import { AppState, AppType } from "../../../../src/app/store/appState/state";
-import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
-import SensitivityTracesPlot from "../../../../src/app/components/sensitivity/SensitivityTracesPlot.vue";
-import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
+import { AppState, AppType } from "../../../../src/store/appState/state";
+import WodinPlot from "../../../../src/components/WodinPlot.vue";
+import SensitivityTracesPlot from "../../../../src/components/sensitivity/SensitivityTracesPlot.vue";
+import { FitDataGetter } from "../../../../src/store/fitData/getters";
 import { mockRunState } from "../../../mocks";
-import { getters as runGetters } from "../../../../src/app/store/run/getters";
-import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
+import { getters as runGetters } from "../../../../src/store/run/getters";
+import { SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
 
-jest.mock("plotly.js-basic-dist-min", () => {});
+vi.mock("plotly.js-basic-dist-min", () => ({}));
 
-const mockSln1 = jest.fn().mockReturnValue({
+const mockSln1 = vi.fn().mockReturnValue({
     x: [0, 0.5, 1],
     values: [
         { name: "y", y: [5, 6, 7] },
@@ -21,7 +20,7 @@ const mockSln1 = jest.fn().mockReturnValue({
     ]
 });
 
-const mockSln2 = jest.fn().mockReturnValue({
+const mockSln2 = vi.fn().mockReturnValue({
     x: [0, 0.5, 1],
     values: [
         { name: "y", y: [50, 60, 70] },
@@ -30,7 +29,7 @@ const mockSln2 = jest.fn().mockReturnValue({
     ]
 });
 
-const mockCentralSln = jest.fn().mockReturnValue({
+const mockCentralSln = vi.fn().mockReturnValue({
     x: [0, 0.5, 1],
     values: [
         { name: "y", y: [15, 16, 17] },
@@ -39,7 +38,7 @@ const mockCentralSln = jest.fn().mockReturnValue({
     ]
 });
 
-const mockCentralStochasticSln = jest.fn().mockReturnValue({
+const mockCentralStochasticSln = vi.fn().mockReturnValue({
     x: [0, 0.5, 1],
     values: [
         { name: "y", description: "Mean", y: [22, 23, 24] },
@@ -48,7 +47,7 @@ const mockCentralStochasticSln = jest.fn().mockReturnValue({
     ]
 });
 
-const mockParameterSetSln1 = jest.fn().mockReturnValue({
+const mockParameterSetSln1 = vi.fn().mockReturnValue({
     x: [0, 0.5, 1],
     values: [
         { name: "y", y: [51, 61, 71] },
@@ -57,7 +56,7 @@ const mockParameterSetSln1 = jest.fn().mockReturnValue({
     ]
 });
 
-const mockParameterSetSln2 = jest.fn().mockReturnValue({
+const mockParameterSetSln2 = vi.fn().mockReturnValue({
     x: [0, 0.5, 1],
     values: [
         { name: "y", y: [52, 62, 72] },
@@ -66,7 +65,7 @@ const mockParameterSetSln2 = jest.fn().mockReturnValue({
     ]
 });
 
-const mockParameterSetCentralSln = jest.fn().mockReturnValue({
+const mockParameterSetCentralSln = vi.fn().mockReturnValue({
     x: [0, 0.5, 1],
     values: [
         { name: "y", y: [151, 161, 171] },
@@ -393,7 +392,24 @@ const mockParameterSetCentralResults = {
     "Set 2": { solution: mockParameterSetCentralSln }
 } as any;
 
-const mockSetLoading = jest.fn();
+const mockSetLoading = vi.fn();
+
+const getMockResult = (sensitivityHasSolutions = true, sensitivityHasData = false) => {
+    return {
+        batch: {
+            solutions: sensitivityHasSolutions ? mockSolutions : null,
+            allFitData: sensitivityHasData ? mockAllFitData : undefined,
+            pars: {
+                varying: [
+                    {
+                        name: "alpha",
+                        values: [1.11111, 2.22222]
+                    }
+                ]
+            }
+        }
+    };
+}
 
 describe("SensitivityTracesPlot", () => {
     const getWrapper = (
@@ -442,20 +458,7 @@ describe("SensitivityTracesPlot", () => {
                         paramSettings: {
                             parameterToVary: "alpha"
                         },
-                        result: {
-                            batch: {
-                                solutions: sensitivityHasSolutions ? mockSolutions : null,
-                                allFitData: sensitivityHasData ? mockAllFitData : undefined,
-                                pars: {
-                                    varying: [
-                                        {
-                                            name: "alpha",
-                                            values: [1.11111, 2.22222]
-                                        }
-                                    ]
-                                }
-                            }
-                        },
+                        result: getMockResult(sensitivityHasSolutions, sensitivityHasData),
                         parameterSetResults: hasParameterSets ? mockParameterSetResults : {}
                     },
                     mutations: {
@@ -485,7 +488,7 @@ describe("SensitivityTracesPlot", () => {
     };
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("renders as expected when there are sensitivity solutions", () => {
@@ -496,6 +499,7 @@ describe("SensitivityTracesPlot", () => {
         expect(wodinPlot.props("endTime")).toBe(1);
         expect(wodinPlot.props("redrawWatches")).toStrictEqual([
             ...mockSolutions,
+            getMockResult(),
             undefined,
             selectedVariables,
             {},
@@ -521,6 +525,7 @@ describe("SensitivityTracesPlot", () => {
         expect(wodinPlot.props("endTime")).toBe(1);
         expect(wodinPlot.props("redrawWatches")).toStrictEqual([
             ...mockSolutions,
+            getMockResult(true, true),
             mockAllFitData,
             selectedVariables,
             {},
@@ -546,6 +551,7 @@ describe("SensitivityTracesPlot", () => {
         expect(wodinPlot.props("endTime")).toBe(1);
         expect(wodinPlot.props("redrawWatches")).toStrictEqual([
             ...mockSolutions,
+            getMockResult(true, true),
             mockAllFitData,
             selectedVariables,
             { "Set 1": mockParameterSetBatch1 },
@@ -576,7 +582,7 @@ describe("SensitivityTracesPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Sensitivity has not been run.");
         expect(wodinPlot.props("endTime")).toBe(1);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([undefined, selectedVariables, {}, [], 0]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([getMockResult(false), undefined, selectedVariables, {}, [], 0]);
 
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 1, 100);
