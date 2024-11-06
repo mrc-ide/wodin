@@ -7,7 +7,7 @@
     "dev": "npm run copy-assets && vite",
     "build-with-check": "npm run copy-assets && run-p type-check \"build-only {@}\" -- && npm run copy-dist",
     "build": "npm run copy-assets && vite build && npm run copy-dist",
-    "copy-assets": "cp -r ./src/assets/ ../server/public/",
+    "copy-assets": "rm -rf ../server/public/* && cp -r ./src/assets/ ../server/public/ && cp ../server/assets/favicon.ico ../server/public/.",
     "copy-dist": "cp -r ./dist/. ../server/public/.",
     "test:unit": "vitest",
     "test:e2e": "playwright test",
