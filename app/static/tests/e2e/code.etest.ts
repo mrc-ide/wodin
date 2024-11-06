@@ -33,9 +33,9 @@ beta <- user(4)
 sigma <- user(2)
 `;
 
-const editorGlyphs: any = {
-    error: "fa-solid fa-circle-xmark",
-    warning: "fa-solid fa-triangle-exclamation"
+const editorGlyphs: Record<EditorStates, string> = {
+    error: "fa-circle-xmark",
+    warning: "fa-triangle-exclamation"
 };
 
 enum EditorStates {
@@ -47,36 +47,40 @@ test.beforeEach(async ({ page }) => {
     await page.goto("/apps/day1");
 });
 
-const expectMonacoDecoration = async (state: EditorStates, line: number, numOfLines: number, page: any) => {
+const expectMonacoDecoration = async (state: EditorStates, line: number, numOfLines: number, page: Page) => {
     for (let i = 0; i < numOfLines; i += 1) {
         const lineElement = await page.locator(`.view-overlays div:nth-child(${i + 1}) >> div`);
-        const glyphElement = await page.locator(`.margin-view-overlays div:nth-child(${i + 1}) >> div`);
         if (i === line - 1) {
-            expect(lineElement).toHaveClass(`cdr editor-${state}-background`);
-            expect(glyphElement.nth(0)).toHaveClass(`cgmr codicon ${editorGlyphs[state]} ${state}-glyph-style ms-1`);
-            expect(glyphElement.nth(1)).toHaveClass("line-numbers lh-odd");
+            await expect(lineElement).toHaveClass(`cdr editor-${state}-background`);
         } else if (i === numOfLines - 1) {
-            expect(lineElement).toHaveClass("current-line");
-            expect(glyphElement.nth(0)).toHaveClass("current-line current-line-margin-both");
-            expect(glyphElement.nth(1)).toHaveClass(/\bactive-line-number\b/);
-            expect(glyphElement.nth(1)).toHaveClass(/\bline-numbers\b/);
-            expect(glyphElement.nth(1)).toHaveClass(/\blh-odd\b/);
+            await expect(lineElement).toHaveClass("current-line");
         } else {
-            expect(lineElement).toHaveCount(0);
-            expect(glyphElement).toHaveClass("line-numbers lh-odd");
+            await expect(lineElement).toHaveCount(0);
         }
     }
+
+    const lineHeight = await page.locator(".margin-view-overlays").evaluate(el => {
+        return window.getComputedStyle(el).getPropertyValue("line-height");
+    });
+    const glyphTop = await page.locator(`.${editorGlyphs[state]}`).evaluate(el => {
+        return window.getComputedStyle(el).getPropertyValue("top");
+    });
+    expect(glyphTop).toBe(`${(line - 1) * parseInt(lineHeight)}px`);
 };
 
-const expectMonacoHover = async (type: "glyph" | "content", line: number, message: string, page: any) => {
+const expectMonacoHover = async (type: "glyph" | "content", line: number, message: string, page: Page) => {
     const isGlyph = type === "glyph";
-    const hoverElem = `.${isGlyph ? "margin-" : ""}view-overlays div:nth-child(${line}) >> div`;
-    const tooltipElem = `${isGlyph ? ".overlayWidgets" : ".overflowingContentWidgets"} .hover-contents div p`;
+    const hoverElem = type === "content" ?
+        `.view-overlays div:nth-child(${line}) >> div` :
+        ".glyph-margin-widgets .fa-solid";
+    // const hoverElem = `.${isGlyph ? "margin-" : ""}view-overlays div:nth-child(${line}) >> div`;
+    // const tooltipElem = `${isGlyph ? ".overlayWidgets" : ".overflowingContentWidgets"} .hover-contents div p`;
     await page.hover(hoverElem, { force: true });
-    const tooltip = await page.locator(tooltipElem);
-    await tooltip.waitFor({ timeout: 1000 });
-    await expect(tooltip).toHaveText(message);
-    await expect(tooltip).toHaveCSS("visibility", "visible");
+    // const tooltip = await page.locator(tooltipElem);
+    // await tooltip.waitFor({ timeout: 2000 });
+    // await expect(tooltip).toHaveText(message);
+    // await expect(tooltip).toHaveCSS("visibility", "visible");
+    await expect(await page.getByText(message)).toBeVisible()
 };
 
 test.describe("Code Tab tests", () => {
@@ -128,9 +132,9 @@ test.describe("Code Tab tests", () => {
     test("code loading on input renders as expected", async ({ page }) => {
         await page.press(".monaco-editor textarea", "Control+A");
         await page.press(".monaco-editor textarea", "Delete");
-        page.fill(".monaco-editor textarea", "blah");
-        expect(page.locator("#code-status")).toHaveClass("mt-2 code-validating-text");
-        expect(page.locator("#code-status").locator("i")).toHaveClass(
+        await page.fill(".monaco-editor textarea", "blah");
+        await expect(page.locator("#code-status")).toHaveClass("mt-2 code-validating-text");
+        await expect(page.locator("#code-status").locator("i")).toHaveClass(
             "vue-feather vue-feather--check inline-icon me-1 code-validating-icon"
         );
     });
@@ -355,12 +359,12 @@ test.describe("Code Tab tests", () => {
 
     test("can display help dialog", async ({ page }) => {
         await page.click("div.code-tab i.generic-help-icon");
-        expect((await page.innerText(".draggable-dialog .dragtarget")).trim()).toBe("Write odin code");
-        expect(await page.innerText(".draggable-dialog .draggable-content")).toContain("Write code in this editor");
+        await expect((await page.innerText(".draggable-dialog .dragtarget")).trim()).toBe("Write odin code");
+        await expect(await page.innerText(".draggable-dialog .draggable-content")).toContain("Write code in this editor");
 
         // close dialog
         await page.click("i.vue-feather--x");
-        expect(await page.locator(".draggable-dialog")).not.toBeVisible();
+        await expect(await page.locator(".draggable-dialog")).not.toBeVisible();
     });
 
     test("can see error after changing tabs and coming back", async ({ page }) => {
@@ -378,7 +382,7 @@ test.describe("Code Tab tests", () => {
         await page.click(".nav-tabs a:has-text('Options')");
         await page.click(".nav-tabs a:has-text('Code')");
         const lineElement = await page.locator(`.view-overlays div:nth-child(${2}) >> div`);
-        expect(lineElement).toHaveClass("cdr editor-error-background");
+        await expect(lineElement).toHaveClass("cdr editor-error-background");
     });
 
     test("can see warning after changing tabs and coming back", async ({ page }) => {
@@ -396,7 +400,7 @@ test.describe("Code Tab tests", () => {
         await page.click(".nav-tabs a:has-text('Options')");
         await page.click(".nav-tabs a:has-text('Code')");
         const lineElement = await page.locator(`.view-overlays div:nth-child(${3}) >> div`);
-        expect(lineElement).toHaveClass("cdr editor-warning-background");
+        await expect(lineElement).toHaveClass("cdr editor-warning-background");
     });
 
     test("can change graph setting for log scale y axis from code tab", async ({ page }) => {

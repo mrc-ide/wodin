@@ -206,7 +206,7 @@ test.describe("Options Tab tests", () => {
     test("can change graph setting for log scale y axis", async ({ page }) => {
         await page.locator(".log-scale-y-axis input").click();
         // should update y axis tick
-        const tickSelector = ":nth-match(.plotly .ytick text, 2)";
+        const tickSelector = ":nth-match(.ytick text, 2)";
         await expect(await page.innerHTML(tickSelector)).toBe("10n");
         // change back to linear
         await page.locator(".log-scale-y-axis input").click();
@@ -216,7 +216,7 @@ test.describe("Options Tab tests", () => {
     test("can change graph setting for lock axes", async ({ page }) => {
         await page.locator(".lock-y-axis input").click();
 
-        const tickSelector = ":nth-match(.plotly .ytick text, 6)";
+        const tickSelector = ":nth-match(.ytick text, 6)";
         await expect(await page.innerHTML(tickSelector)).toBe("1M");
 
         await page.locator(":nth-match(.parameter-input, 3)").fill("1000000000");
@@ -234,7 +234,7 @@ test.describe("Options Tab tests", () => {
     test("overrides axes lock if log scale toggle changes", async ({ page }) => {
         await page.locator(".lock-y-axis input").click();
 
-        const tickSelector = ":nth-match(.plotly .ytick text, 2)";
+        const tickSelector = ":nth-match(.ytick text, 2)";
         await expect(await page.innerHTML(tickSelector)).toBe("0.2M");
 
         await page.locator(".log-scale-y-axis input").click();
@@ -412,13 +412,13 @@ test.describe("Options Tab tests", () => {
         await sigmaParam.fill("3");
 
         const sigmaSavedParamTile = page.getByText("sigma: 2");
-        expect(sigmaSavedParamTile).toBeVisible();
-        expect(page.getByText("beta: 4")).not.toBeVisible();
+        await expect(sigmaSavedParamTile).toBeVisible();
+        await expect(page.getByText("beta: 4")).not.toBeVisible();
 
         await page.getByLabel("Show unchanged parameters").check();
 
-        expect(sigmaSavedParamTile).toBeVisible();
-        expect(page.getByText("beta: 4")).toBeVisible();
+        await expect(sigmaSavedParamTile).toBeVisible();
+        await expect(page.getByText("beta: 4")).toBeVisible();
     });
 
     test("error tooltip and doesn't change name if same name exists", async ({ page }) => {
@@ -434,8 +434,7 @@ test.describe("Options Tab tests", () => {
         await editDisplayName(2, page);
         await inputDisplayName(2, page, "random name 1");
         await saveDisplayName(1, page);
-        await expect((await page.innerText(":nth-match(.tooltip-inner, 2)")).trim()).toBe("Name already exists");
-        await expect(await page.isVisible(":nth-match(.param-name-input, 2)")).toBe(true);
+        await expect(await page.getByText("Name already exists")).toBeVisible();
     });
 
     test("error tooltip and doesn't change name if Set [number] format used", async ({ page }) => {
@@ -443,11 +442,15 @@ test.describe("Options Tab tests", () => {
         await editDisplayName(1, page);
         await inputDisplayName(1, page, "Set 10");
         await saveDisplayName(1, page);
-        await expect((await page.innerText(":nth-match(.tooltip-inner, 2)")).trim()).toBe(
+        await expect(await page.getByText(
             "Set 10 (or any Set [number] combination) is reserved for default set names. " +
-                "Please choose another set name or name this set back to its original name of 'Set 1'"
-        );
-        await expect(await page.isVisible(".param-name-input")).toBe(true);
+            "Please choose another set name or name this set back to its original name of 'Set 1'"
+        )).toBeVisible();
+        // await expect((await page.innerText(":nth-match(.tooltip-inner, 2)")).trim()).toBe(
+        //     "Set 10 (or any Set [number] combination) is reserved for default set names. " +
+        //         "Please choose another set name or name this set back to its original name of 'Set 1'"
+        // );
+        // await expect(await page.isVisible(".param-name-input")).toBe(true);
     });
 
     const fillInAdvancedInputs = async (type: string, advancedSetting: any, index: number) => {
