@@ -1,8 +1,8 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { mockBasicState, mockRunState } from "../../mocks";
-import { BasicState } from "../../../src/app/store/basic/state";
-import DownloadOutput from "../../../src/app/components/DownloadOutput.vue";
+import { BasicState } from "../../../src/store/basic/state";
+import DownloadOutput from "../../../src/components/DownloadOutput.vue";
 
 /* eslint-disable max-len */
 const generatedFilenameRegex =
@@ -34,7 +34,7 @@ describe("DownloadOutput", () => {
     };
 
     beforeEach(() => {
-        jest.resetAllMocks();
+        vi.resetAllMocks();
     });
 
     it("renders as expected when not open", () => {

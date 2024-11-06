@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import LoadingSpinner from "../../../src/app/components/LoadingSpinner.vue";
+import LoadingSpinner from "../../../src/components/LoadingSpinner.vue";
 
 describe("LoadingSpinner", () => {
     it("renders as expected", () => {

@@ -1,5 +1,5 @@
 import { shallowMount } from "@vue/test-utils";
-import ActionRequiredMessage from "../../../src/app/components/ActionRequiredMessage.vue";
+import ActionRequiredMessage from "../../../src/components/ActionRequiredMessage.vue";
 
 describe("ActionRequiredMessage", () => {
     it("renders message in span if present", () => {

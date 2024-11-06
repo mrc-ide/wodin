@@ -1,13 +1,13 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { mockBasicState } from "../../mocks";
-import { BasicState } from "../../../src/app/store/basic/state";
-import ErrorsAlert from "../../../src/app/components/ErrorsAlert.vue";
-import { WodinError } from "../../../src/app/types/responseTypes";
-import { ErrorsMutation } from "../../../src/app/store/errors/mutations";
+import { BasicState } from "../../../src/store/basic/state";
+import ErrorsAlert from "../../../src/components/ErrorsAlert.vue";
+import { WodinError } from "../../../src/types/responseTypes";
+import { ErrorsMutation } from "../../../src/store/errors/mutations";
 
 describe("ErrorsAlert", () => {
-    const getWrapper = (errors: WodinError[], dismissErrors = jest.fn()) => {
+    const getWrapper = (errors: WodinError[], dismissErrors = vi.fn()) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState,
             modules: {
@@ -71,7 +71,7 @@ describe("ErrorsAlert", () => {
     });
 
     it("dismisses errors on close", async () => {
-        const mockDismissErrors = jest.fn();
+        const mockDismissErrors = vi.fn();
         const wrapper = getWrapper([{ error: "TEST_CODE", detail: "Test Error Message" }], mockDismissErrors);
         const closeButton = wrapper.find("button");
         await closeButton.trigger("click");

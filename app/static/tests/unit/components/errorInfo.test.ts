@@ -1,5 +1,5 @@
 import { shallowMount } from "@vue/test-utils";
-import ErrorInfo from "../../../src/app/components/ErrorInfo.vue";
+import ErrorInfo from "../../../src/components/ErrorInfo.vue";
 
 describe("ErrorInfo", () => {
     it("renders as expected with error", () => {
@@ -10,7 +10,7 @@ describe("ErrorInfo", () => {
     });
 
     it("renders as expected with no error", () => {
-        const wrapper = shallowMount(ErrorInfo, { props: { error: null } });
+        const wrapper = shallowMount(ErrorInfo, { props: { error: undefined } });
         expect(wrapper.find("div").text()).toBe("");
     });
 });

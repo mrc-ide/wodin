@@ -1,9 +1,9 @@
 import { nextTick } from "vue";
 import { shallowMount, VueWrapper } from "@vue/test-utils";
-import WodinPanels from "../../../src/app/components/WodinPanels.vue";
+import WodinPanels from "../../../src/components/WodinPanels.vue";
 
-const docAddListenerSpy = jest.spyOn(document, "addEventListener");
-const docRemoveListenerSpy = jest.spyOn(document, "removeEventListener");
+const docAddListenerSpy = vi.spyOn(document, "addEventListener");
+const docRemoveListenerSpy = vi.spyOn(document, "removeEventListener");
 
 enum PanelsMode {
     Left,
@@ -28,8 +28,8 @@ enum DragStart {
     Edge
 }
 
-const mockObserve = jest.fn();
-const mockDisconnect = jest.fn();
+const mockObserve = vi.fn();
+const mockDisconnect = vi.fn();
 function mockResizeObserver(this: any) {
     this.observe = mockObserve;
     this.disconnect = mockDisconnect;
@@ -45,7 +45,7 @@ const windowBoundaryRight = windowWidth - widthToleranceRight;
 const snapToleranceLeft = windowBoundaryLeft / 3;
 const snapToleranceRight = windowWidth - widthToleranceRight / 3;
 
-const mockPreventDefault = jest.fn();
+const mockPreventDefault = vi.fn();
 
 describe("WodinPanels", () => {
     const getWrapper = () => {
@@ -163,7 +163,7 @@ describe("WodinPanels", () => {
     };
 
     beforeEach(() => {
-        jest.resetAllMocks();
+        vi.resetAllMocks();
     });
 
     it("has expected slot content", () => {

@@ -1,5 +1,5 @@
 import { shallowMount } from "@vue/test-utils";
-import WodinPlotDataSummary from "../../../src/app/components/WodinPlotDataSummary.vue";
+import WodinPlotDataSummary from "../../../src/components/WodinPlotDataSummary.vue";
 
 describe("WodinPlotDataSummary", () => {
     const getWrapper = () => {
