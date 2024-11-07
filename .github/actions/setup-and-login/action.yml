@@ -1,6 +1,12 @@
 name: Setup Node, Env and login to GHCR
 
 inputs:
+  install-packages:
+    required: false
+    default: false
+  build-and-run-server:
+    required: false
+    default: false
   ghcr-username:
     required: false
     default: ''
@@ -43,3 +49,18 @@ runs:
     - uses: actions/setup-node@v4
       with:
         node-version: 20
+
+    - name: Install packages
+      if: inputs.install-packages == true
+      shell: bash
+      run: |
+        npm i --prefix=app/server
+        npm i --prefix=app/static
+
+    - name: Build and run server
+      if: inputs.build-and-run-server == true
+      shell: bash
+      run: |
+        ./scripts/build.sh
+        ./scripts/run-dependencies.sh
+        npm run serve --prefix=app/server &

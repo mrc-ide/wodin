@@ -7,6 +7,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup Node
         uses: ./.github/actions/setup-and-login
+        with:
+          install-packages: true
 
       - name: Test back end
         run: npm test --prefix=app/server
@@ -26,13 +28,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup Node
         uses: ./.github/actions/setup-and-login
+        with:
+          build-and-run-server: true
 
-      - name: Build
-        run: ./scripts/build.sh
-      - name: Run dependencies
-        run: ./scripts/run-dependencies.sh
-      - name: Run server
-        run: npm run serve --prefix=app/server &
       - name: Test back end integration
         run: npm run integration-test --prefix=app/server
 
@@ -42,13 +40,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup Node
         uses: ./.github/actions/setup-and-login
+        with:
+          build-and-run-server: true
 
-      - name: Build
-        run: ./scripts/build.sh
-      - name: Run dependencies
-        run: ./scripts/run-dependencies.sh
-      - name: Run server
-        run: npm run serve --prefix=app/server &
       - name: Test e2e
         run:  npm run test:e2e --prefix=app/static
 
@@ -58,6 +52,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup Node
         uses: ./.github/actions/setup-and-login
+        with:
+          install-packages: true
 
       - name: Lint back end
         run: npm run lint --prefix=app/server
