@@ -1,0 +1,28 @@
+name: build
+
+on: [push]
+
+env:
+  TAG_GHCR: mrc-ide/wodin
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup env and login to GHCR
+        id: ci-env
+        uses: ./.github/actions/setup-and-login
+        with:
+          ghcr-username: ${{ github.actor }}
+          ghcr-password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Build and push docker
+        uses: docker/build-push-action@v5
+        with:
+          context: app
+          file: ./docker/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{env.TAG_GHCR}}:${{steps.ci-env.outputs.CI_SHA}}
+            ghcr.io/${{env.TAG_GHCR}}:${{steps.ci-env.outputs.CI_BRANCH}}
