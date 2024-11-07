@@ -1,7 +1,7 @@
 name: test
 on: [push]
 jobs:
-  unit-tests:
+  fe-unit-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -10,16 +10,33 @@ jobs:
         with:
           install-packages: true
 
-      - name: Test back end
-        run: npm test --prefix=app/server
       - name: Test front end
         run: npm run coverage --prefix=app/static
+      - uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: true # optional (default = false)
+          files: ./app/static/coverage/coverage-final.json
+          token: ${{ secrets.CODECOV_TOKEN }} # required
+
+  be-unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: ./.github/actions/setup-and-login
+        with:
+          install-packages: true
+
+      - name: Run deps
+        run: ./scripts/run-dependencies.sh
+      - name: Test back end
+        run: npm test --prefix=app/server
       - name: Check versions
         run: npm run genversion --prefix=app/server -- --check-only
       - uses: codecov/codecov-action@v4
         with:
           fail_ci_if_error: true # optional (default = false)
-          files: ./app/server/coverage/coverage-final.json,./app/static/coverage/coverage-final.json
+          files: ./app/server/coverage/coverage-final.json
           token: ${{ secrets.CODECOV_TOKEN }} # required
 
   integration-tests:
