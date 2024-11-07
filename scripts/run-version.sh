@@ -41,7 +41,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 API_IMAGE=mrcide/odin.api:$API_BRANCH
-APP_IMAGE=mrcide/wodin:$APP_BRANCH
+APP_IMAGE=ghcr.io/mrc-ide/wodin:$APP_BRANCH
 REDIS_IMAGE=redis:6
 
 API_NAME=odin.api

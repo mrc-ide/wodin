@@ -3,17 +3,18 @@ import * as fs from "fs";
 import { realisticFitData } from "./utils";
 
 test.describe("Index tests", () => {
-    const tmpPath = "tmp";
+    let tmpPath: string;
 
-    test.beforeAll(() => {
+    test.beforeEach(() => {
+        tmpPath = `${Math.random()}`;
         if (fs.existsSync(tmpPath)) {
-            fs.rmdirSync(tmpPath, { recursive: true });
+            fs.rmSync(tmpPath, { recursive: true });
         }
         fs.mkdirSync(tmpPath);
     });
 
-    test.afterAll(() => {
-        fs.rmdirSync(tmpPath, { recursive: true });
+    test.afterEach(() => {
+        fs.rmSync(tmpPath, { recursive: true });
     });
 
     test("renders heading", async ({ page }) => {
