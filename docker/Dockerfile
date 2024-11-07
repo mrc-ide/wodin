@@ -1,4 +1,4 @@
-FROM ghcr.io/mrc-ide/wodin-base-image
+FROM ghcr.io/mrc-ide/wodin-base-image:main
 
 COPY . /wodin
 RUN /wodin/scripts/build.sh && \
