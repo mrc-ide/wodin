@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 retries=10
-sleep 15;
+sleep 20;
 
 while ((retries > 0)); do
     curl http://localhost:3000 | grep "Example WODIN configuration" && break
