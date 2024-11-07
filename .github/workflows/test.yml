@@ -25,10 +25,8 @@ jobs:
       - name: Setup Node
         uses: ./.github/actions/setup-and-login
         with:
-          install-packages: true
+          build-and-run-server: true
 
-      - name: Run deps
-        run: ./scripts/run-dependencies.sh
       - name: Test back end
         run: npm test --prefix=app/server
       - name: Check versions
@@ -59,7 +57,9 @@ jobs:
         uses: ./.github/actions/setup-and-login
         with:
           build-and-run-server: true
-
+      
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
       - name: Test e2e
         run:  npm run test:e2e --prefix=app/static
 
