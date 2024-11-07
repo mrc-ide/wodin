@@ -25,8 +25,7 @@ jobs:
           tags: |
             ghcr.io/${{env.TAG_GHCR}}:${{steps.ci-env.outputs.CI_SHA}}
             ghcr.io/${{env.TAG_GHCR}}:${{steps.ci-env.outputs.CI_BRANCH}}
-
       - name: Smoke test
         run: |
           ./scripts/run-version.sh --app ${{steps.ci-env.outputs.CI_BRANCH}} &
-          curl http://localhost:3000 | grep "Example WODIN configuration"
+          ./scripts/smoke-test.sh
