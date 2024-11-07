@@ -19,6 +19,7 @@ jobs:
           fail_ci_if_error: true # optional (default = false)
           files: ./app/static/coverage/coverage-final.json
           token: ${{ secrets.CODECOV_TOKEN }} # required
+          codecov_yml_path: ./codecov.yml
 
   be-unit-tests:
     runs-on: ubuntu-latest
