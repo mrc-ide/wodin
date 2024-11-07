@@ -3,10 +3,10 @@ name: Setup Node, Env and login to GHCR
 inputs:
   install-packages:
     required: false
-    default: false
+    default: 'false'
   build-and-run-server:
     required: false
-    default: false
+    default: 'false'
   ghcr-username:
     required: false
     default: ''
@@ -51,14 +51,14 @@ runs:
         node-version: 20
 
     - name: Install packages
-      if: inputs.install-packages == true
+      if: inputs.install-packages == 'true'
       shell: bash
       run: |
         npm i --prefix=app/server
         npm i --prefix=app/static
 
     - name: Build and run server
-      if: inputs.build-and-run-server == true
+      if: inputs.build-and-run-server == 'true'
       shell: bash
       run: |
         ./scripts/build.sh
