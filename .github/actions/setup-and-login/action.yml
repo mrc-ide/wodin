@@ -51,7 +51,8 @@ runs:
         node-version: 20
 
     - name: Install packages
-      if: inputs.install-packages == 'true'
+      # we install in the build script anyway so skip if build-and-run-server
+      if: inputs.install-packages == 'true' && inputs.build-and-run-server != 'true'
       shell: bash
       run: |
         npm i --prefix=app/server
