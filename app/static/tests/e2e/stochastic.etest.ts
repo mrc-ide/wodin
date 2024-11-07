@@ -19,6 +19,7 @@ test.describe("stochastic app", () => {
     });
 
     test("can change number of replicates and re-run model", async ({ page }) => {
+        await expect(await page.locator(".action-required-msg")).toHaveText("");
         await page.fill(":nth-match(#run-options input, 2)", "6");
 
         await expect(await page.locator(".action-required-msg")).toHaveText(
@@ -42,6 +43,7 @@ test.describe("stochastic app", () => {
     });
 
     test("traces are hidden if replicates are above maxReplicatesDisplay", async ({ page }) => {
+        await expect(await page.locator(".action-required-msg")).toHaveText("");
         await page.fill(":nth-match(#run-options input, 2)", "50");
         await expect(await page.locator(".action-required-msg")).toHaveText(
             "Plot is out of date: number of replicates has changed. Run model to update."
