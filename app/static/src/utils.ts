@@ -20,7 +20,6 @@ import { AppState } from "./store/appState/state";
 import { AdvancedComponentType, AdvancedSettings, Tag } from "./store/run/state";
 
 export const freezer = {
-    /* eslint-disable @typescript-eslint/no-explicit-any */
     deepFreeze: (data: unknown): unknown => {
         if (Array.isArray(data)) {
             return Object.freeze(data.map((d) => freezer.deepFreeze(d)));
@@ -36,7 +35,6 @@ export const freezer = {
     }
 };
 
-/* eslint-disable no-eval */
 export function evaluateScript<T>(script: string): T {
     return eval(script) as T;
 }

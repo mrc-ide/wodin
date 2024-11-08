@@ -1,4 +1,4 @@
-import { expect, Page, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
 import { expectSummaryValues } from "./utils";
 

@@ -8,7 +8,7 @@ import StandardFormInput from "../../../../src/components/options/StandardFormIn
 import { AdvancedOptions } from "../../../../src/types/responseTypes";
 import TagInput from "../../../../src/components/options/TagInput.vue";
 import { ModelFitMutation } from "../../../../src/store/modelFit/mutations";
-import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
+import { BaseSensitivityMutation } from "../../../../src/store/sensitivity/mutations";
 import { AppType } from "../../../../src/store/appState/state";
 
 describe("Advanced Settings", () => {

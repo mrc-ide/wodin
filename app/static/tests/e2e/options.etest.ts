@@ -446,11 +446,6 @@ test.describe("Options Tab tests", () => {
             "Set 10 (or any Set [number] combination) is reserved for default set names. " +
             "Please choose another set name or name this set back to its original name of 'Set 1'"
         )).toBeVisible();
-        // await expect((await page.innerText(":nth-match(.tooltip-inner, 2)")).trim()).toBe(
-        //     "Set 10 (or any Set [number] combination) is reserved for default set names. " +
-        //         "Please choose another set name or name this set back to its original name of 'Set 1'"
-        // );
-        // await expect(await page.isVisible(".param-name-input")).toBe(true);
     });
 
     const fillInAdvancedInputs = async (type: string, advancedSetting: any, index: number) => {

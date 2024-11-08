@@ -9,7 +9,7 @@ import { RunMutation, mutations as runMutations } from "../../../../src/store/ru
 import { AppType, VisualisationTab } from "../../../../src/store/appState/state";
 import { Mock } from "vitest";
 import { ModelFitMutation } from "../../../../src/store/modelFit/mutations";
-import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
+import { BaseSensitivityMutation } from "../../../../src/store/sensitivity/mutations";
 import { ModelState } from "../../../../src/store/model/state";
 
 const mockTooltipDirective = vi.fn();

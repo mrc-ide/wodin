@@ -75,17 +75,10 @@ const expectMonacoDecoration = async (state: EditorStates, line: number, numOfLi
 };
 
 const expectMonacoHover = async (type: "glyph" | "content", line: number, message: string, page: Page) => {
-    const isGlyph = type === "glyph";
     const hoverElem = type === "content" ?
         `.view-overlays div:nth-child(${line}) >> div` :
         ".glyph-margin-widgets .fa-solid";
-    // const hoverElem = `.${isGlyph ? "margin-" : ""}view-overlays div:nth-child(${line}) >> div`;
-    // const tooltipElem = `${isGlyph ? ".overlayWidgets" : ".overflowingContentWidgets"} .hover-contents div p`;
     await page.hover(hoverElem, { force: true });
-    // const tooltip = await page.locator(tooltipElem);
-    // await tooltip.waitFor({ timeout: 2000 });
-    // await expect(tooltip).toHaveText(message);
-    // await expect(tooltip).toHaveCSS("visibility", "visible");
     await expect(await page.getByText(message)).toBeVisible()
 };
 

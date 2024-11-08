@@ -5,7 +5,6 @@ import { FitState } from "../src/store/fit/state";
 import { StochasticState } from "../src/store/stochastic/state";
 import {
     AdvancedOptions,
-    BatchPars,
     OdinUserType,
     ResponseFailure,
     ResponseSuccess,
@@ -377,7 +376,7 @@ export const mockBatchParsDisplace = (
 
 export const mockRunnerOde = () => {
     return {
-        wodinRun: vi.fn((odin, pars, start, end) => "test solution" as any)
+        wodinRun: vi.fn(() => "test solution" as any)
     } as any;
 };
 

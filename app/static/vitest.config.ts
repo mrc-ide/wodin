@@ -9,7 +9,13 @@ export default mergeConfig(
       environment: 'jsdom',
       exclude: [...configDefaults.exclude, 'e2e/**'],
       root: fileURLToPath(new URL('./', import.meta.url)),
-      globals: true
+      globals: true,
+      silent: true,
+      coverage: {
+        provider: "istanbul",
+        include: ["src", "translationPackage"],
+        exclude: ["**/wodin.ts", "**/App.vue", "**/tests/**"]
+      }
     }
   })
 )

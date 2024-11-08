@@ -120,7 +120,7 @@ describe("verifies valid plot settings time", () => {
     });
 
     it("does not update time if already valid", () => {
-        const state = getState(50, 100);
+        getState(50, 100);
         expect(commit).not.toHaveBeenCalled();
     });
 });

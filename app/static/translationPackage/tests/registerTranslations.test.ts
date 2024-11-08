@@ -50,7 +50,7 @@ describe("Registering translations", () => {
 
     it("throws error if keys are in common in same language", () => {
         try {
-            const error = registerTranslations(getLanguageState(), {
+            registerTranslations(getLanguageState(), {
                 en: [getEnglishLocales(), { hello: "hello" }],
                 fr: [getFrenchLocales()]
             });

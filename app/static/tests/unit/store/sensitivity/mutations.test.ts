@@ -147,7 +147,7 @@ describe("Sensitivity mutations", () => {
         expect(state.running).toBe(true);
     });
 
-    it("sets running", () => {
+    it("sets loading", () => {
         const state = mockSensitivityState();
         mutations.SetLoading(state, true);
         expect(state.loading).toBe(true);

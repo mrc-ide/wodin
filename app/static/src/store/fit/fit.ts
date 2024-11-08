@@ -21,7 +21,6 @@ import { multiSensitivity } from "../multiSensitivity/multiSensitivity";
 
 const language = getStoreModule();
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultState: () => any = () => {
     return {
         sessionId: newUid(),

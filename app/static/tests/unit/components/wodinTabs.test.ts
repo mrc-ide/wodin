@@ -47,7 +47,7 @@ describe("WodinTabs", () => {
         // can click back too
         await tabLinks.at(0)!.trigger("click");
         expect(tabLinks.at(0)!.classes()).toContain("active");
-        expect(slotContainer.html())!.toContain("<div>ONE</div>");
+        expect(slotContainer.html()).toContain("<div>ONE</div>");
         expect(wrapper.emitted("tabSelected")!.length).toBe(2);
         expect(wrapper.emitted("tabSelected")![1]).toStrictEqual(["one"]);
     });

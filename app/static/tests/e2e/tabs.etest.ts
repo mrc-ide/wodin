@@ -1,4 +1,4 @@
-import { expect, test, Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 test.describe("Wodin App tabs tests", () => {
     test.beforeEach(async ({ page }) => {

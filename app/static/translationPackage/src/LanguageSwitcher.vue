@@ -12,7 +12,6 @@
 <script lang="ts">
 import { PropType, computed, defineComponent } from "vue";
 import DropDown from "./DropDown.vue";
-import VueFeather from "vue-feather";
 import { useStore } from "vuex";
 import { LanguageAction } from "../store/actions";
 
@@ -21,8 +20,7 @@ type LanguageKeys = Record<string, string>;
 export default defineComponent({
     name: "LanguageSwitcher",
     components: {
-        DropDown,
-        VueFeather
+        DropDown
     },
     props: {
         languagesKeys: {
@@ -30,7 +28,7 @@ export default defineComponent({
             required: true
         }
     },
-    setup(props) {
+    setup() {
         const store = useStore();
         const currentLanguage = computed(() => store.state.language.currentLanguage);
         const enableI18n = computed(() => store.state.language.enableI18n);
@@ -39,7 +37,6 @@ export default defineComponent({
         };
 
         return {
-            languagesKeys: props.languagesKeys,
             changeLang,
             currentLanguage,
             enableI18n

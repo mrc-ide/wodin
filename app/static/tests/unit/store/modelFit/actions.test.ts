@@ -2,7 +2,7 @@ import { ModelFitMutation } from "../../../../src/store/modelFit/mutations";
 import { mockFitDataState, mockModelFitState, mockModelState, mockRunState } from "../../../mocks";
 import { actions, ModelFitAction } from "../../../../src/store/modelFit/actions";
 import { RunMutation } from "../../../../src/store/run/mutations";
-import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
+import { BaseSensitivityMutation } from "../../../../src/store/sensitivity/mutations";
 import { AdvancedOptions } from "../../../../src/types/responseTypes";
 import { AdvancedComponentType } from "../../../../src/store/run/state";
 import { nextTick } from "vue";
@@ -333,7 +333,6 @@ describe("ModelFit actions", () => {
     it("UpdateSumOfSquares does nothing if fitting", () => {
         const commit = vi.fn();
         const testState = mockModelFitState({ fitting: true });
-        const rootGetters = null;
         const context = {
             commit,
             state: testState,

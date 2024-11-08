@@ -158,7 +158,7 @@ describe("SensitivityPlotOptions", () => {
     });
 
     it("on mounted, initialises time to model end if null", () => {
-        const wrapper = getWrapper({ plotType: SensitivityPlotType.ValueAtTime, time: null });
+        getWrapper({ plotType: SensitivityPlotType.ValueAtTime, time: null });
         expect(mockSetPlotTime).toHaveBeenCalledTimes(1);
         expect(mockSetPlotTime.mock.calls[0][1]).toBe(100);
     });

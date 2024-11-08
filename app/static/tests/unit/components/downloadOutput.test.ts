@@ -1,13 +1,11 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
-import { mockBasicState, mockRunState } from "../../mocks";
+import { mockBasicState } from "../../mocks";
 import { BasicState } from "../../../src/store/basic/state";
 import DownloadOutput from "../../../src/components/DownloadOutput.vue";
 
-/* eslint-disable max-len */
 const generatedFilenameRegex =
     /^test-run-([0-9]{4})?(1[0-2]|0[1-9])?(3[01]|0[1-9]|[12][0-9])-(2[0-3]|[0-1][0-9])?([0-5][0-9])?([0-5][0-9])?$/;
-/* eslint-disable max-len */
 const generatedFilenameWithSuffixRegex =
     /^test-run-([0-9]{4})?(1[0-2]|0[1-9])?(3[01]|0[1-9]|[12][0-9])-(2[0-3]|[0-1][0-9])?([0-5][0-9])?([0-5][0-9])?.xlsx$/;
 
