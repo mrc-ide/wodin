@@ -57,6 +57,10 @@ test.describe("Sessions tests", () => {
         return chromium.launchPersistentContext(userDataDir);
     };
 
+    test.use({
+        permissions: ["clipboard-read", "clipboard-write"]
+    })
+
     test("can use Sessions page", async () => {
         const browser = await usePersistentContext();
         const page = await browser.newPage();

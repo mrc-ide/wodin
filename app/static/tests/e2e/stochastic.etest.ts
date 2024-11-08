@@ -85,7 +85,7 @@ test.describe("stochastic app", () => {
         // Open Sensitivity tab
         await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
 
-        page.click("#run-sens-btn");
+        await page.click("#run-sens-btn");
 
         // Should briefly see 'Running..' message
         await expect(await page.innerText("#sensitivity-running")).toContain("Running sensitivity");

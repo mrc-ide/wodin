@@ -106,7 +106,7 @@ test.describe("Sensitivity tests", () => {
         // run and see all traces
         await page.click("#run-sens-btn");
         const linesSelector = `${plotSelector} .scatterlayer .trace .lines path`;
-        expect((await page.locator(`:nth-match(${linesSelector}, 30)`).getAttribute("d"))!.startsWith("M0")).toBe(true);
+        await expect((await page.locator(`:nth-match(${linesSelector}, 30)`).getAttribute("d"))!.startsWith("M0")).toBe(true);
 
         // expected legend and axes
         await expectLegend(page);
