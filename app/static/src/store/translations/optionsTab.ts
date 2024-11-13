@@ -1,6 +1,6 @@
 import { TranslationLocales } from "../../types/languageTypes";
 
-export interface OptionsTabTranslations extends TranslationLocales {
+interface OptionsTabTranslations extends TranslationLocales {
     optionsTabExample: string;
 }
 

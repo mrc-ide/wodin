@@ -1,6 +1,6 @@
 import { TranslationLocales } from "../../types/languageTypes";
 
-export interface SharedTranslations extends TranslationLocales {
+interface SharedTranslations extends TranslationLocales {
     sharedExample: string;
 }
 

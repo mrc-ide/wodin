@@ -1,6 +1,6 @@
 import { TranslationLocales } from "../../types/languageTypes";
 
-export interface FitTabTranslations extends TranslationLocales {
+interface FitTabTranslations extends TranslationLocales {
     fitTabExample: string;
 }
 

@@ -12,6 +12,7 @@
 <script lang="ts">
 import { computed, defineComponent, ref, watch, onMounted, onUnmounted, PropType, Ref } from "vue";
 import { useStore } from "vuex";
+import EventEmitter from "events";
 import {
     newPlot,
     react,
@@ -226,7 +227,7 @@ export default defineComponent({
                     }
 
                     if (props.recalculateOnRelayout) {
-                        (el as any).on("plotly_relayout", relayout);
+                        (el as EventEmitter).on("plotly_relayout", relayout);
                     }
                     resizeObserver = new ResizeObserver(resize);
                     resizeObserver.observe(plot.value as HTMLElement);

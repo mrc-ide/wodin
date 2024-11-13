@@ -18,7 +18,12 @@
         var loadSessionIdGlobal = "{{loadSessionId}}";
         var shareNotFoundGlobal = "{{shareNotFound}}";
     </script>
-    <script type="module" src="/wodin.js"></script>
-    <link rel="stylesheet" href="/wodin.css"/>
+    {{#if hotReload}}
+        <script type="module" src="http://localhost:5173/src/wodin.ts"></script>
+        <link rel="stylesheet" href="http://localhost:5173/src/scss/style.scss"/>
+    {{else}}
+        <script type="module" src="/wodin.js"></script>
+        <link rel="stylesheet" href="/wodin.css"/>
+    {{/if}}
     <script async src="{{mathjaxSrc}}"></script>
 </html>

@@ -30,12 +30,12 @@
 import { computed, CSSProperties, defineComponent, onMounted, ref } from "vue";
 import VueFeather from "vue-feather";
 
-export interface Point {
+interface Point {
     x: number;
     y: number;
 }
 
-export interface Size {
+interface Size {
     width: number;
     height: number;
 }
