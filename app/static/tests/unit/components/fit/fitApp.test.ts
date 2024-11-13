@@ -1,24 +1,33 @@
 // Mock the import of third party packages to prevent errors
-jest.mock("plotly.js-basic-dist-min", () => ({}));
-jest.mock("plotly.js-basic-dist-min", () => ({}));
-jest.mock("../../../../src/app/components/help/MarkdownItImport.ts", () => {
-    // eslint-disable-next-line func-names
-    return function () {
-        return {
-            use: jest.fn().mockReturnValue({
-                renderer: { rules: {} },
-                render: jest.fn()
-            })
-        };
-    };
+vi.mock("plotly.js-basic-dist-min", () => {
+  return {
+      default: undefined,
+      update: undefined
+  }
+});
+vi.mock("../../../../src/components/help/MarkdownItImport.ts", () => {
+  class MarkDownItClass {
+      constructor() {
+          return {
+              use: vi.fn().mockReturnValue({
+                  renderer: { rules: {} },
+                  render: vi.fn()
+              })
+          }
+      }
+  };
+  return {
+      default: {
+          default: MarkDownItClass
+      }
+  }
 });
 
-/* eslint-disable import/first */
 import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
 import { expectLeftWodinTabs, expectRightWodinTabs } from "../../../testUtils";
-import FitApp from "../../../../src/app/components/fit/FitApp.vue";
-import { FitState } from "../../../../src/app/store/fit/state";
+import FitApp from "../../../../src/components/fit/FitApp.vue";
+import { FitState } from "../../../../src/store/fit/state";
 import {
     mockFitDataState,
     mockFitState,
@@ -27,31 +36,31 @@ import {
     mockModelState,
     mockSensitivityState
 } from "../../../mocks";
-import WodinApp from "../../../../src/app/components/WodinApp.vue";
-import WodinPanels from "../../../../src/app/components/WodinPanels.vue";
-import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
-import { ModelAction } from "../../../../src/app/store/model/actions";
-import CodeTab from "../../../../src/app/components/code/CodeTab.vue";
-import DataTab from "../../../../src/app/components/data/DataTab.vue";
-import RunTab from "../../../../src/app/components/run/RunTab.vue";
-import HelpTab from "../../../../src/app/components/help/HelpTab.vue";
-import MultiSensitivityTab from "../../../../src/app/components/multiSensitivity/MultiSensitivityTab.vue";
-import { VisualisationTab } from "../../../../src/app/store/appState/state";
-import { AppStateMutation } from "../../../../src/app/store/appState/mutations";
-import { ModelFitGetter } from "../../../../src/app/store/modelFit/getters";
-import { AppConfig } from "../../../../src/app/types/responseTypes";
-import { getters as graphsGetters } from "../../../../src/app/store/graphs/getters";
+import WodinApp from "../../../../src/components/WodinApp.vue";
+import WodinPanels from "../../../../src/components/WodinPanels.vue";
+import OptionsTab from "../../../../src/components/options/OptionsTab.vue";
+import { ModelAction } from "../../../../src/store/model/actions";
+import CodeTab from "../../../../src/components/code/CodeTab.vue";
+import DataTab from "../../../../src/components/data/DataTab.vue";
+import RunTab from "../../../../src/components/run/RunTab.vue";
+import HelpTab from "../../../../src/components/help/HelpTab.vue";
+import MultiSensitivityTab from "../../../../src/components/multiSensitivity/MultiSensitivityTab.vue";
+import { VisualisationTab } from "../../../../src/store/appState/state";
+import { AppStateMutation } from "../../../../src/store/appState/mutations";
+import { ModelFitGetter } from "../../../../src/store/modelFit/getters";
+import { AppConfig } from "../../../../src/types/responseTypes";
+import { getters as graphsGetters } from "../../../../src/store/graphs/getters";
 
 function mockResizeObserver(this: any) {
-    this.observe = jest.fn();
-    this.disconnect = jest.fn();
+    this.observe = vi.fn();
+    this.disconnect = vi.fn();
 }
 (global.ResizeObserver as any) = mockResizeObserver;
 
 describe("FitApp", () => {
-    const mockTooltipDirective = jest.fn();
+    const mockTooltipDirective = vi.fn();
 
-    const getWrapper = (mockSetOpenVisualisationTab = jest.fn(), config: Partial<AppConfig> = {}) => {
+    const getWrapper = (mockSetOpenVisualisationTab = vi.fn(), config: Partial<AppConfig> = {}) => {
         const state = mockFitState({ config: config as any });
         const store = new Vuex.Store<FitState>({
             state,
@@ -63,7 +72,7 @@ describe("FitApp", () => {
                     namespaced: true,
                     state: mockModelState(),
                     actions: {
-                        [ModelAction.FetchOdinRunner]: jest.fn()
+                        [ModelAction.FetchOdinRunner]: vi.fn()
                     }
                 },
                 fitData: {
@@ -158,12 +167,10 @@ describe("FitApp", () => {
     });
 
     it("commits open tab change when change tab", async () => {
-        const mockSetOpenTab = jest.fn();
+        const mockSetOpenTab = vi.fn();
         const wrapper = getWrapper(mockSetOpenTab);
         const rightTabs = wrapper.find("#right-tabs");
-        const leftTabs = wrapper.find("#left-tabs");
 
-        const optionsTab = leftTabs.findComponent(OptionsTab);
         await rightTabs.findAll("li a").at(1)!.trigger("click"); // Click Fit tab
         expect(mockSetOpenTab).toHaveBeenCalledTimes(1);
         expect(mockSetOpenTab.mock.calls[0][1]).toBe(VisualisationTab.Fit);
@@ -176,9 +183,8 @@ describe("FitApp", () => {
                 tabName: "Help"
             }
         };
-        const wrapper = getWrapper(jest.fn(), helpConfig);
+        const wrapper = getWrapper(vi.fn(), helpConfig);
         const wodinPanels = wrapper.findComponent(WodinPanels);
-        const rightPanel = wodinPanels.find(".wodin-right");
 
         expectRightWodinTabs(wrapper, ["Help", "Run", "Fit", "Sensitivity"]);
         const rightTabs = wodinPanels.find(".wodin-right #right-tabs");
@@ -189,7 +195,7 @@ describe("FitApp", () => {
         const multiSensConfig = {
             multiSensitivity: true
         };
-        const wrapper = getWrapper(jest.fn(), multiSensConfig);
+        const wrapper = getWrapper(vi.fn(), multiSensConfig);
         const wodinPanels = wrapper.findComponent(WodinPanels);
 
         expectRightWodinTabs(wrapper, ["Run", "Fit", "Sensitivity", "Multi-sensitivity"]);
@@ -208,7 +214,7 @@ describe("FitApp", () => {
             },
             multiSensitivity: true
         };
-        const wrapper = getWrapper(jest.fn(), bothConfig);
+        const wrapper = getWrapper(vi.fn(), bothConfig);
         expectRightWodinTabs(wrapper, ["Help", "Run", "Fit", "Sensitivity", "Multi-sensitivity"]);
     });
 });

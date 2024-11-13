@@ -1,17 +1,16 @@
 // Mock plotly before import RunTab, which indirectly imports plotly via WodinPlot
-jest.mock("plotly.js-basic-dist-min", () => {});
+vi.mock("plotly.js-basic-dist-min", () => ({}));
 
-/* eslint-disable import/first */
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
-import { FitState } from "../../../../src/app/store/fit/state";
-import { FitDataGetter } from "../../../../src/app/store/fitData/getters";
-import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
-import FitPlot from "../../../../src/app/components/fit/FitPlot.vue";
-import { OdinFitResult } from "../../../../src/app/types/wrapperTypes";
+import { FitState } from "../../../../src/store/fit/state";
+import { FitDataGetter } from "../../../../src/store/fitData/getters";
+import WodinPlot from "../../../../src/components/WodinPlot.vue";
+import FitPlot from "../../../../src/components/fit/FitPlot.vue";
+import { OdinFitResult } from "../../../../src/types/wrapperTypes";
 
 describe("FitPlot", () => {
-    const mockSolution = jest.fn().mockReturnValue({
+    const mockSolution = vi.fn().mockReturnValue({
         x: [0, 0.5, 1],
         values: [
             { name: "y", y: [5, 6, 7] },
@@ -19,7 +18,7 @@ describe("FitPlot", () => {
         ]
     });
 
-    const mockRunSolution = jest.fn().mockReturnValue({
+    const mockRunSolution = vi.fn().mockReturnValue({
         x: [0, 0.5, 1],
         values: [
             { name: "y", y: [50, 60, 70] },
@@ -135,7 +134,7 @@ describe("FitPlot", () => {
     };
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("renders as expected when modelFit has solution", () => {
