@@ -3,14 +3,15 @@ import Vuex from "vuex";
 import registerTranslations from "../../registerTranslations";
 import translate from "../../directive/translate";
 import { nextTick } from "vue";
+import { Mock } from "vitest";
 
 describe("translate directive", () => {
     beforeAll(() => {
-        console.warn = jest.fn();
+        console.warn = vi.fn();
     });
 
     afterAll(() => {
-        (console.warn as jest.Mock).mockClear();
+        (console.warn as Mock).mockClear();
     });
 
     const TranslateAttributeTest = {
@@ -243,7 +244,7 @@ describe("translate directive", () => {
             }
         });
         expect(rendered.find("h4").text()).toBe("");
-        expect((console.warn as jest.Mock).mock.calls[0][0]).toBe("v-translate directive declared without a value");
+        expect((console.warn as Mock).mock.calls[0][0]).toBe("v-translate directive declared without a value");
     });
 
     it("removes watcher on unbind", async () => {

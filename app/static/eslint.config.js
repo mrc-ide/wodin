@@ -30,6 +30,13 @@ export default [
   },
 
   {
+    files: ["**/tests/**/*.ts"],
+    rules: {
+      "vitest/expect-expect": "off"
+    }
+  },
+
+  {
     ...pluginPlaywright.configs['flat/recommended'],
     files: ['e2e/**/*.{test,spec}.{js,ts,jsx,tsx}'],
   },

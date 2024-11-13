@@ -82,7 +82,8 @@ describe("appsController", () => {
             shareNotFound: "",
             mathjaxSrc,
             defaultLanguage: "en",
-            enableI18n: false
+            enableI18n: false,
+            hotReload: undefined
         });
         expect(mockStatus).not.toBeCalled();
     });
@@ -104,7 +105,8 @@ describe("appsController", () => {
             shareNotFound: "",
             mathjaxSrc,
             defaultLanguage: "en",
-            enableI18n: false
+            enableI18n: false,
+            hotReload: undefined
         });
     });
 
@@ -130,7 +132,8 @@ describe("appsController", () => {
             shareNotFound: "",
             mathjaxSrc,
             defaultLanguage: "en",
-            enableI18n: false
+            enableI18n: false,
+            hotReload: undefined
         });
     });
 
@@ -154,7 +157,8 @@ describe("appsController", () => {
             shareNotFound: "tiny-mouse",
             mathjaxSrc,
             defaultLanguage: "en",
-            enableI18n: false
+            enableI18n: false,
+            hotReload: undefined
         });
     });
 
