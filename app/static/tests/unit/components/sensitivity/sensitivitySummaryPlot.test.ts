@@ -3,7 +3,7 @@ import Vuex, { Store } from "vuex";
 import { shallowMount, VueWrapper } from "@vue/test-utils";
 import * as plotly from "plotly.js-basic-dist-min";
 import { nextTick } from "vue";
-import { BasicState } from "../../../../src/app/store/basic/state";
+import { BasicState } from "../../../../src/store/basic/state";
 import { mockBasicState } from "../../../mocks";
 import {
     SensitivityParameterSettings,
@@ -11,33 +11,32 @@ import {
     SensitivityPlotSettings,
     SensitivityPlotType,
     SensitivityScaleType
-} from "../../../../src/app/store/sensitivity/state";
-import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
-import SensitivitySummaryPlot from "../../../../src/app/components/sensitivity/SensitivitySummaryPlot.vue";
-import { RunGetter } from "../../../../src/app/store/run/getters";
-import WodinPlotDataSummary from "../../../../src/app/components/WodinPlotDataSummary.vue";
-import { GraphConfig } from "../../../../src/app/store/graphs/state";
+} from "../../../../src/store/sensitivity/state";
+import { SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
+import SensitivitySummaryPlot from "../../../../src/components/sensitivity/SensitivitySummaryPlot.vue";
+import { RunGetter } from "../../../../src/store/run/getters";
+import WodinPlotDataSummary from "../../../../src/components/WodinPlotDataSummary.vue";
 
-jest.mock("plotly.js-basic-dist-min", () => ({
-    newPlot: jest.fn(),
+vi.mock("plotly.js-basic-dist-min", () => ({
+    newPlot: vi.fn(),
     Plots: {
-        resize: jest.fn()
+        resize: vi.fn()
     }
 }));
 
 describe("SensitivitySummaryPlot", () => {
-    const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");
+    const mockPlotlyNewPlot = vi.spyOn(plotly, "newPlot");
 
-    const mockObserve = jest.fn();
-    const mockDisconnect = jest.fn();
+    const mockObserve = vi.fn();
+    const mockDisconnect = vi.fn();
     function mockResizeObserver(this: any) {
         this.observe = mockObserve;
         this.disconnect = mockDisconnect;
     }
     (global.ResizeObserver as any) = mockResizeObserver;
 
-    const mockSetPlotTime = jest.fn();
-    const mockSetLoading = jest.fn();
+    const mockSetPlotTime = vi.fn();
+    const mockSetLoading = vi.fn();
 
     const mockData = {
         x: [{ beta: 1 }, { beta: 1.1 }],
@@ -75,26 +74,26 @@ describe("SensitivitySummaryPlot", () => {
         ]
     };
 
-    const mockValueAtTime = jest.fn().mockReturnValue(mockData);
-    const mockExtreme = jest.fn().mockReturnValue(mockData);
+    const mockValueAtTime = vi.fn().mockReturnValue(mockData);
+    const mockExtreme = vi.fn().mockReturnValue(mockData);
     const mockBatch = {
         valueAtTime: mockValueAtTime,
         extreme: mockExtreme
     };
 
     const mockBatchSet1 = {
-        valueAtTime: jest.fn().mockReturnValue(mockDataSet1),
-        extreme: jest.fn().mockReturnValue(mockDataSet1)
+        valueAtTime: vi.fn().mockReturnValue(mockDataSet1),
+        extreme: vi.fn().mockReturnValue(mockDataSet1)
     };
 
     const mockBatchSet2 = {
-        valueAtTime: jest.fn().mockReturnValue(mockDataSet2),
-        extreme: jest.fn().mockReturnValue(mockDataSet2)
+        valueAtTime: vi.fn().mockReturnValue(mockDataSet2),
+        extreme: vi.fn().mockReturnValue(mockDataSet2)
     };
 
     const mockBatchSet3 = {
-        valueAtTime: jest.fn().mockReturnValue(mockDataSet3),
-        extreme: jest.fn().mockReturnValue(mockDataSet3)
+        valueAtTime: vi.fn().mockReturnValue(mockDataSet3),
+        extreme: vi.fn().mockReturnValue(mockDataSet3)
     };
 
     let store: Store<BasicState> | null = null;
@@ -220,7 +219,7 @@ describe("SensitivitySummaryPlot", () => {
     };
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     const expectDataToHaveBeenPlotted = (wrapper: VueWrapper<any>, layout: any = {}, includesParameterSets = false) => {
@@ -524,7 +523,7 @@ describe("SensitivitySummaryPlot", () => {
 
     it("redraws plot if data changes", async () => {
         // update store's time value to force re-compute of plotData, and then redraw
-        const wrapper = getWrapper();
+        getWrapper();
         store!.state.sensitivity.plotSettings.time = 50;
         await nextTick();
         expect(mockPlotlyNewPlot).toHaveBeenCalledTimes(2);
@@ -564,7 +563,7 @@ describe("SensitivitySummaryPlot", () => {
     });
 
     it("commits set loading when plotData is computed, if loading is true", async () => {
-        const wrapper = getWrapper(
+        getWrapper(
             true,
             defaultPlotSettings,
             false,
@@ -582,7 +581,7 @@ describe("SensitivitySummaryPlot", () => {
     });
 
     it("does not commit set loading when plotData is computed, if loading is false", async () => {
-        const wrapper = getWrapper();
+        getWrapper();
         store!.state.sensitivity.plotSettings.time = 50;
         expect(mockSetLoading).not.toHaveBeenCalled();
     });
