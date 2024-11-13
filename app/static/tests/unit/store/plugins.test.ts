@@ -1,12 +1,12 @@
 import Vuex from "vuex";
-import { logMutations, persistState } from "../../../src/app/store/plugins";
-import { AppState } from "../../../src/app/store/appState/state";
-import { AppStateAction } from "../../../src/app/store/appState/actions";
-import { AppStateMutation } from "../../../src/app/store/appState/mutations";
+import { logMutations, persistState } from "../../../src/store/plugins";
+import { AppState } from "../../../src/store/appState/state";
+import { AppStateAction } from "../../../src/store/appState/actions";
+import { AppStateMutation } from "../../../src/store/appState/mutations";
 
 describe("plugins", () => {
     it("logMutations logs mutations to console", () => {
-        const logSpy = jest.spyOn(console, "log");
+        const logSpy = vi.spyOn(console, "log");
 
         const store = new Vuex.Store<AppState>({
             mutations: {
@@ -40,7 +40,7 @@ describe("plugins", () => {
                 }
             }
         });
-        const spyDispatch = jest.spyOn(store, "dispatch");
+        const spyDispatch = vi.spyOn(store, "dispatch");
         persistState(store);
         store.commit("testModule/test2");
         expect(spyDispatch).toHaveBeenCalledWith(AppStateAction.QueueStateUpload);
@@ -54,7 +54,7 @@ describe("plugins", () => {
                 [AppStateMutation.SetStateUploadInProgress]: () => {}
             }
         });
-        const spyDispatch = jest.spyOn(store, "dispatch");
+        const spyDispatch = vi.spyOn(store, "dispatch");
         persistState(store);
 
         store.commit(AppStateMutation.ClearQueuedStateUpload);
@@ -74,7 +74,7 @@ describe("plugins", () => {
                 }
             }
         });
-        const spyDispatch = jest.spyOn(store, "dispatch");
+        const spyDispatch = vi.spyOn(store, "dispatch");
         persistState(store);
 
         store.commit("errors/addError");

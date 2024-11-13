@@ -1,4 +1,4 @@
-import { actions, VersionsAction } from "../../../../src/app/store/versions/actions";
+import { actions, VersionsAction } from "../../../../src/store/versions/actions";
 import { mockAxios, mockSuccess } from "../../../mocks";
 
 const versions = {
@@ -12,7 +12,7 @@ describe("versions actions", () => {
     it("gets versions", async () => {
         mockAxios.onGet("/odin/versions").reply(200, mockSuccess(versions));
 
-        const commit = jest.fn();
+        const commit = vi.fn();
         await (actions[VersionsAction.GetVersions] as any)({ commit, rootState: { baseUrl: "" } });
         expect(mockAxios.history.get[0].url).toBe("/odin/versions");
         expect(commit.mock.calls.length).toBe(1);

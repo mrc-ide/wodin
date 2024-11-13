@@ -1,5 +1,5 @@
 import { mockModelFitState } from "../../../mocks";
-import { mutations } from "../../../../src/app/store/modelFit/mutations";
+import { mutations } from "../../../../src/store/modelFit/mutations";
 
 describe("ModelFit mutations", () => {
     const mockInputs = {
@@ -45,7 +45,7 @@ describe("ModelFit mutations", () => {
 
     it("sets model fit result", () => {
         const state = mockModelFitState({ inputs: mockInputs });
-        const solution = jest.fn();
+        const solution = vi.fn();
         const pars = { x: 1 };
 
         const payload = {
