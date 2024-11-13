@@ -1,4 +1,4 @@
-import { AppStateGetter, getters } from "../../../../src/app/store/appState/getters";
+import { AppStateGetter, getters } from "../../../../src/store/appState/getters";
 import { mockBasicState } from "../../../mocks";
 
 describe("AppState getters", () => {

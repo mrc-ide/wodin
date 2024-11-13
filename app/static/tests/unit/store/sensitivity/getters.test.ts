@@ -1,6 +1,6 @@
-import { BaseSensitivityGetter, getters, SensitivityGetter } from "../../../../src/app/store/sensitivity/getters";
+import { BaseSensitivityGetter, getters, SensitivityGetter } from "../../../../src/store/sensitivity/getters";
 import { mockBatchParsDisplace, mockRunState, mockSensitivityState } from "../../../mocks";
-import { SensitivityScaleType, SensitivityVariationType } from "../../../../src/app/store/sensitivity/state";
+import { SensitivityScaleType, SensitivityVariationType } from "../../../../src/store/sensitivity/state";
 
 describe("Sensitivity getters", () => {
     const paramSettings = {
@@ -31,7 +31,7 @@ describe("Sensitivity getters", () => {
             }
         } as any;
 
-        const mockSpy = jest.spyOn(odinRunnerOde, "batchParsDisplace");
+        const mockSpy = vi.spyOn(odinRunnerOde, "batchParsDisplace");
 
         const result = getters[BaseSensitivityGetter.batchPars](state, getters, rootState, {} as any);
         expect(result.varying).toStrictEqual([{ name: "A", values: [1, 2, 3] }]);
@@ -60,7 +60,7 @@ describe("Sensitivity getters", () => {
             }
         } as any;
 
-        const mockSpy = jest.spyOn(odinRunnerOde, "batchParsDisplace");
+        const mockSpy = vi.spyOn(odinRunnerOde, "batchParsDisplace");
 
         const result = getters[SensitivityGetter.parameterSetBatchPars](state, getters, rootState, {} as any);
         expect(Object.keys(result)).toStrictEqual(["Set 1", "Set 2"]);
