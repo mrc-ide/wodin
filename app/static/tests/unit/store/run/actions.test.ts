@@ -1,19 +1,19 @@
-import Mock = jest.Mock;
-import { RunMutation } from "../../../../src/app/store/run/mutations";
+import { Mock } from "vitest";
+import { RunMutation } from "../../../../src/store/run/mutations";
 import { mockModelState, mockRunnerDiscrete, mockRunnerOde, mockRunState } from "../../../mocks";
-import { WodinModelOutputDownload } from "../../../../src/app/excel/wodinModelOutputDownload";
-import { actions, RunAction } from "../../../../src/app/store/run/actions";
-import { AppType } from "../../../../src/app/store/appState/state";
-import { ModelFitAction } from "../../../../src/app/store/modelFit/actions";
-import { RunGetter } from "../../../../src/app/store/run/getters";
-import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
-import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
-import { AdvancedComponentType } from "../../../../src/app/store/run/state";
+import { WodinModelOutputDownload } from "../../../../src/excel/wodinModelOutputDownload";
+import { actions, RunAction } from "../../../../src/store/run/actions";
+import { AppType } from "../../../../src/store/appState/state";
+import { ModelFitAction } from "../../../../src/store/modelFit/actions";
+import { RunGetter } from "../../../../src/store/run/getters";
+import { SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
+import { AdvancedOptions } from "../../../../src/types/responseTypes";
+import { AdvancedComponentType } from "../../../../src/store/run/state";
 
-jest.mock("../../../../src/app/excel/wodinModelOutputDownload");
+vi.mock("../../../../src/excel/wodinModelOutputDownload");
 
 describe("Run actions", () => {
-    const mockDownloadModelOutput = jest.fn();
+    const mockDownloadModelOutput = vi.fn();
     const mockWodinModelOutputDownload = WodinModelOutputDownload as any as Mock;
     mockWodinModelOutputDownload.mockImplementation(() => ({ download: mockDownloadModelOutput }));
 
@@ -66,7 +66,7 @@ describe("Run actions", () => {
             endTime: 99,
             parameterSets
         });
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         (actions[RunAction.RunModel] as any)({
             commit,
@@ -127,7 +127,7 @@ describe("Run actions", () => {
             endTime: 99,
             parameterSets
         });
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         (actions[RunAction.RunModel] as any)({
             commit,
@@ -203,7 +203,7 @@ describe("Run actions", () => {
                 [AdvancedOptions.tcrit]: { val: [0, "p1", "p2"], default: [], type: AdvancedComponentType.tag }
             }
         });
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         (actions[RunAction.RunModel] as any)({
             commit,
@@ -275,7 +275,7 @@ describe("Run actions", () => {
         const testGetters = {
             [RunGetter.runParameterSetsIsRequired]: true
         } as any;
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         (actions[RunAction.RunModel] as any)({
             commit,
@@ -353,7 +353,7 @@ describe("Run actions", () => {
             endTime: 99,
             numberOfReplicates: 10
         });
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         (actions[RunAction.RunModel] as any)({
             commit,
@@ -391,7 +391,7 @@ describe("Run actions", () => {
             runRequired: runRequiredAll,
             parameterValues: {}
         });
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         (actions[RunAction.RunModel] as any)({
             commit,
@@ -414,7 +414,7 @@ describe("Run actions", () => {
             model: modelState
         } as any;
         const state = mockRunState();
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         (actions[RunAction.RunModel] as any)({
             commit,
@@ -436,7 +436,7 @@ describe("Run actions", () => {
             model: modelState
         } as any;
         const state = mockRunState();
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         (actions[RunAction.RunModel] as any)({
             commit,
@@ -452,7 +452,7 @@ describe("Run actions", () => {
     const testCommitsErrorOnRunModel = (stochastic: boolean) => {
         const mockError = new Error("test");
         const mockOdin = {} as any;
-        const mockRunMethod = jest.fn().mockImplementation(() => {
+        const mockRunMethod = vi.fn().mockImplementation(() => {
             throw mockError;
         });
         const runner = {
@@ -481,8 +481,8 @@ describe("Run actions", () => {
             parameterValues,
             endTime: 99
         });
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
 
         (actions[RunAction.RunModel] as any)({
             commit,
@@ -563,8 +563,8 @@ describe("Run actions", () => {
             resultOde: isStochastic ? null : result,
             resultDiscrete: isStochastic ? result : null
         });
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
 
         (actions[RunAction.RunModelOnRehydrate] as any)({
             commit,
@@ -623,26 +623,24 @@ describe("Run actions", () => {
         testRunModelOnRehydrate(AppType.Fit);
     });
 
-    it("downloads output", (done) => {
-        const commit = jest.fn();
+    it("downloads output", async () => {
+        const commit = vi.fn();
         const context = { commit };
         const payload = { fileName: "myFile.xlsx", points: 101 };
         (actions[RunAction.DownloadOutput] as any)(context, payload);
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(RunMutation.SetDownloading);
         expect(commit.mock.calls[0][1]).toBe(true);
-        setTimeout(() => {
-            expect(mockWodinModelOutputDownload).toHaveBeenCalledTimes(1); // expect download constructor
-            expect(mockWodinModelOutputDownload.mock.calls[0][0]).toBe(context);
-            expect(mockWodinModelOutputDownload.mock.calls[0][1]).toBe("myFile.xlsx");
-            expect(mockWodinModelOutputDownload.mock.calls[0][2]).toBe(101);
-            expect(mockDownloadModelOutput).toHaveBeenCalledTimes(1);
+        await new Promise(res => setTimeout(res, 20));
+        expect(mockWodinModelOutputDownload).toHaveBeenCalledTimes(1); // expect download constructor
+        expect(mockWodinModelOutputDownload.mock.calls[0][0]).toBe(context);
+        expect(mockWodinModelOutputDownload.mock.calls[0][1]).toBe("myFile.xlsx");
+        expect(mockWodinModelOutputDownload.mock.calls[0][2]).toBe(101);
+        expect(mockDownloadModelOutput).toHaveBeenCalledTimes(1);
 
-            expect(commit).toHaveBeenCalledTimes(2);
-            expect(commit.mock.calls[1][0]).toBe(RunMutation.SetDownloading);
-            expect(commit.mock.calls[1][1]).toBe(false);
-            done();
-        }, 20);
+        expect(commit).toHaveBeenCalledTimes(2);
+        expect(commit.mock.calls[1][0]).toBe(RunMutation.SetDownloading);
+        expect(commit.mock.calls[1][1]).toBe(false);
     });
 
     it("NewParameterSet commits parameter set and result", () => {
@@ -660,7 +658,7 @@ describe("Run actions", () => {
             ],
             resultOde: { solution: "fake result" } as any
         });
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         (actions[RunAction.NewParameterSet] as any)({ state, getters, commit });
         expect(commit).toHaveBeenCalledTimes(3);
@@ -696,7 +694,7 @@ describe("Run actions", () => {
         const testGetters = {
             [RunGetter.runIsRequired]: true
         };
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         (actions[RunAction.NewParameterSet] as any)({ state, getters: testGetters, commit });
         expect(commit).toHaveBeenCalledTimes(0);
@@ -717,7 +715,7 @@ describe("Run actions", () => {
             ],
             resultOde: null
         });
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         (actions[RunAction.NewParameterSet] as any)({ state, getters, commit });
         expect(commit).toHaveBeenCalledTimes(2);
@@ -751,7 +749,7 @@ describe("Run actions", () => {
             resultOde: { solution: "fake result" } as any
         });
 
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         const testGetters = {
             [RunGetter.runIsRequired]: false
@@ -787,14 +785,14 @@ describe("Run actions", () => {
             [RunGetter.runIsRequired]: true
         };
 
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         (actions[RunAction.SwapParameterSet] as any)({ state, getters: testGetters, commit });
         expect(commit).toHaveBeenCalledTimes(0);
     });
 
     it("DeleteParameterSet commits run and sensitivity mutations", () => {
-        const commit = jest.fn();
+        const commit = vi.fn();
         (actions[RunAction.DeleteParameterSet] as any)({ commit }, "Set 1");
         expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(RunMutation.DeleteParameterSet);

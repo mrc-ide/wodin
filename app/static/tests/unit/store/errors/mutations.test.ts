@@ -1,4 +1,4 @@
-import { mutations } from "../../../../src/app/store/errors/mutations";
+import { mutations } from "../../../../src/store/errors/mutations";
 
 describe("Errors mutations", () => {
     it("adds error", () => {

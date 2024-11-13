@@ -1,6 +1,6 @@
-import { RunMutation, mutations } from "../../../../src/app/store/run/mutations";
-import { AdvancedComponentType } from "../../../../src/app/store/run/state";
-import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
+import { RunMutation, mutations } from "../../../../src/store/run/mutations";
+import { AdvancedComponentType } from "../../../../src/store/run/state";
+import { AdvancedOptions } from "../../../../src/types/responseTypes";
 import { mockRunState } from "../../../mocks";
 
 describe("Run mutations", () => {

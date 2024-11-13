@@ -1,11 +1,11 @@
-import { CodeAction, actions } from "../../../../src/app/store/code/actions";
-import { CodeMutation } from "../../../../src/app/store/code/mutations";
-import { ModelAction } from "../../../../src/app/store/model/actions";
+import { CodeAction, actions } from "../../../../src/store/code/actions";
+import { CodeMutation } from "../../../../src/store/code/mutations";
+import { ModelAction } from "../../../../src/store/model/actions";
 
 describe("Code actions", () => {
     it("UpdateCode commits new code and dispatches FetchOdin", () => {
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         (actions[CodeAction.UpdateCode] as any)({ commit, dispatch }, ["new code"]);
         expect(commit).toBeCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(CodeMutation.SetCurrentCode);
