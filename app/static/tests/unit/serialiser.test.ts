@@ -1,13 +1,13 @@
-import { BasicState } from "../../src/app/store/basic/state";
-import { AppType, VisualisationTab } from "../../src/app/store/appState/state";
+import { BasicState } from "../../src/store/basic/state";
+import { AppType, VisualisationTab } from "../../src/store/appState/state";
 import {
     SensitivityPlotExtreme,
     SensitivityPlotType,
     SensitivityScaleType,
     SensitivityVariationType
-} from "../../src/app/store/sensitivity/state";
-import { deserialiseState, serialiseState } from "../../src/app/serialise";
-import { FitState } from "../../src/app/store/fit/state";
+} from "../../src/store/sensitivity/state";
+import { deserialiseState, serialiseState } from "../../src/serialise";
+import { FitState } from "../../src/store/fit/state";
 import {
     mockCodeState,
     mockFitDataState,
@@ -20,16 +20,16 @@ import {
     mockSessionsState,
     mockVersionsState
 } from "../mocks";
-import { defaultState as defaultGraphsState } from "../../src/app/store/graphs/graphs";
-import { Language } from "../../src/app/types/languageTypes";
-import { AdvancedOptions } from "../../src/app/types/responseTypes";
-import { AdvancedComponentType } from "../../src/app/store/run/state";
-import { noSensitivityUpdateRequired } from "../../src/app/store/sensitivity/sensitivity";
-import { defaultGraphSettings } from "../../src/app/store/graphs/state";
+import { defaultState as defaultGraphsState } from "../../src/store/graphs/graphs";
+import { Language } from "../../src/types/languageTypes";
+import { AdvancedOptions } from "../../src/types/responseTypes";
+import { AdvancedComponentType } from "../../src/store/run/state";
+import { noSensitivityUpdateRequired } from "../../src/store/sensitivity/sensitivity";
+import { defaultGraphSettings } from "../../src/store/graphs/state";
 
-jest.mock("../../src/app/utils", () => {
+vi.mock("../../src/utils", () => {
     return {
-        newUid: jest.fn().mockReturnValue("12345")
+        newUid: vi.fn().mockReturnValue("12345")
     };
 });
 
@@ -42,16 +42,16 @@ describe("serialise", () => {
     const modelState = {
         compileRequired: true,
         odinRunnerOde: {
-            wodinRun: jest.fn(),
-            wodinFit: jest.fn(),
-            wodinFitValue: jest.fn(),
-            batchParsRange: jest.fn(),
-            batchParsDisplace: jest.fn(),
-            batchRun: jest.fn()
+            wodinRun: vi.fn(),
+            wodinFit: vi.fn(),
+            wodinFitValue: vi.fn(),
+            batchParsRange: vi.fn(),
+            batchParsDisplace: vi.fn(),
+            batchRun: vi.fn()
         },
         odinRunnerDiscrete: {
-            wodinRunDiscrete: jest.fn(),
-            batchRunDiscrete: jest.fn()
+            wodinRunDiscrete: vi.fn(),
+            batchRunDiscrete: vi.fn()
         },
         odinModelResponse: {
             valid: true,
@@ -81,7 +81,7 @@ describe("serialise", () => {
             model: "a test model",
             error: { line: [1], message: "test model error" }
         },
-        odin: jest.fn(),
+        odin: vi.fn(),
         paletteModel: { S: "#f00", I: "#0f0", R: "#00f" },
         odinModelCodeError: { error: "odin error", detail: "test odin error" }
     };
@@ -102,7 +102,7 @@ describe("serialise", () => {
                 parameterValues: { alpha: 0, beta: 2.2 },
                 endTime: 10
             },
-            solution: jest.fn(),
+            solution: vi.fn(),
             error: { error: "run error", detail: "run error detail" }
         },
         resultDiscrete: {
@@ -111,7 +111,7 @@ describe("serialise", () => {
                 endTime: 5,
                 numberOfReplicates: 6
             },
-            solution: jest.fn(),
+            solution: vi.fn(),
             error: { error: "run discrete error", detail: "run discrete error detail" }
         },
         parameterSetsCreated: 3,
@@ -130,7 +130,7 @@ describe("serialise", () => {
                     parameterValues: { alpha: 1, beta: 3.3 },
                     endTime: 10
                 },
-                solution: jest.fn(),
+                solution: vi.fn(),
                 error: { error: "param set run error", detail: "param set run error detail" }
             }
         },
@@ -208,12 +208,12 @@ describe("serialise", () => {
             },
             batch: {
                 pars: sensitivityBatchPars,
-                solutions: [jest.fn(), jest.fn()],
+                solutions: [vi.fn(), vi.fn()],
                 errors: [],
                 successfulVaryingParams: [],
-                valueAtTime: jest.fn(),
-                extreme: jest.fn(),
-                compute: jest.fn()
+                valueAtTime: vi.fn(),
+                extreme: vi.fn(),
+                compute: vi.fn()
             },
             error: { error: "sensitivity error", detail: "sensitivity error detail" }
         },
@@ -225,12 +225,12 @@ describe("serialise", () => {
                 },
                 batch: {
                     pars: sensitivityParamSetBatchPars,
-                    solutions: [jest.fn(), jest.fn()],
+                    solutions: [vi.fn(), vi.fn()],
                     errors: [],
                     successfulVaryingParams: [],
-                    valueAtTime: jest.fn(),
-                    extreme: jest.fn(),
-                    compute: jest.fn()
+                    valueAtTime: vi.fn(),
+                    extreme: vi.fn(),
+                    compute: vi.fn()
                 },
                 error: { error: "param set sensitivity error", detail: "param set sensitivity error detail" }
             }
@@ -293,12 +293,12 @@ describe("serialise", () => {
             },
             batch: {
                 pars: multiSensitivityBatchPars,
-                solutions: [jest.fn(), jest.fn()],
+                solutions: [vi.fn(), vi.fn()],
                 errors: [],
                 successfulVaryingParams: [],
-                valueAtTime: jest.fn(),
-                extreme: jest.fn(),
-                compute: jest.fn()
+                valueAtTime: vi.fn(),
+                extreme: vi.fn(),
+                compute: vi.fn()
             },
             error: { error: "multiSensitivity error", detail: "multiSensitivity error detail" }
         }
@@ -350,7 +350,7 @@ describe("serialise", () => {
                 ],
                 link: { time: "t", data: "cases", model: "R" }
             },
-            solution: jest.fn(),
+            solution: vi.fn(),
             error: { error: "fit error", detail: "fit error detail" }
         }
     };

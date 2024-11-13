@@ -1,12 +1,12 @@
-export const mockAoaToSheet = jest.fn().mockImplementation((data) => ({ data, type: "aoa" }));
-export const mockBookNew = jest.fn().mockImplementation(() => ({ sheets: [] }) as any);
-export const mockWriteFile = jest.fn();
-export const mockBookAppendSheet = jest.fn().mockImplementation((workbook: any, worksheet: any, name: string) => {
+export const mockAoaToSheet = vi.fn().mockImplementation((data) => ({ data, type: "aoa" }));
+export const mockBookNew = vi.fn().mockImplementation(() => ({ sheets: [] }) as any);
+export const mockWriteFile = vi.fn();
+export const mockBookAppendSheet = vi.fn().mockImplementation((workbook: any, worksheet: any, name: string) => {
     (workbook as any).sheets.push({ ...worksheet, name });
 });
-const mockJsonToSheet = jest.fn().mockImplementation((data) => ({ data, type: "json" }));
+const mockJsonToSheet = vi.fn().mockImplementation((data) => ({ data, type: "json" }));
 
-jest.mock("xlsx", () => ({
+vi.mock("xlsx", () => ({
     writeFile: (data: string, fileName: string) => mockWriteFile(data, fileName),
     utils: {
         aoa_to_sheet: (data: any) => mockAoaToSheet(data),

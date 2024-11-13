@@ -1,7 +1,7 @@
-import { api } from "../../src/app/apiService";
+import { api } from "../../src/apiService";
 import { mockAxios, mockError, mockFailure, mockSuccess, mockBasicState } from "../mocks";
-import { freezer } from "../../src/app/utils";
-import Mock = jest.Mock;
+import { freezer } from "../../src/utils";
+import { Mock } from "vitest";
 
 const BASE_URL = "http://localhost:3000";
 const rootState = mockBasicState({ baseUrl: BASE_URL });
@@ -11,19 +11,19 @@ describe("ApiService", () => {
     const TEST_BODY = "test body";
 
     beforeEach(() => {
-        console.log = jest.fn();
-        console.warn = jest.fn();
+        console.log = vi.fn();
+        console.warn = vi.fn();
         mockAxios.reset();
     });
 
     afterEach(() => {
-        (console.log as jest.Mock).mockClear();
-        (console.warn as jest.Mock).mockClear();
-        jest.clearAllMocks();
+        (console.log as Mock).mockClear();
+        (console.warn as Mock).mockClear();
+        vi.clearAllMocks();
     });
 
     const expectNoErrorHandlerMsgLogged = () => {
-        expect((console.warn as jest.Mock).mock.calls[0][0]).toBe(
+        expect((console.warn as Mock).mock.calls[0][0]).toBe(
             `No error handler registered for request ${TEST_ROUTE}.`
         );
     };
@@ -48,27 +48,27 @@ describe("ApiService", () => {
     it("console logs error on get", async () => {
         mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`).reply(500, mockFailure("some error message"));
 
-        await api({ commit: jest.fn(), rootState } as any).get(TEST_ROUTE);
+        await api({ commit: vi.fn(), rootState } as any).get(TEST_ROUTE);
 
         expectNoErrorHandlerMsgLogged();
 
-        expect((console.log as jest.Mock).mock.calls[0][0].errors[0].detail).toBe("some error message");
+        expect((console.log as Mock).mock.calls[0][0].errors[0].detail).toBe("some error message");
     });
 
     it("console logs error on post", async () => {
         mockAxios.onPost(`${BASE_URL}${TEST_ROUTE}`, TEST_BODY).reply(500, mockFailure("some error message"));
 
-        await api({ commit: jest.fn(), rootState } as any).post(TEST_ROUTE, TEST_BODY);
+        await api({ commit: vi.fn(), rootState } as any).post(TEST_ROUTE, TEST_BODY);
 
         expectNoErrorHandlerMsgLogged();
 
-        expect((console.log as jest.Mock).mock.calls[0][0].errors[0].detail).toBe("some error message");
+        expect((console.log as Mock).mock.calls[0][0].errors[0].detail).toBe("some error message");
     });
 
     it("commits the the first error message to errors module by default on get", async () => {
         mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`).reply(500, mockFailure("some error message"));
 
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         await api({ commit, rootState } as any).get(TEST_ROUTE);
 
@@ -79,7 +79,7 @@ describe("ApiService", () => {
     it("commits the the first error message to errors module by default on post", async () => {
         mockAxios.onPost(`${BASE_URL}${TEST_ROUTE}`, TEST_BODY).reply(500, mockFailure("some error message"));
 
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         await api({ commit, rootState } as any).post(TEST_ROUTE, TEST_BODY);
 
@@ -95,7 +95,7 @@ describe("ApiService", () => {
         };
         mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`).reply(500, failure);
 
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         await api({ commit, rootState } as any).get(TEST_ROUTE);
 
@@ -111,7 +111,7 @@ describe("ApiService", () => {
         };
         mockAxios.onPost(`${BASE_URL}${TEST_ROUTE}`, TEST_BODY).reply(500, failure);
 
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         await api({ commit, rootState } as any).post(TEST_ROUTE, TEST_BODY);
 
@@ -122,7 +122,7 @@ describe("ApiService", () => {
     it("commits the first error with the specified type if well formatted on get", async () => {
         mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`).reply(500, mockFailure("some error message"));
 
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         await api({ commit, rootState } as any)
             .withError("TEST_TYPE")
@@ -135,7 +135,7 @@ describe("ApiService", () => {
     it("commits the first error with the specified type if well formatted on post", async () => {
         mockAxios.onPost(`${BASE_URL}${TEST_ROUTE}`, TEST_BODY).reply(500, mockFailure("some error message"));
 
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         await api({ commit, rootState } as any)
             .withError("TEST_TYPE")
@@ -148,7 +148,7 @@ describe("ApiService", () => {
     it("commits the error type if the error detail is missing on get", async () => {
         mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`).reply(500, mockFailure(null as any));
 
-        const commit = jest.fn();
+        const commit = vi.fn();
         await api({ commit, rootState } as any)
             .withError("TEST_TYPE")
             .get(TEST_ROUTE);
@@ -160,7 +160,7 @@ describe("ApiService", () => {
     it("commits the error type if the error detail is missing on post", async () => {
         mockAxios.onPost(`${BASE_URL}${TEST_ROUTE}`, TEST_BODY).reply(500, mockFailure(null as any));
 
-        const commit = jest.fn();
+        const commit = vi.fn();
         await api({ commit, rootState } as any)
             .withError("TEST_TYPE")
             .post(TEST_ROUTE, TEST_BODY);
@@ -172,7 +172,7 @@ describe("ApiService", () => {
     it("commits the success response with the specified type on get", async () => {
         mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`).reply(200, mockSuccess("test data"));
 
-        const commit = jest.fn();
+        const commit = vi.fn();
         await api({ commit, rootState } as any)
             .withSuccess("TEST_TYPE")
             .get(TEST_ROUTE);
@@ -185,7 +185,7 @@ describe("ApiService", () => {
     it("commits the success response with the specified type on post", async () => {
         mockAxios.onPost(`${BASE_URL}${TEST_ROUTE}`, TEST_BODY).reply(200, mockSuccess("test data"));
 
-        const commit = jest.fn();
+        const commit = vi.fn();
         await api({ commit, rootState } as any)
             .withSuccess("TEST_TYPE")
             .post(TEST_ROUTE, TEST_BODY);
@@ -198,7 +198,7 @@ describe("ApiService", () => {
     it("commits the success response with the specified type with root true", async () => {
         mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`).reply(200, mockSuccess("test data"));
 
-        const commit = jest.fn();
+        const commit = vi.fn();
         await api({ commit, rootState } as any)
             .withSuccess("TEST_TYPE", true)
             .get(TEST_ROUTE);
@@ -211,7 +211,7 @@ describe("ApiService", () => {
     it("commits the error response with the specified type with root true", async () => {
         mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`).reply(500, mockFailure("TEST ERROR"));
 
-        const commit = jest.fn();
+        const commit = vi.fn();
         await api({ commit, rootState } as any)
             .withError("TEST_TYPE", true)
             .get(TEST_ROUTE);
@@ -224,7 +224,7 @@ describe("ApiService", () => {
     it("handles exception thrown on commit success response by adding expected error", async () => {
         mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`).reply(200, mockSuccess("TEST SUCCESS"));
 
-        const commit = jest.fn().mockImplementation((type: string) => {
+        const commit = vi.fn().mockImplementation((type: string) => {
             if (type === "TEST_TYPE") {
                 throw new Error("Test Success Mutation Exception");
             }
@@ -249,7 +249,7 @@ describe("ApiService", () => {
     it("handles exception thrown on commit error response by adding expected error", async () => {
         mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`).reply(500, mockFailure("TEST FAILURE"));
 
-        const commit = jest.fn().mockImplementation((type: string) => {
+        const commit = vi.fn().mockImplementation((type: string) => {
             if (type === "TEST_TYPE") {
                 throw new Error("Test Error Mutation Exception");
             }
@@ -274,7 +274,7 @@ describe("ApiService", () => {
     it("get returns the response object", async () => {
         mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`).reply(200, mockSuccess("TEST"));
 
-        const commit = jest.fn();
+        const commit = vi.fn();
         const response = await api({ commit, rootState } as any)
             .withSuccess("TEST_TYPE")
             .get(TEST_ROUTE);
@@ -285,7 +285,7 @@ describe("ApiService", () => {
     it("post returns the response object", async () => {
         mockAxios.onPost(`${BASE_URL}${TEST_ROUTE}`, TEST_BODY).reply(200, mockSuccess("TEST"));
 
-        const commit = jest.fn();
+        const commit = vi.fn();
         const response = await api({ commit, rootState } as any)
             .withSuccess("TEST_TYPE")
             .post(TEST_ROUTE, TEST_BODY);
@@ -295,7 +295,7 @@ describe("ApiService", () => {
 
     it("post sets default Content-Type header", async () => {
         mockAxios.onPost(`${BASE_URL}${TEST_ROUTE}`, TEST_BODY).reply(200, mockSuccess("TEST"));
-        const commit = jest.fn();
+        const commit = vi.fn();
         await api({ commit, rootState } as any)
             .withSuccess("TEST_TYPE")
             .post(TEST_ROUTE, TEST_BODY);
@@ -305,7 +305,7 @@ describe("ApiService", () => {
 
     it("post sets requested Content-Type header", async () => {
         mockAxios.onPost(`${BASE_URL}${TEST_ROUTE}`, TEST_BODY).reply(200, mockSuccess("TEST"));
-        const commit = jest.fn();
+        const commit = vi.fn();
         await api({ commit, rootState } as any)
             .withSuccess("TEST_TYPE")
             .post(TEST_ROUTE, TEST_BODY, "text/plain");
@@ -318,9 +318,9 @@ describe("ApiService", () => {
         const mockResponse = mockSuccess(fakeData);
         mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`).reply(200, mockResponse);
 
-        const spy = jest.spyOn(freezer, "deepFreeze");
+        const spy = vi.spyOn(freezer, "deepFreeze");
 
-        const commit = jest.fn();
+        const commit = vi.fn();
         await api({ commit, rootState } as any)
             .freezeResponse()
             .withSuccess("TEST_TYPE")
@@ -336,9 +336,9 @@ describe("ApiService", () => {
         const fakeData = { name: "d1" };
         mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`).reply(200, mockSuccess(fakeData));
 
-        const spy = jest.spyOn(freezer, "deepFreeze");
+        const spy = vi.spyOn(freezer, "deepFreeze");
 
-        const commit = jest.fn();
+        const commit = vi.fn();
         await api({ commit, rootState } as any)
             .withSuccess("TEST_TYPE")
             .get(TEST_ROUTE);
@@ -350,7 +350,7 @@ describe("ApiService", () => {
     });
 
     async function expectCouldNotParseAPIResponseError() {
-        const commit = jest.fn();
+        const commit = vi.fn();
         await api({ commit, rootState } as any).get(TEST_ROUTE);
 
         expect(commit.mock.calls.length).toBe(1);
@@ -383,33 +383,33 @@ describe("ApiService", () => {
     it("does nothing on error if ignoreErrors is true", async () => {
         mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`).reply(500, mockFailure("some error message"));
 
-        const commit = jest.fn();
+        const commit = vi.fn();
         await api({ commit, rootState } as any)
             .withSuccess("whatever")
             .ignoreErrors()
             .get("/baseline/");
 
-        expect((console.warn as jest.Mock).mock.calls.length).toBe(0);
+        expect((console.warn as Mock).mock.calls.length).toBe(0);
         expect(commit.mock.calls.length).toBe(0);
     });
 
     it("does not warn that no success handler if ignoring success", async () => {
         mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`).reply(200, mockSuccess(true));
 
-        await api({ commit: jest.fn(), rootState } as any)
+        await api({ commit: vi.fn(), rootState } as any)
             .ignoreSuccess()
             .withError("whatever")
             .get(TEST_ROUTE);
 
-        expect((console.warn as jest.Mock).mock.calls.length).toBe(0);
+        expect((console.warn as Mock).mock.calls.length).toBe(0);
     });
 
     it("warns if error and success handlers are not set if not ignoring", async () => {
         mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`).reply(200, mockSuccess(true));
 
-        await api({ commit: jest.fn(), rootState } as any).get(TEST_ROUTE);
+        await api({ commit: vi.fn(), rootState } as any).get(TEST_ROUTE);
 
-        const warnings = (console.warn as jest.Mock).mock.calls;
+        const warnings = (console.warn as Mock).mock.calls;
 
         expectNoErrorHandlerMsgLogged();
         expect(warnings[1][0]).toBe(`No success handler registered for request ${TEST_ROUTE}.`);

@@ -1,4 +1,4 @@
-import { interpolateColours, paletteData, paletteModel, parseColour, rgb } from "../../src/app/palette";
+import { interpolateColours, paletteData, paletteModel, parseColour, rgb } from "../../src/palette";
 
 describe("parse colours", () => {
     it("can roundtrip", () => {
