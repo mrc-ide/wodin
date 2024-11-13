@@ -33,9 +33,11 @@ export const getters: GraphsGetters & GetterTree<GraphsState, AppState> = {
     },
     [GraphsGetter.legendWidth]: (_, graphsGetters): number => {
         // Heuristic for setting graph legend width based on string length of longest variable name
-        const longestVar = graphsGetters[GraphsGetter.allSelectedVariables].sort((a: string, b: string) =>
-            a.length < b.length ? 1 : -1
-        )[0];
-        return longestVar.length * LEGEND_WIDTH_PER_CHAR + LEGEND_LINE_PADDING;
+        let maxVariableLength = 0;
+        const variables = graphsGetters[GraphsGetter.allSelectedVariables];
+        for (let i = 0; i < variables.length; i++) {
+            maxVariableLength = Math.max(maxVariableLength, variables[i].length);
+        }
+        return maxVariableLength * LEGEND_WIDTH_PER_CHAR + LEGEND_LINE_PADDING;
     }
 };
