@@ -9,6 +9,7 @@ export abstract class WodinExcelDownload {
 
     protected readonly _state: AppState;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected readonly _rootGetters: any;
 
     protected readonly _commit: Commit;

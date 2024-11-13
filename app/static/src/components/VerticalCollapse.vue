@@ -37,6 +37,7 @@ export default defineComponent({
         VueFeather
     },
     setup(props) {
+        // eslint-disable-next-line vue/no-setup-props-destructure
         const collapsed = ref(props.collapsedDefault);
 
         const toggleCollapse = () => {

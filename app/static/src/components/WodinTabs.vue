@@ -33,6 +33,7 @@ export default defineComponent({
     },
     emits: ["tabSelected"],
     setup(props: Props, { emit }) {
+        // eslint-disable-next-line vue/no-setup-props-destructure
         const selectedTabName = ref(props.tabNames[0]);
 
         const tabSelected = (tabName: string) => {

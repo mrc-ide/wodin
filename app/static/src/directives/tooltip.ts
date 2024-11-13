@@ -39,13 +39,14 @@ export default {
     beforeUpdate(el: HTMLElement, binding: DirectiveBinding<string | ToolTipSettings>): void {
         const { value } = binding;
 
-        let tooltip = Tooltip.getInstance(el);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let tooltip = Tooltip.getInstance(el) as any;
 
         if (typeof value !== "string" && tooltip) {
             const variant = value?.variant || "text";
             const oldCustomClass = variant === "text" ? "" : `tooltip-${variant}`;
 
-            const isVariantSame = (tooltip as any)._config.customClass === oldCustomClass;
+            const isVariantSame = tooltip._config.customClass === oldCustomClass;
             if (!isVariantSame) {
                 tooltip.dispose();
 
@@ -63,9 +64,8 @@ export default {
         const content = typeof value === "string" ? value : value?.content || "";
 
         if (tooltip) {
-            const configuredTooltip = tooltip as any;
-            configuredTooltip._config.title = content;
-            const { trigger } = configuredTooltip._config;
+            tooltip._config.title = content;
+            const { trigger } = tooltip._config;
             if (trigger === "manual") {
                 if (!content) {
                     tooltip.hide();

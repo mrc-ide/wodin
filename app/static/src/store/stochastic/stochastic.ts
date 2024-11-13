@@ -19,7 +19,7 @@ import { multiSensitivity } from "../multiSensitivity/multiSensitivity";
 
 const language = getStoreModule();
 
-const defaultState: () => any = () => {
+const defaultState = () => {
     return {
         sessionId: newUid(),
         sessionLabel: null,
@@ -38,7 +38,7 @@ const defaultState: () => any = () => {
 };
 
 export const storeOptions: StoreOptions<StochasticState> = {
-    state: defaultState(),
+    state: defaultState() as StochasticState,
     actions,
     mutations,
     getters,
