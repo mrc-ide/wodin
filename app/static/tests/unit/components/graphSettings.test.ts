@@ -1,16 +1,16 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
-import { BasicState } from "../../../src/app/store/basic/state";
-import GraphSettings from "../../../src/app/components/GraphSettings.vue";
-import { GraphsMutation } from "../../../src/app/store/graphs/mutations";
-import { defaultGraphSettings } from "../../../src/app/store/graphs/state";
+import { BasicState } from "../../../src/store/basic/state";
+import GraphSettings from "../../../src/components/GraphSettings.vue";
+import { GraphsMutation } from "../../../src/store/graphs/mutations";
+import { defaultGraphSettings } from "../../../src/store/graphs/state";
 
 describe("GraphSettings", () => {
-    const mockSetLogScaleYAxis = jest.fn();
-    const mockSetLockYAxis = jest.fn();
+    const mockSetLogScaleYAxis = vi.fn();
+    const mockSetLockYAxis = vi.fn();
 
-    const mockSetFitLogScaleYAxis = jest.fn();
-    const mockSetFitLockYAxis = jest.fn();
+    const mockSetFitLogScaleYAxis = vi.fn();
+    const mockSetFitLockYAxis = vi.fn();
 
     const getWrapper = (
         graphIndex: number | undefined = 1,
@@ -44,7 +44,7 @@ describe("GraphSettings", () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("renders as expected when not fit plot", () => {
@@ -91,7 +91,7 @@ describe("GraphSettings", () => {
         expect(mockSetLogScaleYAxis).not.toHaveBeenCalled();
     });
 
-    it("commits change to log scale y axis setting, when not fit plot", async () => {
+    it("commits change to lock y axis setting, when not fit plot", async () => {
         const wrapper = getWrapper(1, false);
         const inputs = wrapper.findAll("input");
         expect((inputs[1].element as HTMLInputElement).checked).toBe(false);
@@ -101,7 +101,7 @@ describe("GraphSettings", () => {
         expect(mockSetFitLockYAxis).not.toHaveBeenCalled();
     });
 
-    it("commits change to log scale y axis setting, when fit plot", async () => {
+    it("commits change to lock y axis setting, when fit plot", async () => {
         const wrapper = getWrapper(undefined, true);
         const inputs = wrapper.findAll("input");
         expect((inputs[1].element as HTMLInputElement).checked).toBe(false);

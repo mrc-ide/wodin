@@ -1,5 +1,5 @@
 import { shallowMount } from "@vue/test-utils";
-import WodinTabs from "../../../src/app/components/WodinTabs.vue";
+import WodinTabs from "../../../src/components/WodinTabs.vue";
 
 describe("WodinTabs", () => {
     const getWrapper = () => {
