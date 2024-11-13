@@ -15,7 +15,8 @@ function isObject<K extends string>(object: unknown): object is Record<K, unknow
 }
 
 export function isAPIError(object: unknown): object is WodinError {
-    return isObject<keyof WodinError>(object) && typeof object.error === "string" && (object.detail === undefined || typeof object.detail === "string");
+    return isObject<keyof WodinError>(object) && typeof object.error === "string" &&
+           (object.detail === undefined || object.detail === null || typeof object.detail === "string");
 }
 
 export function isAPIResponseFailure(object: unknown): object is ResponseFailure {
