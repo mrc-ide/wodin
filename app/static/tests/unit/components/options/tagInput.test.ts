@@ -2,7 +2,7 @@ import { nextTick } from "vue";
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import VueTagsInput from "vue3-tags-input";
-import TagInput from "../../../../src/app/components/options/TagInput.vue";
+import TagInput from "../../../../src/components/options/TagInput.vue";
 import { mockRunState } from "../../../mocks";
 
 describe("Tag Input", () => {

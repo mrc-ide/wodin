@@ -1,13 +1,13 @@
 import { mount, VueWrapper } from "@vue/test-utils";
 import { nextTick } from "vue";
-import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
+import NumericInput from "../../../../src/components/options/NumericInput.vue";
 
 export type BoundTooltip = {
     error: { number: number; message?: string };
     warning: { number: number; message: string };
 };
 
-const mockTooltipDirective = jest.fn();
+const mockTooltipDirective = vi.fn();
 
 describe("NumericInput", () => {
     const getWrapper = (
@@ -41,7 +41,7 @@ describe("NumericInput", () => {
     };
 
     beforeEach(() => {
-        jest.resetAllMocks();
+        vi.resetAllMocks();
     });
 
     it("renders as expected", async () => {

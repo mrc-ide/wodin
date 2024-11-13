@@ -1,15 +1,15 @@
 import { shallowMount, VueWrapper } from "@vue/test-utils";
 import Vuex from "vuex";
-import LinkData from "../../../../src/app/components/options/LinkData.vue";
-import { FitState } from "../../../../src/app/store/fit/state";
-import { getters } from "../../../../src/app/store/fitData/getters";
+import LinkData from "../../../../src/components/options/LinkData.vue";
+import { FitState } from "../../../../src/store/fit/state";
+import { getters } from "../../../../src/store/fitData/getters";
 import { mockFitDataState, mockFitState, mockGraphsState, mockModelState } from "../../../mocks";
-import { FitDataAction } from "../../../../src/app/store/fitData/actions";
-import { getters as graphGetters } from "../../../../src/app/store/graphs/getters";
-import { defaultGraphSettings } from "../../../../src/app/store/graphs/state";
+import { FitDataAction } from "../../../../src/store/fitData/actions";
+import { getters as graphGetters } from "../../../../src/store/graphs/getters";
+import { defaultGraphSettings } from "../../../../src/store/graphs/state";
 
 describe("LinkData", () => {
-    const getWrapper = (includeColumns = true, includeValidModel = true, mockUpdateLinkedVariable = jest.fn()) => {
+    const getWrapper = (includeColumns = true, includeValidModel = true, mockUpdateLinkedVariable = vi.fn()) => {
         const store = new Vuex.Store<FitState>({
             state: mockFitState(),
             modules: {
@@ -105,7 +105,7 @@ describe("LinkData", () => {
     });
 
     it("updates linked variable on select variable", async () => {
-        const mockUpdateLinkedVariable = jest.fn();
+        const mockUpdateLinkedVariable = vi.fn();
         const wrapper = getWrapper(true, true, mockUpdateLinkedVariable);
         const admissionsSelect = wrapper.findAll("select").at(1)!;
         (admissionsSelect.element as HTMLSelectElement).value = "R";
@@ -115,7 +115,7 @@ describe("LinkData", () => {
     });
 
     it("updates linked variable on select no link", async () => {
-        const mockUpdateLinkedVariable = jest.fn();
+        const mockUpdateLinkedVariable = vi.fn();
         const wrapper = getWrapper(true, true, mockUpdateLinkedVariable);
         const casesSelect = wrapper.findAll("select").at(0)!;
         (casesSelect.element as HTMLSelectElement).value = "";

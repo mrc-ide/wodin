@@ -1,12 +1,12 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { mockFitDataState } from "../../../mocks";
-import { FitState } from "../../../../src/app/store/fit/state";
-import OptimisationOptions from "../../../../src/app/components/options/OptimisationOptions.vue";
-import { FitDataAction } from "../../../../src/app/store/fitData/actions";
+import { FitState } from "../../../../src/store/fit/state";
+import OptimisationOptions from "../../../../src/components/options/OptimisationOptions.vue";
+import { FitDataAction } from "../../../../src/store/fitData/actions";
 
 describe("OptimisationOptions", () => {
-    const getWrapper = (fitDataState = mockFitDataState(), mockUpdateColumnToFit = jest.fn()) => {
+    const getWrapper = (fitDataState = mockFitDataState(), mockUpdateColumnToFit = vi.fn()) => {
         const store = new Vuex.Store<FitState>({
             state: {} as any,
             modules: {
@@ -71,7 +71,7 @@ describe("OptimisationOptions", () => {
     });
 
     it("updates column to fit when select changes", async () => {
-        const mockUpdateColumnToFit = jest.fn();
+        const mockUpdateColumnToFit = vi.fn();
         const state = mockFitDataState({
             columnToFit: "col2",
             linkedVariables: {
