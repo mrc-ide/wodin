@@ -3,4 +3,4 @@ import { ActionContext } from "vuex";
 
 export type Dict<V> = { [k: string]: V };
 
-export type AppCtx = ActionContext<unknown, AppState>;
+export type AppCtx<S> = ActionContext<S, AppState>;

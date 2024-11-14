@@ -41,12 +41,12 @@ export interface API<S, E> {
 type OnError = (failure: ResponseFailure) => void;
 type OnSuccess = (success: ResponseSuccess) => void;
 
-export class APIService<S extends string, E extends string> implements API<S, E> {
+export class APIService<S extends string, E extends string, State> implements API<S, E> {
     private readonly _commit: Commit;
 
     private readonly _baseUrl: string;
 
-    constructor(context: AppCtx) {
+    constructor(context: AppCtx<State>) {
         this._commit = context.commit;
         this._baseUrl = (context.rootState as AppState).baseUrl!;
     }
@@ -189,4 +189,4 @@ export class APIService<S extends string, E extends string> implements API<S, E>
     }
 }
 
-export const api = <S extends string, E extends string>(ctx: AppCtx): APIService<S, E> => new APIService<S, E>(ctx);
+export const api = <S extends string, E extends string, State>(ctx: AppCtx<State>): APIService<S, E, State> => new APIService<S, E, State>(ctx);

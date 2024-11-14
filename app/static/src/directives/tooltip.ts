@@ -9,6 +9,8 @@ export interface ToolTipSettings {
     delayMs?: number;
 }
 
+type TooltipWithConfig = Tooltip & { _config: Tooltip.Options }
+
 export default {
     mounted(el: HTMLElement, binding: DirectiveBinding<string | ToolTipSettings>): void {
         const { value } = binding;
@@ -39,8 +41,7 @@ export default {
     beforeUpdate(el: HTMLElement, binding: DirectiveBinding<string | ToolTipSettings>): void {
         const { value } = binding;
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let tooltip = Tooltip.getInstance(el) as any;
+        let tooltip = Tooltip.getInstance(el) as TooltipWithConfig;
 
         if (typeof value !== "string" && tooltip) {
             const variant = value?.variant || "text";
@@ -57,7 +58,7 @@ export default {
                     customClass: variant === "text" ? "" : `tooltip-${variant}`,
                     animation: false,
                     delay: { show: value?.delayMs || 0, hide: 0 }
-                });
+                }) as TooltipWithConfig;
             }
         }
 
