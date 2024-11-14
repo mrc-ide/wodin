@@ -97,7 +97,6 @@ const allPlotData = (start: number, end: number, points: number): WodinPlotData 
     const lineStylesForParamSets = computed(() => store.getters[`run/${RunGetter.lineStylesForParameterSets}`]);
 
     const updatePlotTraceNameWithParameterSetName = (plotTrace: Partial<PlotData>, setName: string) => {
-        // eslint-disable-next-line no-param-reassign
         plotTrace.name = `${plotTrace.name} (${setName})`;
     };
 

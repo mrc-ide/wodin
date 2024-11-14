@@ -1,4 +1,4 @@
-import { Action, ActionTree } from "vuex";
+import { Action } from "vuex";
 import { actions, BaseSensitivityAction, SensitivityAction } from "../../../../src/store/sensitivity/actions";
 import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
 import { ModelGetter } from "../../../../src/store/model/getters";

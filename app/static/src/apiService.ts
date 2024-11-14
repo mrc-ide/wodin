@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { Commit } from "vuex";
 import { freezer } from "./utils";
@@ -12,16 +10,22 @@ export interface ResponseWithType<T> extends ResponseSuccess {
     data: T;
 }
 
-export function isAPIError(object: any): object is WodinError {
-    return typeof object.error === "string" && (object.details === undefined || typeof object.details === "string");
+function isObject<K extends string>(object: unknown): object is Record<K, unknown> {
+    return typeof object === "object" && !Array.isArray(object) && object !== null;
 }
 
-export function isAPIResponseFailure(object: any): object is ResponseFailure {
-    return (
+export function isAPIError(object: unknown): object is WodinError {
+    return isObject<keyof WodinError>(object) && typeof object.error === "string" &&
+           (object.detail === undefined || object.detail === null || typeof object.detail === "string");
+}
+
+export function isAPIResponseFailure(object: unknown): object is ResponseFailure {
+    return !!(
         object &&
+        isObject<keyof ResponseFailure>(object) &&
         object.status === "failure" &&
         Array.isArray(object.errors) &&
-        object.errors.every((e: any) => isAPIError(e))
+        object.errors.every(e => isAPIError(e))
     );
 }
 
@@ -34,17 +38,15 @@ export interface API<S, E> {
     get<T>(url: string): Promise<void | ResponseWithType<T>>;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type OnError = (failure: ResponseFailure) => void;
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type OnSuccess = (success: ResponseSuccess) => void;
 
-export class APIService<S extends string, E extends string> implements API<S, E> {
+export class APIService<S extends string, E extends string, State> implements API<S, E> {
     private readonly _commit: Commit;
 
     private readonly _baseUrl: string;
 
-    constructor(context: AppCtx) {
+    constructor(context: AppCtx<State>) {
         this._commit = context.commit;
         this._baseUrl = (context.rootState as AppState).baseUrl!;
     }
@@ -105,7 +107,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
     };
 
     withSuccess = (type: S, root = false) => {
-        this._onSuccess = (data: any) => {
+        this._onSuccess = (data: unknown) => {
             const finalData = this._freezeResponse ? freezer.deepFreeze(data) : data;
             try {
                 this._commit(type, finalData, { root });
@@ -179,7 +181,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         return this._handleAxiosResponse(axios.get(fullUrl));
     }
 
-    async post<T>(url: string, body: any, contentType = "application/json"): Promise<void | ResponseWithType<T>> {
+    async post<T>(url: string, body: unknown, contentType = "application/json"): Promise<void | ResponseWithType<T>> {
         this._verifyHandlers(url);
         const headers = { "Content-Type": contentType };
         const fullUrl = this._fullUrl(url);
@@ -187,4 +189,4 @@ export class APIService<S extends string, E extends string> implements API<S, E>
     }
 }
 
-export const api = <S extends string, E extends string>(ctx: AppCtx): APIService<S, E> => new APIService<S, E>(ctx);
+export const api = <S extends string, E extends string, State>(ctx: AppCtx<State>): APIService<S, E, State> => new APIService<S, E, State>(ctx);

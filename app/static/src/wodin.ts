@@ -1,10 +1,8 @@
 import { createApp } from "vue";
 import Vuex from "vuex";
-import WodinSession from "./components/WodinSession.vue";
 import BasicApp from "./components/basic/BasicApp.vue";
 import FitApp from "./components/fit/FitApp.vue";
 import StochasticApp from "./components/stochastic/StochasticApp.vue";
-import AppHeader from "./components/header/AppHeader.vue";
 import { BasicState } from "./store/basic/state";
 import { FitState } from "./store/fit/state";
 import { StochasticState } from "./store/stochastic/state";

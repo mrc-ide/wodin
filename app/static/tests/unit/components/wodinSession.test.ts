@@ -15,8 +15,6 @@ import { localStorageManager } from "../../../src/localStorageManager";
 import { LanguageState } from "../../../translationPackage/store/state";
 import { MockInstance } from "vitest";
 
-const realLocation = window.location;
-
 describe("WodinSession", () => {
     const mockInitialiseApp = vi.fn();
     const mockAddError = vi.fn();

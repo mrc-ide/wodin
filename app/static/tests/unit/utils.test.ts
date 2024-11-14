@@ -5,7 +5,8 @@ import {
     getCodeErrorFromResponse,
     processFitData,
     newUid,
-    joinStringsSentence
+    joinStringsSentence,
+    parseDateTime
 } from "../../src/utils";
 import { SensitivityScaleType, SensitivityVariationType } from "../../src/store/sensitivity/state";
 import { mockBatchParsDisplace, mockBatchParsRange } from "../mocks";
@@ -502,5 +503,29 @@ describe("join strings", () => {
     });
     it("handles longer list", () => {
         expect(joinStringsSentence(["a", "b", "c", "d"], ", and ")).toBe("a, b, c, and d");
+    });
+});
+
+describe("parseDateTime works as expected", () => {
+    it("works with short datetimes", () => {
+        const shortDate = new Date("1/2/24 3:4:5");
+        const { year, month, day, hour, minute, second } = parseDateTime(shortDate);
+        expect(month).toBe("01");
+        expect(day).toBe("02");
+        expect(year).toBe(2024);
+        expect(hour).toBe("03");
+        expect(minute).toBe("04");
+        expect(second).toBe("05");
+    });
+
+    it("works with long datetimes", () => {
+        const shortDate = new Date("11/12/24 13:14:15");
+        const { year, month, day, hour, minute, second } = parseDateTime(shortDate);
+        expect(month).toBe("11");
+        expect(day).toBe("12");
+        expect(year).toBe(2024);
+        expect(hour).toBe("13");
+        expect(minute).toBe("14");
+        expect(second).toBe("15");
     });
 });

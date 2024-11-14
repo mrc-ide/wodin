@@ -14,7 +14,7 @@ import { AppStateAction, appStateActions } from "../../../../src/store/appState/
 import { AppStateMutation, appStateMutations } from "../../../../src/store/appState/mutations";
 import { RunMutation } from "../../../../src/store/run/mutations";
 import { ErrorsMutation } from "../../../../src/store/errors/mutations";
-import { CodeMutation, mutations as codeMutations } from "../../../../src/store/code/mutations";
+import { CodeMutation } from "../../../../src/store/code/mutations";
 import { BasicState } from "../../../../src/store/basic/state";
 import { ModelAction } from "../../../../src/store/model/actions";
 import { serialiseState } from "../../../../src/serialise";
@@ -22,7 +22,6 @@ import { SessionsAction } from "../../../../src/store/sessions/actions";
 import { localStorageManager } from "../../../../src/localStorageManager";
 import { AppStateGetter } from "../../../../src/store/appState/getters";
 import { Language } from "../../../../src/types/languageTypes";
-import { nextTick } from "vue";
 import { flushPromises } from "@vue/test-utils";
 
 describe("AppState actions", () => {

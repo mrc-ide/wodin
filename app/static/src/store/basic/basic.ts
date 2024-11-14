@@ -19,8 +19,7 @@ import { multiSensitivity } from "../multiSensitivity/multiSensitivity";
 
 const language = getStoreModule();
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-const defaultState: () => any = () => {
+const defaultState = () => {
     return {
         sessionId: newUid(),
         sessionLabel: null,
@@ -39,7 +38,7 @@ const defaultState: () => any = () => {
 };
 
 export const storeOptions: StoreOptions<BasicState> = {
-    state: defaultState(),
+    state: defaultState() as BasicState,
     actions,
     mutations,
     getters,

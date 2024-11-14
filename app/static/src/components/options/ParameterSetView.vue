@@ -97,7 +97,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, nextTick, onBeforeUnmount, PropType, ref, watch } from "vue";
+import { computed, defineComponent, nextTick, onBeforeUnmount, PropType, Ref, ref, watch } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import { ParameterSet } from "../../store/run/state";
@@ -172,6 +172,7 @@ export default defineComponent({
 
         const paramNameInput = ref(null);
         const editDisplayName = ref(false);
+        // eslint-disable-next-line vue/no-setup-props-destructure
         const newDisplayName = ref(props.parameterSet.displayName);
         const editDisplayNameOn = () => {
             editDisplayName.value = true;
@@ -189,10 +190,9 @@ export default defineComponent({
                 editDisplayName.value = false;
             }
         };
-        const saveButton = ref<HTMLButtonElement | null>(null);
+        const saveButton = ref<Ref<InstanceType<typeof VueFeather>> | null>(null);
         const cancelEditDisplayName = (event: FocusEvent) => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            if (event.relatedTarget && event.relatedTarget === (saveButton.value as any).$el) return;
+            if (event.relatedTarget && event.relatedTarget === saveButton.value!.$el) return;
             store.commit(`run/${RunMutation.TurnOffDisplayNameError}`, props.parameterSet.name);
             newDisplayName.value = props.parameterSet.displayName;
             editDisplayName.value = false;

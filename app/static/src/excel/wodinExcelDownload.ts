@@ -4,19 +4,18 @@ import { AppState } from "../store/appState/state";
 import { AppCtx } from "../types/utilTypes";
 import { ErrorsMutation } from "../store/errors/mutations";
 
-export abstract class WodinExcelDownload {
+export abstract class WodinExcelDownload<State> {
     private readonly _fileName: string;
 
     protected readonly _state: AppState;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    protected readonly _rootGetters: any;
+    protected readonly _rootGetters: AppCtx<State>["rootGetters"];
 
     protected readonly _commit: Commit;
 
     protected readonly _workbook: XLSX.WorkBook;
 
-    constructor(context: AppCtx, fileName: string) {
+    constructor(context: AppCtx<State>, fileName: string) {
         this._state = context.rootState;
         this._rootGetters = context.rootGetters;
         this._commit = context.commit;

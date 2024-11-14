@@ -21,7 +21,8 @@ import {
     AxisType,
     Layout,
     Config,
-    LayoutAxis
+    LayoutAxis,
+    PlotlyHTMLElement
 } from "plotly.js-basic-dist-min";
 import { WodinPlotData, fadePlotStyle, margin, config } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
@@ -46,8 +47,7 @@ export default defineComponent({
         // Only used as an indicator that redraw is required when this changes - the data to display is calculated by
         // plotData function using these solutions
         redrawWatches: {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            type: Array as PropType<any[]>,
+            type: Array as PropType<unknown[]>,
             required: true
         },
         recalculateOnRelayout: {
@@ -84,7 +84,7 @@ export default defineComponent({
 
         const startTime = 0;
 
-        const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
+        const plot = ref<null | PlotlyHTMLElement>(null); // Picks up the element with 'plot' ref in the template
         const baseData = ref<WodinPlotData>([]);
         const nPoints = 1000; // TODO: appropriate value could be derived from width of element
 
@@ -102,8 +102,7 @@ export default defineComponent({
         const lastYAxisFromZoom: Ref<Partial<LayoutAxis> | null> = ref(null);
 
         const commitYAxisRange = () => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const plotLayout = (plot.value as any).layout;
+            const plotLayout = plot.value!.layout;
             const yRange = plotLayout.yaxis?.range;
             if (plotLayout) {
                 if (props.fitPlot) {
