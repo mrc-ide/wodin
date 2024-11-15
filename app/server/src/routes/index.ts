@@ -5,11 +5,10 @@ import odinRoutes from "./odin";
 import configRoutes from "./config";
 import { ErrorType } from "../errors/errorType";
 import { WodinWebError } from "../errors/wodinWebError";
-
-const express = require("express");
+import { Router } from "express";
 
 export const registerRoutes = (app: Application) => {
-    const router = express.Router();
+    const router = Router();
 
     router.get("/", IndexController.getIndex);
     router.use("/odin", odinRoutes);

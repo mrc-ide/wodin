@@ -7,7 +7,7 @@ import { WodinError } from "./wodinError";
 import { WodinWebError } from "./wodinWebError";
 
 // Need to include the unused next var for this to be used correctly as and error handler
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-unsafe-function-type
 export const handleError = (err: Error, req: Request, res: Response, _: Function) => {
     const wodinError = err instanceof WodinError;
     const wodinWebError = err instanceof WodinWebError;

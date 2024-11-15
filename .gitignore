@@ -8,3 +8,4 @@
 /app/static/dist/
 /app/static/tmp/
 /app/static/test-results
+/logs/*

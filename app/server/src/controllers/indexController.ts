@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { AppLocals } from "../types";
-
-const path = require("path");
+import path from "path";
 
 export class IndexController {
     static getIndex = (req: Request, res: Response) => {
