@@ -1,16 +1,20 @@
-const mockSessionStore = {
-    saveSession: jest.fn(),
-    getSessionsMetadata: jest.fn(),
-    saveSessionLabel: jest.fn(),
-    getSession: jest.fn(),
-    generateFriendlyId: jest.fn()
-};
+const { mockSessionStore, mockGetSessionStore } = vi.hoisted(() => {
+    const mockSessionStore = {
+        saveSession: vi.fn(),
+        getSessionsMetadata: vi.fn(),
+        saveSessionLabel: vi.fn(),
+        getSession: vi.fn(),
+        generateFriendlyId: vi.fn()
+    };
+    // Need to mock getSessionStore before importing the controller
+    const mockGetSessionStore = vi.fn().mockReturnValue(mockSessionStore);
+    return {
+        mockSessionStore,
+        mockGetSessionStore
+    }
+})
+vi.mock("../../src/db/sessionStore", () => { return { getSessionStore: mockGetSessionStore }; });
 
-// Need to mock getSessionStore before importing the controller
-const mockGetSessionStore = jest.fn().mockReturnValue(mockSessionStore);
-jest.mock("../../src/db/sessionStore", () => { return { getSessionStore: mockGetSessionStore }; });
-
-/* eslint-disable import/first */
 import { serialiseSession, SessionsController } from "../../src/controllers/sessionsController";
 
 describe("SessionsController", () => {
@@ -24,18 +28,18 @@ describe("SessionsController", () => {
     } as any;
 
     const res = {
-        end: jest.fn(),
-        header: jest.fn()
+        end: vi.fn(),
+        header: vi.fn()
     } as any;
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     const testError = { message: "test error" };
 
     it("can save session", async () => {
-        await SessionsController.postSession(req, res, jest.fn());
+        await SessionsController.postSession(req, res, vi.fn());
         expect(mockGetSessionStore).toHaveBeenCalledTimes(1);
         expect(mockGetSessionStore.mock.calls[0][0]).toBe(req);
         expect(mockSessionStore.saveSession).toHaveBeenCalledTimes(1);
@@ -46,7 +50,7 @@ describe("SessionsController", () => {
 
     it("postSession handles error", async () => {
         mockSessionStore.saveSession.mockImplementation(() => { throw testError; });
-        const next = jest.fn();
+        const next = vi.fn();
         await SessionsController.postSession(req, res, next);
         expect(next).toHaveBeenCalledWith(testError);
     });
@@ -59,7 +63,7 @@ describe("SessionsController", () => {
                 removeDuplicates: "true"
             }
         };
-        await SessionsController.getSessionsMetadata(metadataReq, res, jest.fn());
+        await SessionsController.getSessionsMetadata(metadataReq, res, vi.fn());
         expect(mockGetSessionStore).toHaveBeenCalledTimes(1);
         expect(mockGetSessionStore.mock.calls[0][0]).toBe(metadataReq);
         expect(mockSessionStore.getSessionsMetadata).toHaveBeenCalledTimes(1);
@@ -78,7 +82,7 @@ describe("SessionsController", () => {
                 removeDuplicates: "false"
             }
         };
-        await SessionsController.getSessionsMetadata(metadataReq, res, jest.fn());
+        await SessionsController.getSessionsMetadata(metadataReq, res, vi.fn());
         expect(mockGetSessionStore).toHaveBeenCalledTimes(1);
         expect(mockGetSessionStore.mock.calls[0][0]).toBe(metadataReq);
         expect(mockSessionStore.getSessionsMetadata).toHaveBeenCalledTimes(1);
@@ -88,7 +92,7 @@ describe("SessionsController", () => {
 
     it("getSessionMetadata handles error", async () => {
         mockSessionStore.getSessionsMetadata.mockImplementation(() => { throw testError; });
-        const next = jest.fn();
+        const next = vi.fn();
         const metadataReq = {
             ...req,
             query: {
@@ -100,7 +104,7 @@ describe("SessionsController", () => {
     });
 
     it("can get empty session metadata with missing ids parameter", async () => {
-        await SessionsController.getSessionsMetadata(req, res, jest.fn());
+        await SessionsController.getSessionsMetadata(req, res, vi.fn());
         expect(mockGetSessionStore).not.toHaveBeenCalled();
         expect(res.header).toHaveBeenCalledWith("Content-Type", "application/json");
         expect(res.end).toHaveBeenCalledTimes(1);
@@ -123,7 +127,7 @@ describe("SessionsController", () => {
             body: "some label"
         } as any;
 
-        SessionsController.postSessionLabel(labelReq, res, jest.fn());
+        SessionsController.postSessionLabel(labelReq, res, vi.fn());
         expect(mockGetSessionStore).toHaveBeenCalledTimes(1);
         expect(mockGetSessionStore.mock.calls[0][0]).toBe(labelReq);
         expect(mockSessionStore.saveSessionLabel).toHaveBeenCalledTimes(1);
@@ -133,7 +137,7 @@ describe("SessionsController", () => {
 
     it("postSessionLabel handles error", async () => {
         mockSessionStore.saveSessionLabel.mockImplementation(() => { throw testError; });
-        const next = jest.fn();
+        const next = vi.fn();
         await SessionsController.postSessionLabel(req, res, next);
         expect(next).toHaveBeenCalledWith(testError);
     });
@@ -153,7 +157,7 @@ describe("SessionsController", () => {
                 id: "1234"
             }
         } as any;
-        SessionsController.getSession(sessionReq, res, jest.fn());
+        SessionsController.getSession(sessionReq, res, vi.fn());
         expect(mockGetSessionStore).toHaveBeenCalledTimes(1);
         expect(mockGetSessionStore.mock.calls[0][0]).toBe(sessionReq);
         expect(mockSessionStore.getSession).toHaveBeenCalledTimes(1);
@@ -162,7 +166,7 @@ describe("SessionsController", () => {
 
     it("getSession handles error", async () => {
         mockSessionStore.getSession.mockImplementation(() => { throw testError; });
-        const next = jest.fn();
+        const next = vi.fn();
         await SessionsController.getSession(req, res, next);
         expect(next).toHaveBeenCalledWith(testError);
     });
@@ -182,7 +186,7 @@ describe("SessionsController", () => {
                 id: "1234"
             }
         } as any;
-        SessionsController.generateFriendlyId(sessionReq, res, jest.fn());
+        SessionsController.generateFriendlyId(sessionReq, res, vi.fn());
         expect(mockGetSessionStore).toHaveBeenCalledTimes(1);
         expect(mockGetSessionStore.mock.calls[0][0]).toBe(sessionReq);
         expect(mockSessionStore.generateFriendlyId).toHaveBeenCalledTimes(1);
@@ -191,7 +195,7 @@ describe("SessionsController", () => {
 
     it("generateFriendlyId handles error", async () => {
         mockSessionStore.generateFriendlyId.mockImplementation(() => { throw testError; });
-        const next = jest.fn();
+        const next = vi.fn();
         await SessionsController.generateFriendlyId(req, res, next);
         expect(next).toHaveBeenCalledWith(testError);
     });
@@ -199,13 +203,13 @@ describe("SessionsController", () => {
 
 describe("Sessions serialise correctly", () => {
     const res = {
-        status: jest.fn(),
-        end: jest.fn(),
-        header: jest.fn()
+        status: vi.fn(),
+        end: vi.fn(),
+        header: vi.fn()
     } as any;
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("serialises json string", () => {

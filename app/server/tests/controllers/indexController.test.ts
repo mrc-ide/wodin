@@ -10,7 +10,7 @@ describe("indexController", () => {
             }
         } as any;
         const mockResponse = {
-            sendFile: jest.fn()
+            sendFile: vi.fn()
         } as any;
         IndexController.getIndex(mockRequest, mockResponse);
         expect(mockResponse.sendFile).toBeCalledTimes(1);
