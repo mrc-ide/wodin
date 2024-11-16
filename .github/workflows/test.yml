@@ -7,28 +7,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node
-        uses: ./.github/actions/setup-and-login
+      - uses: ./.github/actions/install-npm-packages
         with:
-          install-packages: true
+          static: true
 
       - name: Test front end
         run: npm run coverage --prefix=app/static
       - uses: codecov/codecov-action@v4
         with:
-          fail_ci_if_error: true # optional (default = false)
+          fail_ci_if_error: true
           files: ./app/static/coverage/coverage-final.json
-          token: ${{ secrets.CODECOV_TOKEN }} # required
+          token: ${{ secrets.CODECOV_TOKEN }}
           codecov_yml_path: ./codecov.yml
 
   be-unit-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node
-        uses: ./.github/actions/setup-and-login
-        with:
-          build-and-run-server: true
+      - uses: ./.github/actions/build-and-run-wodin
 
       - name: Test back end
         run: npm test --prefix=app/server
@@ -44,10 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node
-        uses: ./.github/actions/setup-and-login
-        with:
-          build-and-run-server: true
+      - uses: ./.github/actions/build-and-run-wodin
 
       - name: Test back end integration
         run: npm run integration-test --prefix=app/server
@@ -59,10 +52,7 @@ jobs:
         shard: [1, 2, 3, 4, 5, 6]
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node
-        uses: ./.github/actions/setup-and-login
-        with:
-          build-and-run-server: true
+      - uses: ./.github/actions/build-and-run-wodin
       
       - name: Get installed Playwright version
         run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./app/static/package-lock.json').packages['node_modules/@playwright/test'].version)")" >> $GITHUB_ENV
@@ -84,10 +74,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node
-        uses: ./.github/actions/setup-and-login
+      - uses: ./.github/actions/install-npm-packages
         with:
-          install-packages: true
+          static: true
+          server: true
 
       - name: Lint back end
         run: npm run lint --prefix=app/server

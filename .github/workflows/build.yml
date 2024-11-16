@@ -10,9 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup env and login to GHCR
-        id: ci-env
-        uses: ./.github/actions/setup-and-login
+      - id: ci-env
+        uses: ./.github/actions/ci-env-and-ghcr-login
         with:
           ghcr-username: ${{ github.actor }}
           ghcr-password: ${{ secrets.GITHUB_TOKEN }}

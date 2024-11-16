@@ -1,0 +1,16 @@
+name: Build and run WODIN (and deps)
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Build and run server
+      if: inputs.build-and-run-server == 'true'
+      shell: bash
+      run: |
+        ./scripts/build.sh
+        ./scripts/run-dependencies.sh
+        npm run serve --prefix=app/server &

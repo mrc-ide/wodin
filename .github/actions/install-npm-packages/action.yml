@@ -1,0 +1,28 @@
+name: Install NPM packages
+
+inputs:
+  server:
+    required: false
+    default: 'false'
+  static:
+    required: false
+    default: 'false'
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Install server (backend) NPM packages
+      if: inputs.server == 'true'
+      shell: bash
+      run: |
+        npm i --prefix=app/server
+
+    - name: Install static (frontend) NPM packages
+      if: inputs.server == 'true'
+      shell: bash
+      run: |
+        npm i --prefix=app/static
