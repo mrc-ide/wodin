@@ -5,7 +5,7 @@ import { api } from "../src/apiService";
 describe("apiService", () => {
     beforeEach(() => {
         mockAxios.reset();
-        jest.resetAllMocks();
+        vi.resetAllMocks();
     });
 
     const mockReq = {
@@ -23,9 +23,9 @@ describe("apiService", () => {
     } as any;
 
     const mockRes = {
-        status: jest.fn(),
-        header: jest.fn(),
-        end: jest.fn()
+        status: vi.fn(),
+        header: vi.fn(),
+        end: vi.fn()
     } as any;
 
     const postData = "posted data";
@@ -33,7 +33,7 @@ describe("apiService", () => {
     const responseData = { data: "test get" };
     const responseHeaders = { respHeader1: "rh1", respHeader2: "rh2" };
 
-    const mockNext = jest.fn();
+    const mockNext = vi.fn();
 
     const testExpectedResponse = () => {
         expect(mockRes.status.mock.calls[0][0]).toBe(200);
@@ -50,13 +50,13 @@ describe("apiService", () => {
         headers: AxiosRequestHeaders,
         transformResponse: AxiosResponseTransformer
     ) => {
-        expect(headers).toStrictEqual({
+        expect(headers.toJSON()).toEqual({
             Accept: "application/json",
             "Content-Type": "text",
             ArrayHeader: "arr1,arr2"
         });
         const transformTest = "{\"json\": \"test\"}";
-        expect((transformResponse as AxiosResponseTransformer)(transformTest)).toBe(transformTest);
+        expect((transformResponse as any)(transformTest)).toBe(transformTest);
     };
 
     const testExpectedError = () => {
