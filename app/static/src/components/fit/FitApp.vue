@@ -1,7 +1,7 @@
 <template>
     <wodin-app>
         <template v-slot:left>
-            <wodin-tabs id="left-tabs" :tabNames="['Data', 'Code', 'Options']">
+            <wodin-tabs id="left-tabs" :tabNames="['Data', 'Code', 'Options']" :init-selected-tab="STATIC_BUILD ? 'Options' : undefined">
                 <template v-slot:Data>
                     <data-tab></data-tab>
                 </template>
@@ -51,6 +51,7 @@ import SensitivityTab from "../sensitivity/SensitivityTab.vue";
 import { VisualisationTab } from "../../store/appState/state";
 import { AppStateMutation } from "../../store/appState/mutations";
 import includeConfiguredTabs from "../mixins/includeConfiguredTabs";
+import { STATIC_BUILD } from "@/parseEnv";
 
 export default defineComponent({
     name: "FitApp",
@@ -81,7 +82,8 @@ export default defineComponent({
         return {
             helpTabName,
             rightTabNames,
-            rightTabSelected
+            rightTabSelected,
+            STATIC_BUILD
         };
     }
 });

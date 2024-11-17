@@ -1,7 +1,7 @@
 <template>
     <wodin-app>
         <template v-slot:left>
-            <wodin-tabs id="left-tabs" :tabNames="['Code', 'Options']">
+            <wodin-tabs id="left-tabs" :tabNames="['Code', 'Options']" :init-selected-tab="STATIC_BUILD ? 'Options' : undefined">
                 <template v-slot:Code>
                     <code-tab></code-tab>
                 </template>
@@ -43,6 +43,7 @@ import { AppStateMutation } from "../../store/appState/mutations";
 import { VisualisationTab } from "../../store/appState/state";
 import HelpTab from "../help/HelpTab.vue";
 import includeConfiguredTabs from "../mixins/includeConfiguredTabs";
+import { STATIC_BUILD } from "@/parseEnv";
 
 export default defineComponent({
     name: "BasicApp",
@@ -70,7 +71,8 @@ export default defineComponent({
             rightTabSelected,
             helpTabName,
             multiSensitivityTabName,
-            rightTabNames
+            rightTabNames,
+            STATIC_BUILD
         };
     }
 });

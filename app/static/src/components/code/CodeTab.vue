@@ -2,18 +2,20 @@
     <div v-if="appIsConfigured" class="code-tab">
         <generic-help title="Write odin code" :markdown="codeHelp"></generic-help>
         <code-editor />
-        <button class="btn btn-primary mt-2" id="compile-btn" :disabled="!codeIsValid" @click="compile">Compile</button>
-        <div class="mt-2" id="code-status" :class="codeValidating ? 'code-validating-text' : ''">
-            <vue-feather
-                class="inline-icon me-1"
-                :class="iconClass"
-                :type="validIcon"
-                :size="20"
-                :stroke-width="4"
-            ></vue-feather>
-            {{ validMsg }}
+        <div v-if="!STATIC_BUILD">
+            <button class="btn btn-primary mt-2" id="compile-btn" :disabled="!codeIsValid" @click="compile">Compile</button>
+            <div class="mt-2" id="code-status" :class="codeValidating ? 'code-validating-text' : ''">
+                <vue-feather
+                    class="inline-icon me-1"
+                    :class="iconClass"
+                    :type="validIcon"
+                    :size="20"
+                    :stroke-width="4"
+                ></vue-feather>
+                {{ validMsg }}
+            </div>
+            <error-info :error="error"></error-info>
         </div>
-        <error-info :error="error"></error-info>
         <div class="mt-3">
             <graph-configs-collapsible></graph-configs-collapsible>
         </div>
@@ -31,6 +33,7 @@ import userMessages from "../../userMessages";
 import ErrorInfo from "../ErrorInfo.vue";
 import GenericHelp from "../help/GenericHelp.vue";
 import GraphConfigsCollapsible from "../graphConfig/GraphConfigsCollapsible.vue";
+import { STATIC_BUILD } from "@/parseEnv";
 
 export default defineComponent({
     name: "CodeTab",
@@ -66,7 +69,8 @@ export default defineComponent({
             error,
             codeHelp,
             codeValidating,
-            loadingMessage
+            loadingMessage,
+            STATIC_BUILD
         };
     }
 });

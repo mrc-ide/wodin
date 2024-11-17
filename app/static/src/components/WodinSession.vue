@@ -12,6 +12,7 @@ import { localStorageManager } from "../localStorageManager";
 import { AppStateGetter } from "../store/appState/getters";
 import { SessionMetadata } from "../types/responseTypes";
 import { SessionsMutation } from "../store/sessions/mutations";
+import { STATIC_BUILD } from "@/parseEnv";
 
 export default defineComponent({
     name: "WodinSession",
@@ -31,7 +32,9 @@ export default defineComponent({
         const store = useStore();
 
         const initialised = ref(false);
-        const appInitialised = computed(() => !!store.state.config && !!store.state.sessions.sessionsMetadata);
+        const appInitialised = computed(() => STATIC_BUILD ?
+                                              !!store.state.config :
+                                              !!store.state.config && !!store.state.sessions.sessionsMetadata);
 
         // These props won't change as provided by server
         const { appName, baseUrl, loadSessionId, appsPath, enableI18n, defaultLanguage } = props;
@@ -54,16 +57,18 @@ export default defineComponent({
         });
 
         watch(appInitialised, () => {
-            // Child component will either be SessionsPage or WodinApp depending on route - both will need the latest
-            // session id so delay rendering these until this has been committed
-            const baseUrlPath = store.getters[AppStateGetter.baseUrlPath];
-            const sessions = localStorageManager.getSessionIds(store.state.appName, baseUrlPath);
-            const sessionId = sessions.length ? sessions[0] : null;
-            // check latest session id is actually available from the back end
-            const sessionAvailable =
-                sessionId && !!store.state.sessions.sessionsMetadata.find((s: SessionMetadata) => s.id === sessionId);
-            if (sessionAvailable) {
-                store.commit(`sessions/${SessionsMutation.SetLatestSessionId}`, sessionId);
+            if (!STATIC_BUILD) {
+                // Child component will either be SessionsPage or WodinApp depending on route - both will need the latest
+                // session id so delay rendering these until this has been committed
+                const baseUrlPath = store.getters[AppStateGetter.baseUrlPath];
+                const sessions = localStorageManager.getSessionIds(store.state.appName, baseUrlPath);
+                const sessionId = sessions.length ? sessions[0] : null;
+                // check latest session id is actually available from the back end
+                const sessionAvailable =
+                    sessionId && !!store.state.sessions.sessionsMetadata.find((s: SessionMetadata) => s.id === sessionId);
+                if (sessionAvailable) {
+                    store.commit(`sessions/${SessionsMutation.SetLatestSessionId}`, sessionId);
+                }
             }
             initialised.value = true;
         });

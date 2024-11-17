@@ -1,7 +1,7 @@
 <template>
     <wodin-app>
         <template v-slot:left>
-            <wodin-tabs id="left-tabs" :tabNames="['Code', 'Options']">
+            <wodin-tabs id="left-tabs" :tabNames="['Code', 'Options']" :init-selected-tab="STATIC_BUILD ? 'Options' : undefined">
                 <template v-slot:Code>
                     <code-tab></code-tab>
                 </template>
@@ -43,6 +43,7 @@ import OptionsTab from "../options/OptionsTab.vue";
 import SensitivityTab from "../sensitivity/SensitivityTab.vue";
 import includeConfiguredTabs from "../mixins/includeConfiguredTabs";
 import HelpTab from "../help/HelpTab.vue";
+import { STATIC_BUILD } from "@/parseEnv";
 
 export default defineComponent({
     name: "StochasticApp",
@@ -69,7 +70,8 @@ export default defineComponent({
         return {
             helpTabName,
             rightTabNames,
-            rightTabSelected
+            rightTabSelected,
+            STATIC_BUILD
         };
     }
 });

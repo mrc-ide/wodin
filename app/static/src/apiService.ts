@@ -5,6 +5,9 @@ import { WodinError, ResponseSuccess, ResponseFailure } from "./types/responseTy
 import { AppCtx } from "./types/utilTypes";
 import { ErrorsMutation } from "./store/errors/mutations";
 import { AppState } from "./store/appState/state";
+import { STATIC_BUILD } from "./parseEnv";
+
+declare let appNameGlobal: string;
 
 export interface ResponseWithType<T> extends ResponseSuccess {
     data: T;
@@ -168,8 +171,33 @@ export class APIService<S extends string, E extends string> implements API<S, E>
         return `${this._baseUrl}${url}`;
     }
 
+    private _overrideGetRequestsStaticBuild(url: string) {
+        let getUrl: string | null = null;
+        if (url === `/config/${appNameGlobal}`) {
+            getUrl = "./config.json";
+        } else if (url === "/odin/versions") {
+            getUrl = "./versions.json";
+        } else if (url === "/odin/runner/ode") {
+            getUrl = "./runnerOde.json";
+        } else if (url === "/odin/runner/discrete") {
+            getUrl = "./runnerDiscrete.json";
+        }
+        if (getUrl === null) return;
+        return this._handleAxiosResponse(axios.get(getUrl));
+    }
+
+    private _overridePostRequestsStaticBuild(url: string) {
+        let getUrl: string | null = null;
+        if (url === "/odin/model") {
+            getUrl = "./modelCode.json";
+        }
+        if (getUrl === null) return;
+        return this._handleAxiosResponse(axios.get(getUrl));
+    }
+
     async get<T>(url: string): Promise<void | ResponseWithType<T>> {
         this._verifyHandlers(url);
+        if (STATIC_BUILD) return this._overrideGetRequestsStaticBuild(url);
         const fullUrl = this._fullUrl(url);
 
         return this._handleAxiosResponse(axios.get(fullUrl));
@@ -177,6 +205,7 @@ export class APIService<S extends string, E extends string> implements API<S, E>
 
     async post<T>(url: string, body: any, contentType = "application/json"): Promise<void | ResponseWithType<T>> {
         this._verifyHandlers(url);
+        if (STATIC_BUILD) return this._overridePostRequestsStaticBuild(url);
         const headers = { "Content-Type": contentType };
         const fullUrl = this._fullUrl(url);
         return this._handleAxiosResponse(axios.post(fullUrl, body, { headers }));

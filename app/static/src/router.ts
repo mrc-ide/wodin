@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, RouteComponent, Router } from "vue-router";
 import SessionsPage from "./components/sessions/SessionsPage.vue";
+import { STATIC_BUILD } from "./parseEnv";
 
 export function initialiseRouter(
     appComponent: RouteComponent,
@@ -24,9 +25,13 @@ export function initialiseRouter(
 
     return createRouter({
         history: createWebHistory(routeBase),
-        routes: [
-            { path: "/", component: appComponent },
-            { path: "/sessions", component: SessionsPage }
-        ]
+        routes: STATIC_BUILD ?
+            [
+                { path: "/", component: appComponent },
+            ] :
+            [
+                { path: "/", component: appComponent },
+                { path: "/sessions", component: SessionsPage }
+            ]
     });
 }
