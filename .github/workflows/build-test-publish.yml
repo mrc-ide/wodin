@@ -78,6 +78,7 @@ jobs:
         shard: [1, 2, 3, 4, 5, 6]
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/build-and-run-wodin
       
       - name: Get installed Playwright version
         run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./app/static/package-lock.json').packages['node_modules/@playwright/test'].version)")" >> $GITHUB_ENV
@@ -91,9 +92,6 @@ jobs:
       - name: Install Playwright Browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
-
-      - uses: ./.github/actions/build-and-run-wodin
-
       - name: Test e2e
         run: npm run test:e2e --prefix=app/static -- --shard=${{ matrix.shard }}/6
 
