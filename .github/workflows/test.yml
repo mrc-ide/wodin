@@ -2,7 +2,33 @@ name: test
 
 on: [push]
 
+env:
+  TAG_GHCR: mrc-ide/wodin
+
 jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: ci-env
+        uses: ./.github/actions/ci-env-and-ghcr-login
+        with:
+          ghcr-username: ${{ github.actor }}
+          ghcr-password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push docker
+        uses: docker/build-push-action@v5
+        with:
+          file: ./docker/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{env.TAG_GHCR}}:${{steps.ci-env.outputs.CI_SHA}}
+            ghcr.io/${{env.TAG_GHCR}}:${{steps.ci-env.outputs.CI_BRANCH}}
+      - name: Smoke test
+        run: |
+          ./scripts/run-version.sh --app ${{steps.ci-env.outputs.CI_BRANCH}} &
+          ./scripts/smoke-test.sh
+
   fe-unit-tests:
     runs-on: ubuntu-latest
     steps:
@@ -87,7 +113,7 @@ jobs:
   publish-latest-image:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/mrc-5976'
-    needs: [lint]
+    needs: [lint, build-and-push]
     steps:
       - name: Publish image manifest to latest
         run: |
