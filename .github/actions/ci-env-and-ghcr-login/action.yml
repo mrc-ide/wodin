@@ -1,0 +1,39 @@
+name: Setup CI Env and login to GHCR
+
+inputs:
+  ghcr-username:
+    required: true
+  ghcr-password:
+    required: true
+
+outputs:
+  CI_SHA:
+    description: "Short SHA of current commit"
+    value: ${{ steps.ci-env.outputs.CI_SHA }}
+  CI_BRANCH:
+    description: "Current branch"
+    value: ${{ steps.ci-env.outputs.CI_BRANCH }}
+
+runs:
+  using: "composite"
+  steps:
+    - id: ci-env
+      name: Setup Environment
+      shell: bash
+      run: |
+        if [ "${{github.event_name}}" = "pull_request" ];
+        then
+          long_sha=${{ github.event.pull_request.head.sha }}
+          echo "CI_BRANCH=${{ github.head_ref }}" >> $GITHUB_OUTPUT
+        else
+          long_sha=${GITHUB_SHA}
+          echo "CI_BRANCH=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+        fi
+        echo "CI_SHA=${long_sha:0:7}" >> $GITHUB_OUTPUT
+
+    - name: Login to GHCR (GitHub Packages)
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ inputs.ghcr-username }}
+        password: ${{ inputs.ghcr-password }}
