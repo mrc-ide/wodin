@@ -1,7 +1,7 @@
 <template>
     <wodin-app>
         <template v-slot:left>
-            <wodin-tabs id="left-tabs" :tabNames="['Data', 'Code', 'Options']" :init-selected-tab="STATIC_BUILD ? 'Options' : undefined">
+            <wodin-tabs id="left-tabs" :tabNames="['Data', 'Code', 'Options']" :init-selected-tab="initSelectedTab">
                 <template v-slot:Data>
                     <data-tab></data-tab>
                 </template>
@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 import { useStore } from "vuex";
 import MultiSensitivityTab from "@/components/multiSensitivity/MultiSensitivityTab.vue";
 import WodinApp from "../WodinApp.vue";
@@ -51,7 +51,8 @@ import SensitivityTab from "../sensitivity/SensitivityTab.vue";
 import { VisualisationTab } from "../../store/appState/state";
 import { AppStateMutation } from "../../store/appState/mutations";
 import includeConfiguredTabs from "../mixins/includeConfiguredTabs";
-import { STATIC_BUILD } from "@/parseEnv";
+
+const leftTabNames = ['Data', 'Code', 'Options'] as const;
 
 export default defineComponent({
     name: "FitApp",
@@ -66,6 +67,9 @@ export default defineComponent({
         SensitivityTab,
         WodinApp,
         WodinTabs
+    },
+    props: {
+        initSelectedTab: { type: String as PropType<typeof leftTabNames[number]>, required: false }
     },
     setup() {
         const store = useStore();
@@ -83,7 +87,7 @@ export default defineComponent({
             helpTabName,
             rightTabNames,
             rightTabSelected,
-            STATIC_BUILD
+            leftTabNames
         };
     }
 });

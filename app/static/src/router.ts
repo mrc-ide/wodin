@@ -1,9 +1,12 @@
-import { createRouter, createWebHistory, RouteComponent, Router } from "vue-router";
+import { createRouter, createWebHistory, Router, RouteRecordRaw } from "vue-router";
 import SessionsPage from "./components/sessions/SessionsPage.vue";
 import { STATIC_BUILD } from "./parseEnv";
+import type BasicApp from "./components/basic/BasicApp.vue";
+import type FitApp from "./components/fit/FitApp.vue";
+import type StochasticApp from "./components/stochastic/StochasticApp.vue";
 
 export function initialiseRouter(
-    appComponent: RouteComponent,
+    appComponent: typeof BasicApp | typeof FitApp | typeof StochasticApp,
     appName: string,
     baseUrl: string,
     appsPath: string
@@ -23,15 +26,21 @@ export function initialiseRouter(
     }
     const routeBase = `${basePath}/${appsPath}/${appName}`;
 
+    const appRoute: RouteRecordRaw = {
+        path: "/",
+        component: appComponent,
+        props: {
+            initSelectedTab: STATIC_BUILD ? "Options" : undefined
+        } as Parameters<NonNullable<(typeof appComponent)["setup"]>>["0"]
+    };
+
+    const sessionsRoute: RouteRecordRaw = {
+        path: "/sessions",
+        component: SessionsPage
+    };
+
     return createRouter({
         history: createWebHistory(routeBase),
-        routes: STATIC_BUILD ?
-            [
-                { path: "/", component: appComponent },
-            ] :
-            [
-                { path: "/", component: appComponent },
-                { path: "/sessions", component: SessionsPage }
-            ]
+        routes: STATIC_BUILD ? [ appRoute ] : [ appRoute, sessionsRoute ]
     });
 }

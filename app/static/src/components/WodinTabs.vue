@@ -25,7 +25,7 @@ import { defineComponent, ref, PropType } from "vue";
 export default defineComponent({
     name: "WodinTabs",
     props: {
-        tabNames: { type: Array as PropType<string[]>, required: true },
+        tabNames: { type: Array as PropType<readonly string[]>, required: true },
         initSelectedTab: { type: String }
     },
     emits: ["tabSelected"],
