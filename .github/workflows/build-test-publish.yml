@@ -115,10 +115,16 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: [build-and-push, fe-unit-tests, be-unit-tests, integration-tests, playwright-tests, lint]
     steps:
+      - id: ci-env
+        uses: ./.github/actions/ci-env-and-ghcr-login
+        with:
+          ghcr-username: ${{ github.actor }}
+          ghcr-password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Publish image manifest to latest
         run: |
           GHCR_TOKEN=$(echo ${{ secrets.GITHUB_TOKEN }} | base64)
-          curl "https://ghcr.io/v2/mrc-ide/wodin/manifests/mrc-5976" \
+          curl "https://ghcr.io/v2/mrc-ide/wodin/manifests/${{steps.ci-env.outputs.CI_BRANCH}}" \
           -H "accept: application/vnd.docker.distribution.manifest.v2+json" \
           -H "Authorization: Bearer ${GHCR_TOKEN}" \
           > manifest.json
