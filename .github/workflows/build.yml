@@ -18,7 +18,7 @@ jobs:
 
       - name: Checking
         run: |
-          curl 'https://ghcr.io/v2/mrc-ide/wodin/manifests/mrc-5976' -H 'accept: application/vnd.docker.distribution.manifest.v2+json' -H 'Authorization:Bearer ${{ secrets.GITHUB_TOKEN }}'
+          curl 'https://ghcr.io/v2/mrc-ide/wodin/manifests/mrc-5976' -H 'accept: application/vnd.docker.distribution.manifest.v2+json' -H 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}'
       
       - name: Build and push docker
         uses: docker/build-push-action@v5
