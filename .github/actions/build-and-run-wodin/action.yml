@@ -8,7 +8,6 @@ runs:
         node-version: 20
 
     - name: Build and run server
-      if: inputs.build-and-run-server == 'true'
       shell: bash
       run: |
         ./scripts/build.sh
