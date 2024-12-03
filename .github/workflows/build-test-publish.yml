@@ -91,7 +91,7 @@ jobs:
           key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
       - name: Install Playwright Browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwrigh@${{ env.PLAYWRIGHT_VERSION }} install --with-deps
+        run: npx playwright@${{ env.PLAYWRIGHT_VERSION }} install --with-deps
       - name: Test e2e
         run: npm run test:e2e --prefix=app/static -- --shard=${{ matrix.shard }}/6
 
