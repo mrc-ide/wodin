@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, Page, test } from "@playwright/test";
 import { expectSummaryValues } from "./utils";
 
 test.describe("stochastic app", () => {
@@ -7,6 +7,14 @@ test.describe("stochastic app", () => {
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)"); // Options
         await page.click(":nth-match(.wodin-right .nav-tabs a, 2)"); // Run
     });
+
+    const expectChangedNumberOfReplicatesMessage = async (page: Page, newReplicates: string) => {
+        await expect(await page.locator(".action-required-msg")).toHaveText("");
+        await page.fill(":nth-match(#run-options input, 2)", newReplicates);
+        await expect(await page.locator(".action-required-msg")).toHaveText(
+            "Plot is out of date: number of replicates has changed. Run model to update."
+        );
+    };
 
     test("can display number of replicates", async ({ page }) => {
         await expect(await page.innerText(":nth-match(.collapse-title, 2)")).toContain("Run Options");
@@ -19,12 +27,7 @@ test.describe("stochastic app", () => {
     });
 
     test("can change number of replicates and re-run model", async ({ page }) => {
-        await expect(await page.locator(".action-required-msg")).toHaveText("");
-        await page.fill(":nth-match(#run-options input, 2)", "6");
-
-        await expect(await page.locator(".action-required-msg")).toHaveText(
-            "Plot is out of date: number of replicates has changed. Run model to update."
-        );
+        await expectChangedNumberOfReplicatesMessage(page, "6");
 
         // Re-run model
         await page.click("#run-btn");
@@ -43,11 +46,7 @@ test.describe("stochastic app", () => {
     });
 
     test("traces are hidden if replicates are above maxReplicatesDisplay", async ({ page }) => {
-        await expect(await page.locator(".action-required-msg")).toHaveText("");
-        await page.fill(":nth-match(#run-options input, 2)", "50");
-        await expect(await page.locator(".action-required-msg")).toHaveText(
-            "Plot is out of date: number of replicates has changed. Run model to update."
-        );
+        await expectChangedNumberOfReplicatesMessage(page, "50");
 
         await page.click("#run-btn");
         await expect(await page.locator(".action-required-msg")).toHaveText("");
@@ -55,10 +54,7 @@ test.describe("stochastic app", () => {
         const summary = ".wodin-plot-data-summary-series";
         expect(await page.locator(summary).count()).toBe(104);
 
-        await page.fill(":nth-match(#run-options input, 2)", "51");
-        await expect(await page.locator(".action-required-msg")).toHaveText(
-            "Plot is out of date: number of replicates has changed. Run model to update."
-        );
+        await expectChangedNumberOfReplicatesMessage(page, "51");
 
         await page.click("#run-btn");
         await expect(await page.locator(".action-required-msg")).toHaveText("");

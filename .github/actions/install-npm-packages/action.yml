@@ -22,7 +22,7 @@ runs:
         npm i --prefix=app/server
 
     - name: Install static (frontend) NPM packages
-      if: inputs.server == 'true'
+      if: inputs.static == 'true'
       shell: bash
       run: |
         npm i --prefix=app/static
