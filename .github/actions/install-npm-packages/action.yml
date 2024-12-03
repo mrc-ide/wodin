@@ -19,10 +19,10 @@ runs:
       if: inputs.server == 'true'
       shell: bash
       run: |
-        npm i --prefix=app/server
+        npm ci --prefix=app/server
 
     - name: Install static (frontend) NPM packages
       if: inputs.static == 'true'
       shell: bash
       run: |
-        npm i --prefix=app/static
+        npm ci --prefix=app/static
