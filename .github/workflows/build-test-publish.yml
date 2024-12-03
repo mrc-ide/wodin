@@ -114,6 +114,7 @@ jobs:
     if: github.ref == 'refs/heads/mrc-5976'
     needs: [build-and-push, fe-unit-tests, be-unit-tests, integration-tests, playwright-tests, lint]
     steps:
+      - uses: actions/checkout@v4
       - id: ci-env
         uses: ./.github/actions/ci-env-and-ghcr-login
         with:
