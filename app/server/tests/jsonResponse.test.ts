@@ -1,9 +1,9 @@
 import { jsonResponseError, jsonResponseSuccess } from "../src/jsonResponse";
 
 describe("jsonResponse", () => {
-    const mockHeader = jest.fn();
-    const mockStatus = jest.fn();
-    const mockEnd = jest.fn();
+    const mockHeader = vi.fn();
+    const mockStatus = vi.fn();
+    const mockEnd = vi.fn();
     const mockRes = {
         header: mockHeader,
         status: mockStatus,
@@ -11,7 +11,7 @@ describe("jsonResponse", () => {
     };
 
     beforeEach(() => {
-        jest.resetAllMocks();
+        vi.resetAllMocks();
     });
 
     it("jsonResponseSuccess adds header and expected response text", () => {
