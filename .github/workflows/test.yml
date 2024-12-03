@@ -99,4 +99,4 @@ jobs:
           curl -XPUT "https://ghcr.io/v2/mrc-ide/wodin/manifests/test-latest" \
           -H "content-type: application/vnd.docker.distribution.manifest.v2+json" \
           -H "Authorization: Bearer ${GHCR_TOKEN}" \
-          -d '@d manifest.json'
+          -d '@manifest.json'
