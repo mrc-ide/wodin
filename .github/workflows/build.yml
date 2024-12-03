@@ -16,11 +16,6 @@ jobs:
           ghcr-username: ${{ github.actor }}
           ghcr-password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Checking
-        run: |
-          GHCR_TOKEN=$(echo ${{ secrets.GITHUB_TOKEN }} | base64)
-          curl "https://ghcr.io/v2/mrc-ide/wodin/manifests/mrc-5976" -H "accept: application/vnd.docker.distribution.manifest.v2+json" -H "Authorization: Bearer ${GHCR_TOKEN}"
-      
       - name: Build and push docker
         uses: docker/build-push-action@v5
         with:
