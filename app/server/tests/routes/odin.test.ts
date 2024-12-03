@@ -1,25 +1,23 @@
 import { OdinController } from "../../src/controllers/odinController";
+import bodyParser from "body-parser";
+
+const { mockRouter } = vi.hoisted(() => ({
+    mockRouter: {
+        get: vi.fn(),
+        post: vi.fn()
+    }
+}));
+
+vi.mock("express", () => ({
+    Router: () => mockRouter
+}));
 
 describe("odin routes", () => {
-    const express = require("express");
-    const bodyParser = require("body-parser");
-
-    const mockRouter = {
-        get: jest.fn(),
-        post: jest.fn()
-    };
-    const realRouter = express.Router;
-
-    const spyJson = jest.spyOn(bodyParser, "json");
-
-    beforeAll(() => {
-        express.Router = () => mockRouter;
+    beforeEach(() => {
+        vi.resetAllMocks()
     });
 
-    afterAll(() => {
-        express.Router = realRouter;
-        jest.clearAllMocks();
-    });
+    const spyJson = vi.spyOn(bodyParser, "json");
 
     it("registers expected routes", async () => {
         await import("../../src/routes/odin");

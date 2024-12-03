@@ -1,14 +1,14 @@
-import * as fs from "fs";
+import fs from "fs";
 import { AppFileReader } from "../src/appFileReader";
 
 describe("DefaultCodeReader", () => {
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("returns lines from file when file exists", () => {
-        const mockExistsSync = jest.spyOn(fs, "existsSync").mockReturnValue(true);
-        const mockReadFileSync = jest.spyOn(fs, "readFileSync").mockReturnValue("line1\nline2\nline3");
+        const mockExistsSync = vi.spyOn(fs, "existsSync").mockReturnValue(true);
+        const mockReadFileSync = vi.spyOn(fs, "readFileSync").mockReturnValue("line1\nline2\nline3");
 
         const result = new AppFileReader("/testDir", "R").readFile("TestApp");
         expect(result).toStrictEqual(["line1", "line2", "line3"]);
@@ -18,8 +18,8 @@ describe("DefaultCodeReader", () => {
     });
 
     it("returns empty string array when file does not exist", () => {
-        const mockExistsSync = jest.spyOn(fs, "existsSync").mockReturnValue(false);
-        const mockReadFileSync = jest.spyOn(fs, "readFileSync");
+        const mockExistsSync = vi.spyOn(fs, "existsSync").mockReturnValue(false);
+        const mockReadFileSync = vi.spyOn(fs, "readFileSync");
 
         const result = new AppFileReader("/testDir", "R").readFile("TestApp");
         expect(result).toStrictEqual([]);

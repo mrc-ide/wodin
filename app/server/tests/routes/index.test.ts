@@ -6,21 +6,21 @@ import appsRoutes from "../../src/routes/apps";
 import { ErrorType } from "../../src/errors/errorType";
 import { WodinWebError } from "../../src/errors/wodinWebError";
 
+const { mockRouter } = vi.hoisted(() => ({
+    mockRouter: {
+        get: vi.fn(),
+        use: vi.fn(),
+        post: vi.fn()
+    }
+}));
+
+vi.mock("express", () => ({
+    Router: () => mockRouter
+}));
+
 describe("registerRoutes", () => {
-    const express = require("express");
-
-    const mockRouter = {
-        get: jest.fn(),
-        use: jest.fn()
-    };
-    const realRouter = express.Router;
-
-    beforeAll(() => {
-        express.Router = () => mockRouter;
-    });
-
-    afterAll(() => {
-        express.Router = realRouter;
+    beforeEach(() => {
+        vi.resetAllMocks()
     });
 
     const mockApp = {
@@ -30,7 +30,7 @@ describe("registerRoutes", () => {
     } as any;
 
     it("registers all expected routes", () => {
-        const router = registerRoutes(mockApp);
+        const router = registerRoutes(mockApp) as unknown as typeof mockRouter;
         expect(router).toBe(mockRouter);
 
         expect(router.get).toBeCalledTimes(1);
@@ -47,15 +47,15 @@ describe("registerRoutes", () => {
     });
 
     it("not found handler throws expected error", () => {
-        const router = registerRoutes(mockApp);
+        const router = registerRoutes(mockApp) as unknown as typeof mockRouter;
         const notFoundHandler = router.use.mock.calls[3][0];
 
         const mockReq = {
             url: "/nonexistent"
         };
 
-        const mockRender = jest.fn();
-        const mockStatus = jest.fn().mockReturnValue({ render: mockRender });
+        const mockRender = vi.fn();
+        const mockStatus = vi.fn().mockReturnValue({ render: mockRender });
         const mockRes = {
             status: mockStatus
         };
