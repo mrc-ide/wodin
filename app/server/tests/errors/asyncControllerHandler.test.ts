@@ -2,8 +2,8 @@ import asyncControllerHandler from "../../src/errors/asyncControllerHandler";
 
 describe("asyncControllerHandler", () => {
     it("calls method", async () => {
-        const method = jest.fn();
-        const next = jest.fn();
+        const method = vi.fn();
+        const next = vi.fn();
         await asyncControllerHandler(next, method);
         expect(method).toHaveBeenCalledTimes(1);
         expect(next).not.toHaveBeenCalled();
@@ -11,8 +11,8 @@ describe("asyncControllerHandler", () => {
 
     it("handles error by calling next", async () => {
         const error = { message: "test error" };
-        const method = jest.fn().mockImplementation(() => { throw error; });
-        const next = jest.fn();
+        const method = vi.fn().mockImplementation(() => { throw error; });
+        const next = vi.fn();
         await asyncControllerHandler(next, method);
         expect(next).toHaveBeenCalledWith(error);
     });

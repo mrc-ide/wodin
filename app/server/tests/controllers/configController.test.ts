@@ -34,18 +34,18 @@ describe("configController", () => {
     const defaultCode = ["default", "code"];
     const appHelp = ["## HELP"];
 
-    const spyJsonResponseSuccess = jest.spyOn(jsonResponse, "jsonResponseSuccess");
+    const spyJsonResponseSuccess = vi.spyOn(jsonResponse, "jsonResponseSuccess");
 
     beforeEach(() => {
-        jest.resetAllMocks();
+        vi.resetAllMocks();
     });
 
     it("getConfig reads config file, default code file and app help file", () => {
-        const mockReadConfigFile = jest.fn().mockReturnValue(basicConfig);
+        const mockReadConfigFile = vi.fn().mockReturnValue(basicConfig);
         const mockConfigReader = { readConfigFile: mockReadConfigFile } as any;
-        const mockReadDefaultCode = jest.fn().mockReturnValue(defaultCode);
+        const mockReadDefaultCode = vi.fn().mockReturnValue(defaultCode);
         const mockDefaultCodeReader = { readFile: mockReadDefaultCode } as any;
-        const mockReadAppHelp = jest.fn().mockReturnValue(appHelp) as any;
+        const mockReadAppHelp = vi.fn().mockReturnValue(appHelp) as any;
         const mockAppHelpReader = { readFile: mockReadAppHelp } as any;
         const req = getRequest(mockConfigReader, mockDefaultCodeReader, mockAppHelpReader);
 
@@ -76,9 +76,9 @@ describe("configController", () => {
     });
 
     it("getConfig does not add help prop to config if no app help found", () => {
-        const mockConfigReader = { readConfigFile: jest.fn().mockReturnValue(basicConfig) } as any;
-        const mockDefaultCodeReader = { readFile: jest.fn().mockReturnValue([]) } as any;
-        const mockReadAppHelp = jest.fn().mockReturnValue([]) as any;
+        const mockConfigReader = { readConfigFile: vi.fn().mockReturnValue(basicConfig) } as any;
+        const mockDefaultCodeReader = { readFile: vi.fn().mockReturnValue([]) } as any;
+        const mockReadAppHelp = vi.fn().mockReturnValue([]) as any;
         const mockAppHelpReader = { readFile: mockReadAppHelp } as any;
         const req = getRequest(mockConfigReader, mockDefaultCodeReader, mockAppHelpReader);
 
@@ -96,15 +96,15 @@ describe("configController", () => {
 
     it("getConfig includes help tabName from config file along with markdown", () => {
         const mockConfigReader = {
-            readConfigFile: jest.fn().mockReturnValue({
+            readConfigFile: vi.fn().mockReturnValue({
                 ...basicConfig,
                 help: {
                     tabName: "Help"
                 }
             })
         } as any;
-        const mockDefaultCodeReader = { readFile: jest.fn().mockReturnValue([]) } as any;
-        const mockReadAppHelp = jest.fn().mockReturnValue(appHelp) as any;
+        const mockDefaultCodeReader = { readFile: vi.fn().mockReturnValue([]) } as any;
+        const mockReadAppHelp = vi.fn().mockReturnValue(appHelp) as any;
         const mockAppHelpReader = { readFile: mockReadAppHelp } as any;
         const req = getRequest(mockConfigReader, mockDefaultCodeReader, mockAppHelpReader);
 
@@ -125,8 +125,8 @@ describe("configController", () => {
     });
 
     it("getConfig throws expected error when app config file is not found", () => {
-        const mockConfigReader = { readConfigFile: jest.fn().mockReturnValue(null) } as any;
-        const req = getRequest(mockConfigReader, jest.fn() as any, jest.fn() as any);
+        const mockConfigReader = { readConfigFile: vi.fn().mockReturnValue(null) } as any;
+        const req = getRequest(mockConfigReader, vi.fn() as any, vi.fn() as any);
 
         const expectedError = new WodinError("App with name TestApp is not configured.", 404, ErrorType.NOT_FOUND);
         expect(() => { ConfigController.getConfig(req, res); }).toThrow(expectedError);

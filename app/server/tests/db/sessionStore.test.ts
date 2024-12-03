@@ -1,29 +1,29 @@
-import * as md5 from "md5";
+import md5 from "md5";
 import {
     friendlyAdjectiveAnimal, cleanFriendlyId, SessionStore, getSessionStore
 } from "../../src/db/sessionStore";
 
 // Mock Date.now to return hardcoded date
-Date.now = jest.spyOn(Date, "now").mockImplementation(() => new Date(2022, 0, 24, 17).getTime()) as any;
+Date.now = vi.spyOn(Date, "now").mockImplementation(() => new Date(2022, 0, 24, 17).getTime()) as any;
 
 describe("SessionStore", () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     const mockPipeline = {
-        exec: jest.fn()
+        exec: vi.fn()
     } as any;
-    mockPipeline.hset = jest.fn().mockReturnValue(mockPipeline);
+    mockPipeline.hset = vi.fn().mockReturnValue(mockPipeline);
 
     const mockRedis = {
-        pipeline: jest.fn().mockReturnValue(mockPipeline),
-        hget: jest.fn().mockReturnValue(mockPipeline),
-        hmget: jest.fn().mockImplementation(async (key: string, ...fields: string[]) => {
+        pipeline: vi.fn().mockReturnValue(mockPipeline),
+        hget: vi.fn().mockReturnValue(mockPipeline),
+        hmget: vi.fn().mockImplementation(async (key: string, ...fields: string[]) => {
             return fields.map((field: string) => `${field} value for ${key}`);
         }),
-        hset: jest.fn().mockReturnValue(mockPipeline),
-        hsetnx: jest.fn().mockReturnValue(mockPipeline)
+        hset: vi.fn().mockReturnValue(mockPipeline),
+        hsetnx: vi.fn().mockReturnValue(mockPipeline)
     } as any;
 
     it("can save session", async () => {
@@ -66,7 +66,7 @@ describe("SessionStore", () => {
 
     it("filters out session metadata for session ids with no values in db", async () => {
         const mockNullResultRedis = {
-            hmget: jest.fn().mockImplementation(async (key: string, ...fields: string[]) => {
+            hmget: vi.fn().mockImplementation(async (_key: string, ...fields: string[]) => {
                 return fields.map(() => null);
             })
         } as any;
@@ -99,13 +99,13 @@ describe("SessionStore", () => {
 
     it("can create friendly id with no collisions", async () => {
         const mockRedis2 = {
-            hget: jest.fn(),
-            hset: jest.fn(),
-            hsetnx: jest.fn().mockReturnValue(1)
+            hget: vi.fn(),
+            hset: vi.fn(),
+            hsetnx: vi.fn().mockReturnValue(1)
         } as any;
 
         const id = "1234";
-        const mockFriendly = jest.fn().mockReturnValue("happy-rabbit");
+        const mockFriendly = vi.fn().mockReturnValue("happy-rabbit");
         const sut = new SessionStore(mockRedis2, "Test Course", "testApp", mockFriendly);
         const friendly = await sut.generateFriendlyId(id);
         expect(friendly).toBe("happy-rabbit");
@@ -113,13 +113,13 @@ describe("SessionStore", () => {
 
     it("can create friendly id with collisions", async () => {
         const mockRedis2 = {
-            hget: jest.fn(),
-            hset: jest.fn(),
-            hsetnx: jest.fn().mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValue(1)
+            hget: vi.fn(),
+            hset: vi.fn(),
+            hsetnx: vi.fn().mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValue(1)
         } as any;
 
         const id = "1234";
-        const mockFriendly = jest.fn().mockReturnValueOnce("a").mockReturnValueOnce("b").mockReturnValueOnce("c");
+        const mockFriendly = vi.fn().mockReturnValueOnce("a").mockReturnValueOnce("b").mockReturnValueOnce("c");
         const sut = new SessionStore(mockRedis2, "Test Course", "testApp", mockFriendly);
         const friendly = await sut.generateFriendlyId(id);
         expect(friendly).toBe("c");
@@ -134,13 +134,13 @@ describe("SessionStore", () => {
 
     it("can fall back on machine id when there are many collisions", async () => {
         const mockRedis2 = {
-            hget: jest.fn(),
-            hset: jest.fn(),
-            hsetnx: jest.fn().mockReturnValue(0)
+            hget: vi.fn(),
+            hset: vi.fn(),
+            hsetnx: vi.fn().mockReturnValue(0)
         } as any;
 
         const id = "1234";
-        const mockFriendly = jest.fn();
+        const mockFriendly = vi.fn();
         const sut = new SessionStore(mockRedis2, "Test Course", "testApp", mockFriendly);
         const friendly = await sut.generateFriendlyId(id);
         expect(friendly).toBe("1234");
@@ -154,13 +154,13 @@ describe("SessionStore", () => {
 
     it("can return existing friendly id if already set", async () => {
         const mockRedis2 = {
-            hget: jest.fn().mockReturnValue("happy-rabbit"),
-            hset: jest.fn(),
-            hsetnx: jest.fn().mockReturnValue(1)
+            hget: vi.fn().mockReturnValue("happy-rabbit"),
+            hset: vi.fn(),
+            hsetnx: vi.fn().mockReturnValue(1)
         } as any;
 
         const id = "1234";
-        const mockFriendly = jest.fn();
+        const mockFriendly = vi.fn();
         const sut = new SessionStore(mockRedis2, "Test Course", "testApp", mockFriendly);
         const friendly = await sut.generateFriendlyId(id);
         expect(friendly).toBe("happy-rabbit");
@@ -207,14 +207,14 @@ describe("SessionStore handles duplicate sessions", () => {
         savedHGetValues: Record<string, string> = {}
     ) => {
         return {
-            hmget: jest.fn().mockImplementation(async (sessionKey: string) => {
+            hmget: vi.fn().mockImplementation(async (sessionKey: string) => {
                 const key = sessionKey.split(":").slice(-1)[0];
                 return savedHmGetValues[key];
             }),
-            hget: jest.fn().mockImplementation(async (sessionKey: string, sessionId: string) => {
+            hget: vi.fn().mockImplementation(async (_sessionKey: string, sessionId: string) => {
                 return savedHGetValues[sessionId];
             }),
-            hset: jest.fn()
+            hset: vi.fn()
         } as any;
     };
 
