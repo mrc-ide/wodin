@@ -26,7 +26,7 @@ export class ConfigController {
     private static _readAppConfigFile = (
         appName: string,
         appsPath: string,
-        baseUrl: string,
+        _baseUrl: string,
         configReader: ConfigReader,
         defaultCodeReader: AppFileReader,
         appHelpReader: AppFileReader

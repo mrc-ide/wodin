@@ -1,29 +1,33 @@
 // Mock the import of plotly so we can mock Plotly methods
-jest.mock("plotly.js-basic-dist-min", () => ({
-    newPlot: jest.fn(),
-    react: jest.fn(),
+const {
+  mockPlotlyNewPlot,
+  mockPlotlyReact,
+  mockPlotlyResize
+} = vi.hoisted(() => ({
+  mockPlotlyNewPlot: vi.fn(),
+  mockPlotlyReact: vi.fn(),
+  mockPlotlyResize: vi.fn()
+}));
+vi.mock("plotly.js-basic-dist-min", () => ({
+    newPlot: mockPlotlyNewPlot,
+    react: mockPlotlyReact,
     Plots: {
-        resize: jest.fn()
+        resize: mockPlotlyResize
     }
 }));
 
-/* eslint-disable import/first */
 import { shallowMount, VueWrapper } from "@vue/test-utils";
 import { nextTick } from "vue";
 import Vuex, { Store } from "vuex";
-import * as plotly from "plotly.js-basic-dist-min";
-import WodinPlot from "../../../src/app/components/WodinPlot.vue";
-import WodinPlotDataSummary from "../../../src/app/components/WodinPlotDataSummary.vue";
-import { BasicState } from "../../../src/app/store/basic/state";
-import { GraphsMutation } from "../../../src/app/store/graphs/mutations";
-import { defaultGraphSettings } from "../../../src/app/store/graphs/state";
+import WodinPlot from "../../../src/components/WodinPlot.vue";
+import WodinPlotDataSummary from "../../../src/components/WodinPlotDataSummary.vue";
+import { BasicState } from "../../../src/store/basic/state";
+import { GraphsMutation } from "../../../src/store/graphs/mutations";
+import { defaultGraphSettings } from "@/store/graphs/state";
 
 describe("WodinPlot", () => {
-    const mockPlotlyNewPlot = jest.spyOn(plotly, "newPlot");
-    const mockPlotlyReact = jest.spyOn(plotly, "react");
-
-    const mockObserve = jest.fn();
-    const mockDisconnect = jest.fn();
+    const mockObserve = vi.fn();
+    const mockDisconnect = vi.fn();
     function mockResizeObserver(this: any) {
         this.observe = mockObserve;
         this.disconnect = mockDisconnect;
@@ -50,21 +54,20 @@ describe("WodinPlot", () => {
             }
         }
     ];
-    const mockPlotDataFn = jest.fn().mockReturnValue(mockPlotData);
     const settings = defaultGraphSettings();
     const defaultProps = {
         fadePlot: false,
         endTime: 99,
         redrawWatches: [],
-        plotData: mockPlotDataFn,
+        plotData: () => mockPlotData as any,
         placeholderMessage: "No data available",
         fitPlot: false,
         graphIndex: 1,
-        graphConfig: { settings }
+        graphConfig: { settings } as any
     };
 
-    const mockSetYAxisRange = jest.fn();
-    const mockSetFitYAxisRange = jest.fn();
+    const mockSetYAxisRange = vi.fn();
+    const mockSetFitYAxisRange = vi.fn();
 
     const getStore = (fitGraphSettings = defaultGraphSettings()) => {
         return new Vuex.Store<BasicState>({
@@ -105,15 +108,16 @@ describe("WodinPlot", () => {
 
     const mockPlotElementOn = (wrapper: VueWrapper<any>) => {
         const divElement = wrapper.find("div.plot").element;
-        const mockOn = jest.fn();
+        const mockOn = vi.fn();
         (divElement as any).on = mockOn;
         (divElement as any).layout = mockLayout;
         return mockOn;
     };
 
     afterEach(() => {
-        jest.clearAllMocks();
-        jest.restoreAllMocks();
+        vi.clearAllMocks();
+        vi.restoreAllMocks();
+        mockSetYAxisRange.mockReset();
     });
 
     it("renders plot ref element", () => {
@@ -152,7 +156,6 @@ describe("WodinPlot", () => {
     it("renders data summary", async () => {
         const wrapper = getWrapper();
         mockPlotElementOn(wrapper);
-
         await wrapper.setProps({ redrawWatches: [{} as any] });
         const summary = wrapper.findComponent(WodinPlotDataSummary);
         expect(summary.exists()).toBe(true);
@@ -161,10 +164,11 @@ describe("WodinPlot", () => {
 
     it("draws plot and sets event handler when solutions are updated", async () => {
         const wrapper = getWrapper();
+        const mockPlotDataFn = vi.fn().mockReturnValue(mockPlotData);
+        await wrapper.setProps({ plotData: mockPlotDataFn });
         const mockOn = mockPlotElementOn(wrapper);
-
-        wrapper.setProps({ redrawWatches: [{} as any] });
-        await nextTick();
+        await wrapper.setProps({ redrawWatches: [{} as any] });
+        expect(mockPlotDataFn).toHaveBeenCalled()
         expect(mockPlotDataFn.mock.calls[0][0]).toBe(0);
         expect(mockPlotDataFn.mock.calls[0][1]).toBe(99);
         expect(mockPlotDataFn.mock.calls[0][2]).toBe(1000);
@@ -184,6 +188,8 @@ describe("WodinPlot", () => {
 
     it("does not set up relayout event handler when recalculateOnRelayout is false", async () => {
         const wrapper = getWrapper({ recalculateOnRelayout: false });
+        const mockPlotDataFn = vi.fn().mockReturnValue(mockPlotData);
+        await wrapper.setProps({ plotData: mockPlotDataFn });
         const mockOn = mockPlotElementOn(wrapper);
 
         wrapper.setProps({ redrawWatches: [{} as any] });
@@ -196,7 +202,7 @@ describe("WodinPlot", () => {
 
     it("does not draw run plot if base data is null", async () => {
         const wrapper = getWrapper();
-        wrapper.setProps({ redrawWatches: [{} as any], plotData: () => null });
+        wrapper.setProps({ redrawWatches: [{} as any], plotData: () => null as any });
 
         await nextTick();
         expect(mockPlotlyNewPlot).not.toHaveBeenCalled();
@@ -210,6 +216,8 @@ describe("WodinPlot", () => {
 
     it("relayout reruns plotData and calls react if not autorange", async () => {
         const wrapper = getWrapper();
+        const mockPlotDataFn = vi.fn().mockReturnValue(mockPlotData);
+        await wrapper.setProps({ plotData: mockPlotDataFn });
         mockPlotElementOn(wrapper);
 
         wrapper.setProps({ redrawWatches: [{} as any] });
@@ -238,6 +246,9 @@ describe("WodinPlot", () => {
 
     it("relayout uses base data and calls react if autorange", async () => {
         const wrapper = getWrapper();
+        const mockPlotDataFn = vi.fn().mockReturnValue(mockPlotData);
+        await wrapper.setProps({ plotData: mockPlotDataFn });
+
         mockPlotElementOn(wrapper);
 
         wrapper.setProps({ redrawWatches: [{} as any] });
@@ -272,6 +283,8 @@ describe("WodinPlot", () => {
             },
             store
         );
+        const mockPlotDataFn = vi.fn().mockReturnValue(mockPlotData);
+        await wrapper.setProps({ plotData: mockPlotDataFn });
         const { relayout } = wrapper.vm as any;
         const relayoutEvent = {
             "xaxis.autorange": false,
@@ -325,6 +338,8 @@ describe("WodinPlot", () => {
 
     it("relayout does nothing on autorange false if t0 is undefined", async () => {
         const wrapper = getWrapper();
+        const mockPlotDataFn = vi.fn().mockReturnValue(mockPlotData);
+        await wrapper.setProps({ plotData: mockPlotDataFn });
         mockPlotElementOn(wrapper);
 
         wrapper.setProps({ redrawWatches: [{} as any] });
@@ -345,6 +360,8 @@ describe("WodinPlot", () => {
 
     it("relayout does nothing on autorange false if t1 is undefined", async () => {
         const wrapper = getWrapper();
+        const mockPlotDataFn = vi.fn().mockReturnValue(mockPlotData);
+        await wrapper.setProps({ plotData: mockPlotDataFn });
         mockPlotElementOn(wrapper);
 
         wrapper.setProps({ redrawWatches: [{} as any] });
@@ -383,7 +400,7 @@ describe("WodinPlot", () => {
 
         (wrapper.vm as any).resize();
         const divElement = wrapper.find("div.plot").element;
-        expect(plotly.Plots.resize).toHaveBeenCalledWith(divElement);
+        expect(mockPlotlyResize).toHaveBeenCalledWith(divElement);
     });
 
     it("disconnects resizeObserver on unmount", async () => {
@@ -498,7 +515,7 @@ describe("WodinPlot", () => {
 
         (wrapper.vm as any).plot = {
             layout: mockLayout,
-            on: jest.fn()
+            on: vi.fn()
         };
         await nextTick();
         await wrapper.setProps({ redrawWatches: [{} as any] });
@@ -514,7 +531,7 @@ describe("WodinPlot", () => {
 
         (wrapper.vm as any).plot = {
             layout: mockLayout,
-            on: jest.fn()
+            on: vi.fn()
         };
         await nextTick();
         await wrapper.setProps({ redrawWatches: [{} as any] });
@@ -560,6 +577,8 @@ describe("WodinPlot", () => {
 
     it("does not re-draw plot if plot is faded", async () => {
         const wrapper = getWrapper();
+        const mockPlotDataFn = vi.fn().mockReturnValue(mockPlotData);
+        await wrapper.setProps({ plotData: mockPlotDataFn });
         const mockOn = mockPlotElementOn(wrapper);
 
         await wrapper.setProps({ fadePlot: true });
@@ -572,6 +591,8 @@ describe("WodinPlot", () => {
 
     it("re-draws plot if yaxis graph setting toggled", async () => {
         const wrapper = getWrapper();
+        const mockPlotDataFn = vi.fn().mockReturnValue(mockPlotData);
+        await wrapper.setProps({ plotData: mockPlotDataFn });
         const mockOn = mockPlotElementOn(wrapper);
 
         await wrapper.setProps({ redrawWatches: [{} as any] });
@@ -582,7 +603,7 @@ describe("WodinPlot", () => {
         await wrapper.setProps({
             graphConfig: {
                 settings: { ...defaultGraphSettings(), logScaleYAxis: true }
-            }
+            } as any
         });
         await nextTick();
 
@@ -593,6 +614,8 @@ describe("WodinPlot", () => {
 
     it("does not re-draw plot if plot is faded (yaxis toggle)", async () => {
         const wrapper = getWrapper();
+        const mockPlotDataFn = vi.fn().mockReturnValue(mockPlotData);
+        await wrapper.setProps({ plotData: mockPlotDataFn });
         const mockOn = mockPlotElementOn(wrapper);
 
         await wrapper.setProps({ redrawWatches: [{} as any] });
@@ -604,7 +627,7 @@ describe("WodinPlot", () => {
             fadePlot: true,
             graphConfig: {
                 settings: { ...defaultGraphSettings(), logScaleYAxis: true }
-            }
+            } as any
         });
         await nextTick();
 
@@ -641,6 +664,8 @@ describe("WodinPlot", () => {
 
     it("update to linkedXAxis triggers relayout", async () => {
         const wrapper = getWrapper({ linkedXAxis: { autorange: true } });
+        const mockPlotDataFn = vi.fn().mockReturnValue(mockPlotData);
+        await wrapper.setProps({ plotData: mockPlotDataFn });
         mockPlotElementOn(wrapper);
         wrapper.setProps({ linkedXAxis: { autorange: false, range: [4, 6] } });
         await nextTick();
@@ -658,6 +683,8 @@ describe("WodinPlot", () => {
         const wrapper = getWrapper({
             linkedXAxis: { autorange: false, range: [3, 5] }
         });
+        const mockPlotDataFn = vi.fn().mockReturnValue(mockPlotData);
+        await wrapper.setProps({ plotData: mockPlotDataFn });
         mockPlotElementOn(wrapper);
 
         wrapper.setProps({ redrawWatches: [{} as any] });

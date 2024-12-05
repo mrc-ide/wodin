@@ -1,27 +1,26 @@
 import { AppsController } from "../../src/controllers/appsController";
 import { SessionsController } from "../../src/controllers/sessionsController";
+import bodyParser from "body-parser";
 
-describe("odin routes", () => {
-    const express = require("express");
-    const bodyParser = require("body-parser");
+const { mockRouter } = vi.hoisted(() => ({
+    mockRouter: {
+        get: vi.fn(),
+        post: vi.fn()
+    }
+}));
 
-    const mockRouter = {
-        get: jest.fn(),
-        post: jest.fn()
-    };
-    const realRouter = express.Router;
+vi.mock("express", () => ({
+    Router: () => mockRouter
+}));
 
-    const spyText = jest.spyOn(bodyParser, "text");
-
-    beforeAll(() => {
-        express.Router = () => mockRouter;
+describe("odin routes", async () => {
+    beforeEach(() => {
+        vi.resetAllMocks()
     });
 
-    afterAll(() => {
-        express.Router = realRouter;
-    });
+    const spyText = vi.spyOn(bodyParser, "text");
 
-    it.only("registers expected routes", async () => {
+    it("registers expected routes", async () => {
         await import("../../src/routes/apps");
 
         expect(mockRouter.get).toBeCalledTimes(3);

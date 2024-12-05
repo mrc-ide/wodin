@@ -1,12 +1,11 @@
 import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
-import EditSessionLabel from "../../../../src/app/components/sessions/EditSessionLabel.vue";
+import EditSessionLabel from "../../../../src/components/sessions/EditSessionLabel.vue";
 import { mockBasicState } from "../../../mocks";
-import { BasicState } from "../../../../src/app/store/basic/state";
-import mock = jest.mock;
+import { BasicState } from "../../../../src/store/basic/state";
 
 describe("EditSessionLabel", () => {
-    const mockSaveSessionLabel = jest.fn();
+    const mockSaveSessionLabel = vi.fn();
     const getWrapper = async (open: boolean) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
@@ -40,7 +39,7 @@ describe("EditSessionLabel", () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("renders as expected when opened", async () => {

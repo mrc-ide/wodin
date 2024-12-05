@@ -7,7 +7,7 @@ export enum LanguageAction {
     UpdateLanguage = "UpdateLanguage"
 }
 
-export const actions: ActionTree<LanguageState, any> = {
+export const actions: ActionTree<LanguageState, unknown> = {
     async [LanguageAction.UpdateLanguage](context, language) {
         const { commit } = context;
         await i18next.changeLanguage(language);

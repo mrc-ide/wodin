@@ -79,19 +79,26 @@ See the `/config` folder for example configuration, used in development.
 
 ## Development
 
-This codebase has been tested with Node version 16.16.0.
-If you have recently changed node version, you may see Node Sass binding errors - running `npm rebuild node-sass --prefix=app/static`
-should fix this issue. 
+This codebase has been tested with Node version 20.9.0.
 
 ## Frontend 
 
 Front-end source can be found under `app/static/src`. The front end can be built by running `npm run build` from
 `app/static`. This builds output to be picked up by the back end at `app/server/public`.
 
-The entry point script is `app/static/src/app/wodin.ts`.
+The entry point script is `app/static/src/wodin.ts`.
 
 ### Unit Tests
 Run unit tests from `app/static` using `npm run test:unit`. Run [eslint](https://eslint.org/) with `npm run lint` or `npm run lint:fix`.
+
+### Fontawesome
+We use fontawesome for some icons (e.g. glyph in Monaco editor when there's an error or a warning). We have only the icons we need from fontawesome in `app/static/src/assets/fontawesome.css` so if you would like to add a new one, you can define a custom class:
+```
+.<class-name> {
+    content: "\<unicode>"
+}
+```
+where you can define the `<class-name>` and the `<unicode>` for the icon can be found at [Fontawesome](https://fontawesome.com/search?o=r&s=solid&f=classic) (it is in the top right hand corner when you select an icon). Note: we only have the "solid" icons currently.
 
 ## Backend
 
@@ -133,3 +140,9 @@ Use the `./scripts/run-version.sh` script setting the branch references for the 
 ```
 ./scripts/run-version.sh --app mrc-1234 --api mrc-2345
 ```
+
+## Hot Reloading
+
+This repo has two main parts: `app/server` (Express server) and `app/static` (Vue frontend). The normal way to spin up the app without hot reloading is build frontend, copy build files into public folder in the server (`npm run build --prefix=app/static` builds the frontend and copies the files to the server) and run the server (`npm run serve --prefix=app/server`). The html file will then look for its javascript src `wodin.js` and css src `wodin.css` in the `app/server/public` directory and load the app from these.
+
+The hot reloading setup is different. The `server.js` file (from building the server) takes in a `--hot-reload` boolean option which tells it to instead look for the javascript src at `http://localhost:5173/src/wodin.ts` since `wodin.ts` is our entrypoint (`http://localhost:5173` is the default url for `vite` dev mode and it serves the files, after transpiling to javascript, based on your folder structure) and css src at `http://localhost:5173/src/scss/style.scss`. To run it this way we run `npm run dev --prefix=app/static` to start the vite dev server and then we run `npm run serve-hot --prefix=app/server`.

@@ -1,16 +1,20 @@
 // mock morgan before import logging
-const mockMorganResult = {};
-const mockMorgan = jest.fn().mockReturnValue(mockMorganResult);
-const mockMorganToken = jest.fn();
+const { mockMorgan, mockMorganToken, mockMorganResult } = vi.hoisted(() => {
+    const mockMorganResult = {};
+    return {
+        mockMorganResult,
+        mockMorgan: vi.fn().mockReturnValue({}),
+        mockMorganToken: vi.fn()
+    }
+});
 (mockMorgan as any).token = mockMorganToken;
-jest.mock("morgan", () => mockMorgan);
+vi.mock("morgan", () => ({default: mockMorgan}));
 
-// eslint-disable-next-line import/first
 import { initialiseLogging } from "../src/logging";
 
 describe("logging", () => {
     it("initialiseLogging registers custom tokens and format", () => {
-        const mockApplication = { use: jest.fn() } as any;
+        const mockApplication = { use: vi.fn() } as any;
         initialiseLogging(mockApplication);
 
         // Test custom tokens have been registered
@@ -32,7 +36,7 @@ describe("logging", () => {
         expect(errorStackFn(testRequest)).toBe("TEST ERROR STACK");
 
         // Test expected custom format has been registered
-        expect(mockApplication.use.mock.calls[0][0]).toBe(mockMorganResult);
+        expect(mockApplication.use.mock.calls[0][0]).toStrictEqual(mockMorganResult);
         const customFormatFn = mockMorgan.mock.calls[0][0];
 
         const testReq = {

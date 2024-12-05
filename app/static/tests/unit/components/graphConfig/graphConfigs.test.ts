@@ -1,19 +1,19 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { nextTick } from "vue";
-import { BasicState } from "../../../../src/app/store/basic/state";
+import { BasicState } from "../../../../src/store/basic/state";
 import { mockBasicState } from "../../../mocks";
-import { GraphsAction } from "../../../../src/app/store/graphs/actions";
-import GraphConfigs from "../../../../src/app/components/graphConfig/GraphConfigs.vue";
-import GraphConfig from "../../../../src/app/components/graphConfig/GraphConfig.vue";
-import HiddenVariables from "../../../../src/app/components/graphConfig/HiddenVariables.vue";
+import { GraphsAction } from "../../../../src/store/graphs/actions";
+import GraphConfigs from "../../../../src/components/graphConfig/GraphConfigs.vue";
+import GraphConfig from "../../../../src/components/graphConfig/GraphConfig.vue";
+import HiddenVariables from "../../../../src/components/graphConfig/HiddenVariables.vue";
 
 describe("GraphConfigs", () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
-    const mockNewGraph = jest.fn();
+    const mockNewGraph = vi.fn();
     const namespaced = true;
     const getWrapper = () => {
         const store = new Vuex.Store<BasicState>({

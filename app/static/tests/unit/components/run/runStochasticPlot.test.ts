@@ -1,18 +1,17 @@
 // Mock plotly before import RunStochasticTab, which indirectly imports plotly via WodinPlot
-jest.mock("plotly.js-basic-dist-min", () => {});
+vi.mock("plotly.js-basic-dist-min", () => ({}));
 
-/* eslint-disable import/first */
 import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
-import RunStochasticPlot from "../../../../src/app/components/run/RunStochasticPlot.vue";
-import WodinPlot from "../../../../src/app/components/WodinPlot.vue";
-import { StochasticState } from "../../../../src/app/store/stochastic/state";
-import RunPlot from "../../../../src/app/components/run/RunPlot.vue";
+import RunStochasticPlot from "../../../../src/components/run/RunStochasticPlot.vue";
+import WodinPlot from "../../../../src/components/WodinPlot.vue";
+import { StochasticState } from "../../../../src/store/stochastic/state";
+import RunPlot from "../../../../src/components/run/RunPlot.vue";
 import { mockGraphsState, mockModelState, mockRunState } from "../../../mocks";
-import { defaultGraphSettings } from "../../../../src/app/store/graphs/state";
+import { defaultGraphSettings } from "../../../../src/store/graphs/state";
 
 describe("RunPlot for stochastic", () => {
-    const mockSolution = jest.fn().mockReturnValue({
+    const mockSolution = vi.fn().mockReturnValue({
         x: [0, 1],
         values: [
             { description: "Individual", name: "S", y: [10, 20] },
@@ -48,12 +47,12 @@ describe("RunPlot for stochastic", () => {
         selectedVariables,
         unselectedVariables: [],
         settings: defaultGraphSettings()
-    };
+    } as any;
 
     const linkedXAxis = { autorange: false, range: [1, 2] };
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("renders as expected when model has stochastic result", () => {
@@ -95,7 +94,7 @@ describe("RunPlot for stochastic", () => {
 
         // Generates expected plot data from model
         const plotData = wodinPlot.props("plotData");
-        const data = plotData();
+        const data = plotData(0, 0, 0);
         expect(data).toStrictEqual([
             {
                 mode: "lines",
@@ -174,7 +173,7 @@ describe("RunPlot for stochastic", () => {
                 fadePlot: false,
                 graphIndex: 0,
                 graphConfig
-            },
+            } as any,
             global: {
                 plugins: [store]
             }
@@ -188,7 +187,7 @@ describe("RunPlot for stochastic", () => {
         expect(wodinPlot.props("graphConfig")).toStrictEqual(graphConfig);
 
         const plotData = wodinPlot.props("plotData");
-        const data = plotData();
+        const data = plotData(0, 0, 0);
         expect(data).toStrictEqual([]);
     });
 
@@ -211,7 +210,7 @@ describe("RunPlot for stochastic", () => {
             props: {
                 fadePlot: false,
                 graphConfig
-            },
+            } as any,
             global: {
                 plugins: [store]
             }
@@ -219,7 +218,7 @@ describe("RunPlot for stochastic", () => {
         const wodinPlot = wrapper.findComponent(WodinPlot);
         // Generates expected empty plot data from solution
         const plotData = wodinPlot.props("plotData");
-        const data = plotData();
+        const data = plotData(0, 0, 0);
         expect(data).toStrictEqual([]);
     });
 
@@ -235,7 +234,7 @@ describe("RunPlot for stochastic", () => {
             props: {
                 fadePlot: true,
                 graphConfig
-            },
+            } as any,
             global: {
                 plugins: [store]
             }
@@ -260,14 +259,14 @@ describe("RunPlot for stochastic", () => {
             props: {
                 fadePlot: false,
                 graphConfig
-            },
+            } as any,
             global: {
                 plugins: [store]
             }
         });
         const wodinPlot = wrapper.findComponent(WodinPlot);
         const plotData = wodinPlot.props("plotData");
-        const data = plotData();
+        const data = plotData(0, 0, 0);
         expect(data).toStrictEqual([
             {
                 mode: "lines",

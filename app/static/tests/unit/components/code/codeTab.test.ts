@@ -1,14 +1,14 @@
 import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
 import VueFeather from "vue-feather";
-import CodeTab from "../../../../src/app/components/code/CodeTab.vue";
-import CodeEditor from "../../../../src/app/components/code/CodeEditor.vue";
-import { BasicState } from "../../../../src/app/store/basic/state";
+import CodeTab from "../../../../src/components/code/CodeTab.vue";
+import CodeEditor from "../../../../src/components/code/CodeEditor.vue";
+import { BasicState } from "../../../../src/store/basic/state";
 import { mockBasicState, mockCodeState, mockModelState } from "../../../mocks";
-import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
-import { ModelState } from "../../../../src/app/store/model/state";
-import GenericHelp from "../../../../src/app/components/help/GenericHelp.vue";
-import GraphConfigsCollapsible from "../../../../src/app/components/graphConfig/GraphConfigsCollapsible.vue";
+import ErrorInfo from "../../../../src/components/ErrorInfo.vue";
+import { ModelState } from "../../../../src/store/model/state";
+import GenericHelp from "../../../../src/components/help/GenericHelp.vue";
+import GraphConfigsCollapsible from "@/components/graphConfig/GraphConfigsCollapsible.vue";
 
 describe("CodeTab", () => {
     const defaultModelState = {
@@ -22,10 +22,10 @@ describe("CodeTab", () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
-    const mockCompileModel = jest.fn();
+    const mockCompileModel = vi.fn();
 
     const getWrapper = (odinModelState: Partial<ModelState> = defaultModelState, loading = false) => {
         const store = new Vuex.Store<BasicState>({

@@ -1,4 +1,4 @@
-import { FitDataGetter, getters } from "../../../../src/app/store/fitData/getters";
+import { FitDataGetter, getters } from "../../../../src/store/fitData/getters";
 import { mockFitDataState } from "../../../mocks";
 
 describe("FitDataGetters", () => {

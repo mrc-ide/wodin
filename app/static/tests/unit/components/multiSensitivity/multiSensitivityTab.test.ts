@@ -1,18 +1,18 @@
 import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
-import MultiSensitivityTab from "../../../../src/app/components/multiSensitivity/MultiSensitivityTab.vue";
-import { AppState, AppType } from "../../../../src/app/store/appState/state";
-import LoadingButton from "../../../../src/app/components/LoadingButton.vue";
-import { ModelState } from "../../../../src/app/store/model/state";
-import { MultiSensitivityAction } from "../../../../src/app/store/multiSensitivity/actions";
-import ActionRequiredMessage from "../../../../src/app/components/ActionRequiredMessage.vue";
-import { MultiSensitivityState } from "../../../../src/app/store/multiSensitivity/state";
-import ErrorInfo from "../../../../src/app/components/ErrorInfo.vue";
-import SensitivitySummaryDownload from "../../../../src/app/components/sensitivity/SensitivitySummaryDownload.vue";
-import { getters as graphsGetters } from "../../../../src/app/store/graphs/getters";
+import MultiSensitivityTab from "../../../../src/components/multiSensitivity/MultiSensitivityTab.vue";
+import { AppState } from "../../../../src/store/appState/state";
+import LoadingButton from "../../../../src/components/LoadingButton.vue";
+import { ModelState } from "../../../../src/store/model/state";
+import { MultiSensitivityAction } from "../../../../src/store/multiSensitivity/actions";
+import ActionRequiredMessage from "../../../../src/components/ActionRequiredMessage.vue";
+import { MultiSensitivityState } from "../../../../src/store/multiSensitivity/state";
+import ErrorInfo from "../../../../src/components/ErrorInfo.vue";
+import SensitivitySummaryDownload from "../../../../src/components/sensitivity/SensitivitySummaryDownload.vue";
+import { getters as graphsGetters } from "../../../../src/store/graphs/getters";
 
 describe("MultiSensitivityTab", () => {
-    const mockRunMultiSensitivity = jest.fn();
+    const mockRunMultiSensitivity = vi.fn();
 
     const getWrapper = (
         running = false,
@@ -76,7 +76,7 @@ describe("MultiSensitivityTab", () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("renders loading button in loading state when multi-sensitivity is running", () => {

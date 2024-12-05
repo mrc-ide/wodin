@@ -1,5 +1,5 @@
 import { shallowMount } from "@vue/test-utils";
-import DropDown from "../../../src/app/components/DropDown.vue";
+import DropDown from "../../../src/components/DropDown.vue";
 
 describe("dropdown component", () => {
     const itemList = " <li><span class='dropdown-item' style='cursor: default;'>test</span></li>";

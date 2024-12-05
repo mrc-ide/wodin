@@ -1,25 +1,25 @@
 import { mount, shallowMount } from "@vue/test-utils";
 import Vuex, { Store } from "vuex";
-import OptionsTab from "../../../../src/app/components/options/OptionsTab.vue";
-import VerticalCollapse from "../../../../src/app/components/VerticalCollapse.vue";
-import ParameterValues from "../../../../src/app/components/options/ParameterValues.vue";
-import RunOptions from "../../../../src/app/components/options/RunOptions.vue";
-import LinkData from "../../../../src/app/components/options/LinkData.vue";
-import { BasicState } from "../../../../src/app/store/basic/state";
-import { FitState } from "../../../../src/app/store/fit/state";
-import { AppType, VisualisationTab } from "../../../../src/app/store/appState/state";
-import SensitivityOptions from "../../../../src/app/components/options/SensitivityOptions.vue";
-import OptimisationOptions from "../../../../src/app/components/options/OptimisationOptions.vue";
+import OptionsTab from "../../../../src/components/options/OptionsTab.vue";
+import VerticalCollapse from "../../../../src/components/VerticalCollapse.vue";
+import ParameterValues from "../../../../src/components/options/ParameterValues.vue";
+import RunOptions from "../../../../src/components/options/RunOptions.vue";
+import LinkData from "../../../../src/components/options/LinkData.vue";
+import { BasicState } from "../../../../src/store/basic/state";
+import { FitState } from "../../../../src/store/fit/state";
+import { AppType, VisualisationTab } from "../../../../src/store/appState/state";
+import SensitivityOptions from "../../../../src/components/options/SensitivityOptions.vue";
+import OptimisationOptions from "../../../../src/components/options/OptimisationOptions.vue";
 import { mockModelState, mockRunState } from "../../../mocks";
-import { RunMutation } from "../../../../src/app/store/run/mutations";
-import GraphSettings from "../../../../src/app/components/GraphSettings.vue";
-import ParameterSets from "../../../../src/app/components/options/ParameterSets.vue";
-import { getters as runGetters } from "../../../../src/app/store/run/getters";
-import AdvancedSettings from "../../../../src/app/components/options/AdvancedSettings.vue";
-import GraphConfigsCollapsible from "../../../../src/app/components/graphConfig/GraphConfigsCollapsible.vue";
+import { RunMutation } from "../../../../src/store/run/mutations";
+import GraphSettings from "../../../../src/components/GraphSettings.vue";
+import ParameterSets from "../../../../src/components/options/ParameterSets.vue";
+import { getters as runGetters } from "../../../../src/store/run/getters";
+import AdvancedSettings from "../../../../src/components/options/AdvancedSettings.vue";
+import GraphConfigsCollapsible from "../../../../src/components/graphConfig/GraphConfigsCollapsible.vue";
 
 describe("OptionsTab", () => {
-    const mockTooltipDirective = jest.fn();
+    const mockTooltipDirective = vi.fn();
 
     const getWrapper = (store: Store<any>) => {
         return mount(OptionsTab, {
@@ -95,7 +95,7 @@ describe("OptionsTab", () => {
     });
 
     it("can reset model parameters", async () => {
-        const mockUpdateParameterValuesMutation = jest.fn();
+        const mockUpdateParameterValuesMutation = vi.fn();
         const store = new Vuex.Store<BasicState>({
             state: {
                 appType: AppType.Basic,

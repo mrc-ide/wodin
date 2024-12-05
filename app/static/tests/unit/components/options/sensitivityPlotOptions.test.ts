@@ -4,12 +4,12 @@ import {
     SensitivityPlotExtreme,
     SensitivityPlotSettings,
     SensitivityPlotType
-} from "../../../../src/app/store/sensitivity/state";
+} from "../../../../src/store/sensitivity/state";
 import { mockBasicState } from "../../../mocks";
-import { BasicState } from "../../../../src/app/store/basic/state";
-import { SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
-import SensitivityPlotOptions from "../../../../src/app/components/options/SensitivityPlotOptions.vue";
-import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
+import { BasicState } from "../../../../src/store/basic/state";
+import { SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
+import SensitivityPlotOptions from "../../../../src/components/options/SensitivityPlotOptions.vue";
+import NumericInput from "../../../../src/components/options/NumericInput.vue";
 
 describe("SensitivityPlotOptions", () => {
     const plotSettings = {
@@ -18,9 +18,9 @@ describe("SensitivityPlotOptions", () => {
         time: 100
     };
 
-    const mockSetPlotType = jest.fn();
-    const mockSetPlotExtreme = jest.fn();
-    const mockSetPlotTime = jest.fn();
+    const mockSetPlotType = vi.fn();
+    const mockSetPlotExtreme = vi.fn();
+    const mockSetPlotTime = vi.fn();
 
     const getWrapper = (settings: Partial<SensitivityPlotSettings> = {}) => {
         const store = new Vuex.Store<BasicState>({
@@ -58,7 +58,7 @@ describe("SensitivityPlotOptions", () => {
     };
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("renders as expected for Trace over time", () => {
@@ -158,7 +158,7 @@ describe("SensitivityPlotOptions", () => {
     });
 
     it("on mounted, initialises time to model end if null", () => {
-        const wrapper = getWrapper({ plotType: SensitivityPlotType.ValueAtTime, time: null });
+        getWrapper({ plotType: SensitivityPlotType.ValueAtTime, time: null });
         expect(mockSetPlotTime).toHaveBeenCalledTimes(1);
         expect(mockSetPlotTime.mock.calls[0][1]).toBe(100);
     });

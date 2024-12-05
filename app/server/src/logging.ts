@@ -1,6 +1,5 @@
 import { Application, Request, Response } from "express";
-
-const morgan = require("morgan");
+import morgan, { TokenIndexer } from "morgan";
 
 interface RequestWithError {
     errorType: string,
@@ -15,7 +14,7 @@ export const initialiseLogging = (app: Application) => {
     morgan.token("error-detail", (req: Request) => reqWithError(req).errorDetail);
     morgan.token("error-stack", (req: Request) => reqWithError(req).errorStack);
 
-    const customFormat = (tokens: any, req: Request, res: Response) => {
+    const customFormat = (tokens: TokenIndexer<Request, Response>, req: Request, res: Response) => {
         return [
             tokens["remote-addr"](req, res),
             tokens["remote-user"](req, res),
@@ -24,9 +23,9 @@ export const initialiseLogging = (app: Application) => {
             tokens.status(req, res),
             tokens.res(req, res, "content-length"), "-",
             tokens["response-time"](req, res), "ms",
-            tokens["error-type"](req),
-            tokens["error-detail"](req),
-            tokens["error-stack"](req)
+            tokens["error-type"](req, res),
+            tokens["error-detail"](req, res),
+            tokens["error-stack"](req, res)
         ].join(" ");
     };
 

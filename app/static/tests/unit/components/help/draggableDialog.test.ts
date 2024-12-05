@@ -1,11 +1,11 @@
-import { mount, shallowMount } from "@vue/test-utils";
+import { mount } from "@vue/test-utils";
 import VueFeather from "vue-feather";
 import { nextTick } from "vue";
-import DraggableDialog from "../../../../src/app/components/help/DraggableDialog.vue";
+import DraggableDialog from "../../../../src/components/help/DraggableDialog.vue";
 
-const docAddListenerSpy = jest.spyOn(document, "addEventListener");
-const docRemoveListenerSpy = jest.spyOn(document, "removeEventListener");
-const winAddListenerSpy = jest.spyOn(window, "addEventListener");
+const docAddListenerSpy = vi.spyOn(document, "addEventListener");
+const docRemoveListenerSpy = vi.spyOn(document, "removeEventListener");
+const winAddListenerSpy = vi.spyOn(window, "addEventListener");
 
 describe("DraggableDialog", () => {
     const getWrapper = () => {
@@ -20,7 +20,7 @@ describe("DraggableDialog", () => {
     };
 
     beforeEach(() => {
-        jest.resetAllMocks();
+        vi.resetAllMocks();
     });
 
     it("renders as expected", () => {
@@ -55,7 +55,7 @@ describe("DraggableDialog", () => {
         const moveEvent = {
             clientX: moveTo.x,
             clientY: moveTo.y,
-            preventDefault: jest.fn()
+            preventDefault: vi.fn()
         };
         moveHandler(moveEvent);
         expect((wrapper.vm as any).position).toStrictEqual(expectedEndPosition);
@@ -64,7 +64,7 @@ describe("DraggableDialog", () => {
         // End drag
         const endHandlerIndex = touch ? 3 : 2; // touchend or mouseup
         const mouseUpHandler = docAddListenerSpy.mock.calls[endHandlerIndex][1] as any;
-        const mouseUpEvent = { preventDefault: jest.fn() };
+        const mouseUpEvent = { preventDefault: vi.fn() };
         mouseUpHandler(mouseUpEvent);
         expect(docRemoveListenerSpy).toHaveBeenCalledTimes(4);
         expect(docRemoveListenerSpy.mock.calls[0][0]).toBe("mousemove");
@@ -131,7 +131,7 @@ describe("DraggableDialog", () => {
         const moveEvent = {
             clientX: resizeTo.x,
             clientY: resizeTo.y,
-            preventDefault: jest.fn()
+            preventDefault: vi.fn()
         };
         moveHandler(moveEvent);
         expect((wrapper.vm as any).resizedSize).toStrictEqual(expectedEndSize);
@@ -140,7 +140,7 @@ describe("DraggableDialog", () => {
         // End resize
         const endHandlerIndex = touch ? 3 : 2; // touchend or mouseup
         const endHandler = docAddListenerSpy.mock.calls[endHandlerIndex][1] as any;
-        const endEvent = { preventDefault: jest.fn() };
+        const endEvent = { preventDefault: vi.fn() };
         endHandler(endEvent);
         expect(docRemoveListenerSpy).toHaveBeenCalledTimes(4);
         expect(docRemoveListenerSpy.mock.calls[0][0]).toBe("mousemove");

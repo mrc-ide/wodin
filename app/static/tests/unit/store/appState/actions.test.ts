@@ -10,18 +10,19 @@ import {
     mockSessionsState,
     mockSuccess
 } from "../../../mocks";
-import { AppStateAction, appStateActions } from "../../../../src/app/store/appState/actions";
-import { AppStateMutation, appStateMutations } from "../../../../src/app/store/appState/mutations";
-import { RunMutation } from "../../../../src/app/store/run/mutations";
-import { ErrorsMutation } from "../../../../src/app/store/errors/mutations";
-import { CodeMutation, mutations as codeMutations } from "../../../../src/app/store/code/mutations";
-import { BasicState } from "../../../../src/app/store/basic/state";
-import { ModelAction } from "../../../../src/app/store/model/actions";
-import { serialiseState } from "../../../../src/app/serialise";
-import { SessionsAction } from "../../../../src/app/store/sessions/actions";
-import { localStorageManager } from "../../../../src/app/localStorageManager";
-import { AppStateGetter } from "../../../../src/app/store/appState/getters";
-import { Language } from "../../../../src/app/types/languageTypes";
+import { AppStateAction, appStateActions } from "../../../../src/store/appState/actions";
+import { AppStateMutation, appStateMutations } from "../../../../src/store/appState/mutations";
+import { RunMutation } from "../../../../src/store/run/mutations";
+import { ErrorsMutation } from "../../../../src/store/errors/mutations";
+import { CodeMutation } from "../../../../src/store/code/mutations";
+import { BasicState } from "../../../../src/store/basic/state";
+import { ModelAction } from "../../../../src/store/model/actions";
+import { serialiseState } from "../../../../src/serialise";
+import { SessionsAction } from "../../../../src/store/sessions/actions";
+import { localStorageManager } from "../../../../src/localStorageManager";
+import { AppStateGetter } from "../../../../src/store/appState/getters";
+import { Language } from "../../../../src/types/languageTypes";
+import { flushPromises } from "@vue/test-utils";
 
 describe("AppState actions", () => {
     const baseUrl = "http://localhost:3000";
@@ -29,11 +30,11 @@ describe("AppState actions", () => {
     const defaultLanguage = Language.en;
     const enableI18n = true;
 
-    const spyOnAddSessionId = jest.spyOn(localStorageManager, "addSessionId");
-    const mockGetUserPreferences = jest
+    const spyOnAddSessionId = vi.spyOn(localStorageManager, "addSessionId");
+    const mockGetUserPreferences = vi
         .spyOn(localStorageManager, "getUserPreferences")
         .mockReturnValue({ showUnlabelledSessions: false, showDuplicateSessions: false });
-    const mockSetUserPreferences = jest.spyOn(localStorageManager, "setUserPreferences");
+    const mockSetUserPreferences = vi.spyOn(localStorageManager, "setUserPreferences");
 
     const getStore = (partialState: Partial<BasicState> = {}) => {
         const state = mockBasicState({
@@ -53,8 +54,8 @@ describe("AppState actions", () => {
     };
 
     afterEach(() => {
-        jest.clearAllMocks();
-        jest.clearAllTimers();
+        vi.clearAllMocks();
+        vi.clearAllTimers();
         mockAxios.reset();
     });
 
@@ -69,8 +70,8 @@ describe("AppState actions", () => {
         mockAxios.onGet(url).reply(200, mockSuccess(config));
 
         const store = getStore();
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const { state } = store;
         const rootState = state;
         const payload = {
@@ -125,8 +126,8 @@ describe("AppState actions", () => {
         mockAxios.onGet(`${baseUrl}/config/test-app`).reply(200, mockSuccess(config));
 
         const store = getStore();
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const { state } = store;
         const rootState = state;
         const payload = { appName: "test-app", loadSessionId: "", baseUrl };
@@ -155,8 +156,8 @@ describe("AppState actions", () => {
             sessionId: "1234",
             baseUrl
         });
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const { state } = store;
         const rootState = state;
 
@@ -200,8 +201,8 @@ describe("AppState actions", () => {
             appName: "test-app",
             sessionId: "1234"
         });
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const { state } = store;
         const rootState = state;
 
@@ -236,8 +237,8 @@ describe("AppState actions", () => {
             sessionId: "1234",
             code: mockCodeState({ currentCode: ["#some code"] })
         });
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const { state } = store;
         const rootState = state;
 
@@ -270,8 +271,8 @@ describe("AppState actions", () => {
             appName: "test-app",
             sessionId: "1234"
         });
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const { state } = store;
         const rootState = state;
 
@@ -305,8 +306,8 @@ describe("AppState actions", () => {
                 sessionsMetadata: [{ id: "1234", label: "Test Label" }] as any
             })
         });
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const { state } = store;
         const rootState = state;
 
@@ -336,33 +337,33 @@ describe("AppState actions", () => {
     });
 
     it("QueueStateUpload does not queue during fitting", async () => {
-        jest.useFakeTimers();
-        const mockSetInterval = jest.spyOn(window, "setInterval");
+        vi.useFakeTimers();
+        const mockSetInterval = vi.spyOn(window, "setInterval");
         const state = mockFitState({
             modelFit: mockModelFitState({ fitting: true }),
             sensitivity: mockSensitivityState()
         });
-        const commit = jest.fn();
+        const commit = vi.fn();
         await (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
         expect(commit).not.toHaveBeenCalled();
         expect(mockSetInterval).not.toHaveBeenCalled();
     });
 
     it("QueueStateUpload does not queue when running sensitivity", async () => {
-        jest.useFakeTimers();
-        const mockSetInterval = jest.spyOn(window, "setInterval");
+        vi.useFakeTimers();
+        const mockSetInterval = vi.spyOn(window, "setInterval");
         const state = mockBasicState({
             sensitivity: mockSensitivityState({ running: true })
         });
-        const commit = jest.fn();
+        const commit = vi.fn();
         await (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
         expect(commit).not.toHaveBeenCalled();
         expect(mockSetInterval).not.toHaveBeenCalled();
     });
 
-    it("QueueStateUpload sets new state upload pending", (done) => {
-        jest.useFakeTimers();
-        const mockSetInterval = jest.spyOn(window, "setInterval");
+    it("QueueStateUpload sets new state upload pending", async () => {
+        vi.useFakeTimers();
+        const mockSetInterval = vi.spyOn(window, "setInterval");
         const state = mockFitState({
             sessionId: "1234",
             appName: "testApp",
@@ -370,7 +371,7 @@ describe("AppState actions", () => {
             appsPath
         });
         const rootState = state;
-        const commit = jest.fn();
+        const commit = vi.fn();
         mockAxios.onPost(`${baseUrl}/apps/testApp/sessions/1234`).reply(200, "");
 
         (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state, rootState });
@@ -383,7 +384,7 @@ describe("AppState actions", () => {
 
         expect(mockAxios.history.post.length).toBe(0);
 
-        jest.advanceTimersByTime(2000);
+        vi.advanceTimersByTime(2000);
 
         // The additional commits and axios call for immediateUploadState should now have been called
         expect(commit).toHaveBeenCalledTimes(4);
@@ -394,19 +395,17 @@ describe("AppState actions", () => {
         expect(mockAxios.history.post[0].data).toBe(serialiseState(state));
 
         // use a real timer to wait for the final commit after mock axios returns!
-        jest.useRealTimers();
-        setTimeout(() => {
-            expect(commit).toHaveBeenCalledTimes(6);
-            expect(commit.mock.calls[4][0]).toBe(AppStateMutation.SetPersisted);
-            expect(commit.mock.calls[5][0]).toBe(AppStateMutation.SetStateUploadInProgress);
-            expect(commit.mock.calls[5][1]).toBe(false);
-            done();
-        });
+        vi.useRealTimers();
+        await flushPromises();
+        expect(commit).toHaveBeenCalledTimes(6);
+        expect(commit.mock.calls[4][0]).toBe(AppStateMutation.SetPersisted);
+        expect(commit.mock.calls[5][0]).toBe(AppStateMutation.SetStateUploadInProgress);
+        expect(commit.mock.calls[5][1]).toBe(false);
     });
 
     it("Uses state upload interval from config if defined", () => {
-        jest.useFakeTimers();
-        const mockSetInterval = jest.spyOn(window, "setInterval");
+        vi.useFakeTimers();
+        const mockSetInterval = vi.spyOn(window, "setInterval");
         const state = mockFitState({
             sessionId: "1234",
             appName: "testApp",
@@ -414,7 +413,7 @@ describe("AppState actions", () => {
                 stateUploadIntervalMillis: 1000
             } as any
         });
-        const commit = jest.fn();
+        const commit = vi.fn();
         mockAxios.onPost("/apps/testApp/sessions/1234").reply(200, "");
 
         (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
@@ -424,10 +423,10 @@ describe("AppState actions", () => {
     });
 
     it("QueueStateUpload callback does not upload pending if upload is in progress", async () => {
-        jest.useFakeTimers();
-        const mockSetInterval = jest.spyOn(window, "setInterval");
+        vi.useFakeTimers();
+        const mockSetInterval = vi.spyOn(window, "setInterval");
         const state = mockFitState({ sessionId: "1234", appName: "testApp" });
-        const commit = jest.fn();
+        const commit = vi.fn();
         mockAxios.onPost("/apps/testApp/sessions/1234").reply(200);
 
         await (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
@@ -438,7 +437,7 @@ describe("AppState actions", () => {
         // set upload in progress so interval callback will not do upload
         state.stateUploadInProgress = true;
 
-        jest.advanceTimersByTime(2000);
+        vi.advanceTimersByTime(2000);
 
         // There should be no additional commits or axios calls
         expect(commit).toHaveBeenCalledTimes(2);
@@ -446,10 +445,10 @@ describe("AppState actions", () => {
     });
 
     it("QueueStateUpload callback does not upload pending if fitting is in progress", async () => {
-        jest.useFakeTimers();
-        const mockSetInterval = jest.spyOn(window, "setInterval");
+        vi.useFakeTimers();
+        const mockSetInterval = vi.spyOn(window, "setInterval");
         const state = mockFitState({ sessionId: "1234", appName: "testApp" });
-        const commit = jest.fn();
+        const commit = vi.fn();
         mockAxios.onPost("/apps/testApp/sessions/1234").reply(200);
 
         await (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
@@ -460,7 +459,7 @@ describe("AppState actions", () => {
         // set fitting progress so interval callback will not do upload
         state.modelFit.fitting = true;
 
-        jest.advanceTimersByTime(2000);
+        vi.advanceTimersByTime(2000);
 
         // There should be no additional commits or axios calls
         expect(commit).toHaveBeenCalledTimes(2);
@@ -468,10 +467,10 @@ describe("AppState actions", () => {
     });
 
     it("QueueStateUpload callback does not upload pending if running sensitivity", async () => {
-        jest.useFakeTimers();
-        const mockSetInterval = jest.spyOn(window, "setInterval");
+        vi.useFakeTimers();
+        const mockSetInterval = vi.spyOn(window, "setInterval");
         const state = mockFitState({ sessionId: "1234", appName: "testApp" });
-        const commit = jest.fn();
+        const commit = vi.fn();
         mockAxios.onPost("/apps/testApp/sessions/1234").reply(200);
 
         await (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
@@ -482,15 +481,15 @@ describe("AppState actions", () => {
         // set sensitivity running so interval callback will not do upload
         state.sensitivity.running = true;
 
-        jest.advanceTimersByTime(2000);
+        vi.advanceTimersByTime(2000);
 
         // There should be no additional commits or axios calls
         expect(commit).toHaveBeenCalledTimes(2);
         expect(mockAxios.history.post.length).toBe(0);
     });
 
-    it("QueueStatusUpload callback commits api error", (done) => {
-        jest.useFakeTimers();
+    it("QueueStatusUpload callback commits api error", async () => {
+        vi.useFakeTimers();
         const state = mockFitState({
             sessionId: "1234",
             appName: "testApp",
@@ -498,11 +497,11 @@ describe("AppState actions", () => {
             appsPath
         });
         const rootState = state;
-        const commit = jest.fn();
+        const commit = vi.fn();
         mockAxios.onPost(`${baseUrl}/apps/testApp/sessions/1234`).reply(500, mockFailure("upload failure"));
 
         (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state, rootState });
-        jest.advanceTimersByTime(2000);
+        vi.advanceTimersByTime(2000);
 
         expect(commit).toHaveBeenCalledTimes(4);
         expect(commit.mock.calls[2][0]).toBe(AppStateMutation.ClearQueuedStateUpload);
@@ -512,19 +511,17 @@ describe("AppState actions", () => {
         expect(mockAxios.history.post[0].data).toBe(serialiseState(state));
 
         // use a real timer to wait for the final commits after mock axios returns
-        jest.useRealTimers();
-        setTimeout(() => {
-            expect(commit).toHaveBeenCalledTimes(6);
-            expect(commit.mock.calls[4][0]).toBe(ErrorsMutation.AddError);
-            expect(commit.mock.calls[4][1]).toStrictEqual({ error: "OTHER_ERROR", detail: "upload failure" });
-            expect(commit.mock.calls[5][0]).toBe(AppStateMutation.SetStateUploadInProgress);
-            expect(commit.mock.calls[5][1]).toBe(false);
-            done();
-        });
+        vi.useRealTimers();
+        await flushPromises();
+        expect(commit).toHaveBeenCalledTimes(6);
+        expect(commit.mock.calls[4][0]).toBe(ErrorsMutation.AddError);
+        expect(commit.mock.calls[4][1]).toStrictEqual({ error: "OTHER_ERROR", detail: "upload failure" });
+        expect(commit.mock.calls[5][0]).toBe(AppStateMutation.SetStateUploadInProgress);
+        expect(commit.mock.calls[5][1]).toBe(false);
     });
 
     it("LoadUserPreferences gets preferences from local storage and commits", async () => {
-        const commit = jest.fn();
+        const commit = vi.fn();
         await (appStateActions[AppStateAction.LoadUserPreferences] as any)({ commit });
         expect(mockGetUserPreferences).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetUserPreferences);
@@ -532,8 +529,8 @@ describe("AppState actions", () => {
     });
 
     it("SaveUserPreferences sets preferences in local storage and commits", async () => {
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const state = {
             userPreferences: {
                 somePref: "something",
@@ -557,8 +554,8 @@ describe("AppState actions", () => {
     });
 
     it("SaveUserPreferences dispatches GetSessions if showDuplicateSessions has changed", async () => {
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const state = {
             userPreferences: {
                 showUnlabelledSessions: false,

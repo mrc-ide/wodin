@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { AppLocals } from "../types";
+import { AppConfig, AppLocals } from "../types";
 import { ErrorType } from "../errors/errorType";
 import { WodinWebError } from "../errors/wodinWebError";
 import { getSessionStore } from "../db/sessionStore";
@@ -9,7 +9,7 @@ export class AppsController {
     static getApp = async (req: Request, res: Response, next: NextFunction) => {
         await asyncControllerHandler(next, async () => {
             const {
-                configReader, appsPath, wodinConfig, wodinVersion
+                configReader, appsPath, wodinConfig, wodinVersion, hotReload
             } = req.app.locals as AppLocals;
             const { appName } = req.params;
             // client can pass either sessionId or share (friendly id) parameter to identify session to reload
@@ -26,7 +26,7 @@ export class AppsController {
                 }
             }
 
-            const config = configReader.readConfigFile(appsPath, `${appName}.config.json`) as any;
+            const config = configReader.readConfigFile(appsPath, `${appName}.config.json`) as AppConfig;
             if (config) {
                 const baseUrl = wodinConfig.baseUrl.replace(/\/$/, "");
                 // TODO: validate config against schema for app type
@@ -43,7 +43,8 @@ export class AppsController {
                     shareNotFound: shareNotFound || "",
                     mathjaxSrc: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js",
                     enableI18n: wodinConfig.enableI18n ?? false, // if option not set then false by default
-                    defaultLanguage: wodinConfig?.defaultLanguage || "en"
+                    defaultLanguage: wodinConfig?.defaultLanguage || "en",
+                    hotReload
                 };
                 res.render("app", viewOptions);
             } else {

@@ -1,16 +1,16 @@
-import resetAllMocks = jest.resetAllMocks;
-import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
+import { ModelFitMutation } from "../../../../src/store/modelFit/mutations";
 import { mockFitDataState, mockModelFitState, mockModelState, mockRunState } from "../../../mocks";
-import { actions, ModelFitAction } from "../../../../src/app/store/modelFit/actions";
-import { RunMutation } from "../../../../src/app/store/run/mutations";
-import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
-import { AdvancedOptions } from "../../../../src/app/types/responseTypes";
-import { AdvancedComponentType } from "../../../../src/app/store/run/state";
+import { actions, ModelFitAction } from "../../../../src/store/modelFit/actions";
+import { RunMutation } from "../../../../src/store/run/mutations";
+import { BaseSensitivityMutation } from "../../../../src/store/sensitivity/mutations";
+import { AdvancedOptions } from "../../../../src/types/responseTypes";
+import { AdvancedComponentType } from "../../../../src/store/run/state";
+import { nextTick } from "vue";
 
 describe("ModelFit actions", () => {
     const mockSimplex = {} as any;
-    const mockWodinFit = jest.fn().mockReturnValue(mockSimplex);
-    const mockWodinFitValue = jest.fn().mockReturnValue(42);
+    const mockWodinFit = vi.fn().mockReturnValue(mockSimplex);
+    const mockWodinFitValue = vi.fn().mockReturnValue(42);
     const mockOdinRunner = {
         wodinFit: mockWodinFit,
         wodinFitValue: mockWodinFitValue
@@ -64,7 +64,7 @@ describe("ModelFit actions", () => {
     });
 
     afterEach(() => {
-        resetAllMocks();
+        vi.resetAllMocks();
     });
 
     it("FitModel calls wodinFit and dispatches FitModelStep action", () => {
@@ -74,8 +74,8 @@ describe("ModelFit actions", () => {
             "fitData/link": link,
             "fitData/dataEnd": 100
         };
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const expectedData = {
             time: [0, 1, 2],
             value: [10, 20, 30]
@@ -127,8 +127,8 @@ describe("ModelFit actions", () => {
 
     it("FitModel does nothing if cannot fit model", () => {
         const getters = { fitRequirements: { hasData: false } };
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
 
         (actions[ModelFitAction.FitModel] as any)({
             commit,
@@ -144,7 +144,7 @@ describe("ModelFit actions", () => {
 
     it("FitModel commits error thrown during wodinFit", () => {
         const runner = {
-            wodinFit: jest.fn().mockImplementation(() => {
+            wodinFit: vi.fn().mockImplementation(() => {
                 throw new Error("TEST ERROR");
             }),
             wodinFitValue: mockWodinFitValue
@@ -162,8 +162,8 @@ describe("ModelFit actions", () => {
             "fitData/link": link,
             "fitData/dataEnd": 100
         };
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         (actions[ModelFitAction.FitModel] as any)({
             commit,
             dispatch,
@@ -182,7 +182,7 @@ describe("ModelFit actions", () => {
         expect(commit.mock.calls[2][1]).toBe(false);
     });
 
-    it("FitModelStep commits expected changes and dispatches further step if not converged", (done) => {
+    it("FitModelStep commits expected changes and dispatches further step if not converged", async () => {
         const result = {
             converged: false,
             data: {
@@ -192,7 +192,7 @@ describe("ModelFit actions", () => {
             }
         };
         const simplex = {
-            step: jest.fn(),
+            step: vi.fn(),
             result: () => result
         } as any;
 
@@ -200,8 +200,9 @@ describe("ModelFit actions", () => {
             fitting: true
         });
 
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+        const commit = vi.fn();
+        const dispatch = vi.fn();
+        vi.useFakeTimers();
         (actions[ModelFitAction.FitModelStep] as any)(
             {
                 commit,
@@ -211,31 +212,29 @@ describe("ModelFit actions", () => {
             },
             simplex
         );
-
-        setTimeout(() => {
-            expect(simplex.step).toHaveBeenCalledTimes(1);
-            expect(commit).toHaveBeenCalledTimes(4);
-            expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetResult);
-            expect(commit.mock.calls[0][1]).toBe(result);
-            expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
-            expect(commit.mock.calls[1][1]).toBe(result.data.pars);
-            expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
-            expect(commit.mock.calls[2][0]).toBe(`run/${RunMutation.SetResultOde}`);
-            expect(commit.mock.calls[2][1]).toStrictEqual({
-                inputs: { endTime: 99, parameterValues: {} },
-                solution: "solution",
-                error: null
-            });
-            expect(commit.mock.calls[2][2]).toStrictEqual({ root: true });
-            expect(commit.mock.calls[3][0]).toBe(`sensitivity/${BaseSensitivityMutation.SetUpdateRequired}`);
-            expect(commit.mock.calls[3][1]).toStrictEqual({ parameterValueChanged: true });
-            expect(commit.mock.calls[3][2]).toStrictEqual({ root: true });
-
-            expect(dispatch).toHaveBeenCalledTimes(1);
-            expect(dispatch.mock.calls[0][0]).toBe(ModelFitAction.FitModelStep);
-            expect(dispatch.mock.calls[0][1]).toBe(simplex);
-            done();
+        vi.advanceTimersByTime(1);
+        vi.useRealTimers();
+        expect(simplex.step).toHaveBeenCalledTimes(1);
+        expect(commit).toHaveBeenCalledTimes(4);
+        expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetResult);
+        expect(commit.mock.calls[0][1]).toBe(result);
+        expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
+        expect(commit.mock.calls[1][1]).toBe(result.data.pars);
+        expect(commit.mock.calls[1][2]).toStrictEqual({ root: true });
+        expect(commit.mock.calls[2][0]).toBe(`run/${RunMutation.SetResultOde}`);
+        expect(commit.mock.calls[2][1]).toStrictEqual({
+            inputs: { endTime: 99, parameterValues: {} },
+            solution: "solution",
+            error: null
         });
+        expect(commit.mock.calls[2][2]).toStrictEqual({ root: true });
+        expect(commit.mock.calls[3][0]).toBe(`sensitivity/${BaseSensitivityMutation.SetUpdateRequired}`);
+        expect(commit.mock.calls[3][1]).toStrictEqual({ parameterValueChanged: true });
+        expect(commit.mock.calls[3][2]).toStrictEqual({ root: true });
+
+        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(dispatch.mock.calls[0][0]).toBe(ModelFitAction.FitModelStep);
+        expect(dispatch.mock.calls[0][1]).toBe(simplex);
     });
 
     const result = {
@@ -245,13 +244,13 @@ describe("ModelFit actions", () => {
         }
     };
     const simplex = {
-        step: jest.fn(),
+        step: vi.fn(),
         result: () => result
     } as any;
 
-    it("FitModelStep does not dispatch further step if converged", (done) => {
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+    it("FitModelStep does not dispatch further step if converged", async () => {
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const testState = mockModelFitState({ fitting: true });
         (actions[ModelFitAction.FitModelStep] as any)(
             {
@@ -262,25 +261,22 @@ describe("ModelFit actions", () => {
             },
             simplex
         );
+        await nextTick();
+        expect(simplex.step).toHaveBeenCalledTimes(1);
+        expect(commit).toHaveBeenCalledTimes(5);
+        expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetResult);
+        expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
+        expect(commit.mock.calls[2][0]).toBe(`run/${RunMutation.SetResultOde}`);
+        expect(commit.mock.calls[3][0]).toBe(`sensitivity/${BaseSensitivityMutation.SetUpdateRequired}`);
+        expect(commit.mock.calls[4][0]).toBe(ModelFitMutation.SetFitting);
+        expect(commit.mock.calls[4][1]).toBe(false);
 
-        setTimeout(() => {
-            expect(simplex.step).toHaveBeenCalledTimes(1);
-            expect(commit).toHaveBeenCalledTimes(5);
-            expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetResult);
-            expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
-            expect(commit.mock.calls[2][0]).toBe(`run/${RunMutation.SetResultOde}`);
-            expect(commit.mock.calls[3][0]).toBe(`sensitivity/${BaseSensitivityMutation.SetUpdateRequired}`);
-            expect(commit.mock.calls[4][0]).toBe(ModelFitMutation.SetFitting);
-            expect(commit.mock.calls[4][1]).toBe(false);
-
-            expect(dispatch).not.toHaveBeenCalled();
-            done();
-        });
+        expect(dispatch).not.toHaveBeenCalled();
     });
 
-    it("FitModelStep commits multiSensitivity SetUpdateRequired if multiSensitivity is enabled", (done) => {
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+    it("FitModelStep commits multiSensitivity SetUpdateRequired if multiSensitivity is enabled", async () => {
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const testState = mockModelFitState({ fitting: true });
         const testRootState = {
             config: { multiSensitivity: true }
@@ -294,23 +290,20 @@ describe("ModelFit actions", () => {
             },
             simplex
         );
+        await nextTick();
+        expect(simplex.step).toHaveBeenCalledTimes(1);
+        expect(commit).toHaveBeenCalledTimes(6);
+        expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetResult);
+        expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
+        expect(commit.mock.calls[2][0]).toBe(`run/${RunMutation.SetResultOde}`);
+        const expectedReason = { parameterValueChanged: true };
+        expect(commit.mock.calls[3][0]).toBe(`sensitivity/${BaseSensitivityMutation.SetUpdateRequired}`);
+        expect(commit.mock.calls[3][1]).toStrictEqual(expectedReason);
+        expect(commit.mock.calls[4][0]).toBe(`multiSensitivity/${BaseSensitivityMutation.SetUpdateRequired}`);
+        expect(commit.mock.calls[4][1]).toStrictEqual(expectedReason);
+        expect(commit.mock.calls[5][0]).toBe(ModelFitMutation.SetFitting);
 
-        setTimeout(() => {
-            expect(simplex.step).toHaveBeenCalledTimes(1);
-            expect(commit).toHaveBeenCalledTimes(6);
-            expect(commit.mock.calls[0][0]).toBe(ModelFitMutation.SetResult);
-            expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetParameterValues}`);
-            expect(commit.mock.calls[2][0]).toBe(`run/${RunMutation.SetResultOde}`);
-            const expectedReason = { parameterValueChanged: true };
-            expect(commit.mock.calls[3][0]).toBe(`sensitivity/${BaseSensitivityMutation.SetUpdateRequired}`);
-            expect(commit.mock.calls[3][1]).toStrictEqual(expectedReason);
-            expect(commit.mock.calls[4][0]).toBe(`multiSensitivity/${BaseSensitivityMutation.SetUpdateRequired}`);
-            expect(commit.mock.calls[4][1]).toStrictEqual(expectedReason);
-            expect(commit.mock.calls[5][0]).toBe(ModelFitMutation.SetFitting);
-
-            expect(dispatch).not.toHaveBeenCalled();
-            done();
-        });
+        expect(dispatch).not.toHaveBeenCalled();
     });
 
     it("UpdateParamsToVary retains params to vary if possible", () => {
@@ -318,7 +311,7 @@ describe("ModelFit actions", () => {
             paramsToVary: ["p1", "p3"]
         };
 
-        const commit = jest.fn();
+        const commit = vi.fn();
         (actions[ModelFitAction.UpdateParamsToVary] as any)({ commit, state: modelFitState, rootState });
 
         expect(commit).toHaveBeenCalledTimes(1);
@@ -326,23 +319,20 @@ describe("ModelFit actions", () => {
         expect(commit.mock.calls[0][1]).toStrictEqual(["p1"]);
     });
 
-    it("FitModelStep does nothing if not fitting", (done) => {
-        const commit = jest.fn();
-        const dispatch = jest.fn();
+    it("FitModelStep does nothing if not fitting", async () => {
+        const commit = vi.fn();
+        const dispatch = vi.fn();
         const testState = mockModelFitState({ fitting: false });
         (actions[ModelFitAction.FitModelStep] as any)({ commit, dispatch, state: testState }, simplex);
-        setTimeout(() => {
-            expect(simplex.step).not.toHaveBeenCalled();
-            expect(commit).not.toHaveBeenCalled();
-            expect(dispatch).not.toHaveBeenCalled();
-            done();
-        });
+        await nextTick();
+        expect(simplex.step).not.toHaveBeenCalled();
+        expect(commit).not.toHaveBeenCalled();
+        expect(dispatch).not.toHaveBeenCalled();
     });
 
     it("UpdateSumOfSquares does nothing if fitting", () => {
-        const commit = jest.fn();
+        const commit = vi.fn();
         const testState = mockModelFitState({ fitting: true });
-        const rootGetters = null;
         const context = {
             commit,
             state: testState,
@@ -355,7 +345,7 @@ describe("ModelFit actions", () => {
 
     it("UpdateSumOfSquares computes sum of squares if possible", () => {
         mockWodinFitValue.mockReturnValue(42);
-        const commit = jest.fn();
+        const commit = vi.fn();
         const testState = mockModelFitState({ fitting: false });
         const link = { time: "t", data: "v", model: "S" };
         const rootGetters = {

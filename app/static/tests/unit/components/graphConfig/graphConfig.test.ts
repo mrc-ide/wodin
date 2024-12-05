@@ -1,16 +1,16 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
-import { BasicState } from "../../../../src/app/store/basic/state";
-import GraphConfig from "../../../../src/app/components/graphConfig/GraphConfig.vue";
-import { GraphsAction } from "../../../../src/app/store/graphs/actions";
-import { GraphsState } from "../../../../src/app/store/graphs/state";
-import { GraphsMutation } from "../../../../src/app/store/graphs/mutations";
-import GraphSettings from "../../../../src/app/components/GraphSettings.vue";
+import { BasicState } from "../../../../src/store/basic/state";
+import GraphConfig from "../../../../src/components/graphConfig/GraphConfig.vue";
+import { GraphsAction } from "../../../../src/store/graphs/actions";
+import { GraphsState } from "../../../../src/store/graphs/state";
+import { GraphsMutation } from "../../../../src/store/graphs/mutations";
+import GraphSettings from "../../../../src/components/GraphSettings.vue";
 
 describe("GraphConfig", () => {
-    const mockUpdateSelectedVariables = jest.fn();
-    const mockDeleteGraph = jest.fn();
-    const mockTooltipDirective = jest.fn();
+    const mockUpdateSelectedVariables = vi.fn();
+    const mockDeleteGraph = vi.fn();
+    const mockTooltipDirective = vi.fn();
     const defaultGraphState = {
         config: [
             {
@@ -66,7 +66,7 @@ describe("GraphConfig", () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("renders as expected", () => {
@@ -92,7 +92,7 @@ describe("GraphConfig", () => {
     it("starting drag sets values in event and emits setDragging", async () => {
         const wrapper = getWrapper();
         const s = wrapper.findAll(".graph-config-panel .badge").at(0)!;
-        const setData = jest.fn();
+        const setData = vi.fn();
         await s.trigger("dragstart", { dataTransfer: { setData }, ctrlKey: false, metaKey: false });
         expect(setData).toHaveBeenNthCalledWith(1, "variable", "S");
         expect(setData).toHaveBeenNthCalledWith(2, "srcGraphConfig", "0");
@@ -102,7 +102,7 @@ describe("GraphConfig", () => {
     it("start drag sets values copyVar to true in event when Ctrl key pressed", async () => {
         const wrapper = getWrapper();
         const s = wrapper.findAll(".graph-config-panel .badge").at(0)!;
-        const setData = jest.fn();
+        const setData = vi.fn();
         await s.trigger("dragstart", { dataTransfer: { setData }, ctrlKey: true, metaKey: false });
         expect(setData).toHaveBeenNthCalledWith(3, "copyVar", "true");
     });
@@ -110,7 +110,7 @@ describe("GraphConfig", () => {
     it("start drag sets values copyVar to true in event when meta key pressed", async () => {
         const wrapper = getWrapper();
         const s = wrapper.findAll(".graph-config-panel .badge").at(0)!;
-        const setData = jest.fn();
+        const setData = vi.fn();
         await s.trigger("dragstart", { dataTransfer: { setData }, ctrlKey: false, metaKey: true });
         expect(setData).toHaveBeenNthCalledWith(3, "copyVar", "true");
     });

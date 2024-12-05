@@ -1,37 +1,36 @@
 import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
-import { BasicState } from "../src/app/store/basic/state";
-import { FitState } from "../src/app/store/fit/state";
-import { StochasticState } from "../src/app/store/stochastic/state";
+import { BasicState } from "../src/store/basic/state";
+import { FitState } from "../src/store/fit/state";
+import { StochasticState } from "../src/store/stochastic/state";
 import {
     AdvancedOptions,
-    BatchPars,
     OdinUserType,
     ResponseFailure,
     ResponseSuccess,
     VaryingPar,
     WodinError
-} from "../src/app/types/responseTypes";
-import { ModelState } from "../src/app/store/model/state";
-import { AdvancedComponentType, RunState } from "../src/app/store/run/state";
-import { CodeState } from "../src/app/store/code/state";
-import { FitDataState } from "../src/app/store/fitData/state";
-import { AppType, VisualisationTab } from "../src/app/store/appState/state";
-import { ModelFitState } from "../src/app/store/modelFit/state";
+} from "../src/types/responseTypes";
+import { ModelState } from "../src/store/model/state";
+import { AdvancedComponentType, RunState } from "../src/store/run/state";
+import { CodeState } from "../src/store/code/state";
+import { FitDataState } from "../src/store/fitData/state";
+import { AppType, VisualisationTab } from "../src/store/appState/state";
+import { ModelFitState } from "../src/store/modelFit/state";
 import {
     SensitivityPlotExtreme,
     SensitivityPlotType,
     SensitivityScaleType,
     SensitivityState,
     SensitivityVariationType
-} from "../src/app/store/sensitivity/state";
-import { VersionsState } from "../src/app/store/versions/state";
-import { defaultGraphSettings, GraphsState } from "../src/app/store/graphs/state";
+} from "../src/store/sensitivity/state";
+import { VersionsState } from "../src/store/versions/state";
+import { GraphsState, defaultGraphSettings } from "../src/store/graphs/state";
 import { LanguageState } from "../translationPackage/store/state";
-import { Language } from "../src/app/types/languageTypes";
-import { noSensitivityUpdateRequired } from "../src/app/store/sensitivity/sensitivity";
-import { MultiSensitivityState } from "../src/app/store/multiSensitivity/state";
-import { SessionsState } from "../src/app/store/sessions/state";
+import { Language } from "../src/types/languageTypes";
+import { noSensitivityUpdateRequired } from "../src/store/sensitivity/sensitivity";
+import { MultiSensitivityState } from "../src/store/multiSensitivity/state";
+import { SessionsState } from "../src/store/sessions/state";
 
 export const mockAxios = new MockAdapter(axios);
 
@@ -377,12 +376,12 @@ export const mockBatchParsDisplace = (
 
 export const mockRunnerOde = () => {
     return {
-        wodinRun: jest.fn((odin, pars, start, end) => "test solution" as any)
+        wodinRun: vi.fn(() => "test solution" as any)
     } as any;
 };
 
 export const mockRunnerDiscrete = () => {
     return {
-        wodinRunDiscrete: jest.fn(() => "test discrete result" as any)
+        wodinRunDiscrete: vi.fn(() => "test discrete result" as any)
     } as any;
 };

@@ -1,9 +1,9 @@
 import { mockBookNew, mockWriteFile } from "./mocks";
 import { mockFitDataState, mockFitState, mockBasicState, mockRunState } from "../../mocks";
-import { WodinModelOutputDownload } from "../../../src/app/excel/wodinModelOutputDownload";
-import { ErrorsMutation } from "../../../src/app/store/errors/mutations";
+import { WodinModelOutputDownload } from "../../../src/excel/wodinModelOutputDownload";
+import { ErrorsMutation } from "../../../src/store/errors/mutations";
 
-const mockSolution = jest.fn().mockImplementation((options) => {
+const mockSolution = vi.fn().mockImplementation((options) => {
     const x = options.mode === "grid" ? [options.tStart, options.tEnd] : options.times;
     const values = [
         { name: "A", y: x.map((xVal: number) => 1 + xVal) },
@@ -26,7 +26,7 @@ describe("WodinModelOutputDownload", () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     const expectedModelledSheet = {
@@ -52,7 +52,7 @@ describe("WodinModelOutputDownload", () => {
         const rootState = mockBasicState({
             run: runState
         });
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         const sut = new WodinModelOutputDownload({ rootState, rootGetters, commit } as any, "myFile.xlsx", 101);
         sut.download();
@@ -86,7 +86,7 @@ describe("WodinModelOutputDownload", () => {
             })
         });
 
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         const sut = new WodinModelOutputDownload({ rootState, commit, rootGetters } as any, "myFile.xlsx", 101);
         sut.download();
@@ -128,7 +128,7 @@ describe("WodinModelOutputDownload", () => {
         const errorRunState = {
             ...runState,
             resultOde: {
-                solution: jest.fn().mockImplementation(() => {
+                solution: vi.fn().mockImplementation(() => {
                     throw new Error("test error");
                 })
             } as any
@@ -136,7 +136,7 @@ describe("WodinModelOutputDownload", () => {
         const rootState = mockBasicState({
             run: errorRunState
         });
-        const commit = jest.fn();
+        const commit = vi.fn();
 
         const sut = new WodinModelOutputDownload({ rootState, commit, rootGetters } as any, "myFile.xlsx", 101);
         sut.download();

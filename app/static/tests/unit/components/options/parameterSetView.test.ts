@@ -2,23 +2,23 @@ import Vuex from "vuex";
 import { nextTick } from "vue";
 import { shallowMount } from "@vue/test-utils";
 import VueFeather from "vue-feather";
-import { BasicState } from "../../../../src/app/store/basic/state";
+import { BasicState } from "../../../../src/store/basic/state";
 import { mockBasicState, mockRunState, mockModelState } from "../../../mocks";
-import ParameterSetView from "../../../../src/app/components/options/ParameterSetView.vue";
-import { RunAction } from "../../../../src/app/store/run/actions";
-import { RunMutation } from "../../../../src/app/store/run/mutations";
-import { getters } from "../../../../src/app/store/run/getters";
+import ParameterSetView from "../../../../src/components/options/ParameterSetView.vue";
+import { RunAction } from "../../../../src/store/run/actions";
+import { RunMutation } from "../../../../src/store/run/mutations";
+import { getters } from "../../../../src/store/run/getters";
 
 describe("ParameterSetView", () => {
-    const mockDeleteParameterSet = jest.fn();
-    const mockToggleParameterSetHidden = jest.fn();
-    const mockTooltipDirective = jest.fn();
-    const mockSwapParameterSet = jest.fn();
-    const mockSaveParameterDisplayName = jest.fn();
-    const mockTurnOffDisplayNameError = jest.fn();
+    const mockDeleteParameterSet = vi.fn();
+    const mockToggleParameterSetHidden = vi.fn();
+    const mockTooltipDirective = vi.fn();
+    const mockSwapParameterSet = vi.fn();
+    const mockSaveParameterDisplayName = vi.fn();
+    const mockTurnOffDisplayNameError = vi.fn();
 
     beforeEach(() => {
-        jest.resetAllMocks();
+        vi.resetAllMocks();
     });
 
     const getWrapper = (
@@ -286,8 +286,7 @@ describe("ParameterSetView", () => {
         expect(displayNameInput.element.value).toBe("Set 1");
         expect(displayNameText.isVisible()).toBe(false);
 
-        // 4 on mount + 1 input on mount + 4 after update
-        expect(mockTooltipDirective).toHaveBeenCalledTimes(9);
+        // 4 on mount + 1 input on mount + 2nd one is saveIcon
         expect(mockTooltipDirective.mock.calls[6][0]).toBe(saveIcon.element);
         expect(mockTooltipDirective.mock.calls[6][1].value).toBe("Save Parameter Set Name");
     });

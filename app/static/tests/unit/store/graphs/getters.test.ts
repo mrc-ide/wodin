@@ -1,6 +1,6 @@
 import { mockGraphsState } from "../../../mocks";
-import { getters, GraphsGetter } from "../../../../src/app/store/graphs/getters";
-import { defaultGraphSettings } from "../../../../src/app/store/graphs/state";
+import { getters, GraphsGetter } from "../../../../src/store/graphs/getters";
+import { defaultGraphSettings } from "../../../../src/store/graphs/state";
 
 describe("GraphsGetters", () => {
     const settings = defaultGraphSettings();

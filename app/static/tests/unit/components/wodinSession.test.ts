@@ -2,26 +2,25 @@ import { shallowMount, VueWrapper } from "@vue/test-utils";
 import { RouterView } from "vue-router";
 import Vuex, { Store } from "vuex";
 import { nextTick } from "vue";
-import WodinSession from "../../../src/app/components/WodinSession.vue";
-import { AppStateAction } from "../../../src/app/store/appState/actions";
+import WodinSession from "../../../src/components/WodinSession.vue";
+import { AppStateAction } from "../../../src/store/appState/actions";
 import { mockBasicState } from "../../mocks";
-import { BasicState } from "../../../src/app/store/basic/state";
-import { ErrorsMutation } from "../../../src/app/store/errors/mutations";
-import { Language } from "../../../src/app/types/languageTypes";
-import { AppConfigBase, SessionMetadata } from "../../../src/app/types/responseTypes";
-import { mutations as sessionsMutations, SessionsMutation } from "../../../src/app/store/sessions/mutations";
-import { getters as appStateGetters } from "../../../src/app/store/appState/getters";
-import { localStorageManager } from "../../../src/app/localStorageManager";
+import { BasicState } from "../../../src/store/basic/state";
+import { ErrorsMutation } from "../../../src/store/errors/mutations";
+import { Language } from "../../../src/types/languageTypes";
+import { AppConfigBase, SessionMetadata } from "../../../src/types/responseTypes";
+import { mutations as sessionsMutations, SessionsMutation } from "../../../src/store/sessions/mutations";
+import { getters as appStateGetters } from "../../../src/store/appState/getters";
+import { localStorageManager } from "../../../src/localStorageManager";
 import { LanguageState } from "../../../translationPackage/store/state";
-
-const realLocation = window.location;
+import { MockInstance } from "vitest";
 
 describe("WodinSession", () => {
-    const mockInitialiseApp = jest.fn();
-    const mockAddError = jest.fn();
+    const mockInitialiseApp = vi.fn();
+    const mockAddError = vi.fn();
     const mockGetSessionIds = (sessionIds = ["1234", "5678"]) =>
-        jest.spyOn(localStorageManager, "getSessionIds").mockReturnValue(sessionIds);
-    const mockSetLatestSessionId = jest.fn();
+        vi.spyOn(localStorageManager, "getSessionIds").mockReturnValue(sessionIds);
+    const mockSetLatestSessionId = vi.fn();
 
     const defaultBaseUrl = "http://localhost:3000/site1";
     const defaultLanguage = {
@@ -31,7 +30,7 @@ describe("WodinSession", () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     interface StoreOptions {
@@ -121,7 +120,7 @@ describe("WodinSession", () => {
 
     const expectCheckedLatestSessionId = (
         wrapper: VueWrapper<any>,
-        getSessionIds: jest.SpyInstance,
+        getSessionIds: MockInstance,
         expectCommitLatestSessionId: boolean
     ) => {
         expect(getSessionIds).toHaveBeenCalledWith("test", "site1");

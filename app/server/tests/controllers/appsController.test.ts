@@ -3,13 +3,18 @@ import { WodinWebError } from "../../src/errors/wodinWebError";
 
 // Need to mock getSessionStore before importing the controller
 let sessionIdFromFriendlyId: string | null;
-const mockSessionStore = {
-    getSessionIdFromFriendlyId: jest.fn().mockImplementation(() => { return sessionIdFromFriendlyId; })
-};
-const mockGetSessionStore = jest.fn().mockReturnValue(mockSessionStore);
-jest.mock("../../src/db/sessionStore", () => { return { getSessionStore: mockGetSessionStore }; });
+const { mockSessionStore, mockGetSessionStore } = vi.hoisted(() => {
+    const mockSessionStore = {
+        getSessionIdFromFriendlyId: vi.fn().mockImplementation(() => { return sessionIdFromFriendlyId; })
+    };
+    const mockGetSessionStore = vi.fn().mockReturnValue(mockSessionStore);
+    return {
+        mockSessionStore,
+        mockGetSessionStore
+    }
+})
+vi.mock("../../src/db/sessionStore", () => { return { getSessionStore: mockGetSessionStore }; });
 
-/* eslint-disable import/first */
 import { AppsController } from "../../src/controllers/appsController";
 
 describe("appsController", () => {
@@ -20,7 +25,7 @@ describe("appsController", () => {
         wodinConfig = {}
     ) => {
         const mockConfigReader = {
-            readConfigFile: jest.fn().mockReturnValue(appConfig)
+            readConfigFile: vi.fn().mockReturnValue(appConfig)
         };
         return {
             app: {
@@ -45,8 +50,8 @@ describe("appsController", () => {
         } as any;
     };
 
-    const mockRender = jest.fn();
-    const mockStatus = jest.fn().mockReturnValue({ render: mockRender });
+    const mockRender = vi.fn();
+    const mockStatus = vi.fn().mockReturnValue({ render: mockRender });
     const mockResponse = {
         render: mockRender,
         status: mockStatus
@@ -59,13 +64,13 @@ describe("appsController", () => {
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("renders view with app config", () => {
         const appConfig = { title: "testTitle", appType: "testType" };
         const request = getMockRequest(appConfig, "1234", undefined);
-        AppsController.getApp(request, mockResponse, jest.fn());
+        AppsController.getApp(request, mockResponse, vi.fn());
 
         expect(mockRender).toBeCalledTimes(1);
         expect(mockRender.mock.calls[0][0]).toBe("app");
@@ -82,14 +87,15 @@ describe("appsController", () => {
             shareNotFound: "",
             mathjaxSrc,
             defaultLanguage: "en",
-            enableI18n: false
+            enableI18n: false,
+            hotReload: undefined
         });
         expect(mockStatus).not.toBeCalled();
     });
 
     it("sets loadSessionId to be empty when not in query string", () => {
         const request = getMockRequest({ title: "testTitle", appType: "testType" }, undefined, undefined);
-        AppsController.getApp(request, mockResponse, jest.fn());
+        AppsController.getApp(request, mockResponse, vi.fn());
 
         expect(mockRender.mock.calls[0][1]).toStrictEqual({
             appName: "test",
@@ -104,13 +110,14 @@ describe("appsController", () => {
             shareNotFound: "",
             mathjaxSrc,
             defaultLanguage: "en",
-            enableI18n: false
+            enableI18n: false,
+            hotReload: undefined
         });
     });
 
     it("gets session id from share parameter when provided", async () => {
         const request = getMockRequest({ title: "testTitle", appType: "testType" }, undefined, "tiny-mouse");
-        await AppsController.getApp(request, mockResponse, jest.fn());
+        await AppsController.getApp(request, mockResponse, vi.fn());
 
         expect(mockGetSessionStore).toHaveBeenCalledTimes(1);
         expect(mockGetSessionStore.mock.calls[0][0]).toBe(request);
@@ -130,14 +137,15 @@ describe("appsController", () => {
             shareNotFound: "",
             mathjaxSrc,
             defaultLanguage: "en",
-            enableI18n: false
+            enableI18n: false,
+            hotReload: undefined
         });
     });
 
     it("sets shareNotFound value when share parameter does not exist in db", async () => {
         sessionIdFromFriendlyId = null;
         const request = getMockRequest({ title: "testTitle", appType: "testType" }, undefined, "tiny-mouse");
-        await AppsController.getApp(request, mockResponse, jest.fn());
+        await AppsController.getApp(request, mockResponse, vi.fn());
 
         expect(mockGetSessionStore).toHaveBeenCalledTimes(1);
         expect(mockRender).toHaveBeenCalledTimes(1);
@@ -154,7 +162,8 @@ describe("appsController", () => {
             shareNotFound: "tiny-mouse",
             mathjaxSrc,
             defaultLanguage: "en",
-            enableI18n: false
+            enableI18n: false,
+            hotReload: undefined
         });
     });
 
@@ -167,7 +176,7 @@ describe("appsController", () => {
             "app-not-found",
             { appName: "test" }
         );
-        const next = jest.fn();
+        const next = vi.fn();
         await AppsController.getApp(request, mockResponse, next);
         expect(next).toHaveBeenCalledTimes(1);
         expect(next.mock.calls[0][0]).toStrictEqual(expectedErr);
@@ -177,7 +186,7 @@ describe("appsController", () => {
     it("removes trailing slash from baseUrl", async () => {
         const wodinConfig = { baseUrl: "http://localhost:3000/instance/" };
         const request = getMockRequest({ title: "testTitle", appType: "testType" }, "1234", undefined, wodinConfig);
-        await AppsController.getApp(request, mockResponse, jest.fn());
+        await AppsController.getApp(request, mockResponse, vi.fn());
         expect(mockRender.mock.calls[0][1].baseUrl).toBe("http://localhost:3000/instance");
     });
 });

@@ -1,9 +1,9 @@
 import { shallowMount } from "@vue/test-utils";
-import StandardFormInputVue from "../../../../src/app/components/options/StandardFormInput.vue";
-import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
+import StandardFormInputVue from "../../../../src/components/options/StandardFormInput.vue";
+import NumericInput from "../../../../src/components/options/NumericInput.vue";
 
 describe("Standard Form Input", () => {
-    const getWrapper = (placeholder: number[] | null = [3, 4]) => {
+    const getWrapper = (placeholder: [number, number] | null = [3, 4]) => {
         if (placeholder !== null) {
             return shallowMount(StandardFormInputVue, {
                 props: {

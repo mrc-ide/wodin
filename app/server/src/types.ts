@@ -1,4 +1,4 @@
-import Redis from "ioredis";
+import type Redis from "ioredis";
 import { ConfigReader } from "./configReader";
 import { AppFileReader } from "./appFileReader";
 
@@ -51,8 +51,9 @@ export interface AppLocals {
     defaultCodeReader: AppFileReader,
     appHelpReader: AppFileReader,
     wodinConfig: WodinConfig,
-    wodinVersion: String,
-    redis: Redis
+    wodinVersion: string,
+    redis: Redis,
+    hotReload: boolean
 }
 
 export interface SessionMetadata {

@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.app.json",
+  "include": ["env.d.ts", "tests/**/*.ts", "translationPackage/tests/**/*.ts"],
+  "exclude": [],
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.vitest.tsbuildinfo",
+
+    "lib": [],
+    "types": ["node", "jsdom", "vitest/globals"]
+  }
+}

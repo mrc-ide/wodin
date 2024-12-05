@@ -10,10 +10,9 @@ import { initialiseLogging } from "../logging";
 import { redisConnection } from "../redis";
 import { version as wodinVersion } from "../version";
 import { processArgs } from "./args";
-
-const express = require("express");
-const path = require("path");
-const compression = require("compression");
+import express from "express";
+import path from "path";
+import compression from "compression";
 
 const app = express();
 initialiseLogging(app);
@@ -58,7 +57,8 @@ Object.assign(app.locals, {
     odinApi,
     redis,
     wodinConfig,
-    wodinVersion
+    wodinVersion,
+    hotReload: options.hotReload
 });
 
 // Static content

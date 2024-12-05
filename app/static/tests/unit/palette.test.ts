@@ -1,4 +1,4 @@
-import { interpolateColours, paletteData, paletteModel, parseColour, rgb } from "../../src/app/palette";
+import { interpolateColours, paletteData, paletteModel, parseColour, rgb } from "../../src/palette";
 
 describe("parse colours", () => {
     it("can roundtrip", () => {
@@ -26,7 +26,6 @@ describe("interpolate colours", () => {
 
     it("interpolates down", () => {
         const p = interpolateColours(cols, 4);
-        const res = [p(0), p(1), p(2), p(3)];
         expect(p(0)).toEqual(cols[0]); // lower bound
         expect(p(3)).toEqual(cols[4]); // upper bound
         expect(p(1)).toEqual("#6ab74d");

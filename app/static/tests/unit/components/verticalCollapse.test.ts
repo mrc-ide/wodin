@@ -1,6 +1,6 @@
 import { shallowMount } from "@vue/test-utils";
 import VueFeather from "vue-feather";
-import VerticalCollapse from "../../../src/app/components/VerticalCollapse.vue";
+import VerticalCollapse from "../../../src/components/VerticalCollapse.vue";
 
 describe("VerticalCollapse", () => {
     const getWrapper = (collapsedDefault = false) => {

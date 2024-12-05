@@ -1,5 +1,5 @@
 import { expect, Page, test } from "@playwright/test";
-import { SensitivityScaleType, SensitivityVariationType } from "../../src/app/store/sensitivity/state";
+import { SensitivityScaleType, SensitivityVariationType } from "../../src/store/sensitivity/state";
 import PlaywrightConfig from "../../playwright.config";
 import { expectCanRunMultiSensitivity, writeCode } from "./utils";
 
@@ -84,7 +84,7 @@ test.describe("Multi-sensitivity tests", () => {
 
     test("can edit Multi-sensitivity options", async ({ page }) => {
         // check default param settings
-        await expect(await page.locator(".sensitivity-options-settings").count()).toBe(1);
+        await expect(page.locator(".sensitivity-options-settings")).toHaveCount(1);
         await expectOptionsTabParamSettings(
             page,
             1,

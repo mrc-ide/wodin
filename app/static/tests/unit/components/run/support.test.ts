@@ -1,4 +1,4 @@
-import { runRequiredExplanation } from "../../../../src/app/components/run/support";
+import { runRequiredExplanation } from "../../../../src/components/run/support";
 
 describe("construct actionable fit update messages from fit state changes", () => {
     const base = {

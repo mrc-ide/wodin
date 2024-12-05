@@ -1,28 +1,28 @@
 import Vuex, { Store } from "vuex";
 import { nextTick } from "vue";
 import { mount, shallowMount } from "@vue/test-utils";
-import { BasicState } from "../../../../src/app/store/basic/state";
-import ParameterValues from "../../../../src/app/components/options/ParameterValues.vue";
-import NumericInput from "../../../../src/app/components/options/NumericInput.vue";
+import { BasicState } from "../../../../src/store/basic/state";
+import ParameterValues from "../../../../src/components/options/ParameterValues.vue";
+import NumericInput from "../../../../src/components/options/NumericInput.vue";
 import { mockBasicState, mockModelFitState, mockModelState, mockRunState } from "../../../mocks";
-import { RunMutation, mutations as runMutations } from "../../../../src/app/store/run/mutations";
-import { AppType, VisualisationTab } from "../../../../src/app/store/appState/state";
-import Mock = jest.Mock;
-import { ModelFitMutation } from "../../../../src/app/store/modelFit/mutations";
-import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/app/store/sensitivity/mutations";
-import { ModelState } from "../../../../src/app/store/model/state";
+import { RunMutation, mutations as runMutations } from "../../../../src/store/run/mutations";
+import { AppType, VisualisationTab } from "../../../../src/store/appState/state";
+import { Mock } from "vitest";
+import { ModelFitMutation } from "../../../../src/store/modelFit/mutations";
+import { BaseSensitivityMutation } from "../../../../src/store/sensitivity/mutations";
+import { ModelState } from "../../../../src/store/model/state";
 
-const mockTooltipDirective = jest.fn();
+const mockTooltipDirective = vi.fn();
 
 describe("ParameterValues", () => {
     const getStore = (
         fitTabIsOpen = false,
-        mockUpdateParameterValues: Mock<any, any> | null = null,
-        mockSetSensitivityUpdateRequired = jest.fn(),
-        mockSetMultiSensitivityUpdateRequired = jest.fn(),
-        mockSetFitUpdateRequired = jest.fn(),
+        mockUpdateParameterValues: Mock<any> | null = null,
+        mockSetSensitivityUpdateRequired = vi.fn(),
+        mockSetMultiSensitivityUpdateRequired = vi.fn(),
+        mockSetFitUpdateRequired = vi.fn(),
         paramsToVary: string[] = [],
-        mockSetParamsToVary = jest.fn(),
+        mockSetParamsToVary = vi.fn(),
         modelState: Partial<ModelState> = {},
         appType: AppType = AppType.Fit,
         multiSensitivityEnabled = false
@@ -106,7 +106,7 @@ describe("ParameterValues", () => {
     });
 
     it("renders as expected when fit tab is open", () => {
-        const wrapper = getWrapper(getStore(true, null, jest.fn(), jest.fn(), jest.fn(), ["param1"]));
+        const wrapper = getWrapper(getStore(true, null, vi.fn(), vi.fn(), vi.fn(), ["param1"]));
         const rows = wrapper.findAll("div.row");
 
         const p1 = rows.at(0)!;
@@ -126,7 +126,7 @@ describe("ParameterValues", () => {
     });
 
     it("shows select param to vary message if fit tab is open and none are selected", () => {
-        const wrapper = getWrapper(getStore(true, null, jest.fn(), jest.fn(), jest.fn(), []));
+        const wrapper = getWrapper(getStore(true, null, vi.fn(), vi.fn(), vi.fn(), []));
         expect(wrapper.find("#select-param-msg").text()).toBe(
             "Please select at least one parameter to vary during model fit."
         );
@@ -143,9 +143,9 @@ describe("ParameterValues", () => {
                 }
             } as any
         };
-        const mockUpdateParameterValues = jest.fn();
+        const mockUpdateParameterValues = vi.fn();
         const wrapper = getWrapper(
-            getStore(false, mockUpdateParameterValues, jest.fn(), jest.fn(), jest.fn(), [], jest.fn(), modelState)
+            getStore(false, mockUpdateParameterValues, vi.fn(), vi.fn(), vi.fn(), [], vi.fn(), modelState)
         );
         const input2 = wrapper.findAllComponents(NumericInput).at(1)!;
         await input2.vm.$emit("update", 3.3);
@@ -186,9 +186,9 @@ describe("ParameterValues", () => {
                 }
             } as any
         };
-        const mockUpdateParameterValues = jest.fn();
+        const mockUpdateParameterValues = vi.fn();
         const wrapper = getWrapper(
-            getStore(false, mockUpdateParameterValues, jest.fn(), jest.fn(), jest.fn(), [], jest.fn(), modelState)
+            getStore(false, mockUpdateParameterValues, vi.fn(), vi.fn(), vi.fn(), [], vi.fn(), modelState)
         );
         const reset = wrapper.find("#reset-params-btn");
         await reset.trigger("click");
@@ -196,10 +196,10 @@ describe("ParameterValues", () => {
     });
 
     it("commits parameter value change", async () => {
-        const mockUpdateParameterValues = jest.fn();
-        const mockSetSensitivityUpdateRequired = jest.fn();
-        const mockSetMultiSensitivityUpdateRequired = jest.fn();
-        const mockSetFitUpdateRequired = jest.fn();
+        const mockUpdateParameterValues = vi.fn();
+        const mockSetSensitivityUpdateRequired = vi.fn();
+        const mockSetMultiSensitivityUpdateRequired = vi.fn();
+        const mockSetFitUpdateRequired = vi.fn();
         const wrapper = getWrapper(
             getStore(
                 false,
@@ -221,10 +221,10 @@ describe("ParameterValues", () => {
     });
 
     it("parameter value change set multiSensitivity update required when multiSensitivity is enabled", async () => {
-        const mockUpdateParameterValues = jest.fn();
-        const mockSetSensitivityUpdateRequired = jest.fn();
-        const mockSetMultiSensitivityUpdateRequired = jest.fn();
-        const mockSetFitUpdateRequired = jest.fn();
+        const mockUpdateParameterValues = vi.fn();
+        const mockSetSensitivityUpdateRequired = vi.fn();
+        const mockSetMultiSensitivityUpdateRequired = vi.fn();
+        const mockSetFitUpdateRequired = vi.fn();
         const store = getStore(
             false,
             mockUpdateParameterValues,
@@ -232,7 +232,7 @@ describe("ParameterValues", () => {
             mockSetMultiSensitivityUpdateRequired,
             mockSetFitUpdateRequired,
             [],
-            jest.fn(),
+            vi.fn(),
             {},
             AppType.Fit,
             true
@@ -250,17 +250,17 @@ describe("ParameterValues", () => {
     });
 
     it("value change does not SetFitUpdateRequired if not Fit app", async () => {
-        const mockUpdateParameterValues = jest.fn();
-        const mockSetSensitivityUpdateRequired = jest.fn();
-        const mockSetFitUpdateRequired = jest.fn();
+        const mockUpdateParameterValues = vi.fn();
+        const mockSetSensitivityUpdateRequired = vi.fn();
+        const mockSetFitUpdateRequired = vi.fn();
         const store = getStore(
             false,
             mockUpdateParameterValues,
             mockSetSensitivityUpdateRequired,
-            jest.fn(),
+            vi.fn(),
             mockSetFitUpdateRequired,
             [],
-            jest.fn(),
+            vi.fn(),
             {},
             AppType.Basic
         );
@@ -289,13 +289,13 @@ describe("ParameterValues", () => {
     });
 
     it("updates params to vary when checkbox is checked", async () => {
-        const mockSetParamsToVary = jest.fn();
-        const mockSetFitUpdateRequired = jest.fn();
+        const mockSetParamsToVary = vi.fn();
+        const mockSetFitUpdateRequired = vi.fn();
         const store = getStore(
             true,
             null,
-            jest.fn(),
-            jest.fn(),
+            vi.fn(),
+            vi.fn(),
             mockSetFitUpdateRequired,
             ["param1"],
             mockSetParamsToVary
@@ -310,13 +310,13 @@ describe("ParameterValues", () => {
     });
 
     it("updates params to vary when checkbox is unchecked", async () => {
-        const mockSetParamsToVary = jest.fn();
-        const mockSetFitUpdateRequired = jest.fn();
+        const mockSetParamsToVary = vi.fn();
+        const mockSetFitUpdateRequired = vi.fn();
         const store = getStore(
             true,
             null,
-            jest.fn(),
-            jest.fn(),
+            vi.fn(),
+            vi.fn(),
             mockSetFitUpdateRequired,
             ["param1"],
             mockSetParamsToVary

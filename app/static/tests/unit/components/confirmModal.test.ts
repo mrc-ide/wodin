@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import ConfirmModal from "../../../src/app/components/ConfirmModal.vue";
+import ConfirmModal from "../../../src/components/ConfirmModal.vue";
 
 describe("ConfirmModal", () => {
     const getWrapper = (open = true, title = "Delete something", text = "Really?") => {
