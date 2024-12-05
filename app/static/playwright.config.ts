@@ -26,8 +26,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 1,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  fullyParallel: true,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   // reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -54,16 +53,4 @@ export default defineConfig({
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */
   // outputDir: 'test-results/',
-
-  /* Run your local dev server before starting the tests */
-  webServer: {
-    /**
-     * Use the dev server by default for faster feedback loop.
-     * Use the preview server on CI for more realistic testing.
-     * Playwright will re-use the local server if there is already a dev-server running.
-     */
-    command: process.env.CI ? 'npm run build' : 'npm run dev',
-    port: 5173,
-    reuseExistingServer: !process.env.CI
-  }
 })

@@ -1,0 +1,135 @@
+name: CI
+
+on: [push]
+
+env:
+  TAG_GHCR: mrc-ide/wodin
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: ci-env
+        uses: ./.github/actions/ci-env-and-ghcr-login
+        with:
+          ghcr-username: ${{ github.actor }}
+          ghcr-password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push docker
+        uses: docker/build-push-action@v5
+        with:
+          file: ./docker/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ env.TAG_GHCR }}:${{ steps.ci-env.outputs.CI_SHA }}
+            ghcr.io/${{ env.TAG_GHCR }}:${{ steps.ci-env.outputs.CI_BRANCH }}
+      - name: Smoke test
+        run: |
+          ./scripts/run-version.sh --app ${{ steps.ci-env.outputs.CI_BRANCH }} &
+          ./scripts/smoke-test.sh
+
+  fe-unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-npm-packages
+        with:
+          static: true
+
+      - name: Test front end
+        run: npm run coverage --prefix=app/static
+      - uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: true
+          files: ./app/static/coverage/coverage-final.json
+          token: ${{ secrets.CODECOV_TOKEN }}
+          codecov_yml_path: ./codecov.yml
+
+  be-unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/build-and-run-wodin
+
+      - name: Test back end
+        run: npm test --prefix=app/server
+      - name: Check versions
+        run: npm run genversion --prefix=app/server -- --check-only
+      - uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: true # optional (default = false)
+          files: ./app/server/coverage/coverage-final.json
+          token: ${{ secrets.CODECOV_TOKEN }} # required
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/build-and-run-wodin
+
+      - name: Test back end integration
+        run: npm run integration-test --prefix=app/server
+
+  playwright-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/build-and-run-wodin
+      
+      - name: Get installed Playwright version
+        run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./app/static/package-lock.json').packages['node_modules/@playwright/test'].version)")" >> $GITHUB_ENV
+      - name: Cache binaries for playwright version
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+      - name: Install Playwright Browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright@${{ env.PLAYWRIGHT_VERSION }} install --with-deps
+      - name: Test e2e
+        run: npm run test:e2e --prefix=app/static -- --shard=${{ matrix.shard }}/6
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-npm-packages
+        with:
+          static: true
+          server: true
+
+      - name: Lint back end
+        run: npm run lint --prefix=app/server
+      - name: Lint front end
+        run: npm run lint --prefix=app/static
+
+  publish-latest-image:
+    runs-on: ubuntu-latest
+    # change this ref to publish to "latest" tag from another branch
+    if: github.ref == 'refs/heads/main'
+    needs: [build-and-push, fe-unit-tests, be-unit-tests, integration-tests, playwright-tests, lint]
+    steps:
+      - uses: actions/checkout@v4
+      - id: ci-env
+        uses: ./.github/actions/ci-env-and-ghcr-login
+        with:
+          ghcr-username: ${{ github.actor }}
+          ghcr-password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish image manifest to latest
+        run: |
+          GHCR_TOKEN=$(echo ${{ secrets.GITHUB_TOKEN }} | base64)
+          curl "https://ghcr.io/v2/mrc-ide/wodin/manifests/${{ steps.ci-env.outputs.CI_BRANCH }}" \
+          -H "accept: application/vnd.docker.distribution.manifest.v2+json" \
+          -H "Authorization: Bearer ${GHCR_TOKEN}" \
+          > manifest.json
+          curl -XPUT "https://ghcr.io/v2/mrc-ide/wodin/manifests/latest" \
+          -H "content-type: application/vnd.docker.distribution.manifest.v2+json" \
+          -H "Authorization: Bearer ${GHCR_TOKEN}" \
+          -d '@manifest.json'

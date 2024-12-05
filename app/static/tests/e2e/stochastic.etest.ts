@@ -1,15 +1,20 @@
-import { expect, test } from "@playwright/test";
-import PlaywrightConfig from "../../playwright.config";
+import { expect, Page, test } from "@playwright/test";
 import { expectSummaryValues } from "./utils";
 
 test.describe("stochastic app", () => {
-    const { timeout } = PlaywrightConfig;
-
     test.beforeEach(async ({ page }) => {
         await page.goto("/apps/day3");
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)"); // Options
         await page.click(":nth-match(.wodin-right .nav-tabs a, 2)"); // Run
     });
+
+    const expectChangedNumberOfReplicatesMessage = async (page: Page, newReplicates: string) => {
+        await expect(await page.locator(".action-required-msg")).toHaveText("");
+        await page.fill(":nth-match(#run-options input, 2)", newReplicates);
+        await expect(await page.locator(".action-required-msg")).toHaveText(
+            "Plot is out of date: number of replicates has changed. Run model to update."
+        );
+    };
 
     test("can display number of replicates", async ({ page }) => {
         await expect(await page.innerText(":nth-match(.collapse-title, 2)")).toContain("Run Options");
@@ -22,18 +27,11 @@ test.describe("stochastic app", () => {
     });
 
     test("can change number of replicates and re-run model", async ({ page }) => {
-        await page.fill(":nth-match(#run-options input, 2)", "6");
-
-        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Plot is out of date: number of replicates has changed. Run model to update.",
-            {
-                timeout
-            }
-        );
+        await expectChangedNumberOfReplicatesMessage(page, "6");
 
         // Re-run model
         await page.click("#run-btn");
-        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("");
+        await expect(await page.locator(".action-required-msg")).toHaveText("");
 
         // number of series should have increased by 2
         const summary = ".wodin-plot-data-summary-series";
@@ -48,30 +46,18 @@ test.describe("stochastic app", () => {
     });
 
     test("traces are hidden if replicates are above maxReplicatesDisplay", async ({ page }) => {
-        await page.fill(":nth-match(#run-options input, 2)", "50");
-        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Plot is out of date: number of replicates has changed. Run model to update.",
-            {
-                timeout
-            }
-        );
+        await expectChangedNumberOfReplicatesMessage(page, "50");
 
         await page.click("#run-btn");
-        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("");
+        await expect(await page.locator(".action-required-msg")).toHaveText("");
 
         const summary = ".wodin-plot-data-summary-series";
         expect(await page.locator(summary).count()).toBe(104);
 
-        await page.fill(":nth-match(#run-options input, 2)", "51");
-        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
-            "Plot is out of date: number of replicates has changed. Run model to update.",
-            {
-                timeout
-            }
-        );
+        await expectChangedNumberOfReplicatesMessage(page, "51");
 
         await page.click("#run-btn");
-        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("");
+        await expect(await page.locator(".action-required-msg")).toHaveText("");
 
         expect(await page.locator(summary).count()).toBe(4);
 
@@ -93,7 +79,7 @@ test.describe("stochastic app", () => {
 
         // Can see summary traces
         const summary = ".wodin-plot-data-summary-series";
-        await expect(await page.locator(summary)).toHaveCount(44, { timeout });
+        await expect(await page.locator(summary)).toHaveCount(44);
 
         await expectSummaryValues(page, 1, "I_det (beta=0.450)", 1001, "#2e5cb8");
         await expectSummaryValues(page, 2, "I (beta=0.450)", 1001, "#6ab74d");
