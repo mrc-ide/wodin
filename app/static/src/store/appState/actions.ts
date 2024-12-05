@@ -13,6 +13,7 @@ import { SessionsAction } from "../sessions/actions";
 import { localStorageManager } from "../../localStorageManager";
 import { AppStateGetter } from "./getters";
 import { InitialiseAppPayload, InitialiseSessionPayload } from "../../types/payloadTypes";
+import { STATIC_BUILD } from "@/parseEnv";
 
 export enum AppStateAction {
     InitialiseApp = "InitialiseApp",
@@ -97,7 +98,7 @@ export const appStateActions: ActionTree<AppState, AppState> = {
         };
 
         // Do not queue uploads while fitting is true, or while running sensitivity - we'll upload when finished
-        if (!isBusy()) {
+        if (!isBusy() && !STATIC_BUILD) {
             // remove any existing queued upload, as this request should supersede it
             commit(AppStateMutation.ClearQueuedStateUpload);
 
@@ -110,7 +111,7 @@ export const appStateActions: ActionTree<AppState, AppState> = {
                         immediateUploadState(context);
                     }
                 },
-                state.config?.stateUploadIntervalMillis
+                state.config?.stateUploadIntervalMillis || 2000
             );
 
             // record the newly queued upload

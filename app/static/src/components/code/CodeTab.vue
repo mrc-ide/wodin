@@ -2,7 +2,7 @@
     <div v-if="appIsConfigured" class="code-tab">
         <generic-help title="Write odin code" :markdown="codeHelp"></generic-help>
         <code-editor />
-        <div v-if="!STATIC_BUILD">
+        <div v-if="!readOnly">
             <button class="btn btn-primary mt-2" id="compile-btn" :disabled="!codeIsValid" @click="compile">Compile</button>
             <div class="mt-2" id="code-status" :class="codeValidating ? 'code-validating-text' : ''">
                 <vue-feather
@@ -33,7 +33,7 @@ import userMessages from "../../userMessages";
 import ErrorInfo from "../ErrorInfo.vue";
 import GenericHelp from "../help/GenericHelp.vue";
 import GraphConfigsCollapsible from "../graphConfig/GraphConfigsCollapsible.vue";
-import { STATIC_BUILD } from "@/parseEnv";
+import { AppConfig } from "@/types/responseTypes";
 
 export default defineComponent({
     name: "CodeTab",
@@ -47,6 +47,7 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
+        const readOnly = computed(() => (store.state.config as AppConfig).readOnlyCode);
         const codeIsValid = computed(() => store.state.model.odinModelResponse?.valid);
         const codeValidating = computed(() => store.state.code.loading);
         const error = computed(() => store.state.model.odinModelCodeError);
@@ -70,7 +71,7 @@ export default defineComponent({
             codeHelp,
             codeValidating,
             loadingMessage,
-            STATIC_BUILD
+            readOnly
         };
     }
 });

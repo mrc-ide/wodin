@@ -1,7 +1,7 @@
 <template>
     <div>
         <button
-            v-if="defaultCodeExists && !STATIC_BUILD"
+            v-if="defaultCodeExists && !readOnly"
             class="btn btn-primary btn-sm mb-2"
             id="reset-btn"
             v-help="'resetCode'"
@@ -24,7 +24,6 @@ import Timeout = NodeJS.Timeout;
 import { AppConfig, OdinModelResponse } from "../../types/responseTypes";
 import { CodeAction } from "../../store/code/actions";
 import { CodeMutation } from "../../store/code/mutations";
-import { STATIC_BUILD } from "@/parseEnv";
 
 interface DecorationOptions {
     range: {
@@ -190,8 +189,7 @@ export default defineComponent({
             editor,
             readOnly,
             resetCode,
-            defaultCodeExists,
-            STATIC_BUILD
+            defaultCodeExists
         };
     }
 });

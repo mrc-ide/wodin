@@ -8,6 +8,10 @@ import type StochasticApp from "./components/stochastic/StochasticApp.vue";
 type UnionAppComponent = typeof BasicApp | typeof FitApp | typeof StochasticApp
 type IntersectionAppComponent = typeof BasicApp & typeof FitApp & typeof StochasticApp
 
+// this type just extracts the intersection of props that all of the app components accept
+// by getting the type of the first argument in setup function (which are props)
+type IntersectedTabProp = Parameters<NonNullable<IntersectionAppComponent["setup"]>>["0"];
+
 export function initialiseRouter(
     appComponent: UnionAppComponent,
     appName: string,
@@ -34,7 +38,7 @@ export function initialiseRouter(
         component: appComponent,
         props: {
             initSelectedTab: STATIC_BUILD ? "Options" : undefined
-        } as Parameters<NonNullable<IntersectionAppComponent["setup"]>>["0"]
+        } as IntersectedTabProp
     };
 
     const sessionsRoute: RouteRecordRaw = {

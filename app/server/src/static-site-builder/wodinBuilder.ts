@@ -30,8 +30,6 @@ if (fs.existsSync(appsPathFull)) {
 }
 fs.mkdirSync(appsPathFull);
 
-const sessionId = null;
-const shareNotFound = null;
 const baseUrl = wodinConfig.baseUrl.replace(/\/$/, "");
 
 const appNames = fs.readdirSync(path.resolve(configPath, wodinConfig.appsPath)).map(fileName => {
@@ -83,8 +81,8 @@ appNames.forEach(async appName => {
         appTitle: config.title,
         courseTitle: wodinConfig.courseTitle,
         wodinVersion,
-        loadSessionId: sessionId || "",
-        shareNotFound: shareNotFound || "",
+        loadSessionId: "",
+        shareNotFound: "",
         mathjaxSrc: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js",
         enableI18n: wodinConfig.enableI18n ?? false, // if option not set then false by default
         defaultLanguage: wodinConfig?.defaultLanguage || "en",

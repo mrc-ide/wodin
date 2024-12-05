@@ -4,6 +4,7 @@ import { AppConfig } from "../../types/responseTypes";
 import { InitialiseAppPayload } from "../../types/payloadTypes";
 import registerTranslations from "../../../translationPackage/registerTranslations";
 import { collectedTranslations } from "../translations/collectedTranslations";
+import { STATIC_BUILD } from "@/parseEnv";
 
 export enum AppStateMutation {
     SetApp = "SetApp",
@@ -38,6 +39,9 @@ export const appStateMutations: MutationTree<AppState> = {
     },
 
     [AppStateMutation.SetConfig](state: AppState, payload: AppConfig) {
+        if (STATIC_BUILD) {
+            payload.readOnlyCode = true;
+        }
         state.config = payload;
     },
 
