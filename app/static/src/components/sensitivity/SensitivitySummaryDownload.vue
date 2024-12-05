@@ -46,6 +46,7 @@ export default defineComponent({
     },
     setup(props) {
         const store = useStore();
+        // eslint-disable-next-line vue/no-setup-props-destructure
         const { canDownloadSummary, downloading, downloadSummaryUserFileName, downloadSummary } = baseSensitivity(
             store,
             props.multiSensitivity

@@ -37,6 +37,7 @@ export default defineComponent({
                                               !!store.state.config && !!store.state.sessions.sessionsMetadata);
 
         // These props won't change as provided by server
+        // eslint-disable-next-line vue/no-setup-props-destructure
         const { appName, baseUrl, loadSessionId, appsPath, enableI18n, defaultLanguage } = props;
 
         store.dispatch(AppStateAction.InitialiseApp, {

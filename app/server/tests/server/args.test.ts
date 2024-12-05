@@ -24,6 +24,7 @@ describe("args", () => {
             "--base-url", "http://example.com/wodin",
             "--redis-url=redis:6379",
             "--port=1234",
+            "--hot-reload=true",
             "/testConfig"];
         const args = processArgs(argv);
         expect(args.path).toBe("/testConfig");
@@ -32,6 +33,7 @@ describe("args", () => {
             redisUrl: "redis:6379",
             port: 1234
         });
+        expect(args.hotReload).toBe(true);
     });
 
     it("falls back on process.argv", () => {
@@ -46,5 +48,10 @@ describe("args", () => {
     it("requires that port is an integer", () => {
         process.argv = ["node", "wodin", "--port=one", "somepath"];
         expect(() => processArgs()).toThrow("Expected an integer for port");
+    });
+
+    it("requires that hot-reload is a boolean", () => {
+        process.argv = ["node", "wodin", "--hot-reload=T", "somepath"];
+        expect(() => processArgs()).toThrow("Expected a boolean for hot-reload");
     });
 });
