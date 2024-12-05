@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { AppLocals } from "../types";
+import { AppConfig, AppLocals } from "../types";
 import { ErrorType } from "../errors/errorType";
 import { WodinWebError } from "../errors/wodinWebError";
 import { getSessionStore } from "../db/sessionStore";
@@ -26,7 +26,7 @@ export class AppsController {
                 }
             }
 
-            const config = configReader.readConfigFile(appsPath, `${appName}.config.json`) as any;
+            const config = configReader.readConfigFile(appsPath, `${appName}.config.json`) as AppConfig;
             if (config) {
                 const baseUrl = wodinConfig.baseUrl.replace(/\/$/, "");
                 // TODO: validate config against schema for app type

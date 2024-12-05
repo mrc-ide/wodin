@@ -53,7 +53,7 @@ jobs:
       - uses: ./.github/actions/build-and-run-wodin
 
       - name: Test back end
-        run: npm test --prefix=app/server
+        run: npm run coverage --prefix=app/server
       - name: Check versions
         run: npm run genversion --prefix=app/server -- --check-only
       - uses: codecov/codecov-action@v4
@@ -69,7 +69,7 @@ jobs:
       - uses: ./.github/actions/build-and-run-wodin
 
       - name: Test back end integration
-        run: npm run integration-test --prefix=app/server
+        run: npm run test:integration --prefix=app/server
 
   playwright-tests:
     runs-on: ubuntu-latest

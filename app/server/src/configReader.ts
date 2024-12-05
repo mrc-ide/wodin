@@ -1,5 +1,5 @@
-import * as fs from "fs";
-import * as path from "path";
+import fs from "fs";
+import path from "path";
 
 export function stripBom(str: string): string {
     // Catches EFBBBF (UTF-8 BOM) because the buffer-to-string
@@ -17,14 +17,14 @@ export function readFile(filename: string): string {
 export class ConfigReader {
     rootDir: string;
 
-    overrides: Object;
+    overrides: object;
 
-    constructor(rootDir: string, overrides: Object = {}) {
+    constructor(rootDir: string, overrides: object = {}) {
         this.rootDir = rootDir;
         this.overrides = overrides;
     }
 
-    readConfigFile(...filePath: string[]): Object | null {
+    readConfigFile(...filePath: string[]): object | null {
         const fullPath = [this.rootDir, ...filePath];
         const filename = path.join(...fullPath);
         if (fs.existsSync(filename)) {

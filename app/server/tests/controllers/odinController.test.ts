@@ -1,16 +1,15 @@
 import * as apiService from "../../src/apiService";
 import { OdinController } from "../../src/controllers/odinController";
-import clearAllMocks = jest.clearAllMocks;
 
-const mockAPIGet = jest.fn();
-const mockAPIPost = jest.fn();
+const mockAPIGet = vi.fn();
+const mockAPIPost = vi.fn();
 const mockAPIService = {
     get: mockAPIGet,
     post: mockAPIPost
 } as any;
-const mockNext = jest.fn();
+const mockNext = vi.fn();
 
-const apiSpy = jest.spyOn(apiService, "api").mockReturnValue(mockAPIService);
+const apiSpy = vi.spyOn(apiService, "api").mockReturnValue(mockAPIService);
 
 describe("odinController", () => {
     const mockRequest = {
@@ -19,7 +18,7 @@ describe("odinController", () => {
     const mockResponse = {} as any;
 
     beforeEach(() => {
-        clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("getRunnerOde gets from api service", async () => {

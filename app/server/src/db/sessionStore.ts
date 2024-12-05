@@ -1,5 +1,5 @@
-import Redis from "ioredis";
-import * as md5 from "md5";
+import type Redis from "ioredis";
+import md5 from "md5";
 import { generateId } from "zoo-ids";
 import { Request } from "express";
 import { AppLocals, SessionMetadata } from "../types";
@@ -79,7 +79,6 @@ export class SessionStore {
                 const latestByHash: Record<string, SessionMetadata> = {};
 
                 const saveMissingHashes = [];
-                // eslint-disable-next-line no-restricted-syntax
                 for await (const [idx, id] of ids.entries()) {
                     if (times[idx] !== null) {
                         const session = buildSessionMetadata(id, idx) as SessionMetadata;
@@ -111,7 +110,7 @@ export class SessionStore {
                 allResults = ids.map((id: string, idx: number) => buildSessionMetadata(id, idx))
                     .filter((session) => session.time !== null);
             }
-            return allResults.sort((a, b) => (a.time!! < b.time!! ? 1 : -1)) as SessionMetadata[];
+            return allResults.sort((a, b) => (a.time! < b.time! ? 1 : -1)) as SessionMetadata[];
         });
     }
 
@@ -150,11 +149,8 @@ export class SessionStore {
 
         while (retries > 0) {
             const friendly = this._newFriendlyId();
-            // Disable lint rule because we need this to be synchronous
-            // eslint-disable-next-line no-await-in-loop
             const wasSet = await this._redis.hsetnx(keyFriendlyToMachine, friendly, id);
             if (wasSet) {
-                // eslint-disable-next-line no-await-in-loop
                 await this._redis.hset(keyMachineToFriendly, id, friendly);
                 return friendly;
             }

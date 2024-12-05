@@ -12,7 +12,7 @@ export const jsonStringResponseSuccess = (data: string, res: Response) => {
     res.end(`{"status":"success","errors":null,"data":${data}}`);
 };
 
-export const jsonResponseSuccess = (data: any, res: Response) => {
+export const jsonResponseSuccess = (data: object | string, res: Response) => {
     addContentType(res);
     const responseObject = {
         status: "success",

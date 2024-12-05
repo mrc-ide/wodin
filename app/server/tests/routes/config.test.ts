@@ -1,19 +1,19 @@
 import { ConfigController } from "../../src/controllers/configController";
 
+const { mockRouter } = vi.hoisted(() => ({
+    mockRouter: {
+        get: vi.fn(),
+        post: vi.fn()
+    }
+}));
+
+vi.mock("express", () => ({
+    Router: () => mockRouter
+}));
+
 describe("config routes", () => {
-    const express = require("express");
-
-    const mockRouter = {
-        get: jest.fn()
-    };
-    const realRouter = express.Router;
-
-    beforeAll(() => {
-        express.Router = () => mockRouter;
-    });
-
-    afterAll(() => {
-        express.Router = realRouter;
+    beforeEach(() => {
+        vi.resetAllMocks()
     });
 
     it("registers expected routes", async () => {

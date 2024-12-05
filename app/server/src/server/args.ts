@@ -10,8 +10,8 @@ Options:
   --port=PORT        Port to serve on
 `;
 
-const { docopt } = require("docopt");
-const { version } = require("../version");
+import { docopt } from "docopt";
+import { version } from "../version";
 
 type Perhaps<T> = T | null;
 

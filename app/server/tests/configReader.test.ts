@@ -1,13 +1,13 @@
-import * as fs from "fs";
+import fs from "fs";
 import { ConfigReader } from "../src/configReader";
 
 describe("configReader", () => {
     beforeEach(() => {
-        jest.restoreAllMocks();
+        vi.restoreAllMocks();
     });
 
     it("returns null when config not found", () => {
-        const mockExistsSync = jest.spyOn(fs, "existsSync").mockReturnValue(false);
+        const mockExistsSync = vi.spyOn(fs, "existsSync").mockReturnValue(false);
 
         const result = new ConfigReader("root").readConfigFile("test.config");
 
@@ -17,8 +17,8 @@ describe("configReader", () => {
     });
 
     it("returns parsed config file contents", () => {
-        const mockExistsSync = jest.spyOn(fs, "existsSync").mockReturnValue(true);
-        const mockReadFileSync = jest.spyOn(fs, "readFileSync").mockReturnValue("{\"test\": \"value\"}");
+        const mockExistsSync = vi.spyOn(fs, "existsSync").mockReturnValue(true);
+        const mockReadFileSync = vi.spyOn(fs, "readFileSync").mockReturnValue("{\"test\": \"value\"}");
 
         const result = new ConfigReader("root").readConfigFile("test.config");
 

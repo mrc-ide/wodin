@@ -1,7 +1,6 @@
-/* eslint-disable import/first */
 // mock json response before import errors
-const mockJsonResponseError = jest.fn();
-jest.mock("../src/jsonResponse", () => { return { jsonResponseError: mockJsonResponseError }; });
+const { mockJsonResponseError } = vi.hoisted(() => ({ mockJsonResponseError: vi.fn() }));
+vi.mock("../src/jsonResponse", () => { return { jsonResponseError: mockJsonResponseError }; });
 
 import { handleError } from "../src/errors/handleError";
 import { WodinError } from "../src/errors/wodinError";
@@ -17,18 +16,18 @@ const mockRequest = (accept = "application/json,*/*") => {
 };
 
 const mockStatus = {
-    render: jest.fn()
+    render: vi.fn()
 };
 
 const mockResponse = () => {
     return {
-        status: jest.fn().mockReturnValue(mockStatus)
+        status: vi.fn().mockReturnValue(mockStatus)
     } as any;
 };
 
 describe("handeError", () => {
     afterEach(() => {
-        jest.resetAllMocks();
+        vi.resetAllMocks();
     });
 
     const testUnexpectedErrorMsg = (msg: string) => {
@@ -42,7 +41,7 @@ describe("handeError", () => {
         const err = new WodinError("test wodin error", 404, ErrorType.NOT_FOUND);
         const req = mockRequest();
         const res = mockResponse();
-        handleError(err, req, res, jest.fn());
+        handleError(err, req, res, vi.fn());
 
         // check expected data has been attached to request
         expect(req.errorType).toBe(ErrorType.NOT_FOUND);
@@ -61,7 +60,7 @@ describe("handeError", () => {
         const err = new Error("something bad");
         const req = mockRequest();
         const res = mockResponse();
-        handleError(err, req, res, jest.fn());
+        handleError(err, req, res, vi.fn());
 
         // check expected data has been attached to request
         expect(req.errorType).toBe(ErrorType.OTHER_ERROR);
@@ -81,7 +80,7 @@ describe("handeError", () => {
         const err = new WodinWebError("test wodin web error", 404, ErrorType.NOT_FOUND, "test-view", options);
         const req = mockRequest("text/html");
         const res = mockResponse();
-        handleError(err, req, res, jest.fn());
+        handleError(err, req, res, vi.fn());
 
         // check expected data has been attached to request
         expect(req.errorType).toBe(ErrorType.NOT_FOUND);
@@ -98,7 +97,7 @@ describe("handeError", () => {
         const err = new Error("something bad");
         const req = mockRequest("text/html");
         const res = mockResponse();
-        handleError(err, req, res, jest.fn());
+        handleError(err, req, res, vi.fn());
 
         // check expected data has been attached to request
         expect(req.errorType).toBe(ErrorType.OTHER_ERROR);

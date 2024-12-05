@@ -11,19 +11,21 @@
         var courseTitleGlobal = "{{courseTitle}}";
         var wodinVersionGlobal = "{{wodinVersion}}";
         var appNameGlobal = "{{appName}}";
-        var baseUrlGlobal = "{{baseUrl}}";
+        // need to escape special chars in baseUrl in mustache
+        var baseUrlGlobal = "{{& baseUrl}}";
         var appsPathGlobal = "{{appsPath}}";
         var enableI18nGlobal = {{enableI18n}};
         var defaultLanguageGlobal = "{{defaultLanguage}}";
         var loadSessionIdGlobal = "{{loadSessionId}}";
         var shareNotFoundGlobal = "{{shareNotFound}}";
     </script>
-    {{#if hotReload}}
+    {{#hotReload}}
         <script type="module" src="http://localhost:5173/src/wodin.ts"></script>
         <link rel="stylesheet" href="http://localhost:5173/src/scss/style.scss"/>
-    {{else}}
+    {{/hotReload}}
+    {{^hotReload}}
         <script type="module" src="/wodin.js"></script>
         <link rel="stylesheet" href="/wodin.css"/>
-    {{/if}}
-    <script async src="{{mathjaxSrc}}"></script>
+    {{/hotReload}}
+    <script async src="{{& mathjaxSrc}}"></script>
 </html>

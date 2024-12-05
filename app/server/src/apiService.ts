@@ -9,6 +9,7 @@ export class APIService {
 
     private readonly _odinApi: string;
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     private readonly _next: Function;
 
     constructor(req: Request, res: Response, next: NextFunction) {
