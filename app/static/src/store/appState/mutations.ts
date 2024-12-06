@@ -39,10 +39,7 @@ export const appStateMutations: MutationTree<AppState> = {
     },
 
     [AppStateMutation.SetConfig](state: AppState, payload: AppConfig) {
-        if (STATIC_BUILD) {
-            payload.readOnlyCode = true;
-        }
-        state.config = payload;
+        state.config = STATIC_BUILD ? { ...payload, readOnlyCode: true } : payload;
     },
 
     [AppStateMutation.SetOpenVisualisationTab](state: AppState, payload: VisualisationTab) {

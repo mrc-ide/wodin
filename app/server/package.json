@@ -16,7 +16,8 @@
     "genversion": "genversion --es6 --semi --double src/version.ts",
     "static-serve": "http-server ./public -p 3000",
     "copy-static-files": "cp ../../config/index.html ./public && cp -r ../../config/files ./public && cp -r ../../config/help ./public",
-    "build-static-site": "ts-node --project tsconfig.node.json ./src/static-site-builder/wodinBuilder.ts ../../config ./public ./views && npm run copy-static-files"
+    "build-static-site": "ts-node --project tsconfig.node.json ./src/static-site-builder/wodinBuilder.ts ../../config ./public ./views && npm run copy-static-files",
+    "build-static-site-for-action": "ts-node --project tsconfig.node.json ./src/static-site-builder/wodinBuilder.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.14.0",
