@@ -59,6 +59,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore();
+        // eslint-disable-next-line vue/no-setup-props-destructure
         const { startDrag, endDrag, onDrop, removeVariable } = SelectVariables(store, emit, false, props.graphIndex);
         const selectedVariables = computed<string[]>(
             () => store.state.graphs.config[props.graphIndex].selectedVariables

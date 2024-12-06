@@ -16,7 +16,7 @@ const extremeSummarySheets: ExtremeSummarySheetSettings[] = [
     { name: "TimeAtMin", extremePrefix: SensitivityPlotExtremePrefix.time, extreme: SensitivityPlotExtreme.Min },
     { name: "TimeAtMax", extremePrefix: SensitivityPlotExtremePrefix.time, extreme: SensitivityPlotExtreme.Max }
 ];
-export class WodinSensitivitySummaryDownload extends WodinExcelDownload {
+export class WodinSensitivitySummaryDownload<State> extends WodinExcelDownload<State> {
     private _addSummarySheetFromOdinSeriesSet = (data: OdinUserTypeSeriesSet, sheetName: string) => {
         const sheetData = data.x.map((x: OdinUserType, index: number) => {
             return {

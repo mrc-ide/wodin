@@ -8,10 +8,10 @@ import { FitState } from "../store/fit/state";
 import { FitDataGetter } from "../store/fitData/getters";
 import { GraphsGetter } from "../store/graphs/getters";
 
-export class WodinModelOutputDownload extends WodinExcelDownload {
+export class WodinModelOutputDownload<State> extends WodinExcelDownload<State> {
     private readonly _points: number;
 
-    constructor(context: AppCtx, fileName: string, points: number) {
+    constructor(context: AppCtx<State>, fileName: string, points: number) {
         super(context, fileName);
         this._points = points;
     }

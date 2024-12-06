@@ -117,6 +117,7 @@ export default defineComponent({
         );
 
         const showOptions = computed(() => allSettings.value.length && !!allSettings.value[0].parameterToVary);
+        // eslint-disable-next-line vue/no-setup-props-destructure
         const compileModelMessage = userMessages.sensitivity.compileRequiredForOptions(props.multiSensitivity);
         const editOpen = ref(false);
         const editSettingsIdx = ref<number | null>(0);

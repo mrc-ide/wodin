@@ -25,9 +25,9 @@ export const freezer = {
             return Object.freeze(data.map((d) => freezer.deepFreeze(d)));
         }
         if (data != null && typeof data === "object") {
-            const anyData = data as any;
-            Object.keys(data).forEach((prop) => {
-                anyData[prop] = freezer.deepFreeze(anyData[prop]);
+            const typedData = data as Record<string, unknown>;
+            Object.keys(typedData).forEach((prop) => {
+                typedData[prop] = freezer.deepFreeze(typedData[prop]);
             });
             return Object.freeze(data);
         }

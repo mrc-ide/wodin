@@ -23,16 +23,19 @@ export default [
   },
 
   {
-    files: ["**/*.ts", "**/*.vue"],
+    files: ["src/**/*.ts", "src/**/*.vue"],
     rules: {
-      "@typescript-eslint/no-explicit-any": "off"
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-unused-vars": "error",
+      "vue/no-setup-props-destructure": "error",
     }
   },
 
   {
     files: ["**/tests/**/*.ts"],
     rules: {
-      "vitest/expect-expect": "off"
+      "vitest/expect-expect": "off",
+      "@typescript-eslint/no-explicit-any": "off",
     }
   },
 

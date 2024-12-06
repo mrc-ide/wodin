@@ -48,6 +48,8 @@ test.beforeEach(async ({ page }) => {
 });
 
 const expectMonacoDecoration = async (state: EditorStates, line: number, numOfLines: number, page: Page) => {
+    // check that the correct line has the correct background color here by looping through
+    // each line
     for (let i = 0; i < numOfLines; i += 1) {
         const lineElement = await page.locator(`.view-overlays div:nth-child(${i + 1}) >> div`);
         if (i === line - 1) {
@@ -59,6 +61,10 @@ const expectMonacoDecoration = async (state: EditorStates, line: number, numOfLi
         }
     }
 
+    // check that the glyph (our error/warning icon) is vertically aligned with the
+    // correct line number, monaco editor just sets a "top" css property to vertically
+    // align it next to the line number so we calculate what that translation should be
+    // by multiplying the line-height by the number of lines down we have to go down
     const lineHeight = await page.locator(".margin-view-overlays").evaluate(el => {
         return window.getComputedStyle(el).getPropertyValue("line-height");
     });

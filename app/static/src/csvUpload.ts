@@ -14,7 +14,7 @@ interface ParseError {
     message: string;
 }
 
-export class CSVUpload<S extends string, E extends string> {
+export class CSVUpload<S extends string, E extends string, State> {
     private readonly _commit: Commit;
 
     private _onError: OnError | null = null;
@@ -23,7 +23,7 @@ export class CSVUpload<S extends string, E extends string> {
 
     private _postSuccess: PostSuccess | null = null;
 
-    constructor(context: AppCtx) {
+    constructor(context: AppCtx<State>) {
         this._commit = context.commit;
     }
 
@@ -100,4 +100,4 @@ export class CSVUpload<S extends string, E extends string> {
     };
 }
 
-export const csvUpload = <S extends string, E extends string>(ctx: AppCtx): CSVUpload<S, E> => new CSVUpload<S, E>(ctx);
+export const csvUpload = <S extends string, E extends string, State>(ctx: AppCtx<State>): CSVUpload<S, E, State> => new CSVUpload<S, E, State>(ctx);

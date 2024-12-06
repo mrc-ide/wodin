@@ -7,8 +7,10 @@ interface LanguageStore {
     language: LanguageState;
 }
 
+type LangWatchElement = HTMLElement & { __lang_unwatch__: Record<string, () => void> }
+
 const translate = <S extends LanguageStore>(store: Store<S>) => {
-    function _translateText(lng: string, el: HTMLElement, binding: DirectiveBinding) {
+    function _translateText(lng: string, el: LangWatchElement, binding: DirectiveBinding) {
         const attribute = binding.arg;
         let translatedText = i18next.t(binding.value, { lng });
         if (binding.modifiers.lowercase) {
@@ -21,12 +23,11 @@ const translate = <S extends LanguageStore>(store: Store<S>) => {
         }
     }
 
-    function _addWatcher(el: HTMLElement, binding: DirectiveBinding) {
-        const ele = el as any;
-        ele.__lang_unwatch__ = ele.__lang_unwatch__ || {};
+    function _addWatcher(el: LangWatchElement, binding: DirectiveBinding) {
+        el.__lang_unwatch__ = el.__lang_unwatch__ || {};
         if (binding.arg) {
             // this is an attribute binding
-            ele.__lang_unwatch__[binding.arg] = store.watch(
+            el.__lang_unwatch__[binding.arg] = store.watch(
                 (state) => state.language.currentLanguage,
                 (lng) => {
                     _translateText(lng, el, binding);
@@ -34,7 +35,7 @@ const translate = <S extends LanguageStore>(store: Store<S>) => {
             );
         } else {
             // this is a default, i.e. innerHTML, binding
-            ele.__lang_unwatch__["innerHTML"] = store.watch(
+            el.__lang_unwatch__["innerHTML"] = store.watch(
                 (state) => state.language.currentLanguage,
                 (lng) => {
                     _translateText(lng, el, binding);
@@ -43,19 +44,18 @@ const translate = <S extends LanguageStore>(store: Store<S>) => {
         }
     }
 
-    function _removeWatcher(el: HTMLElement, binding: DirectiveBinding) {
-        const ele = el as any;
+    function _removeWatcher(el: LangWatchElement, binding: DirectiveBinding) {
         if (binding.arg) {
             // this is an attribute binding
-            delete ele.__lang_unwatch__[binding.arg];
-            // ele.__lang_unwatch__[binding.arg]()
+            delete el.__lang_unwatch__[binding.arg];
+            // el.__lang_unwatch__[binding.arg]()
         } else {
             // this is a default, i.e. innerHTML, binding
-            delete ele.__lang_unwatch__["innerHTML"];
+            delete el.__lang_unwatch__["innerHTML"];
         }
     }
 
-    function _validateBinding(el: HTMLElement, binding: DirectiveBinding): boolean {
+    function _validateBinding(el: LangWatchElement, binding: DirectiveBinding): boolean {
         if (!binding.value) {
             console.warn("v-translate directive declared without a value", el);
             return false;
@@ -64,12 +64,12 @@ const translate = <S extends LanguageStore>(store: Store<S>) => {
     }
 
     return {
-        beforeMount(el: HTMLElement, binding: DirectiveBinding) {
+        beforeMount(el: LangWatchElement, binding: DirectiveBinding) {
             if (!_validateBinding(el, binding)) return;
             _translateText(store.state.language.currentLanguage, el, binding);
             _addWatcher(el, binding);
         },
-        beforeUpdate(el: HTMLElement, binding: DirectiveBinding) {
+        beforeUpdate(el: LangWatchElement, binding: DirectiveBinding) {
             if (!_validateBinding(el, binding)) return;
 
             // first remove the existing watcher for this directive instance
@@ -80,7 +80,7 @@ const translate = <S extends LanguageStore>(store: Store<S>) => {
             _translateText(store.state.language.currentLanguage, el, binding);
             _addWatcher(el, binding);
         },
-        beforeUnmount(el: HTMLElement, binding: DirectiveBinding) {
+        beforeUnmount(el: LangWatchElement, binding: DirectiveBinding) {
             if (!_validateBinding(el, binding)) return;
             _removeWatcher(el, binding);
         }
