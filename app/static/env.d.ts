@@ -1,5 +1,13 @@
 /// <reference types="vite/client" />
 
+interface ImportMetaEnv {
+  readonly VITE_STATIC_BUILD: string
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}
+
 declare module "vuex" {
   export * from "vuex/types/index.d.ts";
   export * from "vuex/types/helpers.d.ts";

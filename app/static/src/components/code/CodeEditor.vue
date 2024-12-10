@@ -1,7 +1,7 @@
 <template>
     <div>
         <button
-            v-if="defaultCodeExists"
+            v-if="defaultCodeExists && !readOnly"
             class="btn btn-primary btn-sm mb-2"
             id="reset-btn"
             v-help="'resetCode'"
