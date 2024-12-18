@@ -12,8 +12,11 @@ import help from "./directives/help";
 import App from "./components/App.vue";
 import { getStoreOptions } from "./mainUtils";
 import { Store, StoreOptions } from "vuex";
+import { mountScriptTags } from "./externalScriptSrc";
 
 declare let appType: AppType;
+
+mountScriptTags();
 
 const { Basic, Fit, Stochastic } = AppType;
 export const getComponent = (appType: AppType) => {
