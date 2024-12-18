@@ -23,7 +23,7 @@ export const configDefaults = (appType: string) => {
 };
 
 export class ConfigController {
-    static _readAppConfigFile = (
+    private static _readAppConfigFile = (
         appName: string,
         appsPath: string,
         _baseUrl: string,
