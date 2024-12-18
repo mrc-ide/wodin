@@ -6,7 +6,7 @@ import config from "./vite-common.config"
 export default mergeConfig(config, {
   build: {
     rollupOptions: {
-      input: resolve(__dirname, './src/wodin.ts')
+      input: resolve(__dirname, './src/wodin-static.ts')
     }
   }
 });

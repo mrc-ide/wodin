@@ -25,13 +25,12 @@ import { defineComponent, ref, PropType } from "vue";
 export default defineComponent({
     name: "WodinTabs",
     props: {
-        tabNames: { type: Array as PropType<readonly string[]>, required: true },
-        initSelectedTab: { type: String }
+        tabNames: { type: Array as PropType<readonly string[]>, required: true }
     },
     emits: ["tabSelected"],
     setup(props, { emit }) {
         // eslint-disable-next-line vue/no-setup-props-destructure
-        const selectedTabName = ref(props.initSelectedTab || props.tabNames[0]);
+        const selectedTabName = ref(props.tabNames[0]);
 
         const tabSelected = (tabName: string) => {
             selectedTabName.value = tabName;

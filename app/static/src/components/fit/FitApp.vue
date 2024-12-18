@@ -1,7 +1,7 @@
 <template>
     <wodin-app>
         <template v-slot:left>
-            <wodin-tabs id="left-tabs" :tabNames="['Data', 'Code', 'Options']" :init-selected-tab="initSelectedTab">
+            <wodin-tabs id="left-tabs" :tabNames="['Data', 'Code', 'Options']">
                 <template v-slot:Data>
                     <data-tab></data-tab>
                 </template>
@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { defineComponent } from "vue";
 import { useStore } from "vuex";
 import MultiSensitivityTab from "@/components/multiSensitivity/MultiSensitivityTab.vue";
 import WodinApp from "../WodinApp.vue";
@@ -52,8 +52,6 @@ import { VisualisationTab } from "../../store/appState/state";
 import { AppStateMutation } from "../../store/appState/mutations";
 import includeConfiguredTabs from "../mixins/includeConfiguredTabs";
 
-const leftTabNames = ['Data', 'Code', 'Options'] as const;
-
 export default defineComponent({
     name: "FitApp",
     components: {
@@ -67,9 +65,6 @@ export default defineComponent({
         SensitivityTab,
         WodinApp,
         WodinTabs
-    },
-    props: {
-        initSelectedTab: { type: String as PropType<typeof leftTabNames[number]>, required: false }
     },
     setup() {
         const store = useStore();
@@ -86,8 +81,7 @@ export default defineComponent({
         return {
             helpTabName,
             rightTabNames,
-            rightTabSelected,
-            leftTabNames
+            rightTabSelected
         };
     }
 });

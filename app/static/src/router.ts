@@ -1,19 +1,8 @@
-import { createRouter, createWebHistory, Router, RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHistory, RouteComponent, Router } from "vue-router";
 import SessionsPage from "./components/sessions/SessionsPage.vue";
-import { STATIC_BUILD } from "./parseEnv";
-import type BasicApp from "./components/basic/BasicApp.vue";
-import type FitApp from "./components/fit/FitApp.vue";
-import type StochasticApp from "./components/stochastic/StochasticApp.vue";
-
-type UnionAppComponent = typeof BasicApp | typeof FitApp | typeof StochasticApp
-type IntersectionAppComponent = typeof BasicApp & typeof FitApp & typeof StochasticApp
-
-// this type just extracts the intersection of props that all of the app components accept
-// by getting the type of the first argument in setup function (which are props)
-type IntersectedTabProp = Parameters<NonNullable<IntersectionAppComponent["setup"]>>["0"];
 
 export function initialiseRouter(
-    appComponent: UnionAppComponent,
+    appComponent: RouteComponent,
     appName: string,
     baseUrl: string,
     appsPath: string
@@ -33,21 +22,17 @@ export function initialiseRouter(
     }
     const routeBase = `${basePath}/${appsPath}/${appName}`;
 
-    const appRoute: RouteRecordRaw = {
-        path: "/",
-        component: appComponent,
-        props: {
-            initSelectedTab: STATIC_BUILD ? "Options" : undefined
-        } as IntersectedTabProp
-    };
-
-    const sessionsRoute: RouteRecordRaw = {
-        path: "/sessions",
-        component: SessionsPage
-    };
-
     return createRouter({
         history: createWebHistory(routeBase),
-        routes: STATIC_BUILD ? [ appRoute ] : [ appRoute, sessionsRoute ]
+        routes: [
+            {
+                path: "/",
+                component: appComponent
+            },
+            {
+                path: "/sessions",
+                component: SessionsPage
+            }
+        ]
     });
 }

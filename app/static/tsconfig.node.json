@@ -8,7 +8,9 @@
     "vitest.config.*",
     "cypress.config.*",
     "nightwatch.conf.*",
-    "playwright.config.*"
+    "playwright.config.*",
+    "vite-static.config.*",
+    "vite-common.config.*"
   ],
   "compilerOptions": {
     "noEmit": true,

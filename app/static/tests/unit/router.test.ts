@@ -59,10 +59,7 @@ describe("router", () => {
             routes: [
                 {
                     path: "/",
-                    component: WodinSession,
-                    props: {
-                        initSelectedTab: undefined
-                    }
+                    component: WodinSession
                 },
                 {
                     path: "/sessions",

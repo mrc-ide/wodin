@@ -1,11 +1,6 @@
 import path from "path";
 import fs from "fs";
-import { ConfigReader } from "../configReader";
-import { AppConfig, WodinConfig } from "../types";
-import { version as wodinVersion } from "../version";
-import { render } from "mustache";
-import { ConfigController } from "../controllers/configController";
-import { AppFileReader } from "../appFileReader";
+import { readFile } from "../configReader";
 import axios from "axios";
 import { processArgs } from "./args";
 
@@ -15,81 +10,41 @@ const mkdirForce = (path: string) => {
     }
 };
 
-const { configPath, destPath, viewsPath } = processArgs();
+const { configPath, destPath } = processArgs();
 
-const pathResolved = path.resolve(configPath);
-const configReader = new ConfigReader(pathResolved);
-const defaultCodeReader = new AppFileReader(`${pathResolved}/defaultCode`, "R");
-const appHelpReader = new AppFileReader(`${pathResolved}/help`, "md");
-const wodinConfig = configReader.readConfigFile("wodin.config.json") as WodinConfig;
+const storesPath = path.resolve(configPath, "stores")
+const stores = fs.readdirSync(storesPath, { recursive: false }) as string[];
 
 mkdirForce(destPath);
-const appsPathFull = path.resolve(destPath, wodinConfig.appsPath);
-if (fs.existsSync(appsPathFull)) {
-    fs.rmSync(appsPathFull, { recursive: true });
+const destStoresPath = path.resolve(destPath, "stores");
+if (fs.existsSync(destStoresPath)) {
+    fs.rmSync(destStoresPath, { recursive: true });
 }
-fs.mkdirSync(appsPathFull);
+fs.mkdirSync(destStoresPath);
 
-const baseUrl = wodinConfig.baseUrl.replace(/\/$/, "");
+fs.cpSync(path.resolve(configPath, "index.html"), path.resolve(destPath, "index.html"));
 
-const appNames = fs.readdirSync(path.resolve(configPath, wodinConfig.appsPath)).map(fileName => {
-    return /(.*)\.config\.json/.exec(fileName)![1];
-});
-
-appNames.forEach(async appName => {
-    const appNamePath = path.resolve(appsPathFull, appName);
-    fs.mkdirSync(appNamePath);
-
-    const configWithDefaults = ConfigController.readAppConfigFile(
-        appName, wodinConfig.appsPath, baseUrl, configReader, defaultCodeReader, appHelpReader
-    );
-    const readOnlyConfigWithDefaults = { ...configWithDefaults, readOnlyCode: true };
-    const configResponse = {
-        status: "success",
-        errors: null,
-        data: readOnlyConfigWithDefaults
-    };
-    fs.writeFileSync(path.resolve(appNamePath, "config.json"), JSON.stringify(configResponse));
+const getRunners = async () => {
+    const runnerOdeResponse = await axios.get("http://localhost:8001/support/runner-ode");
+    fs.writeFileSync(path.resolve(destStoresPath, "runnerOde.js"), runnerOdeResponse.data.data);
     
+    const runnerDiscreteResponse = await axios.get("http://localhost:8001/support/runner-discrete");
+    fs.writeFileSync(path.resolve(destStoresPath, "runnerDiscrete.js"), runnerDiscreteResponse.data.data);
+}
+getRunners();
 
-    const versionsResponse = await axios.get("http://localhost:8001/");
-    fs.writeFileSync(path.resolve(appNamePath, "versions.json"), JSON.stringify(versionsResponse.data));
+stores.forEach(async store => {
+    const destStorePath = path.resolve(destStoresPath, store);
+    fs.mkdirSync(destStorePath);
 
+    const model = readFile(path.resolve(storesPath, store, "model.R")).split("\n");
 
-    const runnerResponse = await axios.get("http://localhost:8001/support/runner-ode");
-    fs.writeFileSync(path.resolve(appNamePath, "runnerOde.json"), JSON.stringify(runnerResponse.data));
-
-    if (configWithDefaults.appType === "stochastic") {
-        const runnerResponse = await axios.get("http://localhost:8001/support/runner-discrete");
-        fs.writeFileSync(path.resolve(appNamePath, "runnerDiscrete.json"), JSON.stringify(runnerResponse.data));
-    }
+    const config = JSON.parse(readFile(path.resolve(storesPath, store, "config.json"))) as { appType: string };
+    fs.writeFileSync(path.resolve(destStorePath, "config.json"), JSON.stringify({ ...config, defaultCode: model }));
 
     const modelResponse = await axios.post("http://localhost:8001/compile", {
-        model: defaultCodeReader.readFile(appName),
-        requirements: { timeType: configWithDefaults.appType === "stochastic" ? "discrete" : "continuous" }
+        model,
+        requirements: { timeType: config.appType === "stochastic" ? "discrete" : "continuous" }
     });
-    fs.writeFileSync(path.resolve(appNamePath, "modelCode.json"), JSON.stringify(modelResponse.data));
-
-
-    const config = configReader.readConfigFile(wodinConfig.appsPath, `${appName}.config.json`) as AppConfig;
-    const viewOptions = {
-        appName,
-        baseUrl,
-        appsPath: wodinConfig.appsPath,
-        appType: config.appType,
-        title: `${config.title} - ${wodinConfig.courseTitle}`,
-        appTitle: config.title,
-        courseTitle: wodinConfig.courseTitle,
-        wodinVersion,
-        loadSessionId: "",
-        shareNotFound: "",
-        mathjaxSrc: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js",
-        enableI18n: wodinConfig.enableI18n ?? false, // if option not set then false by default
-        defaultLanguage: wodinConfig?.defaultLanguage || "en",
-        hotReload: false
-    };
-    
-    const mustacheTemplate = fs.readFileSync(path.resolve(viewsPath, "app.mustache")).toString();
-    const htmlFile = render(mustacheTemplate, viewOptions);
-    fs.writeFileSync(path.resolve(appNamePath, "index.html"), htmlFile);
+    fs.writeFileSync(path.resolve(destStorePath, `model.json`), JSON.stringify(modelResponse.data.data));
 });
