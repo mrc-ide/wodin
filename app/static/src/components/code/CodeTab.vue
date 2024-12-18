@@ -2,20 +2,18 @@
     <div v-if="appIsConfigured" class="code-tab">
         <generic-help title="Write odin code" :markdown="codeHelp"></generic-help>
         <code-editor />
-        <div v-if="!readOnly">
-            <button class="btn btn-primary mt-2" id="compile-btn" :disabled="!codeIsValid" @click="compile">Compile</button>
-            <div class="mt-2" id="code-status" :class="codeValidating ? 'code-validating-text' : ''">
-                <vue-feather
-                    class="inline-icon me-1"
-                    :class="iconClass"
-                    :type="validIcon"
-                    :size="20"
-                    :stroke-width="4"
-                ></vue-feather>
-                {{ validMsg }}
-            </div>
-            <error-info :error="error"></error-info>
+        <button class="btn btn-primary mt-2" id="compile-btn" :disabled="!codeIsValid" @click="compile">Compile</button>
+        <div class="mt-2" id="code-status" :class="codeValidating ? 'code-validating-text' : ''">
+            <vue-feather
+                class="inline-icon me-1"
+                :class="iconClass"
+                :type="validIcon"
+                :size="20"
+                :stroke-width="4"
+            ></vue-feather>
+            {{ validMsg }}
         </div>
+        <error-info :error="error"></error-info>
         <div class="mt-3">
             <graph-configs-collapsible></graph-configs-collapsible>
         </div>
@@ -33,7 +31,6 @@ import userMessages from "../../userMessages";
 import ErrorInfo from "../ErrorInfo.vue";
 import GenericHelp from "../help/GenericHelp.vue";
 import GraphConfigsCollapsible from "../graphConfig/GraphConfigsCollapsible.vue";
-import { AppConfig } from "@/types/responseTypes";
 
 export default defineComponent({
     name: "CodeTab",
@@ -47,7 +44,6 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
-        const readOnly = computed(() => (store.state.config as AppConfig).readOnlyCode);
         const codeIsValid = computed(() => store.state.model.odinModelResponse?.valid);
         const codeValidating = computed(() => store.state.code.loading);
         const error = computed(() => store.state.model.odinModelCodeError);
@@ -70,8 +66,7 @@ export default defineComponent({
             error,
             codeHelp,
             codeValidating,
-            loadingMessage,
-            readOnly
+            loadingMessage
         };
     }
 });

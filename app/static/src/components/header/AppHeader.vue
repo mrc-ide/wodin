@@ -4,7 +4,7 @@
             <a class="navbar-brand pl-2" :href="baseUrl">{{ courseTitle }}</a>
             <span class="nav-item navbar-app">{{ appTitle }}</span>
         </span>
-        <span v-if="!STATIC_BUILD" class="nav-item dropdown">
+        <span class="nav-item dropdown">
             <a
                 id="sessions-menu"
                 class="nav-link dropdown-toggle"
@@ -57,7 +57,6 @@ import EditSessionLabel from "../sessions/EditSessionLabel.vue";
 import VersionMenu from "./VersionMenu.vue";
 import { LanguageSwitcher } from "../../../translationPackage";
 import { Language } from "../../types/languageTypes";
-import { STATIC_BUILD } from "@/parseEnv";
 
 type LanguagesKeys = Record<Language, string>;
 
@@ -107,8 +106,7 @@ export default defineComponent({
             sessionLabel,
             sessionMenuHeader,
             sessionPersisted,
-            languagesKeys,
-            STATIC_BUILD
+            languagesKeys
         };
     }
 });

@@ -25,14 +25,8 @@ export function initialiseRouter(
     return createRouter({
         history: createWebHistory(routeBase),
         routes: [
-            {
-                path: "/",
-                component: appComponent
-            },
-            {
-                path: "/sessions",
-                component: SessionsPage
-            }
+            { path: "/", component: appComponent },
+            { path: "/sessions", component: SessionsPage }
         ]
     });
 }

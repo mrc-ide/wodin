@@ -23,7 +23,7 @@ export const configDefaults = (appType: string) => {
 };
 
 export class ConfigController {
-    static readAppConfigFile = (
+    static _readAppConfigFile = (
         appName: string,
         appsPath: string,
         _baseUrl: string,
@@ -54,7 +54,7 @@ export class ConfigController {
             configReader, appsPath, defaultCodeReader, appHelpReader, baseUrl
         } = req.app.locals as AppLocals;
 
-        const config = this.readAppConfigFile(
+        const config = this._readAppConfigFile(
             appName,
             appsPath,
             baseUrl,
