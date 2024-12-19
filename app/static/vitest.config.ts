@@ -14,7 +14,7 @@ export default mergeConfig(
       coverage: {
         provider: "istanbul",
         include: ["src", "translationPackage"],
-        exclude: ["**/wodin.ts", "**/App.vue", "**/tests/**"]
+        exclude: ["**/wodin.ts", "**/App.vue", "**/tests/**", "**/wodinStatic.ts"]
       }
     }
   })
