@@ -1,5 +1,9 @@
 import { AppType } from "@/store/appState/state";
-import { componentsAndSelectors, getStoreOptions, waitForBlockingScripts, getStoresInPage, getConfigsAndModels, getDeepCopiedStoreOptions, initialiseStore } from "@/wodinStaticUtils";
+import {
+    componentsAndSelectors, getStoreOptions, waitForBlockingScripts,
+    getStoresInPage, getConfigAndModelForStores, getDeepCopiedStoreOptions,
+    initialiseStore
+} from "@/wodinStaticUtils";
 import { storeOptions as basicStoreOptions } from "@/store/basic/basic";
 import { storeOptions as fitStoreOptions } from "@/store/fit/fit";
 import { storeOptions as stochasticStoreOptions } from "@/store/stochastic/stochastic";
@@ -68,9 +72,11 @@ describe("wodin static utils", () => {
 
     test("can get configs and models for stores", async () => {
         const testStores = ["store1", "store2"];
-        const { configs, modelResponses } = await getConfigsAndModels(testStores);
-        configs.forEach((c, i) => expect(c).toBe(mockConfigRes(testStores[i])));
-        modelResponses.forEach((m, i) => expect(m).toBe(mockModelRes(testStores[i])));
+        const configAndModelObj = await getConfigAndModelForStores(testStores);
+        testStores.forEach(s => {
+            expect(configAndModelObj[s].config).toBe(mockConfigRes(s));
+            expect(configAndModelObj[s].modelResponse).toBe(mockModelRes(s));
+        })
     });
 
     test("can deep copy store options", () => {
@@ -97,8 +103,9 @@ describe("wodin static utils", () => {
         const commit = vi.fn();
         const dispatch = vi.fn();
         await initialiseStore(
-            { commit, dispatch } as any, AppType.Basic,
-            ["test", "code"], "test model res" as any
+            { commit, dispatch } as any,
+            { appType: AppType.Basic, defaultCode: ["test", "code"] },
+            "test model res" as any
         );
 
         expect(commit).toBeCalledTimes(4);

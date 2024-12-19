@@ -61,12 +61,23 @@ export const getStoresInPage = () => {
     return storesInPage;
 };
 
-export const getConfigsAndModels = async (storesInPage: string[]) => {
+// TODO more tolerant error handling, maybe one config didnt work (for error handling PR)
+export type StaticConfig = { appType: AppType, defaultCode: string[] };
+type ConfigAndModel = { config: StaticConfig, modelResponse: OdinModelResponse };
+
+export const getConfigAndModelForStores = async (storesInPage: string[]) => {
     const configPromises = storesInPage.map(s => axios.get(`./stores/${s}/config.json`));
     const modelResponsePromises = storesInPage.map(s => axios.get(`./stores/${s}/model.json`));
-    const configs = (await Promise.all(configPromises)).map(res => res.data) as { appType: AppType, defaultCode: string[] }[];
+    const configs = (await Promise.all(configPromises)).map(res => res.data) as StaticConfig[];
     const modelResponses = (await Promise.all(modelResponsePromises)).map(res => res.data) as OdinModelResponse[];
-    return { configs, modelResponses };
+
+    return Object.fromEntries(storesInPage.map((s, i) => {
+        const cfgAndModel: ConfigAndModel = {
+            config: configs[i],
+            modelResponse: modelResponses[i]
+        };
+        return [ s, cfgAndModel ];
+    }));
 };
 
 export const getDeepCopiedStoreOptions = (storeOptions: StoreOptions<AppState>) => {
@@ -87,14 +98,26 @@ export const getDeepCopiedStoreOptions = (storeOptions: StoreOptions<AppState>) 
 declare let odinjs: OdinRunnerOde
 declare let dust: OdinRunnerDiscrete
 
+/*
+    Traditionally in dynamic wodin, initialising the store is the responsibility
+    of the components on mount (such as WodinSession initialising the app config)
+    however, we do not mount these components anymore in static wodin. Static wodin
+    may or may not mount these components so we need to guarantee that these bits
+    of state are initialised.
+
+    Note: we have not thoroughly explored mounting components that impact these
+    specific parts of the store yet as there is no need to in static wodin. In theory
+    we have disabled the API service so they should not change the state but if you
+    are getting API related errors on static build then it returning undefined as the
+    response may be the cause.
+*/
 export const initialiseStore = async (
-    store: Store<AppState>, appType: AppType,
-    defaultCode: string[], modelResponse: OdinModelResponse
+    store: Store<AppState>, config: StaticConfig, modelResponse: OdinModelResponse
 ) => {
     const appConfigPayload = {
-        appType,
+        appType: config.appType,
         basicProp: "",
-        defaultCode,
+        defaultCode: config.defaultCode,
         endTime: 100,
         readOnlyCode: true,
         stateUploadIntervalMillis: 2_000_000,

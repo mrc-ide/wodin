@@ -3,17 +3,26 @@ import { getStoreOptions } from "./wodinStaticUtils";
 import { Store, StoreOptions } from "vuex";
 import "./scss/style.scss"
 import { AppState } from "./store/appState/state";
-import { mountScriptTags } from "./externalScriptSrc";
+import { loadThirdPartyCDNScripts } from "./externalScriptSrc";
 import {
-    componentsAndSelectors, getConfigsAndModels, getDeepCopiedStoreOptions,
+    componentsAndSelectors, getConfigAndModelForStores, getDeepCopiedStoreOptions,
     getStoresInPage, initialiseStore, waitForBlockingScripts
 } from "./wodinStaticUtils";
+
+/*
+    This is the entrypoint to the wodin static build. This boot function just gets called
+    at the end of the file. Since we are not allowed top level awaits we have to create
+    an async function and call it at the bottom.
+
+    To load any scripts that you need before the runs just append the src to the
+    blockingScripts array.
+*/
 
 const blockingScripts = ["./stores/runnerOde.js", "./stores/runnerDiscrete.js"];
 
 const boot = async () => {
     // inject external scripts such as mathjax
-    mountScriptTags();
+    loadThirdPartyCDNScripts();
 
     // wait for scripts we can't load without such as runner code
     await waitForBlockingScripts(blockingScripts);
@@ -22,12 +31,11 @@ const boot = async () => {
     const storesInPage = getStoresInPage();
 
     // get relevant store configs and model code
-    const { configs, modelResponses } = await getConfigsAndModels(storesInPage);
+    const configAndModelObj = await getConfigAndModelForStores(storesInPage);
 
-    storesInPage.forEach(async (s, i) => {
-        const { appType, defaultCode } = configs[i];
-        const modelResponse = modelResponses[i];
-        const originalStoreOptions = getStoreOptions(appType) as StoreOptions<AppState>;
+    storesInPage.forEach(async s => {
+        const { config, modelResponse } = configAndModelObj[s];
+        const originalStoreOptions = getStoreOptions(config.appType) as StoreOptions<AppState>;
 
         // recursively deep copy state because without this we would have multiple
         // stores writing to the same state objects
@@ -35,7 +43,7 @@ const boot = async () => {
 
         // manually initialise store because this is the responsibility of apps like
         // WodinSession which aren't used in the static build
-        await initialiseStore(store, appType, defaultCode, modelResponse);
+        await initialiseStore(store, config, modelResponse);
 
         // mount components to dom elements based on selectors
         componentsAndSelectors(s).forEach(({ component, selector }) => {

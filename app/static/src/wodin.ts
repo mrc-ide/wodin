@@ -12,11 +12,11 @@ import help from "./directives/help";
 import App from "./components/App.vue";
 import { getStoreOptions } from "./wodinStaticUtils";
 import { Store, StoreOptions } from "vuex";
-import { mountScriptTags } from "./externalScriptSrc";
+import { loadThirdPartyCDNScripts } from "./externalScriptSrc";
 
 declare let appType: AppType;
 
-mountScriptTags();
+loadThirdPartyCDNScripts();
 
 const { Basic, Fit, Stochastic } = AppType;
 export const getComponent = (appType: AppType) => {
