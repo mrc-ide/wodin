@@ -10,7 +10,7 @@ import "./assets/fontawesome.css";
 import "./scss/style.scss"
 import help from "./directives/help";
 import App from "./components/App.vue";
-import { getStoreOptions } from "./mainUtils";
+import { getStoreOptions } from "./wodinStaticUtils";
 import { Store, StoreOptions } from "vuex";
 import { mountScriptTags } from "./externalScriptSrc";
 

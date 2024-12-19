@@ -1,4 +1,4 @@
-const externalScripts = [
+export const externalScripts = [
     "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
 ];
 
