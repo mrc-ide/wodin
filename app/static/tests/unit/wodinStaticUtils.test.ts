@@ -32,6 +32,10 @@ describe("wodin static utils", () => {
         expect(s).toStrictEqual(stochasticStoreOptions);
     });
 
+    test("get store options throws error if not correct app type", () => {
+        expect(() => getStoreOptions("hey" as any)).toThrowError("Unknown app type");
+    });
+
     test("component and selector interpolates store correctly", () => {
         const { selector } = componentsAndSelectors("test-store")[0];
         expect(selector).toContain(`data-w-store="test-store"`);
