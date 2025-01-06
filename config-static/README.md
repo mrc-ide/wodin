@@ -13,9 +13,11 @@ An example of the config a user needs to design is in this folder. To convert th
 1. `./scripts/build-and-serve-static-site.sh`
 The site should be available at `localhost:3000` (the containers which are run by the dependencies script are only involved in generating the model javascript for this site. Once the site is built, you can stop the containers and still change the HTML document, e.g. adding a new graph, and it'll update everything accordingly when you refresh the page - you don't need to re-run the `build-and-serve` script either).
 
-## How it works
+## How researchers will build the static site
 
-There are two stages to this process, build time (code and static asset generation we do in a github action once the user has created a config) and run time (querying the HTML page and mounting the correct components with the correct stores).
+Ther researchers will not be running the `build-and-serve-static-site.sh` manually. There are two stages to how the static site works for them:
+
+1. Build time: The researchers will be using a github action on a repository that looks like `config-static` to generate model code and static assets of the site. 1. Run time: The built Javascript querying the HTML page and mounting the correct components with the correct stores.
 
 ### Build time
 
