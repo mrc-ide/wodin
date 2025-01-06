@@ -21,7 +21,7 @@ There are two stages to this process, build time (code and static asset generati
 
 After the user writes the config, a github action will checkout this repo, run the `odin.api` docker container and run the `wodinBuilder.ts` script which takes in the path of the config and path of the output folder as args. This script expects a `stores` folder which contains folders that label your stores, `<store-name>`. In each `<store-name>` folder it expects a `config.json` and `model.R` file. This script does a couple of things:
 1. Copies the `index.html` file the user has written to the output folder
-1. Gets the Javascript code for the ODE and discrete runners and saves them into `stores/runnerOde.js` and `stores/runnerDiscrete.js` (the runner are generic and shared across all stores)
+1. Gets the Javascript code for the ODE and discrete runners from `odin.api` and saves them into `stores/runnerOde.js` and `stores/runnerDiscrete.js` (the runner are generic and shared across all stores)
 1. For each `<store-name>`, it saves the config into `stores/<store-name>/config.json` and it compiles the model code and saves the response into `stores/<store-name>/model.json`.
 
 We also build `wodin` frontend in static mode (just normal `wodin` frontend with an early return in the api service so we don't do any network requests) and copy the js and css files into the output folder. After this, we just commit the output folder into a github pages branch and github will deploy it.
