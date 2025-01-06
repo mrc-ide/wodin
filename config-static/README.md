@@ -6,7 +6,7 @@ We would like researchers to be able to build a site without a server and publis
 
 Static wodin sites will allow the user to update parameters and re-run the model, fit data, run sensitivity and download data. They do not support updating model code or saving sessions. 
 
-## Run/Development
+## Example static site
 
 An example of the config a user needs to design is in this folder. To convert this example into a site run:
 1. `./scripts/run-dev-dependencies.sh`
