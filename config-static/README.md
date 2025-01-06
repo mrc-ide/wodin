@@ -15,7 +15,7 @@ The site should be available at `localhost:3000` (the containers which are run b
 
 ## How it works
 
-There are two stages to this process, build time (code and static asset generation we do in a github action once the user has created a config) and run time (querying the HTML page and mounting the correct components with the correct stores).
+There are two stages to this process, build time (model code and static asset generation we do in a github action once the user has created a config) and run time (querying the HTML page and mounting the correct components with the correct stores).
 
 ### Build time
 
