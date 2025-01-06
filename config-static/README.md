@@ -2,7 +2,7 @@
 
 ## Background
 
-We would like researchers to be able to build a site without a server and publish a static site somewhere like github pages. This will be to build interactive research papers/articles that allow policy makers to better understand a given model. Since the model will be static we can remove both the `express` backend, `redis` and `odin.api`.
+We would like researchers to be able to build a site without a server and publish a static site somewhere like github pages. This will be to build interactive research papers/articles that allow policy makers to better understand the researchers' models. Since the models will be static we can remove both the `express` backend, `redis` and `odin.api`.
 
 Static wodin sites will allow the user to update parameters and re-run the model, fit data, run sensitivity and download data. They do not support updating model code or saving sessions. 
 
@@ -24,7 +24,7 @@ After the user writes the config, a github action will checkout this repo, run t
 1. Gets the Javascript code for the ODE and discrete runners from `odin.api` and saves them into `stores/runnerOde.js` and `stores/runnerDiscrete.js` (the runner are generic and shared across all stores)
 1. For each `<store-name>`, it saves the config into `stores/<store-name>/config.json` and it compiles the model code (also via the odin api) and saves the response into `stores/<store-name>/model.json`.
 
-We also build `wodin` frontend in static mode (just normal `wodin` frontend with an early return in the api service so we don't do any network requests) and copy the js and css files into the output folder. After this, we just commit the output folder into a github pages branch and github will deploy it.
+We also build `wodin` frontend in static mode (just normal `wodin` frontend with an early return in the api service so we don't do any network requests since there are no `odin.api` and `redis` containers running) and copy the js and css files into the output folder. After this, we just commit the output folder into a github pages branch and github will deploy it.
 
 ### Run time
 

@@ -62,7 +62,7 @@ describe("Wodin builder", () => {
         expectPath(tmpdir);
     });
 
-    tmpdirTest("works as expected", async ({ tmpdir }) => {
+    tmpdirTest("generates site with correct files and folder structure", async ({ tmpdir }) => {
         const storesPath = p(tmpdir, "stores");
         await buildSite(tmpdir);
 
