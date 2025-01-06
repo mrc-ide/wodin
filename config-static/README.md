@@ -4,6 +4,8 @@
 
 We would like researchers to be able to build a site without a server and publish a static site somewhere like github pages. This will be to build interactive research papers/articles that allow policy makers to better understand a given model. Since the model will be static we can remove both the `express` backend, `redis` and `odin.api`.
 
+Static wodin sites will allow the user to update parameters and re-run the model, fit data, run sensitivity and download data. They do not support updating model code or saving sessions. 
+
 ## Run/Development
 
 An example of the config a user needs to design is in this folder. To convert this example into a site run:
