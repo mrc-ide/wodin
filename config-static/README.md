@@ -11,7 +11,7 @@ Static wodin sites will allow the user to update parameters and re-run the model
 An example of the config a user needs to design is in this folder. To convert this example into a site run:
 1. `./scripts/run-dev-dependencies.sh`
 1. `./scripts/build-and-serve-static-site.sh`
-The site should be available at `localhost:3000` (the run dependencies script is only involved in generating code for this site. Once the site is built, you can turn these off and still change the HTML document, e.g. adding a new graph, and it'll update everything accordingly when you refresh the page).
+The site should be available at `localhost:3000` (the containers which are run by the dependencies script are only involved in generating the model javascript for this site. Once the site is built, you can stop the containers and still change the HTML document, e.g. adding a new graph, and it'll update everything accordingly when you refresh the page - you don't need to re-run the `build-and-serve` script either).
 
 ## How it works
 
