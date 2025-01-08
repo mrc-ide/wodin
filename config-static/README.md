@@ -13,7 +13,7 @@ An example of the config a user needs to design is in this folder. To convert th
 1. `./scripts/build-and-serve-static-site.sh`
 The site should be available at `localhost:3000` (the containers which are run by the dependencies script are only involved in generating the model javascript for this site. Once the site is built, you can stop the containers and still change the HTML document, e.g. adding a new graph, and it'll update everything accordingly when you refresh the page - you don't need to re-run the `build-and-serve` script either).
 
-## How researchers will build the static site
+## How researchers will build a static site
 
 Ther researchers will not be running the `build-and-serve-static-site.sh` manually. There are two stages to how the static site works for them:
 
