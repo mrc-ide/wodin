@@ -24,8 +24,8 @@
         <link rel="stylesheet" href="http://localhost:5173/src/scss/style.scss"/>
     {{/hotReload}}
     {{^hotReload}}
-        <script type="module" src="/wodin.js"></script>
-        <link rel="stylesheet" href="/wodin.css"/>
+        <script type="module" src="{{& baseUrl}}/wodin.js"></script>
+        <link rel="stylesheet" href="{{& baseUrl}}/wodin.css"/>
     {{/hotReload}}
     <script async src="{{& mathjaxSrc}}"></script>
 </html>
