@@ -15,7 +15,7 @@ The site should be available at `localhost:3000` (the containers which are run b
 
 ## How researchers will build a static site
 
-Ther researchers will not be running the `build-and-serve-static-site.sh` manually. There are two stages to how the static site works for them:
+The researchers will not be running the `build-and-serve-static-site.sh` manually. There are two stages to how the static site works for them:
 
 1. Build time: The researchers will be using a github action on a repository that looks like `config-static` to generate model code and static assets of the site. 1. Run time: The built Javascript querying the HTML page and mounting the correct components with the correct stores.
 
