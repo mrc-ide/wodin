@@ -47,9 +47,11 @@ const boot = async () => {
 
         // mount components to dom elements based on selectors
         componentsAndSelectors(s).forEach(({ component, selector }) => {
-            const applet = createApp(component);
-            applet.use(store);
-            document.querySelectorAll(selector)?.forEach(el => applet.mount(el));
+            document.querySelectorAll(selector)?.forEach(el => {
+              const applet = createApp(component);
+              applet.use(store);
+              applet.mount(el)
+            });
         });
     })
 };
