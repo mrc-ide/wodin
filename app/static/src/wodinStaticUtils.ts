@@ -11,6 +11,7 @@ import { RunAction } from "./store/run/actions";
 import { storeOptions as basicStoreOptions } from "./store/basic/basic";
 import { storeOptions as fitStoreOptions } from "./store/fit/fit";
 import { storeOptions as stochasticStoreOptions } from "./store/stochastic/stochastic";
+import ParameterControl from "./componentsStatic/ParameterControl.vue";
 
 const { Basic, Fit, Stochastic } = AppType;
 export const getStoreOptions = (appType: AppType) => {
@@ -28,7 +29,8 @@ export const getStoreOptions = (appType: AppType) => {
 
 export const componentsAndSelectors = (s: string) => ([
     { selector: `.w-run-graph[data-w-store="${s}"]`, component: RunTab },
-    { selector: `.w-sens-graph[data-w-store="${s}"]`, component: SensitivityTab }
+    { selector: `.w-sens-graph[data-w-store="${s}"]`, component: SensitivityTab },
+    { selector: `.w-par[data-w-store="${s}"]`, component: ParameterControl }
 ]);
 
 export const waitForBlockingScripts = async (blockingScripts: string[]) => {

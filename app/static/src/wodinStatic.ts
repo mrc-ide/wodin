@@ -48,7 +48,14 @@ const boot = async () => {
         // mount components to dom elements based on selectors
         componentsAndSelectors(s).forEach(({ component, selector }) => {
             document.querySelectorAll(selector)?.forEach(el => {
-              const applet = createApp(component);
+              const ignoredAttributes = ["class", "style", "data-w-store", "data-v-app"];
+              const props: Record<string, string> = {};
+              for (let i = 0; i < el.attributes.length; i++) {
+                const attribute = el.attributes[i];
+                if (ignoredAttributes.includes(attribute.nodeName) || !attribute.nodeValue) continue;
+                props[attribute.nodeName] = attribute.nodeValue;
+              }
+              const applet = createApp(component, props);
               applet.use(store);
               applet.mount(el)
             });
