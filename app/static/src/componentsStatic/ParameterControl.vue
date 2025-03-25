@@ -10,7 +10,6 @@
 
 <script setup lang="ts">
 import { AppState } from '@/store/appState/state';
-import { RunAction } from '@/store/run/actions';
 import { RunMutation } from '@/store/run/mutations';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
@@ -32,6 +31,5 @@ const handleChange = (e: Event) => {
   const oldParameterValues = store.state.run.parameterValues;
   const newParameterValues = { ...oldParameterValues, [props.name]: parseFloat(newVal) };
   store.commit(`run/${RunMutation.SetParameterValues}`, newParameterValues);
-  store.dispatch(`run/${RunAction.RunModel}`);
 };
 </script>

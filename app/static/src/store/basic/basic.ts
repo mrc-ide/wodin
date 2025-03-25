@@ -7,7 +7,7 @@ import { model } from "../model/model";
 import { run } from "../run/run";
 import { code } from "../code/code";
 import { sensitivity } from "../sensitivity/sensitivity";
-import { logMutations, persistState } from "../plugins";
+import { logMutations, persistState, rerunModel } from "../plugins";
 import { AppType, VisualisationTab } from "../appState/state";
 import { newUid } from "../../utils";
 import { sessions } from "../sessions/sessions";
@@ -54,5 +54,5 @@ export const storeOptions: StoreOptions<BasicState> = {
         graphs,
         language
     },
-    plugins: [logMutations, persistState]
+    plugins: [logMutations, persistState, rerunModel]
 };

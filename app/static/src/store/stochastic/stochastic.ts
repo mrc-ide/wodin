@@ -9,7 +9,7 @@ import { code } from "../code/code";
 import { sensitivity } from "../sensitivity/sensitivity";
 import { AppType, VisualisationTab } from "../appState/state";
 import { newUid } from "../../utils";
-import { logMutations, persistState } from "../plugins";
+import { logMutations, persistState, rerunModel } from "../plugins";
 import { sessions } from "../sessions/sessions";
 import { versions } from "../versions/versions";
 import { graphs } from "../graphs/graphs";
@@ -54,5 +54,5 @@ export const storeOptions: StoreOptions<StochasticState> = {
         graphs,
         language
     },
-    plugins: [logMutations, persistState]
+    plugins: [logMutations, persistState, rerunModel]
 };
