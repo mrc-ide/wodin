@@ -2,10 +2,10 @@
   <div>
     <label :id="`${name}-input`" class="col-form-label">{{ name }}</label>
   </div>
-  <div>
+  <div :id="`${name}-description`">
     {{ description }}
   </div>
-  <input type="range" class="form-range" :min="min" :max="max" :step="step || (max - min) / 100" :value="value" @input="handleChange"/>
+  <input type="range" class="form-range" :min="min" :max="max" :step="step || (max - min) / 10000" :value="value" @input="handleChange"/>
 </template>
 
 <script setup lang="ts">
