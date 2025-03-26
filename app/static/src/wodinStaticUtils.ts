@@ -7,7 +7,6 @@ import { Store, StoreOptions } from "vuex";
 import { AppStateMutation } from "./store/appState/mutations";
 import { ModelMutation } from "./store/model/mutations";
 import { ModelAction } from "./store/model/actions";
-import { RunAction } from "./store/run/actions";
 import { storeOptions as basicStoreOptions } from "./store/basic/basic";
 import { storeOptions as fitStoreOptions } from "./store/fit/fit";
 import { storeOptions as stochasticStoreOptions } from "./store/stochastic/stochastic";
@@ -131,5 +130,4 @@ export const initialiseStore = async (
     store.commit(`model/${ModelMutation.SetOdinRunnerDiscrete}`, dust);
     store.commit(`model/${ModelMutation.SetOdinResponse}`, modelResponse);
     await store.dispatch(`model/${ModelAction.CompileModel}`)
-    await store.dispatch(`run/${RunAction.RunModel}`)
 };

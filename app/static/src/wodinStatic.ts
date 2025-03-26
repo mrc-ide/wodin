@@ -9,6 +9,8 @@ import {
     getStoresInPage, initialiseStore, waitForBlockingScripts
 } from "./wodinStaticUtils";
 import { rerunModel, rerunSensitivity } from "./store/plugins";
+import { RunAction } from "./store/run/actions";
+import { SensitivityAction } from "./store/sensitivity/actions";
 
 /*
     This is the entrypoint to the wodin static build. This boot function just gets called
@@ -51,8 +53,10 @@ const boot = async () => {
             // we want the graph to update automatically when users of static wodin
             // change parameter values
             if (tab === VisualisationTab.Run) {
+                store.dispatch(`run/${RunAction.RunModel}`);
                 rerunModel(store);
             } else if (tab === VisualisationTab.Sensitivity) {
+                store.dispatch(`sensitivity/${SensitivityAction.RunSensitivity}`);
                 rerunSensitivity(store);
             }
 
