@@ -60,12 +60,16 @@ describe("RunTab", () => {
     const mockDownloadOutput = vi.fn();
     const mockSetUserDownloadFileName = vi.fn();
 
+    type Props = { hideRunButton: boolean, hideDownloadButton: boolean }
+    const defaultProps = { hideRunButton: false, hideDownloadButton: false };
+
     const getWrapper = (
         modelState: Partial<ModelState> = defaultModelState,
         runState: Partial<RunState> = defaultRunState,
         hasRunner = true,
         appType = AppType.Basic,
-        selectedVariables: string[] = ["S"]
+        selectedVariables: string[] = ["S"],
+        props: Props = defaultProps
     ) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({ appType }),
@@ -103,8 +107,8 @@ describe("RunTab", () => {
         });
         return shallowMount(RunTab, {
             global: {
-                plugins: [store]
-            }
+                plugins: [store],
+            }, props
         });
     };
 
@@ -268,6 +272,22 @@ describe("RunTab", () => {
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         expect(wrapper.findComponent(RunPlot).exists()).toBe(false);
         expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(false);
+    });
+
+    it("hides run button when prop passed in", () => {
+        const wrapper = getWrapper(
+            {}, {}, true, AppType.Basic, ["S"],
+            { hideRunButton: true, hideDownloadButton: false }
+        );
+        expect(wrapper.find("#run-btn").exists()).toBe(false);
+    });
+
+    it("hides download button when prop passed in", () => {
+        const wrapper = getWrapper(
+            {}, {}, true, AppType.Basic, ["S"],
+            { hideRunButton: false, hideDownloadButton: true }
+        );
+        expect(wrapper.find("#download-btn").exists()).toBe(false);
     });
 
     it("propagates x axis changes to all run stochastic plots", async () => {

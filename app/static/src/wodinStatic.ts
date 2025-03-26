@@ -53,10 +53,15 @@ const boot = async () => {
         componentsAndSelectors(s).forEach(({ component, selector }) => {
             document.querySelectorAll(selector)?.forEach(el => {
               const ignoredAttributes = ["class", "style", "data-w-store", "data-v-app"];
-              const props: Record<string, string> = {};
+              const props: Record<string, unknown> = {};
               for (let i = 0; i < el.attributes.length; i++) {
                 const attribute = el.attributes[i];
-                if (ignoredAttributes.includes(attribute.nodeName) || !attribute.nodeValue) continue;
+                if (ignoredAttributes.includes(attribute.nodeName)) continue;
+                // if an empty attribute is present on a tag e.g.
+                // <div prop></div> then we get nodeValue of ""
+                if (attribute.nodeValue === "") {
+                    props[attribute.nodeName] = true;
+                }
                 props[attribute.nodeName] = attribute.nodeValue;
               }
               const applet = createApp(component, props);

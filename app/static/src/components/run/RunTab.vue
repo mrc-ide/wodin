@@ -1,6 +1,6 @@
 <template>
     <div class="run-tab">
-        <div>
+        <div v-if="!hideRunButton">
             <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
         </div>
         <action-required-message :message="updateMsg"></action-required-message>
@@ -28,7 +28,7 @@
             <span id="squares">Sum of squares: {{ sumOfSquares }}</span>
         </div>
         <error-info :error="error"></error-info>
-        <div>
+        <div v-if="!hideDownloadButton">
             <button
                 v-if="!isStochastic"
                 class="btn btn-primary"
@@ -85,6 +85,10 @@ export default defineComponent({
         ActionRequiredMessage,
         DownloadOutput,
         VueFeather
+    },
+    props: {
+        hideRunButton: { type: Boolean, default: false },
+        hideDownloadButton: { type: Boolean, default: false }
     },
     setup() {
         const store = useStore();
