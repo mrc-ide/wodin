@@ -1,19 +1,13 @@
 import Vuex from "vuex";
-import { logMutations, persistState, rerunModel } from "../../../src/store/plugins";
+import { logMutations, persistState, rerunModel, rerunSensitivity } from "../../../src/store/plugins";
 import { AppState } from "../../../src/store/appState/state";
 import { AppStateAction } from "../../../src/store/appState/actions";
 import { AppStateMutation } from "../../../src/store/appState/mutations";
 import { RunMutation } from "@/store/run/mutations";
 import { RunAction } from "@/store/run/actions";
-import * as Env from "@/parseEnv";
-
-vi.mock("@/parseEnv");
+import { SensitivityAction } from "@/store/sensitivity/actions";
 
 describe("plugins", () => {
-    afterEach(() => {
-        vi.resetAllMocks();
-    });
-
     it("logMutations logs mutations to console", () => {
         const logSpy = vi.spyOn(console, "log");
 
@@ -90,8 +84,7 @@ describe("plugins", () => {
         expect(spyDispatch).not.toHaveBeenCalled();
     });
 
-    it("rerun model triggers when parameter values are set only when STATIC_BUILD is true", () => {
-        vi.mocked(Env).STATIC_BUILD = true;
+    it("rerun model triggers when users change parameter values", () => {
         const mockRunModel = vi.fn();
         const store = new Vuex.Store<AppState>({
             modules: {
@@ -109,10 +102,30 @@ describe("plugins", () => {
 
         rerunModel(store);
         store.commit(`run/${RunMutation.SetParameterValues}`);
-        expect(mockRunModel).toHaveBeenCalledTimes(1);
+        expect(mockRunModel).toHaveBeenCalled();
+    });
 
-        vi.mocked(Env).STATIC_BUILD = false;
+    it("rerun sensitivity model triggers when users change parameter values", () => {
+        const mockRunSensitivity = vi.fn();
+        const store = new Vuex.Store<AppState>({
+            modules: {
+                run: {
+                    namespaced: true,
+                    mutations: {
+                        [RunMutation.SetParameterValues]: () => {}
+                    }
+                },
+                sensitivity: {
+                    namespaced: true,
+                    actions: {
+                        [SensitivityAction.RunSensitivity]: mockRunSensitivity
+                    }
+                }
+            }
+        });
+
+        rerunSensitivity(store);
         store.commit(`run/${RunMutation.SetParameterValues}`);
-        expect(mockRunModel).toHaveBeenCalledTimes(1);
+        expect(mockRunSensitivity).toHaveBeenCalled();
     });
 });

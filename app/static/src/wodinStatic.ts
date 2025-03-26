@@ -2,12 +2,13 @@ import { createApp } from "vue";
 import { getStoreOptions } from "./wodinStaticUtils";
 import { Store, StoreOptions } from "vuex";
 import "./scss/style.scss"
-import { AppState } from "./store/appState/state";
+import { AppState, VisualisationTab } from "./store/appState/state";
 import { loadThirdPartyCDNScripts } from "./externalScriptSrc";
 import {
     componentsAndSelectors, getConfigAndModelForStores, getDeepCopiedStoreOptions,
     getStoresInPage, initialiseStore, waitForBlockingScripts
 } from "./wodinStaticUtils";
+import { rerunModel, rerunSensitivity } from "./store/plugins";
 
 /*
     This is the entrypoint to the wodin static build. This boot function just gets called
@@ -46,7 +47,15 @@ const boot = async () => {
         await initialiseStore(store, config, modelResponse);
 
         // mount components to dom elements based on selectors
-        componentsAndSelectors(s).forEach(({ component, selector }) => {
+        componentsAndSelectors(s).forEach(({ component, selector, tab }) => {
+            // we want the graph to update automatically when users of static wodin
+            // change parameter values
+            if (tab === VisualisationTab.Run) {
+                rerunModel(store);
+            } else if (tab === VisualisationTab.Sensitivity) {
+                rerunSensitivity(store);
+            }
+
             document.querySelectorAll(selector)?.forEach(el => {
               const ignoredAttributes = ["class", "style", "data-w-store", "data-v-app"];
               const props: Record<string, string> = {};

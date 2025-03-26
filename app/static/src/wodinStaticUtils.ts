@@ -1,7 +1,7 @@
 import axios from "axios";
 import RunTab from "./components/run/RunTab.vue";
 import SensitivityTab from "./components/sensitivity/SensitivityTab.vue";
-import { AppState, AppType } from "./store/appState/state";
+import { AppState, AppType, VisualisationTab } from "./store/appState/state";
 import { AppConfig, OdinModelResponse, OdinRunnerDiscrete, OdinRunnerOde } from "./types/responseTypes";
 import { Store, StoreOptions } from "vuex";
 import { AppStateMutation } from "./store/appState/mutations";
@@ -28,8 +28,8 @@ export const getStoreOptions = (appType: AppType) => {
 };
 
 export const componentsAndSelectors = (s: string) => ([
-    { selector: `.w-run-graph[data-w-store="${s}"]`, component: RunTab },
-    { selector: `.w-sens-graph[data-w-store="${s}"]`, component: SensitivityTab },
+    { selector: `.w-run-graph[data-w-store="${s}"]`, component: RunTab, tab: VisualisationTab.Run },
+    { selector: `.w-sens-graph[data-w-store="${s}"]`, component: SensitivityTab, tab: VisualisationTab.Sensitivity },
     { selector: `.w-par[data-w-store="${s}"]`, component: ParameterControl }
 ]);
 
