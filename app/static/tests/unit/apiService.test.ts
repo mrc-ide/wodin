@@ -2,6 +2,9 @@ import { api } from "../../src/apiService";
 import { mockAxios, mockError, mockFailure, mockSuccess, mockBasicState } from "../mocks";
 import { freezer } from "../../src/utils";
 import { Mock } from "vitest";
+import * as Env from "@/parseEnv";
+
+vi.mock("@/parseEnv");
 
 const BASE_URL = "http://localhost:3000";
 const rootState = mockBasicState({ baseUrl: BASE_URL });
@@ -291,6 +294,26 @@ describe("ApiService", () => {
             .post(TEST_ROUTE, TEST_BODY);
 
         expect(response).toStrictEqual({ data: "TEST", errors: null, status: "success" });
+    });
+
+    it("does not do anything if STATIC_BUILD is true", async () => {
+        vi.mocked(Env).STATIC_BUILD = true;
+
+        mockAxios.onGet(`${BASE_URL}${TEST_ROUTE}`).reply(200, mockSuccess("TEST"));
+        mockAxios.onPost(`${BASE_URL}${TEST_ROUTE}`, TEST_BODY).reply(200, mockSuccess("TEST"));
+
+        const commit = vi.fn();
+        const responseGet = await api({ commit, rootState } as any)
+            .withSuccess("TEST_TYPE")
+            .get(TEST_ROUTE);
+        expect(responseGet).toBe(undefined);
+
+        const responsePost = await api({ commit, rootState } as any)
+            .withSuccess("TEST_TYPE")
+            .post(TEST_ROUTE, TEST_BODY);
+        expect(responsePost).toBe(undefined);
+
+        vi.mocked(Env).STATIC_BUILD = false;
     });
 
     it("post sets default Content-Type header", async () => {

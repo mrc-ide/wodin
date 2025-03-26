@@ -23,6 +23,9 @@ import { localStorageManager } from "../../../../src/localStorageManager";
 import { AppStateGetter } from "../../../../src/store/appState/getters";
 import { Language } from "../../../../src/types/languageTypes";
 import { flushPromises } from "@vue/test-utils";
+import * as Env from "@/parseEnv";
+
+vi.mock("@/parseEnv");
 
 describe("AppState actions", () => {
     const baseUrl = "http://localhost:3000";
@@ -347,6 +350,18 @@ describe("AppState actions", () => {
         await (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
         expect(commit).not.toHaveBeenCalled();
         expect(mockSetInterval).not.toHaveBeenCalled();
+    });
+
+    it("QueueStateUpload does not queue when STATIC_BUILD is true", async () => {
+        vi.mocked(Env).STATIC_BUILD = true;
+        vi.useFakeTimers();
+        const mockSetInterval = vi.spyOn(window, "setInterval");
+        const state = mockFitState();
+        const commit = vi.fn();
+        await (appStateActions[AppStateAction.QueueStateUpload] as any)({ commit, state });
+        expect(commit).not.toHaveBeenCalled();
+        expect(mockSetInterval).not.toHaveBeenCalled();
+        vi.mocked(Env).STATIC_BUILD = false;
     });
 
     it("QueueStateUpload does not queue when running sensitivity", async () => {
