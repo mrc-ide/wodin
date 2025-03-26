@@ -1,16 +1,13 @@
 import { createApp } from "vue";
-import { getStoreOptions } from "./wodinStaticUtils";
+import { getStoreOptions, registerRedrawGraphPlugins } from "./wodinStaticUtils";
 import { Store, StoreOptions } from "vuex";
 import "./scss/style.scss"
-import { AppState, VisualisationTab } from "./store/appState/state";
+import { AppState } from "./store/appState/state";
 import { loadThirdPartyCDNScripts } from "./externalScriptSrc";
 import {
     componentsAndSelectors, getConfigAndModelForStores, getDeepCopiedStoreOptions,
     getStoresInPage, initialiseStore, waitForBlockingScripts
 } from "./wodinStaticUtils";
-import { rerunModel, rerunSensitivity } from "./store/plugins";
-import { RunAction } from "./store/run/actions";
-import { SensitivityAction } from "./store/sensitivity/actions";
 
 /*
     This is the entrypoint to the wodin static build. This boot function just gets called
@@ -48,18 +45,12 @@ const boot = async () => {
         // WodinSession which aren't used in the static build
         await initialiseStore(store, config, modelResponse);
 
-        // mount components to dom elements based on selectors
-        componentsAndSelectors(s).forEach(({ component, selector, tab }) => {
-            // we want the graph to update automatically when users of static wodin
-            // change parameter values
-            if (tab === VisualisationTab.Run) {
-                store.dispatch(`run/${RunAction.RunModel}`);
-                rerunModel(store);
-            } else if (tab === VisualisationTab.Sensitivity) {
-                store.dispatch(`sensitivity/${SensitivityAction.RunSensitivity}`);
-                rerunSensitivity(store);
-            }
+        // we want the graph to update automatically when users of static wodin
+        // change parameter values
+        registerRedrawGraphPlugins(s, store);
 
+        // mount components to dom elements based on selectors
+        componentsAndSelectors(s).forEach(({ component, selector }) => {
             document.querySelectorAll(selector)?.forEach(el => {
               const ignoredAttributes = ["class", "style", "data-w-store", "data-v-app"];
               const props: Record<string, string> = {};

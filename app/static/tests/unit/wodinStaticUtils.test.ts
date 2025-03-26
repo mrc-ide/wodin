@@ -2,7 +2,8 @@ import { AppType } from "@/store/appState/state";
 import {
     componentsAndSelectors, getStoreOptions, waitForBlockingScripts,
     getStoresInPage, getConfigAndModelForStores, getDeepCopiedStoreOptions,
-    initialiseStore
+    initialiseStore,
+    registerRedrawGraphPlugins
 } from "@/wodinStaticUtils";
 import { storeOptions as basicStoreOptions } from "@/store/basic/basic";
 import { storeOptions as fitStoreOptions } from "@/store/fit/fit";
@@ -10,9 +11,9 @@ import { storeOptions as stochasticStoreOptions } from "@/store/stochastic/stoch
 import { AppStateMutation } from "@/store/appState/mutations";
 import { ModelMutation } from "@/store/model/mutations";
 import { ModelAction } from "@/store/model/actions";
-import { RunAction } from "@/store/run/actions";
+import { nextTick } from "vue";
 
-const { mockConfigRes, mockModelRes, mockGet } = vi.hoisted(() => {
+const { mockConfigRes, mockModelRes, mockGet, mockRerunModel, mockRerunSensitivity } = vi.hoisted(() => {
     const mockConfigRes = (s: string) => `config-${s}`;
     const mockModelRes = (s: string) => `model-${s}`;
     const mockGet = vi.fn().mockImplementation((url: string) => {
@@ -20,9 +21,19 @@ const { mockConfigRes, mockModelRes, mockGet } = vi.hoisted(() => {
         const type = url.split("/").at(-1) === "config.json" ? "config" : "model";
         return { data: `${type}-${store}` };
     });
-    return { mockConfigRes, mockModelRes, mockGet };
+    const mockRerunModel = vi.fn();
+    const mockRerunSensitivity = vi.fn();
+    return { mockConfigRes, mockModelRes, mockGet, mockRerunModel, mockRerunSensitivity };
 });
 vi.mock("axios", () => ({ default: { get: mockGet } }));
+vi.mock("@/store/plugins", async (importOriginal) => {
+    const actual = await importOriginal() as object;
+    return {
+        ...actual,
+        rerunModel: mockRerunModel,
+        rerunSensitivity: mockRerunSensitivity
+    };
+});
 
 describe("wodin static utils", () => {
     test("can get correct store options", () => {
@@ -131,5 +142,29 @@ describe("wodin static utils", () => {
         expect(dispatch).toBeCalledTimes(1);
 
         expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.CompileModel}`);
+    });
+
+    it("register redraw graph plugins works for run model", async () => {
+        const testStoreName = "test-store";
+        const mockDispatch = vi.fn();
+        const mockStore = { dispatch: mockDispatch } as any;
+        vi.spyOn(document, "querySelector").mockImplementation(selector => {
+            return selector.includes("w-run-graph") as any;
+        });
+        registerRedrawGraphPlugins(testStoreName, mockStore);
+        await nextTick();
+        expect(mockRerunModel.mock.calls[0][0]).toStrictEqual(mockStore);
+    });
+
+    it("register redraw graph plugins works for run sensitivity", async () => {
+        const testStoreName = "test-store";
+        const mockDispatch = vi.fn();
+        const mockStore = { dispatch: mockDispatch } as any;
+        vi.spyOn(document, "querySelector").mockImplementation(selector => {
+            return selector.includes("w-sens-graph") as any;
+        });
+        registerRedrawGraphPlugins(testStoreName, mockStore);
+        await nextTick();
+        expect(mockRerunSensitivity.mock.calls[0][0]).toStrictEqual(mockStore);
     });
 });

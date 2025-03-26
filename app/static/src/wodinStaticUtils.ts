@@ -11,6 +11,9 @@ import { storeOptions as basicStoreOptions } from "./store/basic/basic";
 import { storeOptions as fitStoreOptions } from "./store/fit/fit";
 import { storeOptions as stochasticStoreOptions } from "./store/stochastic/stochastic";
 import ParameterControl from "./componentsStatic/ParameterControl.vue";
+import { RunAction } from "./store/run/actions";
+import { SensitivityAction } from "./store/sensitivity/actions";
+import { rerunModel, rerunSensitivity } from "./store/plugins";
 
 const { Basic, Fit, Stochastic } = AppType;
 export const getStoreOptions = (appType: AppType) => {
@@ -130,4 +133,25 @@ export const initialiseStore = async (
     store.commit(`model/${ModelMutation.SetOdinRunnerDiscrete}`, dust);
     store.commit(`model/${ModelMutation.SetOdinResponse}`, modelResponse);
     await store.dispatch(`model/${ModelAction.CompileModel}`)
+};
+
+export const registerRedrawGraphPlugins = (s: string, store: Store<AppState>) => {
+    // add tab to visible tab if it is included in the document
+    const visibleTabs = componentsAndSelectors(s).reduce((tabs, { selector, tab }) => {
+        if (tab && document.querySelector(selector)) {
+            return [ ...tabs, tab ];
+        }
+        return tabs;
+    }, [] as VisualisationTab[]);
+
+    // add appropriate store subscribers for whatever tabs are visible on the page
+    visibleTabs.forEach(async tab => {
+        if (tab === VisualisationTab.Run) {
+            await store.dispatch(`run/${RunAction.RunModel}`);
+            rerunModel(store);
+        } else if (tab === VisualisationTab.Sensitivity) {
+            await store.dispatch(`sensitivity/${SensitivityAction.RunSensitivity}`);
+            rerunSensitivity(store);
+        }
+    });
 };
