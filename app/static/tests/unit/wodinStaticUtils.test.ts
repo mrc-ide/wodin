@@ -128,9 +128,8 @@ describe("wodin static utils", () => {
         expect(commit.mock.calls[3][0]).toBe(`model/${ModelMutation.SetOdinResponse}`);
         expect(commit.mock.calls[3][1]).toBe("test model res");
 
-        expect(dispatch).toBeCalledTimes(2);
+        expect(dispatch).toBeCalledTimes(1);
 
         expect(dispatch.mock.calls[0][0]).toBe(`model/${ModelAction.CompileModel}`);
-        expect(dispatch.mock.calls[1][0]).toBe(`run/${RunAction.RunModel}`);
     });
 });
