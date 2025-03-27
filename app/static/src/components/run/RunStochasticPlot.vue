@@ -4,7 +4,7 @@
         :placeholder-message="placeholderMessage"
         :end-time="endTime"
         :plot-data="allPlotData"
-        :redrawWatches="solution ? [solution, graphCount] : []"
+        :redrawWatches="solution ? [solution, graphCount, selectedVariables] : []"
         :linked-x-axis="linkedXAxis"
         :fit-plot="false"
         :graph-index="graphIndex"
@@ -94,7 +94,8 @@ export default defineComponent({
             graphCount,
             allPlotData,
             solution,
-            updateXAxis
+            updateXAxis,
+            selectedVariables
         };
     }
 });
