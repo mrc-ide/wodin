@@ -86,7 +86,7 @@ describe("RunPlot for stochastic", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution, 1]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution, 1, selectedVariables]);
         expect(wodinPlot.props("recalculateOnRelayout")).toBe(true);
         expect(wodinPlot.props("linkedXAxis")).toStrictEqual(linkedXAxis);
         expect(wodinPlot.props("graphIndex")).toBe(0);
