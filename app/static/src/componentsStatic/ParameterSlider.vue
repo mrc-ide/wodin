@@ -3,7 +3,7 @@
   <div :id="`${name}-description`" class="description">
     {{ description }}
   </div>
-  <div class="float-end value mt-2">
+  <div :id="`${name}-value`" class="float-end value mt-2">
     {{ value }}
   </div>
   <input type="range" class="form-range" :min="min" :max="max" :step="step || (max - min) / 10000" :value="value" @input="handleChange"/>
