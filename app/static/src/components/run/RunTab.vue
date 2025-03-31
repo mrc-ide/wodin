@@ -76,6 +76,7 @@ import RunStochasticPlot from "./RunStochasticPlot.vue";
 import { GraphsGetter } from "../../store/graphs/getters";
 import { GraphConfig } from "@/store/graphs/state";
 import { GraphsAction } from "@/store/graphs/actions";
+import { STATIC_BUILD } from "@/parseEnv";
 
 export default defineComponent({
     name: "RunTab",
@@ -153,7 +154,7 @@ export default defineComponent({
         };
 
         onMounted(() => {
-            if (props.visibleVars) {
+            if (props.visibleVars && STATIC_BUILD) {
                 const visibleVars = props.visibleVars.split(",").map(s => s.trim());
                 graphConfigs.value.forEach((_, graphIndex) => {
                     store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {

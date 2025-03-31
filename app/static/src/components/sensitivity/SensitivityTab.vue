@@ -47,6 +47,7 @@ import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import baseSensitivity from "../mixins/baseSensitivity";
 import { GraphConfig } from "@/store/graphs/state";
 import { GraphsAction } from "@/store/graphs/actions";
+import { STATIC_BUILD } from "@/parseEnv";
 
 export default defineComponent({
     name: "SensitivityTab",
@@ -107,7 +108,7 @@ export default defineComponent({
         const error = computed(() => store.state.sensitivity.result?.error);
 
         onMounted(() => {
-            if (props.visibleVars) {
+            if (props.visibleVars && STATIC_BUILD) {
                 const visibleVars = props.visibleVars.split(",").map(s => s.trim());
                 graphConfigs.value.forEach((_, graphIndex) => {
                     store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
