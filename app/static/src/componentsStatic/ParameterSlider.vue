@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <label :id="`${name}-input`" class="col-form-label">{{ name }}</label>
-  </div>
+  <label :id="`${name}-input`" class="col-form-label fw-bold pb-0">{{ name }}</label>
   <div :id="`${name}-description`">
     {{ description }}
   </div>
