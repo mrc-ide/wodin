@@ -11,8 +11,6 @@ import { storeOptions as basicStoreOptions } from "./store/basic/basic";
 import { storeOptions as fitStoreOptions } from "./store/fit/fit";
 import { storeOptions as stochasticStoreOptions } from "./store/stochastic/stochastic";
 import ParameterSlider from "./componentsStatic/ParameterSlider.vue";
-import { RunAction } from "./store/run/actions";
-import { SensitivityAction } from "./store/sensitivity/actions";
 import { registerRerunModel, registerRerunSensitivity } from "./store/plugins";
 
 const { Basic, Fit, Stochastic } = AppType;
