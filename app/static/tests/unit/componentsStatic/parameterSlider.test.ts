@@ -1,4 +1,4 @@
-import ParameterControl from "@/componentsStatic/ParameterControl.vue";
+import ParameterSlider from "@/componentsStatic/ParameterSlider.vue";
 import { BasicState } from "@/store/basic/state";
 import { shallowMount } from "@vue/test-utils";
 import { mockBasicState, mockModelState, mockRunState } from "../../mocks";
@@ -8,8 +8,8 @@ import { RunMutation } from "@/store/run/mutations";
 describe("Parameter Control", () => {
     const mockSetParameterValues = vi.fn();
 
-    type ParameterControlProps = Parameters<NonNullable<(typeof ParameterControl)["setup"]>>["0"]
-    const getWrapper = (props?: Partial<ParameterControlProps>) => {
+    type ParameterSliderProps = Parameters<NonNullable<(typeof ParameterSlider)["setup"]>>["0"]
+    const getWrapper = (props?: Partial<ParameterSliderProps>) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
             modules: {
@@ -27,13 +27,13 @@ describe("Parameter Control", () => {
             }
         });
 
-        const defaultProps: ParameterControlProps = {
+        const defaultProps: ParameterSliderProps = {
             name: "a",
             description: "test-desc",
             min: 0, max: 10, step: 100
         };
 
-        return shallowMount(ParameterControl, {
+        return shallowMount(ParameterSlider, {
             global: { plugins: [store] },
             props: { ...defaultProps, ...props }
         });
