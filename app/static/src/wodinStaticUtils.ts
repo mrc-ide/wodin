@@ -10,10 +10,8 @@ import { ModelAction } from "./store/model/actions";
 import { storeOptions as basicStoreOptions } from "./store/basic/basic";
 import { storeOptions as fitStoreOptions } from "./store/fit/fit";
 import { storeOptions as stochasticStoreOptions } from "./store/stochastic/stochastic";
-import ParameterControl from "./componentsStatic/ParameterControl.vue";
-import { RunAction } from "./store/run/actions";
-import { SensitivityAction } from "./store/sensitivity/actions";
-import { rerunModel, rerunSensitivity } from "./store/plugins";
+import ParameterSlider from "./componentsStatic/ParameterSlider.vue";
+import { registerRerunModel, registerRerunSensitivity } from "./store/plugins";
 
 const { Basic, Fit, Stochastic } = AppType;
 export const getStoreOptions = (appType: AppType) => {
@@ -32,7 +30,7 @@ export const getStoreOptions = (appType: AppType) => {
 export const componentsAndSelectors = (s: string) => ([
     { selector: `.w-run-graph[data-w-store="${s}"]`, component: RunTab, tab: VisualisationTab.Run },
     { selector: `.w-sens-graph[data-w-store="${s}"]`, component: SensitivityTab, tab: VisualisationTab.Sensitivity },
-    { selector: `.w-par[data-w-store="${s}"]`, component: ParameterControl }
+    { selector: `.w-par[data-w-store="${s}"]`, component: ParameterSlider }
 ]);
 
 export const waitForBlockingScripts = async (blockingScripts: string[]) => {
@@ -135,9 +133,9 @@ export const initialiseStore = async (
     await store.dispatch(`model/${ModelAction.CompileModel}`)
 };
 
-export const registerRedrawGraphPlugins = (s: string, store: Store<AppState>) => {
+export const registerRedrawGraphPlugins = (storeName: string, store: Store<AppState>) => {
     // add tab to visible tab if it is included in the document
-    const visibleTabs = componentsAndSelectors(s).reduce((tabs, { selector, tab }) => {
+    const visibleTabs = componentsAndSelectors(storeName).reduce((tabs, { selector, tab }) => {
         if (tab && document.querySelector(selector)) {
             return [ ...tabs, tab ];
         }
@@ -147,11 +145,9 @@ export const registerRedrawGraphPlugins = (s: string, store: Store<AppState>) =>
     // add appropriate store subscribers for whatever tabs are visible on the page
     visibleTabs.forEach(async tab => {
         if (tab === VisualisationTab.Run) {
-            await store.dispatch(`run/${RunAction.RunModel}`);
-            rerunModel(store);
+            registerRerunModel(store);
         } else if (tab === VisualisationTab.Sensitivity) {
-            await store.dispatch(`sensitivity/${SensitivityAction.RunSensitivity}`);
-            rerunSensitivity(store);
+            registerRerunSensitivity(store);
         }
     });
 };
