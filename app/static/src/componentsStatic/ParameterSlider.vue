@@ -19,7 +19,7 @@ const store = useStore<AppState>();
 
 const props = defineProps({
   name: { type: String, required: true },
-  description: { type: String, required: true },
+  description: { type: String, required: false },
   min: { type: Number, required: true },
   max: { type: Number, required: true },
   step: { type: Number }
