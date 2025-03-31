@@ -52,11 +52,11 @@ const boot = async () => {
         // mount components to dom elements based on selectors
         componentsAndSelectors(s).forEach(({ component, selector }) => {
             document.querySelectorAll(selector)?.forEach(el => {
-              const props: Record<string, unknown> = {};
+              const props: Record<string, string | boolean> = {};
               for (let i = 0; i < el.attributes.length; i++) {
                 const attribute = el.attributes[i];
                 // ignore all attributes except for those matching w-*
-                if (attribute.nodeName.substring(0, 2) !== "w-") continue;
+                if (attribute.nodeName.substring(0, 2) !== "w-" || attribute.nodeValue === null) continue;
                 // if an empty attribute is present on a tag e.g.
                 // <div prop></div> then we get nodeValue of "" which
                 // would be converted to true here
