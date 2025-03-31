@@ -1,5 +1,5 @@
 import Vuex from "vuex";
-import { logMutations, persistState, rerunModel, rerunSensitivity } from "../../../src/store/plugins";
+import { logMutations, persistState, registerRerunModel, registerRerunSensitivity } from "../../../src/store/plugins";
 import { AppState } from "../../../src/store/appState/state";
 import { AppStateAction } from "../../../src/store/appState/actions";
 import { AppStateMutation } from "../../../src/store/appState/mutations";
@@ -100,7 +100,7 @@ describe("plugins", () => {
             }
         });
 
-        rerunModel(store);
+        registerRerunModel(store);
         store.commit(`run/${RunMutation.SetParameterValues}`);
         expect(mockRunModel).toHaveBeenCalled();
     });
@@ -124,7 +124,7 @@ describe("plugins", () => {
             }
         });
 
-        rerunSensitivity(store);
+        registerRerunSensitivity(store);
         store.commit(`run/${RunMutation.SetParameterValues}`);
         expect(mockRunSensitivity).toHaveBeenCalled();
     });
