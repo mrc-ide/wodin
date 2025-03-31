@@ -20,7 +20,8 @@ export const persistState = (store: Store<AppState>): void => {
     });
 };
 
-export const rerunModel = (store: Store<AppState>): void => {
+export const registerRerunModel = (store: Store<AppState>): void => {
+    store.dispatch(`run/${RunAction.RunModel}`);
     store.subscribe((mutation: MutationPayload) => {
         if (mutation.type === `run/${RunMutation.SetParameterValues}`) {
             store.dispatch(`run/${RunAction.RunModel}`);
@@ -28,7 +29,8 @@ export const rerunModel = (store: Store<AppState>): void => {
     });
 };
 
-export const rerunSensitivity = (store: Store<AppState>): void => {
+export const registerRerunSensitivity = (store: Store<AppState>): void => {
+    store.dispatch(`sensitivity/${SensitivityAction.RunSensitivity}`);
     store.subscribe((mutation: MutationPayload) => {
         if (mutation.type === `run/${RunMutation.SetParameterValues}`) {
             store.dispatch(`sensitivity/${SensitivityAction.RunSensitivity}`);

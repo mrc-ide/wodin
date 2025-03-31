@@ -5,7 +5,10 @@
   <div :id="`${name}-description`">
     {{ description }}
   </div>
-  <input type="range" class="form-range" :min="min" :max="max" :step="step || (max - min) / 10000" :value="value" @input="handleChange"/>
+  <input type="range" class="form-range"
+         :min="min" :max="max"
+         :step="step || (max - min) / 100000"
+         :value="value" @input="handleChange"/>
 </template>
 
 <script setup lang="ts">
@@ -18,7 +21,7 @@ const store = useStore<AppState>();
 
 const props = defineProps({
   name: { type: String, required: true },
-  description: { type: String, required: true },
+  description: { type: String, required: false },
   min: { type: Number, required: true },
   max: { type: Number, required: true },
   step: { type: Number }
@@ -27,9 +30,8 @@ const props = defineProps({
 const value = computed(() => store.state.run.parameterValues![props.name]);
 
 const handleChange = (e: Event) => {
-  const newVal = (e.target as HTMLInputElement).value;
-  const oldParameterValues = store.state.run.parameterValues;
-  const newParameterValues = { ...oldParameterValues, [props.name]: parseFloat(newVal) };
-  store.commit(`run/${RunMutation.SetParameterValues}`, newParameterValues);
+  const newVal = parseFloat((e.target as HTMLInputElement).value);
+  const oldParsValue = store.state.run.parameterValues;
+  store.commit(`run/${RunMutation.SetParameterValues}`, { ...oldParsValue, [props.name]: newVal });
 };
 </script>

@@ -13,7 +13,7 @@ import { ModelMutation } from "@/store/model/mutations";
 import { ModelAction } from "@/store/model/actions";
 import { nextTick } from "vue";
 
-const { mockConfigRes, mockModelRes, mockGet, mockRerunModel, mockRerunSensitivity } = vi.hoisted(() => {
+const { mockConfigRes, mockModelRes, mockGet, mockRegisterRerunModel, mockRegisterRerunSensitivity } = vi.hoisted(() => {
     const mockConfigRes = (s: string) => `config-${s}`;
     const mockModelRes = (s: string) => `model-${s}`;
     const mockGet = vi.fn().mockImplementation((url: string) => {
@@ -21,17 +21,17 @@ const { mockConfigRes, mockModelRes, mockGet, mockRerunModel, mockRerunSensitivi
         const type = url.split("/").at(-1) === "config.json" ? "config" : "model";
         return { data: `${type}-${store}` };
     });
-    const mockRerunModel = vi.fn();
-    const mockRerunSensitivity = vi.fn();
-    return { mockConfigRes, mockModelRes, mockGet, mockRerunModel, mockRerunSensitivity };
+    const mockRegisterRerunModel = vi.fn();
+    const mockRegisterRerunSensitivity = vi.fn();
+    return { mockConfigRes, mockModelRes, mockGet, mockRegisterRerunModel, mockRegisterRerunSensitivity };
 });
 vi.mock("axios", () => ({ default: { get: mockGet } }));
 vi.mock("@/store/plugins", async (importOriginal) => {
     const actual = await importOriginal() as object;
     return {
         ...actual,
-        rerunModel: mockRerunModel,
-        rerunSensitivity: mockRerunSensitivity
+        registerRerunModel: mockRegisterRerunModel,
+        registerRerunSensitivity: mockRegisterRerunSensitivity
     };
 });
 
@@ -153,7 +153,7 @@ describe("wodin static utils", () => {
         });
         registerRedrawGraphPlugins(testStoreName, mockStore);
         await nextTick();
-        expect(mockRerunModel.mock.calls[0][0]).toStrictEqual(mockStore);
+        expect(mockRegisterRerunModel.mock.calls[0][0]).toStrictEqual(mockStore);
     });
 
     it("register redraw graph plugins works for run sensitivity", async () => {
@@ -165,6 +165,6 @@ describe("wodin static utils", () => {
         });
         registerRedrawGraphPlugins(testStoreName, mockStore);
         await nextTick();
-        expect(mockRerunSensitivity.mock.calls[0][0]).toStrictEqual(mockStore);
+        expect(mockRegisterRerunSensitivity.mock.calls[0][0]).toStrictEqual(mockStore);
     });
 });
