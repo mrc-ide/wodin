@@ -1,6 +1,6 @@
 <template>
     <div class="sensitivity-tab">
-        <div>
+        <div v-if="!hideSensitivityButton">
             <loading-button
                 class="btn btn-primary"
                 id="run-sens-btn"
@@ -25,7 +25,7 @@
             <span class="ms-2">{{ sensitivityProgressMsg }}</span>
         </div>
         <error-info :error="error"></error-info>
-        <sensitivity-summary-download :multi-sensitivity="false" :download-type="'Sensitivity Summary'">
+        <sensitivity-summary-download v-if="!hideDownloadButton" :multi-sensitivity="false" :download-type="'Sensitivity Summary'">
         </sensitivity-summary-download>
     </div>
 </template>
@@ -56,6 +56,10 @@ export default defineComponent({
         SensitivityTracesPlot,
         LoadingButton,
         SensitivitySummaryDownload
+    },
+    props: {
+        hideSensitivityButton: { type: Boolean, default: false },
+        hideDownloadButton: { type: Boolean, default: false }
     },
     setup() {
         const store = useStore();

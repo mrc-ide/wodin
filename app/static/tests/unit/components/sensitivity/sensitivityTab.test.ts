@@ -24,13 +24,17 @@ describe("SensitivityTab", () => {
     const mockSetLoading = vi.fn();
     const mockSetPlotTime = vi.fn();
 
+    type Props = { hideSensitivityButton: boolean, hideDownloadButton: boolean }
+    const defaultProps = { hideSensitivityButton: false, hideDownloadButton: false };
+
     const getWrapper = (
         appType = AppType.Basic,
         modelState: Partial<ModelState> = {},
         sensitivityState: Partial<SensitivityState> = {},
         batchPars: any = {},
         hasRunner = true,
-        selectedVariables = ["S"]
+        selectedVariables = ["S"],
+        props: Props = defaultProps
     ) => {
         const store = new Vuex.Store<AppState>({
             state: {
@@ -117,7 +121,7 @@ describe("SensitivityTab", () => {
                     "loading-spinner",
                     "error-info"
                 ]
-            }
+            }, props
         });
     };
 
@@ -140,6 +144,22 @@ describe("SensitivityTab", () => {
         expect(wrapper.findComponent(ErrorInfo).props("error")).toBe(null);
         expect(wrapper.find("#sensitivity-running").exists()).toBe(false);
         expect(wrapper.findComponent(SensitivitySummaryPlot).exists()).toBe(false);
+    });
+
+    it("hides sensitivity button when prop passed in", () => {
+        const wrapper = getWrapper(
+            AppType.Basic, {}, {}, {}, true, ["S"],
+            { hideSensitivityButton: true, hideDownloadButton: false }
+        );
+        expect(wrapper.find("#run-sens-btn").exists()).toBe(false);
+    });
+
+    it("hides download button when prop passed in", () => {
+        const wrapper = getWrapper(
+            AppType.Basic, {}, {}, {}, true, ["S"],
+            { hideSensitivityButton: false, hideDownloadButton: true }
+        );
+        expect(wrapper.findComponent(SensitivitySummaryDownload).exists()).toBe(false);
     });
 
     it("enables sensitivity when app is stochastic and runner is available", () => {
