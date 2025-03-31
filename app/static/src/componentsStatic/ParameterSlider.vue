@@ -1,7 +1,10 @@
 <template>
-  <label :id="`${name}-input`" class="col-form-label fw-bold pb-0">{{ name }}</label>
-  <div :id="`${name}-description`">
+  <label :id="`${name}-input`" class="col-form-label fw-bold pb-0 label">{{ name }}</label>
+  <div :id="`${name}-description`" class="description">
     {{ description }}
+  </div>
+  <div class="float-end value mt-2">
+    {{ value }}
   </div>
   <input type="range" class="form-range" :min="min" :max="max" :step="step || (max - min) / 10000" :value="value" @input="handleChange"/>
 </template>
@@ -33,3 +36,19 @@ const handleChange = (e: Event) => {
   store.dispatch(`run/${RunAction.RunModel}`);
 };
 </script>
+
+<style lang="css" scoped>
+.value {
+  font-size: 0.8rem;
+  color: grey;
+}
+
+.description {
+  font-size: 0.85rem;
+  color: rgb(82, 82, 82);
+}
+
+.label {
+  font-size: 0.9rem;
+}
+</style>
