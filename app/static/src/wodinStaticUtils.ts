@@ -1,17 +1,17 @@
 import axios from "axios";
 import RunTab from "./components/run/RunTab.vue";
 import SensitivityTab from "./components/sensitivity/SensitivityTab.vue";
-import { AppState, AppType } from "./store/appState/state";
+import { AppState, AppType, VisualisationTab } from "./store/appState/state";
 import { AppConfig, OdinModelResponse, OdinRunnerDiscrete, OdinRunnerOde } from "./types/responseTypes";
 import { Store, StoreOptions } from "vuex";
 import { AppStateMutation } from "./store/appState/mutations";
 import { ModelMutation } from "./store/model/mutations";
 import { ModelAction } from "./store/model/actions";
-import { RunAction } from "./store/run/actions";
 import { storeOptions as basicStoreOptions } from "./store/basic/basic";
 import { storeOptions as fitStoreOptions } from "./store/fit/fit";
 import { storeOptions as stochasticStoreOptions } from "./store/stochastic/stochastic";
 import ParameterSlider from "./componentsStatic/ParameterSlider.vue";
+import { registerRerunModel, registerRerunSensitivity } from "./store/plugins";
 
 const { Basic, Fit, Stochastic } = AppType;
 export const getStoreOptions = (appType: AppType) => {
@@ -28,8 +28,8 @@ export const getStoreOptions = (appType: AppType) => {
 };
 
 export const componentsAndSelectors = (s: string) => ([
-    { selector: `.w-run-graph[data-w-store="${s}"]`, component: RunTab },
-    { selector: `.w-sens-graph[data-w-store="${s}"]`, component: SensitivityTab },
+    { selector: `.w-run-graph[data-w-store="${s}"]`, component: RunTab, tab: VisualisationTab.Run },
+    { selector: `.w-sens-graph[data-w-store="${s}"]`, component: SensitivityTab, tab: VisualisationTab.Sensitivity },
     { selector: `.w-par[data-w-store="${s}"]`, component: ParameterSlider }
 ]);
 
@@ -131,5 +131,23 @@ export const initialiseStore = async (
     store.commit(`model/${ModelMutation.SetOdinRunnerDiscrete}`, dust);
     store.commit(`model/${ModelMutation.SetOdinResponse}`, modelResponse);
     await store.dispatch(`model/${ModelAction.CompileModel}`)
-    await store.dispatch(`run/${RunAction.RunModel}`)
+};
+
+export const registerRedrawGraphPlugins = (storeName: string, store: Store<AppState>) => {
+    // add tab to visible tab if it is included in the document
+    const visibleTabs = componentsAndSelectors(storeName).reduce((tabs, { selector, tab }) => {
+        if (tab && document.querySelector(selector)) {
+            return [ ...tabs, tab ];
+        }
+        return tabs;
+    }, [] as VisualisationTab[]);
+
+    // add appropriate store subscribers for whatever tabs are visible on the page
+    visibleTabs.forEach(async tab => {
+        if (tab === VisualisationTab.Run) {
+            registerRerunModel(store);
+        } else if (tab === VisualisationTab.Sensitivity) {
+            registerRerunSensitivity(store);
+        }
+    });
 };
