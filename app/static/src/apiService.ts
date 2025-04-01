@@ -5,6 +5,7 @@ import { WodinError, ResponseSuccess, ResponseFailure } from "./types/responseTy
 import { AppCtx } from "./types/utilTypes";
 import { ErrorsMutation } from "./store/errors/mutations";
 import { AppState } from "./store/appState/state";
+import { STATIC_BUILD } from "./parseEnv";
 
 export interface ResponseWithType<T> extends ResponseSuccess {
     data: T;
@@ -175,6 +176,7 @@ export class APIService<S extends string, E extends string, State> implements AP
     }
 
     async get<T>(url: string): Promise<void | ResponseWithType<T>> {
+        if (STATIC_BUILD) return;
         this._verifyHandlers(url);
         const fullUrl = this._fullUrl(url);
 
@@ -182,6 +184,7 @@ export class APIService<S extends string, E extends string, State> implements AP
     }
 
     async post<T>(url: string, body: unknown, contentType = "application/json"): Promise<void | ResponseWithType<T>> {
+        if (STATIC_BUILD) return;
         this._verifyHandlers(url);
         const headers = { "Content-Type": contentType };
         const fullUrl = this._fullUrl(url);

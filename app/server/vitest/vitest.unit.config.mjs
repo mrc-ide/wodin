@@ -9,7 +9,7 @@ export default mergeConfig(
       coverage: {
         provider: "istanbul",
         include: ["src"],
-        exclude: ["**/tests/**", "src/server/server.ts"]
+        exclude: ["**/tests/**", "src/server/server.ts", "src/static-site-builder/wodinBuilder.ts"]
       }
     }
   })

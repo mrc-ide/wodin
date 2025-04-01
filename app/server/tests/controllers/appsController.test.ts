@@ -57,8 +57,6 @@ describe("appsController", () => {
         status: mockStatus
     } as any;
 
-    const mathjaxSrc = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
-
     beforeEach(() => {
         sessionIdFromFriendlyId = "123456";
     });
@@ -85,7 +83,6 @@ describe("appsController", () => {
             wodinVersion: "1.2.3",
             loadSessionId: "1234",
             shareNotFound: "",
-            mathjaxSrc,
             defaultLanguage: "en",
             enableI18n: false,
             hotReload: undefined
@@ -108,7 +105,6 @@ describe("appsController", () => {
             wodinVersion: "1.2.3",
             loadSessionId: "",
             shareNotFound: "",
-            mathjaxSrc,
             defaultLanguage: "en",
             enableI18n: false,
             hotReload: undefined
@@ -135,7 +131,6 @@ describe("appsController", () => {
             wodinVersion: "1.2.3",
             loadSessionId: "123456",
             shareNotFound: "",
-            mathjaxSrc,
             defaultLanguage: "en",
             enableI18n: false,
             hotReload: undefined
@@ -160,7 +155,6 @@ describe("appsController", () => {
             wodinVersion: "1.2.3",
             loadSessionId: "",
             shareNotFound: "tiny-mouse",
-            mathjaxSrc,
             defaultLanguage: "en",
             enableI18n: false,
             hotReload: undefined
