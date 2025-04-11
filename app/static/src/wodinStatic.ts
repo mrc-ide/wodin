@@ -48,7 +48,14 @@ const boot = async () => {
         // mount components to dom elements based on selectors
         componentsAndSelectors(s).forEach(({ component, selector }) => {
             document.querySelectorAll(selector)?.forEach(el => {
-              const applet = createApp(component);
+              const props: Record<string, string> = {};
+              for (let i = 0; i < el.attributes.length; i++) {
+                const attribute = el.attributes[i];
+                // ignore all attributes except for those matching w-*
+                if (attribute.nodeName.substring(0, 2) !== "w-" || !attribute.nodeValue) continue;
+                props[attribute.nodeName.slice(2)] = attribute.nodeValue;
+              }
+              const applet = createApp(component, props);
               applet.use(store);
               applet.mount(el)
             });
