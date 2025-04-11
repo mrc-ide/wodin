@@ -16,15 +16,19 @@ import { SensitivityMutation } from "../../../../src/store/sensitivity/mutations
 import SensitivitySummaryDownload from "../../../../src/components/sensitivity/SensitivitySummaryDownload.vue";
 import LoadingButton from "../../../../src/components/LoadingButton.vue";
 import { getters as graphsGetters } from "../../../../src/store/graphs/getters";
+import * as Env from "@/parseEnv";
+import { GraphsAction } from "@/store/graphs/actions";
 
+vi.mock("@/parseEnv");
 vi.mock("plotly.js-basic-dist-min", () => ({}));
 
 describe("SensitivityTab", () => {
     const mockRunSensitivity = vi.fn();
     const mockSetLoading = vi.fn();
     const mockSetPlotTime = vi.fn();
+    const mockUpdateSelectedVariables = vi.fn();
 
-    type Props = { hideSensitivityButton: boolean, hideDownloadButton: boolean }
+    type Props = { hideSensitivityButton: boolean, hideDownloadButton: boolean, visibleVars?: string }
     const defaultProps = { hideSensitivityButton: false, hideDownloadButton: false };
 
     const getWrapper = (
@@ -53,7 +57,10 @@ describe("SensitivityTab", () => {
                             }
                         ]
                     },
-                    getters: graphsGetters
+                    getters: graphsGetters,
+                    actions: {
+                        [GraphsAction.UpdateSelectedVariables]: mockUpdateSelectedVariables
+                    }
                 },
                 model: {
                     namespaced: true,
@@ -340,5 +347,19 @@ describe("SensitivityTab", () => {
         await new Promise((r) => setTimeout(r, 101));
         expect(mockRunSensitivity).toHaveBeenCalledTimes(1);
         expect(mockSetLoading).toHaveBeenCalledTimes(1);
+    });
+
+    it("correctly filters traces based on visible vars", () => {
+        vi.mocked(Env).STATIC_BUILD = true;
+        getWrapper(AppType.Basic, {}, {}, {}, true, ["S"], { ...defaultProps, visibleVars: "I, T" });
+        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({
+            graphIndex: 0,
+            selectedVariables: ["I", "T"]
+        });
+        expect(mockUpdateSelectedVariables.mock.calls[1][1]).toStrictEqual({
+            graphIndex: 1,
+            selectedVariables: ["I", "T"]
+        });
+        vi.mocked(Env).STATIC_BUILD = false;
     });
 });

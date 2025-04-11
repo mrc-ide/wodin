@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, PropType, onMounted } from "vue";
 import { useStore } from "vuex";
 import SensitivitySummaryDownload from "@/components/sensitivity/SensitivitySummaryDownload.vue";
 import SensitivityTracesPlot from "./SensitivityTracesPlot.vue";
@@ -45,6 +45,9 @@ import LoadingSpinner from "../LoadingSpinner.vue";
 import LoadingButton from "../LoadingButton.vue";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import baseSensitivity from "../mixins/baseSensitivity";
+import { GraphConfig } from "@/store/graphs/state";
+import { GraphsAction } from "@/store/graphs/actions";
+import { STATIC_BUILD } from "@/parseEnv";
 
 export default defineComponent({
     name: "SensitivityTab",
@@ -59,9 +62,10 @@ export default defineComponent({
     },
     props: {
         hideSensitivityButton: { type: Boolean, default: false },
-        hideDownloadButton: { type: Boolean, default: false }
+        hideDownloadButton: { type: Boolean, default: false },
+        visibleVars: { type: String as PropType<string | null>, default: null }
     },
-    setup() {
+    setup(props) {
         const store = useStore();
         const { sensitivityPrerequisitesReady, updateMsg } = baseSensitivity(store, false);
         const namespace = "sensitivity";
@@ -76,7 +80,7 @@ export default defineComponent({
             );
         });
 
-        const graphConfigs = computed(() => store.state.graphs.config);
+        const graphConfigs = computed(() => store.state.graphs.config as GraphConfig[]);
 
         const runSensitivity = () => {
             store.commit(`${namespace}/${SensitivityMutation.SetLoading}`, true);
@@ -102,6 +106,18 @@ export default defineComponent({
         );
 
         const error = computed(() => store.state.sensitivity.result?.error);
+
+        onMounted(() => {
+            if (props.visibleVars && STATIC_BUILD) {
+                const visibleVars = props.visibleVars.split(",").map(s => s.trim());
+                graphConfigs.value.forEach((_, graphIndex) => {
+                    store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
+                        graphIndex,
+                        selectedVariables: visibleVars
+                    });
+                });
+            }
+        });
 
         return {
             graphConfigs,

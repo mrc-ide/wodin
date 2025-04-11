@@ -57,7 +57,7 @@
 
 <script lang="ts">
 import { useStore } from "vuex";
-import { computed, defineComponent, Ref, ref } from "vue";
+import { computed, defineComponent, onMounted, PropType, Ref, ref } from "vue";
 import VueFeather from "vue-feather";
 import { LayoutAxis } from "plotly.js-basic-dist-min";
 import { RunMutation } from "../../store/run/mutations";
@@ -74,6 +74,9 @@ import { AppType } from "../../store/appState/state";
 import { ModelGetter } from "../../store/model/getters";
 import RunStochasticPlot from "./RunStochasticPlot.vue";
 import { GraphsGetter } from "../../store/graphs/getters";
+import { GraphConfig } from "@/store/graphs/state";
+import { GraphsAction } from "@/store/graphs/actions";
+import { STATIC_BUILD } from "@/parseEnv";
 
 export default defineComponent({
     name: "RunTab",
@@ -88,9 +91,10 @@ export default defineComponent({
     },
     props: {
         hideRunButton: { type: Boolean, default: false },
-        hideDownloadButton: { type: Boolean, default: false }
+        hideDownloadButton: { type: Boolean, default: false },
+        visibleVars: { type: String as PropType<string | null>, default: null }
     },
-    setup() {
+    setup(props) {
         const store = useStore();
 
         const showDownloadOutput = ref(false);
@@ -107,7 +111,7 @@ export default defineComponent({
 
         const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
         const allSelectedVariables = computed(() => store.getters[`graphs/${GraphsGetter.allSelectedVariables}`]);
-        const graphConfigs = computed(() => store.state.graphs.config);
+        const graphConfigs = computed(() => store.state.graphs.config as GraphConfig[]);
 
         // Enable run button if model has initialised and compile is not required
         const canRunModel = computed(() => {
@@ -148,6 +152,18 @@ export default defineComponent({
         const updateXAxis = (newAxis: Partial<LayoutAxis>) => {
             xAxis.value = newAxis;
         };
+
+        onMounted(() => {
+            if (props.visibleVars && STATIC_BUILD) {
+                const visibleVars = props.visibleVars.split(",").map(s => s.trim());
+                graphConfigs.value.forEach((_, graphIndex) => {
+                    store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
+                        graphIndex,
+                        selectedVariables: visibleVars
+                    });
+                });
+            }
+        });
 
         return {
             canRunModel,
