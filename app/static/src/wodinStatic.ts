@@ -1,5 +1,5 @@
 import { createApp } from "vue";
-import { getStoreOptions } from "./wodinStaticUtils";
+import { getStoreOptions, registerRedrawGraphPlugins } from "./wodinStaticUtils";
 import { Store, StoreOptions } from "vuex";
 import "./scss/style.scss"
 import { AppState } from "./store/appState/state";
@@ -44,6 +44,10 @@ const boot = async () => {
         // manually initialise store because this is the responsibility of apps like
         // WodinSession which aren't used in the static build
         await initialiseStore(store, config, modelResponse);
+
+        // we want the graph to update automatically when users of static wodin
+        // change parameter values
+        registerRedrawGraphPlugins(s, store);
 
         // mount components to dom elements based on selectors
         componentsAndSelectors(s).forEach(({ component, selector }) => {
