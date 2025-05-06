@@ -45,6 +45,8 @@ describe("Parameter Control", () => {
         expect(label.text()).toBe("a");
         const description = wrapper.find("#a-description");
         expect(description.text()).toBe("test-desc");
+        const value = wrapper.find("#a-value");
+        expect(value.text()).toBe("1");
         const input = wrapper.find("input");
         expect(input.element.classList[0]).toBe("form-range");
         expect(input.element.value).toBe("1");
