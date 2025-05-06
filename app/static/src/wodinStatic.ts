@@ -28,13 +28,14 @@ const boot = async () => {
     await waitForBlockingScripts(blockingScripts);
 
     // find all stores the user has put in the page
-    const storesInPage = getStoresInPage();
+    const { storesInPage, storeTypesInPage } = getStoresInPage();
 
     // get relevant store configs and model code
-    const configAndModelObj = await getConfigAndModelForStores(storesInPage);
+    const configAndModelObj = await getConfigAndModelForStores(storeTypesInPage);
 
     storesInPage.forEach(async s => {
-        const { config, modelResponse } = configAndModelObj[s];
+        const storeType = s.split("-")[0];
+        const { config, modelResponse } = configAndModelObj[storeType];
         const originalStoreOptions = getStoreOptions(config.appType) as StoreOptions<AppState>;
 
         // recursively deep copy state because without this we would have multiple
