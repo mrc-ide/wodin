@@ -30,11 +30,11 @@ const store = useStore<AppState>();
 
 const props = defineProps({
   par: { type: String, required: true },
-  title: { type: String },
-  desc: { type: String },
+  title: { type: String, required: false },
+  desc: { type: String, required: false },
   min: { type: Number, required: true },
   max: { type: Number, required: true },
-  step: { type: Number }
+  step: { type: Number, required: false }
 });
 
 const value = computed(() => store.state.run.parameterValues![props.par]);

@@ -8,7 +8,7 @@ import { RunMutation } from "@/store/run/mutations";
 describe("Parameter Control", () => {
     const mockSetParameterValues = vi.fn();
 
-    type ParameterSliderProps = Parameters<NonNullable<(typeof ParameterSlider)["setup"]>>["0"]
+    type ParameterSliderProps = InstanceType<typeof ParameterSlider>["$props"]
     const getWrapper = (props?: Partial<ParameterSliderProps>) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
@@ -28,8 +28,8 @@ describe("Parameter Control", () => {
         });
 
         const defaultProps: ParameterSliderProps = {
-            name: "a",
-            description: "test-desc",
+            par: "a",
+            desc: "test-desc",
             min: 0, max: 10, step: 100
         };
 
@@ -39,17 +39,27 @@ describe("Parameter Control", () => {
         });
     };
 
-    it("renders as expected", () => {
+    it("renders as expected", async () => {
+        (window as any).MathJax = { typesetPromise: () => {} };
         const wrapper = getWrapper();
-        const label = wrapper.find("#a-input");
+        const label = wrapper.find("label");
         expect(label.text()).toBe("a");
-        const description = wrapper.find("#a-description");
+        const description = wrapper.find(".desc");
         expect(description.text()).toBe("test-desc");
-        const value = wrapper.find("#a-value");
+        const value = wrapper.find(".value");
         expect(value.text()).toBe("1");
         const input = wrapper.find("input");
         expect(input.element.classList[0]).toBe("form-range");
         expect(input.element.value).toBe("1");
+        delete (window as any).MathJax;
+    });
+
+    it("uses title as label when provided", async () => {
+        (window as any).MathJax = { typesetPromise: () => {} };
+        const wrapper = getWrapper({ title: "test-title" });
+        const label = wrapper.find("label");
+        expect(label.text()).toBe("test-title");
+        delete (window as any).MathJax;
     });
 
     it("runs model when value changes", async () => {
