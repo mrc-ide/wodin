@@ -12,6 +12,7 @@ import { AppStateMutation } from "@/store/appState/mutations";
 import { ModelMutation } from "@/store/model/mutations";
 import { ModelAction } from "@/store/model/actions";
 import { nextTick } from "vue";
+import { RunMutation } from "@/store/run/mutations";
 
 const { mockConfigRes, mockModelRes, mockGet, mockRegisterRerunModel, mockRegisterRerunSensitivity } = vi.hoisted(() => {
     const mockConfigRes = (s: string) => `config-${s}`;
@@ -72,13 +73,16 @@ describe("wodin static utils", () => {
         expect((documentBodySpy.mock.calls[0][0] as any).src).toBe("test-script");
     });
 
-    test("get stores in page returns unique list of stores", async () => {
-        const testStores = ["store1", "store1", "store2"];
+    test("get stores in page returns unique list of store types and store instances", async () => {
+        const testStores = ["type-1", "type-1", "anotherType-2"];
         vi.spyOn(document, "querySelectorAll").mockImplementation(() => {
             return testStores.map(s => ({ getAttribute: vi.fn().mockImplementation(() => s) })) as any
         });
         const storesInPage = getStoresInPage();
-        expect(storesInPage).toStrictEqual(["store1", "store2"]);
+        expect(storesInPage).toStrictEqual({
+            storeTypesInPage: ["type", "anotherType"],
+            storesInPage: ["type-1", "anotherType-2"]
+        });
     });
 
     test("can get configs and models for stores", async () => {
@@ -115,29 +119,31 @@ describe("wodin static utils", () => {
         const dispatch = vi.fn();
         await initialiseStore(
             { commit, dispatch } as any,
-            { appType: AppType.Basic, defaultCode: ["test", "code"] },
+            { appType: AppType.Basic, defaultCode: ["test", "code"], endTime: 2000 },
             "test model res" as any
         );
 
-        expect(commit).toBeCalledTimes(4);
+        expect(commit).toBeCalledTimes(5);
 
         expect(commit.mock.calls[0][0]).toBe(AppStateMutation.SetConfig);
         expect(commit.mock.calls[0][1]).toStrictEqual({
             appType: AppType.Basic,
             basicProp: "",
             defaultCode: ["test", "code"],
-            endTime: 100,
+            endTime: 2000,
             readOnlyCode: true,
             stateUploadIntervalMillis: 2_000_000,
             maxReplicatesRun: 100,
             maxReplicatesDisplay: 50
         });
-        expect(commit.mock.calls[1][0]).toBe(`model/${ModelMutation.SetOdinRunnerOde}`);
-        expect(commit.mock.calls[1][1]).toBe("test odinjs");
-        expect(commit.mock.calls[2][0]).toBe(`model/${ModelMutation.SetOdinRunnerDiscrete}`);
-        expect(commit.mock.calls[2][1]).toBe("test dust");
-        expect(commit.mock.calls[3][0]).toBe(`model/${ModelMutation.SetOdinResponse}`);
-        expect(commit.mock.calls[3][1]).toBe("test model res");
+        expect(commit.mock.calls[1][0]).toBe(`run/${RunMutation.SetEndTime}`);
+        expect(commit.mock.calls[1][1]).toBe(2000);
+        expect(commit.mock.calls[2][0]).toBe(`model/${ModelMutation.SetOdinRunnerOde}`);
+        expect(commit.mock.calls[2][1]).toBe("test odinjs");
+        expect(commit.mock.calls[3][0]).toBe(`model/${ModelMutation.SetOdinRunnerDiscrete}`);
+        expect(commit.mock.calls[3][1]).toBe("test dust");
+        expect(commit.mock.calls[4][0]).toBe(`model/${ModelMutation.SetOdinResponse}`);
+        expect(commit.mock.calls[4][1]).toBe("test model res");
 
         expect(dispatch).toBeCalledTimes(1);
 
