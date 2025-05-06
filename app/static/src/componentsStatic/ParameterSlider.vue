@@ -1,10 +1,10 @@
 <template>
   <div class="slider">
-    <div style="width: 100%;">
-      <label class="col-form-label fw-bold pb-0 label" ref="labelRef"></label>
-      <div class="desc" ref="descRef"></div>
+    <div>
+      <label class="col-form-label fw-bold pb-0 label">{{ title || par }}</label>
+      <div class="desc">{{ desc }}</div>
     </div>
-    <div style="width: 100%;">
+    <div>
       <div class="float-end value mt-2">
         {{ value }}
       </div>
@@ -23,7 +23,7 @@
 import { AppState } from '@/store/appState/state';
 import { RunAction } from '@/store/run/actions';
 import { RunMutation } from '@/store/run/mutations';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 
 const store = useStore<AppState>();
@@ -47,18 +47,10 @@ const handleChange = (e: Event) => {
   store.dispatch(`run/${RunAction.RunModel}`);
 };
 
-const labelRef = ref<HTMLLabelElement | null>(null);
-const descRef = ref<HTMLDivElement | null>(null);
-
 onMounted(async () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { MathJax } = window as any;
-  if (!labelRef.value || !descRef.value || !MathJax) return;
-
-  labelRef.value.innerHTML = props.title || props.par;
-  descRef.value.innerHTML = props.desc || "";
-
-  await MathJax.typesetPromise();
+  const mathJax = (window as any).MathJax;
+  await mathJax?.typesetPromise();
 });
 </script>
 
