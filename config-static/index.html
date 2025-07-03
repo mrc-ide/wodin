@@ -20,135 +20,98 @@
         }
 
         .par-group .w-par {
-            width: 20%;
+            width: 15rem;
+        }
+
+        h3 {
+            margin-top: 3rem;
+        }
+        body {
+            padding-inline: 20vw;
+            margin-bottom: 10vh;
         }
     </style>
 </head>
 <body>
 <div class="main">
     <div class="container mt-5 mb-10">
-        <h1 class="mb-5">Example WODIN paper</h1>
-        <span style="width: 100%;" class="d-flex justify-content-between mb-5">
-            <span style="width: 35%;">
-                <p>look model so fancy wow its so cool the colorful lines are awesome, wonder what else i can write to emulate research code, okay im bored, time to copy and paste look model so fancy wow its so cool the colorful lines are awesome, wonder what else i can write to emulate research code, okay im bored, time to copy and paste look model so fancy wow its so cool the colorful lines are awesome, wonder what else i can write to emulate research code, okay im bored, time to copy and paste</p>
-                <p>look model so fancy wow its so cool the colorful lines are awesome, wonder what else i can write to emulate research code, okay im bored, time to copy and paste look model so fancy wow its so cool the colorful lines are awesome, wonder what else i can write to emulate research code, okay im bored, time to copy and paste look model so fancy wow its so cool the colorful lines are awesome, wonder what else i can write to emulate research code, okay im bored, time to copy and paste</p>
-                <div class="w-par"
-                         w-par="beta"
-                         w-title="$\boldsymbol{\beta}$"
-                         w-desc="How infectious the disease is"
-                         w-min="1"
-                         w-max="6"
-                         data-w-store="basic-1"></div>
-            </span>
-            <div class="w-run-graph"
-                 data-w-store="basic-1"
-                 w-hide-run-button
-                 w-hide-download-button
-                 w-visible-vars="I"
-                 style="width: 65%;"></div>
-        </span>
-        <div style="width: 100%;">
-            <div class="w-run-graph"
-                 data-w-store="basic-2"
-                 w-hide-run-button
-                 w-hide-download-button></div>
-            <span class="par-group">
-                <div class="w-par"
-                     w-par="beta"
-                     w-title="$\boldsymbol{\beta}$"
-                     w-desc="How infectious the disease is"
-                     w-min="1"
-                     w-max="6"
-                     data-w-store="basic-2"></div>
-                <div class="w-par"
-                     w-par="sigma"
-                     w-title="$\boldsymbol{\sigma}$"
-                     w-desc="The recovery rate"
-                     w-min="0.1"
-                     w-max="4"
-                     data-w-store="basic-2"></div>
-                <div class="w-par"
-                     w-par="I0"
-                     w-title="$\boldsymbol{I_{0}}$"
-                     w-desc="Initial number of infected people"
-                     w-min="1"
-                     w-max="1000"
-                     w-step="1"
-                     data-w-store="basic-2"></div>
-                <div class="w-par"
-                     w-par="N"
-                     w-title="Total population ($N$)"
-                     w-desc="The total population - this doesn't change"
-                     w-min="1000"
-                     w-max="10000000"
-                     data-w-store="basic-2"></div>
-            </span>
-        </div>
-        <p>look model so fancy wow its so cool the colorful lines are awesome, wonder what else i can write to emulate research code, okay im bored, time to copy and paste look model so fancy wow its so cool the colorful lines are awesome, wonder what else i can write to emulate research code, okay im bored, time to copy and paste look model so fancy wow its so cool the colorful lines are awesome, wonder what else i can write to emulate research code, okay im bored, time to copy and paste</p>
-        <p>run this thing please</p>
-        <div class="w-sens-graph"
-             data-w-store="fit-1"
-             w-hide-sensitivity-button
+        <h1 class="mb-5">Exploring Disease Spread with the NPI Simulator</h1>
+        <p>Epidemiological models are essential tools for understanding how infectious diseases spread and how interventions influence their course. The <b>NPI (Non-Pharmaceutical Interventions) Simulator</b> is designed to allow users to interactively explore these dynamics by modifying key parameters and observing how disease transmission changes in response to different public health measures.</p>
+        <p>This page integrates <b>interactive visualizations, adjustable model components, and scenario comparisons</b> to provide an immersive experience in epidemic modeling. As you scroll, you will engage with simulations demonstrating disease progression, intervention effectiveness, and sensitivity analyses, offering deeper insight into the complexity of outbreak dynamics.</p>
+        <h3>Modeling Disease Transmission</h3>
+        <p>Infectious disease models are built upon a framework of assumptions about how individuals move through different stages of infection and how they interact with others in a population. These models aim to capture the transition of individuals between health states – such as being susceptible to infection, becoming infected (and therefore infectious to others), before either recovering or experiencing more severe outcomes, such as hospitalisation and/or death. The models represent how these individual transitions between health states contribute to the overall spread of the disease</p>
+        <p>The tool simulates how a respiratory virus spreads within an age-structured population. People start in the “susceptible” category (S), meaning they are healthy but at risk of catching the disease. If they are exposed to someone infectious, they move into the “exposed” group (E), where they carry the virus but are not yet symptomatic. From here, they either develop symptoms and move into the “symptomatic infected” group (I), or they stay without symptoms and move into the “asymptomatic” group (A). Asymptomatic individuals all eventually recover (R), but symptomatic people might be hospitalized (H), and hospitalized people can either recover (R) or die (D). The age of an individual impacts their risk of different disease outcomes as well as the impact of different NPIs. The model tracks and outputs how many people are in each disease stage over time.</p>
+        <div class="w-run-graph"
+             data-w-store="oj-1"
+             w-hide-run-button
              w-hide-download-button
-             w-visible-vars="E, I, onset"></div>
-        <span class="par-group">
+             w-visible-vars="total_deaths, daily_infections, H"></div>
+        <div class="w-par"
+             data-w-store="oj-1"
+             w-par="A0_importations_per_day"
+             w-title="Importations per day"
+             w-desc="How many people in per day"
+             w-min="1"
+             w-max="1000000"
+             w-step="1"
+             style="width: 15rem;"></div>
+
+        <h3>Key Epidemiological Parameters and Their Impact</h3>
+        <p>The course of an outbreak is dictated by fundamental epidemiological parameters, which influence transmission, disease severity, and recovery dynamics.</p>
+        <p>The <b>basic reproduction number ($R_{0}$)</b> quantifies the average number of secondary infections generated by a single infectious case in a fully susceptible population. A higher $R_{0}$ indicates faster epidemic growth, whereas an $R_{0}$ below one signals a decline in transmission.</p>
+        <div class="w-run-graph"
+             data-w-store="oj-2"
+             w-hide-run-button
+             w-hide-download-button
+             w-visible-vars="total_deaths, daily_infections, H"></div>
+        <div class="w-par"
+             data-w-store="oj-2"
+             w-par="A1_R0"
+             w-title="Basic reproduction number $R_{0}$"
+             w-desc="The average number of secondary infections caused by one infected individual in a fully susceptible population."
+             w-min="0.1"
+             w-max="7"
+             style="width: 15rem;"></div>
+
+        <p>Understanding how disease transmission evolves in a population requires more than just the reproduction number. While $R_{0}$ gives an estimate of how many individuals a single case will infect on average, the severity and burden of an outbreak are also influenced by <b>hospitalization and infection fatality rates</b>. These parameters determine how many cases require medical intervention and how many progress to severe disease, ultimately affecting the capacity of healthcare systems and mortality rates.</p>
+        <p>Hospitalization rates reflect the probability that an infected individual will develop severe disease requiring clinical care. This varies by pathogen and demographic characteristics, such as age and comorbidities. Similarly, infection fatality rates indicate the proportion of infections that result in death, helping policymakers estimate potential mortality burdens and plan healthcare responses accordingly.</p>
+
+        <div class="w-run-graph"
+             data-w-store="oj-3"
+             w-hide-run-button
+             w-hide-download-button
+             w-visible-vars="total_deaths, daily_infections, H"></div>
+        <div class="par-group">
             <div class="w-par"
-                 w-par="R_0"
-                 w-title="$\boldsymbol{R_{0}}$"
-                 w-desc="test"
-                 w-min="1"
-                 w-max="4"
-                 data-w-store="fit-1"></div>
+                 data-w-store="oj-3"
+                 w-par="A1_R0"
+                 w-title="Basic reproduction number $R_{0}$"
+                 w-desc="The average number of secondary infections caused by one infected individual in a fully susceptible population."
+                 w-min="0.1"
+                 w-max="7"></div>
             <div class="w-par"
-                 w-par="L"
-                 w-desc="test"
-                 w-min="0.01"
-                 w-max="4"
-                 data-w-store="fit-1"></div>
+                 data-w-store="oj-3"
+                 w-par="A6_IFR_age_under_18"
+                 w-title="Infection fatality rate for under 18s"
+                 w-desc="Infection fatality rate describes the likelihood of an individual dying from an infection. This is the rate for under 18s."
+                 w-min="0"
+                 w-max="0.2"></div>
             <div class="w-par"
-                 w-par="D"
-                 w-desc="test"
-                 w-min="0.01"
-                 w-max="4"
-                 w-step="0.000001"
-                 data-w-store="fit-1"></div>
-        </span>
-        <span style="width: 100%;" class="d-flex justify-content-between mt-5">
-            <div style="width: 60%;">
-                <div class="w-run-graph"
-                     data-w-store="stochastic-1"
-                     w-hide-run-button
-                     w-hide-download-button
-                     w-visible-vars="I_det, I, I (mean), S, S (mean)"></div>
-                <span class="par-group">
-                    <div class="w-par"
-                         w-par="beta"
-                         w-desc="test"
-                         w-min="1"
-                         w-max="4"
-                         data-w-store="stochastic-1"></div>
-                    <div class="w-par"
-                         w-par="nu"
-                         w-desc="test"
-                         w-min="0.01"
-                         w-max="0.75"
-                         data-w-store="stochastic-1"></div>
-                    <div class="w-par"
-                         w-par="N"
-                         w-desc="test"
-                         w-min="10"
-                         w-max="2000"
-                         w-step="1"
-                         data-w-store="stochastic-1"></div>
-                </span>
-            </div>
-            
-            <span style="width: 35%;">
-                <p>look model so fancy wow its so cool the colorful lines are awesome, wonder what else i can write to emulate research code, okay im bored, time to copy and paste look model so fancy wow its so cool the colorful lines are awesome, wonder what else i can write to emulate research code, okay im bored, time to copy and paste look model so fancy wow its so cool the colorful lines are awesome, wonder what else i can write to emulate research code, okay im bored, time to copy and paste</p>
-                <p>look model so fancy wow its so cool the colorful lines are awesome, wonder what else i can write to emulate research code, okay im bored, time to copy and paste look model so fancy wow its so cool the colorful lines are awesome, wonder what else i can write to emulate research code, okay im bored, time to copy and paste look model so fancy wow its so cool the colorful lines are awesome, wonder what else i can write to emulate research code, okay im bored, time to copy and paste</p>
-                <p>look model so fancy wow its so cool the colorful lines are awesome, wonder what else i can write to emulate research code, okay im bored, time to copy and paste look model so fancy wow its so cool the colorful lines are awesome, wonder what else i can write to emulate research code, okay im bored, time to copy and paste look model so fancy wow its so cool the colorful lines are awesome, wonder what else i can write to emulate research code, okay im bored, time to copy and paste</p>
-            </span>
-        </span>
+                 data-w-store="oj-3"
+                 w-par="A7_IFR_age_18_65"
+                 w-title="Infection fatality rate for 18-65 year olds"
+                 w-desc="Infection fatality rate describes the likelihood of an individual dying from an infection. This is the rate for 18-64 year olds."
+                 w-min="0"
+                 w-max="0.2"></div>
+            <div class="w-par"
+                 data-w-store="oj-3"
+                 w-par="A8_IFR_age_over_65"
+                 w-title="Infection fatality rate for over 65s"
+                 w-desc="Infection fatality rate describes the likelihood of an individual dying from an infection. This is the rate for over 65s."
+                 w-min="0"
+                 w-max="0.2"></div>
+        </div>
+
     </div>
 </div>
 <script type="module" src="./wodin.js"></script>
