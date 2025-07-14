@@ -17,7 +17,7 @@ import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
-import { filterSeriesSet, fitDataToPlotly, odinToPlotly, WodinPlotData } from "../../plot";
+import { filterSeriesSet, fitDataToSkadiChart, odinToSkadiChart, WodinPlotData } from "../../plot";
 import WodinPlot from "../WodinPlot.vue";
 
 export default defineComponent({

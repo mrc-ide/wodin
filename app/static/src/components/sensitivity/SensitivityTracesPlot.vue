@@ -32,10 +32,10 @@ import { PlotData } from "plotly.js-basic-dist-min";
 import { FitDataGetter } from "../../store/fitData/getters";
 import WodinPlot from "../WodinPlot.vue";
 import {
-    allFitDataToPlotly,
+    allFitDataToSkadiChart,
     filterSeriesSet,
-    odinToPlotly,
-    PlotlyOptions,
+    odinToSkadiChart,
+    // PlotlyOptions,
     updatePlotTraceName,
     WodinPlotData
 } from "../../plot";

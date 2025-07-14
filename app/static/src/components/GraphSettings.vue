@@ -12,58 +12,45 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, PropType } from "vue";
 import { useStore } from "vuex";
-import { GraphsMutation } from "../store/graphs/mutations";
+import { GraphsMutation, SetGraphSettingsPayload } from "../store/graphs/mutations";
+import { GraphConfig } from "@/store/graphs/state";
 
 export default defineComponent({
     name: "GraphSettings",
     props: {
-        graphIndex: {
-            type: Number,
-            required: false,
-            default: -1
+        graphConfig: {
+            type: Object as PropType<GraphConfig>,
+            required: true,
         },
-        // fitPlot should be true if graphIndex is not provided - in this case we update the single fit plot settings
-        fitPlot: {
-            type: Boolean,
-            required: true
-        }
     },
     setup(props) {
         const store = useStore();
-        const settings = computed(() =>
-            props.fitPlot ? store.state.graphs.fitGraphSettings : store.state.graphs.config[props.graphIndex].settings
-        );
         const logScaleYAxis = computed({
             get() {
-                return settings.value.logScaleYAxis;
+                return props.graphConfig.settings.logScaleYAxis;
             },
             set(newValue) {
-                if (props.fitPlot) {
-                    store.commit(`graphs/${GraphsMutation.SetFitLogScaleYAxis}`, newValue);
-                } else {
-                    store.commit(`graphs/${GraphsMutation.SetLogScaleYAxis}`, {
-                        graphIndex: props.graphIndex,
-                        value: newValue
-                    });
-                }
+                store.commit(`graphs/${GraphsMutation.SetGraphSettings}`, {
+                    id: props.graphConfig.id,
+                    settings: {
+                      logScaleYAxis: newValue,
+                      yAxisRange: null
+                    }
+                } as SetGraphSettingsPayload);
             }
         });
 
         const lockYAxis = computed({
             get() {
-                return settings.value.lockYAxis;
+                return props.graphConfig.settings.lockYAxis;
             },
             set(newValue) {
-                if (props.fitPlot) {
-                    store.commit(`graphs/${GraphsMutation.SetFitLockYAxis}`, newValue);
-                } else {
-                    store.commit(`graphs/${GraphsMutation.SetLockYAxis}`, {
-                        graphIndex: props.graphIndex,
-                        value: newValue
-                    });
-                }
+                store.commit(`graphs/${GraphsMutation.SetGraphSettings}`, {
+                    id: props.graphConfig.id,
+                    settings: { lockYAxis: newValue }
+                } as SetGraphSettingsPayload);
             }
         });
 

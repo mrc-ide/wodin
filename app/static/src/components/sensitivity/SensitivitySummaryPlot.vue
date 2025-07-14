@@ -13,7 +13,7 @@
 import { computed, defineComponent, onMounted, onUnmounted, PropType, ref, watch } from "vue";
 import { AxisType, newPlot, Plots } from "plotly.js-basic-dist-min";
 import { useStore } from "vuex";
-import { config, fadePlotStyle, filterUserTypeSeriesSet, margin, odinToPlotly, updatePlotTraceName } from "../../plot";
+import { fadePlotStyle, filterUserTypeSeriesSet, odinToSkadiChart, updatePlotTraceName } from "../../plot";
 import { SensitivityPlotExtremePrefix, SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { Batch, OdinUserTypeSeriesSet } from "../../types/responseTypes";

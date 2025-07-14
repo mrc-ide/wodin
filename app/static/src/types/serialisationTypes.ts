@@ -11,7 +11,7 @@ import { VisualisationTab } from "../store/appState/state";
 import { CodeState } from "../store/code/state";
 import { FitDataState } from "../store/fitData/state";
 import { Palette } from "../palette";
-import { GraphSettings } from "../store/graphs/state";
+import { GraphConfig, GraphSettings } from "../store/graphs/state";
 import { Dict } from "./utilTypes";
 
 export interface SerialisedRunResult {
@@ -73,13 +73,14 @@ export interface SerialisedModelFitState {
     error: null | WodinError;
 }
 
+type SerialisedGraphConfig = {
+    selectedVariables: string[];
+    unselectedVariables: string[];
+    settings: GraphSettings;
+};
 export interface SerialisedGraphsState {
-    config: {
-        selectedVariables: string[];
-        unselectedVariables: string[];
-        settings: GraphSettings;
-    }[];
-    fitGraphSettings: GraphSettings;
+    config: SerialisedGraphConfig[];
+    fitGraphConfig: SerialisedGraphConfig;
 }
 
 export interface SerialisedAppState {

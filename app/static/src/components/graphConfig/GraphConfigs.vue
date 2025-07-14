@@ -1,20 +1,22 @@
 <template>
-    <div id="graph-configs-instruction" class="ms-2">
+    <div v-if="!fitTabIsOpen" id="graph-configs-instruction" class="ms-2">
         Drag variables to 'Hidden variables' to remove them from your graph, or click 'Add Graph' to create a new graph
         to move them to.
     </div>
     <graph-config
-        v-for="(_, index) in graphConfigs"
-        :graph-index="index"
-        :key="index"
+        v-for="config in graphConfigs"
+        :graph-config="config"
+        :key="config.id"
         :dragging="draggingVariable"
         @setDragging="setDraggingVariable"
     ></graph-config>
-    <button class="btn btn-primary mt-2 ms-2" id="add-graph-btn" @click="addGraph">
-        <vue-feather size="20" class="inline-icon" type="plus"></vue-feather>
-        Add Graph
-    </button>
-    <hidden-variables @setDragging="setDraggingVariable" :dragging="draggingVariable"></hidden-variables>
+    <template v-if="!fitTabIsOpen">
+        <button class="btn btn-primary mt-2 ms-2" id="add-graph-btn" @click="addGraph">
+            <vue-feather size="20" class="inline-icon" type="plus"></vue-feather>
+            Add Graph
+        </button>
+        <hidden-variables @setDragging="setDraggingVariable" :dragging="draggingVariable"></hidden-variables>
+    </template>
 </template>
 
 <script lang="ts">
@@ -24,6 +26,7 @@ import VueFeather from "vue-feather";
 import HiddenVariables from "./HiddenVariables.vue";
 import GraphConfig from "./GraphConfig.vue";
 import { GraphsAction } from "../../store/graphs/actions";
+import { VisualisationTab } from "@/store/appState/state";
 
 export default defineComponent({
     components: {
@@ -33,6 +36,7 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
+        const fitTabIsOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Fit);
         const draggingVariable = ref(false); // indicates whether a child component is dragging a variable
         const setDraggingVariable = (value: boolean) => {
             draggingVariable.value = value;
@@ -45,7 +49,8 @@ export default defineComponent({
             draggingVariable,
             setDraggingVariable,
             graphConfigs,
-            addGraph
+            addGraph,
+            fitTabIsOpen
         };
     }
 });

@@ -19,7 +19,7 @@
 import { computed, defineComponent, PropType } from "vue";
 import { useStore } from "vuex";
 import { LayoutAxis } from "plotly.js-basic-dist-min";
-import { WodinPlotData, discreteSeriesSetToPlotly, filterSeriesSet } from "../../plot";
+import { WodinPlotData, discreteSeriesSetToSkadiChart, filterSeriesSet } from "../../plot";
 import WodinPlot from "../WodinPlot.vue";
 import { runPlaceholderMessage } from "../../utils";
 import { StochasticConfig } from "../../types/responseTypes";
