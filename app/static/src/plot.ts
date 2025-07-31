@@ -3,7 +3,7 @@ import { Palette, paletteData } from "./palette";
 import type { AllFitData, FitData, FitDataLink } from "./store/fitData/state";
 import { DiscreteSeriesSet, OdinSeriesSet, OdinSeriesSetValues, OdinUserTypeSeriesSet } from "./types/responseTypes";
 import { Dict } from "./types/utilTypes";
-import { Lines, ScatterPoints } from "skadi-chart";
+import { Lines, ScatterPoints, LineStyle, Point } from "skadi-chart";
 
 export type Metadata = {
   name: string,
@@ -34,9 +34,9 @@ function filterData(data: FitData, timeVariable: string, start: number, end: num
   return data.filter((row: Dict<number>) => row[timeVariable] >= start && row[timeVariable] <= end);
 }
 
-type SkadiChartStyle = Lines[number]["style"];
-type SkadiChartStyleNoColor = Omit<Lines[number]["style"], "color">;
-type SkadiChartPoints = Lines[number]["points"];
+type SkadiChartStyle = LineStyle;
+type SkadiChartStyleNoColor = Omit<LineStyle, "color">;
+type SkadiChartPoints = Point[];
 
 const defaultSkadiChartStyle: SkadiChartStyleNoColor = {
   strokeWidth: 2
@@ -53,10 +53,7 @@ export function odinToSkadiChart(
   };
 
   return s.values.map(el => {
-    const points: SkadiChartPoints = [];
-    for (let i = 0; i < s.x.length; i++) {
-      points.push({ x: s.x[i], y: el.y[i] });
-    }
+    const points: SkadiChartPoints = s.x.map((x, i) => ({ x, y: el.y[i] }));
     const style: SkadiChartStyle = {
       color: palette[el.name],
       strokeWidth: skadiChartStyle.strokeWidth,
@@ -164,6 +161,8 @@ export function allFitDataToSkadiChart(
   });
 }
 
+// these are in the form of stroke-dasharray css property
+// https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/stroke-dasharray#example
 const lineStyles = ["3", "10", "15", "8 3 3 3", "15 4 3 4"];
 export const paramSetLineStyle = (index: number): string => lineStyles[index % lineStyles.length];
 

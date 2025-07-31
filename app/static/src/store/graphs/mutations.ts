@@ -2,8 +2,8 @@ import { MutationTree } from "vuex";
 import { GraphsState, GraphConfig, fitGraphId } from "./state";
 
 export enum GraphsMutation {
-    SetGraphSettings = "SetGraphSettings",
-    SetAllGraphSettings = "SetAllGraphSettings",
+    SetGraphConfig = "SetGraphConfig",
+    SetAllGraphConfigs = "SetAllGraphConfigs",
     AddGraph = "AddGraph",
     DeleteGraph = "DeleteGraph",
 }
@@ -14,14 +14,13 @@ export interface SetSelectedVariablesPayload {
     unselectedVariables: string[];
 }
 
-export type SetGraphSettingsPayload = {
-    id: string
-} & {
+export type SetGraphConfigPayload = {
+    id: string,
     settings?: Partial<GraphConfig["settings"]>
 } & Partial<GraphConfig>;
 
 export const mutations: MutationTree<GraphsState> = {
-    [GraphsMutation.SetGraphSettings](state: GraphsState, payload: SetGraphSettingsPayload) {
+    [GraphsMutation.SetGraphConfig](state: GraphsState, payload: SetGraphConfigPayload) {
         if (payload.id === fitGraphId) {
             const oldGraphConfig = state.fitGraphConfig;
             state.fitGraphConfig = {
@@ -47,12 +46,12 @@ export const mutations: MutationTree<GraphsState> = {
         }
     },
 
-    [GraphsMutation.SetAllGraphSettings](state: GraphsState, payload: GraphConfig[]) {
+    [GraphsMutation.SetAllGraphConfigs](state: GraphsState, payload: GraphConfig[]) {
         state.config = payload;
     },
 
     [GraphsMutation.AddGraph](state: GraphsState, payload: GraphConfig) {
-        state.config = [...state.config, payload];
+        state.config.push(payload);
     },
 
     [GraphsMutation.DeleteGraph](state: GraphsState, payload: string) {

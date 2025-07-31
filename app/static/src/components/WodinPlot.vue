@@ -14,7 +14,7 @@ import { computed, defineComponent, ref, watch, onMounted, PropType } from "vue"
 import { useStore } from "vuex";
 import { Metadata, WodinPlotData, fadePlotStyle } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
-import { GraphsMutation, SetGraphSettingsPayload } from "../store/graphs/mutations";
+import { GraphsMutation, SetGraphConfigPayload } from "../store/graphs/mutations";
 import { fitGraphId, GraphConfig } from "../store/graphs/state";
 import { Chart, ZoomExtents } from "skadi-chart";
 import { AppState } from "@/store/appState/state";
@@ -75,26 +75,26 @@ export default defineComponent({
             };
 
             if (props.graphConfig.id === fitGraphId) {
-              store.commit(`graphs/${GraphsMutation.SetGraphSettings}`, {
+              store.commit(`graphs/${GraphsMutation.SetGraphConfig}`, {
                 id: fitGraphId,
                 settings: { ...newXYRanges }
-              } as SetGraphSettingsPayload);
+              } as SetGraphConfigPayload);
             } else {
               const allGraphConfigs = store.state.graphs.config;
-              allGraphConfigs.forEach(cfg => {
-                if (cfg.id === props.graphConfig.id) {
-                  cfg.settings = {
-                    ...cfg.settings,
-                    ...newXYRanges
-                  };
-                } else {
-                  cfg.settings = {
-                    ...cfg.settings,
-                    xAxisRange: newXYRanges.xAxisRange
-                  };
+              const allUpdatedConfigs = allGraphConfigs.map(cfg => ({
+                ...cfg,
+                settings: {
+                  ...cfg.settings,
+                  xAxisRange: newXYRanges.xAxisRange,
+                  yAxisRange: cfg.id === props.graphConfig.id
+                    ? newXYRanges.yAxisRange
+                    : cfg.settings.yAxisRange
                 }
-              });
-              store.commit(`graphs/${GraphsMutation.SetAllGraphSettings}`, JSON.parse(JSON.stringify(allGraphConfigs)));
+              }));
+              store.commit(
+                `graphs/${GraphsMutation.SetAllGraphConfigs}`,
+                JSON.parse(JSON.stringify(allUpdatedConfigs))
+              );
             }
         };
 
@@ -119,6 +119,9 @@ export default defineComponent({
               y: yRange
             };
 
+            console.log(data.lines);
+            console.log(data.points);
+            if (!data.lines.length && !data.points.length) return;
             skadiChart.value = new Chart<Metadata>({ logScale: { y: settings.logScaleYAxis } })
               .addAxes({ x: xAxisTitle })
               .addGridLines()

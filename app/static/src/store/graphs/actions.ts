@@ -1,5 +1,5 @@
 import { ActionTree } from "vuex";
-import { GraphsMutation } from "./mutations";
+import { GraphsMutation, SetGraphConfigPayload } from "./mutations";
 import { AppState, AppType } from "../appState/state";
 import { FitDataAction } from "../fitData/actions";
 import { defaultGraphSettings, GraphsState } from "./state";
@@ -24,11 +24,12 @@ export const actions: ActionTree<GraphsState, AppState> = {
             allVariables.indexOf(a) > allVariables.indexOf(b) ? 1 : -1
         );
 
-        commit(GraphsMutation.SetGraphSettings, {
+        console.log(selectedVariables);
+        commit(GraphsMutation.SetGraphConfig, {
             id: payload.id,
             selectedVariables,
             unselectedVariables
-        });
+        } as SetGraphConfigPayload);
 
         if (rootState.appType === AppType.Fit) {
             dispatch(`fitData/${FitDataAction.UpdateLinkedVariables}`, null, { root: true });

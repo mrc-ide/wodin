@@ -14,7 +14,7 @@
 <script lang="ts">
 import { defineComponent, computed, PropType } from "vue";
 import { useStore } from "vuex";
-import { GraphsMutation, SetGraphSettingsPayload } from "../store/graphs/mutations";
+import { GraphsMutation, SetGraphConfigPayload } from "../store/graphs/mutations";
 import { GraphConfig } from "@/store/graphs/state";
 
 export default defineComponent({
@@ -32,13 +32,13 @@ export default defineComponent({
                 return props.graphConfig.settings.logScaleYAxis;
             },
             set(newValue) {
-                store.commit(`graphs/${GraphsMutation.SetGraphSettings}`, {
+                store.commit(`graphs/${GraphsMutation.SetGraphConfig}`, {
                     id: props.graphConfig.id,
                     settings: {
                       logScaleYAxis: newValue,
                       yAxisRange: null
                     }
-                } as SetGraphSettingsPayload);
+                } as SetGraphConfigPayload);
             }
         });
 
@@ -47,10 +47,10 @@ export default defineComponent({
                 return props.graphConfig.settings.lockYAxis;
             },
             set(newValue) {
-                store.commit(`graphs/${GraphsMutation.SetGraphSettings}`, {
+                store.commit(`graphs/${GraphsMutation.SetGraphConfig}`, {
                     id: props.graphConfig.id,
                     settings: { lockYAxis: newValue }
-                } as SetGraphSettingsPayload);
+                } as SetGraphConfigPayload);
             }
         });
 
