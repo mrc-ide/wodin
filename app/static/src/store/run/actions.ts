@@ -37,10 +37,6 @@ const runOdeModel = (
     const advancedSettingsOdin = convertAdvancedSettingsToOdin(advancedSettings, parameterValues);
 
     try {
-        // console.log(parameterValues)
-        // const schools_time = [0, 50, 60, 120, 130, 170, 180]
-        // const schools_open = [1, 0, 1, 0, 1, 0, 1]
-        // const newParameterValues = {...parameterValues, schools_open, schools_time};
         const newParameterValues = parameterValues;
         const solution = runner.wodinRun(odin, newParameterValues, startTime, endTime, advancedSettingsOdin);
         payload.solution = solution;
