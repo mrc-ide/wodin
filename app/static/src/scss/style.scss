@@ -156,3 +156,25 @@ $grey: #ccc;
         padding: 0;
     }
 }
+
+.wodin-tooltip-container {
+    transform: translate3d(-0.3rem, -50%, 0);
+    display: flex;
+    align-items: center;
+}
+
+.wodin-tooltip-info {
+    border-radius: 4px;
+    color: white;
+    font-size: 0.95rem;
+    padding-inline: 0.5rem;
+    padding-block: 0.2rem;
+    margin-left: -1px;
+}
+
+.wodin-tooltip-arrow {
+    height: 0;
+    width: 0;
+    border: 0.6rem solid black;
+    border-color: transparent;
+}

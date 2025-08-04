@@ -17,8 +17,6 @@
                   ]
                 : []
         "
-        :fit-plot="false"
-        :graph-index="graphIndex"
         :graph-config="graphConfig"
     >
         <slot></slot>
@@ -28,14 +26,12 @@
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
 import { useStore } from "vuex";
-import { PlotData } from "plotly.js-basic-dist-min";
 import { FitDataGetter } from "../../store/fitData/getters";
 import WodinPlot from "../WodinPlot.vue";
 import {
     allFitDataToSkadiChart,
     filterSeriesSet,
     odinToSkadiChart,
-    // PlotlyOptions,
     updatePlotTraceName,
     WodinPlotData
 } from "../../plot";
@@ -47,12 +43,12 @@ import { Dict } from "../../types/utilTypes";
 import { ParameterSet } from "../../store/run/state";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { GraphConfig } from "../../store/graphs/state";
+import { LineStyle } from "skadi-chart";
 
 export default defineComponent({
     name: "SensitivityTracesPlot",
     props: {
         fadePlot: Boolean,
-        graphIndex: { type: Number, required: true },
         graphConfig: { type: Object as PropType<GraphConfig>, required: true }
     },
     components: {
@@ -104,7 +100,7 @@ export default defineComponent({
         const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData}`]);
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
-            const result: WodinPlotData = [];
+            const result: WodinPlotData = { lines: [], points: [] };
             if (solutions.value.length) {
                 const { pars } = store.state.sensitivity.result!.batch!;
                 const time = {
@@ -119,9 +115,9 @@ export default defineComponent({
 
                 const addSolutionOutputToResult = (
                     solution: OdinSolution,
-                    options: Partial<PlotlyOptions>,
-                    updatePlotTrace?: (plotTrace: Partial<PlotData>) => void,
-                    filterOutput?: (output: OdinSeriesSet) => void
+                    updatePlotTrace?: (plotTrace: WodinPlotData["lines"][number]) => void,
+                    filterOutput?: (output: OdinSeriesSet) => void,
+                    style?: LineStyle
                 ) => {
                     const data = solution(time);
                     if (data) {
@@ -130,30 +126,22 @@ export default defineComponent({
                         }
                         // Always filter to selected variables
                         const filtered = filterSeriesSet(data, selectedVariables.value);
-                        const plotData = odinToPlotly(filtered, palette.value, options);
-                        if (updatePlotTrace) {
-                            plotData.forEach((plotTrace) => {
-                                updatePlotTrace(plotTrace);
-                            });
-                        }
+                        const plotData = odinToSkadiChart(filtered, palette.value, style);
+                        if (updatePlotTrace) plotData.forEach(updatePlotTrace);
 
-                        result.push(...plotData);
+                        result.lines.push(...plotData);
                     }
                 };
 
                 solutions.value.forEach((sln: OdinSolution, slnIdx: number) => {
-                    const plotlyOptions = {
-                        includeLegendGroup: true,
-                        lineWidth: 1,
-                        showLegend: false
-                    };
-                    addSolutionOutputToResult(sln, plotlyOptions, (plotTrace) =>
-                        updatePlotTraceName(plotTrace, varyingParamName, parValues[slnIdx])
+                    addSolutionOutputToResult(sln, (plotTrace) =>
+                        updatePlotTraceName(plotTrace, varyingParamName, parValues[slnIdx]),
+                        undefined,
+                        { strokeWidth: 1 }
                     );
                 });
 
                 if (centralSolution.value) {
-                    const plotlyOptions = { includeLegendGroup: true };
                     const filterStochasticCentralOutput = (centralOutput: OdinSeriesSet) => {
                         // Only show summary and deterministic values as central for stochastic
                         centralOutput.values = centralOutput.values.filter(
@@ -162,7 +150,6 @@ export default defineComponent({
                     };
                     addSolutionOutputToResult(
                         centralSolution.value,
-                        plotlyOptions,
                         undefined,
                         isStochastic.value ? filterStochasticCentralOutput : undefined
                     );
@@ -172,38 +159,35 @@ export default defineComponent({
                 const parameterSetNames = Object.keys(parameterSetBatches.value);
                 parameterSetNames.forEach((name) => {
                     const setSolutions = parameterSetBatches.value[name]?.solutions || [];
-                    const dash = lineStylesForParameterSets.value[name];
-                    const plotlyOptions = {
-                        includeLegendGroup: true,
-                        lineWidth: 1,
-                        showLegend: false,
-                        dash
-                    };
+                    const strokeDasharray = lineStylesForParameterSets.value[name];
                     const currentParamSet = parameterSets.value.find((paramSet) => paramSet.name === name);
                     setSolutions.forEach((sln: OdinSolution, slnIdx: number) => {
-                        addSolutionOutputToResult(sln, plotlyOptions, (plotTrace) =>
+                        addSolutionOutputToResult(sln, (plotTrace) =>
                             updatePlotTraceName(
                                 plotTrace,
                                 varyingParamName,
                                 parValues[slnIdx],
                                 currentParamSet!.displayName
-                            )
+                            ),
+                            undefined,
+                            { strokeDasharray, strokeWidth: 1 }
                         );
                     });
 
                     // Also plot the centrals
                     const setCentralSolution = parameterSetCentralResults.value[name]?.solution;
-                    const centralOptions = { showLegend: false, includeLegendGroup: true, dash };
                     if (setCentralSolution) {
-                        addSolutionOutputToResult(setCentralSolution, centralOptions, (plotTrace) =>
-                            updatePlotTraceName(plotTrace, null, null, currentParamSet!.displayName)
+                        addSolutionOutputToResult(setCentralSolution, (plotTrace) =>
+                            updatePlotTraceName(plotTrace, null, null, currentParamSet!.displayName),
+                            undefined,
+                            { strokeDasharray }
                         );
                     }
                 });
 
                 if (allFitData.value) {
-                    result.push(
-                        ...allFitDataToPlotly(
+                    result.points.push(
+                        ...allFitDataToSkadiChart(
                             allFitData.value,
                             palette.value,
                             start,

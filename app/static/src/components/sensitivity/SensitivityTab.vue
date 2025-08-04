@@ -16,7 +16,6 @@
                 v-if="tracesPlot"
                 :fade-plot="!!updateMsg"
                 :graph-config="config"
-                :graph-index="index"
             ></sensitivity-traces-plot>
             <sensitivity-summary-plot v-else :fade-plot="!!updateMsg" :graph-config="config"></sensitivity-summary-plot>
         </template>
@@ -45,6 +44,7 @@ import LoadingSpinner from "../LoadingSpinner.vue";
 import LoadingButton from "../LoadingButton.vue";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import baseSensitivity from "../mixins/baseSensitivity";
+import { AppState } from "@/store/appState/state";
 
 export default defineComponent({
     name: "SensitivityTab",
@@ -62,7 +62,7 @@ export default defineComponent({
         hideDownloadButton: { type: Boolean, default: false }
     },
     setup() {
-        const store = useStore();
+        const store = useStore<AppState>();
         const { sensitivityPrerequisitesReady, updateMsg } = baseSensitivity(store, false);
         const namespace = "sensitivity";
 

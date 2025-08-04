@@ -7,7 +7,8 @@ import { Lines, ScatterPoints, LineStyle, Point } from "skadi-chart";
 
 export type Metadata = {
   name: string,
-  tooltipName: string
+  tooltipName: string,
+  color: string
 };
 export type WodinPlotData = { lines: Lines<Metadata>, points: ScatterPoints<Metadata> };
 
@@ -54,8 +55,9 @@ export function odinToSkadiChart(
 
   return s.values.map(el => {
     const points: SkadiChartPoints = s.x.map((x, i) => ({ x, y: el.y[i] }));
+    const color = palette[el.name];
     const style: SkadiChartStyle = {
-      color: palette[el.name],
+      color,
       strokeWidth: skadiChartStyle.strokeWidth,
       strokeDasharray: skadiChartStyle.strokeDasharray,
       opacity: skadiChartStyle.opacity
@@ -64,7 +66,8 @@ export function odinToSkadiChart(
       points, style,
       metadata: {
         name: el.name,
-        tooltipName: el.name
+        tooltipName: el.name,
+        color
       }
     };
   });
@@ -79,12 +82,10 @@ export function discreteSeriesSetToSkadiChart(
   return series.map((values: OdinSeriesSetValues) => {
     const isIndividual = values.description === "Individual";
 
-    const points: SkadiChartPoints = [];
-    for (let i = 0; i < s.x.length; i++) {
-      points.push({ x: s.x[i], y: values.y[i] });
-    }
+    const points: SkadiChartPoints = s.x.map((x, i) => ({ x, y: values.y[i] }));
+    const color = palette[values.name];
     const style: SkadiChartStyle = {
-      color: palette[values.name],
+      color,
       strokeWidth: isIndividual ? 0.5 : 2,
       opacity: isIndividual ? 0.5 : 1
     };
@@ -92,7 +93,8 @@ export function discreteSeriesSetToSkadiChart(
       points, style,
       metadata: {
         name: values.name,
-        tooltipName: values.name
+        tooltipName: values.name,
+        color
       }
     };
   });
@@ -107,15 +109,17 @@ export function fitDataToSkadiChart(
 ): WodinPlotData["points"] {
   const filteredData = filterData(data, link.time, start, end);
   const points: WodinPlotData["points"] = [];
+  const color = palette[link.model];
   for (let i = 0; i < filteredData.length; i++) {
     const d = filteredData[i];
     points.push({
       x: d[link.time],
       y: d[link.data],
-      style: { color: palette[link.model] },
+      style: { color },
       metadata: {
         name: link.data,
-        tooltipName: link.data
+        tooltipName: link.data,
+        color
       }
     });
   }
@@ -153,7 +157,8 @@ export function allFitDataToSkadiChart(
         style: { color },
         metadata: {
           name,
-          tooltipName: name
+          tooltipName: name,
+          color
         }
       });
     }

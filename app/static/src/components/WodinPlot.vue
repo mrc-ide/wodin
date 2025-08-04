@@ -18,6 +18,7 @@ import { GraphsMutation, SetGraphConfigPayload } from "../store/graphs/mutations
 import { fitGraphId, GraphConfig } from "../store/graphs/state";
 import { Chart, ZoomExtents } from "skadi-chart";
 import { AppState } from "@/store/appState/state";
+import { tooltipCallback } from "@/utils";
 
 export default defineComponent({
     name: "WodinPlot",
@@ -60,12 +61,6 @@ export default defineComponent({
         const nPoints = 1000; // TODO: appropriate value could be derived from width of element
 
         const hasPlotData = computed(() => !!baseData.value.lines.length || !!baseData.value.points.length);
-
-        const tooltipCallback = (info: {x: number, y: number, metadata?: {name: string, tooltipName: string}}) => {
-          return `<div class="skadi-tool" style="transform: translate3d(15px, -50%, 0);">
-            (${info.x.toPrecision(3)} ${info.y.toPrecision(3)}) ${info.metadata?.tooltipName}
-          </div>`
-        };
 
         const updateAxes = (zoomExtents: ZoomExtents) => {
             if (!zoomExtents) return;
@@ -119,8 +114,6 @@ export default defineComponent({
               y: yRange
             };
 
-            console.log(data.lines);
-            console.log(data.points);
             if (!data.lines.length && !data.points.length) return;
             skadiChart.value = new Chart<Metadata>({ logScale: { y: settings.logScaleYAxis } })
               .addAxes({ x: xAxisTitle })
@@ -151,8 +144,3 @@ export default defineComponent({
     }
 });
 </script>
-<style>
-.skadi-tool {
-  background-color: rgba(255,255,255,0.8);
-}
-</style>
