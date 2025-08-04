@@ -18,6 +18,8 @@ import {
 } from "./store/sensitivity/state";
 import { AppState } from "./store/appState/state";
 import { AdvancedComponentType, AdvancedSettings, Tag } from "./store/run/state";
+import { Metadata } from "./plot";
+import Color from "color";
 
 export const freezer = {
     deepFreeze: (data: unknown): unknown => {
@@ -293,4 +295,21 @@ export const parseDateTime = (date: Date) => {
     const second = shortSecond < 10 ? `0${shortSecond}` : `${shortSecond}`;
 
     return { year, month, day, hour, minute, second };
+};
+
+
+export const tooltipCallback = (info: {x: number, y: number, metadata?: Metadata}) => {
+    const fadedColor = Color(info.metadata?.color || "white").desaturate(0).fade(0);
+    const colorStyle = `background-color: ${fadedColor.toString()}; border: 1px solid ${fadedColor.toString()};`;
+
+    const text = `${info.x.toPrecision(3)}, ${info.y.toPrecision(3)} | <b>${info.metadata?.tooltipName}</b>`;
+
+    const arrowColorStyle = `border-right-color: ${fadedColor.toString()};`;
+
+    return `
+        <div class="wodin-tooltip-container">
+            <div class="wodin-tooltip-arrow" style="${arrowColorStyle}"></div>
+            <div class="wodin-tooltip-info" style="${colorStyle}">${text}</div>
+        </div>
+    `
 };

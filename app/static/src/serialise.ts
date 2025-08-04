@@ -18,7 +18,7 @@ import {
     SerialisedMultiSensitivityState,
     SerialisedGraphsState
 } from "./types/serialisationTypes";
-import { GraphConfig, GraphsState, defaultGraphSettings } from "./store/graphs/state";
+import { defaultGraphSettings, fitGraphId, GraphConfig, GraphsState } from "./store/graphs/state";
 import { Dict } from "./types/utilTypes";
 import { MultiSensitivityState } from "./store/multiSensitivity/state";
 import { newUid } from "./utils";
@@ -145,7 +145,11 @@ function serialiseModelFit(modelFit: ModelFitState): SerialisedModelFitState {
 // Do not include graph config uids in serialised as we don't want them to contribute to duplicate checks
 export const serialiseGraphs = (state: GraphsState): SerialisedGraphsState => {
     return {
-        ...state,
+        fitGraphConfig: {
+          selectedVariables: [],
+          unselectedVariables: [],
+          settings: state.fitGraphConfig.settings
+        },
         config: state.config.map((c: GraphConfig) => ({
             selectedVariables: c.selectedVariables,
             unselectedVariables: c.unselectedVariables,
@@ -156,7 +160,12 @@ export const serialiseGraphs = (state: GraphsState): SerialisedGraphsState => {
 
 export const deserialiseGraphs = (serialised: SerialisedGraphsState): GraphsState => {
     return {
-        ...serialised,
+        fitGraphConfig: {
+            id: fitGraphId,
+            selectedVariables: [],
+            unselectedVariables: [],
+            settings: serialised.fitGraphConfig.settings
+        },
         config: serialised.config.map((s) => ({
             id: newUid(),
             selectedVariables: s.selectedVariables,
