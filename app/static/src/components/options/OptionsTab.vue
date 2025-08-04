@@ -27,10 +27,7 @@
         <vertical-collapse v-if="!isStochastic" title="Saved Parameter Sets" collapse-id="parameter-sets">
             <parameter-sets></parameter-sets>
         </vertical-collapse>
-        <graph-configs-collapsible v-if="!fitTabIsOpen"></graph-configs-collapsible>
-        <vertical-collapse v-if="fitTabIsOpen" title="Fit Graph Settings" collapse-id="graph-settings">
-            <graph-settings class="pt-2" :fit-plot="true"></graph-settings>
-        </vertical-collapse>
+        <graph-configs-collapsible></graph-configs-collapsible>
     </div>
 </template>
 

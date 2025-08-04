@@ -21,9 +21,8 @@
 
 <script setup lang="ts">
 import { AppState } from '@/store/appState/state';
-import { RunAction } from '@/store/run/actions';
 import { RunMutation } from '@/store/run/mutations';
-import { computed, onMounted } from 'vue';
+import { computed } from 'vue';
 import { useStore } from 'vuex';
 
 const store = useStore<AppState>();
@@ -44,14 +43,7 @@ const handleChange = (e: Event) => {
   const oldParameterValues = store.state.run.parameterValues;
   const newParameterValues = { ...oldParameterValues, [props.par]: parseFloat(newVal) };
   store.commit(`run/${RunMutation.SetParameterValues}`, newParameterValues);
-  store.dispatch(`run/${RunAction.RunModel}`);
 };
-
-onMounted(async () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mathJax = (window as any).MathJax;
-  await mathJax?.typesetPromise();
-});
 </script>
 
 <style lang="css" scoped>

@@ -16,7 +16,6 @@
                 v-if="tracesPlot"
                 :fade-plot="!!updateMsg"
                 :graph-config="config"
-                :graph-index="index"
             ></sensitivity-traces-plot>
             <sensitivity-summary-plot v-else :fade-plot="!!updateMsg" :graph-config="config"></sensitivity-summary-plot>
         </template>
@@ -46,8 +45,9 @@ import LoadingButton from "../LoadingButton.vue";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import baseSensitivity from "../mixins/baseSensitivity";
 import { GraphConfig } from "@/store/graphs/state";
-import { GraphsAction } from "@/store/graphs/actions";
+import { GraphsAction, UpdateSelectedVariablesPayload } from "@/store/graphs/actions";
 import { STATIC_BUILD } from "@/parseEnv";
+import { AppState } from "@/store/appState/state";
 
 export default defineComponent({
     name: "SensitivityTab",
@@ -66,7 +66,7 @@ export default defineComponent({
         visibleVars: { type: String as PropType<string | null>, default: null }
     },
     setup(props) {
-        const store = useStore();
+        const store = useStore<AppState>();
         const { sensitivityPrerequisitesReady, updateMsg } = baseSensitivity(store, false);
         const namespace = "sensitivity";
 
@@ -110,11 +110,11 @@ export default defineComponent({
         onMounted(() => {
             if (props.visibleVars && STATIC_BUILD) {
                 const visibleVars = props.visibleVars.split(",").map(s => s.trim());
-                graphConfigs.value.forEach((_, graphIndex) => {
+                graphConfigs.value.forEach(cfg => {
                     store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
-                        graphIndex,
+                        id: cfg.id,
                         selectedVariables: visibleVars
-                    });
+                    } as UpdateSelectedVariablesPayload);
                 });
             }
         });
