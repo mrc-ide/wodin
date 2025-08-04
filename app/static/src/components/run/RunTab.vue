@@ -67,7 +67,7 @@ import { ModelGetter } from "../../store/model/getters";
 import RunStochasticPlot from "./RunStochasticPlot.vue";
 import { GraphsGetter } from "../../store/graphs/getters";
 import { GraphConfig } from "@/store/graphs/state";
-import { GraphsAction } from "@/store/graphs/actions";
+import { GraphsAction, UpdateSelectedVariablesPayload } from "@/store/graphs/actions";
 import { STATIC_BUILD } from "@/parseEnv";
 
 export default defineComponent({
@@ -143,11 +143,11 @@ export default defineComponent({
         onMounted(() => {
             if (props.visibleVars && STATIC_BUILD) {
                 const visibleVars = props.visibleVars.split(",").map(s => s.trim());
-                graphConfigs.value.forEach((_, graphIndex) => {
+                graphConfigs.value.forEach(cfg => {
                     store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
-                        graphIndex,
+                        id: cfg.id,
                         selectedVariables: visibleVars
-                    });
+                    } as UpdateSelectedVariablesPayload);
                 });
             }
         });

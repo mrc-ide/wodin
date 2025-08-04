@@ -45,7 +45,7 @@ import LoadingButton from "../LoadingButton.vue";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import baseSensitivity from "../mixins/baseSensitivity";
 import { GraphConfig } from "@/store/graphs/state";
-import { GraphsAction } from "@/store/graphs/actions";
+import { GraphsAction, UpdateSelectedVariablesPayload } from "@/store/graphs/actions";
 import { STATIC_BUILD } from "@/parseEnv";
 import { AppState } from "@/store/appState/state";
 
@@ -110,11 +110,11 @@ export default defineComponent({
         onMounted(() => {
             if (props.visibleVars && STATIC_BUILD) {
                 const visibleVars = props.visibleVars.split(",").map(s => s.trim());
-                graphConfigs.value.forEach((_, graphIndex) => {
+                graphConfigs.value.forEach(cfg => {
                     store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
-                        graphIndex,
+                        id: cfg.id,
                         selectedVariables: visibleVars
-                    });
+                    } as UpdateSelectedVariablesPayload);
                 });
             }
         });

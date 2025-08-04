@@ -57,7 +57,11 @@ const palette = computed(() => store.state.model.paletteModel);
 
 const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData}`]);
 
-const selectedVariables = computed(() => props.graphConfig.selectedVariables);
+const selectedVariables = computed(() => {
+  const ret = props.graphConfig.selectedVariables
+  console.log(ret);
+  return ret;
+});
 const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, false));
 
 // TODO: put this in the composable in mrc-5572

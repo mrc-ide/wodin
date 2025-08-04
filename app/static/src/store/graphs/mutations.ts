@@ -21,6 +21,7 @@ export type SetGraphConfigPayload = {
 
 export const mutations: MutationTree<GraphsState> = {
     [GraphsMutation.SetGraphConfig](state: GraphsState, payload: SetGraphConfigPayload) {
+        console.log(payload);
         if (payload.id === fitGraphId) {
             const oldGraphConfig = state.fitGraphConfig;
             state.fitGraphConfig = {
