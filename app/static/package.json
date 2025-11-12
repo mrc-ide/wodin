@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@monaco-editor/loader": "^1.4.0",
+    "@reside-ic/skadi-chart": "^1.1.1",
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "color": "^4.2.3",
@@ -30,7 +31,6 @@
     "markdown-it-mathjax": "^2.0.0",
     "moment": "^2.30.1",
     "plotly.js-basic-dist-min": "^2.35.2",
-    "skadi-chart": "file:~/skadi-chart-old",
     "uid": "^2.0.2",
     "vue": "^3.5.12",
     "vue-feather": "^2.0.0",

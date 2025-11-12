@@ -16,7 +16,7 @@ import { Metadata, WodinPlotData, fadePlotStyle } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
 import { GraphsMutation, SetGraphConfigPayload } from "../store/graphs/mutations";
 import { fitGraphId, GraphConfig } from "../store/graphs/state";
-import { Chart, ZoomExtents } from "skadi-chart";
+import { Chart, ZoomProperties } from "@reside-ic/skadi-chart";
 import { AppState } from "@/store/appState/state";
 
 export default defineComponent({
@@ -67,11 +67,11 @@ export default defineComponent({
           </div>`
         };
 
-        const updateAxes = (zoomExtents: ZoomExtents) => {
-            if (!zoomExtents) return;
+        const updateAxes = (zoomProperties: ZoomProperties) => {
+            if (!zoomProperties) return;
             const newXYRanges = {
-              xAxisRange: zoomExtents.x,
-              yAxisRange: zoomExtents.eventType === "dblclick" && !props.graphConfig.settings.lockYAxis ? null : zoomExtents.y,
+              xAxisRange: zoomProperties.x,
+              yAxisRange: zoomProperties.eventType === "dblclick" && !props.graphConfig.settings.lockYAxis ? null : zoomProperties.y,
             };
 
             if (props.graphConfig.id === fitGraphId) {
@@ -119,9 +119,6 @@ export default defineComponent({
               y: yRange
             };
 
-            console.log(data.lines);
-            console.log(data.points);
-            if (!data.lines.length && !data.points.length) return;
             skadiChart.value = new Chart<Metadata>({ logScale: { y: settings.logScaleYAxis } })
               .addAxes({ x: xAxisTitle })
               .addGridLines()
