@@ -43,7 +43,7 @@ import { Dict } from "../../types/utilTypes";
 import { ParameterSet } from "../../store/run/state";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { GraphConfig } from "../../store/graphs/state";
-import { LineStyle } from "skadi-chart";
+import { LineStyle } from "@reside-ic/skadi-chart";
 
 export default defineComponent({
     name: "SensitivityTracesPlot",

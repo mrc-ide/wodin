@@ -23,7 +23,7 @@ import WodinPlotDataSummary from "../WodinPlotDataSummary.vue";
 import { ParameterSet } from "../../store/run/state";
 import { verifyValidPlotSettingsTime } from "./support";
 import { GraphConfig } from "../../store/graphs/state";
-import { Chart, LineStyle } from "skadi-chart";
+import { Chart, LineStyle } from "@reside-ic/skadi-chart";
 import { AppState } from "@/store/appState/state";
 
 export default defineComponent({
