@@ -3,7 +3,7 @@ import { Palette, paletteData } from "./palette";
 import type { AllFitData, FitData, FitDataLink } from "./store/fitData/state";
 import { DiscreteSeriesSet, OdinSeriesSet, OdinSeriesSetValues, OdinUserTypeSeriesSet } from "./types/responseTypes";
 import { Dict } from "./types/utilTypes";
-import { Lines, ScatterPoints, LineStyle, Point } from "skadi-chart";
+import { Lines, ScatterPoints, LineStyle, Point } from "@reside-ic/skadi-chart";
 
 export type Metadata = {
   name: string,
@@ -57,7 +57,7 @@ export function odinToSkadiChart(
     const points: SkadiChartPoints = s.x.map((x, i) => ({ x, y: el.y[i] }));
     const color = palette[el.name];
     const style: SkadiChartStyle = {
-      color,
+      strokeColor: color,
       strokeWidth: skadiChartStyle.strokeWidth,
       strokeDasharray: skadiChartStyle.strokeDasharray,
       opacity: skadiChartStyle.opacity
@@ -85,7 +85,7 @@ export function discreteSeriesSetToSkadiChart(
     const points: SkadiChartPoints = s.x.map((x, i) => ({ x, y: values.y[i] }));
     const color = palette[values.name];
     const style: SkadiChartStyle = {
-      color,
+      strokeColor: color,
       strokeWidth: isIndividual ? 0.5 : 2,
       opacity: isIndividual ? 0.5 : 1
     };
