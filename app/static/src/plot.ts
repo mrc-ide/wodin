@@ -81,6 +81,7 @@ export function discreteSeriesSetToSkadiChart(
   const series = showIndividualTraces ? s.values : s.values.filter((el) => el.description !== "Individual");
   return series.map((values: OdinSeriesSetValues) => {
     const isIndividual = values.description === "Individual";
+    const name = values.description === "Mean" ? values.name + " (mean)" : values.name;
 
     const points: SkadiChartPoints = s.x.map((x, i) => ({ x, y: values.y[i] }));
     const color = palette[values.name];
@@ -92,8 +93,8 @@ export function discreteSeriesSetToSkadiChart(
     return {
       points, style,
       metadata: {
-        name: values.name,
-        tooltipName: values.name,
+        name,
+        tooltipName: name,
         color
       }
     };

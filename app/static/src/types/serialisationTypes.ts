@@ -11,7 +11,7 @@ import { VisualisationTab } from "../store/appState/state";
 import { CodeState } from "../store/code/state";
 import { FitDataState } from "../store/fitData/state";
 import { Palette } from "../palette";
-import { GraphConfig, GraphSettings } from "../store/graphs/state";
+import { GraphConfig, GraphSettings, GraphsState } from "../store/graphs/state";
 import { Dict } from "./utilTypes";
 
 export interface SerialisedRunResult {
@@ -73,16 +73,6 @@ export interface SerialisedModelFitState {
     error: null | WodinError;
 }
 
-type SerialisedGraphConfig = {
-    selectedVariables: string[];
-    unselectedVariables: string[];
-    settings: GraphSettings;
-};
-export interface SerialisedGraphsState {
-    config: SerialisedGraphConfig[];
-    fitGraphConfig: SerialisedGraphConfig;
-}
-
 export interface SerialisedAppState {
     openVisualisationTab: VisualisationTab;
     code: CodeState;
@@ -90,7 +80,7 @@ export interface SerialisedAppState {
     run: SerialisedRunState;
     sensitivity: SerialisedSensitivityState;
     multiSensitivity: SerialisedMultiSensitivityState;
-    graphs: SerialisedGraphsState;
+    graphs: GraphsState;
     fitData?: FitDataState;
     modelFit?: SerialisedModelFitState;
 }
