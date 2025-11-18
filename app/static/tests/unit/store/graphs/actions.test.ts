@@ -1,8 +1,7 @@
-import { mockAxios, mockFitState, mockModelState } from "../../../mocks";
+import { mockAxios, mockModelState } from "../../../mocks";
 import { actions, GraphsAction } from "../../../../src/store/graphs/actions";
 import { GraphsMutation } from "../../../../src/store/graphs/mutations";
 import { AppType } from "../../../../src/store/appState/state";
-import { FitDataAction } from "../../../../src/store/fitData/actions";
 import { defaultGraphSettings } from "../../../../src/store/graphs/state";
 
 describe("Graphs actions", () => {

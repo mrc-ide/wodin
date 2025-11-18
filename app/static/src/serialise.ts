@@ -17,10 +17,9 @@ import {
     SerialisedModelFitState,
     SerialisedMultiSensitivityState
 } from "./types/serialisationTypes";
-import { defaultGraphSettings, fitGraphId, GraphConfig, GraphsState } from "./store/graphs/state";
+import { defaultGraphSettings } from "./store/graphs/state";
 import { Dict } from "./types/utilTypes";
 import { MultiSensitivityState } from "./store/multiSensitivity/state";
-import { newUid } from "./utils";
 
 function serialiseCode(code: CodeState): CodeState {
     return {

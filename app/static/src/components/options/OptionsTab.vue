@@ -42,7 +42,6 @@ import LinkData from "./LinkData.vue";
 import SensitivityOptions from "./SensitivityOptions.vue";
 import OptimisationOptions from "./OptimisationOptions.vue";
 import { AppType, VisualisationTab } from "../../store/appState/state";
-import GraphSettings from "../GraphSettings.vue";
 import ParameterSets from "./ParameterSets.vue";
 import AdvancedSettings from "./AdvancedSettings.vue";
 
@@ -57,7 +56,6 @@ export default defineComponent({
         RunOptions,
         SensitivityOptions,
         VerticalCollapse,
-        GraphSettings,
         AdvancedSettings
     },
     setup() {

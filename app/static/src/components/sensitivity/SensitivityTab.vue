@@ -11,7 +11,7 @@
             >
         </div>
         <action-required-message :message="updateMsg"></action-required-message>
-        <template v-for="(config, index) in graphConfigs" :key="config.id">
+        <template v-for="config in graphConfigs" :key="config.id">
             <sensitivity-traces-plot
                 v-if="tracesPlot"
                 :fade-plot="!!updateMsg"

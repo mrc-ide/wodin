@@ -50,7 +50,7 @@
 
 <script lang="ts">
 import { useStore } from "vuex";
-import { computed, defineComponent, Ref, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import VueFeather from "vue-feather";
 import { RunMutation } from "../../store/run/mutations";
 import RunPlot from "./RunPlot.vue";
