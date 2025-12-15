@@ -8,6 +8,8 @@ import { FitDataGetter } from "../../../../src/store/fitData/getters";
 import { mockRunState } from "../../../mocks";
 import { getters as runGetters } from "../../../../src/store/run/getters";
 import { SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
+import { Lines, ScatterPoints } from "@reside-ic/skadi-chart";
+import { Metadata } from "@/plot";
 
 vi.mock("plotly.js-basic-dist-min", () => ({}));
 
@@ -78,255 +80,288 @@ const mockPalette = { y: "#0000ff", z: "#ff0000" };
 
 const mockSolutions = [mockSln1, mockSln2];
 
-const expectedSln1PlotData = [
+const expectedSln1PlotData: Lines<Metadata> = [
     {
-        mode: "lines",
-        line: {
-            color: "#0000ff",
-            width: 1,
-            dash: undefined
+        style: {
+            strokeColor: "#0000ff",
+            strokeWidth: 1,
+            strokeDasharray: undefined,
+            opacity: undefined
         },
-        name: "y (alpha=1.111)",
-        x: [0, 0.5, 1],
-        y: [5, 6, 7],
-        hoverlabel: { namelength: -1 },
-        showlegend: false,
-        legendgroup: "y"
+        metadata: {
+          name: "y",
+          tooltipName: "y (alpha=1.111)",
+          color: "#0000ff",
+        },
+        points: [
+          { x: 0, y: 5 },
+          { x: 0.5, y: 6 },
+          { x: 1, y: 7 }
+        ]
     },
     {
-        mode: "lines",
-        line: {
-            color: "#ff0000",
-            width: 1,
-            dash: undefined
+        style: {
+            strokeColor: "#ff0000",
+            strokeWidth: 1,
+            strokeDasharray: undefined,
+            opacity: undefined
         },
-        name: "z (alpha=1.111)",
-        x: [0, 0.5, 1],
-        y: [1, 2, 3],
-        hoverlabel: { namelength: -1 },
-        showlegend: false,
-        legendgroup: "z"
+        metadata: {
+          name: "z",
+          tooltipName: "z (alpha=1.111)",
+          color: "#ff0000",
+        },
+        points: [
+          { x: 0, y: 1 },
+          { x: 0.5, y: 2 },
+          { x: 1, y: 3 }
+        ]
     }
 ];
 
-const expectedSln2PlotData = [
+const expectedSln2PlotData: Lines<Metadata> = [
     {
-        mode: "lines",
-        line: {
-            color: "#0000ff",
-            width: 1,
-            dash: undefined
+        style: {
+            strokeColor: "#0000ff",
+            strokeWidth: 1,
+            strokeDasharray: undefined,
+            opacity: undefined
         },
-        name: "y (alpha=2.222)",
-        x: [0, 0.5, 1],
-        y: [50, 60, 70],
-        hoverlabel: { namelength: -1 },
-        showlegend: false,
-        legendgroup: "y"
+        metadata: {
+          name: "y",
+          tooltipName: "y (alpha=2.222)",
+          color: "#0000ff",
+        },
+        points: [
+          { x: 0, y: 50 },
+          { x: 0.5, y: 60 },
+          { x: 1, y: 70 }
+        ]
     },
     {
-        mode: "lines",
-        line: {
-            color: "#ff0000",
-            width: 1,
-            dash: undefined
+        style: {
+            strokeColor: "#ff0000",
+            strokeWidth: 1,
+            strokeDasharray: undefined,
+            opacity: undefined
         },
-        name: "z (alpha=2.222)",
-        x: [0, 0.5, 1],
-        y: [10, 20, 30],
-        hoverlabel: { namelength: -1 },
-        showlegend: false,
-        legendgroup: "z"
+        metadata: {
+          name: "z",
+          tooltipName: "z (alpha=2.222)",
+          color: "#ff0000",
+        },
+        points: [
+          { x: 0, y: 10 },
+          { x: 0.5, y: 20 },
+          { x: 1, y: 30 }
+        ]
     }
 ];
 
-const expectedPlotData = [
+const expectedCentralSlnPlotData: Lines<Metadata> = [
+    {
+        style: {
+            strokeColor: "#0000ff",
+            strokeWidth: 2,
+            strokeDasharray: undefined,
+            opacity: undefined
+        },
+        metadata: {
+          name: "y",
+          tooltipName: "y",
+          color: "#0000ff",
+        },
+        points: [
+          { x: 0, y: 15 },
+          { x: 0.5, y: 16 },
+          { x: 1, y: 17 }
+        ]
+    },
+    {
+        style: {
+            strokeColor: "#ff0000",
+            strokeWidth: 2,
+            strokeDasharray: undefined,
+            opacity: undefined
+        },
+        metadata: {
+          name: "z",
+          tooltipName: "z",
+          color: "#ff0000",
+        },
+        points: [
+          { x: 0, y: 11 },
+          { x: 0.5, y: 12 },
+          { x: 1, y: 13 }
+        ]
+    }
+];
+
+const expectedPlotData: Lines<Metadata> = [
     ...expectedSln1PlotData,
     ...expectedSln2PlotData,
     // central
-    {
-        mode: "lines",
-        line: {
-            color: "#0000ff",
-            width: 2,
-            dash: undefined
-        },
-        name: "y",
-        x: [0, 0.5, 1],
-        y: [15, 16, 17],
-        hoverlabel: { namelength: -1 },
-        showlegend: true,
-        legendgroup: "y"
-    },
-    {
-        mode: "lines",
-        line: {
-            color: "#ff0000",
-            width: 2,
-            dash: undefined
-        },
-        name: "z",
-        x: [0, 0.5, 1],
-        y: [11, 12, 13],
-        hoverlabel: { namelength: -1 },
-        showlegend: true,
-        legendgroup: "z"
-    }
+    ...expectedCentralSlnPlotData
 ];
 
-const expectedStochasticPlotData = [
+const expectedStochasticPlotData: Lines<Metadata> = [
     ...expectedSln1PlotData,
     ...expectedSln2PlotData,
     // central stochastic
     {
-        mode: "lines",
-        line: {
-            color: "#0000ff",
-            width: 2,
-            dash: undefined
+        style: {
+            strokeColor: "#0000ff",
+            strokeWidth: 2,
+            strokeDasharray: undefined,
+            opacity: undefined
         },
-        name: "y",
-        x: [0, 0.5, 1],
-        y: [22, 23, 24],
-        hoverlabel: { namelength: -1 },
-        showlegend: true,
-        legendgroup: "y"
+        metadata: {
+          name: "y",
+          tooltipName: "y",
+          color: "#0000ff",
+        },
+        points: [
+          { x: 0, y: 22 },
+          { x: 0.5, y: 23 },
+          { x: 1, y: 24 }
+        ]
     },
     {
-        mode: "lines",
-        line: {
-            color: "#ff0000",
-            width: 2,
-            dash: undefined
+        style: {
+            strokeColor: "#ff0000",
+            strokeWidth: 2,
+            strokeDasharray: undefined,
+            opacity: undefined
         },
-        name: "z",
-        x: [0, 0.5, 1],
-        y: [44, 45, 46],
-        hoverlabel: { namelength: -1 },
-        showlegend: true,
-        legendgroup: "z"
-    }
+        metadata: {
+          name: "z",
+          tooltipName: "z",
+          color: "#ff0000",
+        },
+        points: [
+          { x: 0, y: 44 },
+          { x: 0.5, y: 45 },
+          { x: 1, y: 46 }
+        ]
+    },
 ];
 
 const expectedParameterSetPlotData = [
     ...expectedSln1PlotData,
     ...expectedSln2PlotData,
     // central
-    {
-        mode: "lines",
-        line: {
-            color: "#0000ff",
-            width: 2,
-            dash: undefined
-        },
-        name: "y",
-        x: [0, 0.5, 1],
-        y: [15, 16, 17],
-        hoverlabel: { namelength: -1 },
-        showlegend: true,
-        legendgroup: "y"
-    },
-    {
-        mode: "lines",
-        line: {
-            color: "#ff0000",
-            width: 2,
-            dash: undefined
-        },
-        name: "z",
-        x: [0, 0.5, 1],
-        y: [11, 12, 13],
-        hoverlabel: { namelength: -1 },
-        showlegend: true,
-        legendgroup: "z"
-    },
+    ...expectedCentralSlnPlotData,
     // parameter set sln 1
     {
-        mode: "lines",
-        line: {
-            color: "#0000ff",
-            width: 1,
-            dash: "dot"
+        style: {
+            strokeColor: "#0000ff",
+            strokeWidth: 1,
+            strokeDasharray: "3",
+            opacity: undefined
         },
-        name: "y (alpha=1.111 Hey)",
-        x: [0, 0.5, 1],
-        y: [51, 61, 71],
-        hoverlabel: { namelength: -1 },
-        showlegend: false,
-        legendgroup: "y"
+        metadata: {
+          name: "y",
+          tooltipName: "y (alpha=1.111 Hey)",
+          color: "#0000ff",
+        },
+        points: [
+          { x: 0, y: 51 },
+          { x: 0.5, y: 61 },
+          { x: 1, y: 71 }
+        ]
     },
     {
-        mode: "lines",
-        line: {
-            color: "#ff0000",
-            width: 1,
-            dash: "dot"
+        style: {
+            strokeColor: "#ff0000",
+            strokeWidth: 1,
+            strokeDasharray: "3",
+            opacity: undefined
         },
-        name: "z (alpha=1.111 Hey)",
-        x: [0, 0.5, 1],
-        y: [11, 21, 31],
-        hoverlabel: { namelength: -1 },
-        showlegend: false,
-        legendgroup: "z"
+        metadata: {
+          name: "z",
+          tooltipName: "z (alpha=1.111 Hey)",
+          color: "#ff0000",
+        },
+        points: [
+          { x: 0, y: 11 },
+          { x: 0.5, y: 21 },
+          { x: 1, y: 31 }
+        ]
     },
     // parameter set sln 2
     {
-        mode: "lines",
-        line: {
-            color: "#0000ff",
-            width: 1,
-            dash: "dot"
+        style: {
+            strokeColor: "#0000ff",
+            strokeWidth: 1,
+            strokeDasharray: "3",
+            opacity: undefined
         },
-        name: "y (alpha=2.222 Hey)",
-        x: [0, 0.5, 1],
-        y: [52, 62, 72],
-        hoverlabel: { namelength: -1 },
-        showlegend: false,
-        legendgroup: "y"
+        metadata: {
+          name: "y",
+          tooltipName: "y (alpha=2.222 Hey)",
+          color: "#0000ff",
+        },
+        points: [
+          { x: 0, y: 52 },
+          { x: 0.5, y: 62 },
+          { x: 1, y: 72 }
+        ]
     },
     {
-        mode: "lines",
-        line: {
-            color: "#ff0000",
-            width: 1,
-            dash: "dot"
+        style: {
+            strokeColor: "#ff0000",
+            strokeWidth: 1,
+            strokeDasharray: "3",
+            opacity: undefined
         },
-        name: "z (alpha=2.222 Hey)",
-        x: [0, 0.5, 1],
-        y: [12, 22, 32],
-        hoverlabel: { namelength: -1 },
-        showlegend: false,
-        legendgroup: "z"
+        metadata: {
+          name: "z",
+          tooltipName: "z (alpha=2.222 Hey)",
+          color: "#ff0000",
+        },
+        points: [
+          { x: 0, y: 12 },
+          { x: 0.5, y: 22 },
+          { x: 1, y: 32 }
+        ]
     },
     // parameter set central
     {
-        mode: "lines",
-        line: {
-            color: "#0000ff",
-            width: 2,
-            dash: "dot"
+        style: {
+            strokeColor: "#0000ff",
+            strokeWidth: 2,
+            strokeDasharray: "3",
+            opacity: undefined
         },
-        name: "y (Hey)",
-        x: [0, 0.5, 1],
-        y: [151, 161, 171],
-        hoverlabel: { namelength: -1 },
-        showlegend: false,
-        legendgroup: "y"
+        metadata: {
+          name: "y",
+          tooltipName: "y (Hey)",
+          color: "#0000ff",
+        },
+        points: [
+          { x: 0, y: 151 },
+          { x: 0.5, y: 161 },
+          { x: 1, y: 171 }
+        ]
     },
     {
-        mode: "lines",
-        line: {
-            color: "#ff0000",
-            width: 2,
-            dash: "dot"
+        style: {
+            strokeColor: "#ff0000",
+            strokeWidth: 2,
+            strokeDasharray: "3",
+            opacity: undefined
         },
-        name: "z (Hey)",
-        x: [0, 0.5, 1],
-        y: [111, 121, 131],
-        hoverlabel: { namelength: -1 },
-        showlegend: false,
-        legendgroup: "z"
-    }
+        metadata: {
+          name: "z",
+          tooltipName: "z (Hey)",
+          color: "#ff0000",
+        },
+        points: [
+          { x: 0, y: 111 },
+          { x: 0.5, y: 121 },
+          { x: 1, y: 131 }
+        ]
+    },
 ];
 
 const mockFitData = [
@@ -340,16 +375,32 @@ const mockAllFitData = {
     linkedVariables: { v: "y" }
 };
 
-const expectedFitPlotData = {
-    mode: "markers",
-    marker: {
-        color: "#0000ff"
+const expectedFitPlotData: ScatterPoints<Metadata> = [
+    {
+        style: {
+            color: "#0000ff"
+        },
+        metadata: {
+          name: "v",
+          tooltipName: "v",
+          color: "#0000ff"
+        },
+        x: 0,
+        y: 10
     },
-    name: "v",
-    type: "scatter",
-    x: [0, 1],
-    y: [10, 20]
-};
+    {
+        style: {
+            color: "#0000ff"
+        },
+        metadata: {
+          name: "v",
+          tooltipName: "v",
+          color: "#0000ff"
+        },
+        x: 1,
+        y: 20
+    }
+];
 
 const selectedVariables = ["y", "z"];
 
@@ -471,8 +522,11 @@ describe("SensitivityTracesPlot", () => {
         return shallowMount(SensitivityTracesPlot, {
             props: {
                 fadePlot,
-                graphConfig: { selectedVariables: hasSelectedVariables ? selectedVariables : [] } as any,
-                graphIndex: 0
+                graphConfig: {
+                    selectedVariables: hasSelectedVariables
+                        ? selectedVariables
+                        : []
+                } as any,
             },
             global: {
                 plugins: [store]
@@ -509,10 +563,12 @@ describe("SensitivityTracesPlot", () => {
         expect(wodinPlot.props("graphConfig")).toStrictEqual({
             selectedVariables: ["y", "z"]
         });
-        expect(wodinPlot.props("graphIndex")).toBe(0);
 
         const plotData = wodinPlot.props("plotData");
-        expect(plotData(0, 1, 100)).toStrictEqual(expectedPlotData);
+        expect(plotData(0, 1, 100)).toStrictEqual({
+            lines: expectedPlotData,
+            points: []
+        });
         expect(mockSln1).toBeCalledWith(slnArgs);
         expect(mockSln2).toBeCalledWith(slnArgs);
     });
@@ -535,10 +591,12 @@ describe("SensitivityTracesPlot", () => {
         expect(wodinPlot.props("graphConfig")).toStrictEqual({
             selectedVariables: ["y", "z"]
         });
-        expect(wodinPlot.props("graphIndex")).toBe(0);
 
         const plotData = wodinPlot.props("plotData");
-        expect(plotData(0, 1, 100)).toStrictEqual([...expectedPlotData, expectedFitPlotData]);
+        expect(plotData(0, 1, 100)).toStrictEqual({
+            lines: expectedPlotData,
+            points: expectedFitPlotData
+        });
         expect(mockSln1).toBeCalledWith(slnArgs);
         expect(mockSln2).toBeCalledWith(slnArgs);
     });
@@ -560,7 +618,10 @@ describe("SensitivityTracesPlot", () => {
         ]);
 
         const plotData = wodinPlot.props("plotData");
-        expect(plotData(0, 1, 100)).toStrictEqual([...expectedParameterSetPlotData, expectedFitPlotData]);
+        expect(plotData(0, 1, 100)).toStrictEqual({
+            lines: expectedParameterSetPlotData,
+            points: expectedFitPlotData
+        });
         expect(mockSln1).toBeCalledWith(slnArgs);
         expect(mockSln2).toBeCalledWith(slnArgs);
         expect(mockParameterSetSln1).toBeCalledWith(slnArgs);
@@ -573,7 +634,10 @@ describe("SensitivityTracesPlot", () => {
         // Expect Individual values to be filtered out
         const wodinPlot = wrapper.findComponent(WodinPlot);
         const plotData = wodinPlot.props("plotData");
-        expect(plotData(0, 1, 100)).toStrictEqual([...expectedStochasticPlotData, expectedFitPlotData]);
+        expect(plotData(0, 1, 100)).toStrictEqual({
+            lines: expectedStochasticPlotData,
+            points: expectedFitPlotData
+        });
     });
 
     it("renders as expected when there are no sensitivity solutions", () => {
@@ -586,7 +650,7 @@ describe("SensitivityTracesPlot", () => {
 
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 1, 100);
-        expect(data).toStrictEqual([]);
+        expect(data).toStrictEqual({ lines: [], points: [] });
     });
 
     it("renders placeholder as expected when there are no selected variables", () => {

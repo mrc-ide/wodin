@@ -1,7 +1,6 @@
 // Mock the import of plotly so we can mock Plotly methods
 import Vuex, { Store } from "vuex";
 import { shallowMount, VueWrapper } from "@vue/test-utils";
-import * as plotly from "plotly.js-basic-dist-min";
 import { nextTick } from "vue";
 import { BasicState } from "../../../../src/store/basic/state";
 import { mockBasicState } from "../../../mocks";
@@ -17,16 +16,7 @@ import SensitivitySummaryPlot from "../../../../src/components/sensitivity/Sensi
 import { RunGetter } from "../../../../src/store/run/getters";
 import WodinPlotDataSummary from "../../../../src/components/WodinPlotDataSummary.vue";
 
-vi.mock("plotly.js-basic-dist-min", () => ({
-    newPlot: vi.fn(),
-    Plots: {
-        resize: vi.fn()
-    }
-}));
-
 describe("SensitivitySummaryPlot", () => {
-    const mockPlotlyNewPlot = vi.spyOn(plotly, "newPlot");
-
     const mockObserve = vi.fn();
     const mockDisconnect = vi.fn();
     function mockResizeObserver(this: any) {
@@ -177,9 +167,9 @@ describe("SensitivitySummaryPlot", () => {
                     getters: {
                         [RunGetter.visibleParameterSetNames]: () => visibleParameterSetNames,
                         [RunGetter.lineStylesForParameterSets]: () => ({
-                            Set1: "dot",
-                            Set2: "dash",
-                            Set3: "longdash"
+                            Set1: "3",
+                            Set2: "8",
+                            Set3: "15"
                         })
                     } as any
                 },
@@ -222,133 +212,144 @@ describe("SensitivitySummaryPlot", () => {
         vi.clearAllMocks();
     });
 
-    const expectDataToHaveBeenPlotted = (wrapper: VueWrapper<any>, layout: any = {}, includesParameterSets = false) => {
-        expect(mockPlotlyNewPlot).toHaveBeenCalledTimes(1);
-        const plotEl = wrapper.find(".plot").element;
-        expect(mockPlotlyNewPlot.mock.calls[0][0]).toBe(plotEl);
-        const expectedPlotData = [
-            {
-                mode: "lines",
-                line: {
-                    color: "#ff0000",
-                    width: 2,
-                    dash: undefined
+    const expectCorrectData = (
+        wrapper: ReturnType<typeof getWrapper>,
+        includesParameterSets = false,
+        logScaleX = false,
+        logScaleY = false
+    ) => {
+        const expectedPlotData = {
+            lines: [
+                {
+                    style: {
+                        strokeColor: "#ff0000",
+                        strokeWidth: 2,
+                        strokeDasharray: undefined as undefined | string,
+                        opacity: undefined
+                    },
+                    points: [
+                        { x: 1, y: 10 },
+                        { x: 1.1, y: 10.1 },
+                    ],
+                    metadata: {
+                        color: "#ff0000",
+                        name: "S",
+                        tooltipName: "S"
+                    }
                 },
-                name: "S",
-                x: [1, 1.1],
-                y: [10, 10.1],
-                hoverlabel: { namelength: -1 },
-                legendgroup: "S",
-                showlegend: true
-            },
-            {
-                mode: "lines",
-                line: {
-                    color: "#0000ff",
-                    width: 2,
-                    dash: undefined
+                {
+                    style: {
+                        strokeColor: "#0000ff",
+                        strokeWidth: 2,
+                        strokeDasharray: undefined,
+                        opacity: undefined
+                    },
+                    points: [
+                        { x: 1, y: 20 },
+                        { x: 1.1, y: 19.9 },
+                    ],
+                    metadata: {
+                        color: "#0000ff",
+                        name: "I",
+                        tooltipName: "I"
+                    }
                 },
-                name: "I",
-                x: [1, 1.1],
-                y: [20, 19.9],
-                hoverlabel: { namelength: -1 },
-                legendgroup: "I",
-                showlegend: true
-            }
-        ] as any;
+            ],
+            points: []
+        }
 
         if (includesParameterSets) {
-            expectedPlotData.push(
+            expectedPlotData.lines.push(
                 // Set 1
                 {
-                    mode: "lines",
-                    line: {
-                        color: "#ff0000",
-                        width: 1,
-                        dash: "dot"
+                    style: {
+                        strokeColor: "#ff0000",
+                        strokeWidth: 1,
+                        strokeDasharray: "3",
+                        opacity: undefined
                     },
-                    name: "S (Hey)",
-                    x: [10, 10.1],
-                    y: [100, 100.1],
-                    hoverlabel: { namelength: -1 },
-                    legendgroup: "S",
-                    showlegend: false
+                    points: [
+                        { x: 10, y: 100 },
+                        { x: 10.1, y: 100.1 },
+                    ],
+                    metadata: {
+                        color: "#ff0000",
+                        name: "S",
+                        tooltipName: "S (Hey)"
+                    }
                 },
                 {
-                    mode: "lines",
-                    line: {
-                        color: "#0000ff",
-                        width: 1,
-                        dash: "dot"
+                    style: {
+                        strokeColor: "#0000ff",
+                        strokeWidth: 1,
+                        strokeDasharray: "3",
+                        opacity: undefined
                     },
-                    name: "I (Hey)",
-                    x: [10, 10.1],
-                    y: [200, 190.9],
-                    hoverlabel: { namelength: -1 },
-                    legendgroup: "I",
-                    showlegend: false
+                    points: [
+                        { x: 10, y: 200 },
+                        { x: 10.1, y: 190.9 },
+                    ],
+                    metadata: {
+                        color: "#0000ff",
+                        name: "I",
+                        tooltipName: "I (Hey)"
+                    }
                 },
                 // Set 2
                 {
-                    mode: "lines",
-                    line: {
-                        color: "#ff0000",
-                        width: 1,
-                        dash: "dash"
+                    style: {
+                        strokeColor: "#ff0000",
+                        strokeWidth: 1,
+                        strokeDasharray: "8",
+                        opacity: undefined
                     },
-                    name: "S (Bye)",
-                    x: [20, 20.1],
-                    y: [101, 101.1],
-                    hoverlabel: { namelength: -1 },
-                    legendgroup: "S",
-                    showlegend: false
+                    points: [
+                        { x: 20, y: 101 },
+                        { x: 20.1, y: 101.1 },
+                    ],
+                    metadata: {
+                        color: "#ff0000",
+                        name: "S",
+                        tooltipName: "S (Bye)"
+                    }
                 },
                 {
-                    mode: "lines",
-                    line: {
-                        color: "#0000ff",
-                        width: 1,
-                        dash: "dash"
+                    style: {
+                        strokeColor: "#0000ff",
+                        strokeWidth: 1,
+                        strokeDasharray: "8",
+                        opacity: undefined
                     },
-                    name: "I (Bye)",
-                    x: [20, 20.1],
-                    y: [201, 191.9],
-                    hoverlabel: { namelength: -1 },
-                    legendgroup: "I",
-                    showlegend: false
-                }
+                    points: [
+                        { x: 20, y: 201 },
+                        { x: 20.1, y: 191.9 },
+                    ],
+                    metadata: {
+                        color: "#0000ff",
+                        name: "I",
+                        tooltipName: "I (Bye)"
+                    }
+                },
             );
         }
 
-        const expectedLayout = {
-            margin: {
-                t: 25
-            },
-            xaxis: {
-                title: "beta",
-                type: "linear"
-            },
-            yaxis: {
-                type: "linear"
-            },
-            ...layout
-        };
-        expect(mockPlotlyNewPlot.mock.calls[0][1]).toStrictEqual(expectedPlotData);
-        expect(mockPlotlyNewPlot.mock.calls[0][2]).toStrictEqual(expectedLayout);
-        expect(mockPlotlyNewPlot.mock.calls[0][3]).toStrictEqual({ responsive: true });
-
+        expect(wrapper.vm.plotData).toStrictEqual(expectedPlotData);
         expect(wrapper.findComponent(WodinPlotDataSummary).props("data")).toStrictEqual(expectedPlotData);
+
+        expect(wrapper.vm.xAxisLabel).toBe("beta");
+        expect(wrapper.vm.logScaleX).toBe(logScaleX);
+        expect(wrapper.vm.logScaleY).toBe(logScaleY);
     };
 
-    it("plots ValueAtTime data as expected", () => {
+    it("calculates ValueAtTime data as expected", () => {
         const wrapper = getWrapper();
         expect(wrapper.find(".plot-placeholder").exists()).toBe(false);
 
         expect(mockValueAtTime).toHaveBeenCalledWith(99);
-        expectDataToHaveBeenPlotted(wrapper);
+        expectCorrectData(wrapper);
     });
 
-    it("plots ValueAtTime with parameter set traces", () => {
+    it("calculates ValueAtTime with parameter set traces", () => {
         const wrapper = getWrapper(
             true,
             defaultPlotSettings,
@@ -363,10 +364,10 @@ describe("SensitivitySummaryPlot", () => {
         expect(mockBatchSet1.valueAtTime).toHaveBeenCalledWith(99);
         expect(mockBatchSet2.valueAtTime).toHaveBeenCalledWith(99);
         expect(mockBatchSet3.valueAtTime).not.toHaveBeenCalled();
-        expectDataToHaveBeenPlotted(wrapper, {}, true);
+        expectCorrectData(wrapper, true);
     });
 
-    it("plots TimeAtExtreme min data as expected", () => {
+    it("calculates TimeAtExtreme min data as expected", () => {
         const plotSettings = {
             plotType: SensitivityPlotType.TimeAtExtreme,
             extreme: SensitivityPlotExtreme.Min,
@@ -374,10 +375,10 @@ describe("SensitivitySummaryPlot", () => {
         };
         const wrapper = getWrapper(true, plotSettings);
         expect(mockExtreme).toHaveBeenCalledWith("tMin");
-        expectDataToHaveBeenPlotted(wrapper);
+        expectCorrectData(wrapper);
     });
 
-    it("plots TimeAtExtreme max data as expected", () => {
+    it("calculates TimeAtExtreme max data as expected", () => {
         const plotSettings = {
             plotType: SensitivityPlotType.TimeAtExtreme,
             extreme: SensitivityPlotExtreme.Max,
@@ -385,10 +386,10 @@ describe("SensitivitySummaryPlot", () => {
         };
         const wrapper = getWrapper(true, plotSettings);
         expect(mockExtreme).toHaveBeenCalledWith("tMax");
-        expectDataToHaveBeenPlotted(wrapper);
+        expectCorrectData(wrapper);
     });
 
-    it("plots timeAtExtreme with parameter set traces", () => {
+    it("calculates timeAtExtreme with parameter set traces", () => {
         const plotSettings = {
             plotType: SensitivityPlotType.TimeAtExtreme,
             extreme: SensitivityPlotExtreme.Min,
@@ -407,10 +408,10 @@ describe("SensitivitySummaryPlot", () => {
         expect(mockBatchSet1.extreme).toHaveBeenCalledWith("tMin");
         expect(mockBatchSet2.extreme).toHaveBeenCalledWith("tMin");
         expect(mockBatchSet3.extreme).not.toHaveBeenCalled();
-        expectDataToHaveBeenPlotted(wrapper, {}, true);
+        expectCorrectData(wrapper, true);
     });
 
-    it("plots ValueAtExtreme min data as expected", () => {
+    it("calculates ValueAtExtreme min data as expected", () => {
         const plotSettings = {
             plotType: SensitivityPlotType.ValueAtExtreme,
             extreme: SensitivityPlotExtreme.Min,
@@ -418,10 +419,10 @@ describe("SensitivitySummaryPlot", () => {
         };
         const wrapper = getWrapper(true, plotSettings);
         expect(mockExtreme).toHaveBeenCalledWith("yMin");
-        expectDataToHaveBeenPlotted(wrapper);
+        expectCorrectData(wrapper);
     });
 
-    it("plots ValueAtExtreme max data as expected", () => {
+    it("calculates ValueAtExtreme max data as expected", () => {
         const plotSettings = {
             plotType: SensitivityPlotType.ValueAtExtreme,
             extreme: SensitivityPlotExtreme.Max,
@@ -429,10 +430,10 @@ describe("SensitivitySummaryPlot", () => {
         };
         const wrapper = getWrapper(true, plotSettings);
         expect(mockExtreme).toHaveBeenCalledWith("yMax");
-        expectDataToHaveBeenPlotted(wrapper);
+        expectCorrectData(wrapper);
     });
 
-    it("plots ValueAtExtreme with parameter set traces", () => {
+    it("calculates ValueAtExtreme with parameter set traces", () => {
         const plotSettings = {
             plotType: SensitivityPlotType.ValueAtExtreme,
             extreme: SensitivityPlotExtreme.Max,
@@ -451,37 +452,35 @@ describe("SensitivitySummaryPlot", () => {
         expect(mockBatchSet1.extreme).toHaveBeenCalledWith("yMax");
         expect(mockBatchSet2.extreme).toHaveBeenCalledWith("yMax");
         expect(mockBatchSet3.extreme).not.toHaveBeenCalled();
-        expectDataToHaveBeenPlotted(wrapper, {}, true);
+        expectCorrectData(wrapper, true);
     });
 
     it("renders as expected when no data", () => {
         const wrapper = getWrapper(false);
-        expect(mockPlotlyNewPlot).not.toHaveBeenCalled();
         expect(wrapper.find(".plot-placeholder").text()).toBe("Sensitivity has not been run.");
     });
 
     it("renders as expected when no selected variables", () => {
         const wrapper = getWrapper(true, defaultPlotSettings, false, defaultParamSettings, false, []);
-        expect(mockPlotlyNewPlot).not.toHaveBeenCalled();
         expect(wrapper.find(".plot-placeholder").text()).toBe("No variables are selected.");
     });
 
     it("sets end time to 0 if less", () => {
         const wrapper = getWrapper(true, { ...defaultPlotSettings, time: -1 });
         expect(mockSetPlotTime.mock.calls[0][1]).toBe(0);
-        expectDataToHaveBeenPlotted(wrapper);
+        expectCorrectData(wrapper);
     });
 
     it("sets end time to model end time if greater", () => {
         const wrapper = getWrapper(true, { ...defaultPlotSettings, time: 101 });
         expect(mockSetPlotTime.mock.calls[0][1]).toBe(100);
-        expectDataToHaveBeenPlotted(wrapper);
+        expectCorrectData(wrapper);
     });
 
     it("sets end time to model end time if null", () => {
         const wrapper = getWrapper(true, { ...defaultPlotSettings, time: null });
         expect(mockSetPlotTime.mock.calls[0][1]).toBe(100);
-        expectDataToHaveBeenPlotted(wrapper);
+        expectCorrectData(wrapper);
     });
 
     it("does not render fade style when fadePlot is false", () => {
@@ -496,70 +495,24 @@ describe("SensitivitySummaryPlot", () => {
         expect(div.attributes("style")).toBe("opacity: 0.5;");
     });
 
-    it("initialises ResizeObserver", async () => {
-        const wrapper = getWrapper();
-        const divElement = wrapper.find("div.plot").element;
-        expect(mockObserve).toHaveBeenCalledWith(divElement);
-    });
-
-    it("resize method resizes Plot", async () => {
-        const wrapper = getWrapper();
-        (wrapper.vm as any).resize();
-        const divElement = wrapper.find("div.plot").element;
-        expect(plotly.Plots.resize).toHaveBeenCalledWith(divElement);
-    });
-
-    it("disconnects resizeObserver on unmount", async () => {
-        const wrapper = getWrapper();
-        wrapper.unmount();
-        expect(mockDisconnect).toHaveBeenCalled();
-    });
-
-    it("does not attempt to disconnect resizeObserver if not initialised", () => {
-        const wrapper = getWrapper(false);
-        wrapper.unmount();
-        expect(mockDisconnect).not.toHaveBeenCalled();
-    });
-
-    it("redraws plot if data changes", async () => {
-        // update store's time value to force re-compute of plotData, and then redraw
-        getWrapper();
-        store!.state.sensitivity.plotSettings.time = 50;
-        await nextTick();
-        expect(mockPlotlyNewPlot).toHaveBeenCalledTimes(2);
-    });
-
-    it("redraws plot if graph setting changes", async () => {
-        const wrapper = getWrapper();
-        const graphConfig = wrapper.props("graphConfig");
-        await wrapper.setProps({
-            graphConfig: {
-                ...graphConfig,
-                settings: { logScaleYAxis: true } as any
-            }
-        });
-        await nextTick();
-        expect(mockPlotlyNewPlot).toHaveBeenCalledTimes(2);
-    });
-
     it("draws x axis on log scale if parameters vary logarithmically", () => {
         const paramSettings = {
             parameterToVary: "beta",
             scaleType: SensitivityScaleType.Logarithmic
         } as SensitivityParameterSettings;
         const wrapper = getWrapper(true, defaultPlotSettings, false, paramSettings);
-        expectDataToHaveBeenPlotted(wrapper, { xaxis: { title: "beta", type: "log" } });
+        expectCorrectData(wrapper, false, true, false);
     });
 
     it("draws y axis on log scale if graph setting log scale is true and plot type is not time at extreme", () => {
         const wrapper = getWrapper(true, defaultPlotSettings, false, defaultParamSettings, true);
-        expectDataToHaveBeenPlotted(wrapper, { yaxis: { type: "log" } });
+        expectCorrectData(wrapper, false, false, true);
     });
 
     it("draws y axis on lines scale if graph setting log scale is true but plot type is time at extreme", () => {
         const plotSettings = { ...defaultPlotSettings, plotType: SensitivityPlotType.TimeAtExtreme };
         const wrapper = getWrapper(true, plotSettings, false, defaultParamSettings, true);
-        expectDataToHaveBeenPlotted(wrapper);
+        expectCorrectData(wrapper);
     });
 
     it("commits set loading when plotData is computed, if loading is true", async () => {
