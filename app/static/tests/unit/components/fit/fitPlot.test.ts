@@ -8,6 +8,7 @@ import { FitDataGetter } from "../../../../src/store/fitData/getters";
 import WodinPlot from "../../../../src/components/WodinPlot.vue";
 import FitPlot from "../../../../src/components/fit/FitPlot.vue";
 import { OdinFitResult } from "../../../../src/types/wrapperTypes";
+import { mockGraphsState } from "../../../mocks";
 
 describe("FitPlot", () => {
     const mockSolution = vi.fn().mockReturnValue({
@@ -33,59 +34,103 @@ describe("FitPlot", () => {
 
     const mockPalette = { y: "#0000ff", z: "#ff0000" };
 
-    const expectedPlotData = [
-        {
-            mode: "lines",
-            name: "y",
-            x: [0, 0.5, 1],
-            y: [5, 6, 7],
-            line: {
-                color: "#0000ff",
-                width: 2,
-                dash: undefined
+    const expectedPlotData = {
+        lines: [
+            {
+                style: {
+                    strokeColor: "#0000ff",
+                    strokeWidth: 2,
+                    strokeDasharray: undefined,
+                    opacity: undefined
+                },
+                points: [
+                    { x: 0, y: 5 },
+                    { x: 0.5, y: 6 },
+                    { x: 1, y: 7 },
+                ],
+                metadata: {
+                    color: "#0000ff",
+                    name: "y",
+                    tooltipName: "y"
+                }
             },
-            hoverlabel: { namelength: -1 },
-            legendgroup: undefined,
-            showlegend: true
-        },
-        {
-            name: "v",
-            x: [0, 1],
-            y: [10, 20],
-            mode: "markers",
-            type: "scatter",
-            marker: {
-                color: "#0000ff"
-            }
-        }
-    ];
+        ],
+        points: [
+            {
+                style: {
+                    color: "#0000ff"
+                },
+                x: 0,
+                y: 10,
+                metadata: {
+                    color: "#0000ff",
+                    name: "v",
+                    tooltipName: "v"
+                }
+            },
+            {
+                style: {
+                    color: "#0000ff"
+                },
+                x: 1,
+                y: 20,
+                metadata: {
+                    color: "#0000ff",
+                    name: "v",
+                    tooltipName: "v"
+                }
+            },
+        ]
+    };
 
-    const expectedRunPlotData = [
-        {
-            mode: "lines",
-            name: "y",
-            x: [0, 0.5, 1],
-            y: [50, 60, 70],
-            line: {
-                color: "#0000ff",
-                width: 2,
-                dash: undefined
+    const expectedRunPlotData = {
+        lines: [
+            {
+                style: {
+                    strokeColor: "#0000ff",
+                    strokeWidth: 2,
+                    strokeDasharray: undefined,
+                    opacity: undefined
+                },
+                points: [
+                    { x: 0, y: 50 },
+                    { x: 0.5, y: 60 },
+                    { x: 1, y: 70 },
+                ],
+                metadata: {
+                    color: "#0000ff",
+                    name: "y",
+                    tooltipName: "y"
+                }
             },
-            hoverlabel: { namelength: -1 },
-            legendgroup: undefined,
-            showlegend: true
-        },
-        {
-            name: "v",
-            x: [0, 1],
-            y: [10, 20],
-            mode: "markers",
-            type: "scatter",
-            marker: {
-                color: "#0000ff"
-            }
-        }
-    ];
+        ],
+        points: [
+            {
+                style: {
+                    color: "#0000ff"
+                },
+                x: 0,
+                y: 10,
+                metadata: {
+                    color: "#0000ff",
+                    name: "v",
+                    tooltipName: "v"
+                }
+            },
+            {
+                style: {
+                    color: "#0000ff"
+                },
+                x: 1,
+                y: 20,
+                metadata: {
+                    color: "#0000ff",
+                    name: "v",
+                    tooltipName: "v"
+                }
+            },
+        ]
+    };
 
     const getWrapper = (modelFitResult: OdinFitResult | null, fadePlot = false) => {
         const store = new Vuex.Store<FitState>({
@@ -122,6 +167,10 @@ describe("FitPlot", () => {
                             solution: mockRunSolution
                         }
                     }
+                },
+                graphs: {
+                    namespaced: true,
+                    state: mockGraphsState()
                 }
             }
         });
@@ -196,7 +245,7 @@ describe("FitPlot", () => {
 
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 1, 100);
-        expect(data).toStrictEqual([]);
+        expect(data).toStrictEqual({ lines: [], points: [] });
     });
 
     it("fades plot when fadePlot prop is true", () => {

@@ -49,9 +49,13 @@ describe("GraphConfigs", () => {
         );
         const graphConfigComps = wrapper.findAllComponents(GraphConfig);
         expect(graphConfigComps.length).toBe(2);
-        expect(graphConfigComps.at(0)!.props("graphIndex")).toBe(0);
+        expect(graphConfigComps.at(0)!.props("graphConfig")).toStrictEqual(
+            { selectedVariables: ["S"], unselectedVariables: ["I", "R"] }
+        );
         expect(graphConfigComps.at(0)!.props("dragging")).toBe(false);
-        expect(graphConfigComps.at(1)!.props("graphIndex")).toBe(1);
+        expect(graphConfigComps.at(1)!.props("graphConfig")).toStrictEqual(
+            { selectedVariables: ["I"], unselectedVariables: ["S", "R"] }
+        );
         expect(graphConfigComps.at(1)!.props("dragging")).toBe(false);
         expect(wrapper.find("button").text()).toBe("Add Graph");
         expect(wrapper.findComponent(HiddenVariables).props("dragging")).toBe(false);

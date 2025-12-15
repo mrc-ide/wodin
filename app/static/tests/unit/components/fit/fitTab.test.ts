@@ -1,6 +1,3 @@
-// Mock plotly before import RunTab, which indirectly imports plotly via FitPlot
-vi.mock("plotly.js-basic-dist-min", () => ({}));
-
 import { mount } from "@vue/test-utils";
 import Vuex from "vuex";
 import VueFeather from "vue-feather";
@@ -67,7 +64,8 @@ describe("Fit Tab", () => {
 
         return mount(FitTab, {
             global: {
-                plugins: [store]
+                plugins: [store],
+                stubs: ["wodin-plot"]
             }
         });
     };
@@ -79,11 +77,11 @@ describe("Fit Tab", () => {
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         const fitPlot = wrapper.findComponent(FitPlot);
         expect(fitPlot.props("fadePlot")).toBe(false);
-        expect(fitPlot.findComponent(VueFeather).props("type")).toBe("check");
-        expect(fitPlot.findComponent(VueFeather).classes()).toContain("text-success");
-        expect(fitPlot.findComponent(LoadingSpinner).exists()).toBe(false);
-        expect(fitPlot.findAll("span").at(0)!.text()).toBe("Iterations: 10");
-        expect(fitPlot.findAll("span").at(1)!.text()).toBe("Sum of squares: 2.1");
+        expect(wrapper.vm.iconType).toBe("check");
+        expect(wrapper.vm.iconClass).toBe("text-success");
+        expect(wrapper.vm.fitting).toBe(false);
+        expect(wrapper.vm.iterations).toBe(10);
+        expect(wrapper.vm.sumOfSquares).toBe(2.1);
         expect(fitPlot.find("#fit-cancelled-msg").exists()).toBe(false);
         expect(wrapper.findComponent(ErrorInfo).props("error")).toBe(null);
     });
@@ -95,11 +93,11 @@ describe("Fit Tab", () => {
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         const fitPlot = wrapper.findComponent(FitPlot);
         expect(fitPlot.props("fadePlot")).toBe(false);
-        expect(fitPlot.findComponent(VueFeather).exists()).toBe(false);
-        expect(fitPlot.findComponent(LoadingSpinner).props("size")).toBe("xs");
-        expect(fitPlot.findAll("span").at(1)!.text()).toBe("Iterations: 5");
-        expect(fitPlot.findAll("span").at(2)!.text()).toBe("Sum of squares: 123.45");
-        expect(fitPlot.find("#fit-cancelled-msg").exists()).toBe(false);
+        expect(wrapper.vm.iconType).toBe(null);
+        expect(wrapper.vm.fitting).toBe(true);
+        expect(wrapper.vm.iterations).toBe(5);
+        expect(wrapper.vm.sumOfSquares).toBe(123.45);
+        expect(wrapper.vm.cancelled).toBe(false);
     });
 
     it("renders as expected before fit runs", () => {
@@ -109,10 +107,10 @@ describe("Fit Tab", () => {
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         const fitPlot = wrapper.findComponent(FitPlot);
         expect(fitPlot.props("fadePlot")).toBe(false);
-        expect(fitPlot.findComponent(VueFeather).exists()).toBe(false);
-        expect(fitPlot.findComponent(LoadingSpinner).exists()).toBe(false);
-        expect(fitPlot.findAll("span").length).toBe(0);
-        expect(fitPlot.find("#fit-cancelled-msg").exists()).toBe(false);
+        expect(wrapper.vm.iconType).toBe(null);
+        expect(wrapper.vm.fitting).toBe(false);
+        expect(wrapper.vm.iterations).toBe(null);
+        expect(wrapper.vm.cancelled).toBe(null);
     });
 
     it("renders as expected when fit has been cancelled", () => {
@@ -122,12 +120,13 @@ describe("Fit Tab", () => {
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         const fitPlot = wrapper.findComponent(FitPlot);
         expect(fitPlot.props("fadePlot")).toBe(false);
-        expect(fitPlot.findComponent(VueFeather).props("type")).toBe("alert-circle");
-        expect(fitPlot.findComponent(VueFeather).classes()).toContain("text-secondary");
-        expect(fitPlot.findComponent(LoadingSpinner).exists()).toBe(false);
-        expect(fitPlot.findAll("span").at(0)!.text()).toBe("Iterations: 1");
-        expect(fitPlot.findAll("span").at(1)!.text()).toBe("Sum of squares: 121.2");
-        expect(fitPlot.find("#fit-cancelled-msg").text()).toBe("Model fit was cancelled before converging");
+        expect(wrapper.vm.iconType).toBe("alert-circle");
+        expect(wrapper.vm.iconClass).toBe("text-secondary");
+        expect(wrapper.vm.fitting).toBe(false);
+        expect(wrapper.vm.iterations).toBe(1);
+        expect(wrapper.vm.sumOfSquares).toBe(121.2);
+        expect(wrapper.vm.cancelled).toBe(true);
+        expect(wrapper.vm.cancelledMsg).toBe("Model fit was cancelled before converging");
     });
 
     it("renders as expected when cannot run fit", () => {
@@ -143,10 +142,9 @@ describe("Fit Tab", () => {
         );
         const fitPlot = wrapper.findComponent(FitPlot);
         expect(fitPlot.props("fadePlot")).toBe(true);
-        expect(fitPlot.findComponent(VueFeather).exists()).toBe(false);
-        expect(fitPlot.findComponent(LoadingSpinner).exists()).toBe(false);
-        expect(fitPlot.findAll("span").length).toBe(0);
-        expect(fitPlot.find("#fit-cancelled-msg").exists()).toBe(false);
+        expect(wrapper.vm.fitting).toBe(false);
+        expect(wrapper.vm.iterations).toBe(null);
+        expect(wrapper.vm.cancelled).toBe(null);
     });
 
     it("renders as expected when compile is required", () => {
@@ -157,9 +155,9 @@ describe("Fit Tab", () => {
         );
         const fitPlot = wrapper.findComponent(FitPlot);
         expect(fitPlot.props("fadePlot")).toBe(true);
-        expect(fitPlot.findComponent(VueFeather).props("type")).toBe("check");
-        expect(fitPlot.findAll("span").at(0)!.text()).toBe("Iterations: 10");
-        expect(fitPlot.findAll("span").at(1)!.text()).toBe("Sum of squares: 2.1");
+        expect(wrapper.vm.iconType).toBe("check");
+        expect(wrapper.vm.iterations).toBe(10);
+        expect(wrapper.vm.sumOfSquares).toBe(2.1);
     });
 
     it("renders as expected when fit update is required", () => {
@@ -170,9 +168,9 @@ describe("Fit Tab", () => {
         );
         const fitPlot = wrapper.findComponent(FitPlot);
         expect(fitPlot.props("fadePlot")).toBe(true);
-        expect(fitPlot.findComponent(LoadingSpinner).exists()).toBe(false);
-        expect(fitPlot.findAll("span").at(0)!.text()).toBe("Iterations: 10");
-        expect(fitPlot.findAll("span").at(1)!.text()).toBe("Sum of squares: 2.1");
+        expect(wrapper.vm.fitting).toBe(false);
+        expect(wrapper.vm.iterations).toBe(10);
+        expect(wrapper.vm.sumOfSquares).toBe(2.1);
     });
 
     it("renders model fit error as expected", () => {
