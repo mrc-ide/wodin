@@ -124,17 +124,21 @@ export default defineComponent({
             return plotData.value.lines.length || plotData.value.points.length;
         });
 
+        const xAxisLabel = computed(() =>
+            store.state.sensitivity.paramSettings.parameterToVary!);
+
+        const logScaleX = computed(() =>
+            store.state.sensitivity.paramSettings.scaleType === SensitivityScaleType.Logarithmic);
+
+        const logScaleY = computed(() =>
+            props.graphConfig.settings.logScaleYAxis &&
+            plotSettings.value.plotType !== SensitivityPlotType.TimeAtExtreme);
+
         const drawPlot = () => {
             if (!hasPlotData.value) return;
 
-            const { scaleType } = store.state.sensitivity.paramSettings;
-            const logScaleX = scaleType === SensitivityScaleType.Logarithmic;
-
-            const isNotTimePlot = plotSettings.value.plotType !== SensitivityPlotType.TimeAtExtreme;
-            const logScaleY = props.graphConfig.settings.logScaleYAxis && isNotTimePlot;
-
-            new Chart({ logScale: { x: logScaleX, y: logScaleY } })
-                .addAxes({ x: store.state.sensitivity.paramSettings.parameterToVary! })
+            new Chart({ logScale: { x: logScaleX.value, y: logScaleY.value } })
+                .addAxes({ x: xAxisLabel.value })
                 .addGridLines()
                 .addTraces(plotData.value.lines)
                 .makeResponsive()
@@ -152,7 +156,10 @@ export default defineComponent({
             plot,
             plotStyle,
             plotData,
-            hasPlotData
+            hasPlotData,
+            xAxisLabel,
+            logScaleX,
+            logScaleY
         };
     }
 });
