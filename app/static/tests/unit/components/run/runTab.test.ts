@@ -1,8 +1,4 @@
-// Mock plotly before import RunTab, which indirectly imports plotly via RunPlot
 import VueFeather from "vue-feather";
-
-vi.mock("plotly.js-basic-dist-min", () => ({}));
-
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { nextTick } from "vue";
@@ -193,17 +189,13 @@ describe("RunTab", () => {
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
         const plots = wrapper.findAllComponents(RunPlot);
         expect(plots.length).toBe(2);
-        expect(plots.at(0)!.props("graphIndex")).toBe(0);
         expect(plots.at(0)!.props("fadePlot")).toBe(false);
-        expect(plots.at(0)!.props("linkedXAxis")).toStrictEqual({ autorange: true });
         expect(plots.at(0)!.props("graphConfig")).toStrictEqual({
             id: "123",
             selectedVariables: ["S"],
             unselectedVariables: []
         });
-        expect(plots.at(1)!.props("graphIndex")).toBe(1);
         expect(plots.at(1)!.props("fadePlot")).toBe(false);
-        expect(plots.at(1)!.props("linkedXAxis")).toStrictEqual({ autorange: true });
         expect(plots.at(1)!.props("graphConfig")).toStrictEqual({
             id: "456",
             selectedVariables: [],
@@ -231,17 +223,6 @@ describe("RunTab", () => {
         expect(wrapper.find("#squares").text()).toBe("Sum of squares: 21.2");
     });
 
-    it("propagates x axis changes to all run plots", async () => {
-        const wrapper = getWrapper();
-        const plots = wrapper.findAllComponents(RunPlot);
-        expect(plots.length).toBe(2);
-        const newXAxis = { autorange: false, range: [1, 10] };
-        plots.at(0)!.vm.$emit("updateXAxis", newXAxis);
-        await nextTick();
-        expect(plots.at(0)!.props("linkedXAxis")).toStrictEqual(newXAxis);
-        expect(plots.at(1)!.props("linkedXAxis")).toStrictEqual(newXAxis);
-    });
-
     it("renders as expected when app is stochastic", () => {
         const wrapper = getStochasticWrapper(
             {},
@@ -251,18 +232,14 @@ describe("RunTab", () => {
         );
         const plots = wrapper.findAllComponents(RunStochasticPlot);
         expect(plots.length).toBe(2);
-        expect(plots.at(0)!.props("graphIndex")).toBe(0);
         expect(plots.at(0)!.props("fadePlot")).toBe(false);
-        expect(plots.at(0)!.props("linkedXAxis")).toStrictEqual({ autorange: true });
         expect(plots.at(0)!.props("graphConfig")).toStrictEqual({
             id: "123",
             selectedVariables: ["S"],
             unselectedVariables: []
         });
 
-        expect(plots.at(1)!.props("graphIndex")).toBe(1);
         expect(plots.at(1)!.props("fadePlot")).toBe(false);
-        expect(plots.at(1)!.props("linkedXAxis")).toStrictEqual({ autorange: true });
         expect(plots.at(1)!.props("graphConfig")).toStrictEqual({
             id: "456",
             selectedVariables: [],
@@ -288,17 +265,6 @@ describe("RunTab", () => {
             { hideRunButton: false, hideDownloadButton: true }
         );
         expect(wrapper.find("#download-btn").exists()).toBe(false);
-    });
-
-    it("propagates x axis changes to all run stochastic plots", async () => {
-        const wrapper = getStochasticWrapper();
-        const plots = wrapper.findAllComponents(RunStochasticPlot);
-        expect(plots.length).toBe(2);
-        const newXAxis = { autorange: false, range: [1, 10] };
-        plots.at(0)!.vm.$emit("updateXAxis", newXAxis);
-        await nextTick();
-        expect(plots.at(0)!.props("linkedXAxis")).toStrictEqual(newXAxis);
-        expect(plots.at(1)!.props("linkedXAxis")).toStrictEqual(newXAxis);
     });
 
     it("disables run button when state has no runner", () => {
