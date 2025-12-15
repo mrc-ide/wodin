@@ -66,7 +66,9 @@ export default defineComponent({
             if (!zoomProperties) return;
             const newXYRanges = {
               xAxisRange: zoomProperties.x,
-              yAxisRange: zoomProperties.eventType === "dblclick" && !props.graphConfig.settings.lockYAxis ? null : zoomProperties.y,
+              yAxisRange: zoomProperties.eventType === "dblclick" && !props.graphConfig.settings.lockYAxis
+                ? null
+                : zoomProperties.y,
             };
 
             if (props.graphConfig.id === fitGraphId) {
@@ -138,7 +140,8 @@ export default defineComponent({
             plotStyle,
             plot,
             baseData,
-            hasPlotData
+            hasPlotData,
+            updateAxes
         };
     }
 });
