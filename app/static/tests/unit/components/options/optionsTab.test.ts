@@ -18,7 +18,6 @@ import { getters as runGetters } from "../../../../src/store/run/getters";
 import AdvancedSettings from "../../../../src/components/options/AdvancedSettings.vue";
 import GraphConfigsCollapsible from "../../../../src/components/graphConfig/GraphConfigsCollapsible.vue";
 import { fitGraphId } from "@/store/graphs/state";
-import selectVariables from "@/components/mixins/selectVariables";
 
 describe("OptionsTab", () => {
     const mockTooltipDirective = vi.fn();

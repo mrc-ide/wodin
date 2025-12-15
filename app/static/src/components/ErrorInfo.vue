@@ -4,11 +4,12 @@
 
 <script lang="ts">
 import { defineComponent, computed, PropType } from "vue";
+import { WodinError } from "../types/responseTypes"
 
 export default defineComponent({
     name: "ErrorInfo",
     props: {
-        error: Object as PropType<Record<string, any> | null | undefined>
+        error: Object as PropType<WodinError | null | undefined>
     },
     setup(props) {
         const displayError = computed(() => (props.error ? `${props.error.error}: ${props.error.detail}` : ""));

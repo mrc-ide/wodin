@@ -159,6 +159,7 @@ import SensitivityParamValues from "./SensitivityParamValues.vue";
 import { generateBatchPars } from "../../utils";
 import ErrorInfo from "../ErrorInfo.vue";
 import TagInput from "./TagInput.vue";
+import { WodinError } from "../../types/responseTypes";
 
 export default defineComponent({
     name: "EditParamSettings",

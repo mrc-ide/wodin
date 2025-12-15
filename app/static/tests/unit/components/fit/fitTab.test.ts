@@ -1,10 +1,8 @@
 import { mount } from "@vue/test-utils";
 import Vuex from "vuex";
-import VueFeather from "vue-feather";
 import FitTab from "../../../../src/components/fit/FitTab.vue";
 import { FitState } from "../../../../src/store/fit/state";
 import ActionRequiredMessage from "../../../../src/components/ActionRequiredMessage.vue";
-import LoadingSpinner from "../../../../src/components/LoadingSpinner.vue";
 import FitPlot from "../../../../src/components/fit/FitPlot.vue";
 import { mockFitState, mockGraphsState } from "../../../mocks";
 import { WodinError } from "../../../../src/types/responseTypes";

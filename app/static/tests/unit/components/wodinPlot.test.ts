@@ -1,5 +1,4 @@
-import { shallowMount, VueWrapper } from "@vue/test-utils";
-import { nextTick } from "vue";
+import { shallowMount } from "@vue/test-utils";
 import Vuex, { Store } from "vuex";
 import WodinPlot from "../../../src/components/WodinPlot.vue";
 import WodinPlotDataSummary from "../../../src/components/WodinPlotDataSummary.vue";
@@ -7,8 +6,7 @@ import { BasicState } from "../../../src/store/basic/state";
 import { GraphsMutation } from "../../../src/store/graphs/mutations";
 import { defaultGraphSettings, fitGraphId, GraphSettings, GraphsState } from "@/store/graphs/state";
 import { ZoomProperties } from "@reside-ic/skadi-chart";
-import { ComponentProps } from "tests/testUtils";
-import settings from "@/settings";
+import { ComponentProps } from "../../testUtils";
 
 describe("WodinPlot", () => {
     const mockObserve = vi.fn();
@@ -214,7 +212,7 @@ describe("WodinPlot", () => {
 
     it("update axis works as expected", () => {
         const wrapper = getWrapper();
-        let zoomProperties: ZoomProperties = {
+        const zoomProperties: ZoomProperties = {
             eventType: "brush",
             x: [0, 0.5],
             y: [1, 50]
@@ -269,7 +267,7 @@ describe("WodinPlot", () => {
 
     it("update axis works as expected with fit graph", () => {
         const wrapper = getWrapper({ useFitPlot: true });
-        let zoomProperties: ZoomProperties = {
+        const zoomProperties: ZoomProperties = {
             eventType: "brush",
             x: [0, 0.5],
             y: [1, 50]
