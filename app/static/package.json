@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@monaco-editor/loader": "^1.4.0",
-    "@reside-ic/skadi-chart": "^1.1.2",
+    "@reside-ic/skadi-chart": "^1.1.4",
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "color": "^4.2.3",

@@ -34,7 +34,7 @@ test.describe("stochastic app", () => {
         await expect(await page.locator(".action-required-msg")).toHaveText("");
 
         // number of series should have increased by 2
-        const summary = ".wodin-plot-data-summary-series";
+        const summary = ".wodin-plot-data-summary-lines";
         expect(await page.locator(summary).count()).toBe(16);
 
         await expectSummaryValues(page, 1, "I_det", 1001, "#2e5cb8");
@@ -51,7 +51,7 @@ test.describe("stochastic app", () => {
         await page.click("#run-btn");
         await expect(await page.locator(".action-required-msg")).toHaveText("");
 
-        const summary = ".wodin-plot-data-summary-series";
+        const summary = ".wodin-plot-data-summary-lines";
         expect(await page.locator(summary).count()).toBe(104);
 
         await expectChangedNumberOfReplicatesMessage(page, "51");
@@ -78,7 +78,7 @@ test.describe("stochastic app", () => {
         await expect(await page.locator("#run-sensitivity")).toBeHidden();
 
         // Can see summary traces
-        const summary = ".wodin-plot-data-summary-series";
+        const summary = ".wodin-plot-data-summary-lines";
         await expect(await page.locator(summary)).toHaveCount(44);
 
         await expectSummaryValues(page, 1, "I_det (beta=0.450)", 1001, "#2e5cb8");

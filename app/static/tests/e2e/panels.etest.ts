@@ -16,7 +16,7 @@ test.describe("Wodin App panels tests", () => {
         await expect(await page.innerText(".wodin-mode-both .wodin-left .wodin-content .nav-tabs .active")).toBe(
             "Code"
         );
-        await expect(await page.locator(".wodin-mode-both .wodin-right .wodin-content .js-plotly-plot")).toBeVisible();
+        await expect(await page.locator(".wodin-mode-both .wodin-right .wodin-content .plot")).toBeVisible();
         await expect(await page.locator(".wodin-collapse-controls #resize-panel-control")).toBeVisible();
         await expect(await page.locator(".wodin-left .view-left").isHidden()).toBe(true);
         await expect(await page.locator(".wodin-right .view-right").isHidden()).toBe(true);
@@ -28,7 +28,7 @@ test.describe("Wodin App panels tests", () => {
         await expect(await page.innerText(".wodin-mode-both .wodin-left .wodin-content .nav-tabs .active")).toBe(
             "Code"
         );
-        await expect(await page.locator(".wodin-mode-both .wodin-right .wodin-content .js-plotly-plot")).toBeVisible();
+        await expect(await page.locator(".wodin-mode-both .wodin-right .wodin-content .plot")).toBeVisible();
         await expect(await page.locator(".wodin-collapse-controls #resize-panel-control")).toBeVisible();
         await expect(await page.locator(".wodin-left .view-left").isHidden()).toBe(false);
         await expect(await page.locator(".wodin-right .view-right").isHidden()).toBe(true);
@@ -41,7 +41,7 @@ test.describe("Wodin App panels tests", () => {
             "Code"
         );
         await expect(
-            await page.locator(".wodin-mode-both .wodin-right .wodin-content .js-plotly-plot").isHidden()
+            await page.locator(".wodin-mode-both .wodin-right .wodin-content .plot").isHidden()
         ).toBe(true);
         await expect(await page.locator(".wodin-collapse-controls #resize-panel-control")).toBeVisible();
         await expect(await page.locator(".wodin-left .view-left").isHidden()).toBe(true);
@@ -51,7 +51,7 @@ test.describe("Wodin App panels tests", () => {
     };
 
     const expectRightMode = async (page: Page) => {
-        await expect(await page.locator(".wodin-mode-right .wodin-right .wodin-content .js-plotly-plot")).toBeVisible();
+        await expect(await page.locator(".wodin-mode-right .wodin-right .wodin-content .plot")).toBeVisible();
         await expect(await page.locator(".wodin-mode-right .wodin-left .wodin-content").isHidden()).toBe(true);
         await expect(await page.locator(".wodin-collapse-controls #resize-panel-control")).toBeVisible();
         await expect(await page.locator(".wodin-left .view-left")).toBeVisible();

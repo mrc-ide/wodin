@@ -1,16 +1,17 @@
 import { expect, test, Page } from "@playwright/test";
 import { expectGraphVariables, addGraphWithVariable, expectXAxisTimeLabelFinalGraph } from "./utils";
 
-const expectXTicks = async (page: Page, expectedGraphCount: number, expectedXTicks: number[]) => {
-    const graphs = await page.locator(".plot-container");
+const expectFirstAndLastXTick = async (
+    page: Page, expectedGraphCount: number, expectedFirstAndLastTick: [number, number]
+) => {
+    const graphs = await page.locator(".wodin-plot-container");
     expect(await graphs.count()).toBe(expectedGraphCount);
     for (let i = 0; i < expectedGraphCount; i++) {
         const graph = graphs.nth(i);
-        const ticks = await graph.locator(".xtick text");
-        expect(await ticks.count()).toBe(expectedXTicks.length);
-        for (let tickIdx = 0; tickIdx < expectedXTicks.length; tickIdx++) {
-            await expect(ticks.nth(tickIdx)).toHaveText(expectedXTicks[tickIdx].toString());
-        }
+        const xAxis = graph.locator(`g[id^="x-axes"]`);
+        const ticks = xAxis.locator(".tick");
+        expect(await ticks.first().textContent()).toBe(expectedFirstAndLastTick[0].toString());
+        expect(await ticks.last().textContent()).toBe(expectedFirstAndLastTick[1].toString());
     }
 };
 
@@ -25,17 +26,17 @@ test.describe("Run Tab", () => {
         await expectGraphVariables(page, 1, ["S"]);
         await expectGraphVariables(page, 2, ["I"]);
         // Sanity check that each graph has expected initial x axis ticks for full 0-100 time range
-        await expectXTicks(page, 3, [0, 20, 40, 60, 80, 100]);
+        await expectFirstAndLastXTick(page, 3, [0, 100]);
 
         // 2. Drag to zoom to an area on the first graph
-        const graphBounds = (await page.locator(":nth-match(.plot .draglayer .xy .nsewdrag, 1)").boundingBox())!;
+        const graphBounds = (await page.locator(`:nth-match(.plot g[id^="brush"], 1)`).boundingBox())!;
         await page.mouse.move(graphBounds.x + 100, graphBounds.y + 50);
         await page.mouse.down();
         await page.mouse.move(graphBounds.x + 300, graphBounds.y + 100);
         await page.mouse.up();
 
         // 3. Check - using x axis ticks - that the expected x axis values are shown on all three graphs.
-        await expectXTicks(page, 3, [15, 20, 25, 30, 35, 40]);
+        await expectFirstAndLastXTick(page, 3, [14, 38]);
     });
 
     test("x axis Time label is shown for final plot only, in Basic app", async ({ page }) => {

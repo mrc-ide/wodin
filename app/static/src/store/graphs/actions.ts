@@ -24,7 +24,6 @@ export const actions: ActionTree<GraphsState, AppState> = {
             allVariables.indexOf(a) > allVariables.indexOf(b) ? 1 : -1
         );
 
-        console.log(selectedVariables);
         commit(GraphsMutation.SetGraphConfig, {
             id: payload.id,
             selectedVariables,

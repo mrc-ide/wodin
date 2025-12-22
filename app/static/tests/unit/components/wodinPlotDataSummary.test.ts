@@ -72,9 +72,13 @@ describe("WodinPlotDataSummary", () => {
         expect(pointSummaries.length).toBe(2);
         const pointSummary1 = pointSummaries[0];
         expect(pointSummary1.attributes("name")).toBe("test points");
+        expect(pointSummary1.attributes("x")).toBe("1");
+        expect(pointSummary1.attributes("y")).toBe("3");
         expect(pointSummary1.attributes("pointcolor")).toBe("#ff0000");
         const pointSummary2 = pointSummaries[1];
         expect(pointSummary2.attributes("name")).toBe("test points");
+        expect(pointSummary2.attributes("x")).toBe("2");
+        expect(pointSummary2.attributes("y")).toBe("4");
         expect(pointSummary2.attributes("pointcolor")).toBe("#ff0000");
     });
 

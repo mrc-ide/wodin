@@ -6,7 +6,7 @@
     <graph-config
         v-for="config in graphConfigs"
         :graph-config="config"
-        :key="config.id"
+        :key="JSON.stringify(config)"
         :dragging="draggingVariable"
         @setDragging="setDraggingVariable"
     ></graph-config>

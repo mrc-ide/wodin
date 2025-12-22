@@ -122,10 +122,12 @@ test.describe("Code Tab tests", () => {
         await page.click("#run-btn");
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("", { timeout });
         await expect(await getRunPlotOpacity(page)).toBe("1");
-        const legendTextSelector = ".js-plotly-plot .legendtext";
-        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("y1");
-        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 2)`)).toBe("y2");
-        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 3)`)).toBe("y3");
+
+        // TODO when legend is added - mrc-6826
+        // const legendTextSelector = ".js-plotly-plot .legendtext";
+        // await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("y1");
+        // await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 2)`)).toBe("y2");
+        // await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 3)`)).toBe("y3");
     });
 
     test("code loading on input renders as expected", async ({ page }) => {
@@ -320,7 +322,11 @@ test.describe("Code Tab tests", () => {
         await page.click("#add-graph-btn");
 
         // Check second graph has appeared with placeholder text, and second graph config panel is there
-        expect(await page.locator(":nth-match(.wodin-plot-container, 2)").textContent()).toBe(
+        expect(
+            await page.locator(":nth-match(.wodin-plot-container, 2)")
+                .locator(".plot-placeholder")
+                .textContent()
+        ).toBe(
             "No variables are selected."
         );
         expect(await page.locator(":nth-match(.graph-config-panel .drop-zone, 2)").textContent()).toContain(
@@ -405,10 +411,11 @@ test.describe("Code Tab tests", () => {
     test("can change graph setting for log scale y axis from code tab", async ({ page }) => {
         await page.locator(".log-scale-y-axis input").click();
         // should update y axis tick
-        const tickSelector = ":nth-match(.plotly .ytick text, 2)";
-        await expect(await page.innerHTML(tickSelector)).toBe("10n");
+        const yAxis = page.locator(`g[id^="y-axes"]`);
+        const firstTick = yAxis.locator(".tick").first();
+        await expect(await firstTick.textContent()).toBe("100p");
         // change back to linear
         await page.locator(".log-scale-y-axis input").click();
-        await expect(await page.innerHTML(tickSelector)).toBe("0.2M");
+        await expect(await firstTick.textContent()).toBe("0M");
     });
 });

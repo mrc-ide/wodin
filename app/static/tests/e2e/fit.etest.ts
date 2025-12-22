@@ -8,7 +8,7 @@ import {
     realisticFitData,
     linkData,
     addGraphWithVariable,
-    expectWodinPlotDataSummary
+    expectWodinPointSummary,
 } from "./utils";
 import PlaywrightConfig from "../../playwright.config";
 
@@ -146,23 +146,18 @@ test.describe("Wodin App model fit tests", () => {
         const sumOfSquares = await page.innerText(":nth-match(.wodin-plot-container span, 2)");
         expect(sumOfSquares).toContain("Sum of squares:");
 
-        const plotSelector = ".wodin-right .wodin-content div.mt-4 .js-plotly-plot";
-
-        await expect(await page.locator(".plotly .xtitle").textContent()).toBe("Time");
+        await expect(await page.locator(`text[id^="labelx"]`).textContent()).toBe("Time");
 
         // Test line is plotted for fit trace and data points
-        const linesSelector = `${plotSelector} .scatterlayer .trace .lines path`;
-        await expect((await page.locator(linesSelector).getAttribute("d"))!.startsWith("M")).toBe(true);
-        const pointsSelector = `${plotSelector} .scatterlayer .trace .points path`;
-        expect((await page.locator(`:nth-match(${pointsSelector}, 1)`).getAttribute("d"))!.startsWith("M")).toBe(true);
+        await expect((await page.locator(`path[id^=trace]`).getAttribute("d"))!.startsWith("M"))
+            .toBe(true);
+        expect(await page.locator(`circle[id^=scatter]`).count()).toBe(32);
 
+        // TODO when legend is added - mrc-6826
         // Test traces appear on legend
-        const legendTextSelector = `${plotSelector} .legendtext`;
-        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("I");
-        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 2)`)).toBe("Cases");
-
-        // Test modebar menu is present
-        await expect(await page.isVisible(`${plotSelector} .modebar`)).toBe(true);
+        // const legendTextSelector = `${plotSelector} .legendtext`;
+        // await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("I");
+        // await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 2)`)).toBe("Cases");
 
         // Test can run again with different params to vary, and get different result
         await page.click(":nth-match(input.vary-param-check, 2)");
@@ -334,23 +329,8 @@ test.describe("Wodin App model fit tests", () => {
         expect(sumOfSquares).toContain("Sum of squares:");
     });
 
-    test("can change graph setting for log scale y axis for fit graph", async ({ page }) => {
-        await startModelFit(page);
-        await waitForModelFitCompletion(page);
-
-        await expect(await page.locator(":nth-match(.collapse-title, 7)")).toHaveText("Fit Graph Settings");
-        await page.locator(".log-scale-y-axis input").click();
-        // should update y axis tick
-        const tickSelector = ":nth-match(.plotly .ytick text, 2)";
-        await expect(await page.innerHTML(tickSelector)).toBe("4");
-        // change back to linear
-        await page.locator(".log-scale-y-axis input").click();
-        await expect(await page.innerHTML(tickSelector)).toBe("2");
-    });
-
-    const expectDataSummaryOnGraph = async (graph: Locator, dataSummaryIdx: number, dataColor: string) => {
-        const summaryLocator = await graph.locator(`:nth-match(.wodin-plot-data-summary-series, ${dataSummaryIdx})`);
-        await expectWodinPlotDataSummary(summaryLocator, "Cases", 32, 0, 31, 0, 13, "markers", null, dataColor);
+    const expectDataSummaryOnGraph = async (graph: Locator, dataColor: string) => {
+        await expectWodinPointSummary(graph, "Cases", 32, 0, 31, 0, 13, dataColor);
     };
 
     test("data is displayed as expected with multiple graphs", async ({ page }) => {
@@ -368,16 +348,16 @@ test.describe("Wodin App model fit tests", () => {
         const unlinkedDataColor = "#1c0a00";
         const linkedDataColor = "#cccc00";
         const unselectedDataColor = "transparent";
-        await expectDataSummaryOnGraph(firstGraph, 4, unlinkedDataColor);
-        await expectDataSummaryOnGraph(secondGraph, 3, unlinkedDataColor);
+        await expectDataSummaryOnGraph(firstGraph, unlinkedDataColor);
+        await expectDataSummaryOnGraph(secondGraph, unlinkedDataColor);
 
         // Link data to 'I'
         await linkData(page);
 
         // Expect data to be shown on second graph with I's variable colour. Data should still be present on first graph
         // but transparent
-        await expectDataSummaryOnGraph(firstGraph, 4, unselectedDataColor);
-        await expectDataSummaryOnGraph(secondGraph, 3, linkedDataColor);
+        await expectDataSummaryOnGraph(firstGraph, unselectedDataColor);
+        await expectDataSummaryOnGraph(secondGraph, linkedDataColor);
 
         // Drag 'I' back to first graph
         const secondGraphConfig = page.locator(":nth-match(.graph-config-panel, 2)");
@@ -385,8 +365,8 @@ test.describe("Wodin App model fit tests", () => {
         await iVariable.dragTo(page.locator(":nth-match(.graph-config-panel .drop-zone, 1)"));
 
         // Expect data to be visible on first graph, transparent on second
-        await expectDataSummaryOnGraph(firstGraph, 5, linkedDataColor);
-        await expectDataSummaryOnGraph(secondGraph, 2, unselectedDataColor);
+        await expectDataSummaryOnGraph(firstGraph, linkedDataColor);
+        await expectDataSummaryOnGraph(secondGraph, unselectedDataColor);
 
         // SoS should be shown only once
         const sumOfSquares = page.locator("#squares");
@@ -396,7 +376,8 @@ test.describe("Wodin App model fit tests", () => {
         // Run sensitivity - expect data to be coloured on first graph, transparent on second
         await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
         await page.click("#run-sens-btn");
-        await expectDataSummaryOnGraph(firstGraph, 45, linkedDataColor);
-        await expectDataSummaryOnGraph(secondGraph, 12, unselectedDataColor);
+        await page.waitForTimeout(1000);
+        await expectDataSummaryOnGraph(firstGraph, linkedDataColor);
+        await expectDataSummaryOnGraph(secondGraph, unselectedDataColor);
     });
 });

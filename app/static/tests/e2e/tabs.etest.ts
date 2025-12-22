@@ -34,22 +34,20 @@ test.describe("Wodin App tabs tests", () => {
     test("renders plot in Run tab", async ({ page }) => {
         await expect(await page.innerText(".wodin-right .wodin-content .nav-tabs .active")).toBe("Run");
 
-        const plotSelector = ".wodin-right .wodin-content div.mt-4 .js-plotly-plot";
+        const plotSelector = ".wodin-right .wodin-content .plot";
 
         // Test line is plotted for each of 3 traces
-        const linesSelector = `${plotSelector} .scatterlayer .trace .lines path`;
-        expect((await page.locator(`:nth-match(${linesSelector}, 1)`).getAttribute("d"))!.startsWith("M0")).toBe(true);
-        expect((await page.locator(`:nth-match(${linesSelector}, 2)`).getAttribute("d"))!.startsWith("M0")).toBe(true);
-        expect((await page.locator(`:nth-match(${linesSelector}, 3)`).getAttribute("d"))!.startsWith("M0")).toBe(true);
+        const linesSelector = `${plotSelector} path[id^=trace]`;
+        expect((await page.locator(`:nth-match(${linesSelector}, 1)`).getAttribute("d"))!.startsWith("M")).toBe(true);
+        expect((await page.locator(`:nth-match(${linesSelector}, 2)`).getAttribute("d"))!.startsWith("M")).toBe(true);
+        expect((await page.locator(`:nth-match(${linesSelector}, 3)`).getAttribute("d"))!.startsWith("M")).toBe(true);
 
         // Test traces appear on legend
-        const legendTextSelector = `${plotSelector} .legendtext`;
-        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("S");
-        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 2)`)).toBe("I");
-        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 3)`)).toBe("R");
-
-        // Test modebar menu is present
-        await expect(await page.isVisible(`${plotSelector} .modebar`)).toBe(true);
+        // TODO when legend is added - mrc-6826
+        // const legendTextSelector = `${plotSelector} .legendtext`;
+        // await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("S");
+        // await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 2)`)).toBe("I");
+        // await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 3)`)).toBe("R");
     });
 
     test("can change to Sensitivity tab and back", async ({ page }) => {

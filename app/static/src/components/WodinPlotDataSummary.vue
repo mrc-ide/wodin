@@ -33,7 +33,7 @@ export default defineComponent({
             if (!props.data?.lines) return [];
             const lines = props.data.lines;
             return lines.map(l => ({
-                name: l.metadata?.name,
+                name: l.metadata?.tooltipName,
                 count: l.points.length,
                 xmin: Math.min(...l.points.map(p => p.x)),
                 xmax: Math.max(...l.points.map(p => p.x)),
@@ -49,6 +49,8 @@ export default defineComponent({
             const points = props.data.points;
             return points.map(p => ({
                 name: p.metadata?.name,
+                x: p.x,
+                y: p.y,
                 pointcolor: p.style.color,
             }));
         });
