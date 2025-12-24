@@ -1,6 +1,7 @@
 import { shallowMount } from "@vue/test-utils";
 import WodinPlotDataSummary from "../../../src/components/WodinPlotDataSummary.vue";
 import { WodinPlotData } from "@/plot";
+import { nextTick } from "vue";
 
 describe("WodinPlotDataSummary", () => {
     const getWrapper = () => {
@@ -55,6 +56,7 @@ describe("WodinPlotDataSummary", () => {
 
     it("renders hidden data summary elements", async () => {
         const wrapper = getWrapper();
+        await nextTick();
         const summaryContainer = wrapper.find(".wodin-plot-data-summary");
         const linesSummaries = summaryContainer.findAll(".wodin-plot-data-summary-lines");
         expect(linesSummaries.length).toBe(1);
@@ -82,13 +84,15 @@ describe("WodinPlotDataSummary", () => {
         expect(pointSummary2.attributes("pointcolor")).toBe("#ff0000");
     });
 
-    it("renders nothing if no data or empty data", () => {
+    it("renders nothing if no data or empty data", async () => {
         const emptyWrapper = shallowMount(WodinPlotDataSummary, {
             props: { data: { lines: [], points: [] } }
         });
+        await nextTick();
         expect(emptyWrapper.find("div").exists()).toBe(false);
 
         const nullWrapper = shallowMount(WodinPlotDataSummary, {});
+        await nextTick();
         expect(nullWrapper.find("div").exists()).toBe(false);
     });
 });

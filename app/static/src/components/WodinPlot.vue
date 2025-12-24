@@ -1,5 +1,6 @@
 <template>
     <div class="wodin-plot-container" :style="plotStyle">
+        <wodin-legend :legendConfigs="legendConfigs" @legendClick="handleClick"/>
         <div class="plot" ref="plot" id="plot"></div>
         <div v-if="!hasPlotData" class="plot-placeholder">
             {{ placeholderMessage }}
@@ -19,10 +20,11 @@ import { fitGraphId, GraphConfig } from "../store/graphs/state";
 import { Chart, ZoomProperties } from "@reside-ic/skadi-chart";
 import { AppState } from "@/store/appState/state";
 import { tooltipCallback } from "@/utils";
+import WodinLegend, { LegendConfig } from "./WodinLegend.vue";
 
 export default defineComponent({
     name: "WodinPlot",
-    components: { WodinPlotDataSummary },
+    components: { WodinPlotDataSummary, WodinLegend },
     props: {
         fadePlot: Boolean,
         placeholderMessage: String,
@@ -90,9 +92,44 @@ export default defineComponent({
             }
         };
 
+        const getLegendConfigs = (data: WodinPlotData) => {
+          const ret: Record<string, LegendConfig> = {};
+          const { lines, points } = data;
+          lines.forEach(l => {
+            const { name, color } = l.metadata!;
+            if (name in ret) return;
+            ret[name] = { color, type: "line", enabled: true };
+          });
+          points.forEach(p => {
+            const { name, color } = p.metadata!;
+            if (name in ret) return;
+            ret[name] = { color, type: "point", enabled: true };
+          });
+          return ret;
+        };
+
+        const legendConfigs = ref<Record<string, LegendConfig>>(
+          getLegendConfigs(baseData.value)
+        );
+
+        const handleClick = (name: string) => {
+          const old = legendConfigs.value;
+          old[name].enabled = !old[name].enabled;
+          legendConfigs.value = { ...old };
+          const filteredOutNames: string[] = [];
+          Object.entries(legendConfigs.value).forEach(([name, config]) => {
+            if (!config.enabled)  filteredOutNames.push(name);
+          });
+          const filteredData: WodinPlotData = {
+            lines: baseData.value.lines.filter(l => !filteredOutNames.includes(l.metadata!.name)),
+            points: baseData.value.points.filter(p => !filteredOutNames.includes(p.metadata!.name))
+          };
+          drawSkadiChart(filteredData);
+        };
+
         const skadiChart = ref<Chart>();
 
-        const drawSkadiChart = () => {
+        const drawSkadiChart = (legendFilteredData: null | WodinPlotData = null) => {
             const isLastGraph = props.graphConfig.id === fitGraphId
               || store.state.graphs.config.at(-1)!.id === props.graphConfig.id;
             const xAxisTitle = isLastGraph ? "Time" : "";
@@ -101,8 +138,15 @@ export default defineComponent({
             const xRange = settings.xAxisRange
               ? { start: settings.xAxisRange[0], end: settings.xAxisRange[1] }
               : maxXExtents;
-            const data = props.plotData(xRange.start, xRange.end, nPoints);
-            baseData.value = data;
+
+            let data: WodinPlotData;
+            if (legendFilteredData) {
+                data = legendFilteredData;
+            } else {
+                data = props.plotData(xRange.start, xRange.end, nPoints);
+                baseData.value = data;
+                legendConfigs.value = getLegendConfigs(baseData.value);
+            }
 
             const yRange = settings.yAxisRange
               ? { start: settings.yAxisRange[0], end: settings.yAxisRange[1] }
@@ -151,7 +195,9 @@ export default defineComponent({
             plot,
             baseData,
             hasPlotData,
-            updateAxes
+            updateAxes,
+            legendConfigs,
+            handleClick,
         };
     }
 });

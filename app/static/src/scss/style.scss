@@ -56,6 +56,17 @@ $grey: #ccc;
 .wodin-plot-container,
 .summary-plot-container {
     position: relative;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+    padding-inline: 1rem;
+    margin-bottom: 2rem;
+    border-radius: 5px;
+}
+
+.wodin-plot-container text[id^="labelx"],
+.summary-plot-container text[id^="labelx"]{
+    font-size: 1rem !important;
 }
 
 .plot {
@@ -64,7 +75,7 @@ $grey: #ccc;
 
 .plot-placeholder {
     width: 100%;
-    height: 450px;
+    height: 100%;
     background-color: $light-grey;
     display: flex;
     align-items: center;
@@ -72,6 +83,8 @@ $grey: #ccc;
     text-align: center;
     position: absolute;
     top: 0;
+    left: 0;
+    border-radius: 5px;
 }
 
 .alert-danger {
@@ -177,4 +190,8 @@ $grey: #ccc;
     width: 0;
     border: 0.6rem solid black;
     border-color: transparent;
+}
+
+.graph-config-settings {
+    margin-left: 8px;
 }

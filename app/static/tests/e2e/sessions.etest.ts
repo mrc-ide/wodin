@@ -28,7 +28,8 @@ const enterSessionLabel = async (page: Page, dialogId: string, newLabel: string)
 const loadAppPage = async (page: Page) => {
     // Reload the page to get fresh session, and give it time to save new session Id
     await page.goto(appUrl);
-    await page.waitForTimeout(saveSessionTimeout);
+    await page.waitForTimeout(500);
+    await page.clock.fastForward(saveSessionTimeout);
 };
 
 const newSessionFromAppPage = async (page: Page) => {
@@ -68,6 +69,7 @@ test.describe("Sessions tests", () => {
     test("can use Sessions page", async () => {
         const browser = await usePersistentContext();
         const page = await browser.newPage();
+        await page.clock.install({ time: new Date('2024-02-02T08:00:00') });
         await page.goto(appUrl);
 
         // change code in this session, which we will later reload and check that we can see the code changes
@@ -109,10 +111,11 @@ test.describe("Sessions tests", () => {
 
         // Run multi-sensitivity
         await page.click(":nth-match(.wodin-right .nav-tabs a, 4)");
-        expectCanRunMultiSensitivity(page, timeout);
+        await expectCanRunMultiSensitivity(page, timeout);
 
         // give the page a chance to save the session to back end
-        await page.waitForTimeout(saveSessionTimeout);
+        await page.waitForTimeout(500);
+        await page.clock.fastForward(saveSessionTimeout);
 
         // Reload the page to get fresh session, and give it time to save new session Id
         await newSessionFromAppPage(page);
@@ -178,13 +181,15 @@ test.describe("Sessions tests", () => {
 
         // Load no label session
         await page.locator(":nth-match(.session-load > a, 2)").click();
-        await page.waitForTimeout(saveSessionTimeout);
+        await page.waitForTimeout(500);
+        await page.clock.fastForward(saveSessionTimeout);
 
         // Create 3 duplicate
         await page.locator("#sessions-menu").click();
         await page.locator("#all-sessions-link").click();
         await page.locator("#copy-current-session").click();
-        await page.waitForTimeout(saveSessionTimeout);
+        await page.waitForTimeout(500);
+        await page.clock.fastForward(saveSessionTimeout);
 
         await page.goto(`${appUrl}/sessions`);
         // ... then after checking "Show duplicate sessions", all new sessions should be displayed...
@@ -222,7 +227,8 @@ test.describe("Sessions tests", () => {
 
         // Check all session values have been rehydrated:
         // Check data
-        await page.waitForTimeout(saveSessionTimeout);
+        await page.waitForTimeout(500);
+        await page.clock.fastForward(saveSessionTimeout);
         await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Data");
         await expect(await page.innerText("#data-upload-success")).toBe(" Uploaded 32 rows and 2 columns");
 
@@ -323,6 +329,7 @@ test.describe("Sessions tests", () => {
     test("session initialise modal behaves as expected", async () => {
         const browser = await usePersistentContext();
         const page = await browser.newPage();
+        await page.clock.install({ time: new Date('2024-02-02T08:00:00') });
         await loadAppPage(page);
 
         // We don't see the modal on load first session...
@@ -341,7 +348,8 @@ test.describe("Sessions tests", () => {
         await page.click("#sessions-menu");
         await page.click("#edit-current-session-label");
         await enterSessionLabel(page, "header-edit-session-label", "session to reload");
-        await page.waitForTimeout(saveSessionTimeout);
+        await page.waitForTimeout(500);
+        await page.clock.fastForward(saveSessionTimeout);
 
         // refresh page and select reload latest - should see the changes and new label
         await loadAppPage(page);
@@ -351,7 +359,8 @@ test.describe("Sessions tests", () => {
 
         // navigate to sessions page - should also be able to reload from there
         await page.goto(`${appUrl}/sessions`);
-        await page.waitForTimeout(saveSessionTimeout);
+        await page.waitForTimeout(500);
+        await page.clock.fastForward(saveSessionTimeout);
         await page.click("#reload-session");
         await expectReloadedSession(page);
 

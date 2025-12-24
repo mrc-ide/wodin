@@ -43,11 +43,16 @@ test.describe("Wodin App tabs tests", () => {
         expect((await page.locator(`:nth-match(${linesSelector}, 3)`).getAttribute("d"))!.startsWith("M")).toBe(true);
 
         // Test traces appear on legend
-        // TODO when legend is added - mrc-6826
-        // const legendTextSelector = `${plotSelector} .legendtext`;
-        // await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("S");
-        // await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 2)`)).toBe("I");
-        // await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 3)`)).toBe("R");
+        const legendTextSelector = `.wodin-plot-container .legend-row`;
+        await expect(
+            (await page.locator(`:nth-match(${legendTextSelector}, 1)`).textContent())!.trim()
+        ).toBe("S");
+        await expect(
+            (await page.locator(`:nth-match(${legendTextSelector}, 2)`).textContent())!.trim()
+        ).toBe("I");
+        await expect(
+            (await page.locator(`:nth-match(${legendTextSelector}, 3)`).textContent())!.trim()
+        ).toBe("R");
     });
 
     test("can change to Sensitivity tab and back", async ({ page }) => {

@@ -92,12 +92,18 @@ test.describe("Sensitivity tests", () => {
     });
 
     const plotSelector = ".wodin-right .wodin-content .plot";
-    // const expectLegend = async (page: Page) => {
-    //     const legendTextSelector = `${plotSelector} .legendtext`;
-    //     await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("S");
-    //     await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 2)`)).toBe("I");
-    //     await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 3)`)).toBe("R");
-    // };
+    const expectLegend = async (page: Page) => {
+        const legendTextSelector = `.wodin-plot-container .legend-row`;
+        await expect(
+            (await page.locator(`:nth-match(${legendTextSelector}, 1)`).textContent())!.trim()
+        ).toBe("S");
+        await expect(
+            (await page.locator(`:nth-match(${legendTextSelector}, 2)`).textContent())!.trim()
+        ).toBe("I");
+        await expect(
+            (await page.locator(`:nth-match(${legendTextSelector}, 3)`).textContent())!.trim()
+        ).toBe("R");
+    };
 
     const expectXYMinMax = async (
         page: Page,
@@ -127,8 +133,7 @@ test.describe("Sensitivity tests", () => {
         ).toBe(true);
 
         // expected legend and axes
-        // TODO when legend is added - mrc-6826
-        // await expectLegend(page);
+        await expectLegend(page);
         await expectXYMinMax(page, [0, 100], [267_000, 1_000_000], 1000);
 
         // change parameter - should see update required message

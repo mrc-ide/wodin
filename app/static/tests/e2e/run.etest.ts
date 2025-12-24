@@ -36,7 +36,7 @@ test.describe("Run Tab", () => {
         await page.mouse.up();
 
         // 3. Check - using x axis ticks - that the expected x axis values are shown on all three graphs.
-        await expectFirstAndLastXTick(page, 3, [14, 38]);
+        await expectFirstAndLastXTick(page, 3, [14, 40]);
     });
 
     test("x axis Time label is shown for final plot only, in Basic app", async ({ page }) => {
