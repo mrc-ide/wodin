@@ -8,7 +8,6 @@ import { defaultGraphSettings, fitGraphId, GraphSettings, GraphsState } from "@/
 import { ZoomProperties } from "@reside-ic/skadi-chart";
 import { ComponentProps } from "../../testUtils";
 import WodinLegend from "@/components/WodinLegend.vue";
-import { nextTick } from "vue";
 
 describe("WodinPlot", () => {
     const mockObserve = vi.fn();
