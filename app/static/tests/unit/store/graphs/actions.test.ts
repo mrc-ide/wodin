@@ -22,7 +22,7 @@ describe("Graphs actions", () => {
         mockAxios.reset();
     });
 
-    it("Updates selected variables commits selection only, if not fit model", () => {
+    it("Updates selected variables commits selection only", () => {
         const state = mockModelState();
         const commit = vi.fn();
         const dispatch = vi.fn();
