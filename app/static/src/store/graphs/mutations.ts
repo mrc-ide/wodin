@@ -1,4 +1,3 @@
-import { MutationTree } from "vuex";
 import { GraphsState, GraphConfig, fitGraphId } from "./state";
 
 export enum GraphsMutation {
@@ -8,18 +7,12 @@ export enum GraphsMutation {
     DeleteGraph = "DeleteGraph",
 }
 
-export interface SetSelectedVariablesPayload {
-    graphIndex: number;
-    selectedVariables: string[];
-    unselectedVariables: string[];
-}
-
-export type SetGraphConfigPayload = {
+export type SetGraphConfigPayload = Partial<Omit<GraphConfig, "settings">> & {
     id: string,
     settings?: Partial<GraphConfig["settings"]>
-} & Partial<GraphConfig>;
+};
 
-export const mutations: MutationTree<GraphsState> = {
+export const mutations = {
     [GraphsMutation.SetGraphConfig](state: GraphsState, payload: SetGraphConfigPayload) {
         if (payload.id === fitGraphId) {
             const oldGraphConfig = state.fitGraphConfig;

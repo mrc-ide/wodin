@@ -1,13 +1,12 @@
-import { Dash } from "plotly.js-basic-dist-min";
 import {
-    allFitDataToPlotly,
-    discreteSeriesSetToPlotly,
-    fitDataToPlotly,
+    allFitDataToSkadiChart,
+    discreteSeriesSetToSkadiChart,
+    fitDataToSkadiChart,
     paramSetLineStyle,
-    odinToPlotly
+    odinToSkadiChart
 } from "../../src/plot";
 
-describe("odinToPlotly", () => {
+describe("odinToSkadiChart", () => {
     const palette = {
         a: "#ff0000",
         b: "#0000ff"
@@ -22,91 +21,117 @@ describe("odinToPlotly", () => {
     };
 
     it("uses default options", () => {
-        expect(odinToPlotly(series, palette)).toStrictEqual([
+        expect(odinToSkadiChart(series, palette)).toStrictEqual([
             {
-                mode: "lines",
-                line: {
+                metadata: {
                     color: "#ff0000",
-                    width: 2,
-                    dash: undefined
+                    name: "a",
+                    tooltipName: "a"
                 },
-                name: "a",
-                x: [0, 1],
-                y: [30, 40],
-                hoverlabel: { namelength: -1 },
-                legendgroup: undefined,
-                showlegend: true
+                points: [
+                    { x: 0, y: 30 },
+                    { x: 1, y: 40 }
+                ],
+                style: {
+                    opacity: undefined,
+                    strokeColor: "#ff0000",
+                    strokeDasharray: undefined,
+                    strokeWidth: 2
+                }
             },
             {
-                mode: "lines",
-                line: {
+                metadata: {
                     color: "#0000ff",
-                    width: 2,
-                    dash: undefined
+                    name: "b",
+                    tooltipName: "b"
                 },
-                name: "b",
-                x: [0, 1],
-                y: [50, 60],
-                hoverlabel: { namelength: -1 },
-                legendgroup: undefined,
-                showlegend: true
+                points: [
+                    { x: 0, y: 50 },
+                    { x: 1, y: 60 }
+                ],
+                style: {
+                    opacity: undefined,
+                    strokeColor: "#0000ff",
+                    strokeDasharray: undefined,
+                    strokeWidth: 2
+                }
             }
         ]);
     });
 
     it("uses custom options", () => {
         const options = {
-            includeLegendGroup: true,
-            lineWidth: 3,
-            showLegend: false,
-            dash: "dot" as Dash
+            strokeWidth: 3,
+            strokeDasharray: "3"
         };
 
-        expect(odinToPlotly(series, palette, options)).toStrictEqual([
+        expect(odinToSkadiChart(series, palette, options)).toStrictEqual([
             {
-                mode: "lines",
-                line: {
+                metadata: {
                     color: "#ff0000",
-                    width: 3,
-                    dash: "dot"
+                    name: "a",
+                    tooltipName: "a"
                 },
-                name: "a",
-                x: [0, 1],
-                y: [30, 40],
-                hoverlabel: { namelength: -1 },
-                legendgroup: "a",
-                showlegend: false
+                points: [
+                    { x: 0, y: 30 },
+                    { x: 1, y: 40 }
+                ],
+                style: {
+                    opacity: undefined,
+                    strokeColor: "#ff0000",
+                    strokeDasharray: "3",
+                    strokeWidth: 3
+                }
             },
             {
-                mode: "lines",
-                line: {
+                metadata: {
                     color: "#0000ff",
-                    width: 3,
-                    dash: "dot"
+                    name: "b",
+                    tooltipName: "b"
                 },
-                name: "b",
-                x: [0, 1],
-                y: [50, 60],
-                hoverlabel: { namelength: -1 },
-                legendgroup: "b",
-                showlegend: false
+                points: [
+                    { x: 0, y: 50 },
+                    { x: 1, y: 60 }
+                ],
+                style: {
+                    opacity: undefined,
+                    strokeColor: "#0000ff",
+                    strokeDasharray: "3",
+                    strokeWidth: 3
+                }
             }
         ]);
     });
 });
 
-describe("allFitDataToPlotly", () => {
-    const palette = {
-        A: "#ff0000",
-        B: "#0000ff"
+const data = [
+    { t: 0, a: 1, b: 2 },
+    { t: 1, a: 2, b: 4 },
+    { t: 2, a: 3, b: 6 },
+    { t: 3, a: 4, b: 8 },
+    { t: 4, a: 5, b: 10 }
+];
+
+const expectedStyleAndMetdata = (name: "a" | "b", overrideColor?: string) => {
+    const color = overrideColor
+      || (name === "a" ? "#1c0a00" : "#603601");
+
+    return {
+        metadata: {
+            color,
+            name,
+            tooltipName: name
+        },
+        style: { color },
     };
-    const data = [
-        { t: 0, a: 1, b: 2 },
-        { t: 1, a: 2, b: 4 },
-        { t: 2, a: 3, b: 6 },
-        { t: 3, a: 4, b: 8 },
-        { t: 4, a: 5, b: 10 }
-    ];
+};
+
+const palette = {
+    A: "#ff0000",
+    B: "#0000ff"
+};
+
+describe("allFitDataToSkadiChart", () => {
     const allFitData = {
         data,
         linkedVariables: { a: null, b: null },
@@ -114,51 +139,25 @@ describe("allFitDataToPlotly", () => {
     };
 
     it("creates unlinked data", () => {
-        const res = allFitDataToPlotly(allFitData, palette, 0, 4, ["B"]);
+        const res = allFitDataToSkadiChart(allFitData, palette, 0, 4, ["B"]);
         expect(res).toStrictEqual([
-            {
-                marker: { color: "#1c0a00" }, // first data colour
-                mode: "markers",
-                name: "a",
-                type: "scatter",
-                x: [0, 1, 2, 3, 4],
-                y: [1, 2, 3, 4, 5]
-            },
-            {
-                marker: { color: "#603601" }, // second data colour
-                mode: "markers",
-                name: "b",
-                type: "scatter",
-                x: [0, 1, 2, 3, 4],
-                y: [2, 4, 6, 8, 10]
-            }
+            ...data.map(dat => ({ ...expectedStyleAndMetdata("a"), x: dat.t, y: dat.a })),
+            ...data.map(dat => ({ ...expectedStyleAndMetdata("b"), x: dat.t, y: dat.b })),
         ]);
     });
 
     it("returns empty set if data missing", () => {
-        const res = allFitDataToPlotly(null, palette, 0, 4, ["B"]);
+        const res = allFitDataToSkadiChart(null, palette, 0, 4, ["B"]);
         expect(res).toStrictEqual([]);
     });
 
     it("filters data by time", () => {
-        const res = allFitDataToPlotly(allFitData, palette, 1, 3, ["B"]);
+        const res = allFitDataToSkadiChart(allFitData, palette, 1, 3, ["B"]);
         expect(res).toStrictEqual([
-            {
-                marker: { color: "#1c0a00" },
-                mode: "markers",
-                name: "a",
-                type: "scatter",
-                x: [1, 2, 3],
-                y: [2, 3, 4]
-            },
-            {
-                marker: { color: "#603601" },
-                mode: "markers",
-                name: "b",
-                type: "scatter",
-                x: [1, 2, 3],
-                y: [4, 6, 8]
-            }
+            ...data.filter(dat => dat.t >= 1 && dat.t <= 3)
+              .map(dat => ({ ...expectedStyleAndMetdata("a"), x: dat.t, y: dat.a })),
+            ...data.filter(dat => dat.t >= 1 && dat.t <= 3)
+              .map(dat => ({ ...expectedStyleAndMetdata("b"), x: dat.t, y: dat.b })),
         ]);
     });
 
@@ -169,24 +168,10 @@ describe("allFitDataToPlotly", () => {
             timeVariable: "t"
         };
         const selectedVariables = ["A", "B"];
-        const res = allFitDataToPlotly(allFitDataLinked, palette, 0, 4, selectedVariables);
+        const res = allFitDataToSkadiChart(allFitDataLinked, palette, 0, 4, selectedVariables);
         expect(res).toStrictEqual([
-            {
-                marker: { color: "#1c0a00" }, // first data colour
-                mode: "markers",
-                name: "a",
-                type: "scatter",
-                x: [0, 1, 2, 3, 4],
-                y: [1, 2, 3, 4, 5]
-            },
-            {
-                marker: { color: "#0000ff" }, // Model colour
-                mode: "markers",
-                name: "b",
-                type: "scatter",
-                x: [0, 1, 2, 3, 4],
-                y: [2, 4, 6, 8, 10]
-            }
+            ...data.map(dat => ({ ...expectedStyleAndMetdata("a"), x: dat.t, y: dat.a })),
+            ...data.map(dat => ({ ...expectedStyleAndMetdata("b", "#0000ff"), x: dat.t, y: dat.b })),
         ]);
     });
 
@@ -197,51 +182,30 @@ describe("allFitDataToPlotly", () => {
             timeVariable: "t"
         };
         const selectedVariables = ["A"];
-        const res = allFitDataToPlotly(allFitDataLinked, palette, 0, 4, selectedVariables);
-        expect(res[1]).toStrictEqual({
-            marker: { color: "transparent" }, // Model colour
-            mode: "markers",
-            name: "b",
-            type: "scatter",
-            x: [0, 1, 2, 3, 4],
-            y: [2, 4, 6, 8, 10]
-        });
+        const res = allFitDataToSkadiChart(allFitDataLinked, palette, 0, 4, selectedVariables);
+        expect(res).toStrictEqual([
+            ...data.map(dat => ({ ...expectedStyleAndMetdata("a"), x: dat.t, y: dat.a })),
+            ...data.map(dat => ({ ...expectedStyleAndMetdata("b", "transparent"), x: dat.t, y: dat.b })),
+        ]);
     });
 });
 
-describe("fitDataToPlotly", () => {
-    const palette = {
-        A: "#ff0000",
-        B: "#0000ff"
-    };
-    const data = [
-        { t: 0, a: 1, b: 2 },
-        { t: 1, a: 2, b: 4 },
-        { t: 2, a: 3, b: 6 },
-        { t: 3, a: 4, b: 8 },
-        { t: 4, a: 5, b: 10 }
-    ];
+describe("fitDataToSkadiChart", () => {
     const link = {
         time: "t",
         data: "a",
         model: "A"
     };
+
     it("creates series", () => {
-        const res = fitDataToPlotly(data, link, palette, 0, 4);
+        const res = fitDataToSkadiChart(data, link, palette, 0, 4);
         expect(res).toEqual([
-            {
-                marker: { color: "#ff0000" },
-                mode: "markers",
-                name: "a",
-                type: "scatter",
-                x: [0, 1, 2, 3, 4],
-                y: [1, 2, 3, 4, 5]
-            }
+            ...data.map(dat => ({ ...expectedStyleAndMetdata("a", "#ff0000"), x: dat.t, y: dat.a })),
         ]);
     });
 });
 
-describe("discreteSeriesSetToPlotly", () => {
+describe("discreteSeriesSetToSkadiChart", () => {
     const palette = {
         A: "#ff0000",
         B: "#0000ff"
@@ -257,43 +221,75 @@ describe("discreteSeriesSetToPlotly", () => {
                 { name: "B", description: "Deterministic", y: [10, 11, 12] }
             ]
         };
-        const res = discreteSeriesSetToPlotly(seriesSet, palette, true);
+        const res = discreteSeriesSetToSkadiChart(seriesSet, palette, true);
         expect(res).toStrictEqual([
             {
-                mode: "lines",
-                line: { color: "#ff0000", width: 0.5, opacity: 0.5 },
-                name: "A",
-                x: [0, 1, 2],
-                y: [1, 2, 3],
-                legendgroup: "A",
-                showlegend: true
+                metadata: {
+                    color: "#ff0000",
+                    name: "A",
+                    tooltipName: "A"
+                },
+                points: [
+                    { x: 0, y: 1 },
+                    { x: 1, y: 2 },
+                    { x: 2, y: 3 }
+                ],
+                style: {
+                    opacity: 0.5,
+                    strokeColor: "#ff0000",
+                    strokeWidth: 0.5
+                }
             },
             {
-                mode: "lines",
-                line: { color: "#ff0000", width: 0.5, opacity: 0.5 },
-                name: "A",
-                x: [0, 1, 2],
-                y: [4, 5, 6],
-                legendgroup: "A",
-                showlegend: false
+                metadata: {
+                    color: "#ff0000",
+                    name: "A",
+                    tooltipName: "A"
+                },
+                points: [
+                    { x: 0, y: 4 },
+                    { x: 1, y: 5 },
+                    { x: 2, y: 6 }
+                ],
+                style: {
+                    opacity: 0.5,
+                    strokeColor: "#ff0000",
+                    strokeWidth: 0.5
+                }
             },
             {
-                mode: "lines",
-                line: { color: "#ff0000", width: undefined, opacity: undefined },
-                name: "A (mean)",
-                x: [0, 1, 2],
-                y: [7, 8, 9],
-                legendgroup: "A (mean)",
-                showlegend: true
+                metadata: {
+                    color: "#ff0000",
+                    name: "A (mean)",
+                    tooltipName: "A (mean)"
+                },
+                points: [
+                    { x: 0, y: 7 },
+                    { x: 1, y: 8 },
+                    { x: 2, y: 9 }
+                ],
+                style: {
+                    opacity: 1,
+                    strokeColor: "#ff0000",
+                    strokeWidth: 2
+                }
             },
             {
-                mode: "lines",
-                line: { color: "#0000ff", width: undefined, opacity: undefined },
-                name: "B",
-                x: [0, 1, 2],
-                y: [10, 11, 12],
-                legendgroup: "B",
-                showlegend: true
+                metadata: {
+                    color: "#0000ff",
+                    name: "B",
+                    tooltipName: "B"
+                },
+                points: [
+                    { x: 0, y: 10 },
+                    { x: 1, y: 11 },
+                    { x: 2, y: 12 }
+                ],
+                style: {
+                    opacity: 1,
+                    strokeColor: "#0000ff",
+                    strokeWidth: 2
+                }
             }
         ]);
     });
@@ -308,25 +304,41 @@ describe("discreteSeriesSetToPlotly", () => {
                 { name: "B", description: "Deterministic", y: [10, 11, 12] }
             ]
         };
-        const res = discreteSeriesSetToPlotly(seriesSet, palette, false);
+        const res = discreteSeriesSetToSkadiChart(seriesSet, palette, false);
         expect(res).toStrictEqual([
             {
-                mode: "lines",
-                line: { color: "#ff0000", width: undefined, opacity: undefined },
-                name: "A (mean)",
-                x: [0, 1, 2],
-                y: [7, 8, 9],
-                legendgroup: "A (mean)",
-                showlegend: true
+                metadata: {
+                    color: "#ff0000",
+                    name: "A (mean)",
+                    tooltipName: "A (mean)"
+                },
+                points: [
+                    { x: 0, y: 7 },
+                    { x: 1, y: 8 },
+                    { x: 2, y: 9 }
+                ],
+                style: {
+                    opacity: 1,
+                    strokeColor: "#ff0000",
+                    strokeWidth: 2
+                }
             },
             {
-                mode: "lines",
-                line: { color: "#0000ff", width: undefined, opacity: undefined },
-                name: "B",
-                x: [0, 1, 2],
-                y: [10, 11, 12],
-                legendgroup: "B",
-                showlegend: true
+                metadata: {
+                    color: "#0000ff",
+                    name: "B",
+                    tooltipName: "B"
+                },
+                points: [
+                    { x: 0, y: 10 },
+                    { x: 1, y: 11 },
+                    { x: 2, y: 12 }
+                ],
+                style: {
+                    opacity: 1,
+                    strokeColor: "#0000ff",
+                    strokeWidth: 2
+                }
             }
         ]);
     });
@@ -334,11 +346,7 @@ describe("discreteSeriesSetToPlotly", () => {
 
 describe("paramSetLineStyle", () => {
     it("fetches expected line styles", () => {
-        expect(paramSetLineStyle(0)).toBe("dot");
-        expect(paramSetLineStyle(1)).toBe("dash");
-        expect(paramSetLineStyle(2)).toBe("longdash");
-        expect(paramSetLineStyle(3)).toBe("dashdot");
-        expect(paramSetLineStyle(4)).toBe("longdashdot");
-        expect(paramSetLineStyle(5)).toBe("dot");
+        // check we are looping around after 5th line style
+        expect(paramSetLineStyle(0)).toBe(paramSetLineStyle(5));
     });
 });
