@@ -348,7 +348,7 @@ test.describe("Wodin App model fit tests", () => {
         await expectWodinPointSummary(graph, "Cases", 32, 0, 31, 0, 13, dataColor);
     };
 
-    test.only("data is displayed as expected with multiple graphs", async ({ page }) => {
+    test("data is displayed as expected with multiple graphs", async ({ page }) => {
         await uploadCSVData(page, realisticFitData);
         await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
 
