@@ -1,6 +1,6 @@
 // Mock the import of plotly so we can mock Plotly methods
 import Vuex, { Store } from "vuex";
-import { shallowMount, VueWrapper } from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
 import { nextTick } from "vue";
 import { BasicState } from "../../../../src/store/basic/state";
 import { mockBasicState } from "../../../mocks";
