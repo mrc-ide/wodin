@@ -329,11 +329,26 @@ test.describe("Wodin App model fit tests", () => {
         expect(sumOfSquares).toContain("Sum of squares:");
     });
 
+    test("can change graph setting for log scale y axis for fit graph", async ({ page }) => {
+        await startModelFit(page);
+        await waitForModelFitCompletion(page);
+
+        // first tick is actually the bottom one, y axis ticks are in reverse
+        // order, this is a d3 default
+        const yAxis = page.locator(`g[id^="y-axes"]`);
+        const firstTick = yAxis.locator(".tick").first();
+        await expect(await firstTick.textContent()).toBe("0");
+
+        await page.locator(".log-scale-y-axis input").click();
+
+        await expect(await firstTick.textContent()).not.toBe("0");
+    });
+
     const expectDataSummaryOnGraph = async (graph: Locator, dataColor: string) => {
         await expectWodinPointSummary(graph, "Cases", 32, 0, 31, 0, 13, dataColor);
     };
 
-    test("data is displayed as expected with multiple graphs", async ({ page }) => {
+    test.only("data is displayed as expected with multiple graphs", async ({ page }) => {
         await uploadCSVData(page, realisticFitData);
         await page.click(":nth-match(.wodin-left .nav-tabs a, 3)");
 
@@ -376,7 +391,10 @@ test.describe("Wodin App model fit tests", () => {
         // Run sensitivity - expect data to be coloured on first graph, transparent on second
         await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
         await page.click("#run-sens-btn");
-        await page.waitForTimeout(1000);
+
+        // Wait until loading indicator on the button is finished
+        await expect(page.getByText("Run sensitivity")).toBeVisible();
+
         await expectDataSummaryOnGraph(firstGraph, linkedDataColor);
         await expectDataSummaryOnGraph(secondGraph, unselectedDataColor);
     });

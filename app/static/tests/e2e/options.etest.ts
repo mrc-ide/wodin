@@ -205,6 +205,16 @@ test.describe("Options Tab tests", () => {
         await expect(await page.inputValue(":nth-match(#model-params input, 1)")).toBe("4");
     });
 
+    test("can change graph setting for log scale y axis", async ({ page }) => {
+        const yAxis = page.locator(`g[id^="y-axes"]`);
+        const firstTick = yAxis.locator(".tick").first();
+        await expect(await firstTick.textContent()).toBe("0M");
+
+        await page.locator(".log-scale-y-axis input").click();
+
+        await expect(await firstTick.textContent()).not.toBe("0M");
+    });
+
     test("can change graph setting for lock axes", async ({ page }) => {
         await page.locator(".lock-y-axis input").click();
 

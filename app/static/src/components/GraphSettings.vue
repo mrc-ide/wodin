@@ -32,6 +32,7 @@ export default defineComponent({
                 return props.graphConfig.settings.logScaleYAxis;
             },
             set(newValue) {
+                console.log(props.graphConfig)
                 store.commit(`graphs/${GraphsMutation.SetGraphConfig}`, {
                     id: props.graphConfig.id,
                     settings: {

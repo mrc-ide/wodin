@@ -165,13 +165,6 @@ test.describe("Sessions tests", () => {
         await page.click("input#show-unlabelled-check");
         await expect(await page.locator(".previous-session-row")).toHaveCount(unlabelledCount);
 
-        // // We now have a current session with a label, and we are not filtering unlabelled sessions.
-        // // We'll test filtering out duplicate sessions, by adding three new sessions - only the latest of these should
-        // // be displayed above the previous labelled sessions initially...
-        // await newSessionFromAppPage(page);
-        // await newSessionFromAppPage(page);
-        // await newSessionFromAppPage(page);
-
         await page.goto(`${appUrl}/sessions`);
         await expect(await page.isChecked("#show-duplicates-check")).toBe(false);
         await expect(await page.innerText(":nth-match(.session-label, 2)")).toBe(noLabel);
@@ -180,18 +173,18 @@ test.describe("Sessions tests", () => {
         await page.locator(":nth-match(.session-load > a, 2)").click();
         await page.waitForTimeout(saveSessionTimeout);
 
-        // Create 3 duplicate
+        // Create duplicate of current session (we already have 3, this will be the 4th)
         await page.locator("#sessions-menu").click();
         await page.locator("#all-sessions-link").click();
         await page.locator("#copy-current-session").click();
         await page.waitForTimeout(saveSessionTimeout);
 
         await page.goto(`${appUrl}/sessions`);
-        // ... then after checking "Show duplicate sessions", all new sessions should be displayed...
         await expect(page.locator(":nth-match(.session-label, 1)")).toHaveText(noLabel, { timeout });
         await expect(page.locator(":nth-match(.session-label, 2)")).toHaveText("current session label", { timeout });
         await expect(page.locator(":nth-match(.session-label, 3)")).toHaveText(noLabel, { timeout });
 
+        // ... then after checking "Show duplicate sessions", all new sessions should be displayed...
         await page.check("#show-duplicates-check");
         await expect(page.locator(":nth-match(.session-label, 1)")).toHaveText(noLabel, { timeout });
         await expect(page.locator(":nth-match(.session-label, 2)")).toHaveText(noLabel, { timeout });
