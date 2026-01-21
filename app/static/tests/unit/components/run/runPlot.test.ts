@@ -89,6 +89,117 @@ describe("RunPlot", () => {
 
     const linkedXAxis = { autorange: false, range: [1, 2] };
 
+    const centralSolutions = [
+        {
+            style: {
+                strokeColor: "#ff0000",
+                strokeWidth: 2,
+                strokeDasharray: undefined,
+                opacity: undefined
+            },
+            points: [
+                { x: 0, y: 3 },
+                { x: 1, y: 4 },
+            ],
+            metadata: {
+                color: "#ff0000",
+                name: "S",
+                tooltipName: "S"
+            }
+        },
+        {
+            style: {
+                strokeColor: "#00ff00",
+                strokeWidth: 2,
+                strokeDasharray: undefined,
+                opacity: undefined
+            },
+            points: [
+                { x: 0, y: 5 },
+                { x: 1, y: 6 },
+            ],
+            metadata: {
+                color: "#00ff00",
+                name: "I",
+                tooltipName: "I"
+            }
+        },
+    ];
+
+    const paramSet1Solutions = [
+        {
+            style: {
+                strokeColor: "#ff0000",
+                strokeWidth: 2,
+                strokeDasharray: "3",
+                opacity: undefined
+            },
+            points: [
+                { x: 0, y: 30 },
+                { x: 1, y: 40 },
+            ],
+            metadata: {
+                color: "#ff0000",
+                name: "S",
+                tooltipName: "S (rand1)"
+            }
+        },
+        {
+            style: {
+                strokeColor: "#00ff00",
+                strokeWidth: 2,
+                strokeDasharray: "3",
+                opacity: undefined
+            },
+            points: [
+                { x: 0, y: 50 },
+                { x: 1, y: 60 },
+            ],
+            metadata: {
+                color: "#00ff00",
+                name: "I",
+                tooltipName: "I (rand1)"
+            }
+        },
+    ];
+
+    const paramSet2Solutions = [
+        {
+            style: {
+                strokeColor: "#ff0000",
+                strokeWidth: 2,
+                strokeDasharray: "10",
+                opacity: undefined
+            },
+            points: [
+                { x: 0, y: 300 },
+                { x: 1, y: 400 },
+            ],
+            metadata: {
+                color: "#ff0000",
+                name: "S",
+                tooltipName: "S (rand2)"
+            }
+        },
+        {
+            style: {
+                strokeColor: "#00ff00",
+                strokeWidth: 2,
+                strokeDasharray: "10",
+                opacity: undefined
+            },
+            points: [
+                { x: 0, y: 500 },
+                { x: 1, y: 600 },
+            ],
+            metadata: {
+                color: "#00ff00",
+                name: "I",
+                tooltipName: "I (rand2)"
+            }
+        },
+    ];
+
     const defaultRunState = () =>
         mockRunState({
             endTime: 99,
@@ -155,41 +266,11 @@ describe("RunPlot", () => {
             ["Hey", "Bye"],
             1
         ]);
-        expect(wodinPlot.props("linkedXAxis")).toStrictEqual(linkedXAxis);
 
         // Generates expected plot data from model
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 1, 10);
-        expect(data).toStrictEqual([
-            {
-                mode: "lines",
-                line: {
-                    color: "#ff0000",
-                    width: 2,
-                    dash: undefined
-                },
-                name: "S",
-                x: [0, 1],
-                y: [3, 4],
-                hoverlabel: { namelength: -1 },
-                showlegend: true,
-                legendgroup: "S"
-            },
-            {
-                mode: "lines",
-                line: {
-                    color: "#00ff00",
-                    width: 2,
-                    dash: undefined
-                },
-                name: "I",
-                x: [0, 1],
-                y: [5, 6],
-                hoverlabel: { namelength: -1 },
-                showlegend: true,
-                legendgroup: "I"
-            }
-        ]);
+        expect(data).toStrictEqual({ lines: centralSolutions, points: [] });
 
         expect(mockSolution).toBeCalledWith({
             mode: "grid",
@@ -197,33 +278,6 @@ describe("RunPlot", () => {
             tEnd: 1,
             nPoints: 10
         });
-    });
-
-    it("emits updateXAxis event", () => {
-        const store = new Vuex.Store<BasicState>({
-            state: {
-                graphs: graphsState,
-                model: {
-                    paletteModel
-                },
-                run: defaultRunState()
-            } as any
-        });
-        const wrapper = shallowMount(RunPlot, {
-            props: {
-                fadePlot: false,
-                graphIndex: 0,
-                linkedXAxis,
-                graphConfig
-            },
-            global: {
-                plugins: [store]
-            }
-        });
-        const wodinPlot = wrapper.findComponent(WodinPlot);
-        const xAxis = { autorange: false, range: [111, 222] };
-        wodinPlot.vm.$emit("updateXAxis", xAxis);
-        expect(wrapper.emitted("updateXAxis")![0]).toStrictEqual([xAxis]);
     });
 
     it("renders as expected when there are parameter set solutions", () => {
@@ -285,7 +339,6 @@ describe("RunPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
-        expect(wodinPlot.props("graphIndex")).toBe(0);
         expect(wodinPlot.props("graphConfig")).toStrictEqual(graphConfig);
         expect(wodinPlot.props("redrawWatches")).toStrictEqual([
             mockSolution,
@@ -299,95 +352,14 @@ describe("RunPlot", () => {
         // Generates expected plot data from model
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 1, 10);
-        expect(data).toStrictEqual([
-            // central solution
-            {
-                mode: "lines",
-                line: {
-                    color: "#ff0000",
-                    width: 2,
-                    dash: undefined
-                },
-                name: "S",
-                x: [0, 1],
-                y: [3, 4],
-                hoverlabel: { namelength: -1 },
-                showlegend: true,
-                legendgroup: "S"
-            },
-            {
-                mode: "lines",
-                line: {
-                    color: "#00ff00",
-                    width: 2,
-                    dash: undefined
-                },
-                name: "I",
-                x: [0, 1],
-                y: [5, 6],
-                hoverlabel: { namelength: -1 },
-                showlegend: true,
-                legendgroup: "I"
-            },
-            // param set 1
-            {
-                mode: "lines",
-                line: {
-                    color: "#ff0000",
-                    width: 2,
-                    dash: "dot"
-                },
-                name: "S (rand1)",
-                x: [0, 1],
-                y: [30, 40],
-                hoverlabel: { namelength: -1 },
-                showlegend: false,
-                legendgroup: "S"
-            },
-            {
-                mode: "lines",
-                line: {
-                    color: "#00ff00",
-                    width: 2,
-                    dash: "dot"
-                },
-                name: "I (rand1)",
-                x: [0, 1],
-                y: [50, 60],
-                hoverlabel: { namelength: -1 },
-                showlegend: false,
-                legendgroup: "I"
-            },
-            // param set 2
-            {
-                mode: "lines",
-                line: {
-                    color: "#ff0000",
-                    width: 2,
-                    dash: "dash"
-                },
-                name: "S (rand2)",
-                x: [0, 1],
-                y: [300, 400],
-                hoverlabel: { namelength: -1 },
-                showlegend: false,
-                legendgroup: "S"
-            },
-            {
-                mode: "lines",
-                line: {
-                    color: "#00ff00",
-                    width: 2,
-                    dash: "dash"
-                },
-                name: "I (rand2)",
-                x: [0, 1],
-                y: [500, 600],
-                hoverlabel: { namelength: -1 },
-                showlegend: false,
-                legendgroup: "I"
-            }
-        ]);
+        expect(data).toStrictEqual({
+            lines: [
+                ...centralSolutions,
+                ...paramSet1Solutions,
+                ...paramSet2Solutions,
+            ],
+            points: []
+        });
 
         expect(mockSolution).toBeCalledWith({
             mode: "grid",
@@ -424,12 +396,11 @@ describe("RunPlot", () => {
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
         expect(wodinPlot.props("redrawWatches")).toStrictEqual([]);
-        expect(wodinPlot.props("graphIndex")).toBe(0);
         expect(wodinPlot.props("graphConfig")).toStrictEqual(graphConfig);
 
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 1, 10);
-        expect(data).toStrictEqual([]);
+        expect(data).toStrictEqual({lines: [], points: []});
     });
 
     it("fades plot when fadePlot prop is true", () => {
@@ -525,46 +496,35 @@ describe("RunPlot", () => {
         // Generates expected plot data from model
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 1, 10);
-        expect(data).toStrictEqual([
-            {
-                mode: "lines",
-                line: {
-                    color: "#ff0000",
-                    width: 2,
-                    dash: undefined
+        expect(data).toStrictEqual({
+            lines: centralSolutions,
+            points: [
+                {
+                    style: {
+                        color: "#ff0000"
+                    },
+                    x: 0,
+                    y: 10,
+                    metadata: {
+                        color: "#ff0000",
+                        name: "v",
+                        tooltipName: "v"
+                    }
                 },
-                name: "S",
-                x: [0, 1],
-                y: [3, 4],
-                hoverlabel: { namelength: -1 },
-                showlegend: true,
-                legendgroup: "S"
-            },
-            {
-                mode: "lines",
-                line: {
-                    color: "#00ff00",
-                    width: 2,
-                    dash: undefined
-                },
-                name: "I",
-                x: [0, 1],
-                y: [5, 6],
-                hoverlabel: { namelength: -1 },
-                showlegend: true,
-                legendgroup: "I"
-            },
-            {
-                mode: "markers",
-                marker: {
-                    color: "#ff0000"
-                },
-                name: "v",
-                type: "scatter",
-                x: [0, 1],
-                y: [10, 20]
-            }
-        ]);
+                {
+                    style: {
+                        color: "#ff0000"
+                    },
+                    x: 1,
+                    y: 20,
+                    metadata: {
+                        color: "#ff0000",
+                        name: "v",
+                        tooltipName: "v"
+                    }
+                }
+            ]
+        });
 
         expect(mockSolution).toBeCalledWith({
             mode: "grid",

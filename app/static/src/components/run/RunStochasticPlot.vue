@@ -32,7 +32,6 @@ export default defineComponent({
     components: {
         WodinPlot
     },
-    emits: ["updateXAxis"],
     setup(props) {
         const store = useStore();
 
