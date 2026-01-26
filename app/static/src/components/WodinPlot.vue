@@ -43,11 +43,6 @@ export default defineComponent({
         graphConfig: {
             type: Object as PropType<GraphConfig>,
             required: true
-        },
-        isLastGraph: {
-            type: Boolean,
-            required: false,
-            default: false
         }
     },
     setup(props) {
@@ -98,7 +93,9 @@ export default defineComponent({
         const skadiChart = ref<Chart>();
 
         const drawSkadiChart = () => {
-            const xAxisTitle = props.isLastGraph ? "Time" : "";
+            const isLastGraph = props.graphConfig.id === fitGraphId
+              || store.state.graphs.config.at(-1)!.id === props.graphConfig.id;
+            const xAxisTitle = isLastGraph ? "Time" : "";
             const maxXExtents = { start: startTime, end: props.endTime };
             const settings = props.graphConfig.settings;
             const xRange = settings.xAxisRange
@@ -130,9 +127,22 @@ export default defineComponent({
 
         onMounted(drawSkadiChart);
 
-        watch([() => props.redrawWatches, () => props.graphConfig], () => {
+        watch(
+          [() => props.redrawWatches, () => props.graphConfig],
+          ([, newGraphConfig], [, oldGraphConfig]) => {
           if (plotStyle.value !== fadePlotStyle) {
             drawSkadiChart();
+            // if a user locks the y axis then we have to store the y axis range that
+            // the graph automatically calculates or an existing y axis range
+            if (newGraphConfig.settings.lockYAxis && !oldGraphConfig.settings.lockYAxis) {
+              const maxExtentsY = skadiChart.value!.autoscaledMaxExtents.y;
+              const yRange = newGraphConfig.settings.yAxisRange
+                || [maxExtentsY.start, maxExtentsY.end];
+              store.commit(`graphs/${GraphsMutation.SetGraphConfig}`, {
+                  id: props.graphConfig.id,
+                  settings: { yAxisRange: yRange }
+              } as SetGraphConfigPayload);
+            }
           }
         });
 

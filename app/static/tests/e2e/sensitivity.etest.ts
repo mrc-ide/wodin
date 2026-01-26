@@ -91,12 +91,27 @@ test.describe("Sensitivity tests", () => {
         await expect(await page.inputValue("#sensitivity-plot-time input")).toBe("50");
     });
 
-    const plotSelector = ".wodin-right .wodin-content div.mt-4 .js-plotly-plot";
-    const expectLegend = async (page: Page) => {
-        const legendTextSelector = `${plotSelector} .legendtext`;
-        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("S");
-        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 2)`)).toBe("I");
-        await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 3)`)).toBe("R");
+    const plotSelector = ".wodin-right .wodin-content .plot";
+    // const expectLegend = async (page: Page) => {
+    //     const legendTextSelector = `${plotSelector} .legendtext`;
+    //     await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("S");
+    //     await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 2)`)).toBe("I");
+    //     await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 3)`)).toBe("R");
+    // };
+
+    const expectXYMinMax = async (
+        page: Page,
+        xMinMax: [number, number],
+        yMinMax: [number, number],
+        threshold: number
+    ) => {
+        const dataSummary = page.locator(".wodin-plot-data-summary-lines").first();
+        expect(await dataSummary.getAttribute("xmin")).toBe(xMinMax[0].toString());
+        expect(await dataSummary.getAttribute("xmax")).toBe(xMinMax[1].toString());
+        const yMax = parseFloat((await dataSummary.getAttribute("ymax"))!);
+        const yMin = parseFloat((await dataSummary.getAttribute("ymin"))!);
+        expect(Math.abs(yMin - yMinMax[0])).toBeLessThan(threshold);
+        expect(Math.abs(yMax - yMinMax[1])).toBeLessThan(threshold);
     };
 
     test("can run sensitivity", async ({ page }) => {
@@ -105,17 +120,16 @@ test.describe("Sensitivity tests", () => {
 
         // run and see all traces
         await page.click("#run-sens-btn");
-        const linesSelector = `${plotSelector} .scatterlayer .trace .lines path`;
-        await expect((await page.locator(`:nth-match(${linesSelector}, 30)`).getAttribute("d"))!.startsWith("M0")).toBe(true);
+        const linesSelector = `${plotSelector} path[id^=trace]`;
+        await expect(
+            (await page.locator(`:nth-match(${linesSelector}, 30)`).getAttribute("d"))!
+                .startsWith("M")
+        ).toBe(true);
 
         // expected legend and axes
-        await expectLegend(page);
-        await expect(await page.locator(".plotly .xaxislayer-above .xtick").count()).toBe(6);
-        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 1)")).toBe("0");
-        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 6)")).toBe("100");
-        await expect(await page.locator(".plotly .yaxislayer-above .ytick").count()).toBe(6);
-        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 1)")).toBe("0");
-        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 6)")).toBe("1M");
+        // TODO when legend is added - mrc-6826
+        // await expectLegend(page);
+        await expectXYMinMax(page, [0, 100], [267_000, 1_000_000], 1000);
 
         // change parameter - should see update required message
         await page.fill("#model-params .parameter-input", "5");
@@ -130,40 +144,19 @@ test.describe("Sensitivity tests", () => {
 
         // switch to Value at Time - expect axes to change
         await page.locator("#sensitivity-plot-type select").selectOption("ValueAtTime");
-        await expect(await page.locator(".plotly .xaxislayer-above .xtick").count()).toBe(5);
-        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 1)")).toBe("4.6");
-        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 5)")).toBe("5.4");
-        await expect(await page.locator(".plotly .yaxislayer-above .ytick").count()).toBe(5);
-        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 1)")).toBe("0");
-        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 5)")).toBe("800k");
-        await expectLegend(page);
+        await expectXYMinMax(page, [4.5, 5.5], [79_000, 146_000], 1000);
 
         // switch to Value at its Min/Max
         await page.locator("#sensitivity-plot-type select").selectOption("ValueAtExtreme");
-        await expect(await page.locator(".plotly .xaxislayer-above .xtick").count()).toBe(5);
-        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 1)")).toBe("4.6");
-        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 5)")).toBe("5.4");
-        await expect(await page.locator(".plotly .yaxislayer-above .ytick").count()).toBe(9);
-        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 1)")).toBe("0.2M");
-        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 9)")).toBe("1M");
+        await expectXYMinMax(page, [4.5, 5.5], [1_000_000, 1_000_000], 10);
 
         // Change Min/Max to Min
         await page.locator("#sensitivity-plot-extreme select").selectOption("Min");
-        await expect(await page.locator(".plotly .xaxislayer-above .xtick").count()).toBe(5);
-        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 1)")).toBe("4.6");
-        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 5)")).toBe("5.4");
-        await expect(await page.locator(".plotly .yaxislayer-above .ytick").count()).toBe(8);
-        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 1)")).toBe("0");
-        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 8)")).toBe("140k");
+        await expectXYMinMax(page, [4.5, 5.5], [79_000, 146_000], 1000);
 
         // switch to Time at value's Min/Max
         await page.locator("#sensitivity-plot-type select").selectOption("TimeAtExtreme");
-        await expect(await page.locator(".plotly .xaxislayer-above .xtick").count()).toBe(5);
-        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 1)")).toBe("4.6");
-        await expect(await page.innerHTML(":nth-match(.plotly .xaxislayer-above .xtick text, 5)")).toBe("5.4");
-        await expect(await page.locator(".plotly .yaxislayer-above .ytick").count()).toBe(8);
-        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 1)")).toBe("0");
-        await expect(await page.innerHTML(":nth-match(.plotly .yaxislayer-above .ytick text, 8)")).toBe("35");
+        await expectXYMinMax(page, [4.5, 5.5], [28, 34], 2);
     });
 
     test("can create parameter set and see sensitivity traces", async ({ page }) => {
@@ -171,7 +164,7 @@ test.describe("Sensitivity tests", () => {
         await page.fill(":nth-match(#model-params input, 1)", "5"); // update a parameter value
         await page.click("#run-sens-btn");
         // Expect 3 (number of vars) * (10 (sensitivity runs) + 1 (central)) * 2 (current params + param set)
-        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(66, { timeout });
+        await expect(await page.locator(".wodin-plot-data-summary-lines")).toHaveCount(66, { timeout });
         // current parameters
         await expectSummaryValues(page, 1, "S (beta=4.500)", 1000, "#2e5cb8");
         await expectSummaryValues(page, 2, "I (beta=4.500)", 1000, "#cccc00");
@@ -180,22 +173,22 @@ test.describe("Sensitivity tests", () => {
         await expectSummaryValues(page, 32, "I", 1000, "#cccc00");
         await expectSummaryValues(page, 33, "R", 1000, "#cc0044");
         // parameter set
-        await expectSummaryValues(page, 34, "S (beta=4.500 Set 1)", 1000, "#2e5cb8", "dot");
-        await expectSummaryValues(page, 35, "I (beta=4.500 Set 1)", 1000, "#cccc00", "dot");
-        await expectSummaryValues(page, 36, "R (beta=4.500 Set 1)", 1000, "#cc0044", "dot");
-        await expectSummaryValues(page, 64, "S (Set 1)", 1000, "#2e5cb8", "dot");
-        await expectSummaryValues(page, 65, "I (Set 1)", 1000, "#cccc00", "dot");
-        await expectSummaryValues(page, 66, "R (Set 1)", 1000, "#cc0044", "dot");
+        await expectSummaryValues(page, 34, "S (beta=4.500 Set 1)", 1000, "#2e5cb8", "3");
+        await expectSummaryValues(page, 35, "I (beta=4.500 Set 1)", 1000, "#cccc00", "3");
+        await expectSummaryValues(page, 36, "R (beta=4.500 Set 1)", 1000, "#cc0044", "3");
+        await expectSummaryValues(page, 64, "S (Set 1)", 1000, "#2e5cb8", "3");
+        await expectSummaryValues(page, 65, "I (Set 1)", 1000, "#cccc00", "3");
+        await expectSummaryValues(page, 66, "R (Set 1)", 1000, "#cc0044", "3");
 
         // Switch to summary view
         await page.locator("#sensitivity-plot-type select").selectOption("ValueAtTime");
-        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(6, { timeout });
+        await expect(await page.locator(".wodin-plot-data-summary-lines")).toHaveCount(6, { timeout });
         await expectSummaryValues(page, 1, "S", 10, "#2e5cb8", null, "4.5", "5.5");
         await expectSummaryValues(page, 2, "I", 10, "#cccc00", null, "4.5", "5.5");
         await expectSummaryValues(page, 3, "R", 10, "#cc0044", null, "4.5", "5.5");
-        await expectSummaryValues(page, 4, "S (Set 1)", 10, "#2e5cb8", "dot", "3.6", "4.4");
-        await expectSummaryValues(page, 5, "I (Set 1)", 10, "#cccc00", "dot", "3.6", "4.4");
-        await expectSummaryValues(page, 6, "R (Set 1)", 10, "#cc0044", "dot", "3.6", "4.4");
+        await expectSummaryValues(page, 4, "S (Set 1)", 10, "#2e5cb8", "3", "3.6", "4.4");
+        await expectSummaryValues(page, 5, "I (Set 1)", 10, "#cccc00", "3", "3.6", "4.4");
+        await expectSummaryValues(page, 6, "R (Set 1)", 10, "#cc0044", "3", "3.6", "4.4");
     });
 
     test("can swap sensitivity run traces", async ({ page }) => {
@@ -211,28 +204,28 @@ test.describe("Sensitivity tests", () => {
         await page.fill(":nth-match(#model-params input, 4)", "1.5");
         await page.click("#run-sens-btn");
         await new Promise((r) => setTimeout(r, 101));
-        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(66, { timeout });
+        await expect(await page.locator(".wodin-plot-data-summary-lines")).toHaveCount(66, { timeout });
 
         // current parameters
         await expectSummaryValues(page, 31, "S", 1000, "#2e5cb8", null, "0", "100", "1000000", "1000000");
         await expectSummaryValues(page, 32, "I", 1000, "#cccc00", null, "0", "100", "0", "0");
         await expectSummaryValues(page, 33, "R", 1000, "#cc0044", null, "0", "100", "0", "0");
         // parameter set
-        await expectSummaryValues(page, 64, "S (Set 1)", 1000, "#2e5cb8", "dot", "0", "100", "0", "0");
-        await expectSummaryValues(page, 65, "I (Set 1)", 1000, "#cccc00", "dot", "0", "100", "1000000", "1000000");
-        await expectSummaryValues(page, 66, "R (Set 1)", 1000, "#cc0044", "dot", "0", "100", "0", "0");
+        await expectSummaryValues(page, 64, "S (Set 1)", 1000, "#2e5cb8", "3", "0", "100", "0", "0");
+        await expectSummaryValues(page, 65, "I (Set 1)", 1000, "#cccc00", "3", "0", "100", "1000000", "1000000");
+        await expectSummaryValues(page, 66, "R (Set 1)", 1000, "#cc0044", "3", "0", "100", "0", "0");
 
         await page.click(`:nth-match(.swap-param-set, ${1})`);
-        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(66, { timeout });
+        await expect(await page.locator(".wodin-plot-data-summary-lines")).toHaveCount(66, { timeout });
 
         // current parameters
         await expectSummaryValues(page, 31, "S", 1000, "#2e5cb8", null, "0", "100", "0", "0");
         await expectSummaryValues(page, 32, "I", 1000, "#cccc00", null, "0", "100", "1000000", "1000000");
         await expectSummaryValues(page, 33, "R", 1000, "#cc0044", null, "0", "100", "0", "0");
         // parameter set
-        await expectSummaryValues(page, 64, "S (Set 1)", 1000, "#2e5cb8", "dot", "0", "100", "1000000", "1000000");
-        await expectSummaryValues(page, 65, "I (Set 1)", 1000, "#cccc00", "dot", "0", "100", "0", "0");
-        await expectSummaryValues(page, 66, "R (Set 1)", 1000, "#cc0044", "dot", "0", "100", "0", "0");
+        await expectSummaryValues(page, 64, "S (Set 1)", 1000, "#2e5cb8", "3", "0", "100", "1000000", "1000000");
+        await expectSummaryValues(page, 65, "I (Set 1)", 1000, "#cccc00", "3", "0", "100", "0", "0");
+        await expectSummaryValues(page, 66, "R (Set 1)", 1000, "#cc0044", "3", "0", "100", "0", "0");
     });
 
     test("can change sensitivity settings to Custom variation, and see values in plot", async ({ page }) => {
@@ -277,10 +270,10 @@ test.describe("Sensitivity tests", () => {
         const containerClass = summary ? "summary-plot-container" : "wodin-plot-container";
         const firstPlot = await page.locator(`:nth-match(.${containerClass}, 1)`);
         const secondPlot = await page.locator(`:nth-match(.${containerClass}, 2)`);
-        expect(await firstPlot.locator(":nth-match(.wodin-plot-data-summary-series, 1)").getAttribute("name")).toBe(
+        expect(await firstPlot.locator(":nth-match(.wodin-plot-data-summary-lines, 1)").getAttribute("name")).toBe(
             summary ? "I" : "I (beta=3.600)"
         );
-        expect(await secondPlot.locator(":nth-match(.wodin-plot-data-summary-series, 1)").getAttribute("name")).toBe(
+        expect(await secondPlot.locator(":nth-match(.wodin-plot-data-summary-lines, 1)").getAttribute("name")).toBe(
             summary ? "S" : "S (beta=3.600)"
         );
     };

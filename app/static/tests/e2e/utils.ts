@@ -117,7 +117,7 @@ export const waitForModelFitCompletion = async (page: Page) => {
     await expect(await page.getAttribute(".wodin-plot-container .vue-feather", "data-type")).toBe("check");
 };
 
-export const expectWodinPlotDataSummary = async (
+export const expectWodinLineSummary = async (
     summaryLocator: Locator,
     name: string,
     count: number,
@@ -125,23 +125,59 @@ export const expectWodinPlotDataSummary = async (
     xMax: number,
     yMin: number,
     yMax: number,
-    mode: string,
     lineColor: string | null,
-    markerColor: string | null
 ) => {
     expect(await summaryLocator.getAttribute("name")).toBe(name);
     expect(await summaryLocator.getAttribute("count")).toBe(count.toString());
-    const attrXMin = (await summaryLocator.getAttribute("x-min")) as string;
+    const attrXMin = (await summaryLocator.getAttribute("xmin")) as string;
     expect(parseFloat(attrXMin)).toBeCloseTo(xMin);
-    const attrXMax = (await summaryLocator.getAttribute("x-max")) as string;
+    const attrXMax = (await summaryLocator.getAttribute("xmax")) as string;
     expect(parseFloat(attrXMax)).toBeCloseTo(xMax);
-    const attrYMin = (await summaryLocator.getAttribute("y-min")) as string;
+    const attrYMin = (await summaryLocator.getAttribute("ymin")) as string;
     expect(parseFloat(attrYMin)).toBeCloseTo(yMin);
-    const attrYMax = (await summaryLocator.getAttribute("y-max")) as string;
+    const attrYMax = (await summaryLocator.getAttribute("ymax")) as string;
     expect(parseFloat(attrYMax)).toBeCloseTo(yMax);
-    expect(await summaryLocator.getAttribute("mode")).toBe(mode);
-    expect(await summaryLocator.getAttribute("line-color")).toBe(lineColor);
-    expect(await summaryLocator.getAttribute("marker-color")).toBe(markerColor);
+    expect(await summaryLocator.getAttribute("linecolor")).toBe(lineColor);
+};
+
+export const expectWodinPointSummary = async (
+    locator: Page | Locator,
+    name: string,
+    count: number,
+    xMin: number,
+    xMax: number,
+    yMin: number,
+    yMax: number,
+    pointColor: string,
+) => {
+    const pointSummarySelector = `.wodin-plot-data-summary-points[pointcolor="${pointColor}"]`;
+    const points = await locator.locator(pointSummarySelector).all();
+    expect(points.length).toBe(count);
+
+    let xmin = Infinity,
+        xmax = -Infinity,
+        ymin = Infinity,
+        ymax = -Infinity;
+
+    const checkPoint = async (p: Locator) => {
+        expect(await p.getAttribute("name")).toBe(name);
+
+        const x = parseFloat((await p.getAttribute("x"))!);
+        const y = parseFloat((await p.getAttribute("y"))!);
+        xmin = Math.min(xmin, x);
+        xmax = Math.max(xmax, x);
+        ymin = Math.min(ymin, y);
+        ymax = Math.max(ymax, y);
+    };
+
+    const promises: Promise<void>[] = [];
+    points.forEach(p => promises.push(checkPoint(p)));
+    await Promise.all(promises);
+
+    expect(xmin).toBeCloseTo(xMin);
+    expect(xmax).toBeCloseTo(xMax);
+    expect(ymin).toBeCloseTo(yMin);
+    expect(ymax).toBeCloseTo(yMax);
 };
 
 export const expectSummaryValues = async (
@@ -156,20 +192,19 @@ export const expectSummaryValues = async (
     yMin: string | null = null,
     yMax: string | null = null
 ) => {
-    const summary = ".wodin-plot-data-summary-series";
+    const summary = ".wodin-plot-data-summary-lines";
     const locator = `:nth-match(${summary}, ${idx})`;
     expect(await page.getAttribute(locator, "name")).toBe(name);
     expect(await page.getAttribute(locator, "count")).toBe(count.toString());
-    expect(await page.getAttribute(locator, "x-min")).toBe(xMin);
-    expect(await page.getAttribute(locator, "x-max")).toBe(xMax);
-    expect(await page.getAttribute(locator, "mode")).toBe("lines");
-    expect(await page.getAttribute(locator, "line-color")).toBe(color);
-    expect(await page.getAttribute(locator, "line-dash")).toBe(dash);
+    expect(await page.getAttribute(locator, "xmin")).toBe(xMin);
+    expect(await page.getAttribute(locator, "xmax")).toBe(xMax);
+    expect(await page.getAttribute(locator, "linecolor")).toBe(color);
+    expect(await page.getAttribute(locator, "linedash")).toBe(dash);
     if (yMin) {
-        expect(await page.getAttribute(locator, "y-min")).toBe(yMin);
+        expect(await page.getAttribute(locator, "ymin")).toBe(yMin);
     }
     if (yMax) {
-        expect(await page.getAttribute(locator, "y-max")).toBe(yMax);
+        expect(await page.getAttribute(locator, "ymax")).toBe(yMax);
     }
 };
 
@@ -201,7 +236,7 @@ export const expectGraphVariables = async (page: Page, graphIndex: number, expec
     );
     for (let i = 0; i < expectedVariables.length; i++) {
         await expect(configVars.nth(i)).toHaveText(expectedVariables[i]);
-        await expect(plotSummary.locator(`:nth-match(.wodin-plot-data-summary-series, ${i + 1})`)).toHaveAttribute(
+        await expect(plotSummary.locator(`:nth-match(.wodin-plot-data-summary-lines, ${i + 1})`)).toHaveAttribute(
             "name",
             expectedVariables[i]
         );
@@ -220,13 +255,13 @@ export const addGraphWithVariable = async (page: Page, variableIdx: number) => {
 
 export const expectXAxisTimeLabelFinalGraph = async (page: Page) => {
     await addGraphWithVariable(page, 1);
-    const firstGraph = page.locator(":nth-match(.plotly, 1)");
-    const secondGraph = page.locator(":nth-match(.plotly, 2)");
+    const firstGraph = page.locator(":nth-match(.wodin-plot-container, 1)");
+    const secondGraph = page.locator(":nth-match(.wodin-plot-container, 2)");
 
-    await expect(await firstGraph.locator(".xtitle")).not.toBeVisible();
-    await expect(await secondGraph.locator(".xtitle").textContent()).toBe("Time");
+    await expect(await firstGraph.locator(`text[id^="labelx"]`)).not.toBeVisible();
+    await expect(await secondGraph.locator(`text[id^="labelx"]`).textContent()).toBe("Time");
 
     // Delete second config - the Time label should be shown on the first graph
     await page.locator(":nth-match(button.delete-graph, 2)").click();
-    await expect(await firstGraph.locator(".xtitle").textContent()).toBe("Time");
+    await expect(await firstGraph.locator(`text[id^="labelx"]`).textContent()).toBe("Time");
 };
