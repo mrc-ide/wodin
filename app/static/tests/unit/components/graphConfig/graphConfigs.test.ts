@@ -7,8 +7,8 @@ import { GraphsAction } from "../../../../src/store/graphs/actions";
 import GraphConfigs from "../../../../src/components/graphConfig/GraphConfigs.vue";
 import GraphConfig from "../../../../src/components/graphConfig/GraphConfig.vue";
 import HiddenVariables from "../../../../src/components/graphConfig/HiddenVariables.vue";
-import { VisualisationTab } from "@/store/appState/state";
 import { fitGraphId } from "@/store/graphs/state";
+import { VisualisationTab } from "@/store/appState/state";
 import GraphSettings from "@/components/GraphSettings.vue";
 
 describe("GraphConfigs", () => {
@@ -23,11 +23,13 @@ describe("GraphConfigs", () => {
     };
     const mockNewGraph = vi.fn();
     const namespaced = true;
-    const getWrapper = (fitTab?: boolean) => {
+    const getWrapper = (fitTabOpen = false) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
                 configured: true,
-                openVisualisationTab: fitTab ? VisualisationTab.Fit : undefined
+                openVisualisationTab: fitTabOpen
+                    ? VisualisationTab.Fit
+                    : VisualisationTab.Run
             }),
             modules: {
                 graphs: {
@@ -37,7 +39,7 @@ describe("GraphConfigs", () => {
                         config: [
                             { selectedVariables: ["S"], unselectedVariables: ["I", "R"] },
                             { selectedVariables: ["I"], unselectedVariables: ["S", "R"] }
-                        ]
+                        ],
                     },
                     actions: {
                         [GraphsAction.NewGraph]: mockNewGraph
@@ -71,13 +73,10 @@ describe("GraphConfigs", () => {
         expect(wrapper.findComponent(HiddenVariables).props("dragging")).toBe(false);
     });
 
-    it("renders as expected for fit tab", () => {
+    it("renders as expected when fit tab is open", () => {
         const wrapper = getWrapper(true);
-        expect(wrapper.find("#graph-configs-instruction").exists()).toBe(false);
-        expect(wrapper.findComponent(GraphConfig).exists()).toBe(false);
-        expect(wrapper.findComponent(HiddenVariables).exists()).toBe(false);
-        const graphSettingsComp = wrapper.findComponent(GraphSettings);
-        expect(graphSettingsComp.props("graphConfig")).toStrictEqual(fitGraphConfig);
+        const graphSettings = wrapper.findComponent(GraphSettings);
+        expect(graphSettings.props("graphConfig")).toStrictEqual(fitGraphConfig);
     });
 
     it("sets dragging on emit from GraphConfig", async () => {

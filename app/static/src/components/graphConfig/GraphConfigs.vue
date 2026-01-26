@@ -1,7 +1,10 @@
 <template>
     <template v-if="fitTabIsOpen">
-        <graph-settings :graph-config="fitGraphConfig"
-                        class="graph-config-settings mb-1"></graph-settings>
+        <graph-settings
+            :key="JSON.stringify(fitGraphConfig)"
+            :graph-config="fitGraphConfig"
+            class="graph-config-settings mb-1"
+        ></graph-settings>
     </template>
     <template v-else>
         <div id="graph-configs-instruction" class="ms-2">
@@ -30,7 +33,7 @@ import VueFeather from "vue-feather";
 import HiddenVariables from "./HiddenVariables.vue";
 import GraphConfig from "./GraphConfig.vue";
 import { GraphsAction } from "../../store/graphs/actions";
-import { VisualisationTab } from "@/store/appState/state";
+import { AppState, VisualisationTab } from "@/store/appState/state";
 import GraphSettings from "../GraphSettings.vue";
 
 export default defineComponent({
@@ -41,7 +44,7 @@ export default defineComponent({
         GraphSettings
     },
     setup() {
-        const store = useStore();
+        const store = useStore<AppState>();
         const fitTabIsOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Fit);
         const draggingVariable = ref(false); // indicates whether a child component is dragging a variable
         const setDraggingVariable = (value: boolean) => {
@@ -58,7 +61,7 @@ export default defineComponent({
             graphConfigs,
             fitGraphConfig,
             addGraph,
-            fitTabIsOpen
+            fitTabIsOpen,
         };
     }
 });
