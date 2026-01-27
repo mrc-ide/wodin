@@ -7,12 +7,12 @@
          @click="$emit('legendClick', name)">
       <svg v-if="config.type === 'line'" viewBox="0 0 30 10" height="10" width="30">
         <line x1="0" x2="30" y1="5" y2="5"
-              :stroke="config.color" stroke-width="3"/>
+              :stroke="config.color" stroke-width="2"/>
       </svg>
-      <svg v-if="config.type === 'point'" viewBox="0 0 10 10" height="10" width="10">
-        <circle cx="5" cy="5" r="4" :fill="config.color"/>
+      <svg v-if="config.type === 'point'" viewBox="0 0 30 10" height="10" width="30">
+        <circle cx="15" cy="5" r="2.5" :fill="config.color"/>
       </svg>
-      {{ name }}
+      <p class="legend-text">{{ name }}</p>
     </div>
   </div>
 </template>
@@ -39,14 +39,29 @@ defineEmits(["legendClick"]);
 <style lang="css" scoped>
 .legend {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: start;
+  width: min(20rem, 25%);
+  max-height: calc(450px - 1rem);
+  overflow: scroll;
+  scrollbar-color: grey transparent;
+  scrollbar-width: thin;
 }
 
 .legend-row {
+  display: grid;
+  grid-template-columns: 30px 1fr;
   margin-inline: 0.4rem;
   padding-inline: 0.5rem;
-  border-radius: 5px;
   cursor: pointer;
+  align-items: center;
+  margin-block: 0.1rem;
+}
+
+.legend-text {
+  font-size: 0.85rem;
+  margin-bottom: 0;
+  margin-left: 0.5rem;
 }
 
 .faded {

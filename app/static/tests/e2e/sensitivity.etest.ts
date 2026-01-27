@@ -1,6 +1,6 @@
 import { expect, test, Page } from "@playwright/test";
 import PlaywrightConfig from "../../playwright.config";
-import { addGraphWithVariable, expectSummaryValues, expectXAxisTimeLabelFinalGraph } from "./utils";
+import { addGraphWithVariable, expectSummaryValues } from "./utils";
 
 test.describe("Sensitivity tests", () => {
     const { timeout } = PlaywrightConfig;
@@ -93,7 +93,7 @@ test.describe("Sensitivity tests", () => {
 
     const plotSelector = ".wodin-right .wodin-content .plot";
     const expectLegend = async (page: Page) => {
-        const legendTextSelector = `.wodin-plot-container .legend-row`;
+        const legendTextSelector = `.legend-text`;
         await expect(
             (await page.locator(`:nth-match(${legendTextSelector}, 1)`).textContent())!.trim()
         ).toBe("S");
@@ -287,11 +287,6 @@ test.describe("Sensitivity tests", () => {
         await page.click("#run-sens-btn");
         await addGraphWithVariable(page, 1);
         await expectMultipleSensitivityGraphs(page);
-    });
-
-    test("can see Time label on final Trace over time graph only", async ({ page }) => {
-        await page.click("#run-sens-btn");
-        await expectXAxisTimeLabelFinalGraph(page);
     });
 
     test("can see multiple summary graphs", async ({ page }) => {

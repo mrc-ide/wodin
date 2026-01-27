@@ -43,7 +43,7 @@ test.describe("Wodin App tabs tests", () => {
         expect((await page.locator(`:nth-match(${linesSelector}, 3)`).getAttribute("d"))!.startsWith("M")).toBe(true);
 
         // Test traces appear on legend
-        const legendTextSelector = `.wodin-plot-container .legend-row`;
+        const legendTextSelector = `.legend-text`;
         await expect(
             (await page.locator(`:nth-match(${legendTextSelector}, 1)`).textContent())!.trim()
         ).toBe("S");

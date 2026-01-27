@@ -53,20 +53,27 @@ $grey: #ccc;
     color: #0d6efd !important;
 }
 
+.wodin-plot-and-legend {
+    position: relative;
+    display: flex;
+    width: 100%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    border-radius: 5px;
+    padding-top: 1rem;
+    margin-bottom: 2rem;
+}
+
 .wodin-plot-container,
 .summary-plot-container {
-    position: relative;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding-top: 1rem;
-    padding-bottom: 0.5rem;
     padding-inline: 1rem;
-    margin-bottom: 2rem;
-    border-radius: 5px;
+    width: calc(100% - min(20rem, 25%));
+    overflow-x: hidden;
+    margin-bottom: 1rem;
 }
 
 .wodin-plot-container text[id^="labelx"],
 .summary-plot-container text[id^="labelx"]{
-    font-size: 1rem !important;
+    font-size: 0.9rem !important;
 }
 
 .plot {

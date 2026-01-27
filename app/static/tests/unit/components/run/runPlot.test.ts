@@ -264,7 +264,6 @@ describe("RunPlot", () => {
             selectedVariables,
             {},
             ["Hey", "Bye"],
-            1
         ]);
 
         // Generates expected plot data from model
@@ -346,7 +345,6 @@ describe("RunPlot", () => {
             selectedVariables,
             { Set1: mockParamSetResult1.solution, Set2: mockParamSetResult2.solution },
             ["rand1", "rand2", "rand3"],
-            1
         ]);
 
         // Generates expected plot data from model
@@ -490,7 +488,6 @@ describe("RunPlot", () => {
             selectedVariables,
             {},
             ["Hey", "Bye"],
-            1
         ]);
 
         // Generates expected plot data from model

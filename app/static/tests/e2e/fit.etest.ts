@@ -154,7 +154,7 @@ test.describe("Wodin App model fit tests", () => {
         expect(await page.locator(`circle[id^=scatter]`).count()).toBe(32);
 
         // Test traces appear on legend
-        const legendTextSelector = `.wodin-plot-container .legend-row`;
+        const legendTextSelector = `.legend-text`;
         await expect(
             (await page.locator(`:nth-match(${legendTextSelector}, 1)`).textContent())!.trim()
         ).toBe("I");

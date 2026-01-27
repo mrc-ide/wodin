@@ -123,7 +123,7 @@ test.describe("Code Tab tests", () => {
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("", { timeout });
         await expect(await getRunPlotOpacity(page)).toBe("1");
 
-        const legendTextSelector = ".wodin-plot-container .legend-row";
+        const legendTextSelector = ".legend-text";
         await expect(
           (await page.locator(`:nth-match(${legendTextSelector}, 1)`).textContent())!.trim()
         ).toBe("y1");
@@ -328,7 +328,7 @@ test.describe("Code Tab tests", () => {
 
         // Check second graph has appeared with placeholder text, and second graph config panel is there
         expect(
-            await page.locator(":nth-match(.wodin-plot-container, 2)")
+            await page.locator(":nth-match(.wodin-plot-and-legend, 2)")
                 .locator(".plot-placeholder")
                 .textContent()
         ).toBe(

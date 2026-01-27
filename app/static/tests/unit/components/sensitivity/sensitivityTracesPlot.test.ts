@@ -558,7 +558,6 @@ describe("SensitivityTracesPlot", () => {
             selectedVariables,
             {},
             [],
-            0
         ]);
         expect(wodinPlot.props("graphConfig")).toStrictEqual({
             selectedVariables: ["y", "z"]
@@ -586,7 +585,6 @@ describe("SensitivityTracesPlot", () => {
             selectedVariables,
             {},
             [],
-            0
         ]);
         expect(wodinPlot.props("graphConfig")).toStrictEqual({
             selectedVariables: ["y", "z"]
@@ -614,7 +612,6 @@ describe("SensitivityTracesPlot", () => {
             selectedVariables,
             { "Set 1": mockParameterSetBatch1 },
             ["Hey", "Bye"],
-            0
         ]);
 
         const plotData = wodinPlot.props("plotData");
@@ -646,7 +643,7 @@ describe("SensitivityTracesPlot", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Sensitivity has not been run.");
         expect(wodinPlot.props("endTime")).toBe(1);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([getMockResult(false), undefined, selectedVariables, {}, [], 0]);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([getMockResult(false), undefined, selectedVariables, {}, []]);
 
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 1, 100);

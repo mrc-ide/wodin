@@ -252,16 +252,3 @@ export const addGraphWithVariable = async (page: Page, variableIdx: number) => {
     await page.locator(`:nth-match(.graph-config-panel .drop-zone, ${count})`).scrollIntoViewIfNeeded();
     await variable.dragTo(page.locator(`:nth-match(.graph-config-panel .drop-zone, ${count})`));
 };
-
-export const expectXAxisTimeLabelFinalGraph = async (page: Page) => {
-    await addGraphWithVariable(page, 1);
-    const firstGraph = page.locator(":nth-match(.wodin-plot-container, 1)");
-    const secondGraph = page.locator(":nth-match(.wodin-plot-container, 2)");
-
-    await expect(await firstGraph.locator(`text[id^="labelx"]`)).not.toBeVisible();
-    await expect(await secondGraph.locator(`text[id^="labelx"]`).textContent()).toBe("Time");
-
-    // Delete second config - the Time label should be shown on the first graph
-    await page.locator(":nth-match(button.delete-graph, 2)").click();
-    await expect(await firstGraph.locator(`text[id^="labelx"]`).textContent()).toBe("Time");
-};

@@ -13,7 +13,6 @@
                       selectedVariables,
                       parameterSetBatches,
                       parameterSetDisplayNames,
-                      graphCount
                   ]
                 : []
         "

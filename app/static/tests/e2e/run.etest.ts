@@ -1,5 +1,5 @@
 import { expect, test, Page } from "@playwright/test";
-import { expectGraphVariables, addGraphWithVariable, expectXAxisTimeLabelFinalGraph } from "./utils";
+import { expectGraphVariables, addGraphWithVariable } from "./utils";
 
 const expectFirstAndLastXTick = async (
     page: Page, expectedGraphCount: number, expectedFirstAndLastTick: [number, number]
@@ -36,17 +36,6 @@ test.describe("Run Tab", () => {
         await page.mouse.up();
 
         // 3. Check - using x axis ticks - that the expected x axis values are shown on all three graphs.
-        await expectFirstAndLastXTick(page, 3, [14, 40]);
-    });
-
-    test("x axis Time label is shown for final plot only, in Basic app", async ({ page }) => {
-        await page.goto("/apps/day1");
-        await expectXAxisTimeLabelFinalGraph(page);
-    });
-
-    test("x axis Time label is shown for final plot only, in Stochastic app", async ({ page }) => {
-        await page.goto("/apps/day3");
-        await page.click(":nth-match(#right-tabs .nav-link, 2)");
-        await expectXAxisTimeLabelFinalGraph(page);
+        await expectFirstAndLastXTick(page, 3, [20, 55]);
     });
 });

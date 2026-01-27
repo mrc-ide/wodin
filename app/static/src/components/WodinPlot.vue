@@ -1,12 +1,14 @@
 <template>
-    <div class="wodin-plot-container" :style="plotStyle">
+    <div class="wodin-plot-and-legend">
+        <div class="wodin-plot-container" :style="plotStyle">
+            <div class="plot" ref="plot" id="plot"></div>
+            <wodin-plot-data-summary :data="baseData"></wodin-plot-data-summary>
+            <slot></slot>
+        </div>
         <wodin-legend :legendConfigs="legendConfigs" @legendClick="handleClick"/>
-        <div class="plot" ref="plot" id="plot"></div>
         <div v-if="!hasPlotData" class="plot-placeholder">
             {{ placeholderMessage }}
         </div>
-        <wodin-plot-data-summary :data="baseData"></wodin-plot-data-summary>
-        <slot></slot>
     </div>
 </template>
 
@@ -17,7 +19,7 @@ import { Metadata, WodinPlotData, fadePlotStyle } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
 import { GraphsMutation, SetGraphConfigPayload } from "../store/graphs/mutations";
 import { fitGraphId, GraphConfig } from "../store/graphs/state";
-import { Chart, ZoomProperties } from "@reside-ic/skadi-chart";
+import { Chart, Scales, ZoomProperties } from "@reside-ic/skadi-chart";
 import { AppState } from "@/store/appState/state";
 import { tooltipCallback } from "@/utils";
 import WodinLegend, { LegendConfig } from "./WodinLegend.vue";
@@ -118,21 +120,27 @@ export default defineComponent({
           legendConfigs.value = { ...old };
           const filteredOutNames: string[] = [];
           Object.entries(legendConfigs.value).forEach(([name, config]) => {
-            if (!config.enabled)  filteredOutNames.push(name);
+            if (!config.enabled) filteredOutNames.push(name);
           });
+
+          // need to do this again, do not use baseData, it causes a
+          // slowdown because it deeply wraps the data in Vue's reactivity
+          const maxXExtents = { start: startTime, end: props.endTime };
+          const settings = props.graphConfig.settings;
+          const xRange = settings.xAxisRange
+            ? { start: settings.xAxisRange[0], end: settings.xAxisRange[1] }
+            : maxXExtents;
+          const data = props.plotData(xRange.start, xRange.end, nPoints);
           const filteredData: WodinPlotData = {
-            lines: baseData.value.lines.filter(l => !filteredOutNames.includes(l.metadata!.name)),
-            points: baseData.value.points.filter(p => !filteredOutNames.includes(p.metadata!.name))
+            lines: data.lines.filter(l => !filteredOutNames.includes(l.metadata!.name)),
+            points: data.points.filter(p => !filteredOutNames.includes(p.metadata!.name))
           };
           drawSkadiChart(filteredData);
         };
 
-        const skadiChart = ref<Chart>();
+        const autoscaledMaxExtentsY = ref<Scales["y"]>();
 
         const drawSkadiChart = (legendFilteredData: null | WodinPlotData = null) => {
-            const isLastGraph = props.graphConfig.id === fitGraphId
-              || store.state.graphs.config.at(-1)!.id === props.graphConfig.id;
-            const xAxisTitle = isLastGraph ? "Time" : "";
             const maxXExtents = { start: startTime, end: props.endTime };
             const settings = props.graphConfig.settings;
             const xRange = settings.xAxisRange
@@ -157,8 +165,8 @@ export default defineComponent({
               y: yRange
             };
 
-            skadiChart.value = new Chart<Metadata>({ logScale: { y: settings.logScaleYAxis } })
-              .addAxes({ x: xAxisTitle })
+            const skadiChart = new Chart<Metadata>({ logScale: { y: settings.logScaleYAxis } })
+              .addAxes({ x: "Time" })
               .addGridLines()
               .addTraces(data.lines)
               .addScatterPoints(data.points)
@@ -167,6 +175,8 @@ export default defineComponent({
               .addTooltips(tooltipCallback)
               .addCustomLifecycleHooks({ beforeZoom: updateAxes })
               .appendTo(plot.value!, { x: maxXExtents }, currentRanges);
+
+            autoscaledMaxExtentsY.value = skadiChart.autoscaledMaxExtents.y;
         };
 
         onMounted(drawSkadiChart);
@@ -179,7 +189,7 @@ export default defineComponent({
             // if a user locks the y axis then we have to store the y axis range that
             // the graph automatically calculates or an existing y axis range
             if (newGraphConfig.settings.lockYAxis && !oldGraphConfig.settings.lockYAxis) {
-              const maxExtentsY = skadiChart.value!.autoscaledMaxExtents.y;
+              const maxExtentsY = autoscaledMaxExtentsY.value!;
               const yRange = newGraphConfig.settings.yAxisRange
                 || [maxExtentsY.start, maxExtentsY.end];
               store.commit(`graphs/${GraphsMutation.SetGraphConfig}`, {
