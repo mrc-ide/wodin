@@ -50,8 +50,8 @@ export default defineComponent({
         const setDraggingVariable = (value: boolean) => {
             draggingVariable.value = value;
         };
-        const fitGraphConfig = computed(() => store.state.graphs.fitGraphConfig);
         const graphConfigs = computed(() => store.state.graphs.config);
+        const fitGraphConfig = computed(() => store.state.graphs.fitGraphConfig);
         const addGraph = () => {
             store.dispatch(`graphs/${GraphsAction.NewGraph}`);
         };
@@ -59,9 +59,9 @@ export default defineComponent({
             draggingVariable,
             setDraggingVariable,
             graphConfigs,
-            fitGraphConfig,
             addGraph,
             fitTabIsOpen,
+            fitGraphConfig
         };
     }
 });
