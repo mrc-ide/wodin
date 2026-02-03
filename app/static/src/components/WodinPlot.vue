@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch, onMounted, PropType } from "vue";
+import { computed, defineComponent, ref, watch, onMounted, PropType, shallowRef } from "vue";
 import { useStore } from "vuex";
 import { Metadata, WodinPlotData, fadePlotStyle } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
@@ -56,7 +56,7 @@ export default defineComponent({
         const startTime = 0;
 
         const plot = ref<null | HTMLDivElement>(null); // Picks up the element with 'plot' ref in the template
-        const baseData = ref<WodinPlotData>({ lines: [], points: [] });
+        const baseData = shallowRef<WodinPlotData>({ lines: [], points: [] });
         const nPoints = 1000; // TODO: appropriate value could be derived from width of element
 
         const hasPlotData = computed(() => !!baseData.value.lines.length || !!baseData.value.points.length);
@@ -100,12 +100,12 @@ export default defineComponent({
           lines.forEach(l => {
             const { name, color } = l.metadata!;
             if (name in ret) return;
-            ret[name] = { color, type: "line", enabled: true };
+            ret[name] = { color, type: "line", faded: false };
           });
           points.forEach(p => {
             const { name, color } = p.metadata!;
             if (name in ret) return;
-            ret[name] = { color, type: "point", enabled: true };
+            ret[name] = { color, type: "point", faded: false };
           });
           return ret;
         };
@@ -116,24 +116,16 @@ export default defineComponent({
 
         const handleClick = (name: string) => {
           const old = legendConfigs.value;
-          old[name].enabled = !old[name].enabled;
+          old[name].faded = !old[name].faded;
           legendConfigs.value = { ...old };
           const filteredOutNames: string[] = [];
           Object.entries(legendConfigs.value).forEach(([name, config]) => {
-            if (!config.enabled) filteredOutNames.push(name);
+            if (config.faded) filteredOutNames.push(name);
           });
 
-          // need to do this again, do not use baseData, it causes a
-          // slowdown because it deeply wraps the data in Vue's reactivity
-          const maxXExtents = { start: startTime, end: props.endTime };
-          const settings = props.graphConfig.settings;
-          const xRange = settings.xAxisRange
-            ? { start: settings.xAxisRange[0], end: settings.xAxisRange[1] }
-            : maxXExtents;
-          const data = props.plotData(xRange.start, xRange.end, nPoints);
           const filteredData: WodinPlotData = {
-            lines: data.lines.filter(l => !filteredOutNames.includes(l.metadata!.name)),
-            points: data.points.filter(p => !filteredOutNames.includes(p.metadata!.name))
+            lines: baseData.value.lines.filter(l => !filteredOutNames.includes(l.metadata!.name)),
+            points: baseData.value.points.filter(p => !filteredOutNames.includes(p.metadata!.name))
           };
           drawSkadiChart(filteredData);
         };
@@ -141,30 +133,27 @@ export default defineComponent({
         const autoscaledMaxExtentsY = ref<Scales["y"]>();
 
         const drawSkadiChart = (legendFilteredData: null | WodinPlotData = null) => {
-            const maxXExtents = { start: startTime, end: props.endTime };
             const settings = props.graphConfig.settings;
+            const maxXExtents = { start: startTime, end: props.endTime };
             const xRange = settings.xAxisRange
               ? { start: settings.xAxisRange[0], end: settings.xAxisRange[1] }
               : maxXExtents;
+            const yRange = settings.yAxisRange
+              ? { start: settings.yAxisRange[0], end: settings.yAxisRange[1] }
+              : {};
+            const ranges = { x: xRange, y: yRange };
 
             let data: WodinPlotData;
             if (legendFilteredData) {
                 data = legendFilteredData;
             } else {
-                data = props.plotData(xRange.start, xRange.end, nPoints);
+                data = props.plotData(ranges.x.start, ranges.x.end, nPoints);
                 baseData.value = data;
                 legendConfigs.value = getLegendConfigs(baseData.value);
             }
 
-            const yRange = settings.yAxisRange
-              ? { start: settings.yAxisRange[0], end: settings.yAxisRange[1] }
-              : {};
-
-            const currentRanges = {
-              x: xRange,
-              y: yRange
-            };
-
+            // skadiChart holds a lot of data, making this reactive will have a performance
+            // penalty, if you need to make it reactive, please use shallowRef
             const skadiChart = new Chart<Metadata>({ logScale: { y: settings.logScaleYAxis } })
               .addAxes({ x: "Time" })
               .addGridLines()
@@ -174,7 +163,7 @@ export default defineComponent({
               .makeResponsive()
               .addTooltips(tooltipCallback)
               .addCustomLifecycleHooks({ beforeZoom: updateAxes })
-              .appendTo(plot.value!, { x: maxXExtents }, currentRanges);
+              .appendTo(plot.value!, { x: maxXExtents }, ranges);
 
             autoscaledMaxExtentsY.value = skadiChart.autoscaledMaxExtents.y;
         };

@@ -7,12 +7,12 @@ describe("Wodin legend", () => {
       S: {
         color: "red",
         type: "line",
-        enabled: true
+        faded: false
       },
       I: {
         color: "lime",
         type: "point",
-        enabled: false
+        faded: true
       }
     };
 

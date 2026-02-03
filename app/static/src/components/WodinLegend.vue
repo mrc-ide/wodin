@@ -3,14 +3,12 @@
     <div v-for="(config, name) in legendConfigs"
          :key="name"
          class="legend-row"
-         :class="config.enabled ? '' : 'faded'"
+         :class="config.faded ? 'faded' : ''"
          @click="$emit('legendClick', name)">
-      <svg v-if="config.type === 'line'" viewBox="0 0 30 10" height="10" width="30">
-        <line x1="0" x2="30" y1="5" y2="5"
+      <svg  viewBox="0 0 30 10" height="10" width="30">
+        <line v-if="config.type === 'line'" x1="0" x2="30" y1="5" y2="5"
               :stroke="config.color" stroke-width="2"/>
-      </svg>
-      <svg v-if="config.type === 'point'" viewBox="0 0 30 10" height="10" width="30">
-        <circle cx="15" cy="5" r="2.5" :fill="config.color"/>
+        <circle v-if="config.type === 'point'" cx="15" cy="5" r="2.5" :fill="config.color"/>
       </svg>
       <p class="legend-text">{{ name }}</p>
     </div>
@@ -23,7 +21,7 @@ import { PropType } from 'vue';
 export type LegendConfig = {
   color: string,
   type: "line" | "point",
-  enabled: boolean
+  faded: boolean
 }
 
 defineProps({
@@ -43,7 +41,7 @@ defineEmits(["legendClick"]);
   justify-content: start;
   width: min(20rem, 25%);
   max-height: calc(450px - 1rem);
-  overflow: scroll;
+  overflow: auto;
   scrollbar-color: grey transparent;
   scrollbar-width: thin;
 }

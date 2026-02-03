@@ -306,12 +306,12 @@ describe("WodinPlot", () => {
         expect(wrapper.vm.legendConfigs).toStrictEqual({
             ["test lines"]: {
                 color: "#ff00ff",
-                enabled: true,
+                faded: false,
                 type: "line"
             },
             ["test markers"]: {
                 color: "#ff0000",
-                enabled: true,
+                faded: false,
                 type: "point"
             }
         });
@@ -320,12 +320,12 @@ describe("WodinPlot", () => {
         expect(wrapper.vm.legendConfigs).toStrictEqual({
             ["test lines"]: {
                 color: "#ff00ff",
-                enabled: false,
+                faded: true,
                 type: "line"
             },
             ["test markers"]: {
                 color: "#ff0000",
-                enabled: true,
+                faded: false,
                 type: "point"
             }
         });
