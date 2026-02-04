@@ -123,11 +123,16 @@ test.describe("Code Tab tests", () => {
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("", { timeout });
         await expect(await getRunPlotOpacity(page)).toBe("1");
 
-        // TODO when legend is added - mrc-6826
-        // const legendTextSelector = ".js-plotly-plot .legendtext";
-        // await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("y1");
-        // await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 2)`)).toBe("y2");
-        // await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 3)`)).toBe("y3");
+        const legendTextSelector = ".legend-text";
+        await expect(
+          (await page.locator(`:nth-match(${legendTextSelector}, 1)`).textContent())!.trim()
+        ).toBe("y1");
+        await expect(
+          (await page.locator(`:nth-match(${legendTextSelector}, 2)`).textContent())!.trim()
+        ).toBe("y2");
+        await expect(
+          (await page.locator(`:nth-match(${legendTextSelector}, 3)`).textContent())!.trim()
+        ).toBe("y3");
     });
 
     test("code loading on input renders as expected", async ({ page }) => {
@@ -323,7 +328,7 @@ test.describe("Code Tab tests", () => {
 
         // Check second graph has appeared with placeholder text, and second graph config panel is there
         expect(
-            await page.locator(":nth-match(.wodin-plot-container, 2)")
+            await page.locator(":nth-match(.wodin-plot-and-legend, 2)")
                 .locator(".plot-placeholder")
                 .textContent()
         ).toBe(

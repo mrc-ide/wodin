@@ -7,6 +7,7 @@ import { GraphsMutation } from "../../../src/store/graphs/mutations";
 import { defaultGraphSettings, fitGraphId, GraphSettings, GraphsState } from "@/store/graphs/state";
 import { ZoomProperties } from "@reside-ic/skadi-chart";
 import { ComponentProps } from "../../testUtils";
+import WodinLegend from "@/components/WodinLegend.vue";
 
 describe("WodinPlot", () => {
     const mockObserve = vi.fn();
@@ -299,4 +300,34 @@ describe("WodinPlot", () => {
         // since fadePlot is false, data is updated
         expect(wrapper.vm.baseData).toStrictEqual({ lines: [], points: [] });
     });
+
+    it("updates legend configs when legend is clicked", async () => {
+        const wrapper = getWrapper();
+        expect(wrapper.vm.legendConfigs).toStrictEqual({
+            ["test lines"]: {
+                color: "#ff00ff",
+                faded: false,
+                type: "line"
+            },
+            ["test markers"]: {
+                color: "#ff0000",
+                faded: false,
+                type: "point"
+            }
+        });
+        const legend = wrapper.findComponent(WodinLegend);
+        legend.vm.$emit("legendClick", "test lines");
+        expect(wrapper.vm.legendConfigs).toStrictEqual({
+            ["test lines"]: {
+                color: "#ff00ff",
+                faded: true,
+                type: "line"
+            },
+            ["test markers"]: {
+                color: "#ff0000",
+                faded: false,
+                type: "point"
+            }
+        });
+    })
 });

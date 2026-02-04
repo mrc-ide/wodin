@@ -153,11 +153,14 @@ test.describe("Wodin App model fit tests", () => {
             .toBe(true);
         expect(await page.locator(`circle[id^=scatter]`).count()).toBe(32);
 
-        // TODO when legend is added - mrc-6826
         // Test traces appear on legend
-        // const legendTextSelector = `${plotSelector} .legendtext`;
-        // await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 1)`)).toBe("I");
-        // await expect(await page.innerHTML(`:nth-match(${legendTextSelector}, 2)`)).toBe("Cases");
+        const legendTextSelector = `.legend-text`;
+        await expect(
+            (await page.locator(`:nth-match(${legendTextSelector}, 1)`).textContent())!.trim()
+        ).toBe("I");
+        await expect(
+            (await page.locator(`:nth-match(${legendTextSelector}, 2)`).textContent())!.trim()
+        ).toBe("Cases");
 
         // Test can run again with different params to vary, and get different result
         await page.click(":nth-match(input.vary-param-check, 2)");

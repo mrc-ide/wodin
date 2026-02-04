@@ -16,9 +16,13 @@ describe("GraphConfigs", () => {
         vi.clearAllMocks();
     });
 
+    const fitGraphConfig = {
+        id: fitGraphId,
+        selectedVariabled: ["Fit S"],
+        unselectedVariabled: ["Fit I"]
+    };
     const mockNewGraph = vi.fn();
     const namespaced = true;
-    const fitGraphConfig = { id: fitGraphId };
     const getWrapper = (fitTabOpen = false) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
@@ -31,11 +35,11 @@ describe("GraphConfigs", () => {
                 graphs: {
                     namespaced,
                     state: {
+                        fitGraphConfig,
                         config: [
                             { selectedVariables: ["S"], unselectedVariables: ["I", "R"] },
                             { selectedVariables: ["I"], unselectedVariables: ["S", "R"] }
                         ],
-                        fitGraphConfig
                     },
                     actions: {
                         [GraphsAction.NewGraph]: mockNewGraph

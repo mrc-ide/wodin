@@ -93,10 +93,6 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.graph-config-settings {
-    margin-left: 8px;
-}
-
 .graph-config-panel {
     border-width: 1px;
     border-style: solid;

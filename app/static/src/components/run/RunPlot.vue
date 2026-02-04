@@ -5,7 +5,7 @@
         :end-time="endTime"
         :plot-data="allPlotData"
         :redrawWatches="
-            solution ? [solution, allFitData, selectedVariables, parameterSetSolutions, displayNames, graphCount] : []
+            solution ? [solution, allFitData, selectedVariables, parameterSetSolutions, displayNames] : []
         "
         :graph-config="graphConfig"
     >
@@ -59,9 +59,6 @@ const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData
 
 const selectedVariables = computed(() => props.graphConfig.selectedVariables);
 const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, false));
-
-// TODO: put this in the composable in mrc-5572
-const graphCount = computed(() => store.state.graphs.config.length);
 
 const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
     const options = {
