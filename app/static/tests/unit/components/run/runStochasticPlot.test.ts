@@ -1,6 +1,3 @@
-// Mock plotly before import RunStochasticTab, which indirectly imports plotly via WodinPlot
-vi.mock("plotly.js-basic-dist-min", () => ({}));
-
 import { shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
 import RunStochasticPlot from "../../../../src/components/run/RunStochasticPlot.vue";
@@ -74,8 +71,6 @@ describe("RunPlot for stochastic", () => {
         const wrapper = shallowMount(RunStochasticPlot, {
             props: {
                 fadePlot: false,
-                graphIndex: 0,
-                linkedXAxis,
                 graphConfig
             },
             global: {
@@ -86,76 +81,49 @@ describe("RunPlot for stochastic", () => {
         expect(wodinPlot.props("fadePlot")).toBe(false);
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
-        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution, 1, selectedVariables]);
-        expect(wodinPlot.props("recalculateOnRelayout")).toBe(true);
-        expect(wodinPlot.props("linkedXAxis")).toStrictEqual(linkedXAxis);
-        expect(wodinPlot.props("graphIndex")).toBe(0);
+        expect(wodinPlot.props("redrawWatches")).toStrictEqual([mockSolution, 1]);
         expect(wodinPlot.props("graphConfig")).toStrictEqual(graphConfig);
 
         // Generates expected plot data from model
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 0, 0);
-        expect(data).toStrictEqual([
-            {
-                mode: "lines",
-                line: {
-                    color: "#ff0000",
-                    width: 0.5,
-                    opacity: 0.5
+        expect(data).toStrictEqual({
+            lines: [
+                {
+                    style: {
+                        strokeColor: "#ff0000",
+                        strokeWidth: 0.5,
+                        opacity: 0.5
+                    },
+                    metadata: {
+                        name: "S",
+                        tooltipName: "S",
+                        color: "#ff0000"
+                    },
+                    points: [
+                        { x: 0, y: 10 },
+                        { x: 1, y: 20 },
+                    ]
                 },
-                name: "S",
-                x: [0, 1],
-                y: [10, 20],
-                showlegend: true,
-                legendgroup: "S"
-            },
-            {
-                mode: "lines",
-                line: {
-                    color: "#00ff00",
-                    width: undefined,
-                    opacity: undefined
-                },
-                name: "I (mean)",
-                x: [0, 1],
-                y: [5, 10],
-                showlegend: true,
-                legendgroup: "I (mean)"
-            }
-        ]);
-    });
-
-    it("emits updateXAxis event", () => {
-        const store = new Vuex.Store<StochasticState>({
-            state: {
-                graphs: graphsState,
-                model: mockModelState({ paletteModel }),
-                run: {
-                    endTime: 99,
-                    numberOfReplicates: 20,
-                    resultDiscrete: mockResult
-                },
-                config: {
-                    maxReplicatesDisplay: 50,
-                    maxReplicatesRun: 1000
+                {
+                    style: {
+                        strokeColor: "#00ff00",
+                        strokeWidth: 2,
+                        opacity: 1
+                    },
+                    metadata: {
+                        name: "I (mean)",
+                        tooltipName: "I (mean)",
+                        color: "#00ff00",
+                    },
+                    points: [
+                        { x: 0, y: 5 },
+                        { x: 1, y: 10 },
+                    ]
                 }
-            } as any
+            ],
+            points: []
         });
-        const wrapper = shallowMount(RunStochasticPlot, {
-            props: {
-                fadePlot: false,
-                graphIndex: 0,
-                linkedXAxis,
-                graphConfig
-            },
-            global: {
-                plugins: [store]
-            }
-        });
-        const wodinPlot = wrapper.findComponent(WodinPlot);
-        const xAxis = { autorange: false, range: [111, 222] };
-        wodinPlot.vm.$emit("updateXAxis", xAxis);
-        expect(wrapper.emitted("updateXAxis")![0]).toStrictEqual([xAxis]);
     });
 
     it("renders as expected when model has no stochastic result", () => {
@@ -171,7 +139,6 @@ describe("RunPlot for stochastic", () => {
         const wrapper = shallowMount(RunPlot, {
             props: {
                 fadePlot: false,
-                graphIndex: 0,
                 graphConfig
             } as any,
             global: {
@@ -183,12 +150,11 @@ describe("RunPlot for stochastic", () => {
         expect(wodinPlot.props("placeholderMessage")).toBe("Model has not been run.");
         expect(wodinPlot.props("endTime")).toBe(99);
         expect(wodinPlot.props("redrawWatches")).toStrictEqual([]);
-        expect(wodinPlot.props("graphIndex")).toBe(0);
         expect(wodinPlot.props("graphConfig")).toStrictEqual(graphConfig);
 
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 0, 0);
-        expect(data).toStrictEqual([]);
+        expect(data).toStrictEqual({ lines: [], points: [] });
     });
 
     it("renders as expected when solution returns no data", () => {
@@ -219,7 +185,7 @@ describe("RunPlot for stochastic", () => {
         // Generates expected empty plot data from solution
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 0, 0);
-        expect(data).toStrictEqual([]);
+        expect(data).toStrictEqual({ lines: [], points: [] });
     });
 
     it("fades plot when fadePlot prop is true", () => {
@@ -267,20 +233,24 @@ describe("RunPlot for stochastic", () => {
         const wodinPlot = wrapper.findComponent(WodinPlot);
         const plotData = wodinPlot.props("plotData");
         const data = plotData(0, 0, 0);
-        expect(data).toStrictEqual([
-            {
-                mode: "lines",
-                line: {
-                    color: "#00ff00",
-                    width: undefined,
-                    opacity: undefined
+        expect(data).toStrictEqual({
+            lines: [{
+                style: {
+                    strokeColor: "#00ff00",
+                    strokeWidth: 2,
+                    opacity: 1
                 },
-                name: "I (mean)",
-                x: [0, 1],
-                y: [5, 10],
-                showlegend: true,
-                legendgroup: "I (mean)"
-            }
-        ]);
+                metadata: {
+                    name: "I (mean)",
+                    tooltipName: "I (mean)",
+                    color: "#00ff00",
+                },
+                points: [
+                    { x: 0, y: 5 },
+                    { x: 1, y: 10 },
+                ]
+            }],
+            points: []
+        });
     });
 });

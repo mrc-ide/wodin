@@ -15,7 +15,7 @@ import { ErrorsMutation } from "../errors/mutations";
 import { BaseSensitivityMutation, SensitivityMutation } from "../sensitivity/mutations";
 import { defaultSensitivityParamSettings } from "../sensitivity/sensitivity";
 import { MultiSensitivityMutation } from "../multiSensitivity/mutations";
-import { GraphsAction } from "../graphs/actions";
+import { GraphsAction, UpdateSelectedVariablesPayload } from "../graphs/actions";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
@@ -72,7 +72,7 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
         const selectedVariables = variables.filter((s) => !rootState.graphs.config[0].unselectedVariables.includes(s));
         dispatch(
             `graphs/${GraphsAction.UpdateSelectedVariables}`,
-            { graphIndex: 0, selectedVariables },
+            { id: rootState.graphs.config[0].id, selectedVariables } as UpdateSelectedVariablesPayload,
             { root: true }
         );
 

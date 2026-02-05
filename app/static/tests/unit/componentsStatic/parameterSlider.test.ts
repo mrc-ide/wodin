@@ -4,11 +4,12 @@ import { shallowMount } from "@vue/test-utils";
 import { mockBasicState, mockModelState, mockRunState } from "../../mocks";
 import Vuex from "vuex";
 import { RunMutation } from "@/store/run/mutations";
+import { ComponentProps } from "tests/testUtils";
 
 describe("Parameter Control", () => {
     const mockSetParameterValues = vi.fn();
 
-    type ParameterSliderProps = Parameters<NonNullable<(typeof ParameterSlider)["setup"]>>["0"]
+    type ParameterSliderProps = ComponentProps<typeof ParameterSlider>
     const getWrapper = (props?: Partial<ParameterSliderProps>) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),

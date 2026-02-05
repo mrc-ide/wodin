@@ -1,5 +1,5 @@
 <template>
-    <vertical-collapse v-if="showGraphs" title="Graphs" collapse-id="graphs">
+    <vertical-collapse v-if="showGraphs" title="Graphs settings" collapse-id="graphs">
         <graph-configs></graph-configs>
     </vertical-collapse>
 </template>

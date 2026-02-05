@@ -53,9 +53,23 @@ $grey: #ccc;
     color: #0d6efd !important;
 }
 
+.wodin-plot-and-legend {
+    position: relative;
+    display: flex;
+    width: 100%;
+    padding-top: 1rem;
+}
+
 .wodin-plot-container,
 .summary-plot-container {
-    position: relative;
+    padding-inline: 1rem;
+    width: calc(100% - min(20rem, 25%));
+    overflow-x: hidden;
+}
+
+.wodin-plot-container text[id^="labelx"],
+.summary-plot-container text[id^="labelx"]{
+    font-size: 0.9rem !important;
 }
 
 .plot {
@@ -64,7 +78,7 @@ $grey: #ccc;
 
 .plot-placeholder {
     width: 100%;
-    height: 450px;
+    height: 100%;
     background-color: $light-grey;
     display: flex;
     align-items: center;
@@ -72,6 +86,8 @@ $grey: #ccc;
     text-align: center;
     position: absolute;
     top: 0;
+    left: 0;
+    border-radius: 5px;
 }
 
 .alert-danger {
@@ -155,4 +171,30 @@ $grey: #ccc;
         color: white;
         padding: 0;
     }
+}
+
+.wodin-tooltip-container {
+    transform: translate3d(-0.3rem, -50%, 0);
+    display: flex;
+    align-items: center;
+}
+
+.wodin-tooltip-info {
+    border-radius: 4px;
+    color: white;
+    font-size: 0.95rem;
+    padding-inline: 0.5rem;
+    padding-block: 0.2rem;
+    margin-left: -1px;
+}
+
+.wodin-tooltip-arrow {
+    height: 0;
+    width: 0;
+    border: 0.6rem solid black;
+    border-color: transparent;
+}
+
+.graph-config-settings {
+    margin-left: 8px;
 }

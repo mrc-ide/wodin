@@ -23,8 +23,8 @@ describe("Run getters", () => {
         });
         const result = (getters[RunGetter.lineStylesForParameterSets] as any)(state);
         expect(result).toStrictEqual({
-            "Set 1": "dot",
-            "Set 2": "dash"
+            "Set 1": "3",
+            "Set 2": "10"
         });
     });
 

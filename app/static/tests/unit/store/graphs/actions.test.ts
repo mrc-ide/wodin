@@ -1,8 +1,7 @@
-import { mockAxios, mockFitState, mockModelState } from "../../../mocks";
+import { mockAxios, mockModelState } from "../../../mocks";
 import { actions, GraphsAction } from "../../../../src/store/graphs/actions";
 import { GraphsMutation } from "../../../../src/store/graphs/mutations";
 import { AppType } from "../../../../src/store/appState/state";
-import { FitDataAction } from "../../../../src/store/fitData/actions";
 import { defaultGraphSettings } from "../../../../src/store/graphs/state";
 
 describe("Graphs actions", () => {
@@ -23,7 +22,7 @@ describe("Graphs actions", () => {
         mockAxios.reset();
     });
 
-    it("Updates selected variables commits selection only, if not fit model", () => {
+    it("Updates selected variables commits selection only", () => {
         const state = mockModelState();
         const commit = vi.fn();
         const dispatch = vi.fn();
@@ -35,47 +34,18 @@ describe("Graphs actions", () => {
                 state,
                 rootState
             },
-            { graphIndex: 1, selectedVariables: ["a", "b"] }
+            { id: "123", selectedVariables: ["a", "b"] }
         );
         expect(commit).toHaveBeenCalledTimes(1);
-        expect(commit.mock.calls[0][0]).toBe(GraphsMutation.SetSelectedVariables);
+        expect(commit.mock.calls[0][0]).toBe(GraphsMutation.SetGraphConfig);
         expect(commit.mock.calls[0][1]).toStrictEqual({
-            graphIndex: 1,
+            id: "123",
             selectedVariables: ["b", "a"], // should have reordered variables to match model
             unselectedVariables: ["c"]
         });
         expect(dispatch).not.toHaveBeenCalled();
     });
 
-    it("Updates selected variables commits selection and updates linked variables if fit app", () => {
-        const state = mockModelState();
-        const commit = vi.fn();
-        const dispatch = vi.fn();
-        const fitRootState = mockFitState({
-            model: modelState
-        });
-
-        (actions[GraphsAction.UpdateSelectedVariables] as any)(
-            {
-                commit,
-                dispatch,
-                state,
-                rootState: fitRootState
-            },
-            { graphIndex: 1, selectedVariables: ["a", "b"] }
-        );
-        expect(commit).toHaveBeenCalledTimes(1);
-        expect(commit.mock.calls[0][0]).toBe(GraphsMutation.SetSelectedVariables);
-        expect(commit.mock.calls[0][1]).toStrictEqual({
-            graphIndex: 1,
-            selectedVariables: ["b", "a"],
-            unselectedVariables: ["c"]
-        });
-        expect(dispatch).toHaveBeenCalledTimes(1);
-        expect(dispatch.mock.calls[0][0]).toBe(`fitData/${FitDataAction.UpdateLinkedVariables}`);
-        expect(dispatch.mock.calls[0][1]).toBe(null);
-        expect(dispatch.mock.calls[0][2]).toStrictEqual({ root: true });
-    });
     it("NewGraph adds empty graph", () => {
         const commit = vi.fn();
 

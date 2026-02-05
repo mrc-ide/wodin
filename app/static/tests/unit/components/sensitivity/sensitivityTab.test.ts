@@ -20,7 +20,6 @@ import * as Env from "@/parseEnv";
 import { GraphsAction } from "@/store/graphs/actions";
 
 vi.mock("@/parseEnv");
-vi.mock("plotly.js-basic-dist-min", () => ({}));
 
 describe("SensitivityTab", () => {
     const mockRunSensitivity = vi.fn();
@@ -50,9 +49,11 @@ describe("SensitivityTab", () => {
                     state: {
                         config: [
                             {
+                                id: "123",
                                 selectedVariables
                             },
                             {
+                                id: "456",
                                 selectedVariables: []
                             }
                         ]
@@ -143,11 +144,13 @@ describe("SensitivityTab", () => {
         const plots = wrapper.findAllComponents(SensitivityTracesPlot);
         expect(plots.length).toBe(2);
         expect(plots.at(0)!.props("fadePlot")).toBe(false);
-        expect(plots.at(0)!.props("graphConfig")).toStrictEqual({ selectedVariables: ["S"] });
-        expect(plots.at(0)!.props("graphIndex")).toStrictEqual(0);
+        expect(plots.at(0)!.props("graphConfig")).toStrictEqual({
+            id: "123", selectedVariables: ["S"]
+        });
         expect(plots.at(1)!.props("fadePlot")).toBe(false);
-        expect(plots.at(1)!.props("graphConfig")).toStrictEqual({ selectedVariables: [] });
-        expect(plots.at(1)!.props("graphIndex")).toStrictEqual(1);
+        expect(plots.at(1)!.props("graphConfig")).toStrictEqual({
+            id: "456", selectedVariables: []
+        });
         expect(wrapper.findComponent(ErrorInfo).props("error")).toBe(null);
         expect(wrapper.find("#sensitivity-running").exists()).toBe(false);
         expect(wrapper.findComponent(SensitivitySummaryPlot).exists()).toBe(false);
@@ -190,9 +193,13 @@ describe("SensitivityTab", () => {
         const plots = wrapper.findAllComponents(SensitivitySummaryPlot);
         expect(plots.length).toBe(2);
         expect(plots.at(0)!.props("fadePlot")).toBe(false);
-        expect(plots.at(0)!.props("graphConfig")).toStrictEqual({ selectedVariables: ["S"] });
+        expect(plots.at(0)!.props("graphConfig")).toStrictEqual({
+            id: "123", selectedVariables: ["S"]
+        });
         expect(plots.at(1)!.props("fadePlot")).toBe(false);
-        expect(plots.at(1)!.props("graphConfig")).toStrictEqual({ selectedVariables: [] });
+        expect(plots.at(1)!.props("graphConfig")).toStrictEqual({
+            id: "456", selectedVariables: []
+        });
         expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
     });
 
@@ -353,11 +360,11 @@ describe("SensitivityTab", () => {
         vi.mocked(Env).STATIC_BUILD = true;
         getWrapper(AppType.Basic, {}, {}, {}, true, ["S"], { ...defaultProps, visibleVars: "I, T" });
         expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({
-            graphIndex: 0,
+            id: "123",
             selectedVariables: ["I", "T"]
         });
         expect(mockUpdateSelectedVariables.mock.calls[1][1]).toStrictEqual({
-            graphIndex: 1,
+            id: "456",
             selectedVariables: ["I", "T"]
         });
         vi.mocked(Env).STATIC_BUILD = false;

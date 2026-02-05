@@ -37,7 +37,8 @@ const runOdeModel = (
     const advancedSettingsOdin = convertAdvancedSettingsToOdin(advancedSettings, parameterValues);
 
     try {
-        const solution = runner.wodinRun(odin, parameterValues, startTime, endTime, advancedSettingsOdin);
+        const newParameterValues = parameterValues;
+        const solution = runner.wodinRun(odin, newParameterValues, startTime, endTime, advancedSettingsOdin);
         payload.solution = solution;
     } catch (e) {
         payload.error = {

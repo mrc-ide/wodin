@@ -24,7 +24,6 @@ import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import ActionRequiredMessage from "@/components/ActionRequiredMessage.vue";
 import ErrorInfo from "@/components/ErrorInfo.vue";
-import { update } from "plotly.js-basic-dist-min";
 import SensitivitySummaryDownload from "@/components/sensitivity/SensitivitySummaryDownload.vue";
 import baseSensitivity from "../mixins/baseSensitivity";
 import { MultiSensitivityAction } from "../../store/multiSensitivity/actions";
@@ -34,7 +33,6 @@ import { BaseSensitivityGetter } from "../../store/sensitivity/getters";
 
 export default defineComponent({
     name: "MultiSensitivityTab",
-    methods: { update },
     components: {
         SensitivitySummaryDownload,
         ErrorInfo,
