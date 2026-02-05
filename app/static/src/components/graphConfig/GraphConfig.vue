@@ -9,7 +9,7 @@
         >
             <vue-feather class="inline-icon clickable ms-2" type="trash-2"></vue-feather>
         </button>
-        <graph-settings :fit-plot="false" :graph-index="graphIndex" class="graph-config-settings mb-1"></graph-settings>
+        <graph-settings :graph-config="graphConfig" class="graph-config-settings mb-1"></graph-settings>
         <div class="drop-zone" :class="dragging ? 'drop-zone-active' : 'drop-zone-inactive'">
             <template v-for="variable in selectedVariables" :key="variable">
                 <span
@@ -21,7 +21,7 @@
                 >
                     <span class="variable-name">{{ variable }}</span>
                     <span class="variable-delete">
-                        <button @click="removeVariable(graphIndex, variable)" v-tooltip="'Remove variable'">×</button>
+                        <button @click="removeVariable(graphConfig.id, variable)" v-tooltip="'Remove variable'">×</button>
                     </span>
                 </span>
             </template>
@@ -35,11 +35,12 @@
 
 <script lang="ts">
 import VueFeather from "vue-feather";
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { useStore } from "vuex";
 import GraphSettings from "@/components/GraphSettings.vue";
 import SelectVariables from "../mixins/selectVariables";
 import { GraphsMutation } from "../../store/graphs/mutations";
+import { GraphConfig } from "../../store/graphs/state";
 
 export default defineComponent({
     name: "GraphConfig",
@@ -52,18 +53,16 @@ export default defineComponent({
             type: Boolean,
             required: true
         },
-        graphIndex: {
-            type: Number,
+        graphConfig: {
+            type: Object as PropType<GraphConfig>,
             required: true
         }
     },
     setup(props, { emit }) {
         const store = useStore();
         // eslint-disable-next-line vue/no-setup-props-destructure
-        const { startDrag, endDrag, onDrop, removeVariable } = SelectVariables(store, emit, false, props.graphIndex);
-        const selectedVariables = computed<string[]>(
-            () => store.state.graphs.config[props.graphIndex].selectedVariables
-        );
+        const { startDrag, endDrag, onDrop, removeVariable } = SelectVariables(store, emit, false, props.graphConfig);
+        const selectedVariables = computed<string[]>(() => props.graphConfig.selectedVariables);
         const canDelete = computed(() => store.state.graphs.config.length > 1);
         const palette = computed(() => store.state.model.paletteModel!);
 
@@ -76,7 +75,7 @@ export default defineComponent({
         };
 
         const deleteGraph = () => {
-            store.commit(`graphs/${GraphsMutation.DeleteGraph}`, props.graphIndex);
+            store.commit(`graphs/${GraphsMutation.DeleteGraph}`, props.graphConfig.id);
         };
 
         return {
@@ -99,9 +98,6 @@ export default defineComponent({
     border-style: solid;
     border-color: #ccc;
     padding: 4px;
-    .graph-config-settings {
-        margin-left: 8px;
-    }
     .selected-variables-panel {
         width: 100%;
 

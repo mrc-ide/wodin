@@ -1,42 +1,37 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../src/store/basic/state";
-import GraphSettings from "../../../src/components/GraphSettings.vue";
+import GraphSettingsComponent from "../../../src/components/GraphSettings.vue";
 import { GraphsMutation } from "../../../src/store/graphs/mutations";
-import { defaultGraphSettings } from "../../../src/store/graphs/state";
+import { defaultGraphSettings, fitGraphId, GraphSettings, GraphsState } from "../../../src/store/graphs/state";
 
 describe("GraphSettings", () => {
-    const mockSetLogScaleYAxis = vi.fn();
-    const mockSetLockYAxis = vi.fn();
+    const mockSetGraphConfig = vi.fn();
 
-    const mockSetFitLogScaleYAxis = vi.fn();
-    const mockSetFitLockYAxis = vi.fn();
-
-    const getWrapper = (
-        graphIndex: number | undefined = 1,
-        fitPlot = false,
-        graphSettings = [defaultGraphSettings(), defaultGraphSettings()],
-        fitGraphSettings = defaultGraphSettings()
-    ) => {
+    const getWrapper = (fitGraphSettings: Partial<GraphSettings> = {}) => {
+        const graphState: GraphsState = {
+            fitGraphConfig: {
+                id: fitGraphId,
+                selectedVariables: [],
+                unselectedVariables: [],
+                settings: { ...defaultGraphSettings(), ...fitGraphSettings }
+            },
+            config: []
+        };
         const store = new Vuex.Store<BasicState>({
             modules: {
                 graphs: {
                     namespaced: true,
-                    state: {
-                        fitGraphSettings,
-                        config: graphSettings.map((settings) => ({ settings }))
-                    } as any,
+                    state: graphState,
                     mutations: {
-                        [GraphsMutation.SetLogScaleYAxis]: mockSetLogScaleYAxis,
-                        [GraphsMutation.SetLockYAxis]: mockSetLockYAxis,
-                        [GraphsMutation.SetFitLogScaleYAxis]: mockSetFitLogScaleYAxis,
-                        [GraphsMutation.SetFitLockYAxis]: mockSetFitLockYAxis
+                        [GraphsMutation.SetGraphConfig]: mockSetGraphConfig,
                     }
                 }
             }
         });
-        return shallowMount(GraphSettings, {
-            props: { graphIndex, fitPlot },
+
+        return shallowMount(GraphSettingsComponent, {
+            props: { graphConfig: graphState.fitGraphConfig },
             global: {
                 plugins: [store]
             }
@@ -47,11 +42,8 @@ describe("GraphSettings", () => {
         vi.clearAllMocks();
     });
 
-    it("renders as expected when not fit plot", () => {
-        const wrapper = getWrapper(1, false, [
-            defaultGraphSettings(),
-            { lockYAxis: true, logScaleYAxis: true, yAxisRange: [0, 10] }
-        ]);
+    it("renders as expected", () => {
+        const wrapper = getWrapper({ lockYAxis: true, logScaleYAxis: true });
         const labels = wrapper.findAll("label");
         const inputs = wrapper.findAll("input");
         expect(labels.length).toBe(2);
@@ -64,50 +56,25 @@ describe("GraphSettings", () => {
         expect((inputs[1].element as HTMLInputElement).checked).toBe(true);
     });
 
-    it("renders as expected when fit plot", () => {
-        const wrapper = getWrapper(undefined, true, [{ lockYAxis: true, logScaleYAxis: true, yAxisRange: [0, 10] }]);
-        const inputs = wrapper.findAll("input");
-        expect((inputs[0].element as HTMLInputElement).checked).toBe(false);
-        expect((inputs[1].element as HTMLInputElement).checked).toBe(false);
-    });
-
-    it("commits change to log scale y axis setting, when not fit plot", async () => {
-        const wrapper = getWrapper(1, false);
+    it("commits change to log scale y axis setting", async () => {
+        const wrapper = getWrapper();
         const inputs = wrapper.findAll("input");
         expect((inputs[0].element as HTMLInputElement).checked).toBe(false);
         await inputs[0].setValue(true);
-        expect(mockSetLogScaleYAxis).toHaveBeenCalledTimes(1);
-        expect(mockSetLogScaleYAxis.mock.calls[0][1]).toStrictEqual({ graphIndex: 1, value: true });
-        expect(mockSetFitLogScaleYAxis).not.toHaveBeenCalled();
+        expect(mockSetGraphConfig.mock.calls[0][1]).toStrictEqual({
+            id: fitGraphId,
+            settings: { logScaleYAxis: true, yAxisRange: null }
+        });
     });
 
-    it("commits change to log scale y axis setting, when fit plot", async () => {
-        const wrapper = getWrapper(undefined, true);
-        const inputs = wrapper.findAll("input");
-        expect((inputs[0].element as HTMLInputElement).checked).toBe(false);
-        await inputs[0].setValue(true);
-        expect(mockSetFitLogScaleYAxis).toHaveBeenCalledTimes(1);
-        expect(mockSetFitLogScaleYAxis.mock.calls[0][1]).toBe(true);
-        expect(mockSetLogScaleYAxis).not.toHaveBeenCalled();
-    });
-
-    it("commits change to lock y axis setting, when not fit plot", async () => {
-        const wrapper = getWrapper(1, false);
+    it("commits change to lock y axis setting", async () => {
+        const wrapper = getWrapper();
         const inputs = wrapper.findAll("input");
         expect((inputs[1].element as HTMLInputElement).checked).toBe(false);
         await inputs[1].setValue(true);
-        expect(mockSetLockYAxis).toHaveBeenCalledTimes(1);
-        expect(mockSetLockYAxis.mock.calls[0][1]).toStrictEqual({ graphIndex: 1, value: true });
-        expect(mockSetFitLockYAxis).not.toHaveBeenCalled();
-    });
-
-    it("commits change to lock y axis setting, when fit plot", async () => {
-        const wrapper = getWrapper(undefined, true);
-        const inputs = wrapper.findAll("input");
-        expect((inputs[1].element as HTMLInputElement).checked).toBe(false);
-        await inputs[1].setValue(true);
-        expect(mockSetFitLockYAxis).toHaveBeenCalledTimes(1);
-        expect(mockSetFitLockYAxis.mock.calls[0][1]).toBe(true);
-        expect(mockSetLockYAxis).not.toHaveBeenCalled();
+        expect(mockSetGraphConfig.mock.calls[0][1]).toStrictEqual({
+            id: fitGraphId,
+            settings: { lockYAxis: true }
+        });
     });
 });

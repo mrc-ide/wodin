@@ -22,7 +22,7 @@
             <p>
                 <router-link to="/" class="brand-link"> Return to the current session </router-link>
                 or
-                <a class="brand-link" :href="sessionUrl(currentSessionId)"> make a copy of the current session. </a>
+                <a class="brand-link" id="copy-current-session" :href="sessionUrl(currentSessionId)"> make a copy of the current session. </a>
             </p>
             <div>
                 <span

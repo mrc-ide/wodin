@@ -4,23 +4,16 @@
             <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
         </div>
         <action-required-message :message="updateMsg"></action-required-message>
-        <template v-for="(config, index) in graphConfigs" :key="config.id">
+        <template v-for="config in graphConfigs" :key="config.id">
             <run-stochastic-plot
                 v-if="isStochastic"
                 :fade-plot="!!updateMsg"
                 :graph-config="config"
-                :graph-index="index"
-                :linked-x-axis="xAxis"
-                @updateXAxis="updateXAxis"
             ></run-stochastic-plot>
             <run-plot
                 v-else
                 :fade-plot="!!updateMsg"
-                :model-fit="false"
                 :graph-config="config"
-                :graph-index="index"
-                :linked-x-axis="xAxis"
-                @updateXAxis="updateXAxis"
             >
             </run-plot>
         </template>
@@ -57,9 +50,8 @@
 
 <script lang="ts">
 import { useStore } from "vuex";
-import { computed, defineComponent, Ref, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import VueFeather from "vue-feather";
-import { LayoutAxis } from "plotly.js-basic-dist-min";
 import { RunMutation } from "../../store/run/mutations";
 import RunPlot from "./RunPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
@@ -94,7 +86,6 @@ export default defineComponent({
         const store = useStore();
 
         const showDownloadOutput = ref(false);
-        const xAxis: Ref<Partial<LayoutAxis>> = ref({ autorange: true });
 
         const isStochastic = computed(() => store.state.appType === AppType.Stochastic);
 
@@ -145,10 +136,6 @@ export default defineComponent({
         const download = (payload: { fileName: string; points: number }) =>
             store.dispatch(`run/${RunAction.DownloadOutput}`, payload);
 
-        const updateXAxis = (newAxis: Partial<LayoutAxis>) => {
-            xAxis.value = newAxis;
-        };
-
         return {
             canRunModel,
             isStochastic,
@@ -163,8 +150,6 @@ export default defineComponent({
             toggleShowDownloadOutput,
             download,
             graphConfigs,
-            xAxis,
-            updateXAxis
         };
     }
 });
