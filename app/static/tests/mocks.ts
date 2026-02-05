@@ -25,7 +25,7 @@ import {
     SensitivityVariationType
 } from "../src/store/sensitivity/state";
 import { VersionsState } from "../src/store/versions/state";
-import { GraphsState, defaultGraphSettings } from "../src/store/graphs/state";
+import { GraphsState, defaultGraphSettings, fitGraphId } from "../src/store/graphs/state";
 import { LanguageState } from "../translationPackage/store/state";
 import { Language } from "../src/types/languageTypes";
 import { noSensitivityUpdateRequired } from "../src/store/sensitivity/sensitivity";
@@ -131,7 +131,12 @@ export const mockGraphsState = (state: Partial<GraphsState> = {}): GraphsState =
                 settings: defaultGraphSettings()
             }
         ],
-        fitGraphSettings: defaultGraphSettings(),
+        fitGraphConfig: {
+            id: fitGraphId,
+            selectedVariables: [],
+            unselectedVariables: [],
+            settings: defaultGraphSettings()
+        },
         ...state
     };
 };

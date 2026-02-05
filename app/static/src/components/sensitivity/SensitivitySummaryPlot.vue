@@ -10,20 +10,21 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, onUnmounted, PropType, ref, watch } from "vue";
-import { AxisType, newPlot, Plots } from "plotly.js-basic-dist-min";
+import { computed, defineComponent, onMounted, PropType, ref, watch } from "vue";
 import { useStore } from "vuex";
-import { fadePlotStyle, filterUserTypeSeriesSet, odinToSkadiChart, updatePlotTraceName } from "../../plot";
+import { fadePlotStyle, filterUserTypeSeriesSet, odinToSkadiChart, updatePlotTraceName, WodinPlotData } from "../../plot";
 import { SensitivityPlotExtremePrefix, SensitivityPlotType, SensitivityScaleType } from "../../store/sensitivity/state";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { Batch, OdinUserTypeSeriesSet } from "../../types/responseTypes";
-import { runPlaceholderMessage } from "../../utils";
+import { runPlaceholderMessage, tooltipCallback } from "../../utils";
 import { RunGetter } from "../../store/run/getters";
 import { Dict } from "../../types/utilTypes";
 import WodinPlotDataSummary from "../WodinPlotDataSummary.vue";
 import { ParameterSet } from "../../store/run/state";
 import { verifyValidPlotSettingsTime } from "./support";
 import { GraphConfig } from "../../store/graphs/state";
+import { Chart, LineStyle } from "@reside-ic/skadi-chart";
+import { AppState } from "@/store/appState/state";
 
 export default defineComponent({
     name: "SensitivitySummaryPlot",
@@ -33,34 +34,16 @@ export default defineComponent({
         graphConfig: { type: Object as PropType<GraphConfig>, required: true }
     },
     setup(props) {
-        const store = useStore();
+        const store = useStore<AppState>();
         const namespace = "sensitivity";
         const plotStyle = computed(() => (props.fadePlot ? fadePlotStyle : ""));
-        const plot = ref<null | HTMLElement>(null); // Picks up the element with 'plot' ref in the template
+        const plot = ref<null | HTMLDivElement>(null); // Picks up the element with 'plot' ref in the template
 
         const batch = computed(() => store.state.sensitivity.result?.batch);
         const plotSettings = computed(() => store.state.sensitivity.plotSettings);
         const palette = computed(() => store.state.model.paletteModel);
         const selectedVariables = computed(() => props.graphConfig.selectedVariables);
         const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, true));
-
-        const xAxisSettings = computed(() => {
-            const { paramSettings } = store.state.sensitivity;
-            // https://plotly.com/javascript/reference/layout/xaxis/#layout-xaxis-type
-            const xtype: AxisType = paramSettings.scaleType === SensitivityScaleType.Logarithmic ? "log" : "linear";
-            return {
-                title: paramSettings.parameterToVary,
-                type: xtype
-            };
-        });
-
-        const yAxisSettings = computed(() => {
-            const isNotTimePlot = plotSettings.value.plotType !== SensitivityPlotType.TimeAtExtreme;
-
-            const logScale = props.graphConfig.settings.logScaleYAxis && isNotTimePlot;
-            const type = logScale ? "log" : ("linear" as AxisType);
-            return { type };
-        });
 
         const visibleParameterSetNames = computed(() => store.getters[`run/${RunGetter.visibleParameterSetNames}`]);
         const parameterSets = computed(() => store.state.run.parameterSets as ParameterSet[]);
@@ -86,87 +69,87 @@ export default defineComponent({
             }
         };
 
-        const plotData = computed(() => {
-            if (batch.value) {
-                const paramName = store.state.sensitivity.paramSettings.parameterToVary;
-                let data: null | OdinUserTypeSeriesSet;
-                const paramSetData: Dict<OdinUserTypeSeriesSet> = {};
-                if (plotSettings.value.plotType === SensitivityPlotType.ValueAtTime) {
-                    verifyValidPlotSettingsTime(store.state, store.commit);
-                    data = batch.value.valueAtTime(plotSettings.value.time);
-                    Object.keys(paramSetBatches.value).forEach((name) => {
-                        paramSetData[name] = paramSetBatches.value[name].valueAtTime(plotSettings.value.time);
-                    });
-                } else {
-                    const paramPrefix =
-                        plotSettings.value.plotType === SensitivityPlotType.TimeAtExtreme
-                            ? SensitivityPlotExtremePrefix.time
-                            : SensitivityPlotExtremePrefix.value;
-                    const extremeParam = `${paramPrefix}${plotSettings.value.extreme}`;
-                    data = batch.value.extreme(extremeParam);
-                    Object.keys(paramSetBatches.value).forEach((paramSetName) => {
-                        paramSetData[paramSetName] = paramSetBatches.value[paramSetName].extreme(extremeParam);
-                    });
-                }
-
-                const filtered = filterUserTypeSeriesSet(data!, paramName, selectedVariables.value);
-                const result = [...odinToPlotly(filtered, palette.value, { includeLegendGroup: true })];
-                Object.keys(paramSetData).forEach((name: string) => {
-                    const dash = lineStylesForParamSets.value[name];
-                    const options = {
-                        includeLegendGroup: true,
-                        lineWidth: 1,
-                        showLegend: false,
-                        dash
-                    };
-                    const psData = paramSetData[name];
-                    const psFiltered = filterUserTypeSeriesSet(psData, paramName, selectedVariables.value);
-                    const psPlotData = odinToPlotly(psFiltered, palette.value, options);
-                    const currentParamSet = parameterSets.value.find((paramSet) => paramSet.name === name);
-                    psPlotData.forEach((plotTrace) => {
-                        updatePlotTraceName(plotTrace, null, null, currentParamSet!.displayName);
-                    });
-                    result.push(...psPlotData);
-                });
+        const plotData = computed<WodinPlotData>(() => {
+            if (!batch.value) {
                 finishLoading();
-                return result;
+                return { lines: [], points: [] };
             }
+
+            const paramName = store.state.sensitivity.paramSettings.parameterToVary;
+            let data: null | OdinUserTypeSeriesSet;
+            const paramSetData: Dict<OdinUserTypeSeriesSet> = {};
+            if (plotSettings.value.plotType === SensitivityPlotType.ValueAtTime) {
+                verifyValidPlotSettingsTime(store.state, store.commit);
+                data = batch.value.valueAtTime(plotSettings.value.time!);
+                Object.keys(paramSetBatches.value).forEach((name) => {
+                    paramSetData[name] = paramSetBatches.value[name].valueAtTime(plotSettings.value.time!);
+                });
+            } else {
+                const paramPrefix =
+                    plotSettings.value.plotType === SensitivityPlotType.TimeAtExtreme
+                        ? SensitivityPlotExtremePrefix.time
+                        : SensitivityPlotExtremePrefix.value;
+                const extremeParam = `${paramPrefix}${plotSettings.value.extreme}`;
+                data = batch.value.extreme(extremeParam);
+                Object.keys(paramSetBatches.value).forEach((paramSetName) => {
+                    paramSetData[paramSetName] = paramSetBatches.value[paramSetName].extreme(extremeParam);
+                });
+            }
+
+            const filtered = filterUserTypeSeriesSet(data!, paramName!, selectedVariables.value);
+            const result: WodinPlotData = {
+                lines: [...odinToSkadiChart(filtered, palette.value!)],
+                points: []
+            };
+            Object.keys(paramSetData).forEach((name: string) => {
+                const strokeDasharray = lineStylesForParamSets.value[name];
+                const options: LineStyle = {
+                    strokeWidth: 1,
+                    strokeDasharray
+                };
+                const psData = paramSetData[name];
+                const psFiltered = filterUserTypeSeriesSet(psData, paramName!, selectedVariables.value);
+                const psPlotData = odinToSkadiChart(psFiltered, palette.value!, options);
+                const currentParamSet = parameterSets.value.find((paramSet) => paramSet.name === name);
+                psPlotData.forEach((plotTrace) => {
+                    updatePlotTraceName(plotTrace, null, null, currentParamSet!.displayName);
+                });
+                result.lines.push(...psPlotData);
+            });
             finishLoading();
-            return [];
+            return result;
         });
-        const hasPlotData = computed(() => !!plotData.value?.length);
 
-        const resize = () => {
-            if (plot.value) {
-                Plots.resize(plot.value as HTMLElement);
-            }
-        };
+        const hasPlotData = computed(() => {
+            return plotData.value.lines.length || plotData.value.points.length;
+        });
 
-        let resizeObserver: null | ResizeObserver = null;
+        const xAxisLabel = computed(() =>
+            store.state.sensitivity.paramSettings.parameterToVary!);
+
+        const logScaleX = computed(() =>
+            store.state.sensitivity.paramSettings.scaleType === SensitivityScaleType.Logarithmic);
+
+        const logScaleY = computed(() =>
+            props.graphConfig.settings.logScaleYAxis &&
+            plotSettings.value.plotType !== SensitivityPlotType.TimeAtExtreme);
 
         const drawPlot = () => {
-            if (hasPlotData.value) {
-                const el = plot.value as unknown;
-                const layout = {
-                    margin,
-                    yaxis: yAxisSettings.value,
-                    xaxis: xAxisSettings.value
-                };
-                newPlot(el as HTMLElement, plotData.value, layout, config);
-                resizeObserver = new ResizeObserver(resize);
-                resizeObserver.observe(plot.value as HTMLElement);
-            }
+            if (!hasPlotData.value) return;
+
+            new Chart({ logScale: { x: logScaleX.value, y: logScaleY.value } })
+                .addAxes({ x: xAxisLabel.value })
+                .addGridLines()
+                .addTraces(plotData.value.lines)
+                .makeResponsive()
+                .addZoom()
+                .addTooltips(tooltipCallback)
+                .appendTo(plot.value!);
         };
 
         onMounted(drawPlot);
 
-        watch([plotData, yAxisSettings, parameterSetDisplayNames], drawPlot);
-
-        onUnmounted(() => {
-            if (resizeObserver) {
-                resizeObserver.disconnect();
-            }
-        });
+        watch([plotData, () => props.graphConfig, parameterSetDisplayNames], drawPlot);
 
         return {
             placeholderMessage,
@@ -174,7 +157,9 @@ export default defineComponent({
             plotStyle,
             plotData,
             hasPlotData,
-            resize
+            xAxisLabel,
+            logScaleX,
+            logScaleY
         };
     }
 });

@@ -1,41 +1,36 @@
 <template>
-    <template v-if="fitTabIsOpen">
+    <div class="graph-config-panel m-2" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
+        <button
+            type="button"
+            class="btn btn-sm btn-light bg-transparent border-0 float-end delete-graph"
+            v-if="canDelete"
+            @click="deleteGraph"
+            v-tooltip="'Delete Graph'"
+        >
+            <vue-feather class="inline-icon clickable ms-2" type="trash-2"></vue-feather>
+        </button>
         <graph-settings :graph-config="graphConfig" class="graph-config-settings mb-1"></graph-settings>
-    </template>
-    <template v-else>
-        <div class="graph-config-panel m-2" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
-            <button
-                type="button"
-                class="btn btn-sm btn-light bg-transparent border-0 float-end delete-graph"
-                v-if="canDelete"
-                @click="deleteGraph"
-                v-tooltip="'Delete Graph'"
-            >
-                <vue-feather class="inline-icon clickable ms-2" type="trash-2"></vue-feather>
-            </button>
-            <graph-settings :graph-config="graphConfig" class="graph-config-settings mb-1"></graph-settings>
-            <div class="drop-zone" :class="dragging ? 'drop-zone-active' : 'drop-zone-inactive'">
-                <template v-for="variable in selectedVariables" :key="variable">
-                    <span
-                        class="badge variable me-2"
-                        :style="getStyle(variable)"
-                        :draggable="true"
-                        @dragstart="startDrag($event, variable)"
-                        @dragend="endDrag"
-                    >
-                        <span class="variable-name">{{ variable }}</span>
-                        <span class="variable-delete">
-                            <button @click="removeVariable(graphConfig.id, variable)" v-tooltip="'Remove variable'">×</button>
-                        </span>
+        <div class="drop-zone" :class="dragging ? 'drop-zone-active' : 'drop-zone-inactive'">
+            <template v-for="variable in selectedVariables" :key="variable">
+                <span
+                    class="badge variable me-2"
+                    :style="getStyle(variable)"
+                    :draggable="true"
+                    @dragstart="startDrag($event, variable)"
+                    @dragend="endDrag"
+                >
+                    <span class="variable-name">{{ variable }}</span>
+                    <span class="variable-delete">
+                        <button @click="removeVariable(graphConfig.id, variable)" v-tooltip="'Remove variable'">×</button>
                     </span>
-                </template>
-                <div v-if="!selectedVariables.length" class="drop-zone-instruction p-2 me-4">
-                    Drag variables here to select them for this graph. Press the Ctrl or ⌘ key on drag to make a copy of a
-                    variable.
-                </div>
+                </span>
+            </template>
+            <div v-if="!selectedVariables.length" class="drop-zone-instruction p-2 me-4">
+                Drag variables here to select them for this graph. Press the Ctrl or ⌘ key on drag to make a copy of a
+                variable.
             </div>
         </div>
-    </template>
+    </div>
 </template>
 
 <script lang="ts">
@@ -46,7 +41,6 @@ import GraphSettings from "@/components/GraphSettings.vue";
 import SelectVariables from "../mixins/selectVariables";
 import { GraphsMutation } from "../../store/graphs/mutations";
 import { GraphConfig } from "../../store/graphs/state";
-import { VisualisationTab } from "@/store/appState/state";
 
 export default defineComponent({
     name: "GraphConfig",
@@ -66,7 +60,6 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const store = useStore();
-        const fitTabIsOpen = computed(() => store.state.openVisualisationTab === VisualisationTab.Fit);
         // eslint-disable-next-line vue/no-setup-props-destructure
         const { startDrag, endDrag, onDrop, removeVariable } = SelectVariables(store, emit, false, props.graphConfig);
         const selectedVariables = computed<string[]>(() => props.graphConfig.selectedVariables);
@@ -86,7 +79,6 @@ export default defineComponent({
         };
 
         return {
-            fitTabIsOpen,
             selectedVariables,
             canDelete,
             removeVariable,
@@ -101,10 +93,6 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.graph-config-settings {
-    margin-left: 8px;
-}
-
 .graph-config-panel {
     border-width: 1px;
     border-style: solid;

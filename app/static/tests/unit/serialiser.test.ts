@@ -25,7 +25,7 @@ import { Language } from "../../src/types/languageTypes";
 import { AdvancedOptions } from "../../src/types/responseTypes";
 import { AdvancedComponentType } from "../../src/store/run/state";
 import { noSensitivityUpdateRequired } from "../../src/store/sensitivity/sensitivity";
-import { defaultGraphSettings } from "../../src/store/graphs/state";
+import { defaultGraphSettings, fitGraphId, GraphConfig, GraphsState } from "../../src/store/graphs/state";
 
 vi.mock("../../src/utils", () => {
     return {
@@ -370,11 +370,24 @@ describe("serialise", () => {
         sessionsMetadata: []
     });
 
+    const defaultFitGraphConfig: GraphConfig = {
+        id: fitGraphId,
+        selectedVariables: [],
+        unselectedVariables: [],
+        settings: defaultGraphSettings()
+    }
+
     const graphsState = mockGraphsState({
-        fitGraphSettings: {
-            logScaleYAxis: true,
-            lockYAxis: true,
-            yAxisRange: [1, 2]
+        fitGraphConfig: {
+            id: fitGraphId,
+            selectedVariables: ["S", "I"],
+            unselectedVariables: ["R"],
+            settings: {
+              logScaleYAxis: true,
+              lockYAxis: true,
+              yAxisRange: [1, 2],
+              xAxisRange: [0, 10]
+            }
         },
         config: [
             {
@@ -384,7 +397,8 @@ describe("serialise", () => {
                 settings: {
                     logScaleYAxis: false,
                     lockYAxis: true,
-                    yAxisRange: [10, 20]
+                    yAxisRange: [10, 20],
+                    xAxisRange: [0, 100]
                 }
             }
         ]
@@ -549,20 +563,28 @@ describe("serialise", () => {
         }
     };
 
-    const expectedGraphs = {
-        fitGraphSettings: {
+    const expectedGraphs: GraphsState = {
+        fitGraphConfig: {
+          id: fitGraphId,
+          selectedVariables: ["S", "I"],
+          unselectedVariables: ["R"],
+          settings: {
             logScaleYAxis: true,
             lockYAxis: true,
-            yAxisRange: [1, 2]
+            yAxisRange: [1, 2],
+            xAxisRange: [0, 10]
+          }
         },
         config: [
             {
+                id: "123",
                 selectedVariables: ["S", "I"],
                 unselectedVariables: ["R"],
                 settings: {
                     logScaleYAxis: false,
                     lockYAxis: true,
-                    yAxisRange: [10, 20]
+                    yAxisRange: [10, 20],
+                    xAxisRange: [0, 100]
                 }
             }
         ]
@@ -735,13 +757,13 @@ describe("serialise", () => {
             graphs: mockGraphsState({
                 config: [
                     {
-                        id: "12345", // id from mocked newUid
+                        id: "123",
                         selectedVariables: [],
                         unselectedVariables: [],
                         settings: defaultGraphSettings()
                     }
                 ],
-                fitGraphSettings: defaultGraphSettings()
+                fitGraphConfig: defaultFitGraphConfig
             })
         });
     });
@@ -788,7 +810,7 @@ describe("serialise", () => {
                 settings: defaultGraphSettings()
             }
         ]);
-        expect(target.graphs.fitGraphSettings).toStrictEqual(defaultGraphSettings());
+        expect(target.graphs.fitGraphConfig).toStrictEqual(defaultFitGraphConfig);
     });
 
     it("deserialises default graph settings when undefined in serialised state", () => {
@@ -821,11 +843,11 @@ describe("serialise", () => {
             graphs: defaultGraphsState()
         } as any;
         // sanity check
-        expect(target.graphs.fitGraphSettings.logScaleYAxis).toBe(false);
+        expect(target.graphs.fitGraphConfig.settings.logScaleYAxis).toBe(false);
         expect(target.graphs.config[0].settings.logScaleYAxis).toBe(false);
 
         deserialiseState(target, serialised);
-        expect(target.graphs.fitGraphSettings.logScaleYAxis).toBe(false);
+        expect(target.graphs.fitGraphConfig.settings.logScaleYAxis).toBe(false);
         expect(target.graphs.config[0].settings.logScaleYAxis).toBe(false);
     });
 });

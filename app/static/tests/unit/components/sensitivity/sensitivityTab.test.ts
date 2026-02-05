@@ -17,8 +17,6 @@ import SensitivitySummaryDownload from "../../../../src/components/sensitivity/S
 import LoadingButton from "../../../../src/components/LoadingButton.vue";
 import { getters as graphsGetters } from "../../../../src/store/graphs/getters";
 
-vi.mock("plotly.js-basic-dist-min", () => ({}));
-
 describe("SensitivityTab", () => {
     const mockRunSensitivity = vi.fn();
     const mockSetLoading = vi.fn();
@@ -137,10 +135,8 @@ describe("SensitivityTab", () => {
         expect(plots.length).toBe(2);
         expect(plots.at(0)!.props("fadePlot")).toBe(false);
         expect(plots.at(0)!.props("graphConfig")).toStrictEqual({ selectedVariables: ["S"] });
-        expect(plots.at(0)!.props("graphIndex")).toStrictEqual(0);
         expect(plots.at(1)!.props("fadePlot")).toBe(false);
         expect(plots.at(1)!.props("graphConfig")).toStrictEqual({ selectedVariables: [] });
-        expect(plots.at(1)!.props("graphIndex")).toStrictEqual(1);
         expect(wrapper.findComponent(ErrorInfo).props("error")).toBe(null);
         expect(wrapper.find("#sensitivity-running").exists()).toBe(false);
         expect(wrapper.findComponent(SensitivitySummaryPlot).exists()).toBe(false);

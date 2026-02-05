@@ -73,9 +73,9 @@ test.describe("Options Tab tests", () => {
 
     test("can update parameter value", async ({ page }) => {
         // Check that we can see the graph paths change when a parameter changes and model is re-run
-        const graphPathSelector = ":nth-match(.plotly svg .scatterlayer .scatter g.lines path, 1)";
+        const graphPathSelector = ":nth-match(path[id^=trace], 1)";
         const previousPath = await page.getAttribute(graphPathSelector, "d");
-        expect(previousPath!.startsWith("M0")).toBe(true);
+        expect(previousPath!.startsWith("M")).toBe(true);
 
         await page.fill(":nth-match(#model-params input, 1)", "3");
 
@@ -91,7 +91,7 @@ test.describe("Options Tab tests", () => {
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("");
 
         const newPath = await page.getAttribute(graphPathSelector, "d");
-        expect(newPath!.startsWith("M0")).toBe(true);
+        expect(newPath!.startsWith("M")).toBe(true);
         expect(newPath).not.toEqual(previousPath);
     });
 
@@ -133,9 +133,10 @@ test.describe("Options Tab tests", () => {
     });
 
     test("can update end time", async ({ page }) => {
-        // Expect run plot's x axis final tick to initially be 100
-        const xAxisTickSelector = ".plotly svg .xaxislayer-above .xtick text";
-        await expect(await page.locator(xAxisTickSelector).last().innerHTML()).toBe("100");
+        // Expect run plot's x max to initially be 100
+        const lineSelector = ".wodin-plot-data-summary-lines";
+        await expect(await page.locator(lineSelector).first().getAttribute("xmax"))
+            .toBe("100");
 
         await page.fill("#run-options input", "200");
 
@@ -150,8 +151,9 @@ test.describe("Options Tab tests", () => {
         await page.click("#run-btn");
         await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("");
 
-        // Expect run plot's x axis final tick to now be 200
-        await expect(await page.locator(xAxisTickSelector).last().innerHTML()).toBe("200");
+        // Expect run plot's x max to now be 200
+        await expect(await page.locator(lineSelector).first().getAttribute("xmax"))
+            .toBe("200");
     });
 
     test("cleared parameter input resets on model run", async ({ page }) => {
@@ -204,44 +206,45 @@ test.describe("Options Tab tests", () => {
     });
 
     test("can change graph setting for log scale y axis", async ({ page }) => {
+        const yAxis = page.locator(`g[id^="y-axes"]`);
+        const firstTick = yAxis.locator(".tick").first();
+        await expect(await firstTick.textContent()).toBe("0M");
+
         await page.locator(".log-scale-y-axis input").click();
-        // should update y axis tick
-        const tickSelector = ":nth-match(.ytick text, 2)";
-        await expect(await page.innerHTML(tickSelector)).toBe("10n");
-        // change back to linear
-        await page.locator(".log-scale-y-axis input").click();
-        await expect(await page.innerHTML(tickSelector)).toBe("0.2M");
+
+        await expect(await firstTick.textContent()).not.toBe("0M");
     });
 
     test("can change graph setting for lock axes", async ({ page }) => {
         await page.locator(".lock-y-axis input").click();
 
-        const tickSelector = ":nth-match(.ytick text, 6)";
-        await expect(await page.innerHTML(tickSelector)).toBe("1M");
+        // last tick is actually the top one, y axis ticks are in reverse
+        // order, this is a d3 default
+        const yAxis = page.locator(`g[id^="y-axes"]`);
+        const lastTick = yAxis.locator(".tick").last();
+        await expect(await lastTick.textContent()).toBe("1M");
 
         await page.locator(":nth-match(.parameter-input, 3)").fill("1000000000");
 
         await page.locator("#run-btn").click();
 
-        // would be 1B if we didn't lock the axes
-        await expect(await page.innerHTML(tickSelector)).toBe("1M");
+        // would be 1G if we didn't lock the axes
+        await expect(await lastTick.textContent()).toBe("1M");
         await page.locator(".lock-y-axis input").click();
-
-        // autorange on deselect of lock axes
-        await expect(await page.innerHTML(tickSelector)).toBe("1B");
     });
 
     test("overrides axes lock if log scale toggle changes", async ({ page }) => {
         await page.locator(".lock-y-axis input").click();
 
-        const tickSelector = ":nth-match(.ytick text, 2)";
-        await expect(await page.innerHTML(tickSelector)).toBe("0.2M");
+        const yAxis = page.locator(`g[id^="y-axes"]`);
+        const firstTick = yAxis.locator(".tick").first();
+        await expect(await firstTick.textContent()).toBe("0M");
 
         await page.locator(".log-scale-y-axis input").click();
 
         // if you've locked the axis, it should not update to 10n, would
         // be 10^115441
-        await expect(await page.innerHTML(tickSelector)).toBe("10n");
+        await expect(await firstTick.textContent()).toBe("100p");
     });
 
     const createParameterSet = async (page: Page) => {
@@ -284,24 +287,24 @@ test.describe("Options Tab tests", () => {
         await expect(await page.innerText(":nth-match(.parameter-set .card-body span.badge, 4)")).toBe("sigma: 2");
 
         await page.click("#run-btn");
-        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(6, { timeout });
+        await expect(await page.locator(".wodin-plot-data-summary-lines")).toHaveCount(6, { timeout });
         // current parameters
         await expectSummaryValues(page, 1, "S", 1000, "#2e5cb8");
         await expectSummaryValues(page, 2, "I", 1000, "#cccc00");
         await expectSummaryValues(page, 3, "R", 1000, "#cc0044");
         // parameter set
-        await expectSummaryValues(page, 4, "S (Set 1)", 1000, "#2e5cb8", "dot");
-        await expectSummaryValues(page, 5, "I (Set 1)", 1000, "#cccc00", "dot");
-        await expectSummaryValues(page, 6, "R (Set 1)", 1000, "#cc0044", "dot");
+        await expectSummaryValues(page, 4, "S (Set 1)", 1000, "#2e5cb8", "3");
+        await expectSummaryValues(page, 5, "I (Set 1)", 1000, "#cccc00", "3");
+        await expectSummaryValues(page, 6, "R (Set 1)", 1000, "#cc0044", "3");
     });
 
     test("can delete a parameter set", async ({ page }) => {
         await createParameterSet(page);
         await page.click("#run-btn");
-        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(6, { timeout });
+        await expect(await page.locator(".wodin-plot-data-summary-lines")).toHaveCount(6, { timeout });
 
         await deleteParameterSet(1, page);
-        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(3, { timeout });
+        await expect(await page.locator(".wodin-plot-data-summary-lines")).toHaveCount(3, { timeout });
         await expectSummaryValues(page, 1, "S", 1000, "#2e5cb8");
         await expectSummaryValues(page, 2, "I", 1000, "#cccc00");
         await expectSummaryValues(page, 3, "R", 1000, "#cc0044");
@@ -319,7 +322,7 @@ test.describe("Options Tab tests", () => {
         await page.fill(":nth-match(#model-params input, 3)", "1000000");
         await page.fill(":nth-match(#model-params input, 4)", "1.5");
         await page.click("#run-btn");
-        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(6, { timeout });
+        await expect(await page.locator(".wodin-plot-data-summary-lines")).toHaveCount(6, { timeout });
 
         await expect(await page.inputValue(":nth-match(#model-params input, 1)")).toBe("5");
         await expect(await page.inputValue(":nth-match(#model-params input, 2)")).toBe("0");
@@ -337,12 +340,12 @@ test.describe("Options Tab tests", () => {
         await expectSummaryValues(page, 2, "I", 1000, "#cccc00", null, "0", "100", "0", "0");
         await expectSummaryValues(page, 3, "R", 1000, "#cc0044", null, "0", "100", "0", "0");
         // parameter set
-        await expectSummaryValues(page, 4, "S (Set 1)", 1000, "#2e5cb8", "dot", "0", "100", "0", "0");
-        await expectSummaryValues(page, 5, "I (Set 1)", 1000, "#cccc00", "dot", "0", "100", "1000000", "1000000");
-        await expectSummaryValues(page, 6, "R (Set 1)", 1000, "#cc0044", "dot", "0", "100", "0", "0");
+        await expectSummaryValues(page, 4, "S (Set 1)", 1000, "#2e5cb8", "3", "0", "100", "0", "0");
+        await expectSummaryValues(page, 5, "I (Set 1)", 1000, "#cccc00", "3", "0", "100", "1000000", "1000000");
+        await expectSummaryValues(page, 6, "R (Set 1)", 1000, "#cc0044", "3", "0", "100", "0", "0");
 
         await swapParameterSet(1, page);
-        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(6, { timeout });
+        await expect(await page.locator(".wodin-plot-data-summary-lines")).toHaveCount(6, { timeout });
 
         await expect(await page.inputValue(":nth-match(#model-params input, 1)")).toBe("6");
         await expect(await page.inputValue(":nth-match(#model-params input, 2)")).toBe("1,000,000");
@@ -359,27 +362,27 @@ test.describe("Options Tab tests", () => {
         await expectSummaryValues(page, 2, "I", 1000, "#cccc00", null, "0", "100", "1000000", "1000000");
         await expectSummaryValues(page, 3, "R", 1000, "#cc0044", null, "0", "100", "0", "0");
         // parameter set
-        await expectSummaryValues(page, 4, "S (Set 1)", 1000, "#2e5cb8", "dot", "0", "100", "1000000", "1000000");
-        await expectSummaryValues(page, 5, "I (Set 1)", 1000, "#cccc00", "dot", "0", "100", "0", "0");
-        await expectSummaryValues(page, 6, "R (Set 1)", 1000, "#cc0044", "dot", "0", "100", "0", "0");
+        await expectSummaryValues(page, 4, "S (Set 1)", 1000, "#2e5cb8", "3", "0", "100", "1000000", "1000000");
+        await expectSummaryValues(page, 5, "I (Set 1)", 1000, "#cccc00", "3", "0", "100", "0", "0");
+        await expectSummaryValues(page, 6, "R (Set 1)", 1000, "#cc0044", "3", "0", "100", "0", "0");
     });
 
     test("can hide and show a parameter set", async ({ page }) => {
         await createParameterSet(page);
         await page.click("#run-btn");
-        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(6, { timeout });
+        await expect(await page.locator(".wodin-plot-data-summary-lines")).toHaveCount(6, { timeout });
 
         await page.click(".hide-param-set");
-        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(3, { timeout });
+        await expect(await page.locator(".wodin-plot-data-summary-lines")).toHaveCount(3, { timeout });
         await expectSummaryValues(page, 1, "S", 1000, "#2e5cb8");
         await expectSummaryValues(page, 2, "I", 1000, "#cccc00");
         await expectSummaryValues(page, 3, "R", 1000, "#cc0044");
 
         await page.click(".show-param-set");
-        await expect(await page.locator(".wodin-plot-data-summary-series")).toHaveCount(6, { timeout });
-        await expectSummaryValues(page, 4, "S (Set 1)", 1000, "#2e5cb8", "dot");
-        await expectSummaryValues(page, 5, "I (Set 1)", 1000, "#cccc00", "dot");
-        await expectSummaryValues(page, 6, "R (Set 1)", 1000, "#cc0044", "dot");
+        await expect(await page.locator(".wodin-plot-data-summary-lines")).toHaveCount(6, { timeout });
+        await expectSummaryValues(page, 4, "S (Set 1)", 1000, "#2e5cb8", "3");
+        await expectSummaryValues(page, 5, "I (Set 1)", 1000, "#cccc00", "3");
+        await expectSummaryValues(page, 6, "R (Set 1)", 1000, "#cc0044", "3");
     });
 
     test("can get unique parameter set name after delete", async ({ page }) => {

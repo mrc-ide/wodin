@@ -5,8 +5,7 @@
         :end-time="endTime"
         :plot-data="allPlotData"
         :redrawWatches="solution ? [solution] : []"
-        :fit-plot="true"
-        :graph-config="null"
+        :graph-config="graphConfig"
     >
         <slot></slot>
     </wodin-plot>
@@ -19,6 +18,7 @@ import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
 import { filterSeriesSet, fitDataToSkadiChart, odinToSkadiChart, WodinPlotData } from "../../plot";
 import WodinPlot from "../WodinPlot.vue";
+import { FitState } from "@/store/fit/state";
 
 export default defineComponent({
     name: "FitPlot",
@@ -27,7 +27,7 @@ export default defineComponent({
         fadePlot: Boolean
     },
     setup() {
-        const store = useStore();
+        const store = useStore<FitState>();
 
         const placeholderMessage = userMessages.modelFit.notFittedYet;
 
@@ -48,15 +48,17 @@ export default defineComponent({
 
         const endTime = computed(() => {
             return plotRehydratedFit.value
-                ? store.state.modelFit.result.inputs.endTime
+                ? store.state.modelFit.result?.inputs.endTime
                 : store.getters[`fitData/${FitDataGetter.dataEnd}`];
         });
 
         const link = computed(() => {
             return plotRehydratedFit.value
-                ? store.state.modelFit.result.inputs.link
+                ? store.state.modelFit.result?.inputs.link
                 : store.getters[`fitData/${FitDataGetter.link}`];
         });
+
+        const graphConfig = computed(() => store.state.graphs.fitGraphConfig);
 
         const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
             const { data } = store.state.fitData;
@@ -69,20 +71,21 @@ export default defineComponent({
                     nPoints: points
                 });
             if (!data || !link.value || !result) {
-                return [];
+                return { lines: [], points: [] };
             }
-            const palette = store.state.model.paletteModel;
-            return [
-                ...odinToPlotly(filterSeriesSet(result, [link.value.model]), palette),
-                ...fitDataToPlotly(data, link.value, palette, start, end)
-            ];
+            const palette = store.state.model.paletteModel!;
+            return {
+                lines: odinToSkadiChart(filterSeriesSet(result, [link.value.model]), palette),
+                points: fitDataToSkadiChart(data, link.value, palette, start, end)
+            };
         };
 
         return {
             placeholderMessage,
             solution,
             endTime,
-            allPlotData
+            allPlotData,
+            graphConfig
         };
     }
 });
