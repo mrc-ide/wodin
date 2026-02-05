@@ -87,8 +87,6 @@ describe("RunPlot", () => {
         config: [{ selectedVariables, unselectedVariables: [] }]
     };
 
-    const linkedXAxis = { autorange: false, range: [1, 2] };
-
     const centralSolutions = [
         {
             style: {

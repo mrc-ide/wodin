@@ -46,8 +46,6 @@ describe("RunPlot for stochastic", () => {
         settings: defaultGraphSettings()
     } as any;
 
-    const linkedXAxis = { autorange: false, range: [1, 2] };
-
     afterEach(() => {
         vi.clearAllMocks();
     });
