@@ -58,7 +58,7 @@ export const getStoresInPage = () => {
     const storesInPage: string[] = []
     stores.forEach(el => {
         const elStore = el.getAttribute("data-w-store")!;
-        const storeType = elStore.split("-")[0];
+        const storeType = elStore.split(":")[0];
         if (!storesInPage.includes(elStore)) storesInPage.push(elStore);
         if (!storeTypesInPage.includes(storeType)) storeTypesInPage.push(storeType);
     });

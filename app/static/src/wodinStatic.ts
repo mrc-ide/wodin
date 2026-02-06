@@ -34,7 +34,7 @@ const boot = async () => {
     const configAndModelObj = await getConfigAndModelForStores(storeTypesInPage);
 
     storesInPage.forEach(async s => {
-        const storeType = s.split("-")[0];
+        const storeType = s.split(":")[0];
         const { config, modelResponse } = configAndModelObj[storeType];
         const originalStoreOptions = getStoreOptions(config.appType) as StoreOptions<AppState>;
 
