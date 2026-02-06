@@ -30,6 +30,19 @@ export const expectLeftWodinTabs = (wrapper: VueWrapper<any>, expectedTabNames: 
     expectWodinTabs(wrapper, expectedTabNames, "left");
 };
 
-export type ComponentProps<
-    T extends { setup?: (props: any, ...otherArgs: any[]) => any }
-> = Parameters<NonNullable<T["setup"]>>[0]
+export type Prettify<T> = {
+    [K in keyof T]: T[K];
+} & {};
+
+type OptionalKeys<T> = {
+    [K in keyof T as undefined extends T[K] ? K : never]?: T[K]
+}
+
+type RequiredKeys<T> = {
+    [K in keyof T as undefined extends T[K] ? never : K]: T[K]
+}
+
+export type ComponentProps<T> =
+    T extends { setup?: (props: infer Props, ...otherArgs: any[]) => any }
+        ? Prettify<RequiredKeys<Props> & OptionalKeys<Props>>
+        : never

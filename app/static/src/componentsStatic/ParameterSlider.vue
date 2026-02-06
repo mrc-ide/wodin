@@ -48,6 +48,11 @@ const handleChange = (e: Event) => {
 };
 
 onMounted(async () => {
+  // MathJax works by looking through what is mounted on the DOM
+  // and renders symbols when it loads. However, Vue components may
+  // mount after this so typesetPromise allows us to re-trigger
+  // MathJax parsing the DOM and rendering maths symbols
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mathJax = (window as any).MathJax;
   await mathJax?.typesetPromise();
