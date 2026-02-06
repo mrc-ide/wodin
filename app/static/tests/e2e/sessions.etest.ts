@@ -7,13 +7,17 @@ import {
     realisticFitData,
     startModelFit,
     waitForModelFitCompletion,
-    expectWodinPlotDataSummary,
+    expectWodinLineSummary,
     expectCanRunMultiSensitivity,
-    saveSessionTimeout
+    saveSessionTimeout,
+    expectWodinPointSummary
 } from "./utils";
 import PlaywrightConfig from "../../playwright.config";
 
 const appUrl = "/apps/day2";
+const dataSummarySelector = ".wodin-plot-data-summary";
+const lineSummarySelector = ".wodin-plot-data-summary-lines";
+const pointSummarySelector = ".wodin-plot-data-summary-points";
 
 const enterSessionLabel = async (page: Page, dialogId: string, newLabel: string) => {
     await expect(await page.locator(`#${dialogId} #edit-session-label label`)).toBeVisible();
@@ -24,7 +28,8 @@ const enterSessionLabel = async (page: Page, dialogId: string, newLabel: string)
 const loadAppPage = async (page: Page) => {
     // Reload the page to get fresh session, and give it time to save new session Id
     await page.goto(appUrl);
-    await page.waitForTimeout(saveSessionTimeout);
+    await page.waitForTimeout(500);
+    await page.clock.fastForward(saveSessionTimeout);
 };
 
 const newSessionFromAppPage = async (page: Page) => {
@@ -64,6 +69,7 @@ test.describe("Sessions tests", () => {
     test("can use Sessions page", async () => {
         const browser = await usePersistentContext();
         const page = await browser.newPage();
+        await page.clock.install({ time: new Date('2024-02-02T08:00:00') });
         await page.goto(appUrl);
 
         // change code in this session, which we will later reload and check that we can see the code changes
@@ -95,17 +101,21 @@ test.describe("Sessions tests", () => {
         // Run sensitivity
         await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
         page.click("#run-sens-btn");
-        const hidden = await page.locator(".wodin-plot-data-summary").getAttribute("hidden");
+        const hidden = await page.locator(dataSummarySelector).getAttribute("hidden");
         expect(hidden).not.toBe(null);
-        // 5 * 10 sensitivity traces, 5 central traces, 1 data plot
-        expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(56);
+        // 5 * 10 sensitivity traces, 5 central traces
+        expect(await page.locator(lineSummarySelector).count()).toBe(55);
+        // number of data points in fit data (-1 header, -1 last new line)
+        expect(await page.locator(pointSummarySelector).count())
+          .toBe(realisticFitData.split("\n").length - 2);
 
         // Run multi-sensitivity
         await page.click(":nth-match(.wodin-right .nav-tabs a, 4)");
-        expectCanRunMultiSensitivity(page, timeout);
+        await expectCanRunMultiSensitivity(page, timeout);
 
         // give the page a chance to save the session to back end
-        await page.waitForTimeout(saveSessionTimeout);
+        await page.waitForTimeout(500);
+        await page.clock.fastForward(saveSessionTimeout);
 
         // Reload the page to get fresh session, and give it time to save new session Id
         await newSessionFromAppPage(page);
@@ -158,42 +168,42 @@ test.describe("Sessions tests", () => {
         await page.click("input#show-unlabelled-check");
         await expect(await page.locator(".previous-session-row")).toHaveCount(unlabelledCount);
 
-        // We now have a current session with a label, and we are not filtering unlabelled sessions.
-        // We'll test filtering out duplicate sessions, by adding three new sessions - only the latest of these should
-        // be displayed above the previous labelled sessions initially...
-        await newSessionFromAppPage(page);
-        await newSessionFromAppPage(page);
-        await newSessionFromAppPage(page);
-
         await page.goto(`${appUrl}/sessions`);
         await expect(await page.isChecked("#show-duplicates-check")).toBe(false);
-        await expect(await page.innerText(":nth-match(.session-label, 1)")).toBe(noLabel);
-        await expect(await page.innerText(":nth-match(.session-label, 2)")).toBe("current session label");
+        await expect(await page.innerText(":nth-match(.session-label, 2)")).toBe(noLabel);
+
+        // Load no label session
+        await page.locator(":nth-match(.session-load > a, 2)").click();
+        await page.waitForTimeout(500);
+        await page.clock.fastForward(saveSessionTimeout);
+
+        // Create duplicate of current session (we already have 3, this will be the 4th)
+        await page.locator("#sessions-menu").click();
+        await page.locator("#all-sessions-link").click();
+        await page.locator("#copy-current-session").click();
+        await page.waitForTimeout(500);
+        await page.clock.fastForward(saveSessionTimeout);
+
+        await page.goto(`${appUrl}/sessions`);
+        await expect(page.locator(":nth-match(.session-label, 1)")).toHaveText(noLabel, { timeout });
+        await expect(page.locator(":nth-match(.session-label, 2)")).toHaveText("current session label", { timeout });
+        await expect(page.locator(":nth-match(.session-label, 3)")).toHaveText(noLabel, { timeout });
 
         // ... then after checking "Show duplicate sessions", all new sessions should be displayed...
         await page.check("#show-duplicates-check");
-        await expect(await page.locator(":nth-match(.session-label, 1)")).toHaveText(noLabel, { timeout });
-        await expect(await page.locator(":nth-match(.session-label, 2)")).toHaveText(noLabel, { timeout });
-        await expect(await page.locator(":nth-match(.session-label, 3)")).toHaveText(noLabel, { timeout });
-        await expect(await page.locator(":nth-match(.session-label, 4)")).toHaveText("current session label", {
-            timeout
-        });
-
-        // ...then unchecking should filter out the earlier unlabelled duplicates again
-        await page.uncheck("#show-duplicates-check");
-        await expect(await page.locator(":nth-match(.session-label, 1)")).toHaveText(noLabel, { timeout });
-        await expect(await page.locator(":nth-match(.session-label, 2)")).toHaveText("current session label", {
-            timeout
-        });
+        await expect(page.locator(":nth-match(.session-label, 1)")).toHaveText(noLabel, { timeout });
+        await expect(page.locator(":nth-match(.session-label, 2)")).toHaveText(noLabel, { timeout });
+        await expect(page.locator(":nth-match(.session-label, 3)")).toHaveText("current session label", { timeout });
+        await expect(page.locator(":nth-match(.session-label, 4)")).toHaveText(noLabel, { timeout });
 
         // Adding a label to the earliest duplicate session means it should be displayed when we uncheck
         // "Show duplicates"
         await page.check("#show-duplicates-check");
         // wait for second no label to appear
-        await expect(await page.locator(":nth-match(.session-label, 3)")).toHaveText(noLabel, { timeout });
-        await page.click(":nth-match(.session-edit-label i, 3)");
+        await expect(await page.locator(":nth-match(.session-label, 2)")).toHaveText(noLabel, { timeout });
+        await page.click(":nth-match(.session-edit-label i, 2)");
         await enterSessionLabel(page, "page-edit-session-label", "earlier duplicate");
-        await expect(await page.locator(":nth-match(.session-label, 3)")).toHaveText("earlier duplicate", { timeout });
+        await expect(await page.locator(":nth-match(.session-label, 2)")).toHaveText("earlier duplicate", { timeout });
 
         await page.uncheck("#show-duplicates-check");
         // the newly labelled duplicate should still be visible after unchecking, as should the latest (unlabelled) one,
@@ -203,13 +213,15 @@ test.describe("Sessions tests", () => {
         await expect(await page.locator(":nth-match(.session-label, 3)")).toHaveText("current session label", {
             timeout
         });
+        await expect(await page.locator(":nth-match(.session-label, 4)")).toHaveText(noLabel, { timeout });
 
         // Load previously run session
         await page.click(":nth-match(.session-load a, 4)");
 
         // Check all session values have been rehydrated:
         // Check data
-        await page.waitForTimeout(saveSessionTimeout);
+        await page.waitForTimeout(500);
+        await page.clock.fastForward(saveSessionTimeout);
         await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Data");
         await expect(await page.innerText("#data-upload-success")).toBe(" Uploaded 32 rows and 2 columns");
 
@@ -233,33 +245,32 @@ test.describe("Sessions tests", () => {
 
         // Check run plot
         await page.click(":nth-match(.wodin-right .nav-tabs a, 1)"); // Run tab
-        expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(6);
-        const summary1 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 1)");
-        await expectWodinPlotDataSummary(summary1, "S", 1000, 0, 31, 154.64, 369, "lines", "#2e5cb8", null);
-        const summary2 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 2)");
-        await expectWodinPlotDataSummary(summary2, "E", 1000, 0, 31, 0, 16.12, "lines", "#39ac73", null);
-        const summary3 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 3)");
-        await expectWodinPlotDataSummary(summary3, "I", 1000, 0, 31, 0.3, 7.9, "lines", "#cccc00", null);
-        const summary4 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 4)");
-        await expectWodinPlotDataSummary(summary4, "R", 1000, 0, 31, 0, 214.52, "lines", "#ff884d", null);
-        const summary5 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 5)");
-        await expectWodinPlotDataSummary(summary5, "onset", 1000, 0, 31, 0.09, 16.12, "lines", "#cc0044", null);
-        const summary6 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 6)");
-        await expectWodinPlotDataSummary(summary6, "Cases", 32, 0, 31, 0, 13, "markers", null, "#cccc00");
+        expect(await page.locator(lineSummarySelector).count()).toBe(5);
+        const summary1 = page.locator(`:nth-match(${lineSummarySelector}, 1)`);
+        await expectWodinLineSummary(summary1, "S", 1000, 0, 31, 154.64, 369, "#2e5cb8");
+        const summary2 = page.locator(`:nth-match(${lineSummarySelector}, 2)`);
+        await expectWodinLineSummary(summary2, "E", 1000, 0, 31, 0, 16.12, "#39ac73");
+        const summary3 = page.locator(`:nth-match(${lineSummarySelector}, 3)`);
+        await expectWodinLineSummary(summary3, "I", 1000, 0, 31, 0.3, 7.9, "#cccc00");
+        const summary4 = page.locator(`:nth-match(${lineSummarySelector}, 4)`);
+        await expectWodinLineSummary(summary4, "R", 1000, 0, 31, 0, 214.52, "#ff884d");
+        const summary5 = page.locator(`:nth-match(${lineSummarySelector}, 5)`);
+        await expectWodinLineSummary(summary5, "onset", 1000, 0, 31, 0.09, 16.12, "#cc0044");
+
+        await expectWodinPointSummary(page, "Cases", 32, 0, 31, 0, 13, "#cccc00");
 
         // Check fit plot
         await page.click(":nth-match(.wodin-right .nav-tabs a, 2)"); // Fit tab
-        expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(2);
-        const fitSummary1 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 1)");
-        await expectWodinPlotDataSummary(fitSummary1, "I", 1000, 0, 31, 0.3, 7.9, "lines", "#cccc00", null);
-        const fitSummary2 = await page.locator(":nth-match(.wodin-plot-data-summary-series, 2)");
-        await expectWodinPlotDataSummary(fitSummary2, "Cases", 32, 0, 31, 0, 13, "markers", null, "#cccc00");
+        expect(await page.locator(lineSummarySelector).count()).toBe(1);
+        const fitSummary1 = page.locator(`:nth-match(${lineSummarySelector}, 1)`);
+        await expectWodinLineSummary(fitSummary1, "I", 1000, 0, 31, 0.3, 7.9, "#cccc00");
+        await expectWodinPointSummary(page, "Cases", 32, 0, 31, 0, 13, "#cccc00");
 
         // Check sensitivity plot - but not every trace!
         await page.click(":nth-match(.wodin-right .nav-tabs a, 3)"); // Sensitivity tab
-        expect(await page.locator(".wodin-plot-data-summary-series").count()).toBe(56);
-        const sensitivitySummary = await page.locator(":nth-match(.wodin-plot-data-summary-series, 1)");
-        await expectWodinPlotDataSummary(
+        expect(await page.locator(lineSummarySelector).count()).toBe(55);
+        const sensitivitySummary = page.locator(`:nth-match(${lineSummarySelector}, 1)`);
+        await expectWodinLineSummary(
             sensitivitySummary,
             "S (D=0.443)",
             1000,
@@ -267,14 +278,11 @@ test.describe("Sessions tests", () => {
             31,
             154.28,
             369,
-            "lines",
             "#2e5cb8",
-            null
         );
-        const centralSummary = await page.locator(":nth-match(.wodin-plot-data-summary-series, 51)");
-        await expectWodinPlotDataSummary(centralSummary, "S", 1000, 0, 31, 154.64, 369, "lines", "#2e5cb8", null);
-        const sensitivityDataSummary = await page.locator(":nth-match(.wodin-plot-data-summary-series, 56)");
-        await expectWodinPlotDataSummary(sensitivityDataSummary, "Cases", 32, 0, 31, 0, 13, "markers", null, "#cccc00");
+        const centralSummary = page.locator(`:nth-match(${lineSummarySelector}, 51)`);
+        await expectWodinLineSummary(centralSummary, "S", 1000, 0, 31, 154.64, 369, "#2e5cb8");
+        await expectWodinPointSummary(page, "Cases", 32, 0, 31, 0, 13, "#cccc00");
 
         // Check multi-sensitivity result
         await page.click(":nth-match(.wodin-right .nav-tabs a, 4)"); // Multi-sensitivity tab
@@ -314,6 +322,7 @@ test.describe("Sessions tests", () => {
     test("session initialise modal behaves as expected", async () => {
         const browser = await usePersistentContext();
         const page = await browser.newPage();
+        await page.clock.install({ time: new Date('2024-02-02T08:00:00') });
         await loadAppPage(page);
 
         // We don't see the modal on load first session...
@@ -332,7 +341,8 @@ test.describe("Sessions tests", () => {
         await page.click("#sessions-menu");
         await page.click("#edit-current-session-label");
         await enterSessionLabel(page, "header-edit-session-label", "session to reload");
-        await page.waitForTimeout(saveSessionTimeout);
+        await page.waitForTimeout(500);
+        await page.clock.fastForward(saveSessionTimeout);
 
         // refresh page and select reload latest - should see the changes and new label
         await loadAppPage(page);
@@ -342,7 +352,8 @@ test.describe("Sessions tests", () => {
 
         // navigate to sessions page - should also be able to reload from there
         await page.goto(`${appUrl}/sessions`);
-        await page.waitForTimeout(saveSessionTimeout);
+        await page.waitForTimeout(500);
+        await page.clock.fastForward(saveSessionTimeout);
         await page.click("#reload-session");
         await expectReloadedSession(page);
 

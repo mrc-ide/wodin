@@ -39,7 +39,7 @@ describe("GraphConfigsCollapsible", () => {
 
     it("renders collapsible when graph configs should be shown", () => {
         const wrapper = getWrapper();
-        expect(wrapper.findComponent(VerticalCollapse).props("title")).toBe("Graphs");
+        expect(wrapper.findComponent(VerticalCollapse).props("title")).toBe("Graphs settings");
     });
 
     it("does not render collapsible when no variables in model", () => {

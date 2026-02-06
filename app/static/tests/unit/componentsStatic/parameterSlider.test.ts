@@ -4,11 +4,12 @@ import { shallowMount } from "@vue/test-utils";
 import { mockBasicState, mockModelState, mockRunState } from "../../mocks";
 import Vuex from "vuex";
 import { RunMutation } from "@/store/run/mutations";
+import { ComponentProps } from "tests/testUtils";
 
 describe("Parameter Control", () => {
     const mockSetParameterValues = vi.fn();
 
-    type ParameterSliderProps = InstanceType<typeof ParameterSlider>["$props"]
+    type ParameterSliderProps = ComponentProps<typeof ParameterSlider>
     const getWrapper = (props?: Partial<ParameterSliderProps>) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState(),
@@ -28,6 +29,7 @@ describe("Parameter Control", () => {
         });
 
         const defaultProps: ParameterSliderProps = {
+            title: "Alpha",
             par: "a",
             desc: "test-desc",
             min: 0, max: 10, step: 100

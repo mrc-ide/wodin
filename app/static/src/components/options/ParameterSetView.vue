@@ -156,7 +156,7 @@ export default defineComponent({
             };
         };
 
-        const lineStyleClass = computed(() => `trace-${paramSetLineStyle(props.index)}`);
+        const lineStyleClass = computed(() => `trace-${paramSetLineStyle(props.index).split(" ").join("-")}`);
 
         const deleteParameterSet = () => {
             store.dispatch(`run/${RunAction.DeleteParameterSet}`, props.parameterSet.name);

@@ -3,7 +3,7 @@ import { shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../../src/store/basic/state";
 import GraphConfig from "../../../../src/components/graphConfig/GraphConfig.vue";
 import { GraphsAction } from "../../../../src/store/graphs/actions";
-import { GraphsState } from "../../../../src/store/graphs/state";
+import { defaultGraphSettings, fitGraphId, GraphsState } from "../../../../src/store/graphs/state";
 import { GraphsMutation } from "../../../../src/store/graphs/mutations";
 import GraphSettings from "../../../../src/components/GraphSettings.vue";
 
@@ -11,27 +11,41 @@ describe("GraphConfig", () => {
     const mockUpdateSelectedVariables = vi.fn();
     const mockDeleteGraph = vi.fn();
     const mockTooltipDirective = vi.fn();
-    const defaultGraphState = {
+    const defaultGraphState: GraphsState = {
+        fitGraphConfig: {
+            id: fitGraphId,
+            selectedVariables: [],
+            unselectedVariables: [],
+            settings: defaultGraphSettings()
+        },
         config: [
             {
-                selectedVariables: ["S", "R"]
+                id: "123",
+                selectedVariables: ["S", "R"],
+                unselectedVariables: [],
+                settings: defaultGraphSettings()
             },
             {
-                selectedVariables: ["I", "J"]
+                id: "456",
+                selectedVariables: ["I", "J"],
+                unselectedVariables: [],
+                settings: defaultGraphSettings()
             }
         ]
-    } as any;
+    };
 
     const getWrapper = (props = {}, graphState: Partial<GraphsState> = {}) => {
+        const actualGraphState = {
+            ...defaultGraphState,
+            ...graphState
+        };
+
         const store = new Vuex.Store<BasicState>({
             state: {} as any,
             modules: {
                 graphs: {
                     namespaced: true,
-                    state: {
-                        ...defaultGraphState,
-                        ...graphState
-                    },
+                    state: actualGraphState,
                     actions: {
                         [GraphsAction.UpdateSelectedVariables]: mockUpdateSelectedVariables
                     },
@@ -54,7 +68,7 @@ describe("GraphConfig", () => {
 
         return shallowMount(GraphConfig, {
             props: {
-                graphIndex: 0,
+                graphConfig: actualGraphState.config[0],
                 dragging: false,
                 ...props
             },
@@ -85,8 +99,7 @@ describe("GraphConfig", () => {
         // instruction not shown if at least one selected variable
         expect(wrapper.findAll(".drop-zone-instruction").length).toBe(0);
         const settings = wrapper.findComponent(GraphSettings);
-        expect(settings.props("fitPlot")).toBe(false);
-        expect(settings.props("graphIndex")).toBe(0);
+        expect(settings.props("graphConfig")).toStrictEqual(defaultGraphState.config[0]);
     });
 
     it("starting drag sets values in event and emits setDragging", async () => {
@@ -95,7 +108,7 @@ describe("GraphConfig", () => {
         const setData = vi.fn();
         await s.trigger("dragstart", { dataTransfer: { setData }, ctrlKey: false, metaKey: false });
         expect(setData).toHaveBeenNthCalledWith(1, "variable", "S");
-        expect(setData).toHaveBeenNthCalledWith(2, "srcGraphConfig", "0");
+        expect(setData).toHaveBeenNthCalledWith(2, "srcGraphConfig", "123");
         expect(setData).toHaveBeenNthCalledWith(3, "copyVar", "false");
     });
 
@@ -127,7 +140,7 @@ describe("GraphConfig", () => {
         const dataTransfer = {
             getData: (s: string) => {
                 if (s === "variable") return "I";
-                if (s === "srcGraphConfig") return "1";
+                if (s === "srcGraphConfig") return "456";
                 if (s === "copyVar") return "false";
                 return null;
             }
@@ -135,11 +148,18 @@ describe("GraphConfig", () => {
         const dropPanel = wrapper.find(".graph-config-panel");
         await dropPanel.trigger("drop", { dataTransfer });
         expect(mockUpdateSelectedVariables.mock.calls.length).toBe(2);
+
+        // adds I to 123
         expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({
-            graphIndex: 0,
+            id: "123",
             selectedVariables: ["S", "R", "I"]
         });
-        expect(mockUpdateSelectedVariables.mock.calls[1][1]).toStrictEqual({ graphIndex: 1, selectedVariables: ["J"] });
+
+        // removes I from 456
+        expect(mockUpdateSelectedVariables.mock.calls[1][1]).toStrictEqual({
+            id: "456",
+            selectedVariables: ["J"]
+        });
     });
 
     it("onDrop does not attempt to remove variable if source is hidden, even with Ctrl key", async () => {
@@ -156,7 +176,7 @@ describe("GraphConfig", () => {
         await dropPanel.trigger("drop", { dataTransfer });
         expect(mockUpdateSelectedVariables.mock.calls.length).toBe(1);
         expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({
-            graphIndex: 0,
+            id: "123",
             selectedVariables: ["S", "R", "I"]
         });
     });
@@ -166,7 +186,7 @@ describe("GraphConfig", () => {
         const dataTransfer = {
             getData: (s: string) => {
                 if (s === "variable") return "I";
-                if (s === "srcGraphConfig") return "1";
+                if (s === "srcGraphConfig") return "456";
                 if (s === "copyVar") return "true";
                 return null;
             }
@@ -175,7 +195,7 @@ describe("GraphConfig", () => {
         await dropPanel.trigger("drop", { dataTransfer });
         expect(mockUpdateSelectedVariables.mock.calls.length).toBe(1);
         expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({
-            graphIndex: 0,
+            id: "123",
             selectedVariables: ["S", "R", "I"]
         });
     });
@@ -185,7 +205,7 @@ describe("GraphConfig", () => {
         const button = wrapper.findAll(".variable-delete button").at(0);
         await button!.trigger("click");
         expect(mockUpdateSelectedVariables.mock.calls.length).toBe(1);
-        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({ graphIndex: 0, selectedVariables: ["R"] });
+        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({ id: "123", selectedVariables: ["R"] });
     });
 
     it("shows drop zone when dragging", () => {
@@ -195,12 +215,13 @@ describe("GraphConfig", () => {
 
     it("shows instruction if no selected variables", () => {
         const wrapper = getWrapper({}, {
-            config: [
-                {
-                    selectedVariables: []
-                }
-            ]
-        } as any);
+            config: [{
+                id: "123",
+                selectedVariables: [],
+                unselectedVariables: [],
+                settings: defaultGraphSettings()
+            }]
+        });
         expect(wrapper.find(".drop-zone-instruction").text()).toBe(
             "Drag variables here to select them for this graph. " +
                 "Press the Ctrl or ⌘ key on drag to make a copy of a variable."
@@ -209,12 +230,13 @@ describe("GraphConfig", () => {
 
     it("does not render delete button if there is only one graph", () => {
         const wrapper = getWrapper({}, {
-            config: [
-                {
-                    selectedVariables: ["S", "R"]
-                }
-            ]
-        } as any);
+            config: [{
+                id: "123",
+                selectedVariables: ["S", "R"],
+                unselectedVariables: [],
+                settings: defaultGraphSettings()
+            }]
+        });
         expect(wrapper.find("h5 button.delete-graph").exists()).toBe(false);
     });
 
@@ -222,6 +244,6 @@ describe("GraphConfig", () => {
         const wrapper = getWrapper();
         await wrapper.find("button.delete-graph").trigger("click");
         expect(mockDeleteGraph).toHaveBeenCalledTimes(1);
-        expect(mockDeleteGraph.mock.calls[0][1]).toBe(0);
+        expect(mockDeleteGraph.mock.calls[0][1]).toBe("123");
     });
 });

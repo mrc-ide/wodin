@@ -30,11 +30,4 @@ describe("GraphsGetters", () => {
         } as any;
         expect((getters[GraphsGetter.hiddenVariables] as any)({}, testGetters, rootState)).toStrictEqual(["e", "c"]);
     });
-
-    it("gets legend width", () => {
-        const testGetters = {
-            allSelectedVariables: ["a", "zz", "a longer name"]
-        };
-        expect((getters[GraphsGetter.legendWidth] as any)({}, testGetters)).toBe(170);
-    });
 });

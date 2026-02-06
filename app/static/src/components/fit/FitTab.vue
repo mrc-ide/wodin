@@ -14,7 +14,7 @@
             </button>
             <action-required-message :message="actionRequiredMessage"></action-required-message>
             <fit-plot :fade-plot="!!actionRequiredMessage" :model-fit="true">
-                <div v-if="iterations">
+                <div v-if="iterations" class="fit-summary-container">
                     <vue-feather
                         v-if="iconType"
                         class="inline-icon"
@@ -141,3 +141,10 @@ export default defineComponent({
     }
 });
 </script>
+
+<style lang="css" scoped>
+.fit-summary-container {
+    display: flex;
+    align-items: center;
+}
+</style>
