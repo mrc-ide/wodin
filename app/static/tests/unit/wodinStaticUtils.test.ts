@@ -74,14 +74,14 @@ describe("wodin static utils", () => {
     });
 
     test("get stores in page returns unique list of store types and store instances", async () => {
-        const testStores = ["type-1", "type-1", "anotherType-2"];
+        const testStores = ["type-1", "type-1:2", "anotherType-2"];
         vi.spyOn(document, "querySelectorAll").mockImplementation(() => {
             return testStores.map(s => ({ getAttribute: vi.fn().mockImplementation(() => s) })) as any
         });
         const storesInPage = getStoresInPage();
         expect(storesInPage).toStrictEqual({
-            storeTypesInPage: ["type", "anotherType"],
-            storesInPage: ["type-1", "anotherType-2"]
+            storeTypesInPage: ["type-1", "anotherType-2"],
+            storesInPage: ["type-1", "type-1:2", "anotherType-2"]
         });
     });
 
