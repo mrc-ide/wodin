@@ -30,6 +30,10 @@ import { RunMutation } from "../../../../src/store/run/mutations";
 import { RunAction } from "../../../../src/store/run/actions";
 import { getters as graphGetters } from "../../../../src/store/graphs/getters";
 import { FitState } from "../../../../src/store/fit/state";
+import * as Env from "@/parseEnv";
+import { GraphsAction } from "@/store/graphs/actions";
+
+vi.mock("@/parseEnv");
 
 describe("RunTab", () => {
     const defaultModelState = {
@@ -55,8 +59,9 @@ describe("RunTab", () => {
     const mockRunModel = vi.fn();
     const mockDownloadOutput = vi.fn();
     const mockSetUserDownloadFileName = vi.fn();
+    const mockUpdateSelectedVariables = vi.fn();
 
-    type Props = { hideRunButton: boolean, hideDownloadButton: boolean }
+    type Props = { hideRunButton: boolean, hideDownloadButton: boolean, visibleVars?: string }
     const defaultProps = { hideRunButton: false, hideDownloadButton: false };
 
     const getWrapper = (
@@ -78,7 +83,10 @@ describe("RunTab", () => {
                             { id: "456", selectedVariables: [], unselectedVariables: [] }
                         ]
                     } as any),
-                    getters: graphGetters
+                    getters: graphGetters,
+                    actions: {
+                        [GraphsAction.UpdateSelectedVariables]: mockUpdateSelectedVariables
+                    }
                 },
                 model: {
                     namespaced: true,
@@ -404,5 +412,19 @@ describe("RunTab", () => {
         downloadOutput.vm.$emit("download", payload);
         expect(mockDownloadOutput).toHaveBeenCalledTimes(1);
         expect(mockDownloadOutput.mock.calls[0][1]).toBe(payload);
+    });
+
+    it("correctly filters traces based on visible vars", () => {
+        vi.mocked(Env).STATIC_BUILD = true;
+        getWrapper({}, {}, true, AppType.Basic, ["S"], { ...defaultProps, visibleVars: "I, T" });
+        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({
+            id: "123",
+            selectedVariables: ["I", "T"]
+        });
+        expect(mockUpdateSelectedVariables.mock.calls[1][1]).toStrictEqual({
+            id: "456",
+            selectedVariables: ["I", "T"]
+        });
+        vi.mocked(Env).STATIC_BUILD = false;
     });
 });

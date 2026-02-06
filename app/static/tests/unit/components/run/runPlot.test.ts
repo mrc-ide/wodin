@@ -87,8 +87,6 @@ describe("RunPlot", () => {
         config: [{ selectedVariables, unselectedVariables: [] }]
     };
 
-    const linkedXAxis = { autorange: false, range: [1, 2] };
-
     const centralSolutions = [
         {
             style: {
@@ -245,8 +243,6 @@ describe("RunPlot", () => {
         const wrapper = shallowMount(RunPlot, {
             props: {
                 fadePlot: false,
-                graphIndex: 0,
-                linkedXAxis,
                 graphConfig
             },
             global: {
@@ -326,7 +322,6 @@ describe("RunPlot", () => {
         const wrapper = shallowMount(RunPlot, {
             props: {
                 fadePlot: false,
-                graphIndex: 0,
                 graphConfig
             } as any,
             global: {
@@ -383,7 +378,6 @@ describe("RunPlot", () => {
             props: {
                 fadePlot: false,
                 graphConfig,
-                graphIndex: 0
             } as any,
             global: {
                 plugins: [store]
