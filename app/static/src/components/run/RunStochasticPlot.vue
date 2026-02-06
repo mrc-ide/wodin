@@ -78,7 +78,7 @@ export default defineComponent({
             endTime,
             graphCount,
             allPlotData,
-            solution,
+            solution
         };
     }
 });
