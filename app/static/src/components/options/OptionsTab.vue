@@ -27,10 +27,7 @@
         <vertical-collapse v-if="!isStochastic" title="Saved Parameter Sets" collapse-id="parameter-sets">
             <parameter-sets></parameter-sets>
         </vertical-collapse>
-        <graph-configs-collapsible v-if="!fitTabIsOpen"></graph-configs-collapsible>
-        <vertical-collapse v-if="fitTabIsOpen" title="Fit Graph Settings" collapse-id="graph-settings">
-            <graph-settings class="pt-2" :fit-plot="true"></graph-settings>
-        </vertical-collapse>
+        <graph-configs-collapsible></graph-configs-collapsible>
     </div>
 </template>
 
@@ -45,7 +42,6 @@ import LinkData from "./LinkData.vue";
 import SensitivityOptions from "./SensitivityOptions.vue";
 import OptimisationOptions from "./OptimisationOptions.vue";
 import { AppType, VisualisationTab } from "../../store/appState/state";
-import GraphSettings from "../GraphSettings.vue";
 import ParameterSets from "./ParameterSets.vue";
 import AdvancedSettings from "./AdvancedSettings.vue";
 
@@ -60,7 +56,6 @@ export default defineComponent({
         RunOptions,
         SensitivityOptions,
         VerticalCollapse,
-        GraphSettings,
         AdvancedSettings
     },
     setup() {

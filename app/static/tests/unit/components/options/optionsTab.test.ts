@@ -17,6 +17,7 @@ import ParameterSets from "../../../../src/components/options/ParameterSets.vue"
 import { getters as runGetters } from "../../../../src/store/run/getters";
 import AdvancedSettings from "../../../../src/components/options/AdvancedSettings.vue";
 import GraphConfigsCollapsible from "../../../../src/components/graphConfig/GraphConfigsCollapsible.vue";
+import { fitGraphId } from "@/store/graphs/state";
 
 describe("OptionsTab", () => {
     const mockTooltipDirective = vi.fn();
@@ -154,8 +155,13 @@ describe("OptionsTab", () => {
                     columnToFit: null
                 },
                 graphs: {
-                    fitGraphSettings: {
-                        logScaleYAxis: false
+                    fitGraphConfig: {
+                        id: fitGraphId,
+                        selectVariables: [],
+                        unselectedVariables: [],
+                        settings: {
+                            logScaleYAxis: false
+                        }
                     }
                 }
             } as any,
@@ -172,7 +178,7 @@ describe("OptionsTab", () => {
         const wrapper = getWrapper(store);
 
         const collapses = wrapper.findAllComponents(VerticalCollapse);
-        expect(collapses.length).toBe(7);
+        expect(collapses.length).toBe(6);
         expect(collapses.at(0)!.props("title")).toBe("Link");
         expect(collapses.at(0)!.props("collapseId")).toBe("link-data");
         expect(collapses.at(0)!.findComponent(LinkData).exists()).toBe(true);
@@ -193,9 +199,9 @@ describe("OptionsTab", () => {
         expect(collapses.at(5)!.props("title")).toBe("Saved Parameter Sets");
         expect(collapses.at(5)!.props("collapseId")).toBe("parameter-sets");
         expect(collapses.at(5)!.findComponent(ParameterSets).exists()).toBe(true);
-        expect(collapses.at(6)!.props("title")).toBe("Fit Graph Settings");
-        expect(collapses.at(6)!.props("collapseId")).toBe("graph-settings");
-        expect(collapses.at(6)!.findComponent(GraphSettings).props("fitPlot")).toBe(true);
+
+        const graphConfigCollapse = wrapper.findAllComponents(GraphConfigsCollapsible);
+        expect(graphConfigCollapse.length).toBe(1);
 
         expect(wrapper.find("#reset-params-btn").exists()).toBe(true);
         expect(wrapper.find("#reset-params-btn").text()).toBe("Reset");

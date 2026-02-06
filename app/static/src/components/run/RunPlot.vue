@@ -5,24 +5,19 @@
         :end-time="endTime"
         :plot-data="allPlotData"
         :redrawWatches="
-            solution ? [solution, allFitData, selectedVariables, parameterSetSolutions, displayNames, graphCount] : []
+            solution ? [solution, allFitData, selectedVariables, parameterSetSolutions, displayNames] : []
         "
-        :linked-x-axis="linkedXAxis"
-        :fit-plot="false"
-        :graph-index="graphIndex"
         :graph-config="graphConfig"
-        @updateXAxis="updateXAxis"
     >
         <slot></slot>
     </wodin-plot>
 </template>
 
 <script setup lang="ts">
-import { computed, defineEmits, defineProps, PropType } from "vue";
+import { computed, defineProps, PropType } from "vue";
 import { useStore } from "vuex";
-import { LayoutAxis, PlotData } from "plotly.js-basic-dist-min";
 import { FitDataGetter } from "../../store/fitData/getters";
-import { odinToPlotly, allFitDataToPlotly, WodinPlotData, filterSeriesSet } from "../../plot";
+import { odinToSkadiChart, allFitDataToSkadiChart, WodinPlotData, filterSeriesSet } from "../../plot";
 import WodinPlot from "../WodinPlot.vue";
 import { RunGetter } from "../../store/run/getters";
 import { OdinSolution, Times } from "../../types/responseTypes";
@@ -33,14 +28,8 @@ import { GraphConfig } from "../../store/graphs/state";
 
 const props = defineProps({
     fadePlot: Boolean,
-    graphIndex: { type: Number, required: true },
     graphConfig: { type: Object as PropType<GraphConfig>, required: true },
-    linkedXAxis: { type: Object as PropType<Partial<LayoutAxis> | null>, required: true }
 });
-
-const emit = defineEmits<{
-    (e: "updateXAxis", options: Partial<LayoutAxis>): void;
-}>();
 
 const store = useStore();
 
@@ -71,9 +60,6 @@ const allFitData = computed(() => store.getters[`fitData/${FitDataGetter.allData
 const selectedVariables = computed(() => props.graphConfig.selectedVariables);
 const placeholderMessage = computed(() => runPlaceholderMessage(selectedVariables.value, false));
 
-// TODO: put this in the composable in mrc-5572
-const graphCount = computed(() => store.state.graphs.config.length);
-
 const allPlotData = (start: number, end: number, points: number): WodinPlotData => {
     const options = {
         mode: "grid",
@@ -83,43 +69,33 @@ const allPlotData = (start: number, end: number, points: number): WodinPlotData 
     };
     const result = solution.value && solution.value(options);
     if (!result) {
-        return [];
+        return { lines: [], points: [] };
     }
 
     // 1. Current parameter values
-    const plotOptions = { showLegend: true, includeLegendGroup: true };
-    const allData = [
-        ...odinToPlotly(filterSeriesSet(result, selectedVariables.value), palette.value, plotOptions),
-        ...allFitDataToPlotly(allFitData.value, palette.value, start, end, props.graphConfig.selectedVariables)
-    ];
+    const allData: WodinPlotData = {
+        lines: odinToSkadiChart(filterSeriesSet(result, selectedVariables.value), palette.value),
+        points: allFitDataToSkadiChart(allFitData.value, palette.value, start, end, selectedVariables.value)
+    };
 
     // 2. Parameter sets
     const lineStylesForParamSets = computed(() => store.getters[`run/${RunGetter.lineStylesForParameterSets}`]);
-
-    const updatePlotTraceNameWithParameterSetName = (plotTrace: Partial<PlotData>, setName: string) => {
-        plotTrace.name = `${plotTrace.name} (${setName})`;
-    };
 
     Object.keys(parameterSetSolutions.value).forEach((name) => {
         const paramSetSln = parameterSetSolutions.value[name];
         const paramSetResult = paramSetSln!(options as Times);
 
-        const dash = lineStylesForParamSets.value[name];
+        const strokeDasharray = lineStylesForParamSets.value[name];
         if (paramSetResult) {
             const filteredSetData = filterSeriesSet(paramSetResult, selectedVariables.value);
-            const paramSetOptions = { dash, showLegend: false, includeLegendGroup: true };
-            const plotData = odinToPlotly(filteredSetData, palette.value, paramSetOptions);
+            const plotData = odinToSkadiChart(filteredSetData, palette.value, { strokeDasharray });
             const currentParamSet = parameterSets.value.find((paramSet) => paramSet.name === name);
-            plotData.forEach((plotTrace) => {
-                updatePlotTraceNameWithParameterSetName(plotTrace, currentParamSet!.displayName);
+            plotData.forEach(line => {
+                line.metadata!.tooltipName = `${line.metadata!.name} (${currentParamSet!.displayName})`;
             });
-            allData.push(...plotData);
+            allData.lines.push(...plotData);
         }
     });
     return allData;
-};
-
-const updateXAxis = (options: Partial<LayoutAxis>) => {
-    emit("updateXAxis", options);
 };
 </script>

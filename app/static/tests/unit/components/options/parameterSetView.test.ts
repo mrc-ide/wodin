@@ -129,12 +129,12 @@ describe("ParameterSetView", () => {
             expect(lineStyle.text()).toBe("Line Style");
             expect(traceLine.classes()).toContain(expectedClass);
         };
-        testExpectedTraceClassForIndex(0, "trace-dot");
-        testExpectedTraceClassForIndex(1, "trace-dash");
-        testExpectedTraceClassForIndex(2, "trace-longdash");
-        testExpectedTraceClassForIndex(3, "trace-dashdot");
-        testExpectedTraceClassForIndex(4, "trace-longdashdot");
-        testExpectedTraceClassForIndex(5, "trace-dot"); // back to start
+        testExpectedTraceClassForIndex(0, "trace-3");
+        testExpectedTraceClassForIndex(1, "trace-10");
+        testExpectedTraceClassForIndex(2, "trace-15");
+        testExpectedTraceClassForIndex(3, "trace-8-3-3-3");
+        testExpectedTraceClassForIndex(4, "trace-15-4-3-4");
+        testExpectedTraceClassForIndex(5, "trace-3"); // back to start
     });
 
     it("uses tooltip directive", () => {

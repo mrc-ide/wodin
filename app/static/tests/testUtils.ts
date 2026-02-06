@@ -29,3 +29,7 @@ export const expectRightWodinTabs = (wrapper: VueWrapper<any>, expectedTabNames:
 export const expectLeftWodinTabs = (wrapper: VueWrapper<any>, expectedTabNames: string[]) => {
     expectWodinTabs(wrapper, expectedTabNames, "left");
 };
+
+export type ComponentProps<
+    T extends { setup?: (props: any, ...otherArgs: any[]) => any }
+> = Parameters<NonNullable<T["setup"]>>[0]

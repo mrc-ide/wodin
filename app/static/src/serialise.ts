@@ -15,13 +15,11 @@ import {
     SerialisedRunResult,
     SerialisedSensitivityResult,
     SerialisedModelFitState,
-    SerialisedMultiSensitivityState,
-    SerialisedGraphsState
+    SerialisedMultiSensitivityState
 } from "./types/serialisationTypes";
-import { GraphConfig, GraphsState, defaultGraphSettings } from "./store/graphs/state";
+import { defaultGraphSettings } from "./store/graphs/state";
 import { Dict } from "./types/utilTypes";
 import { MultiSensitivityState } from "./store/multiSensitivity/state";
-import { newUid } from "./utils";
 
 function serialiseCode(code: CodeState): CodeState {
     return {
@@ -142,30 +140,6 @@ function serialiseModelFit(modelFit: ModelFitState): SerialisedModelFitState {
     };
 }
 
-// Do not include graph config uids in serialised as we don't want them to contribute to duplicate checks
-export const serialiseGraphs = (state: GraphsState): SerialisedGraphsState => {
-    return {
-        ...state,
-        config: state.config.map((c: GraphConfig) => ({
-            selectedVariables: c.selectedVariables,
-            unselectedVariables: c.unselectedVariables,
-            settings: c.settings
-        }))
-    };
-};
-
-export const deserialiseGraphs = (serialised: SerialisedGraphsState): GraphsState => {
-    return {
-        ...serialised,
-        config: serialised.config.map((s) => ({
-            id: newUid(),
-            selectedVariables: s.selectedVariables,
-            unselectedVariables: s.unselectedVariables,
-            settings: s.settings
-        }))
-    };
-};
-
 export const serialiseState = (state: AppState): string => {
     const result: SerialisedAppState = {
         openVisualisationTab: state.openVisualisationTab,
@@ -174,7 +148,7 @@ export const serialiseState = (state: AppState): string => {
         run: serialiseRun(state.run),
         sensitivity: serialiseSensitivity(state.sensitivity),
         multiSensitivity: serialiseMultiSensitivity(state.multiSensitivity),
-        graphs: serialiseGraphs(state.graphs)
+        graphs: state.graphs
     };
 
     if (state.appType === AppType.Fit) {
@@ -190,7 +164,6 @@ export const deserialiseState = (targetState: AppState, serialised: SerialisedAp
     Object.assign(targetState, {
         ...targetState,
         ...serialised,
-        graphs: serialised.graphs ? deserialiseGraphs(serialised.graphs) : targetState.graphs,
         persisted: true
     });
 
