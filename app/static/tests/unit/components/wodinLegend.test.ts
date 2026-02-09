@@ -1,5 +1,8 @@
 import WodinLegend, { LegendConfig } from "@/components/WodinLegend.vue";
+import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
+import { AppState } from "@/store/appState/state";
+import { mockBasicState } from "../../mocks";
 
 describe("Wodin legend", () => {
   const getWrapper = () => {
@@ -16,8 +19,13 @@ describe("Wodin legend", () => {
       }
     };
 
+    const store = new Vuex.Store<AppState>({
+      state: mockBasicState()
+    });
+
     return shallowMount(WodinLegend, {
-      props: { legendConfigs }
+      props: { legendConfigs },
+      global: { plugins: [store] }
     });
   };
 
@@ -26,8 +34,8 @@ describe("Wodin legend", () => {
     const legend = wrapper.find("div");
     expect(legend.classes()).toContain("legend");
     const legendRows = legend.findAll("div");
-    expect(legendRows.length).toBe(2);
-    const [ sRow, iRow ] = legendRows;
+    expect(legendRows.length).toBe(3);
+    const [ sRow, iRow, hiddenRow ] = legendRows;
 
     expect(sRow.classes()).toContain("legend-row");
     expect(sRow.classes()).not.toContain("faded");
@@ -38,6 +46,9 @@ describe("Wodin legend", () => {
     expect(iRow.classes()).toContain("faded");
     expect(iRow.find("circle").exists()).toBe(true);
     expect(iRow.text()).toBe("I");
+
+    expect(hiddenRow.classes()).toContain("legend-row");
+    expect(hiddenRow.classes()).toContain("hidden-legend-row");
   });
 
   test("emits correct legend row", async () => {

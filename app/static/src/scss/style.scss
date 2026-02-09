@@ -62,8 +62,8 @@ $grey: #ccc;
 
 .wodin-plot-container,
 .summary-plot-container {
+    flex-grow: 1;
     padding-inline: 1rem;
-    width: calc(100% - min(20rem, 25%));
     overflow-x: hidden;
 }
 

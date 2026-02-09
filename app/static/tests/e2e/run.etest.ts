@@ -2,7 +2,7 @@ import { expect, test, Page } from "@playwright/test";
 import { expectGraphVariables, addGraphWithVariable } from "./utils";
 
 const expectFirstAndLastXTick = async (
-    page: Page, expectedGraphCount: number, expectedFirstAndLastTick: [number, number]
+    page: Page, expectedGraphCount: number, expectedFirstAndLastTick: [string, string]
 ) => {
     const graphs = await page.locator(".wodin-plot-container");
     expect(await graphs.count()).toBe(expectedGraphCount);
@@ -10,8 +10,8 @@ const expectFirstAndLastXTick = async (
         const graph = graphs.nth(i);
         const xAxis = graph.locator(`g[id^="x-axes"]`);
         const ticks = xAxis.locator(".tick");
-        expect(await ticks.first().textContent()).toBe(expectedFirstAndLastTick[0].toString());
-        expect(await ticks.last().textContent()).toBe(expectedFirstAndLastTick[1].toString());
+        expect(await ticks.first().textContent()).toBe(expectedFirstAndLastTick[0]);
+        expect(await ticks.last().textContent()).toBe(expectedFirstAndLastTick[1]);
     }
 };
 
@@ -26,7 +26,7 @@ test.describe("Run Tab", () => {
         await expectGraphVariables(page, 1, ["S"]);
         await expectGraphVariables(page, 2, ["I"]);
         // Sanity check that each graph has expected initial x axis ticks for full 0-100 time range
-        await expectFirstAndLastXTick(page, 3, [0, 100]);
+        await expectFirstAndLastXTick(page, 3, ["0", "100"]);
 
         // 2. Drag to zoom to an area on the first graph
         const graphBounds = (await page.locator(`:nth-match(.plot g[id^="brush"], 1)`).boundingBox())!;
@@ -35,7 +35,16 @@ test.describe("Run Tab", () => {
         await page.mouse.move(graphBounds.x + 300, graphBounds.y + 100);
         await page.mouse.up();
 
-        // 3. Check - using x axis ticks - that the expected x axis values are shown on all three graphs.
-        await expectFirstAndLastXTick(page, 3, [20, 55]);
+        // 3. Make sure graph has zoomed in
+        const firstGraph = await page.locator(".wodin-plot-container").nth(0);
+        const xAxis = firstGraph.locator(`g[id^="x-axes"]`);
+        const ticks = xAxis.locator(".tick");
+        const firstTick = await ticks.first().textContent();
+        const lastTick = await ticks.last().textContent();
+        expect(firstTick).not.toBe("0");
+        expect(lastTick).not.toBe("100");
+
+        // 4. Check - using x axis ticks - that the expected x axis values are shown on all three graphs.
+        await expectFirstAndLastXTick(page, 3, [firstTick!, lastTick!]);
     });
 });
