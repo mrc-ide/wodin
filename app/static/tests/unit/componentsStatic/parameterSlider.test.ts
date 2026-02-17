@@ -29,8 +29,8 @@ describe("Parameter Control", () => {
         });
 
         const defaultProps: ParameterSliderProps = {
-            name: "a",
-            description: "test-desc",
+            par: "a",
+            desc: "test-desc",
             min: 0, max: 10, step: 100
         };
 
@@ -40,17 +40,31 @@ describe("Parameter Control", () => {
         });
     };
 
-    it("renders as expected", () => {
+    beforeEach(() => {
+        (window as any).MathJax = { typesetPromise: () => {} };
+    });
+
+    afterEach(() => {
+        delete (window as any).MathJax;
+    });
+
+    it("renders as expected", async () => {
         const wrapper = getWrapper();
-        const label = wrapper.find("#a-input");
+        const label = wrapper.find("label");
         expect(label.text()).toBe("a");
-        const description = wrapper.find("#a-description");
+        const description = wrapper.find(".desc");
         expect(description.text()).toBe("test-desc");
-        const value = wrapper.find("#a-value");
+        const value = wrapper.find(".value");
         expect(value.text()).toBe("1");
         const input = wrapper.find("input");
         expect(input.element.classList[0]).toBe("form-range");
         expect(input.element.value).toBe("1");
+    });
+
+    it("uses title as label when provided", async () => {
+        const wrapper = getWrapper({ title: "test-title" });
+        const label = wrapper.find("label");
+        expect(label.text()).toBe("test-title");
     });
 
     it("runs model when value changes", async () => {
