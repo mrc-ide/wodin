@@ -12,6 +12,7 @@ import { storeOptions as fitStoreOptions } from "./store/fit/fit";
 import { storeOptions as stochasticStoreOptions } from "./store/stochastic/stochastic";
 import ParameterSlider from "./componentsStatic/ParameterSlider.vue";
 import { registerRerunModel, registerRerunSensitivity } from "./store/plugins";
+import { RunMutation } from "./store/run/mutations";
 
 const { Basic, Fit, Stochastic } = AppType;
 export const getStoreOptions = (appType: AppType) => {
@@ -53,18 +54,19 @@ export const waitForBlockingScripts = async (blockingScripts: string[]) => {
 
 export const getStoresInPage = () => {
     const stores = document.querySelectorAll("[data-w-store]")!;
+    const storeTypesInPage: string[] = []
     const storesInPage: string[] = []
     stores.forEach(el => {
         const elStore = el.getAttribute("data-w-store")!;
-        if (!storesInPage.includes(elStore)) {
-            storesInPage.push(elStore);
-        }
+        const storeType = elStore.split(":")[0];
+        if (!storesInPage.includes(elStore)) storesInPage.push(elStore);
+        if (!storeTypesInPage.includes(storeType)) storeTypesInPage.push(storeType);
     });
-    return storesInPage;
+    return { storesInPage, storeTypesInPage };
 };
 
 // TODO more tolerant error handling, maybe one config didnt work (for error handling PR)
-export type StaticConfig = { appType: AppType, defaultCode: string[] };
+export type StaticConfig = { appType: AppType, defaultCode: string[], endTime?: number };
 type ConfigAndModel = { config: StaticConfig, modelResponse: OdinModelResponse };
 
 export const getConfigAndModelForStores = async (storesInPage: string[]) => {
@@ -120,13 +122,14 @@ export const initialiseStore = async (
         appType: config.appType,
         basicProp: "",
         defaultCode: config.defaultCode,
-        endTime: 100,
+        endTime: config.endTime || 100,
         readOnlyCode: true,
         stateUploadIntervalMillis: 2_000_000,
         maxReplicatesRun: 100,
         maxReplicatesDisplay: 50
     } as AppConfig
     store.commit(AppStateMutation.SetConfig, appConfigPayload);
+    store.commit(`run/${RunMutation.SetEndTime}`, config.endTime || 100);
     store.commit(`model/${ModelMutation.SetOdinRunnerOde}`, odinjs);
     store.commit(`model/${ModelMutation.SetOdinRunnerDiscrete}`, dust);
     store.commit(`model/${ModelMutation.SetOdinResponse}`, modelResponse);
