@@ -16,13 +16,18 @@ import { SensitivityMutation } from "../../../../src/store/sensitivity/mutations
 import SensitivitySummaryDownload from "../../../../src/components/sensitivity/SensitivitySummaryDownload.vue";
 import LoadingButton from "../../../../src/components/LoadingButton.vue";
 import { getters as graphsGetters } from "../../../../src/store/graphs/getters";
+import * as Env from "@/parseEnv";
+import { GraphsAction } from "@/store/graphs/actions";
+
+vi.mock("@/parseEnv");
 
 describe("SensitivityTab", () => {
     const mockRunSensitivity = vi.fn();
     const mockSetLoading = vi.fn();
     const mockSetPlotTime = vi.fn();
+    const mockUpdateSelectedVariables = vi.fn();
 
-    type Props = { hideSensitivityButton: boolean, hideDownloadButton: boolean }
+    type Props = { hideSensitivityButton: boolean, hideDownloadButton: boolean, visibleVars?: string }
     const defaultProps = { hideSensitivityButton: false, hideDownloadButton: false };
 
     const getWrapper = (
@@ -44,14 +49,19 @@ describe("SensitivityTab", () => {
                     state: {
                         config: [
                             {
+                                id: "123",
                                 selectedVariables
                             },
                             {
+                                id: "456",
                                 selectedVariables: []
                             }
                         ]
                     },
-                    getters: graphsGetters
+                    getters: graphsGetters,
+                    actions: {
+                        [GraphsAction.UpdateSelectedVariables]: mockUpdateSelectedVariables
+                    }
                 },
                 model: {
                     namespaced: true,
@@ -134,9 +144,13 @@ describe("SensitivityTab", () => {
         const plots = wrapper.findAllComponents(SensitivityTracesPlot);
         expect(plots.length).toBe(2);
         expect(plots.at(0)!.props("fadePlot")).toBe(false);
-        expect(plots.at(0)!.props("graphConfig")).toStrictEqual({ selectedVariables: ["S"] });
+        expect(plots.at(0)!.props("graphConfig")).toStrictEqual({
+            id: "123", selectedVariables: ["S"]
+        });
         expect(plots.at(1)!.props("fadePlot")).toBe(false);
-        expect(plots.at(1)!.props("graphConfig")).toStrictEqual({ selectedVariables: [] });
+        expect(plots.at(1)!.props("graphConfig")).toStrictEqual({
+            id: "456", selectedVariables: []
+        });
         expect(wrapper.findComponent(ErrorInfo).props("error")).toBe(null);
         expect(wrapper.find("#sensitivity-running").exists()).toBe(false);
         expect(wrapper.findComponent(SensitivitySummaryPlot).exists()).toBe(false);
@@ -179,9 +193,13 @@ describe("SensitivityTab", () => {
         const plots = wrapper.findAllComponents(SensitivitySummaryPlot);
         expect(plots.length).toBe(2);
         expect(plots.at(0)!.props("fadePlot")).toBe(false);
-        expect(plots.at(0)!.props("graphConfig")).toStrictEqual({ selectedVariables: ["S"] });
+        expect(plots.at(0)!.props("graphConfig")).toStrictEqual({
+            id: "123", selectedVariables: ["S"]
+        });
         expect(plots.at(1)!.props("fadePlot")).toBe(false);
-        expect(plots.at(1)!.props("graphConfig")).toStrictEqual({ selectedVariables: [] });
+        expect(plots.at(1)!.props("graphConfig")).toStrictEqual({
+            id: "456", selectedVariables: []
+        });
         expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
     });
 
@@ -336,5 +354,19 @@ describe("SensitivityTab", () => {
         await new Promise((r) => setTimeout(r, 101));
         expect(mockRunSensitivity).toHaveBeenCalledTimes(1);
         expect(mockSetLoading).toHaveBeenCalledTimes(1);
+    });
+
+    it("correctly filters traces based on visible vars", () => {
+        vi.mocked(Env).STATIC_BUILD = true;
+        getWrapper(AppType.Basic, {}, {}, {}, true, ["S"], { ...defaultProps, visibleVars: "I, T" });
+        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({
+            id: "123",
+            selectedVariables: ["I", "T"]
+        });
+        expect(mockUpdateSelectedVariables.mock.calls[1][1]).toStrictEqual({
+            id: "456",
+            selectedVariables: ["I", "T"]
+        });
+        vi.mocked(Env).STATIC_BUILD = false;
     });
 });

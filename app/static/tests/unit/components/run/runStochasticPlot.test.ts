@@ -46,8 +46,6 @@ describe("RunPlot for stochastic", () => {
         settings: defaultGraphSettings()
     } as any;
 
-    const linkedXAxis = { autorange: false, range: [1, 2] };
-
     afterEach(() => {
         vi.clearAllMocks();
     });
@@ -71,8 +69,6 @@ describe("RunPlot for stochastic", () => {
         const wrapper = shallowMount(RunStochasticPlot, {
             props: {
                 fadePlot: false,
-                graphIndex: 0,
-                linkedXAxis,
                 graphConfig
             },
             global: {
@@ -141,7 +137,6 @@ describe("RunPlot for stochastic", () => {
         const wrapper = shallowMount(RunPlot, {
             props: {
                 fadePlot: false,
-                graphIndex: 0,
                 graphConfig
             } as any,
             global: {
