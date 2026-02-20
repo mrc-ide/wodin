@@ -1,4 +1,5 @@
 import { ActionTree } from "vuex";
+import { markRaw } from "vue";
 import { GraphsMutation } from "./mutations";
 import { AppState, AppType, VisualisationTab } from "../appState/state";
 import { FitDataAction } from "../fitData/actions";
@@ -32,7 +33,11 @@ export const actions: ActionTree<GraphsState, AppState> = {
             ...payload.config,
         };
 
-        const newGraph = { id: payload.id, config: newConfig, data: getPlotData(context, newConfig) };
+        const newGraph = {
+            id: payload.id,
+            config: newConfig,
+            data: markRaw(getPlotData(context, newConfig))
+        };
 
         // sort the selected variables to match the order in the model
         const allVariables = rootState.model.odinModelResponse?.metadata?.variables || [];
@@ -41,17 +46,13 @@ export const actions: ActionTree<GraphsState, AppState> = {
         );
 
         commit(GraphsMutation.SetGraph, newGraph);
-
-        // if (rootState.appType === AppType.Fit) {
-        //     dispatch(`fitData/${FitDataAction.UpdateLinkedVariables}`, null, { root: true });
-        // }
     },
 
     UpdateAllGraphs(context, payload: UpdateAllGraphsPayload) {
         const { commit, rootState } = context;
 
         const newGraphs = payload.map(({ id, config }) => {
-          const newData = getPlotData(context, config);
+          const newData = markRaw(getPlotData(context, config));
           const newGraph = { id, config, data: newData };
 
           const allVariables = rootState.model.odinModelResponse?.metadata?.variables || [];
