@@ -1,4 +1,4 @@
-import { defaultGraphSettings, fitGraphId, GraphsState } from "./state";
+import { defaultGraphConfig, fitGraphId, GraphsState } from "./state";
 import { actions } from "./actions";
 import { getters } from "./getters";
 import { mutations } from "./mutations";
@@ -6,17 +6,15 @@ import { newUid } from "../../utils";
 
 
 export const defaultState = (): GraphsState => ({
-    config: [{
-        id: newUid(),
-        selectedVariables: [],
-        unselectedVariables: [],
-        settings: defaultGraphSettings()
+    graphs: [{
+      id: newUid(),
+      config: defaultGraphConfig(),
+      data: { points: [], lines: [] }
     }],
-    fitGraphConfig: {
+    fitGraph: {
       id: fitGraphId,
-      selectedVariables: [],
-      unselectedVariables: [],
-      settings: defaultGraphSettings()
+      config: defaultGraphConfig(),
+      data: { points: [], lines: [] }
     }
 });
 

@@ -135,6 +135,8 @@ export const runSensitivity = (
                 advancedSettingsChanged: false
             });
         }
+
+        commit(SensitivityMutation.SetLoading, false);
     }
 };
 

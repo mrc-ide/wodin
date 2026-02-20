@@ -2,7 +2,7 @@
     <div class="wodin-plot-and-legend">
         <div class="wodin-plot-container" :style="plotStyle">
             <div class="plot" ref="plot" id="plot"></div>
-            <wodin-plot-data-summary :data="baseData"></wodin-plot-data-summary>
+            <wodin-plot-data-summary v-if="DATA_SUMMARY" :data="baseData"></wodin-plot-data-summary>
             <slot></slot>
         </div>
         <wodin-legend :legendConfigs="legendConfigs" @legendClick="handleClick"/>
@@ -15,49 +15,46 @@
 <script lang="ts">
 import { computed, defineComponent, ref, watch, onMounted, PropType, shallowRef } from "vue";
 import { useStore } from "vuex";
-import { Metadata, WodinPlotData, fadePlotStyle } from "../plot";
+import { fadePlotStyle } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
-import { GraphsMutation, SetGraphConfigPayload } from "../store/graphs/mutations";
-import { fitGraphId, GraphConfig } from "../store/graphs/state";
+import { GraphsAction, UpdateGraphPayload } from "../store/graphs/actions";
+import { fitGraphId, Graph, Metadata, WodinPlotData } from "../store/graphs/state";
 import { Chart, Scales, ZoomProperties } from "@reside-ic/skadi-chart";
-import { AppState } from "@/store/appState/state";
-import { tooltipCallback } from "@/utils";
+import { AppState, VisualisationTab } from "@/store/appState/state";
+import { runPlaceholderMessage, tooltipCallback } from "@/utils";
 import WodinLegend, { LegendConfig } from "./WodinLegend.vue";
+import userMessages from "@/userMessages";
+import { DATA_SUMMARY } from "@/parseEnv";
+import { SensitivityPlotType } from "@/store/sensitivity/state";
 
 export default defineComponent({
     name: "WodinPlot",
     components: { WodinPlotDataSummary, WodinLegend },
     props: {
         fadePlot: Boolean,
-        placeholderMessage: String,
-        endTime: {
-            type: Number,
-            required: true
-        },
-        plotData: {
-            type: Function as PropType<(start: number, end: number, points: number) => WodinPlotData>,
-            required: true
-        },
-        // Only used as an indicator that redraw is required when this changes - the data to display is calculated by
-        // plotData function using these solutions
-        redrawWatches: {
-            type: Array as PropType<unknown[]>,
-            required: true
-        },
-        graphConfig: {
-            type: Object as PropType<GraphConfig>,
+        graph: {
+            type: Object as PropType<Graph>,
             required: true
         }
     },
     setup(props) {
         const store = useStore<AppState>();
 
+        const placeholderMessage = computed(() => {
+          if (store.state.openVisualisationTab === VisualisationTab.Fit) {
+            return userMessages.modelFit.notFittedYet;
+          }
+
+          return runPlaceholderMessage(
+            props.graph.config.selectedVariables,
+            store.state.openVisualisationTab === VisualisationTab.Sensitivity
+          )
+        });
+
         const plotStyle = computed(() => (props.fadePlot ? fadePlotStyle : ""));
-        const startTime = 0;
 
         const plot = ref<null | HTMLDivElement>(null); // Picks up the element with 'plot' ref in the template
         const baseData = shallowRef<WodinPlotData>({ lines: [], points: [] });
-        const nPoints = 1000; // TODO: appropriate value could be derived from width of element
 
         const hasPlotData = computed(() => !!baseData.value.lines.length || !!baseData.value.points.length);
 
@@ -65,31 +62,31 @@ export default defineComponent({
             if (!zoomProperties) return;
             const newXYRanges = {
               xAxisRange: zoomProperties.x,
-              yAxisRange: zoomProperties.eventType === "dblclick" && !props.graphConfig.settings.lockYAxis
+              yAxisRange: zoomProperties.eventType === "dblclick" && !props.graph.config.lockYAxis
                 ? null
                 : zoomProperties.y,
             };
 
-            if (props.graphConfig.id === fitGraphId) {
-              store.commit(`graphs/${GraphsMutation.SetGraphConfig}`, {
+            if (props.graph.id === fitGraphId) {
+              store.dispatch(`graphs/${GraphsAction.UpdateGraph}`, {
                 id: fitGraphId,
-                settings: { ...newXYRanges }
-              } as SetGraphConfigPayload);
+                config: { ...newXYRanges }
+              } as UpdateGraphPayload);
             } else {
-              const allGraphConfigs = store.state.graphs.config;
-              const allUpdatedConfigs = allGraphConfigs.map(cfg => ({
-                ...cfg,
-                settings: {
-                  ...cfg.settings,
+              const allGraphs = store.state.graphs.graphs;
+              const allUpdatedGraphs = allGraphs.map(g => ({
+                id: g.id,
+                config: {
+                  ...g.config,
                   xAxisRange: newXYRanges.xAxisRange,
-                  yAxisRange: cfg.id === props.graphConfig.id
+                  yAxisRange: g.id === props.graph.id
                     ? newXYRanges.yAxisRange
-                    : cfg.settings.yAxisRange
+                    : g.config.yAxisRange
                 }
               }));
-              store.commit(
-                `graphs/${GraphsMutation.SetAllGraphConfigs}`,
-                JSON.parse(JSON.stringify(allUpdatedConfigs))
+              store.dispatch(
+                `graphs/${GraphsAction.UpdateAllGraphs}`,
+                JSON.parse(JSON.stringify(allUpdatedGraphs))
               );
             }
         };
@@ -133,37 +130,41 @@ export default defineComponent({
         const autoscaledMaxExtentsY = ref<Scales["y"]>();
 
         const drawSkadiChart = (legendFilteredData: null | WodinPlotData = null) => {
-            const settings = props.graphConfig.settings;
-            const maxXExtents = { start: startTime, end: props.endTime };
-            const xRange = settings.xAxisRange
-              ? { start: settings.xAxisRange[0], end: settings.xAxisRange[1] }
+            const { config, data: graphData } = props.graph;
+            const maxXExtents = { start: 0, end: store.state.run.endTime };
+            const xRange = config.xAxisRange
+              ? { start: config.xAxisRange[0], end: config.xAxisRange[1] }
               : maxXExtents;
-            const yRange = settings.yAxisRange
-              ? { start: settings.yAxisRange[0], end: settings.yAxisRange[1] }
+            const yRange = config.yAxisRange
+              ? { start: config.yAxisRange[0], end: config.yAxisRange[1] }
               : {};
-            const ranges = { x: xRange, y: yRange };
+
+            const isSensitivitySummary = store.state.openVisualisationTab === VisualisationTab.Sensitivity
+                && store.state.sensitivity.plotSettings.plotType !== SensitivityPlotType.TraceOverTime;
+            const ranges = isSensitivitySummary ? undefined : { x: xRange, y: yRange };
+            const maxExtents = isSensitivitySummary ? undefined : { x: maxXExtents };
 
             let data: WodinPlotData;
             if (legendFilteredData) {
                 data = legendFilteredData;
             } else {
-                data = props.plotData(ranges.x.start, ranges.x.end, nPoints);
+                data = graphData;
                 baseData.value = data;
                 legendConfigs.value = getLegendConfigs(baseData.value);
             }
 
             // skadiChart holds a lot of data, making this reactive will have a performance
             // penalty, if you need to make it reactive, please use shallowRef
-            const skadiChart = new Chart<Metadata>({ logScale: { y: settings.logScaleYAxis } })
+            const skadiChart = new Chart<Metadata>({ logScale: { y: config.logScaleYAxis } })
               .addAxes({ x: "Time" })
               .addGridLines()
-              .addTraces(data.lines)
-              .addScatterPoints(data.points)
-              .addZoom({ lockAxis: settings.lockYAxis ? "y" : null })
+              .addTraces(baseData.value.lines)
+              .addScatterPoints(baseData.value.points)
+              .addZoom({ lockAxis: config.lockYAxis ? "y" : null })
               .makeResponsive()
               .addTooltips(tooltipCallback)
               .addCustomLifecycleHooks({ beforeZoom: updateAxes })
-              .appendTo(plot.value!, { x: maxXExtents }, ranges);
+              .appendTo(plot.value!, maxExtents, ranges);
 
             autoscaledMaxExtentsY.value = skadiChart.autoscaledMaxExtents.y;
         };
@@ -171,20 +172,20 @@ export default defineComponent({
         onMounted(drawSkadiChart);
 
         watch(
-          [() => props.redrawWatches, () => props.graphConfig],
-          ([, newGraphConfig], [, oldGraphConfig]) => {
+          [() => props.graph],
+          ([newGraph], [oldGraph]) => {
           if (plotStyle.value !== fadePlotStyle) {
             drawSkadiChart();
             // if a user locks the y axis then we have to store the y axis range that
             // the graph automatically calculates or an existing y axis range
-            if (newGraphConfig.settings.lockYAxis && !oldGraphConfig.settings.lockYAxis) {
+            if (newGraph.config.lockYAxis && !oldGraph.config.lockYAxis) {
               const maxExtentsY = autoscaledMaxExtentsY.value!;
-              const yRange = newGraphConfig.settings.yAxisRange
+              const yRange = newGraph.config.yAxisRange
                 || [maxExtentsY.start, maxExtentsY.end];
-              store.commit(`graphs/${GraphsMutation.SetGraphConfig}`, {
-                  id: props.graphConfig.id,
-                  settings: { yAxisRange: yRange }
-              } as SetGraphConfigPayload);
+              store.dispatch(`graphs/${GraphsAction.UpdateGraph}`, {
+                  id: props.graph.id,
+                  config: { yAxisRange: yRange }
+              } as UpdateGraphPayload);
             }
           }
         });
@@ -197,6 +198,8 @@ export default defineComponent({
             updateAxes,
             legendConfigs,
             handleClick,
+            placeholderMessage,
+            DATA_SUMMARY
         };
     }
 });

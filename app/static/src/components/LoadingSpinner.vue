@@ -22,6 +22,13 @@ export default defineComponent({
                     "border-width": "20px"
                 };
             }
+            if (this.size) {
+                return {
+                    height: this.size,
+                    width: this.size,
+                    "border-width": "6px"
+                };
+            }
             return {
                 height: "200px",
                 width: "200px",

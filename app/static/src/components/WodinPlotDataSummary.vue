@@ -16,8 +16,8 @@
 </template>
 
 <script lang="ts">
+import { WodinPlotData } from "@/store/graphs/state";
 import { computed, defineComponent, PropType } from "vue";
-import { WodinPlotData } from "../plot";
 
 export default defineComponent({
     name: "WodinPlotDataSummary",

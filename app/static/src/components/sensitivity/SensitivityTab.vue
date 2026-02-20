@@ -11,13 +11,8 @@
             >
         </div>
         <action-required-message :message="updateMsg"></action-required-message>
-        <template v-for="config in graphConfigs" :key="config.id">
-            <sensitivity-traces-plot
-                v-if="tracesPlot"
-                :fade-plot="!!updateMsg"
-                :graph-config="config"
-            ></sensitivity-traces-plot>
-            <sensitivity-summary-plot v-else :fade-plot="!!updateMsg" :graph-config="config"></sensitivity-summary-plot>
+        <template v-for="graph in graphs" :key="graph.id">
+            <wodin-plot :fade-plot="!!updateMsg" :graph="graph"/>
         </template>
         <div id="sensitivity-running" v-if="running">
             <loading-spinner class="inline-spinner" size="xs"></loading-spinner>
@@ -33,32 +28,29 @@
 import { computed, defineComponent, PropType, onMounted } from "vue";
 import { useStore } from "vuex";
 import SensitivitySummaryDownload from "@/components/sensitivity/SensitivitySummaryDownload.vue";
-import SensitivityTracesPlot from "./SensitivityTracesPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { BaseSensitivityGetter } from "../../store/sensitivity/getters";
 import { SensitivityAction } from "../../store/sensitivity/actions";
 import { SensitivityPlotType } from "../../store/sensitivity/state";
-import SensitivitySummaryPlot from "./SensitivitySummaryPlot.vue";
 import ErrorInfo from "../ErrorInfo.vue";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import LoadingButton from "../LoadingButton.vue";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import baseSensitivity from "../mixins/baseSensitivity";
-import { GraphConfig } from "@/store/graphs/state";
-import { GraphsAction } from "@/store/graphs/actions";
+import { GraphsAction, UpdateGraphPayload } from "@/store/graphs/actions";
 import { STATIC_BUILD } from "@/parseEnv";
 import { AppState } from "@/store/appState/state";
+import WodinPlot from "../WodinPlot.vue";
 
 export default defineComponent({
     name: "SensitivityTab",
     components: {
         ErrorInfo,
         LoadingSpinner,
-        SensitivitySummaryPlot,
         ActionRequiredMessage,
-        SensitivityTracesPlot,
         LoadingButton,
-        SensitivitySummaryDownload
+        SensitivitySummaryDownload,
+        WodinPlot
     },
     props: {
         hideSensitivityButton: { type: Boolean, default: false },
@@ -80,7 +72,7 @@ export default defineComponent({
             );
         });
 
-        const graphConfigs = computed(() => store.state.graphs.config as GraphConfig[]);
+        const graphs = computed(() => store.state.graphs.graphs);
 
         const runSensitivity = () => {
             store.commit(`${namespace}/${SensitivityMutation.SetLoading}`, true);
@@ -110,17 +102,17 @@ export default defineComponent({
         onMounted(() => {
             if (props.visibleVars && STATIC_BUILD) {
                 const visibleVars = props.visibleVars.split(",").map(s => s.trim());
-                graphConfigs.value.forEach(cfg => {
-                    store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
-                        id: cfg.id,
-                        selectedVariables: visibleVars
-                    });
+                graphs.value.forEach(g => {
+                    store.dispatch(`graphs/${GraphsAction.UpdateGraph}`, {
+                        id: g.id,
+                        config: { selectedVariables: visibleVars }
+                    } as UpdateGraphPayload);
                 });
             }
         });
 
         return {
-            graphConfigs,
+            graphs,
             canRunSensitivity,
             running,
             sensitivityProgressMsg,

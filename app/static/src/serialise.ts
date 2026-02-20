@@ -17,7 +17,7 @@ import {
     SerialisedModelFitState,
     SerialisedMultiSensitivityState
 } from "./types/serialisationTypes";
-import { defaultGraphSettings } from "./store/graphs/state";
+import { defaultGraphConfig } from "./store/graphs/state";
 import { Dict } from "./types/utilTypes";
 import { MultiSensitivityState } from "./store/multiSensitivity/state";
 
@@ -166,24 +166,4 @@ export const deserialiseState = (targetState: AppState, serialised: SerialisedAp
         ...serialised,
         persisted: true
     });
-
-    // Initialise selected variables if required
-    const { model, graphs } = targetState;
-    if (
-        model.odinModelResponse?.metadata?.variables &&
-        !graphs.config[0].selectedVariables.length &&
-        !graphs.config[0].unselectedVariables?.length
-    ) {
-        const selectedVariables = [...(model.odinModelResponse?.metadata?.variables || [])];
-        const unselectedVariables: string[] = [];
-
-        targetState.graphs.config = [
-            {
-                id: graphs!.config[0].id,
-                selectedVariables,
-                unselectedVariables,
-                settings: defaultGraphSettings()
-            }
-        ];
-    }
 };
