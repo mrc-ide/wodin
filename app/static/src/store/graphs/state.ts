@@ -1,6 +1,20 @@
+import { Lines, ScatterPoints } from "@reside-ic/skadi-chart";
+
+export type Metadata = {
+  name: string,
+  tooltipName: string,
+  color: string
+};
+
+export type WodinPlotData = {
+  lines: Lines<Metadata>,
+  points: ScatterPoints<Metadata>
+};
+
 export const fitGraphId = "FIT";
 
-export const defaultGraphSettings = (): GraphSettings => ({
+export const defaultGraphConfig = (): GraphConfig => ({
+    selectedVariables: [],
     logScaleYAxis: false,
     lockYAxis: false,
     xAxisRange: null,
@@ -9,26 +23,24 @@ export const defaultGraphSettings = (): GraphSettings => ({
 
 export type AxisRange = [number, number];
 
-// User-adjustable settings for a given graph - log/linear y axis scale and lock y axis are selected via checkboxes,
-// yAxisRange is saved on data/variable update in order to implement lock y axis.
-export interface GraphSettings {
+// GraphConfig holds all the configuration for the user-configurable array of graphs which will be shown on the Run
+// and Sensitivity tabs, both the variable selections and the graph settings.
+export interface GraphConfig {
+    selectedVariables: string[];
     logScaleYAxis: boolean;
     lockYAxis: boolean;
     xAxisRange: AxisRange | null;
     yAxisRange: AxisRange | null;
 }
 
-// GraphConfig holds all the configuration for the user-configurable array of graphs which will be shown on the Run
-// and Sensitivity tabs, both the variable selections and the graph settings.
-export interface GraphConfig {
-    id: string; // We need to keep a persistent id to identify configs in vue when a graph is deleted from the array
-    selectedVariables: string[];
-    unselectedVariables: string[]; // We keep track of unselected variables too so we can retain on model update
-    settings: GraphSettings;
+export interface Graph {
+  id: string;
+  config: GraphConfig,
+  data: WodinPlotData
 }
 
 export interface GraphsState {
-    config: GraphConfig[];
-    fitGraphConfig: GraphConfig; // For Fit apps, the Fit tab graph needs to have its own settings
+    graphs: Graph[];
+    fitGraph: Graph; // For Fit apps, the Fit tab graph needs to have its own settings
 }
 

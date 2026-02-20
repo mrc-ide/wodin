@@ -1,8 +1,8 @@
 import { Store } from "vuex";
 import { computed } from "vue";
 import { AppState } from "../../store/appState/state";
-import { GraphsAction } from "../../store/graphs/actions";
-import { GraphConfig } from "@/store/graphs/state";
+import { GraphsAction, UpdateGraphPayload } from "../../store/graphs/actions";
+import { Graph } from "@/store/graphs/state";
 
 export interface SelectVariablesMixin {
     startDrag: (evt: DragEvent, variable: string) => void;
@@ -15,9 +15,9 @@ export default (
     store: Store<AppState>,
     emit: (event: string, ...args: unknown[]) => void,
     hasHiddenVariables: boolean,
-    graphConfig?: GraphConfig
+    graph?: Graph
 ): SelectVariablesMixin => {
-    const thisSrcGraphConfig = hasHiddenVariables ? "hidden" : graphConfig!.id;
+    const thisSrcGraphConfig = hasHiddenVariables ? "hidden" : graph!.id;
 
     const startDrag = (event: DragEvent, variable: string) => {
         const { dataTransfer, ctrlKey, metaKey } = event;
@@ -36,19 +36,19 @@ export default (
     };
 
     const updateSelectedVariables = (graphId: string, newVariables: string[]) => {
-        store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
-            id: graphId, selectedVariables: newVariables
-        });
+        store.dispatch(`graphs/${GraphsAction.UpdateGraph}`, {
+            id: graphId, config: { selectedVariables: newVariables }
+        } as UpdateGraphPayload);
     };
 
     const removeVariable = (graphId: string, variable: string) => {
-        const graphConfig = store.state.graphs.config.find(cfg => cfg.id === graphId)!;
+        const graphConfig = store.state.graphs.graphs.find(g => g.id === graphId)!.config;
         const srcVariables = graphConfig.selectedVariables.filter((v) => v !== variable);
         updateSelectedVariables(graphId, srcVariables);
     };
 
     const selectedVariables = computed<string[]>(() =>
-        hasHiddenVariables ? [] : graphConfig!.selectedVariables
+        hasHiddenVariables ? [] : graph!.config.selectedVariables
     );
 
     const onDrop = (evt: DragEvent) => {
@@ -61,16 +61,16 @@ export default (
             // add to this graph if necessary - do this before remove so, if a linked variable, it is not unlinked
             if (!hasHiddenVariables && !selectedVariables.value.includes(variable)) {
                 const newVars = [...selectedVariables.value, variable];
-                updateSelectedVariables(graphConfig!.id, newVars);
+                updateSelectedVariables(graph!.id, newVars);
             }
 
             if (srcGraphConfig !== "hidden" && !copy) {
                 // Remove variable from all graphs where it occurs if this is HiddenVariables, otherwise from source
                 // graph only
                 if (hasHiddenVariables) {
-                    store.state.graphs.config.forEach(config => {
-                        if (config.selectedVariables.includes(variable)) {
-                            removeVariable(config.id, variable);
+                    store.state.graphs.graphs.forEach(g => {
+                        if (g.config.selectedVariables.includes(variable)) {
+                            removeVariable(g.id, variable);
                         }
                     });
                 } else {

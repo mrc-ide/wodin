@@ -4,18 +4,8 @@
             <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
         </div>
         <action-required-message :message="updateMsg"></action-required-message>
-        <template v-for="config in graphConfigs" :key="config.id">
-            <run-stochastic-plot
-                v-if="isStochastic"
-                :fade-plot="!!updateMsg"
-                :graph-config="config"
-            ></run-stochastic-plot>
-            <run-plot
-                v-else
-                :fade-plot="!!updateMsg"
-                :graph-config="config"
-            >
-            </run-plot>
+        <template v-for="graph in graphs" :key="graph.id">
+            <wodin-plot :fade-plot="!!updateMsg" :graph="graph"/>
         </template>
         <div v-if="sumOfSquares">
             <span id="squares">Sum of squares: {{ sumOfSquares }}</span>
@@ -53,7 +43,6 @@ import { useStore } from "vuex";
 import { computed, defineComponent, onMounted, PropType, ref } from "vue";
 import VueFeather from "vue-feather";
 import { RunMutation } from "../../store/run/mutations";
-import RunPlot from "./RunPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { RunAction } from "../../store/run/actions";
 import userMessages from "../../userMessages";
@@ -64,22 +53,21 @@ import { anyTrue } from "../../utils";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import { AppType } from "../../store/appState/state";
 import { ModelGetter } from "../../store/model/getters";
-import RunStochasticPlot from "./RunStochasticPlot.vue";
 import { GraphsGetter } from "../../store/graphs/getters";
-import { GraphConfig } from "@/store/graphs/state";
-import { GraphsAction } from "@/store/graphs/actions";
+import WodinPlot from "../WodinPlot.vue";
+import { GraphsAction, UpdateGraphPayload } from "@/store/graphs/actions";
 import { STATIC_BUILD } from "@/parseEnv";
+import { FitState } from "@/store/fit/state";
 
 export default defineComponent({
     name: "RunTab",
     components: {
-        RunStochasticPlot,
         LoadingSpinner,
-        RunPlot,
         ErrorInfo,
         ActionRequiredMessage,
         DownloadOutput,
-        VueFeather
+        VueFeather,
+        WodinPlot
     },
     props: {
         hideRunButton: { type: Boolean, default: false },
@@ -87,7 +75,7 @@ export default defineComponent({
         visibleVars: { type: String as PropType<string | null>, default: null }
     },
     setup(props) {
-        const store = useStore();
+        const store = useStore<FitState>();
 
         const showDownloadOutput = ref(false);
 
@@ -102,7 +90,7 @@ export default defineComponent({
 
         const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
         const allSelectedVariables = computed(() => store.getters[`graphs/${GraphsGetter.allSelectedVariables}`]);
-        const graphConfigs = computed(() => store.state.graphs.config as GraphConfig[]);
+        const graphs = computed(() => store.state.graphs.graphs);
 
         // Enable run button if model has initialised and compile is not required
         const canRunModel = computed(() => {
@@ -143,11 +131,11 @@ export default defineComponent({
         onMounted(() => {
             if (props.visibleVars && STATIC_BUILD) {
                 const visibleVars = props.visibleVars.split(",").map(s => s.trim());
-                graphConfigs.value.forEach(cfg => {
-                    store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
-                        id: cfg.id,
-                        selectedVariables: visibleVars
-                    });
+                graphs.value.forEach(g => {
+                    store.dispatch(`graphs/${GraphsAction.UpdateGraph}`, {
+                        id: g.id,
+                        config: { selectedVariables: visibleVars }
+                    } as UpdateGraphPayload);
                 });
             }
         });
@@ -165,7 +153,7 @@ export default defineComponent({
             downloadUserFileName,
             toggleShowDownloadOutput,
             download,
-            graphConfigs,
+            graphs,
         };
     }
 });

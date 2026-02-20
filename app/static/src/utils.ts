@@ -18,7 +18,7 @@ import {
 } from "./store/sensitivity/state";
 import { AppState } from "./store/appState/state";
 import { AdvancedComponentType, AdvancedSettings, Tag } from "./store/run/state";
-import { Metadata } from "./plot";
+import { Metadata } from "./store/graphs/state";
 import Color from "color";
 
 export const freezer = {
@@ -226,7 +226,7 @@ export const allTrue = (x: Dict<boolean>): boolean => {
     return Object.values(x).every((el: boolean) => el);
 };
 
-export const anyTrue = (x: Dict<boolean>): boolean => {
+export const anyTrue = <T extends object>(x: T): boolean => {
     return Object.values(x).some((el: boolean) => el);
 };
 

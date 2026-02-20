@@ -15,7 +15,7 @@ import { ErrorsMutation } from "../errors/mutations";
 import { BaseSensitivityMutation, SensitivityMutation } from "../sensitivity/mutations";
 import { defaultSensitivityParamSettings } from "../sensitivity/sensitivity";
 import { MultiSensitivityMutation } from "../multiSensitivity/mutations";
-import { GraphsAction, UpdateSelectedVariablesPayload } from "../graphs/actions";
+import { GraphsAction, UpdateGraphPayload } from "../graphs/actions";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
@@ -68,14 +68,6 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
         const variables = state.odinModelResponse.metadata?.variables || [];
         commit(ModelMutation.SetPaletteModel, paletteModel(variables));
 
-        // Retain variable selections. Newly added variables will be selected by default in the first graph
-        const selectedVariables = variables.filter((s) => !rootState.graphs.config[0].unselectedVariables.includes(s));
-        dispatch(
-            `graphs/${GraphsAction.UpdateSelectedVariables}`,
-            { id: rootState.graphs.config[0].id, selectedVariables } as UpdateSelectedVariablesPayload,
-            { root: true }
-        );
-
         if (state.compileRequired) {
             commit(ModelMutation.SetCompileRequired, false);
             commit(`run/${RunMutation.SetRunRequired}`, { modelChanged: true }, { root: true });
@@ -110,6 +102,17 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
             dispatch(`fitData/${FitDataAction.UpdateLinkedVariables}`, null, { root: true });
             dispatch(`modelFit/${ModelFitAction.UpdateParamsToVary}`, null, { root: true });
         }
+
+        // TODO discuss, i think this hsould be different, we shouldnt need to care about unselected vars
+        // What about other graphs? it breaks currently, need to update all graphs and just take them to default maybe
+        //
+        // Retain variable selections. Newly added variables will be selected by default in the first graph
+        // const selectedVariables = variables.filter((s) => !rootState.graphs.config[0].unselectedVariables.includes(s));
+        dispatch(
+            `graphs/${GraphsAction.UpdateGraph}`,
+            { id: rootState.graphs.graphs[0].id, config: { selectedVariables: variables } } as UpdateGraphPayload,
+            { root: true }
+        );
     }
 };
 

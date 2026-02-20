@@ -1,55 +1,34 @@
-import { GraphsState, GraphConfig, fitGraphId } from "./state";
+import { GraphsState, fitGraphId, Graph } from "./state";
 
 export enum GraphsMutation {
-    SetGraphConfig = "SetGraphConfig",
-    SetAllGraphConfigs = "SetAllGraphConfigs",
+    SetGraph = "SetGraph",
+    SetAllGraphs = "SetAllGraphs",
     AddGraph = "AddGraph",
     DeleteGraph = "DeleteGraph",
 }
 
-export type SetGraphConfigPayload = Partial<Omit<GraphConfig, "settings">> & {
-    id: string,
-    settings?: Partial<GraphConfig["settings"]>
-};
-
 export const mutations = {
-    [GraphsMutation.SetGraphConfig](state: GraphsState, payload: SetGraphConfigPayload) {
+    [GraphsMutation.SetGraph](state: GraphsState, payload: Graph) {
         if (payload.id === fitGraphId) {
-            const oldGraphConfig = state.fitGraphConfig;
-            state.fitGraphConfig = {
-                ...oldGraphConfig,
-                ...payload,
-                settings: {
-                    ...oldGraphConfig.settings,
-                    ...payload.settings
-                }
-            };
+            state.fitGraph = payload;
         } else {
-            const graphConfigIdx = state.config.findIndex(config => config.id === payload.id);
+            const graphConfigIdx = state.graphs.findIndex(g => g.id === payload.id);
             if (graphConfigIdx === -1) return;
-            const oldGraphConfig = state.config[graphConfigIdx];
-            state.config[graphConfigIdx] = {
-                ...oldGraphConfig,
-                ...payload,
-                settings: {
-                    ...oldGraphConfig.settings,
-                    ...payload.settings
-                }
-            };
+            state.graphs[graphConfigIdx] = payload;
         }
     },
 
-    [GraphsMutation.SetAllGraphConfigs](state: GraphsState, payload: GraphConfig[]) {
-        state.config = payload;
+    [GraphsMutation.SetAllGraphs](state: GraphsState, payload: Graph[]) {
+        state.graphs = payload;
     },
 
-    [GraphsMutation.AddGraph](state: GraphsState, payload: GraphConfig) {
-        state.config.push(payload);
+    [GraphsMutation.AddGraph](state: GraphsState, payload: Graph) {
+        state.graphs.push(payload);
     },
 
     [GraphsMutation.DeleteGraph](state: GraphsState, payload: string) {
-        const graphConfigIdx = state.config.findIndex(config => config.id === payload);
+        const graphConfigIdx = state.graphs.findIndex(g => g.id === payload);
         if (graphConfigIdx === -1) return;
-        state.config.splice(graphConfigIdx, 1);
+        state.graphs.splice(graphConfigIdx, 1);
     }
 };

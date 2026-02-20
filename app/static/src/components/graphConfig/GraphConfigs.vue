@@ -1,8 +1,8 @@
 <template>
     <template v-if="fitTabIsOpen">
         <graph-settings
-            :key="JSON.stringify(fitGraphConfig)"
-            :graph-config="fitGraphConfig"
+            :key="JSON.stringify(fitGraph.config)"
+            :graph="fitGraph"
             class="graph-config-settings mb-1"
         ></graph-settings>
     </template>
@@ -12,9 +12,9 @@
             to move them to.
         </div>
         <graph-config
-            v-for="config in graphConfigs"
-            :graph-config="config"
-            :key="JSON.stringify(config)"
+            v-for="graph in graphs"
+            :graph="graph"
+            :key="JSON.stringify(graph.config)"
             :dragging="draggingVariable"
             @setDragging="setDraggingVariable"
         ></graph-config>
@@ -50,18 +50,18 @@ export default defineComponent({
         const setDraggingVariable = (value: boolean) => {
             draggingVariable.value = value;
         };
-        const graphConfigs = computed(() => store.state.graphs.config);
-        const fitGraphConfig = computed(() => store.state.graphs.fitGraphConfig);
+        const graphs = computed(() => store.state.graphs.graphs);
+        const fitGraph = computed(() => store.state.graphs.fitGraph);
         const addGraph = () => {
             store.dispatch(`graphs/${GraphsAction.NewGraph}`);
         };
         return {
             draggingVariable,
             setDraggingVariable,
-            graphConfigs,
+            graphs,
             addGraph,
             fitTabIsOpen,
-            fitGraphConfig
+            fitGraph
         };
     }
 });

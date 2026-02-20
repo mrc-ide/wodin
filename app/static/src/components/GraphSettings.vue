@@ -14,14 +14,14 @@
 <script lang="ts">
 import { defineComponent, computed, PropType } from "vue";
 import { useStore } from "vuex";
-import { GraphsMutation, SetGraphConfigPayload } from "../store/graphs/mutations";
-import { GraphConfig } from "@/store/graphs/state";
+import { Graph } from "@/store/graphs/state";
+import { GraphsAction, UpdateGraphPayload } from "@/store/graphs/actions";
 
 export default defineComponent({
     name: "GraphSettings",
     props: {
-        graphConfig: {
-            type: Object as PropType<GraphConfig>,
+        graph: {
+            type: Object as PropType<Graph>,
             required: true,
         },
     },
@@ -29,28 +29,28 @@ export default defineComponent({
         const store = useStore();
         const logScaleYAxis = computed({
             get() {
-                return props.graphConfig.settings.logScaleYAxis;
+                return props.graph.config.logScaleYAxis;
             },
             set(newValue) {
-                store.commit(`graphs/${GraphsMutation.SetGraphConfig}`, {
-                    id: props.graphConfig.id,
-                    settings: {
-                      logScaleYAxis: newValue,
-                      yAxisRange: null
+                store.dispatch(`graphs/${GraphsAction.UpdateGraph}`, {
+                    id: props.graph.id,
+                    config: {
+                        logScaleYAxis: newValue,
+                        yAxisRange: null
                     }
-                } as SetGraphConfigPayload);
+                } as UpdateGraphPayload);
             }
         });
 
         const lockYAxis = computed({
             get() {
-                return props.graphConfig.settings.lockYAxis;
+                return props.graph.config.lockYAxis;
             },
             set(newValue) {
-                store.commit(`graphs/${GraphsMutation.SetGraphConfig}`, {
-                    id: props.graphConfig.id,
-                    settings: { lockYAxis: newValue }
-                } as SetGraphConfigPayload);
+                store.dispatch(`graphs/${GraphsAction.UpdateGraph}`, {
+                    id: props.graph.id,
+                    config: { lockYAxis: newValue }
+                } as UpdateGraphPayload);
             }
         });
 

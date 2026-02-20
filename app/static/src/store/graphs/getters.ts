@@ -19,7 +19,7 @@ export interface GraphsGettersValues {
 
 export const getters: GraphsGetters & GetterTree<GraphsState, AppState> = {
     [GraphsGetter.allSelectedVariables]: (state: GraphsState): string[] => {
-        return state.config.flatMap((c) => c.selectedVariables); // TODO: dedupe, in mrc-5443
+        return state.graphs.flatMap((c) => c.config.selectedVariables); // TODO: dedupe, in mrc-5443
     },
     [GraphsGetter.hiddenVariables]: (_, graphsGetters: GraphsGettersValues, rootState: AppState): string[] => {
         const allSelected = graphsGetters[GraphsGetter.allSelectedVariables];

@@ -1,47 +1,81 @@
 import { ActionTree } from "vuex";
-import { GraphsMutation, SetGraphConfigPayload } from "./mutations";
-import { AppState, AppType } from "../appState/state";
+import { markRaw } from "vue";
+import { GraphsMutation } from "./mutations";
+import { AppState, AppType, VisualisationTab } from "../appState/state";
 import { FitDataAction } from "../fitData/actions";
-import { defaultGraphSettings, GraphsState } from "./state";
+import { defaultGraphConfig, fitGraphId, Graph, GraphConfig, GraphsState } from "./state";
 import { newUid } from "../../utils";
+import { getPlotData } from "@/plotData";
 
 export enum GraphsAction {
-    UpdateSelectedVariables = "UpdateSelectedVariables",
+    UpdateGraph = "UpdateGraph",
+    UpdateAllGraphs = "UpdateAllGraphs",
     NewGraph = "NewGraph"
 }
 
-export type UpdateSelectedVariablesPayload = { id: string; selectedVariables: string[] };
+export type UpdateGraphPayload = {
+    id: string,
+    config: Partial<GraphConfig>,
+};
+
+export type UpdateAllGraphsPayload = { id: string, config: GraphConfig }[];
 
 export const actions: ActionTree<GraphsState, AppState> = {
-    UpdateSelectedVariables(context, payload: UpdateSelectedVariablesPayload) {
-        const { commit, dispatch, rootState } = context;
-        // Maintain unselected variables too, so we know which variables had been explicitly unselected when model
-        // updates
-        const allVariables = rootState.model.odinModelResponse?.metadata?.variables || [];
-        const unselectedVariables = allVariables.filter((s) => !payload.selectedVariables.includes(s)) || [];
+    UpdateGraph(context, payload: UpdateGraphPayload) {
+        const { commit, dispatch, rootState, state } = context;
+
+        const oldConfig = payload.id === fitGraphId
+            ? state.fitGraph.config
+            : state.graphs.find(g => g.id === payload.id)!.config;
+
+        const newConfig = {
+            ...oldConfig,
+            ...payload.config,
+        };
+
+        const newGraph = {
+            id: payload.id,
+            config: newConfig,
+            data: markRaw(getPlotData(context, newConfig))
+        };
+
         // sort the selected variables to match the order in the model
-        const selectedVariables = payload.selectedVariables.sort((a, b) =>
+        const allVariables = rootState.model.odinModelResponse?.metadata?.variables || [];
+        newGraph.config.selectedVariables.sort((a, b) =>
             allVariables.indexOf(a) > allVariables.indexOf(b) ? 1 : -1
         );
 
-        commit(GraphsMutation.SetGraphConfig, {
-            id: payload.id,
-            selectedVariables,
-            unselectedVariables
-        } as SetGraphConfigPayload);
-
-        if (rootState.appType === AppType.Fit) {
-            dispatch(`fitData/${FitDataAction.UpdateLinkedVariables}`, null, { root: true });
-        }
+        commit(GraphsMutation.SetGraph, newGraph);
     },
+
+    UpdateAllGraphs(context, payload: UpdateAllGraphsPayload) {
+        const { commit, rootState } = context;
+
+        const newGraphs = payload.map(({ id, config }) => {
+          const newData = markRaw(getPlotData(context, config));
+          const newGraph = { id, config, data: newData };
+
+          const allVariables = rootState.model.odinModelResponse?.metadata?.variables || [];
+          newGraph.config.selectedVariables.sort((a, b) =>
+              allVariables.indexOf(a) > allVariables.indexOf(b) ? 1 : -1
+          );
+
+          return newGraph;
+        });
+
+        commit(GraphsMutation.SetAllGraphs, newGraphs);
+    },
+
     NewGraph(context) {
-        const { rootState, commit } = context;
-        const unselectedVariables = [...(rootState.model.odinModelResponse?.metadata?.variables || [])];
+        const { commit, state } = context;
+        const { config: { xAxisRange } } = state.graphs[0];
         commit(GraphsMutation.AddGraph, {
             id: newUid(),
-            settings: defaultGraphSettings(),
-            selectedVariables: [],
-            unselectedVariables
-        });
+            config: {
+                ...defaultGraphConfig(),
+                xAxisRange
+            },
+            data: { points: [], lines: [] }
+        } as Graph);
     }
 };

@@ -1,16 +1,10 @@
 import { format } from "d3-format";
 import { Palette, paletteData } from "./palette";
-import type { AllFitData, FitData, FitDataLink } from "./store/fitData/state";
+import type { FitData, FitDataLink } from "./store/fitData/state";
 import { DiscreteSeriesSet, OdinSeriesSet, OdinSeriesSetValues, OdinUserTypeSeriesSet } from "./types/responseTypes";
 import { Dict } from "./types/utilTypes";
-import { Lines, ScatterPoints, LineStyle, Point } from "@reside-ic/skadi-chart";
-
-export type Metadata = {
-  name: string,
-  tooltipName: string,
-  color: string
-};
-export type WodinPlotData = { lines: Lines<Metadata>, points: ScatterPoints<Metadata> };
+import { LineStyle, Point } from "@reside-ic/skadi-chart";
+import { WodinPlotData } from "./store/graphs/state";
 
 export const fadePlotStyle = "opacity:0.5;";
 
@@ -143,11 +137,7 @@ export function allFitDataToSkadiChart(
   return Object.keys(linkedVariables).flatMap((name: string): WodinPlotData["points"] => {
     let color = palette[name];
     const variable = linkedVariables[name];
-    if (variable) {
-      // If there is a linked variable, only show data if the variable is selected - if not selected, render the
-      // series, but as transparent so that all graph x axes are consistent
-      color = selectedVariables.includes(variable) ? paletteModel[variable] : "transparent";
-    }
+    if (variable) color = paletteModel[variable];
 
     const points: WodinPlotData["points"] = [];
     for (let i = 0; i < filteredData.length; i++) {

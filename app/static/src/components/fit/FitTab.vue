@@ -13,7 +13,7 @@
                 Cancel fit
             </button>
             <action-required-message :message="actionRequiredMessage"></action-required-message>
-            <fit-plot :fade-plot="!!actionRequiredMessage" :model-fit="true">
+            <wodin-plot :fade-plot="!!actionRequiredMessage" :graph="fitGraph">
                 <div v-if="iterations" class="fit-summary-container">
                     <vue-feather
                         v-if="iconType"
@@ -27,7 +27,7 @@
                     <span class="ms-2">Sum of squares: {{ sumOfSquares }}</span>
                     <div v-if="cancelled" id="fit-cancelled-msg" class="small text-danger">{{ cancelledMsg }}</div>
                 </div>
-            </fit-plot>
+            </wodin-plot>
             <error-info :error="error"></error-info>
         </div>
     </div>
@@ -37,7 +37,6 @@
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
-import FitPlot from "./FitPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { ModelFitAction } from "../../store/modelFit/actions";
 import { ModelFitGetter } from "../../store/modelFit/getters";
@@ -48,19 +47,21 @@ import { fitRequirementsExplanation, fitUpdateRequiredExplanation } from "./supp
 import { allTrue, anyTrue } from "../../utils";
 import LoadingButton from "../LoadingButton.vue";
 import ErrorInfo from "../ErrorInfo.vue";
+import { FitState } from "@/store/fit/state";
+import WodinPlot from "../WodinPlot.vue";
 
 export default defineComponent({
     name: "FitTab",
     components: {
         ErrorInfo,
         LoadingSpinner,
-        FitPlot,
         ActionRequiredMessage,
         VueFeather,
-        LoadingButton
+        LoadingButton,
+        WodinPlot
     },
     setup() {
-        const store = useStore();
+        const store = useStore<FitState>();
         const namespace = "modelFit";
 
         const fitRequirements = computed(() => store.getters[`${namespace}/${ModelFitGetter.fitRequirements}`]);
@@ -77,6 +78,8 @@ export default defineComponent({
         const fitting = computed(() => store.state.modelFit.fitting);
         const cancelled = computed(() => iterations.value && !fitting.value && !converged.value);
         const sumOfSquares = computed(() => store.state.modelFit.sumOfSquares);
+
+        const fitGraph = computed(() => store.state.graphs.fitGraph);
 
         const actionRequiredMessage = computed(() => {
             if (error.value) {
@@ -136,7 +139,8 @@ export default defineComponent({
             actionRequiredMessage,
             error,
             iconType,
-            iconClass
+            iconClass,
+            fitGraph
         };
     }
 });
