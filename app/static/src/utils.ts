@@ -18,8 +18,8 @@ import {
 } from "./store/sensitivity/state";
 import { AppState } from "./store/appState/state";
 import { AdvancedComponentType, AdvancedSettings, Tag } from "./store/run/state";
-import Color from "color";
 import { Metadata } from "./store/graphs/state";
+import Color from "color";
 
 export const freezer = {
     deepFreeze: (data: unknown): unknown => {
