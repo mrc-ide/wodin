@@ -7,7 +7,7 @@ import { GraphsAction } from "../../../../src/store/graphs/actions";
 import GraphConfigs from "../../../../src/components/graphConfig/GraphConfigs.vue";
 import GraphConfig from "../../../../src/components/graphConfig/GraphConfig.vue";
 import HiddenVariables from "../../../../src/components/graphConfig/HiddenVariables.vue";
-import { fitGraphId } from "@/store/graphs/state";
+import { fitGraphId, Graph } from "@/store/graphs/state";
 import { VisualisationTab } from "@/store/appState/state";
 import GraphSettings from "@/components/GraphSettings.vue";
 
@@ -16,11 +16,13 @@ describe("GraphConfigs", () => {
         vi.clearAllMocks();
     });
 
-    const fitGraphConfig = {
+    const fitGraph = {
         id: fitGraphId,
-        selectedVariabled: ["Fit S"],
-        unselectedVariabled: ["Fit I"]
-    };
+        config: {
+            selectedVariabled: ["Fit S"],
+        } as any,
+        data: { lines: [], points: [] }
+    } as Graph;
     const mockNewGraph = vi.fn();
     const namespaced = true;
     const getWrapper = (fitTabOpen = false) => {
@@ -35,10 +37,10 @@ describe("GraphConfigs", () => {
                 graphs: {
                     namespaced,
                     state: {
-                        fitGraphConfig,
-                        config: [
-                            { selectedVariables: ["S"], unselectedVariables: ["I", "R"] },
-                            { selectedVariables: ["I"], unselectedVariables: ["S", "R"] }
+                        fitGraph,
+                        graphs: [
+                            { config: { selectedVariables: ["S"] } },
+                            { config: { selectedVariables: ["I"] } }
                         ],
                     },
                     actions: {
@@ -61,12 +63,12 @@ describe("GraphConfigs", () => {
         );
         const graphConfigComps = wrapper.findAllComponents(GraphConfig);
         expect(graphConfigComps.length).toBe(2);
-        expect(graphConfigComps.at(0)!.props("graphConfig")).toStrictEqual(
-            { selectedVariables: ["S"], unselectedVariables: ["I", "R"] }
+        expect(graphConfigComps.at(0)!.props("graph")).toStrictEqual(
+            { config: { selectedVariables: ["S"] } }
         );
         expect(graphConfigComps.at(0)!.props("dragging")).toBe(false);
-        expect(graphConfigComps.at(1)!.props("graphConfig")).toStrictEqual(
-            { selectedVariables: ["I"], unselectedVariables: ["S", "R"] }
+        expect(graphConfigComps.at(1)!.props("graph")).toStrictEqual(
+            { config: { selectedVariables: ["I"] } }
         );
         expect(graphConfigComps.at(1)!.props("dragging")).toBe(false);
         expect(wrapper.find("button").text()).toBe("Add Graph");
@@ -76,7 +78,7 @@ describe("GraphConfigs", () => {
     it("renders as expected when fit tab is open", () => {
         const wrapper = getWrapper(true);
         const graphSettings = wrapper.findComponent(GraphSettings);
-        expect(graphSettings.props("graphConfig")).toStrictEqual(fitGraphConfig);
+        expect(graphSettings.props("graph")).toStrictEqual(fitGraph);
     });
 
     it("sets dragging on emit from GraphConfig", async () => {

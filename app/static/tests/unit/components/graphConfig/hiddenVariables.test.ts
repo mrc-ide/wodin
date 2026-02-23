@@ -21,7 +21,7 @@ describe("HiddenVariables", () => {
         vi.clearAllMocks();
     });
 
-    const mockUpdateSelectedVariables = vi.fn();
+    const mockUpdateGraph = vi.fn();
 
     const getWrapper = (hiddenVariables = ["I", "R"]) => {
         const store = new Vuex.Store<BasicState>({
@@ -30,19 +30,19 @@ describe("HiddenVariables", () => {
                 graphs: {
                     namespaced: true,
                     state: {
-                        config: [
+                        graphs: [
                             {
                                 id: "S&J",
-                                selectedVariables: ["S", "J"]
+                                config: { selectedVariables: ["S", "J"] }
                             },
                             {
                                 id: "OnlyS",
-                                selectedVariables: ["S"]
+                                config: { selectedVariables: ["S"] }
                             }
                         ]
                     },
                     actions: {
-                        [GraphsAction.UpdateSelectedVariables]: mockUpdateSelectedVariables
+                        [GraphsAction.UpdateGraph]: mockUpdateGraph
                     },
                     getters: {
                         [GraphsGetter.hiddenVariables]: () => hiddenVariables
@@ -117,9 +117,13 @@ describe("HiddenVariables", () => {
         };
         const dropPanel = wrapper.find(".hidden-variables-panel");
         await dropPanel.trigger("drop", { dataTransfer });
-        expect(mockUpdateSelectedVariables.mock.calls.length).toBe(2);
-        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({ id: "S&J", selectedVariables: ["J"] });
-        expect(mockUpdateSelectedVariables.mock.calls[1][1]).toStrictEqual({ id: "OnlyS", selectedVariables: [] });
+        expect(mockUpdateGraph.mock.calls.length).toBe(2);
+        expect(mockUpdateGraph.mock.calls[0][1]).toStrictEqual({
+            id: "S&J", config: { selectedVariables: ["J"] }
+        });
+        expect(mockUpdateGraph.mock.calls[1][1]).toStrictEqual({
+            id: "OnlyS", config: { selectedVariables: [] }
+        });
     });
 
     it("shows drop zone when dragging", async () => {

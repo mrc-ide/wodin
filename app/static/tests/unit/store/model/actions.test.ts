@@ -38,7 +38,13 @@ describe("Model actions", () => {
             currentCode: ["line1", "line2"]
         },
         graphs: {
-            config: [{ id: "123", selectedVariables: ["x", "y"], unselectedVariables: [] }]
+            graphs: [{
+                id: "123",
+                config: {
+                    selectedVariables: ["x", "y"],
+                },
+                data: { lines: [], points: [] }
+            }]
         },
         sensitivity: {
             paramSettings: {
@@ -204,8 +210,8 @@ describe("Model actions", () => {
 
         // does not dispatch updated linked variables or update params to vary if app type is not Fit
         expect(dispatch.mock.calls.length).toBe(1);
-        expect(dispatch.mock.calls[0][0]).toBe(`graphs/${GraphsAction.UpdateSelectedVariables}`);
-        expect(dispatch.mock.calls[0][1]).toStrictEqual({ id: "123", selectedVariables: ["x", "y", "z"] });
+        expect(dispatch.mock.calls[0][0]).toBe(`graphs/${GraphsAction.UpdateGraph}`);
+        expect(dispatch.mock.calls[0][1]).toStrictEqual({ id: "123", config: { selectedVariables: ["x", "y", "z"] } });
     });
 
     it("does not set multi-sensitivity update required or parameter to vary when multiSensitivity not enabled", () => {
@@ -217,7 +223,7 @@ describe("Model actions", () => {
                 paramSettings: {}
             },
             graphs: {
-                config: [{ selectedVariables: ["x", "y"], unselectedVariables: [] }]
+                graphs: [{ config: { selectedVariables: ["x", "y"] } }]
             }
         };
         (actions[ModelAction.CompileModel] as any)({
@@ -235,7 +241,7 @@ describe("Model actions", () => {
         expect(commit.mock.calls[5][0]).toBe(`sensitivity/${BaseSensitivityMutation.SetUpdateRequired}`);
         expect(commit.mock.calls[6][0]).toBe(`sensitivity/${SensitivityMutation.SetParameterToVary}`);
         expect(dispatch.mock.calls.length).toBe(1);
-        expect(dispatch.mock.calls[0][0]).toBe(`graphs/${GraphsAction.UpdateSelectedVariables}`);
+        expect(dispatch.mock.calls[0][0]).toBe(`graphs/${GraphsAction.UpdateGraph}`);
     });
 
     it("compile does not update multiSensitivity param settings if multisensitivity is not configured", () => {
@@ -302,7 +308,7 @@ describe("Model actions", () => {
                 }
             },
             graphs: {
-                config: [{ id: "123", selectedVariables: ["x", "y"], unselectedVariables: [] }]
+                graphs: [{ id: "123", config: { selectedVariables: ["x", "y"] } }]
             }
         };
         const commit = vi.fn();
@@ -330,10 +336,10 @@ describe("Model actions", () => {
         expect(commit.mock.calls[7][2]).toStrictEqual({ root: true });
 
         expect(dispatch).toHaveBeenCalledTimes(3);
-        expect(dispatch.mock.calls[0][0]).toBe(`graphs/${GraphsAction.UpdateSelectedVariables}`);
-        expect(dispatch.mock.calls[0][1]).toStrictEqual({ id: "123", selectedVariables: ["x", "y"] });
-        expect(dispatch.mock.calls[1][0]).toBe(`fitData/${FitDataAction.UpdateLinkedVariables}`);
-        expect(dispatch.mock.calls[2][0]).toBe(`modelFit/${ModelFitAction.UpdateParamsToVary}`);
+        expect(dispatch.mock.calls[0][0]).toBe(`fitData/${FitDataAction.UpdateLinkedVariables}`);
+        expect(dispatch.mock.calls[1][0]).toBe(`modelFit/${ModelFitAction.UpdateParamsToVary}`);
+        expect(dispatch.mock.calls[2][0]).toBe(`graphs/${GraphsAction.UpdateGraph}`);
+        expect(dispatch.mock.calls[2][1]).toStrictEqual({ id: "123", config: { selectedVariables: ["x", "y"] } });
     });
 
     it("compile model does not update paramToVary if current parameter exists in new model", () => {
@@ -390,8 +396,8 @@ describe("Model actions", () => {
         expect(commit.mock.calls[7][0]).toBe(`multiSensitivity/${MultiSensitivityMutation.SetParamSettings}`);
 
         expect(dispatch.mock.calls.length).toBe(1);
-        expect(dispatch.mock.calls[0][0]).toBe(`graphs/${GraphsAction.UpdateSelectedVariables}`);
-        expect(dispatch.mock.calls[0][1]).toStrictEqual({ id: "123", selectedVariables: ["x", "y"] });
+        expect(dispatch.mock.calls[0][0]).toBe(`graphs/${GraphsAction.UpdateGraph}`);
+        expect(dispatch.mock.calls[0][1]).toStrictEqual({ id: "123", config: { selectedVariables: ["x", "y"] } });
     });
 
     it("compile model does not update runRequired or compileRequired if compileRequired was false", () => {
@@ -420,8 +426,8 @@ describe("Model actions", () => {
         expect(commit.mock.calls[4][1]).toStrictEqual([defaultSensitivityParamSettings()]);
 
         expect(dispatch.mock.calls.length).toBe(1);
-        expect(dispatch.mock.calls[0][0]).toBe(`graphs/${GraphsAction.UpdateSelectedVariables}`);
-        expect(dispatch.mock.calls[0][1]).toStrictEqual({ id: "123", selectedVariables: ["x", "y"] });
+        expect(dispatch.mock.calls[0][0]).toBe(`graphs/${GraphsAction.UpdateGraph}`);
+        expect(dispatch.mock.calls[0][1]).toStrictEqual({ id: "123", config: { selectedVariables: ["x", "y"] } });
     });
 
     it("compile model does nothing if no odin response", () => {
@@ -551,8 +557,8 @@ describe("Model actions", () => {
         });
 
         expect(dispatch.mock.calls.length).toBe(3);
-        expect(dispatch.mock.calls[1][0]).toBe(`graphs/${GraphsAction.UpdateSelectedVariables}`);
-        expect(dispatch.mock.calls[1][1]).toStrictEqual({ id: "123", selectedVariables: ["x", "y"] });
+        expect(dispatch.mock.calls[1][0]).toBe(`graphs/${GraphsAction.UpdateGraph}`);
+        expect(dispatch.mock.calls[1][1]).toStrictEqual({ id: "123", config: { selectedVariables: ["x", "y"] } });
 
         expect(dispatch.mock.calls[2][0]).toBe(`run/${RunAction.RunModel}`);
     });

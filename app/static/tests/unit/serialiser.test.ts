@@ -20,12 +20,12 @@ import {
     mockSessionsState,
     mockVersionsState
 } from "../mocks";
-import { defaultState as defaultGraphsState } from "../../src/store/graphs/graphs";
 import { Language } from "../../src/types/languageTypes";
 import { AdvancedOptions } from "../../src/types/responseTypes";
 import { AdvancedComponentType } from "../../src/store/run/state";
 import { noSensitivityUpdateRequired } from "../../src/store/sensitivity/sensitivity";
-import { defaultGraphSettings, fitGraphId, GraphConfig, GraphsState } from "../../src/store/graphs/state";
+import { defaultGraphConfig, fitGraphId, Graph } from "../../src/store/graphs/state";
+import { SerialisedGraphsState } from "@/types/serialisationTypes";
 
 vi.mock("../../src/utils", () => {
     return {
@@ -370,36 +370,35 @@ describe("serialise", () => {
         sessionsMetadata: []
     });
 
-    const defaultFitGraphConfig: GraphConfig = {
+    const defaultFitGraph: Graph = {
         id: fitGraphId,
-        selectedVariables: [],
-        unselectedVariables: [],
-        settings: defaultGraphSettings()
+        config: defaultGraphConfig(),
+        data: { lines: [], points: [] }
     }
 
     const graphsState = mockGraphsState({
-        fitGraphConfig: {
+        fitGraph: {
             id: fitGraphId,
-            selectedVariables: ["S", "I"],
-            unselectedVariables: ["R"],
-            settings: {
-              logScaleYAxis: true,
-              lockYAxis: true,
-              yAxisRange: [1, 2],
-              xAxisRange: [0, 10]
-            }
+            config: {
+                selectedVariables: ["S", "I"],
+                logScaleYAxis: true,
+                lockYAxis: true,
+                yAxisRange: [1, 2],
+                xAxisRange: [0, 10]
+            },
+            data: { lines: [], points: [] }
         },
-        config: [
+        graphs: [
             {
                 id: "123",
-                selectedVariables: ["S", "I"],
-                unselectedVariables: ["R"],
-                settings: {
+                config: {
+                    selectedVariables: ["S", "I"],
                     logScaleYAxis: false,
                     lockYAxis: true,
                     yAxisRange: [10, 20],
                     xAxisRange: [0, 100]
-                }
+                },
+                data: { lines: [], points: [] }
             }
         ]
     });
@@ -563,24 +562,22 @@ describe("serialise", () => {
         }
     };
 
-    const expectedGraphs: GraphsState = {
-        fitGraphConfig: {
+    const expectedGraphs: SerialisedGraphsState = {
+        fitGraph: {
           id: fitGraphId,
-          selectedVariables: ["S", "I"],
-          unselectedVariables: ["R"],
-          settings: {
+          config: {
+            selectedVariables: ["S", "I"],
             logScaleYAxis: true,
             lockYAxis: true,
             yAxisRange: [1, 2],
             xAxisRange: [0, 10]
           }
         },
-        config: [
+        graphs: [
             {
                 id: "123",
-                selectedVariables: ["S", "I"],
-                unselectedVariables: ["R"],
-                settings: {
+                config: {
+                    selectedVariables: ["S", "I"],
                     logScaleYAxis: false,
                     lockYAxis: true,
                     yAxisRange: [10, 20],
@@ -754,100 +751,7 @@ describe("serialise", () => {
             fitData: mockFitDataState(),
             modelFit: mockModelFitState(),
             versions: mockVersionsState(),
-            graphs: mockGraphsState({
-                config: [
-                    {
-                        id: "123",
-                        selectedVariables: [],
-                        unselectedVariables: [],
-                        settings: defaultGraphSettings()
-                    }
-                ],
-                fitGraphConfig: defaultFitGraphConfig
-            })
+            graphs: mockGraphsState()
         });
-    });
-
-    it("deserialise initialises selected variables if required", () => {
-        const serialised = {
-            openVisualisationTab: VisualisationTab.Fit,
-            code: mockCodeState(),
-            model: mockModelState({
-                odinModelResponse: {
-                    metadata: {
-                        variables: ["S", "I", "R"]
-                    }
-                }
-            } as any),
-            run: { ...mockRunState(), advancedSettings: expectedRun.advancedSettings },
-            sensitivity: mockSensitivityState(),
-            multiSensitivity: mockMultiSensitivityState(),
-            fitData: mockFitDataState(),
-            modelFit: mockModelFitState(),
-            versions: mockVersionsState()
-        } as any;
-
-        const target = {
-            sessionId: "123",
-            appType: AppType.Fit,
-            config: {},
-            openVisualisationTab: VisualisationTab.Run,
-            code: {},
-            model: {},
-            run: {},
-            sensitivity: {},
-            fitData: {},
-            modelFit: {},
-            graphs: defaultGraphsState(),
-            versions: null
-        } as any;
-        deserialiseState(target, serialised);
-        expect(target.graphs.config).toStrictEqual([
-            {
-                id: "12345",
-                selectedVariables: ["S", "I", "R"],
-                unselectedVariables: [],
-                settings: defaultGraphSettings()
-            }
-        ]);
-        expect(target.graphs.fitGraphConfig).toStrictEqual(defaultFitGraphConfig);
-    });
-
-    it("deserialises default graph settings when undefined in serialised state", () => {
-        // serialised state with no graph settings
-        const serialised = {
-            openVisualisationTab: VisualisationTab.Fit,
-            code: mockCodeState(),
-            model: mockModelState(),
-            run: { ...mockRunState(), advancedSettings: expectedRun.advancedSettings },
-            sensitivity: mockSensitivityState(),
-            multiSensitivity: mockMultiSensitivityState(),
-            fitData: mockFitDataState(),
-            modelFit: mockModelFitState(),
-            versions: mockVersionsState()
-        } as any;
-
-        // target state with default graph settings - as module will initialise to
-        const target = {
-            sessionId: "123",
-            appType: AppType.Fit,
-            config: {},
-            openVisualisationTab: VisualisationTab.Run,
-            code: {},
-            model: {},
-            run: {},
-            sensitivity: {},
-            fitData: {},
-            modelFit: {},
-            versions: null,
-            graphs: defaultGraphsState()
-        } as any;
-        // sanity check
-        expect(target.graphs.fitGraphConfig.settings.logScaleYAxis).toBe(false);
-        expect(target.graphs.config[0].settings.logScaleYAxis).toBe(false);
-
-        deserialiseState(target, serialised);
-        expect(target.graphs.fitGraphConfig.settings.logScaleYAxis).toBe(false);
-        expect(target.graphs.config[0].settings.logScaleYAxis).toBe(false);
     });
 });

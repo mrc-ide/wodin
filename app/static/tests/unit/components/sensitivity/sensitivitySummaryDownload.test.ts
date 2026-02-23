@@ -15,7 +15,7 @@ import LoadingSpinner from "../../../../src/components/LoadingSpinner.vue";
 import { ModelGetter } from "../../../../src/store/model/getters";
 import { getters as graphsGetters } from "../../../../src/store/graphs/getters";
 import { mockGraphsState } from "../../../mocks";
-import { defaultGraphSettings } from "../../../../src/store/graphs/state";
+import { defaultGraphConfig } from "@/store/graphs/state";
 
 describe("SensitivitySummaryDownload", () => {
     const mockSetUserSummaryDownloadFileName = vi.fn();
@@ -85,12 +85,14 @@ describe("SensitivitySummaryDownload", () => {
                 graphs: {
                     namespaced: true,
                     state: mockGraphsState({
-                        config: [
+                        graphs: [
                             {
                                 id: "123",
-                                selectedVariables: ["S"],
-                                unselectedVariables: [],
-                                settings: defaultGraphSettings()
+                                config: {
+                                    ...defaultGraphConfig(),
+                                    selectedVariables: ["S"],
+                                },
+                                data: { lines: [], points: [] }
                             }
                         ]
                     }),

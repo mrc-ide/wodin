@@ -119,33 +119,4 @@ describe("Run getters", () => {
         });
         expect((getters[RunGetter.runParameterSetsIsRequired] as any)(state)).toBe(true);
     });
-
-    it("gets visibleParameterSetNames", () => {
-        const state = mockRunState({
-            parameterSets: [
-                {
-                    name: "Set 1",
-                    displayName: "Set 1",
-                    displayNameErrorMsg: "",
-                    parameterValues: { alpha: 1 },
-                    hidden: false
-                },
-                {
-                    name: "Set 2",
-                    displayName: "Set 2",
-                    displayNameErrorMsg: "",
-                    parameterValues: { alpha: 1 },
-                    hidden: true
-                },
-                {
-                    name: "Set 3",
-                    displayName: "Set 3",
-                    displayNameErrorMsg: "",
-                    parameterValues: { alpha: 1 },
-                    hidden: false
-                }
-            ]
-        });
-        expect((getters[RunGetter.visibleParameterSetNames] as any)(state)).toStrictEqual(["Set 1", "Set 3"]);
-    });
 });

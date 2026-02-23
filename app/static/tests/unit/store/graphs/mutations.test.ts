@@ -1,109 +1,127 @@
 import { GraphsMutation, mutations } from "../../../../src/store/graphs/mutations";
-import { defaultGraphSettings, fitGraphId, GraphConfig, GraphsState } from "../../../../src/store/graphs/state";
+import { defaultGraphConfig, fitGraphId, Graph, GraphConfig, GraphsState } from "../../../../src/store/graphs/state";
 import { mockGraphsState } from "../../../mocks";
 
 describe("Graphs mutations", () => {
     const state: GraphsState = mockGraphsState({
-        fitGraphConfig: {
+        fitGraph: {
             id: fitGraphId,
-            selectedVariables: ["R"],
-            unselectedVariables: [],
-            settings: defaultGraphSettings()
+            config: {
+                ...defaultGraphConfig(),
+                selectedVariables: ["R"],
+            },
+            data: { lines: [], points: [] }
         },
-        config: [
+        graphs: [
             {
                 id: "123",
-                selectedVariables: ["S"],
-                unselectedVariables: [],
-                settings: defaultGraphSettings()
+                config: {
+                    ...defaultGraphConfig(),
+                    selectedVariables: ["S"],
+                },
+                data: { lines: [], points: [] }
             },
             {
                 id: "456",
-                selectedVariables: ["I"],
-                unselectedVariables: [],
-                settings: defaultGraphSettings()
-            }
+                config: {
+                    ...defaultGraphConfig(),
+                    selectedVariables: ["I"],
+                },
+                data: { lines: [], points: [] }
+            },
         ]
     });
 
-    it("can set graph config", () => {
-        mutations[GraphsMutation.SetGraphConfig](state, {
+    it("can set graph", () => {
+        mutations[GraphsMutation.SetGraph](state, {
             id: "123",
-            selectedVariables: ["S1"],
-            settings: { logScaleYAxis: true }
-        });
+            config: {
+                selectedVariables: ["S1"],
+                logScaleYAxis: true
+            }
+        } as any);
 
-        expect(state.config[0].selectedVariables).toStrictEqual(["S1"]);
-        expect(state.config[0].settings.logScaleYAxis).toBe(true);
+        expect(state.graphs[0].config.selectedVariables).toStrictEqual(["S1"]);
+        expect(state.graphs[0].config.logScaleYAxis).toBe(true);
     });
 
-    it("can set fit graph config", () => {
-        mutations[GraphsMutation.SetGraphConfig](state, {
+    it("can set fit graph", () => {
+        mutations[GraphsMutation.SetGraph](state, {
             id: fitGraphId,
-            selectedVariables: ["S1"],
-            settings: { logScaleYAxis: true }
-        });
+            config: {
+                selectedVariables: ["S1"],
+                logScaleYAxis: true
+            }
+        } as any);
 
-        expect(state.fitGraphConfig.selectedVariables).toStrictEqual(["S1"]);
-        expect(state.fitGraphConfig.settings.logScaleYAxis).toBe(true);
+        expect(state.fitGraph.config.selectedVariables).toStrictEqual(["S1"]);
+        expect(state.fitGraph.config.logScaleYAxis).toBe(true);
     });
 
-    it("can set all graph configs (not including fit graph config)", () => {
-        const newGraphConfig: GraphConfig[] = [
+    it("can set all graphs (not including fit graph)", () => {
+        const newGraphs: Graph[] = [
             {
                 id: "1234",
-                selectedVariables: ["P"],
-                unselectedVariables: ["Q"],
-                settings: {
+                config: {
+                    selectedVariables: ["P"],
                     lockYAxis: true,
                     logScaleYAxis: true,
                     xAxisRange: [0, 100],
                     yAxisRange: [2, 3]
-                }
+                },
+                data: { lines: [], points: [] }
             }
         ];
 
-        mutations[GraphsMutation.SetAllGraphConfigs](state, newGraphConfig);
+        mutations[GraphsMutation.SetAllGraphs](state, newGraphs);
 
-        expect(state.config).toStrictEqual(newGraphConfig);
+        expect(state.graphs).toStrictEqual(newGraphs);
     });
 
-    it("AddGraph pushes new graph to config", () => {
-        const settings = defaultGraphSettings();
+    it("AddGraph pushes new graph to graphs", () => {
         const testState = mockGraphsState({
-            config: [{
+            graphs: [{
                 id: "123",
-                selectedVariables: ["a"],
-                unselectedVariables: ["b", "c"],
-                settings
+                config: {
+                    ...defaultGraphConfig(),
+                    selectedVariables: ["a"],
+                },
+                data: { lines: [], points: [] }
             }]
         });
-        mutations.AddGraph(testState, {
-            id: "456",
-            selectedVariables: [],
-            unselectedVariables: ["b", "a", "c"],
-            settings
-        });
+        const oldGraphs = JSON.parse(JSON.stringify(testState.graphs));
 
-        expect(testState.config).toStrictEqual([
-            { id: "123", selectedVariables: ["a"], unselectedVariables: ["b", "c"], settings },
-            { id: "456", selectedVariables: [], unselectedVariables: ["b", "a", "c"], settings }
+        const newGraph = {
+            id: "456",
+            config: {
+                ...defaultGraphConfig(),
+                selectedVariables: [],
+            },
+            data: { lines: [], points: [] }
+        };
+
+        mutations.AddGraph(testState, newGraph);
+
+        expect(testState.graphs).toStrictEqual([
+            ...oldGraphs,
+            newGraph
         ]);
     });
 
-    it("DeleteGraph removes graph from config", () => {
-        const settings = defaultGraphSettings();
+    it("DeleteGraph removes graph from graphs", () => {
+        const cfg = defaultGraphConfig();
+        const data = { lines: [], points: [] };
         const testState = mockGraphsState({
-            config: [
-                { id: "1", selectedVariables: ["a"], unselectedVariables: ["b", "c"], settings },
-                { id: "2", selectedVariables: ["b"], unselectedVariables: ["a", "c"], settings },
-                { id: "3", selectedVariables: ["c"], unselectedVariables: ["a", "b"], settings }
+            graphs: [
+                { id: "1", config: {...cfg, selectedVariables: ["a"]}, data },
+                { id: "2", config: {...cfg, selectedVariables: ["b"]}, data },
+                { id: "3", config: {...cfg, selectedVariables: ["c"]}, data }
             ]
         });
         mutations.DeleteGraph(testState, "2");
-        expect(testState.config).toStrictEqual([
-            { id: "1", selectedVariables: ["a"], unselectedVariables: ["b", "c"], settings },
-            { id: "3", selectedVariables: ["c"], unselectedVariables: ["a", "b"], settings }
+        expect(testState.graphs).toStrictEqual([
+            { id: "1", config: {...cfg, selectedVariables: ["a"]}, data },
+            { id: "3", config: {...cfg, selectedVariables: ["c"]}, data }
         ]);
     });
 });

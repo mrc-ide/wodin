@@ -174,20 +174,6 @@ describe("allFitDataToSkadiChart", () => {
             ...data.map(dat => ({ ...expectedStyleAndMetdata("b", "#0000ff"), x: dat.t, y: dat.b })),
         ]);
     });
-
-    it("adds transparent data for unselected variable", () => {
-        const allFitDataLinked = {
-            data,
-            linkedVariables: { a: null, b: "B" },
-            timeVariable: "t"
-        };
-        const selectedVariables = ["A"];
-        const res = allFitDataToSkadiChart(allFitDataLinked, palette, 0, 4, selectedVariables);
-        expect(res).toStrictEqual([
-            ...data.map(dat => ({ ...expectedStyleAndMetdata("a"), x: dat.t, y: dat.a })),
-            ...data.map(dat => ({ ...expectedStyleAndMetdata("b", "transparent"), x: dat.t, y: dat.b })),
-        ]);
-    });
 });
 
 describe("fitDataToSkadiChart", () => {

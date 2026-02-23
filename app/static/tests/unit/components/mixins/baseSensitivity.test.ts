@@ -8,7 +8,7 @@ import { BaseSensitivityMutation } from "../../../../src/store/sensitivity/mutat
 import { BaseSensitivityAction } from "../../../../src/store/sensitivity/actions";
 import { getters as graphGetters } from "../../../../src/store/graphs/getters";
 import { mockGraphsState } from "../../../mocks";
-import { defaultGraphSettings } from "../../../../src/store/graphs/state";
+import { defaultGraphConfig } from "@/store/graphs/state";
 
 describe("baseSensitivity mixin", () => {
     const mockSensSetUserSummaryDownloadFileName = vi.fn();
@@ -30,12 +30,11 @@ describe("baseSensitivity mixin", () => {
                 graphs: {
                     namespaced: true,
                     state: mockGraphsState({
-                        config: [
+                        graphs: [
                             {
                                 id: "123",
-                                selectedVariables,
-                                unselectedVariables: [],
-                                settings: defaultGraphSettings()
+                                config: { ...defaultGraphConfig(), selectedVariables },
+                                data: { lines: [], points: [] }
                             }
                         ]
                     }),

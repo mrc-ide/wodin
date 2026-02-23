@@ -9,7 +9,7 @@ import {
     testCommonRunSensitivity
 } from "../sensitivity/actions.test";
 import { AppType } from "../../../../src/store/appState/state";
-import { BaseSensitivityMutation } from "../../../../src/store/sensitivity/mutations";
+import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
 
 describe("multiSensitivity actions", () => {
     beforeEach(() => {
@@ -41,7 +41,7 @@ describe("multiSensitivity actions", () => {
             rootGetters
         });
 
-        expect(commit).toHaveBeenCalledTimes(2);
+        expect(commit).toHaveBeenCalledTimes(3);
         expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
         expect(commit.mock.calls[0][1]).toStrictEqual({
             inputs: { endTime: 99, pars: mockBatchPars },
@@ -57,6 +57,8 @@ describe("multiSensitivity actions", () => {
             sensitivityOptionsChanged: false,
             numberOfReplicatesChanged: false
         });
+        expect(commit.mock.calls[2][0]).toBe(SensitivityMutation.SetLoading);
+        expect(commit.mock.calls[2][1]).toBe(false);
 
         expect(mockRunnerOde.batchRun).toHaveBeenCalledTimes(1);
         expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(

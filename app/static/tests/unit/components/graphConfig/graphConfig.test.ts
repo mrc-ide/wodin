@@ -3,33 +3,38 @@ import { shallowMount } from "@vue/test-utils";
 import { BasicState } from "../../../../src/store/basic/state";
 import GraphConfig from "../../../../src/components/graphConfig/GraphConfig.vue";
 import { GraphsAction } from "../../../../src/store/graphs/actions";
-import { defaultGraphSettings, fitGraphId, GraphsState } from "../../../../src/store/graphs/state";
+import { defaultGraphConfig, fitGraphId, GraphsState } from "../../../../src/store/graphs/state";
 import { GraphsMutation } from "../../../../src/store/graphs/mutations";
 import GraphSettings from "../../../../src/components/GraphSettings.vue";
+import { config } from "process";
 
 describe("GraphConfig", () => {
-    const mockUpdateSelectedVariables = vi.fn();
+    const mockUpdateGraph = vi.fn();
     const mockDeleteGraph = vi.fn();
     const mockTooltipDirective = vi.fn();
+    const data = { lines: [], points: [] };
     const defaultGraphState: GraphsState = {
-        fitGraphConfig: {
+        fitGraph: {
             id: fitGraphId,
-            selectedVariables: [],
-            unselectedVariables: [],
-            settings: defaultGraphSettings()
+            config: defaultGraphConfig(),
+            data
         },
-        config: [
+        graphs: [
             {
                 id: "123",
-                selectedVariables: ["S", "R"],
-                unselectedVariables: [],
-                settings: defaultGraphSettings()
+                config: {
+                    ...defaultGraphConfig(),
+                    selectedVariables: ["S", "R"],
+                },
+                data
             },
             {
                 id: "456",
-                selectedVariables: ["I", "J"],
-                unselectedVariables: [],
-                settings: defaultGraphSettings()
+                config: {
+                    ...defaultGraphConfig(),
+                    selectedVariables: ["I", "J"],
+                },
+                data
             }
         ]
     };
@@ -47,7 +52,7 @@ describe("GraphConfig", () => {
                     namespaced: true,
                     state: actualGraphState,
                     actions: {
-                        [GraphsAction.UpdateSelectedVariables]: mockUpdateSelectedVariables
+                        [GraphsAction.UpdateGraph]: mockUpdateGraph
                     },
                     mutations: {
                         [GraphsMutation.DeleteGraph]: mockDeleteGraph
@@ -68,7 +73,7 @@ describe("GraphConfig", () => {
 
         return shallowMount(GraphConfig, {
             props: {
-                graphConfig: actualGraphState.config[0],
+                graph: actualGraphState.graphs[0],
                 dragging: false,
                 ...props
             },
@@ -99,7 +104,7 @@ describe("GraphConfig", () => {
         // instruction not shown if at least one selected variable
         expect(wrapper.findAll(".drop-zone-instruction").length).toBe(0);
         const settings = wrapper.findComponent(GraphSettings);
-        expect(settings.props("graphConfig")).toStrictEqual(defaultGraphState.config[0]);
+        expect(settings.props("graph")).toStrictEqual(defaultGraphState.graphs[0]);
     });
 
     it("starting drag sets values in event and emits setDragging", async () => {
@@ -147,18 +152,22 @@ describe("GraphConfig", () => {
         };
         const dropPanel = wrapper.find(".graph-config-panel");
         await dropPanel.trigger("drop", { dataTransfer });
-        expect(mockUpdateSelectedVariables.mock.calls.length).toBe(2);
+        expect(mockUpdateGraph.mock.calls.length).toBe(2);
 
         // adds I to 123
-        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({
+        expect(mockUpdateGraph.mock.calls[0][1]).toStrictEqual({
             id: "123",
-            selectedVariables: ["S", "R", "I"]
+            config: {
+                selectedVariables: ["S", "R", "I"]
+            }
         });
 
         // removes I from 456
-        expect(mockUpdateSelectedVariables.mock.calls[1][1]).toStrictEqual({
+        expect(mockUpdateGraph.mock.calls[1][1]).toStrictEqual({
             id: "456",
-            selectedVariables: ["J"]
+            config: {
+                selectedVariables: ["J"]
+            }
         });
     });
 
@@ -174,10 +183,12 @@ describe("GraphConfig", () => {
         };
         const dropPanel = wrapper.find(".graph-config-panel");
         await dropPanel.trigger("drop", { dataTransfer });
-        expect(mockUpdateSelectedVariables.mock.calls.length).toBe(1);
-        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({
+        expect(mockUpdateGraph.mock.calls.length).toBe(1);
+        expect(mockUpdateGraph.mock.calls[0][1]).toStrictEqual({
             id: "123",
-            selectedVariables: ["S", "R", "I"]
+            config: {
+                selectedVariables: ["S", "R", "I"]
+            }
         });
     });
 
@@ -193,10 +204,12 @@ describe("GraphConfig", () => {
         };
         const dropPanel = wrapper.find(".graph-config-panel");
         await dropPanel.trigger("drop", { dataTransfer });
-        expect(mockUpdateSelectedVariables.mock.calls.length).toBe(1);
-        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({
+        expect(mockUpdateGraph.mock.calls.length).toBe(1);
+        expect(mockUpdateGraph.mock.calls[0][1]).toStrictEqual({
             id: "123",
-            selectedVariables: ["S", "R", "I"]
+            config: {
+                selectedVariables: ["S", "R", "I"]
+            }
         });
     });
 
@@ -204,8 +217,13 @@ describe("GraphConfig", () => {
         const wrapper = getWrapper();
         const button = wrapper.findAll(".variable-delete button").at(0);
         await button!.trigger("click");
-        expect(mockUpdateSelectedVariables.mock.calls.length).toBe(1);
-        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({ id: "123", selectedVariables: ["R"] });
+        expect(mockUpdateGraph.mock.calls.length).toBe(1);
+        expect(mockUpdateGraph.mock.calls[0][1]).toStrictEqual({
+            id: "123",
+            config: {
+                selectedVariables: ["R"]
+            }
+        });
     });
 
     it("shows drop zone when dragging", () => {
@@ -215,11 +233,10 @@ describe("GraphConfig", () => {
 
     it("shows instruction if no selected variables", () => {
         const wrapper = getWrapper({}, {
-            config: [{
+            graphs: [{
                 id: "123",
-                selectedVariables: [],
-                unselectedVariables: [],
-                settings: defaultGraphSettings()
+                config: defaultGraphConfig(),
+                data
             }]
         });
         expect(wrapper.find(".drop-zone-instruction").text()).toBe(
@@ -230,11 +247,13 @@ describe("GraphConfig", () => {
 
     it("does not render delete button if there is only one graph", () => {
         const wrapper = getWrapper({}, {
-            config: [{
+            graphs: [{
                 id: "123",
-                selectedVariables: ["S", "R"],
-                unselectedVariables: [],
-                settings: defaultGraphSettings()
+                config: {
+                    ...defaultGraphConfig(),
+                    selectedVariables: ["S", "R"],
+                },
+                data
             }]
         });
         expect(wrapper.find("h5 button.delete-graph").exists()).toBe(false);

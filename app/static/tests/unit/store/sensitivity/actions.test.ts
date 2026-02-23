@@ -78,7 +78,7 @@ export const testCommonRunSensitivity = (runSensitivityAction: Action<any, AppSt
             rootGetters
         });
 
-        expect(commit).toHaveBeenCalledTimes(2);
+        expect(commit).toHaveBeenCalledTimes(3);
         expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
         expect(commit.mock.calls[0][1]).toStrictEqual({
             inputs: { endTime: 99, pars: mockBatchPars },
@@ -94,6 +94,8 @@ export const testCommonRunSensitivity = (runSensitivityAction: Action<any, AppSt
             numberOfReplicatesChanged: false,
             advancedSettingsChanged: false
         });
+        expect(commit.mock.calls[2][0]).toBe(SensitivityMutation.SetLoading);
+        expect(commit.mock.calls[2][1]).toBe(false);
 
         expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
             rootState.model.odin,
@@ -134,7 +136,7 @@ export const testCommonRunSensitivity = (runSensitivityAction: Action<any, AppSt
             rootGetters
         });
 
-        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
         expect(commit.mock.calls[0][1]).toStrictEqual({
             inputs: {
@@ -147,6 +149,8 @@ export const testCommonRunSensitivity = (runSensitivityAction: Action<any, AppSt
                 detail: "a test error"
             }
         });
+        expect(commit.mock.calls[1][0]).toBe(SensitivityMutation.SetLoading);
+        expect(commit.mock.calls[1][1]).toBe(false);
 
         expect(dispatch).not.toHaveBeenCalled();
     });
@@ -244,9 +248,11 @@ export const testCommonRunSensitivity = (runSensitivityAction: Action<any, AppSt
             rootGetters
         });
 
-        expect(commit).toHaveBeenCalledTimes(2);
+        expect(commit).toHaveBeenCalledTimes(3);
         expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
         expect(commit.mock.calls[1][0]).toBe(BaseSensitivityMutation.SetUpdateRequired);
+        expect(commit.mock.calls[2][0]).toBe(SensitivityMutation.SetLoading);
+        expect(commit.mock.calls[2][1]).toBe(false);
 
         expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(
             rootState.model.odin,
@@ -280,7 +286,7 @@ export const testCommonRunSensitivity = (runSensitivityAction: Action<any, AppSt
             rootGetters
         });
 
-        expect(commit).toHaveBeenCalledTimes(3);
+        expect(commit).toHaveBeenCalledTimes(4);
         expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetRunning);
         expect(commit.mock.calls[0][1]).toBe(true);
 
@@ -299,6 +305,8 @@ export const testCommonRunSensitivity = (runSensitivityAction: Action<any, AppSt
             numberOfReplicatesChanged: false,
             advancedSettingsChanged: false
         });
+        expect(commit.mock.calls[3][0]).toBe(SensitivityMutation.SetLoading);
+        expect(commit.mock.calls[3][1]).toBe(false);
 
         expect(mockRunnerDiscrete.batchRunDiscrete).toHaveBeenCalledWith(
             rootState.model.odin,
@@ -340,10 +348,12 @@ export const testCommonRunSensitivity = (runSensitivityAction: Action<any, AppSt
             rootGetters
         });
 
-        expect(commit).toHaveBeenCalledTimes(3);
+        expect(commit).toHaveBeenCalledTimes(4);
         expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetRunning);
         expect(commit.mock.calls[1][0]).toBe(BaseSensitivityMutation.SetResult);
         expect(commit.mock.calls[2][0]).toBe(BaseSensitivityMutation.SetUpdateRequired);
+        expect(commit.mock.calls[3][0]).toBe(SensitivityMutation.SetLoading);
+        expect(commit.mock.calls[3][1]).toBe(false);
 
         expect(mockRunnerDiscrete.batchRunDiscrete).toHaveBeenCalledWith(
             rootState.model.odin,
@@ -398,7 +408,7 @@ describe("Sensitivity actions", () => {
             rootGetters
         });
 
-        expect(commit).toHaveBeenCalledTimes(3);
+        expect(commit).toHaveBeenCalledTimes(4);
         expect(commit.mock.calls[0][0]).toBe(BaseSensitivityMutation.SetResult);
         expect(commit.mock.calls[0][1]).toStrictEqual({
             inputs: { endTime: 99, pars: mockBatchPars },
@@ -427,6 +437,8 @@ describe("Sensitivity actions", () => {
             numberOfReplicatesChanged: false,
             advancedSettingsChanged: false
         });
+        expect(commit.mock.calls[3][0]).toBe(SensitivityMutation.SetLoading);
+        expect(commit.mock.calls[3][1]).toBe(false);
 
         expect(mockRunnerOde.batchRun).toHaveBeenCalledTimes(3);
         expect(mockRunnerOde.batchRun).toHaveBeenCalledWith(

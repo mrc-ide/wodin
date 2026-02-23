@@ -26,10 +26,8 @@ describe("MultiSensitivityTab", () => {
                 graphs: {
                     namespaced: true,
                     state: {
-                        config: [
-                            {
-                                selectedVariables: ["A"]
-                            }
+                        graphs: [
+                            { config: { selectedVariables: ["A"] } }
                         ]
                     },
                     getters: graphsGetters

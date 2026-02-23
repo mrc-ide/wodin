@@ -22,7 +22,7 @@ export type UpdateAllGraphsPayload = { id: string, config: GraphConfig }[];
 
 export const actions: ActionTree<GraphsState, AppState> = {
     UpdateGraph(context, payload: UpdateGraphPayload) {
-        const { commit, dispatch, rootState, state } = context;
+        const { commit, rootState, state } = context;
 
         const oldConfig = payload.id === fitGraphId
             ? state.fitGraph.config

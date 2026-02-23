@@ -6,7 +6,7 @@ import { getters } from "../../../../src/store/fitData/getters";
 import { mockFitDataState, mockFitState, mockGraphsState, mockModelState } from "../../../mocks";
 import { FitDataAction } from "../../../../src/store/fitData/actions";
 import { getters as graphGetters } from "../../../../src/store/graphs/getters";
-import { defaultGraphSettings } from "../../../../src/store/graphs/state";
+import { defaultGraphConfig } from "@/store/graphs/state";
 
 describe("LinkData", () => {
     const getWrapper = (includeColumns = true, includeValidModel = true, mockUpdateLinkedVariable = vi.fn()) => {
@@ -34,12 +34,14 @@ describe("LinkData", () => {
                 graphs: {
                     namespaced: true,
                     state: mockGraphsState({
-                        config: [
+                        graphs: [
                             {
                                 id: "123",
-                                selectedVariables: ["I", "R"],
-                                unselectedVariables: [],
-                                settings: defaultGraphSettings()
+                                config: {
+                                    ...defaultGraphConfig(),
+                                    selectedVariables: ["I", "R"],
+                                },
+                                data: { lines: [], points: [] }
                             }
                         ]
                     }),
