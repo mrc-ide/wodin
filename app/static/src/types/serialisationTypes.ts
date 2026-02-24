@@ -11,7 +11,7 @@ import { VisualisationTab } from "../store/appState/state";
 import { CodeState } from "../store/code/state";
 import { FitDataState } from "../store/fitData/state";
 import { Palette } from "../palette";
-import { GraphsState } from "../store/graphs/state";
+import { BaseGraph, GraphsState } from "../store/graphs/state";
 import { Dict } from "./utilTypes";
 
 export interface SerialisedRunResult {
@@ -74,8 +74,8 @@ export interface SerialisedModelFitState {
 }
 
 export interface SerialisedGraphsState {
-    fitGraph: Omit<GraphsState["fitGraph"], "data">;
-    graphs: Omit<GraphsState["graphs"][number], "data">[];
+    fitGraph: BaseGraph;
+    graphs: BaseGraph[];
 }
 
 export interface SerialisedAppState {

@@ -5,7 +5,10 @@
         </div>
         <action-required-message :message="updateMsg"></action-required-message>
         <template v-for="graph in graphs" :key="graph.id">
-            <wodin-plot :fade-plot="!!updateMsg" :graph="graph"/>
+            <wodin-plot
+              :fade-plot="!!updateMsg"
+              :id="graph.id"
+              :type="NonFitGraphType.Run"/>
         </template>
         <div v-if="sumOfSquares">
             <span id="squares">Sum of squares: {{ sumOfSquares }}</span>
@@ -58,6 +61,8 @@ import WodinPlot from "../WodinPlot.vue";
 import { GraphsAction, UpdateGraphPayload } from "@/store/graphs/actions";
 import { STATIC_BUILD } from "@/parseEnv";
 import { FitState } from "@/store/fit/state";
+import { NonFitGraphType, GraphType } from "@/store/graphs/state";
+import { GraphsMutation } from "@/store/graphs/mutations";
 
 export default defineComponent({
     name: "RunTab",
@@ -138,6 +143,11 @@ export default defineComponent({
                     } as UpdateGraphPayload);
                 });
             }
+
+            store.commit(
+                `graphs/${GraphsMutation.SetMountedGraphTypes}`,
+                [NonFitGraphType.Run] as GraphType[]
+            );
         });
 
         return {
@@ -154,6 +164,7 @@ export default defineComponent({
             toggleShowDownloadOutput,
             download,
             graphs,
+            NonFitGraphType
         };
     }
 });

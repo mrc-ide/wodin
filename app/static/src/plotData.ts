@@ -1,32 +1,30 @@
 import { ActionContext } from "vuex";
-import { AppState, AppType, VisualisationTab } from "./store/appState/state";
-import { GraphConfig, WodinPlotData } from "./store/graphs/state";
+import { AppState, AppType } from "./store/appState/state";
+import { FitGraphType, GraphConfig, GraphType, NonFitGraphType, WodinPlotData } from "./store/graphs/state";
 import { allFitDataToSkadiChart, discreteSeriesSetToSkadiChart, filterSeriesSet, filterUserTypeSeriesSet, fitDataToSkadiChart, odinToSkadiChart, paramSetLineStyle, updatePlotTraceName } from "./plot";
 import { FitState } from "./store/fit/state";
 import { StochasticState } from "./store/stochastic/state";
 import { FitDataGetter } from "./store/fitData/getters";
 import { Batch, FilteredDiscreteSolution, OdinSeriesSet, OdinSolution, OdinUserTypeSeriesSet } from "./types/responseTypes";
 import { LineStyle } from "@reside-ic/skadi-chart";
-import { SensitivityPlotExtremePrefix, SensitivityPlotType } from "./store/sensitivity/state";
+import { SensitivityPlotExtremePrefix } from "./store/sensitivity/state";
 
 export const getPlotData = <T>(
   ctx: ActionContext<T, AppState>,
   cfg: GraphConfig,
+  type: GraphType,
 ) => {
-  const { appType, openVisualisationTab, sensitivity } = ctx.rootState;
-  if (openVisualisationTab === VisualisationTab.Run) {
+  const { appType } = ctx.rootState;
+  if (type === NonFitGraphType.Run) {
     return appType === AppType.Stochastic
       ? getRunTracesDiscreteData(ctx as ActionContext<T, StochasticState>, cfg)
       : getRunTracesContinuousData(ctx, cfg);
-  } else if (openVisualisationTab === VisualisationTab.Fit) {
+  } else if (type === FitGraphType.Fit) {
     return getFitTraceData(ctx as ActionContext<T, FitState>, cfg);
-  } else if (
-    openVisualisationTab === VisualisationTab.Sensitivity
-    && sensitivity.plotSettings.plotType === SensitivityPlotType.TraceOverTime
-  ) {
+  } else if (type === NonFitGraphType.SensitivityTraces) {
     return getSensitivityTracesData(ctx, cfg);
   } else {
-    return getSensitivitySummaryData(ctx, cfg);
+    return getSensitivitySummaryData(ctx, cfg, type);
   }
 }
 
@@ -285,7 +283,8 @@ const getSensitivityTracesData = <T>(
 
 const getSensitivitySummaryData = <T>(
   ctx: ActionContext<T, AppState>,
-  cfg: GraphConfig
+  cfg: GraphConfig,
+  type: GraphType
 ) => {
   const { rootState } = ctx;
   const { result: sensitivityResult, paramSettings, plotSettings, parameterSetResults } = rootState.sensitivity;
@@ -298,10 +297,10 @@ const getSensitivitySummaryData = <T>(
 
   const paramName = paramSettings.parameterToVary;
   let getSeriesFromBatch: (batch: Batch) => OdinUserTypeSeriesSet;
-  if (plotSettings.plotType === SensitivityPlotType.ValueAtTime) {
+  if (type === NonFitGraphType.SensitivityValueAtTime) {
     getSeriesFromBatch = batch => batch.valueAtTime(plotSettings.time!);
   } else {
-    const paramPrefix = plotSettings.plotType === SensitivityPlotType.TimeAtExtreme
+    const paramPrefix = type === NonFitGraphType.SensitivityTimeAtExtreme
       ? SensitivityPlotExtremePrefix.time
       : SensitivityPlotExtremePrefix.value;
     getSeriesFromBatch = batch => batch.extreme(`${paramPrefix}${plotSettings.extreme}`);

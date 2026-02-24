@@ -13,7 +13,10 @@
                 Cancel fit
             </button>
             <action-required-message :message="actionRequiredMessage"></action-required-message>
-            <wodin-plot :fade-plot="!!actionRequiredMessage" :graph="fitGraph">
+            <wodin-plot
+                :fade-plot="!!actionRequiredMessage"
+                :id="fitGraphId"
+                :type="FitGraphType.Fit">
                 <div v-if="iterations" class="fit-summary-container">
                     <vue-feather
                         v-if="iconType"
@@ -34,7 +37,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
@@ -49,6 +52,8 @@ import LoadingButton from "../LoadingButton.vue";
 import ErrorInfo from "../ErrorInfo.vue";
 import { FitState } from "@/store/fit/state";
 import WodinPlot from "../WodinPlot.vue";
+import { GraphsMutation } from "@/store/graphs/mutations";
+import { fitGraphId, FitGraphType, GraphType } from "@/store/graphs/state";
 
 export default defineComponent({
     name: "FitTab",
@@ -78,8 +83,6 @@ export default defineComponent({
         const fitting = computed(() => store.state.modelFit.fitting);
         const cancelled = computed(() => iterations.value && !fitting.value && !converged.value);
         const sumOfSquares = computed(() => store.state.modelFit.sumOfSquares);
-
-        const fitGraph = computed(() => store.state.graphs.fitGraph);
 
         const actionRequiredMessage = computed(() => {
             if (error.value) {
@@ -126,6 +129,13 @@ export default defineComponent({
             return iconType.value ? classes[iconType.value] : null;
         });
 
+        onMounted(() => {
+            store.commit(
+                `graphs/${GraphsMutation.SetMountedGraphTypes}`,
+                [FitGraphType.Fit] as GraphType[]
+            );
+        });
+
         return {
             canFitModel,
             fitModel,
@@ -140,7 +150,8 @@ export default defineComponent({
             error,
             iconType,
             iconClass,
-            fitGraph
+            fitGraphId,
+            FitGraphType
         };
     }
 });

@@ -75,7 +75,7 @@ export default defineComponent({
         };
 
         const deleteGraph = () => {
-            store.commit(`graphs/${GraphsMutation.DeleteGraph}`, props.graph.id);
+            store.commit(`graphs/${GraphsMutation.DeleteNonFitGraph}`, props.graph.id);
         };
 
         return {

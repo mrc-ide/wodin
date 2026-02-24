@@ -53,7 +53,7 @@ export default defineComponent({
         const graphs = computed(() => store.state.graphs.graphs);
         const fitGraph = computed(() => store.state.graphs.fitGraph);
         const addGraph = () => {
-            store.dispatch(`graphs/${GraphsAction.NewGraph}`);
+            store.dispatch(`graphs/${GraphsAction.NewNonFitGraph}`);
         };
         return {
             draggingVariable,

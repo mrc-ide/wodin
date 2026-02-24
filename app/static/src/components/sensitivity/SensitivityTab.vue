@@ -12,7 +12,7 @@
         </div>
         <action-required-message :message="updateMsg"></action-required-message>
         <template v-for="graph in graphs" :key="graph.id">
-            <wodin-plot :fade-plot="!!updateMsg" :graph="graph"/>
+            <wodin-plot :fade-plot="!!updateMsg" :id="graph.id" :type="graphType"/>
         </template>
         <div id="sensitivity-running" v-if="running">
             <loading-spinner class="inline-spinner" size="xs"></loading-spinner>
@@ -31,7 +31,6 @@ import SensitivitySummaryDownload from "@/components/sensitivity/SensitivitySumm
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { BaseSensitivityGetter } from "../../store/sensitivity/getters";
 import { SensitivityAction } from "../../store/sensitivity/actions";
-import { SensitivityPlotType } from "../../store/sensitivity/state";
 import ErrorInfo from "../ErrorInfo.vue";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import LoadingButton from "../LoadingButton.vue";
@@ -41,6 +40,8 @@ import { GraphsAction, UpdateGraphPayload } from "@/store/graphs/actions";
 import { STATIC_BUILD } from "@/parseEnv";
 import { AppState } from "@/store/appState/state";
 import WodinPlot from "../WodinPlot.vue";
+import { GraphType, plotTypeToGraphType } from "@/store/graphs/state";
+import { GraphsMutation } from "@/store/graphs/mutations";
 
 export default defineComponent({
     name: "SensitivityTab",
@@ -93,11 +94,11 @@ export default defineComponent({
             return `Running sensitivity: finished ${finished} of ${total} runs`;
         });
 
-        const tracesPlot = computed(
-            () => store.state.sensitivity.plotSettings.plotType === SensitivityPlotType.TraceOverTime
-        );
-
         const error = computed(() => store.state.sensitivity.result?.error);
+
+        const graphType = computed(
+            () => plotTypeToGraphType[store.state.sensitivity.plotSettings.plotType]
+        );
 
         onMounted(() => {
             if (props.visibleVars && STATIC_BUILD) {
@@ -109,6 +110,11 @@ export default defineComponent({
                     } as UpdateGraphPayload);
                 });
             }
+
+            store.commit(
+                `graphs/${GraphsMutation.SetMountedGraphTypes}`,
+                [graphType.value] as GraphType[]
+            );
         });
 
         return {
@@ -118,9 +124,9 @@ export default defineComponent({
             sensitivityProgressMsg,
             runSensitivity,
             updateMsg,
-            tracesPlot,
             error,
-            loading
+            loading,
+            graphType
         };
     }
 });

@@ -18,7 +18,7 @@ import {
     SerialisedMultiSensitivityState,
     SerialisedGraphsState
 } from "./types/serialisationTypes";
-import { defaultGraphConfig, GraphsState } from "./store/graphs/state";
+import { GraphsState } from "./store/graphs/state";
 import { Dict } from "./types/utilTypes";
 import { MultiSensitivityState } from "./store/multiSensitivity/state";
 

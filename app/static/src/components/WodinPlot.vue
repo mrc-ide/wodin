@@ -18,27 +18,39 @@ import { useStore } from "vuex";
 import { fadePlotStyle } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
 import { GraphsAction, UpdateGraphPayload } from "../store/graphs/actions";
-import { fitGraphId, Graph, Metadata, WodinPlotData } from "../store/graphs/state";
+import { FitGraph, fitGraphId, FitGraphType, FitGraphTypeValue, GraphType, Metadata, NonFitGraph, NonFitGraphType, NonFitGraphTypeValue, WodinPlotData } from "../store/graphs/state";
 import { Chart, Scales, ZoomProperties } from "@reside-ic/skadi-chart";
 import { AppState, VisualisationTab } from "@/store/appState/state";
 import { runPlaceholderMessage, tooltipCallback } from "@/utils";
 import WodinLegend, { LegendConfig } from "./WodinLegend.vue";
 import userMessages from "@/userMessages";
 import { DATA_SUMMARY } from "@/parseEnv";
-import { SensitivityPlotType } from "@/store/sensitivity/state";
 
 export default defineComponent({
     name: "WodinPlot",
     components: { WodinPlotDataSummary, WodinLegend },
     props: {
         fadePlot: Boolean,
-        graph: {
-            type: Object as PropType<Graph>,
+        type: {
+            type: String as PropType<GraphType>,
+            required: true
+        },
+        id: {
+            type: String,
             required: true
         }
     },
     setup(props) {
         const store = useStore<AppState>();
+
+        const graph = computed(() => {
+            const { graphs } = store.state;
+            if (props.id === fitGraphId) {
+                return graphs.fitGraph;
+            } else {
+                return graphs.graphs.find(g => g.id === props.id)!;
+            }
+        });
 
         const placeholderMessage = computed(() => {
           if (store.state.openVisualisationTab === VisualisationTab.Fit) {
@@ -46,7 +58,7 @@ export default defineComponent({
           }
 
           return runPlaceholderMessage(
-            props.graph.config.selectedVariables,
+            graph.value.config.selectedVariables,
             store.state.openVisualisationTab === VisualisationTab.Sensitivity
           )
         });
@@ -62,12 +74,12 @@ export default defineComponent({
             if (!zoomProperties) return;
             const newXYRanges = {
               xAxisRange: zoomProperties.x,
-              yAxisRange: zoomProperties.eventType === "dblclick" && !props.graph.config.lockYAxis
+              yAxisRange: zoomProperties.eventType === "dblclick" && !graph.value.config.lockYAxis
                 ? null
                 : zoomProperties.y,
             };
 
-            if (props.graph.id === fitGraphId) {
+            if (graph.value.id === fitGraphId) {
               store.dispatch(`graphs/${GraphsAction.UpdateGraph}`, {
                 id: fitGraphId,
                 config: { ...newXYRanges }
@@ -79,13 +91,13 @@ export default defineComponent({
                 config: {
                   ...g.config,
                   xAxisRange: newXYRanges.xAxisRange,
-                  yAxisRange: g.id === props.graph.id
+                  yAxisRange: g.id === graph.value.id
                     ? newXYRanges.yAxisRange
                     : g.config.yAxisRange
                 }
               }));
               store.dispatch(
-                `graphs/${GraphsAction.UpdateAllGraphs}`,
+                `graphs/${GraphsAction.UpdateAllNonFitGraphs}`,
                 JSON.parse(JSON.stringify(allUpdatedGraphs))
               );
             }
@@ -130,7 +142,19 @@ export default defineComponent({
         const autoscaledMaxExtentsY = ref<Scales["y"]>();
 
         const drawSkadiChart = (legendFilteredData: null | WodinPlotData = null) => {
-            const { config, data: graphData } = props.graph;
+            const { config } = graph.value;
+
+            let graphData: WodinPlotData;
+            if (props.id === fitGraphId) {
+                const type = props.type as FitGraphTypeValue;
+                const g = graph.value as FitGraph;
+                graphData = g[`${type}Data`];
+            } else {
+                const type = props.type as NonFitGraphTypeValue;
+                const g = graph.value as NonFitGraph;
+                graphData = g[`${type}Data`];
+            }
+
             const maxXExtents = { start: 0, end: store.state.run.endTime };
             const xRange = config.xAxisRange
               ? { start: config.xAxisRange[0], end: config.xAxisRange[1] }
@@ -139,8 +163,12 @@ export default defineComponent({
               ? { start: config.yAxisRange[0], end: config.yAxisRange[1] }
               : {};
 
-            const isSensitivitySummary = store.state.openVisualisationTab === VisualisationTab.Sensitivity
-                && store.state.sensitivity.plotSettings.plotType !== SensitivityPlotType.TraceOverTime;
+            // TODO make x axis label the varying parameter!!
+            const isSensitivitySummary = ([
+                NonFitGraphType.SensitivityValueAtTime,
+                NonFitGraphType.SensitivityTimeAtExtreme,
+                NonFitGraphType.SensitivityValueAtExtreme,
+            ] as GraphType[]).includes(props.type);
             const ranges = isSensitivitySummary ? undefined : { x: xRange, y: yRange };
             const maxExtents = isSensitivitySummary ? undefined : { x: maxXExtents };
 
@@ -171,9 +199,7 @@ export default defineComponent({
 
         onMounted(drawSkadiChart);
 
-        watch(
-          [() => props.graph],
-          ([newGraph], [oldGraph]) => {
+        watch(graph, (newGraph, oldGraph) => {
           if (plotStyle.value !== fadePlotStyle) {
             drawSkadiChart();
             // if a user locks the y axis then we have to store the y axis range that
@@ -183,7 +209,7 @@ export default defineComponent({
               const yRange = newGraph.config.yAxisRange
                 || [maxExtentsY.start, maxExtentsY.end];
               store.dispatch(`graphs/${GraphsAction.UpdateGraph}`, {
-                  id: props.graph.id,
+                  id: props.id,
                   config: { yAxisRange: yRange }
               } as UpdateGraphPayload);
             }

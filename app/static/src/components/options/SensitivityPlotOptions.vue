@@ -39,6 +39,8 @@ import { useStore } from "vuex";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { SensitivityPlotExtreme, SensitivityPlotType } from "../../store/sensitivity/state";
 import NumericInput from "./NumericInput.vue";
+import { GraphsMutation } from "@/store/graphs/mutations";
+import { GraphType, plotTypeToGraphType } from "@/store/graphs/state";
 
 export default defineComponent({
     name: "SensitivityPlotOptions.vue",
@@ -54,7 +56,13 @@ export default defineComponent({
 
         const plotType = computed({
             get: () => settings.value.plotType,
-            set: (newVal) => store.commit(`${namespace}/${SensitivityMutation.SetPlotType}`, newVal)
+            set: (newVal) => {
+                store.commit(`${namespace}/${SensitivityMutation.SetPlotType}`, newVal);
+                store.commit(
+                    `graphs/${GraphsMutation.SetMountedGraphTypes}`,
+                    [plotTypeToGraphType[newVal as SensitivityPlotType]] as GraphType[]
+                );
+            }
         });
 
         const extreme = computed({

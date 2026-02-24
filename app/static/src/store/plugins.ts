@@ -1,15 +1,14 @@
 import { MutationPayload, Store } from "vuex";
-import { AppState, VisualisationTab } from "./appState/state";
-import { AppStateMutation, StateUploadMutations } from "./appState/mutations";
+import { AppState } from "./appState/state";
+import { StateUploadMutations } from "./appState/mutations";
 import { RunMutation } from "./run/mutations";
 import { RunAction } from "./run/actions";
 import { SensitivityAction } from "./sensitivity/actions";
 import { FitDataMutation } from "./fitData/mutations";
 import { ModelFitMutation } from "./modelFit/mutations";
 import { BaseSensitivityMutation, SensitivityMutation } from "./sensitivity/mutations";
-import { GraphsAction, UpdateAllGraphsPayload, UpdateGraphPayload } from "./graphs/actions";
-import { fitGraphId } from "./graphs/state";
-import { clearTimeout } from "timers";
+import { GraphsAction } from "./graphs/actions";
+import { GraphsMutation } from "./graphs/mutations";
 
 export const logMutations = (store: Store<AppState>): void => {
     store.subscribe((mutation: MutationPayload) => {
@@ -53,41 +52,24 @@ const updateGraphOnMutations = [
     `sensitivity/${BaseSensitivityMutation.SetResult}`,
     `sensitivity/${SensitivityMutation.SetParameterSetResults}`,
 
-    // changing tabs
-    `${AppStateMutation.SetOpenVisualisationTab}`,
-
-    // changing sensitivity plot type
-    `sensitivity/${SensitivityMutation.SetPlotType}`,
-
     // change endTime
     `run/${RunMutation.SetEndTime}`,
+
+    // mounted graph types change
+    `graphs/${GraphsMutation.SetMountedGraphTypes}`,
 ];
 
 export const updateGraphs = (store: Store<AppState>) => {
     let timeout: NodeJS.Timeout | undefined = undefined;
-    store.subscribe((mutation, state) => {
+    store.subscribe(mutation => {
         if (updateGraphOnMutations.includes(mutation.type)) {
             if (timeout) globalThis.clearTimeout(timeout);
             timeout = globalThis.setTimeout(() => {
-                const isShowingFit = state.openVisualisationTab === VisualisationTab.Fit
-                    // case that we are changing to fit tab
-                    || mutation.payload === VisualisationTab.Fit
-                if (isShowingFit) {
-                    store.dispatch(
-                        `graphs/${GraphsAction.UpdateGraph}`,
-                        {
-                            id: fitGraphId,
-                            config: {...state.graphs.fitGraph.config}
-                        } as UpdateGraphPayload,
-                        { root: true }
-                    );
-                } else {
-                    store.dispatch(
-                        `graphs/${GraphsAction.UpdateAllGraphs}`,
-                        [...state.graphs.graphs] as UpdateAllGraphsPayload,
-                        { root: true }
-                    );
-                }
+                store.dispatch(
+                    `graphs/${GraphsAction.RefreshAllGraphs}`,
+                    null,
+                    { root: true }
+                );
             }, 0);
         }
     });
