@@ -13,4 +13,6 @@ export interface ModelState {
     paletteModel: null | Palette;
     // TODO: rename to simply error
     odinModelCodeError: WodinError | null;
+    // so we can diff this with new variables and find out what new variables have been added
+    oldVariables: string[];
 }

@@ -15,7 +15,8 @@ import { ErrorsMutation } from "../errors/mutations";
 import { BaseSensitivityMutation, SensitivityMutation } from "../sensitivity/mutations";
 import { defaultSensitivityParamSettings } from "../sensitivity/sensitivity";
 import { MultiSensitivityMutation } from "../multiSensitivity/mutations";
-import { GraphsAction, UpdateGraphPayload } from "../graphs/actions";
+import { GraphsAction } from "../graphs/actions";
+import { defaultGraphData, GraphConfig, NonFitGraph } from "../graphs/state";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
@@ -103,14 +104,21 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
             dispatch(`modelFit/${ModelFitAction.UpdateParamsToVary}`, null, { root: true });
         }
 
-        // TODO discuss, i think this hsould be different, we shouldnt need to care about unselected vars
-        // What about other graphs? it breaks currently, need to update all graphs and just take them to default maybe
-        //
-        // Retain variable selections. Newly added variables will be selected by default in the first graph
-        // const selectedVariables = variables.filter((s) => !rootState.graphs.config[0].unselectedVariables.includes(s));
+        const newVariables = variables.filter(v => !state.oldVariables.includes(v));
+        const nonFitGraphs = rootState.graphs.graphs.map((g, i) => {
+            const validSelectedVariables = g.config.selectedVariables.filter(v => variables.includes(v));
+            const newConfig: GraphConfig = {
+                ...g.config,
+                selectedVariables: [...validSelectedVariables, ...(i === 0 ? newVariables : [])]
+            };
+            return { id: g.id, config: newConfig, ...defaultGraphData(g.id) };
+        });
+
+        commit(ModelMutation.SetOldVariables, variables);
+
         dispatch(
-            `graphs/${GraphsAction.UpdateGraph}`,
-            { id: rootState.graphs.graphs[0].id, config: { selectedVariables: variables } } as UpdateGraphPayload,
+            `graphs/${GraphsAction.UpdateAllNonFitGraphs}`,
+            nonFitGraphs as NonFitGraph[],
             { root: true }
         );
     }

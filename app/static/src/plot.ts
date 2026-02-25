@@ -121,6 +121,12 @@ export function fitDataToSkadiChart(
   return points;
 }
 
+interface AllFitData {
+    data: FitData;
+    linkedVariables: Dict<string | null>;
+    timeVariable: string;
+}
+
 export function allFitDataToSkadiChart(
   allFitData: AllFitData | null,
   paletteModel: Palette,
