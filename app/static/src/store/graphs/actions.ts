@@ -1,14 +1,22 @@
-import { ActionTree } from "vuex";
+import { markRaw } from "vue";
+import { ActionContext, ActionTree } from "vuex";
 import { GraphsMutation } from "./mutations";
 import { AppState } from "../appState/state";
-import { DataWithConfigId, GraphConfig, GraphsState, SyncedConfigGroup, SyncedConfigGroupId, SyncedGraphGroup, SyncedGraphGroupId } from "./state";
+import { ConfigId, DataWithConfigId, defaultGraphConfig, GraphConfig, GraphsState, SyncedConfigGroup, SyncedConfigGroupId, SyncedGraphGroup, SyncedGraphGroupId } from "./state";
 import { getPlotData } from "@/plotData";
 
 export enum GraphsAction {
-  UpdateConfigs = "UpdateConfigs",
+  AddConfig = "AddConfig",
+  UpdateConfig = "UpdateConfig",
+  DeleteConfig = "DeleteConfig",
   UpdateSyncedConfigGroup = "UpdateSyncedConfigGroup",
   UpdateSyncedGraphGroup = "UpdateSyncedGraphGroup",
   UpdateVisibleGraphGroups = "UpdateVisibleGraphGroups",
+}
+
+export type UpdateConfigPayload = {
+  id: ConfigId,
+  value: Partial<GraphConfig>,
 }
 
 export type UpdateSyncedConfigGroupPayload = {
@@ -21,67 +29,109 @@ export type UpdateSyncedGraphGroupPayload = {
   value: SyncedGraphGroup,
 }
 
+
+// utility for creating a new state and committing it after the action
+// is finished
+type Ctx = ActionContext<GraphsState, AppState>
+type CtxWithNewState = Ctx & { newState: GraphsState }
+const actionWrapper = (
+  ctx: Ctx,
+  callback: (ctxWithNewState: CtxWithNewState) => void
+) => {
+  const { state, commit } = ctx;
+  const newState = { ...state };
+
+  callback({ ...ctx, newState });
+
+  commit(GraphsMutation.SetGraphsState, newState);
+};
+
 export const actions = {
-  [GraphsAction.UpdateConfigs](ctx, newConfigs: GraphConfig[]) {
-    const { state, commit } = ctx;
-    const newState = { ...state };
-
-    newState.configs = newConfigs;
-
-    const deletedConfigIds = state.configs
-      .filter(oldCfg => newConfigs.some(newCfg => newCfg.id !== oldCfg.id))
-      .map(cfg => cfg.id);
-
-    Object.values(newState.syncedConfigGroups).forEach(cfgGroup => {
-      cfgGroup.configIds = cfgGroup.configIds.filter(id => !deletedConfigIds.includes(id));
+  [GraphsAction.AddConfig](ctx, id: string) {
+    actionWrapper(ctx, ({ newState }) => {
+      newState.configs.push(defaultGraphConfig(id));
     });
+  },
 
-    Object.keys(newState.visibleData).forEach(key => {
-      newState.visibleData[key] = newState.visibleData[key]
-        .filter(dCfg => !deletedConfigIds.includes(dCfg.configId));
+
+  [GraphsAction.UpdateConfig](ctx, payload: UpdateConfigPayload) {
+    actionWrapper(ctx, ({ newState }) => {
+      const cfgIdx = newState.configs.findIndex(c => c.id === payload.id);
+      newState.configs[cfgIdx] = {
+        ...newState.configs[cfgIdx],
+        ...payload.value,
+      };
+
+      // resolve synced config updates
+      Object.values(newState.syncedConfigGroups).forEach(({ syncProperties, configIds }) => {
+        // don't update if config not in group
+        if (!configIds.includes(payload.id)) return;
+
+        const propertiesToSync = Object.fromEntries(
+          Object.entries(payload.value)
+            .filter(([property]) => syncProperties.includes(property as keyof GraphConfig))
+        );
+        // don't update if updated keys are not in synced properties
+        if (Object.keys(propertiesToSync).length === 0) return;
+
+        configIds.forEach(id => {
+          if (id === payload.id) return;
+          const cfgIdx = newState.configs.findIndex(c => c.id === id);
+          newState.configs[cfgIdx] = {
+            ...newState.configs[cfgIdx],
+            ...propertiesToSync,
+          };
+        });
+      });
     });
+  },
 
-    commit(GraphsMutation.SetGraphsState, newState);
+
+  [GraphsAction.DeleteConfig](ctx, deleteId: string) {
+    actionWrapper(ctx, ({ newState }) => {
+      newState.configs = newState.configs.filter(c => c.id !== deleteId);
+
+      // remove all references to this config
+      Object.values(newState.syncedConfigGroups).forEach(cfgGroup => {
+        cfgGroup.configIds = cfgGroup.configIds.filter(id => id !== deleteId);
+      });
+
+      Object.keys(newState.visibleData).forEach(key => {
+        newState.visibleData[key] = newState.visibleData[key]
+          .filter(dCfg => dCfg.configId !== deleteId);
+      });
+    });
   },
 
 
   [GraphsAction.UpdateSyncedConfigGroup](ctx, payload: UpdateSyncedConfigGroupPayload) {
-    const { state, commit } = ctx;
-    const newState = { ...state };
-
-    newState.syncedConfigGroups[payload.id] = payload.value;
-
-    commit(GraphsMutation.SetGraphsState, newState);
+    actionWrapper(ctx, ({ newState }) => {
+      newState.syncedConfigGroups[payload.id] = payload.value;
+    });
   },
 
 
   [GraphsAction.UpdateSyncedGraphGroup](ctx, payload: UpdateSyncedGraphGroupPayload) {
-    const { state, commit } = ctx;
-    const newState = { ...state };
-
-    newState.syncedGraphGroups[payload.id] = payload.value;
-
-    commit(GraphsMutation.SetGraphsState, newState);
+    actionWrapper(ctx, ({ newState }) => {
+      newState.syncedGraphGroups[payload.id] = payload.value;
+    });
   },
 
 
   [GraphsAction.UpdateVisibleGraphGroups](ctx, newVisibleGraphGroups: SyncedGraphGroupId[]) {
-    const { state, commit } = ctx;
-    const newState = { ...state };
+    actionWrapper(ctx, ({ newState }) => {
+      newState.visibleData = Object.fromEntries(newVisibleGraphGroups.map(graphGroupId => {
+        const { syncedConfigGroupId, dataType } = newState.syncedGraphGroups[graphGroupId];
+        const { configIds } = newState.syncedConfigGroups[syncedConfigGroupId];
 
-    newState.visibleData = Object.fromEntries(newVisibleGraphGroups.map(graphGroupId => {
-      const { syncedConfigGroupId, dataType } = newState.syncedGraphGroups[graphGroupId];
-      const { configIds } = newState.syncedConfigGroups[syncedConfigGroupId];
+        const dataWithConfigIds: DataWithConfigId[] = configIds.map(cfgId => {
+          const config = newState.configs.find(cfg => cfg.id === cfgId)!;
+          const data = markRaw(getPlotData(ctx, config, dataType));
+          return { configId: config.id, data };
+        });
 
-      const dataWithConfigIds: DataWithConfigId[] = configIds.map(cfgId => {
-        const config = newState.configs.find(cfg => cfg.id === cfgId)!;
-        const data = getPlotData(ctx, config, dataType);
-        return { configId: config.id, data };
-      });
-
-      return [graphGroupId, dataWithConfigIds];
-    }));
-
-    commit(GraphsMutation.SetGraphsState, newState);
+        return [graphGroupId, dataWithConfigIds];
+      }));
+    });
   },
 } satisfies ActionTree<GraphsState, AppState>;
