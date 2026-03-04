@@ -1,55 +1,11 @@
-import { GraphsState, GraphConfig, fitGraphId } from "./state";
+import { GraphsState } from "./state";
 
 export enum GraphsMutation {
-    SetGraphConfig = "SetGraphConfig",
-    SetAllGraphConfigs = "SetAllGraphConfigs",
-    AddGraph = "AddGraph",
-    DeleteGraph = "DeleteGraph",
+    SetGraphsState = "SetGraphsState",
 }
 
-export type SetGraphConfigPayload = Partial<Omit<GraphConfig, "settings">> & {
-    id: string,
-    settings?: Partial<GraphConfig["settings"]>
-};
-
 export const mutations = {
-    [GraphsMutation.SetGraphConfig](state: GraphsState, payload: SetGraphConfigPayload) {
-        if (payload.id === fitGraphId) {
-            const oldGraphConfig = state.fitGraphConfig;
-            state.fitGraphConfig = {
-                ...oldGraphConfig,
-                ...payload,
-                settings: {
-                    ...oldGraphConfig.settings,
-                    ...payload.settings
-                }
-            };
-        } else {
-            const graphConfigIdx = state.config.findIndex(config => config.id === payload.id);
-            if (graphConfigIdx === -1) return;
-            const oldGraphConfig = state.config[graphConfigIdx];
-            state.config[graphConfigIdx] = {
-                ...oldGraphConfig,
-                ...payload,
-                settings: {
-                    ...oldGraphConfig.settings,
-                    ...payload.settings
-                }
-            };
-        }
+    [GraphsMutation.SetGraphsState](state: GraphsState, payload: GraphsState) {
+        state = payload;
     },
-
-    [GraphsMutation.SetAllGraphConfigs](state: GraphsState, payload: GraphConfig[]) {
-        state.config = payload;
-    },
-
-    [GraphsMutation.AddGraph](state: GraphsState, payload: GraphConfig) {
-        state.config.push(payload);
-    },
-
-    [GraphsMutation.DeleteGraph](state: GraphsState, payload: string) {
-        const graphConfigIdx = state.config.findIndex(config => config.id === payload);
-        if (graphConfigIdx === -1) return;
-        state.config.splice(graphConfigIdx, 1);
-    }
 };

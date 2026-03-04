@@ -1,34 +1,58 @@
-export const fitGraphId = "FIT";
+import { WodinPlotData } from "@/plot";
 
-export const defaultGraphSettings = (): GraphSettings => ({
-    logScaleYAxis: false,
-    lockYAxis: false,
-    xAxisRange: null,
-    yAxisRange: null,
-});
+export type ConfigId = string
+export type SyncedConfigGroupId = string
+export type SyncedGraphGroupId = string
 
-export type AxisRange = [number, number];
+export type AxisRange = [number, number]
 
 // User-adjustable settings for a given graph - log/linear y axis scale and lock y axis are selected via checkboxes,
 // yAxisRange is saved on data/variable update in order to implement lock y axis.
-export interface GraphSettings {
-    logScaleYAxis: boolean;
-    lockYAxis: boolean;
-    xAxisRange: AxisRange | null;
-    yAxisRange: AxisRange | null;
+export type GraphConfig = {
+  id: ConfigId,
+  selectedVariables: string[],
+  logScaleYAxis: boolean,
+  lockYAxis: boolean,
+  xAxisRange: AxisRange | null,
+  yAxisRange: AxisRange | null,
 }
 
-// GraphConfig holds all the configuration for the user-configurable array of graphs which will be shown on the Run
-// and Sensitivity tabs, both the variable selections and the graph settings.
-export interface GraphConfig {
-    id: string; // We need to keep a persistent id to identify configs in vue when a graph is deleted from the array
-    selectedVariables: string[];
-    unselectedVariables: string[]; // We keep track of unselected variables too so we can retain on model update
-    settings: GraphSettings;
+export type SyncedConfigGroup = {
+  syncProperties: (keyof GraphConfig)[],
+  configIds: ConfigId[],
 }
 
-export interface GraphsState {
-    config: GraphConfig[];
-    fitGraphConfig: GraphConfig; // For Fit apps, the Fit tab graph needs to have its own settings
+export enum DataType {
+  Run = "run",
+  Fit = "fit",
+  Sensitivity = "sensitivity",
+  SensitivityValueAtTime = "sensitivityValueAtTime",
+  SensitivityTimeAtExtreme = "sensitivityTimeAtExtreme",
+  SensitivityValueAtExtreme = "sensitivityValueAtExtreme",
 }
 
+export type SyncedGraphGroup = {
+  syncedConfigGroupId: SyncedConfigGroupId,
+  dataType: DataType,
+}
+
+export type DataWithConfig = {
+  configId: ConfigId,
+  data: WodinPlotData,
+}
+
+export type GraphsState = {
+  configs: GraphConfig[],
+  syncedConfigGroups: Record<SyncedConfigGroupId, SyncedConfigGroup>,
+  syncedGraphGroups: Record<SyncedGraphGroupId, SyncedGraphGroup>,
+  visibleData: Record<SyncedGraphGroupId, DataWithConfig[]>,
+}
+
+export const defaultGraphConfig = (id: string): GraphConfig => ({
+  id,
+  selectedVariables: [],
+  logScaleYAxis: false,
+  lockYAxis: false,
+  xAxisRange: null,
+  yAxisRange: null,
+});
