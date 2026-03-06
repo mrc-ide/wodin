@@ -1,28 +1,28 @@
 <template>
     <vertical-collapse v-if="showGraphs" title="Graphs settings" collapse-id="graphs">
-        <graph-configs></graph-configs>
+        <config-group></config-group>
     </vertical-collapse>
 </template>
 
 <script lang="ts">
-import GraphConfigs from "@/components/graphConfig/GraphConfigs.vue";
-import VerticalCollapse from "@/components/VerticalCollapse.vue";
 import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
+import ConfigGroup from "./ConfigGroup.vue";
+import VerticalCollapse from "@/components/VerticalCollapse.vue";
 
 export default defineComponent({
     name: "GraphConfigsCollapsible",
     components: {
-        GraphConfigs,
-        VerticalCollapse
+        ConfigGroup,
+        VerticalCollapse,
     },
     setup() {
         const store = useStore();
-        const allVariables = computed<string[]>(() => store.state.model.odinModelResponse?.metadata?.variables || []);
-        const showGraphs = computed(() => allVariables.value.length > 0 && !store.state.model.compileRequired);
-        return {
-            showGraphs
-        };
+        const showGraphs = computed(() => {
+            const allVariables = store.state.model.odinModelResponse?.metadata?.variables || [];
+            return allVariables.length > 0 && !store.state.model.compileRequired
+        });
+        return { showGraphs };
     }
 });
 </script>
