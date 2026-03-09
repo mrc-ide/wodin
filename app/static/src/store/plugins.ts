@@ -4,6 +4,10 @@ import { StateUploadMutations } from "./appState/mutations";
 import { RunMutation } from "./run/mutations";
 import { RunAction } from "./run/actions";
 import { SensitivityAction } from "./sensitivity/actions";
+import { BaseSensitivityMutation, SensitivityMutation } from "./sensitivity/mutations";
+import { FitDataMutation } from "./fitData/mutations";
+import { ModelFitMutation } from "./modelFit/mutations";
+import { GraphsAction } from "./graphs/actions";
 
 export const logMutations = (store: Store<AppState>): void => {
     store.subscribe((mutation: MutationPayload) => {
@@ -16,6 +20,53 @@ export const persistState = (store: Store<AppState>): void => {
         if (!StateUploadMutations.includes(mutation.type) && !mutation.type.startsWith("errors")) {
             const { dispatch } = store;
             dispatch("QueueStateUpload");
+        }
+    });
+};
+
+const updateGraphOnMutations = [
+    // run button
+    `run/${RunMutation.SetResultOde}`,
+    `run/${RunMutation.SetParameterSetResult}`,
+    `run/${RunMutation.SetResultDiscrete}`,
+
+    // parameter set changes
+    `run/${RunMutation.DeleteParameterSet}`,
+    `sensitivity/${SensitivityMutation.ParameterSetDeleted}`,
+    `run/${RunMutation.SwapParameterSet}`,
+    `sensitivity/${SensitivityMutation.ParameterSetSwapped}`,
+    `run/${RunMutation.ToggleParameterSetHidden}`,
+    `run/${RunMutation.SaveParameterDisplayName}`,
+
+    // fit data changes
+    `fitData/${FitDataMutation.SetData}`,
+    `fitData/${FitDataMutation.SetTimeVariable}`,
+    `fitData/${FitDataMutation.SetLinkedVariable}`,
+    `fitData/${FitDataMutation.SetLinkedVariables}`,
+
+    // fit button
+    `modelFit/${ModelFitMutation.SetResult}`,
+
+    // run sensitivity
+    `sensitivity/${BaseSensitivityMutation.SetResult}`,
+    `sensitivity/${SensitivityMutation.SetParameterSetResults}`,
+
+    // change endTime
+    `run/${RunMutation.SetEndTime}`,
+];
+
+export const updateGraphs = (store: Store<AppState>) => {
+    let timeout: NodeJS.Timeout | undefined = undefined;
+    store.subscribe((mutation, state) => {
+        if (updateGraphOnMutations.includes(mutation.type)) {
+            if (timeout) globalThis.clearTimeout(timeout);
+            timeout = globalThis.setTimeout(() => {
+                store.dispatch(
+                    `graphs/${GraphsAction.UpdateVisibleGraphGroups}`,
+                    [...Object.keys(state.graphs.visibleData)],
+                    { root: true }
+                );
+            }, 0);
         }
     });
 };
