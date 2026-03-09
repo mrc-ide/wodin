@@ -15,10 +15,12 @@ import {
     SerialisedRunResult,
     SerialisedSensitivityResult,
     SerialisedModelFitState,
-    SerialisedMultiSensitivityState
+    SerialisedMultiSensitivityState,
+    SerialisedGraphsState
 } from "./types/serialisationTypes";
 import { Dict } from "./types/utilTypes";
 import { MultiSensitivityState } from "./store/multiSensitivity/state";
+import { GraphsState } from "./store/graphs/state";
 
 function serialiseCode(code: CodeState): CodeState {
     return {
@@ -139,6 +141,14 @@ function serialiseModelFit(modelFit: ModelFitState): SerialisedModelFitState {
     };
 }
 
+function serialiseGraphs(graphs: GraphsState): SerialisedGraphsState {
+    return {
+        configs: graphs.configs,
+        syncedConfigGroups: graphs.syncedConfigGroups,
+        syncedGraphGroups: graphs.syncedGraphGroups,
+    };
+}
+
 export const serialiseState = (state: AppState): string => {
     const result: SerialisedAppState = {
         openVisualisationTab: state.openVisualisationTab,
@@ -147,7 +157,7 @@ export const serialiseState = (state: AppState): string => {
         run: serialiseRun(state.run),
         sensitivity: serialiseSensitivity(state.sensitivity),
         multiSensitivity: serialiseMultiSensitivity(state.multiSensitivity),
-        graphs: state.graphs
+        graphs: serialiseGraphs(state.graphs),
     };
 
     if (state.appType === AppType.Fit) {
