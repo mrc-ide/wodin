@@ -8,6 +8,7 @@ import { BaseSensitivityMutation, SensitivityMutation } from "./sensitivity/muta
 import { FitDataMutation } from "./fitData/mutations";
 import { ModelFitMutation } from "./modelFit/mutations";
 import { GraphsAction } from "./graphs/actions";
+import { GraphsMutation } from "./graphs/mutations";
 
 export const logMutations = (store: Store<AppState>): void => {
     store.subscribe((mutation: MutationPayload) => {
@@ -53,17 +54,25 @@ const updateGraphOnMutations = [
 
     // change endTime
     `run/${RunMutation.SetEndTime}`,
+
+    // graphs mutations
+    `graphs/${GraphsMutation.AddConfig}`,
+    `graphs/${GraphsMutation.UpdateConfig}`,
+    `graphs/${GraphsMutation.DeleteConfig}`,
+    `graphs/${GraphsMutation.UpdateSyncedConfigGroup}`,
+    `graphs/${GraphsMutation.UpdateSyncedGraphGroup}`,
+    `graphs/${GraphsMutation.UpdateVisibleGraphGroups}`,
 ];
 
 export const updateGraphs = (store: Store<AppState>) => {
     let timeout: NodeJS.Timeout | undefined = undefined;
-    store.subscribe((mutation, state) => {
+    store.subscribe(mutation => {
         if (updateGraphOnMutations.includes(mutation.type)) {
             if (timeout) globalThis.clearTimeout(timeout);
             timeout = globalThis.setTimeout(() => {
                 store.dispatch(
-                    `graphs/${GraphsAction.UpdateVisibleGraphGroups}`,
-                    [...Object.keys(state.graphs.visibleData)],
+                    `graphs/${GraphsAction.GenerateData}`,
+                    null,
                     { root: true }
                 );
             }, 0);
