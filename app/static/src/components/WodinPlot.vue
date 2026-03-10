@@ -55,7 +55,6 @@ export default defineComponent({
             const emptyData = { lines: [], points: [] };
             const visibleData = store.state.graphs.visibleData[props.graphGroupId];
             if (!visibleData) return emptyData;
-
             return visibleData.find(({ configId }) => configId === props.config.id)?.data || emptyData;
         });
 

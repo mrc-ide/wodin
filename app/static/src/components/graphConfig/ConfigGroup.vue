@@ -92,13 +92,9 @@ export default defineComponent({
         const graphGroupId = computed(() => store.state.openVisualisationTab);
 
         const configs = computed(() => {
-            const graphGroup = store.state.graphs.syncedGraphGroups[graphGroupId.value];
-            if (!graphGroup) return [];
-
-            const configGroup = store.state.graphs.syncedConfigGroups[graphGroup.syncedConfigGroupId];
-            if (!configGroup) return [];
-
-            return configGroup.configIds.map(id => store.state.graphs.configs.find(c => c.id === id)!);
+            const { syncedConfigGroupId } = store.state.graphs.syncedGraphGroups[graphGroupId.value];
+            const { configIds } = store.state.graphs.syncedConfigGroups[syncedConfigGroupId];
+            return configIds.map(id => store.state.graphs.configs.find(c => c.id === id)!);
         });
 
         const hiddenVariables = computed(() => {
