@@ -6,7 +6,7 @@ import { FitData } from "../store/fitData/state";
 import { AppType } from "../store/appState/state";
 import { FitState } from "../store/fit/state";
 import { FitDataGetter } from "../store/fitData/getters";
-import { GraphsGetter } from "../store/graphs/getters";
+import { getAllSelectedVariables } from "@/store/graphs/utils";
 
 export class WodinModelOutputDownload<State> extends WodinExcelDownload<State> {
     private readonly _points: number;
@@ -46,7 +46,7 @@ export class WodinModelOutputDownload<State> extends WodinExcelDownload<State> {
                 tEnd: end,
                 nPoints: this._points
             });
-            const selectedVariables = this._rootGetters[`graphs/${GraphsGetter.allSelectedVariables}`];
+            const selectedVariables = getAllSelectedVariables(this._state);
 
             const worksheet = WodinModelOutputDownload._generateModelledOutput(
                 selectedVariables,
@@ -68,7 +68,7 @@ export class WodinModelOutputDownload<State> extends WodinExcelDownload<State> {
             if (fitData && timeVariable) {
                 const times = fitData.map((row: Dict<number>) => row[timeVariable]);
                 const solutionOutput = solution({ mode: "given", times });
-                const selectedVariables = this._rootGetters[`graphs/${GraphsGetter.allSelectedVariables}`];
+                const selectedVariables = getAllSelectedVariables(this._state);
 
                 const worksheet = WodinModelOutputDownload._generateModelledOutput(
                     selectedVariables,

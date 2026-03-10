@@ -65,10 +65,10 @@ import LoadingSpinner from "../LoadingSpinner.vue";
 import { AppType } from "../../store/appState/state";
 import { ModelGetter } from "../../store/model/getters";
 import RunStochasticPlot from "./RunStochasticPlot.vue";
-import { GraphsGetter } from "../../store/graphs/getters";
 import { GraphConfig } from "@/store/graphs/state";
 import { GraphsAction } from "@/store/graphs/actions";
 import { STATIC_BUILD } from "@/parseEnv";
+import { getAllSelectedVariables } from "@/store/graphs/utils";
 
 export default defineComponent({
     name: "RunTab",
@@ -101,7 +101,7 @@ export default defineComponent({
         const sumOfSquares = computed(() => store.state.modelFit?.sumOfSquares);
 
         const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
-        const allSelectedVariables = computed(() => store.getters[`graphs/${GraphsGetter.allSelectedVariables}`]);
+        const allSelectedVariables = computed(() => getAllSelectedVariables(store.state));
         const graphConfigs = computed(() => store.state.graphs.config as GraphConfig[]);
 
         // Enable run button if model has initialised and compile is not required

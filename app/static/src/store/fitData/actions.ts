@@ -8,7 +8,7 @@ import { RunMutation } from "../run/mutations";
 import { ModelFitMutation } from "../modelFit/mutations";
 import { ModelFitAction } from "../modelFit/actions";
 import { SensitivityMutation } from "../sensitivity/mutations";
-import { GraphsGetter } from "../graphs/getters";
+import { getAllSelectedVariables } from "../graphs/utils";
 
 export enum FitDataAction {
     Upload = "Upload",
@@ -24,7 +24,7 @@ const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) =
     // Empty string means no link
     const { commit, state, rootState, getters, rootGetters } = context;
     const modelResponse = rootState.model.odinModelResponse;
-    const modelVariables = modelResponse?.valid ? rootGetters[`graphs/${GraphsGetter.allSelectedVariables}`] : [];
+    const modelVariables = modelResponse?.valid ? getAllSelectedVariables(rootState) : [];
     const dataColumns = getters.nonTimeColumns;
     let newLinks = {};
     if (dataColumns) {
