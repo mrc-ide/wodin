@@ -6,6 +6,7 @@ export const defaultState = (): GraphsState => ({
   configs: [],
   syncedConfigGroups: {},
   syncedGraphGroups: {},
+  visibleGraphGroups: [],
   visibleData: {}
 });
 

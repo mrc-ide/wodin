@@ -74,6 +74,7 @@ export type GraphsState = {
   configs: GraphConfig[],
   syncedConfigGroups: Record<SyncedConfigGroupId, SyncedConfigGroup>,
   syncedGraphGroups: Record<SyncedGraphGroupId, SyncedGraphGroup>,
+  visibleGraphGroups: SyncedGraphGroupId[],
   visibleData: Record<SyncedGraphGroupId, DataWithConfigId[]>,
 }
 
