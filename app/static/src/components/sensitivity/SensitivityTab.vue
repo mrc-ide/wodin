@@ -31,12 +31,10 @@
 import { computed, defineComponent, onMounted } from "vue";
 import { useStore } from "vuex";
 import SensitivitySummaryDownload from "@/components/sensitivity/SensitivitySummaryDownload.vue";
-import SensitivityTracesPlot from "./SensitivityTracesPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { BaseSensitivityGetter } from "../../store/sensitivity/getters";
 import { SensitivityAction } from "../../store/sensitivity/actions";
 import { SensitivityPlotType } from "../../store/sensitivity/state";
-import SensitivitySummaryPlot from "./SensitivitySummaryPlot.vue";
 import ErrorInfo from "../ErrorInfo.vue";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import LoadingButton from "../LoadingButton.vue";
@@ -55,9 +53,7 @@ export default defineComponent({
     components: {
         ErrorInfo,
         LoadingSpinner,
-        SensitivitySummaryPlot,
         ActionRequiredMessage,
-        SensitivityTracesPlot,
         LoadingButton,
         SensitivitySummaryDownload,
         WodinPlot,
