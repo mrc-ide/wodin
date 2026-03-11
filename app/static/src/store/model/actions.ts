@@ -15,7 +15,6 @@ import { ErrorsMutation } from "../errors/mutations";
 import { BaseSensitivityMutation, SensitivityMutation } from "../sensitivity/mutations";
 import { defaultSensitivityParamSettings } from "../sensitivity/sensitivity";
 import { MultiSensitivityMutation } from "../multiSensitivity/mutations";
-import { GraphConfig } from "../graphs/state";
 import { GraphsMutation, UpdateConfigPayload } from "../graphs/mutations";
 
 export enum ModelAction {
