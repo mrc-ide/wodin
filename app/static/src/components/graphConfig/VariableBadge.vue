@@ -3,8 +3,7 @@
           :class="inHidden ? 'mb-2' : ''"
           :style="style"
           draggable="true"
-          @dragstart="$event => $emit('dragstart', $event)"
-          @dragend="$event => $emit('dragend', $event)">
+          @dragstart="$event => $emit('dragstart', $event)">
         <span class="variable-name">{{ variable }}</span>
         <span v-if="!inHidden" class="variable-delete">
           <button @click="() => $emit('removeVariable', variable)"
@@ -20,7 +19,7 @@ import { default as Color } from "color";
 import { AppState } from "@/store/appState/state";
 
 export default defineComponent({
-    emits: ["dragstart", "dragend", "removeVariable"],
+    emits: ["dragstart", "removeVariable"],
     props: {
         variable: {
             type: String,
