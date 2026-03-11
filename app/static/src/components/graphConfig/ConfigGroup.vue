@@ -23,6 +23,7 @@
                     <variable-badge :variable="variable"
                                     :inHidden="false"
                                     @dragstart="event => startDrag(event, config.id, variable)"
+                                    @dragend="endDrag"
                                     @removeVariable="variable => removeVariable(config, variable)"></variable-badge>
                 </template>
                 <div v-if="!config.selectedVariables.length"
@@ -47,7 +48,8 @@
             <template v-for="variable in hiddenVariables" :key="variable">
                 <variable-badge :variable="variable"
                                 :inHidden="false"
-                                @dragstart="event => startDrag(event, hiddenConfigId, variable)"></variable-badge>
+                                @dragstart="event => startDrag(event, hiddenConfigId, variable)"
+                                @dragend="endDrag"></variable-badge>
             </template>
             <div v-if="!hiddenVariables.length" class="drop-zone-instruction p-2 me-4">
                 Drag variables here to hide them on all graphs.
@@ -132,6 +134,8 @@ export default defineComponent({
             dragging.value = true;
         };
 
+        const endDrag = () => dragging.value = false;
+
         const updateSelectedVariables = (configId: string, newVariables: string[]) => {
             store.commit(`graphs/${GraphsMutation.UpdateConfig}`, {
                 id: configId,
@@ -171,8 +175,6 @@ export default defineComponent({
                 addVariable(config!, variable);
                 if (!copy) removeVariable(srcConfig!, variable);
             }
-
-            dragging.value = false;
         };
 
         return {
@@ -181,6 +183,7 @@ export default defineComponent({
             addGraph,
             deleteGraph,
             startDrag,
+            endDrag,
             removeVariable,
             onDrop,
             hiddenConfigId,
