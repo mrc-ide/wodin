@@ -1,36 +1,34 @@
 <template>
     <div class="sensitivity-tab">
-        <div v-if="!hideSensitivityButton">
-            <loading-button
-                class="btn btn-primary"
-                id="run-sens-btn"
-                :loading="loading || running"
-                :is-disabled="!canRunSensitivity"
-                @click="runSensitivity"
-                >Run sensitivity</loading-button
-            >
-        </div>
+        <loading-button
+            class="btn btn-primary"
+            id="run-sens-btn"
+            :loading="loading || running"
+            :is-disabled="!canRunSensitivity"
+            @click="runSensitivity"
+            >Run sensitivity</loading-button
+        >
         <action-required-message :message="updateMsg"></action-required-message>
         <template v-for="config in graphConfigs" :key="config.id">
-            <sensitivity-traces-plot
-                v-if="tracesPlot"
-                :fade-plot="!!updateMsg"
-                :graph-config="config"
-            ></sensitivity-traces-plot>
-            <sensitivity-summary-plot v-else :fade-plot="!!updateMsg" :graph-config="config"></sensitivity-summary-plot>
+            <wodin-plot
+              :fade-plot="!!updateMsg"
+              :end-time="endTime"
+              :config="config"
+              :graph-group-id="graphGroupId">
+            </wodin-plot>
         </template>
         <div id="sensitivity-running" v-if="running">
             <loading-spinner class="inline-spinner" size="xs"></loading-spinner>
             <span class="ms-2">{{ sensitivityProgressMsg }}</span>
         </div>
         <error-info :error="error"></error-info>
-        <sensitivity-summary-download v-if="!hideDownloadButton" :multi-sensitivity="false" :download-type="'Sensitivity Summary'">
+        <sensitivity-summary-download :multi-sensitivity="false" :download-type="'Sensitivity Summary'">
         </sensitivity-summary-download>
     </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, onMounted } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import { useStore } from "vuex";
 import SensitivitySummaryDownload from "@/components/sensitivity/SensitivitySummaryDownload.vue";
 import SensitivityTracesPlot from "./SensitivityTracesPlot.vue";
@@ -44,10 +42,13 @@ import LoadingSpinner from "../LoadingSpinner.vue";
 import LoadingButton from "../LoadingButton.vue";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import baseSensitivity from "../mixins/baseSensitivity";
-import { GraphConfig } from "@/store/graphs/state";
-import { GraphsAction } from "@/store/graphs/actions";
-import { STATIC_BUILD } from "@/parseEnv";
-import { AppState } from "@/store/appState/state";
+import { AppState, VisualisationTab } from "@/store/appState/state";
+import { ConfigGroupIds } from "@/store/graphs/graphs";
+import { newUid } from "@/utils";
+import { GraphsMutation, UpdateConfigPayload, UpdateSyncedConfigGroupPayload } from "@/store/graphs/mutations";
+import WodinPlot from "../WodinPlot.vue";
+
+const graphGroupId = VisualisationTab.Sensitivity;
 
 export default defineComponent({
     name: "SensitivityTab",
@@ -58,14 +59,10 @@ export default defineComponent({
         ActionRequiredMessage,
         SensitivityTracesPlot,
         LoadingButton,
-        SensitivitySummaryDownload
+        SensitivitySummaryDownload,
+        WodinPlot,
     },
-    props: {
-        hideSensitivityButton: { type: Boolean, default: false },
-        hideDownloadButton: { type: Boolean, default: false },
-        visibleVars: { type: String as PropType<string | null>, default: null }
-    },
-    setup(props) {
+    setup() {
         const store = useStore<AppState>();
         const { sensitivityPrerequisitesReady, updateMsg } = baseSensitivity(store, false);
         const namespace = "sensitivity";
@@ -80,7 +77,13 @@ export default defineComponent({
             );
         });
 
-        const graphConfigs = computed(() => store.state.graphs.config as GraphConfig[]);
+        const endTime = computed(() => store.state.run.endTime);
+
+        const graphConfigs = computed(() => {
+            const { syncedConfigGroupId } = store.state.graphs.syncedGraphGroups[graphGroupId];
+            const { configIds } = store.state.graphs.syncedConfigGroups[syncedConfigGroupId];
+            return store.state.graphs.configs.filter(cfg => configIds.includes(cfg.id));
+        });
 
         const runSensitivity = () => {
             store.commit(`${namespace}/${SensitivityMutation.SetLoading}`, true);
@@ -108,15 +111,22 @@ export default defineComponent({
         const error = computed(() => store.state.sensitivity.result?.error);
 
         onMounted(() => {
-            if (props.visibleVars && STATIC_BUILD) {
-                const visibleVars = props.visibleVars.split(",").map(s => s.trim());
-                graphConfigs.value.forEach(cfg => {
-                    store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
-                        id: cfg.id,
-                        selectedVariables: visibleVars
-                    });
-                });
+            const { configIds } = store.state.graphs.syncedConfigGroups[ConfigGroupIds.RunAndSens];
+            if (configIds.length === 0) {
+                const newId = newUid();
+                store.commit(`graphs/${GraphsMutation.AddConfig}`, newId);
+                const updateConfigPayload: UpdateConfigPayload = {
+                    id: newId,
+                    value: { selectedVariables: store.state.model.oldVariables }
+                };
+                store.commit(`graphs/${GraphsMutation.UpdateConfig}`, updateConfigPayload);
+                const configGroupPayload: UpdateSyncedConfigGroupPayload = {
+                    id: ConfigGroupIds.RunAndSens,
+                    value: { syncProperties: ["xAxisRange"], configIds: [newId] }
+                };
+                store.commit(`graphs/${GraphsMutation.UpdateSyncedConfigGroup}`, configGroupPayload);
             }
+            store.commit(`graphs/${GraphsMutation.UpdateVisibleGraphGroups}`, [graphGroupId]);
         });
 
         return {
@@ -128,7 +138,9 @@ export default defineComponent({
             updateMsg,
             tracesPlot,
             error,
-            loading
+            loading,
+            graphGroupId,
+            endTime,
         };
     }
 });

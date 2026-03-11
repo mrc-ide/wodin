@@ -51,6 +51,8 @@ const updateGraphOnMutations = [
     // run sensitivity
     `sensitivity/${BaseSensitivityMutation.SetResult}`,
     `sensitivity/${SensitivityMutation.SetParameterSetResults}`,
+    `sensitivity/${SensitivityMutation.SetPlotExtreme}`,
+    `sensitivity/${SensitivityMutation.SetPlotTime}`,
 
     // change endTime
     `run/${RunMutation.SetEndTime}`,

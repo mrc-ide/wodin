@@ -16,7 +16,7 @@ import { computed, defineComponent, ref, watch, onMounted, PropType } from "vue"
 import { useStore } from "vuex";
 import { Metadata, WodinPlotData, fadePlotStyle } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
-import { GraphConfig } from "../store/graphs/state";
+import { DataType, GraphConfig } from "../store/graphs/state";
 import { Chart, Scales, ZoomProperties } from "@reside-ic/skadi-chart";
 import { AppState, VisualisationTab } from "@/store/appState/state";
 import { runPlaceholderMessage, tooltipCallback } from "@/utils";
@@ -56,6 +56,8 @@ export default defineComponent({
             if (!visibleData) return emptyData;
             return visibleData.find(({ configId }) => configId === props.config.id)?.data || emptyData;
         });
+
+        const dataType = computed(() => store.state.graphs.syncedGraphGroups[props.graphGroupId].dataType);
 
         const hasPlotData = computed(() => !!baseData.value.lines.length || !!baseData.value.points.length);
 
@@ -129,8 +131,16 @@ export default defineComponent({
         const autoscaledMaxExtentsY = ref<Scales["y"]>();
 
         const drawSkadiChart = (legendFilteredData: null | WodinPlotData = null) => {
+            const summaryDataTypes = [
+              DataType.SensitivityValueAtTime,
+              DataType.SensitivityTimeAtExtreme,
+              DataType.SensitivityValueAtExtreme
+            ];
+            const isSummaryType = summaryDataTypes.includes(dataType.value);
+            const parameterToVary = store.state.sensitivity.paramSettings.parameterToVary || undefined;
+
             const settings = props.config;
-            const maxXExtents = { start: startTime, end: props.endTime };
+            const maxXExtents = isSummaryType ? undefined : { start: startTime, end: props.endTime };
             const xRange = settings.xAxisRange
               ? { start: settings.xAxisRange[0], end: settings.xAxisRange[1] }
               : maxXExtents;
@@ -150,7 +160,7 @@ export default defineComponent({
             // skadiChart holds a lot of data, making this reactive will have a performance
             // penalty, if you need to make it reactive, please use shallowRef
             const skadiChart = new Chart<Metadata>({ logScale: { y: settings.logScaleYAxis } })
-              .addAxes({ x: "Time" })
+              .addAxes({ x: isSummaryType ? parameterToVary : "Time" })
               .addGridLines()
               .addTraces(data.lines)
               .addScatterPoints(data.points)
