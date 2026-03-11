@@ -19,18 +19,18 @@ import { Metadata, WodinPlotData, fadePlotStyle } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
 import { GraphConfig } from "../store/graphs/state";
 import { Chart, Scales, ZoomProperties } from "@reside-ic/skadi-chart";
-import { AppState } from "@/store/appState/state";
-import { tooltipCallback } from "@/utils";
+import { AppState, VisualisationTab } from "@/store/appState/state";
+import { runPlaceholderMessage, tooltipCallback } from "@/utils";
 import WodinLegend, { LegendConfig } from "./WodinLegend.vue";
 import { GraphsMutation, UpdateConfigPayload } from "@/store/graphs/mutations";
+import { STATIC_BUILD } from "@/parseEnv";
+import userMessages from "@/userMessages";
 
 export default defineComponent({
     name: "WodinPlot",
     components: { WodinPlotDataSummary, WodinLegend },
     props: {
         fadePlot: Boolean,
-        placeholderMessage: String,
-        // need to check out fit plot in more detail to see why this is passed in
         endTime: {
             type: Number,
             required: true
@@ -59,6 +59,20 @@ export default defineComponent({
         });
 
         const hasPlotData = computed(() => !!baseData.value.lines.length || !!baseData.value.points.length);
+
+        const placeholderMessage = computed(() => {
+            if (STATIC_BUILD) return "";
+            const tab = store.state.openVisualisationTab;
+            if (tab === VisualisationTab.Run) {
+                return runPlaceholderMessage(props.config.selectedVariables, false);
+            } else if (tab === VisualisationTab.Fit) {
+                return userMessages.modelFit.notFittedYet;
+            } else if (tab === VisualisationTab.Sensitivity) {
+                return runPlaceholderMessage(props.config.selectedVariables, true);
+            } else {
+                return "";
+            }
+        });
 
         const updateAxes = (zoomProperties: ZoomProperties) => {
             if (!zoomProperties) return;
@@ -183,6 +197,7 @@ export default defineComponent({
             updateAxes,
             legendConfigs,
             handleClick,
+            placeholderMessage,
         };
     }
 });
