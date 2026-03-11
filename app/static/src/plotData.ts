@@ -105,7 +105,7 @@ const getFitTraceData = <T>(
   if (!data || !link || !result) return { lines: [], points: [] };
 
   return {
-    lines: odinToSkadiChart(filterSeriesSet(result, [link.model]), paletteModel!),
+    lines: odinToSkadiChart(filterSeriesSet(result, cfg.selectedVariables), paletteModel!),
     points: fitDataToSkadiChart(data, link, paletteModel!, tRange[0], tRange[1])
   };
 }

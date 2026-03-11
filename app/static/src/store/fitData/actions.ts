@@ -9,6 +9,8 @@ import { ModelFitMutation } from "../modelFit/mutations";
 import { ModelFitAction } from "../modelFit/actions";
 import { SensitivityMutation } from "../sensitivity/mutations";
 import { getAllSelectedVariables } from "../graphs/utils";
+import { ConfigGroupIds } from "../graphs/graphs";
+import { GraphsMutation, UpdateConfigPayload } from "../graphs/mutations";
 
 export enum FitDataAction {
     Upload = "Upload",
@@ -80,11 +82,27 @@ export const actions: ActionTree<FitDataState, FitState> = {
     },
 
     [FitDataAction.UpdateLinkedVariable](context, payload: SetLinkedVariablePayload) {
-        const { commit, dispatch, state } = context;
+        const { commit, dispatch, state, rootState } = context;
         commit(FitDataMutation.SetLinkedVariable, payload);
+
         if (payload.column === state.columnToFit) {
             commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { linkChanged: true }, { root: true });
             dispatch(`modelFit/${ModelFitAction.UpdateSumOfSquares}`, null, { root: true });
+        }
+
+        // the fit tab may be mounted and add a graph config without the linked variable selected.
+        // if the first graph config has no variables selected then we add the linked variable
+        // as a quality of life feature
+        const { configIds } = rootState.graphs.syncedConfigGroups[ConfigGroupIds.Fit];
+        if (payload.variable && configIds.length !== 0) {
+            const firstConfig = rootState.graphs.configs.find(cfg => cfg.id === configIds[0]);
+            if (firstConfig?.selectedVariables.length === 0) {
+                const updateConfigPayload: UpdateConfigPayload = {
+                    id: firstConfig.id,
+                    value: { selectedVariables: [payload.variable] }
+                };
+                commit(`graphs/${GraphsMutation.UpdateConfig}`, updateConfigPayload, { root: true });
+            }
         }
     },
 

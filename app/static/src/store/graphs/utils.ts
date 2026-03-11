@@ -1,5 +1,13 @@
 import { AppState } from "../appState/state";
 
 export const getAllSelectedVariables = <T extends AppState>(state: T) => {
-  return state.graphs.configs.flatMap(cfg => cfg.selectedVariables);
+  const allSelectedVariables: string[] = [];
+  state.graphs.configs.forEach(cfg => {
+    cfg.selectedVariables.forEach(v => {
+      if (allSelectedVariables.includes(v)) return;
+      allSelectedVariables.push(v);
+    });
+  });
+
+  return allSelectedVariables;
 };

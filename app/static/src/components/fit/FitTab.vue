@@ -13,28 +13,34 @@
                 Cancel fit
             </button>
             <action-required-message :message="actionRequiredMessage"></action-required-message>
-            <fit-plot :fade-plot="!!actionRequiredMessage" :model-fit="true">
-                <div v-if="iterations" class="fit-summary-container">
-                    <vue-feather
-                        v-if="iconType"
-                        class="inline-icon"
-                        :class="iconClass"
-                        :type="iconType"
-                        size="40px"
-                    ></vue-feather>
-                    <loading-spinner v-if="fitting" class="inline-icon" size="xs"></loading-spinner>
-                    <span class="ms-2">Iterations: {{ iterations }}</span>
-                    <span class="ms-2">Sum of squares: {{ sumOfSquares }}</span>
-                    <div v-if="cancelled" id="fit-cancelled-msg" class="small text-danger">{{ cancelledMsg }}</div>
-                </div>
-            </fit-plot>
+            <div v-if="iterations" class="fit-summary-container">
+                <vue-feather
+                    v-if="iconType"
+                    class="inline-icon"
+                    :class="iconClass"
+                    :type="iconType"
+                    size="40px"
+                ></vue-feather>
+                <loading-spinner v-if="fitting" class="inline-icon" size="xs"></loading-spinner>
+                <span class="ms-2">Iterations: {{ iterations }}</span>
+                <span class="ms-2">Sum of squares: {{ sumOfSquares }}</span>
+                <div v-if="cancelled" id="fit-cancelled-msg" class="small text-danger">{{ cancelledMsg }}</div>
+            </div>
+            <template v-for="config in graphConfigs" :key="config.id">
+                <wodin-plot
+                  :fade-plot="!!actionRequiredMessage"
+                  :end-time="endTime"
+                  :config="config"
+                  :graph-group-id="graphGroupId">
+                </wodin-plot>
+            </template>
             <error-info :error="error"></error-info>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import FitPlot from "./FitPlot.vue";
@@ -45,9 +51,17 @@ import userMessages from "../../userMessages";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import { ModelFitMutation } from "../../store/modelFit/mutations";
 import { fitRequirementsExplanation, fitUpdateRequiredExplanation } from "./support";
-import { allTrue, anyTrue } from "../../utils";
+import { allTrue, anyTrue, newUid } from "../../utils";
 import LoadingButton from "../LoadingButton.vue";
 import ErrorInfo from "../ErrorInfo.vue";
+import { VisualisationTab } from "@/store/appState/state";
+import { FitState } from "@/store/fit/state";
+import { ConfigGroupIds } from "@/store/graphs/graphs";
+import { GraphsMutation, UpdateConfigPayload, UpdateSyncedConfigGroupPayload } from "@/store/graphs/mutations";
+import { FitDataGetter } from "@/store/fitData/getters";
+import WodinPlot from "../WodinPlot.vue";
+
+const graphGroupId = VisualisationTab.Fit;
 
 export default defineComponent({
     name: "FitTab",
@@ -57,11 +71,18 @@ export default defineComponent({
         FitPlot,
         ActionRequiredMessage,
         VueFeather,
-        LoadingButton
+        LoadingButton,
+        WodinPlot,
     },
     setup() {
-        const store = useStore();
+        const store = useStore<FitState>();
         const namespace = "modelFit";
+
+        const graphConfigs = computed(() => {
+            const { syncedConfigGroupId } = store.state.graphs.syncedGraphGroups[graphGroupId];
+            const { configIds } = store.state.graphs.syncedConfigGroups[syncedConfigGroupId];
+            return store.state.graphs.configs.filter(cfg => configIds.includes(cfg.id));
+        });
 
         const fitRequirements = computed(() => store.getters[`${namespace}/${ModelFitGetter.fitRequirements}`]);
         const canFitModel = computed(() => allTrue(fitRequirements.value));
@@ -123,6 +144,48 @@ export default defineComponent({
             return iconType.value ? classes[iconType.value] : null;
         });
 
+        // If we're displaying a reloaded session with fit, we should be able to plot the previous fit plot without
+        // re-running fit. Determine if this is the case, by checking if we have a fit result but no fit solution
+        // (which is not persisted)
+        const plotRehydratedFit = computed(() => {
+            const { modelFit } = store.state;
+            const result = modelFit.result && !modelFit.result.solution && !modelFit.result.error;
+            return result;
+        });
+
+        const link = computed(() => {
+            return plotRehydratedFit.value
+                ? store.state.modelFit.result?.inputs.link
+                : store.getters[`fitData/${FitDataGetter.link}`];
+        });
+
+        const endTime = computed(() => {
+            return plotRehydratedFit.value
+                ? store.state.modelFit.result?.inputs.endTime
+                : store.getters[`fitData/${FitDataGetter.dataEnd}`];
+        });
+
+        onMounted(() => {
+            const { configIds } = store.state.graphs.syncedConfigGroups[ConfigGroupIds.Fit];
+            if (configIds.length === 0) {
+                const newId = newUid();
+                store.commit(`graphs/${GraphsMutation.AddConfig}`, newId);
+                if (link.value) {
+                    const updateConfigPayload: UpdateConfigPayload = {
+                        id: newId,
+                        value: { selectedVariables: [link.value.model] }
+                    };
+                    store.commit(`graphs/${GraphsMutation.UpdateConfig}`, updateConfigPayload);
+                }
+                const configGroupPayload: UpdateSyncedConfigGroupPayload = {
+                    id: ConfigGroupIds.Fit,
+                    value: { syncProperties: ["xAxisRange"], configIds: [newId] }
+                };
+                store.commit(`graphs/${GraphsMutation.UpdateSyncedConfigGroup}`, configGroupPayload);
+            }
+            store.commit(`graphs/${GraphsMutation.UpdateVisibleGraphGroups}`, [graphGroupId]);
+        });
+
         return {
             canFitModel,
             fitModel,
@@ -136,7 +199,10 @@ export default defineComponent({
             actionRequiredMessage,
             error,
             iconType,
-            iconClass
+            iconClass,
+            graphConfigs,
+            endTime,
+            graphGroupId,
         };
     }
 });

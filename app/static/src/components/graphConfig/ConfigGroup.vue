@@ -154,6 +154,8 @@ export default defineComponent({
         };
 
         const onDrop = (configId: string, event: DragEvent) => {
+            dragging.value = false;
+
             const { dataTransfer } = event;
             const srcConfigId = dataTransfer!.getData(DragData.CfgId);
             const variable = dataTransfer!.getData(DragData.Var);
