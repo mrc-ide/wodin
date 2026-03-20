@@ -93,7 +93,7 @@ export const actions: ActionTree<FitDataState, FitState> = {
         // the fit tab may be mounted and add a graph config without the linked variable selected.
         // if the first graph config has no variables selected then we add the linked variable
         // as a quality of life feature
-        const { configIds } = rootState.graphs.syncedConfigGroups[ConfigGroupIds.Fit];
+        const { configIds } = rootState.graphs.configGroups[ConfigGroupIds.Fit];
         if (payload.variable && configIds.length !== 0) {
             const firstConfig = rootState.graphs.configs.find(cfg => cfg.id === configIds[0]);
             if (firstConfig?.selectedVariables.length === 0) {

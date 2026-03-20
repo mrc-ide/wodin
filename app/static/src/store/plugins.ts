@@ -61,8 +61,8 @@ const updateGraphOnMutations = [
     `graphs/${GraphsMutation.AddConfig}`,
     `graphs/${GraphsMutation.UpdateConfig}`,
     `graphs/${GraphsMutation.DeleteConfig}`,
-    `graphs/${GraphsMutation.UpdateSyncedConfigGroup}`,
-    `graphs/${GraphsMutation.UpdateSyncedGraphGroup}`,
+    `graphs/${GraphsMutation.UpdateConfigGroup}`,
+    `graphs/${GraphsMutation.UpdateGraphGroup}`,
     `graphs/${GraphsMutation.UpdateVisibleGraphGroups}`,
 ];
 

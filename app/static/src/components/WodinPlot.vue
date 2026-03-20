@@ -57,7 +57,7 @@ export default defineComponent({
             return visibleData.find(({ configId }) => configId === props.config.id)?.data || emptyData;
         });
 
-        const dataType = computed(() => store.state.graphs.syncedGraphGroups[props.graphGroupId].dataType);
+        const dataType = computed(() => store.state.graphs.graphGroups[props.graphGroupId].dataType);
 
         const hasPlotData = computed(() => !!baseData.value.lines.length || !!baseData.value.points.length);
 

@@ -39,7 +39,7 @@ import { useStore } from "vuex";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { SensitivityPlotExtreme, SensitivityPlotType } from "../../store/sensitivity/state";
 import NumericInput from "./NumericInput.vue";
-import { GraphsMutation, UpdateSyncedGraphGroupPayload } from "@/store/graphs/mutations";
+import { GraphsMutation, UpdateGraphGroupPayload } from "@/store/graphs/mutations";
 import { AppState, VisualisationTab } from "@/store/appState/state";
 import { ConfigGroupIds } from "@/store/graphs/graphs";
 import { DataType } from "@/store/graphs/state";
@@ -71,14 +71,14 @@ export default defineComponent({
                     dataType = DataType.SensitivityValueAtExtreme;
                 }
 
-                const payload: UpdateSyncedGraphGroupPayload = {
+                const payload: UpdateGraphGroupPayload = {
                     id: VisualisationTab.Sensitivity,
                     value: {
-                        syncedConfigGroupId: ConfigGroupIds.RunAndSens,
+                        configGroupId: ConfigGroupIds.RunAndSens,
                         dataType,
                     }
                 };
-                store.commit(`graphs/${GraphsMutation.UpdateSyncedGraphGroup}`, payload);
+                store.commit(`graphs/${GraphsMutation.UpdateGraphGroup}`, payload);
             }
         });
 

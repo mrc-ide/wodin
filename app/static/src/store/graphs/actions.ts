@@ -12,8 +12,8 @@ export const actions = {
   [GraphsAction.GenerateData](ctx) {
     const { state, rootState } = ctx;
     state.visibleData = Object.fromEntries(state.visibleGraphGroups.map(graphGroupId => {
-      const { syncedConfigGroupId, dataType } = state.syncedGraphGroups[graphGroupId];
-      const { configIds } = state.syncedConfigGroups[syncedConfigGroupId];
+      const { configGroupId, dataType } = state.graphGroups[graphGroupId];
+      const { configIds } = state.configGroups[configGroupId];
 
       const dataWithConfigIds: DataWithConfigId[] = configIds.map(cfgId => {
         const config = state.configs.find(cfg => cfg.id === cfgId)!;
