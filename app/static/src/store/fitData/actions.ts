@@ -90,7 +90,8 @@ export const actions: ActionTree<FitDataState, FitState> = {
             dispatch(`modelFit/${ModelFitAction.UpdateSumOfSquares}`, null, { root: true });
         }
 
-        // the fit tab may be mounted and add a graph config without the linked variable selected.
+        // the fit tab may be mounted and add a graph config when there is no linked variable,
+        // so no selectedVariables will be added to the default fit config.
         // if the first graph config has no variables selected then we add the linked variable
         // as a quality of life feature
         const { configIds } = rootState.graphs.configGroups[ConfigGroupIds.Fit];
