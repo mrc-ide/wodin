@@ -45,6 +45,7 @@ import { ConfigGroupIds } from "@/store/graphs/graphs";
 import { newUid } from "@/utils";
 import { GraphsMutation, UpdateConfigPayload, UpdateConfigGroupPayload } from "@/store/graphs/mutations";
 import WodinPlot from "../WodinPlot.vue";
+import { getGraphConfigs } from "@/store/graphs/utils";
 
 const graphGroupId = VisualisationTab.Sensitivity;
 
@@ -75,11 +76,7 @@ export default defineComponent({
 
         const endTime = computed(() => store.state.run.endTime);
 
-        const graphConfigs = computed(() => {
-            const { configGroupId } = store.state.graphs.graphGroups[graphGroupId];
-            const { configIds } = store.state.graphs.configGroups[configGroupId];
-            return store.state.graphs.configs.filter(cfg => configIds.includes(cfg.id));
-        });
+        const graphConfigs = computed(() => getGraphConfigs(store, graphGroupId));
 
         const runSensitivity = () => {
             store.commit(`${namespace}/${SensitivityMutation.SetLoading}`, true);

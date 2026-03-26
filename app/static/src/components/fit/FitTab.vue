@@ -59,6 +59,7 @@ import { ConfigGroupIds } from "@/store/graphs/graphs";
 import { GraphsMutation, UpdateConfigPayload, UpdateConfigGroupPayload } from "@/store/graphs/mutations";
 import { FitDataGetter } from "@/store/fitData/getters";
 import WodinPlot from "../WodinPlot.vue";
+import { getGraphConfigs } from "@/store/graphs/utils";
 
 const graphGroupId = VisualisationTab.Fit;
 
@@ -76,11 +77,7 @@ export default defineComponent({
         const store = useStore<FitState>();
         const namespace = "modelFit";
 
-        const graphConfigs = computed(() => {
-            const { configGroupId } = store.state.graphs.graphGroups[graphGroupId];
-            const { configIds } = store.state.graphs.configGroups[configGroupId];
-            return store.state.graphs.configs.filter(cfg => configIds.includes(cfg.id));
-        });
+        const graphConfigs = computed(() => getGraphConfigs(store, graphGroupId));
 
         const fitRequirements = computed(() => store.getters[`${namespace}/${ModelFitGetter.fitRequirements}`]);
         const canFitModel = computed(() => allTrue(fitRequirements.value));
