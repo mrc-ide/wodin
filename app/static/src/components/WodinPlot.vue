@@ -139,13 +139,13 @@ export default defineComponent({
             const isSummaryType = summaryDataTypes.includes(dataType.value);
             const parameterToVary = store.state.sensitivity.paramSettings.parameterToVary || undefined;
 
-            const settings = props.config;
+            const config = props.config;
             const maxXExtents = isSummaryType ? undefined : { start: startTime, end: props.endTime };
-            const xRange = settings.xAxisRange
-              ? { start: settings.xAxisRange[0], end: settings.xAxisRange[1] }
+            const xRange = config.xAxisRange
+              ? { start: config.xAxisRange[0], end: config.xAxisRange[1] }
               : maxXExtents;
-            const yRange = settings.yAxisRange
-              ? { start: settings.yAxisRange[0], end: settings.yAxisRange[1] }
+            const yRange = config.yAxisRange
+              ? { start: config.yAxisRange[0], end: config.yAxisRange[1] }
               : {};
             const ranges = { x: xRange, y: yRange };
 
@@ -159,12 +159,12 @@ export default defineComponent({
 
             // skadiChart holds a lot of data, making this reactive will have a performance
             // penalty, if you need to make it reactive, please use shallowRef
-            const skadiChart = new Chart<Metadata>({ logScale: { y: settings.logScaleYAxis } })
+            const skadiChart = new Chart<Metadata>({ logScale: { y: config.logScaleYAxis } })
               .addAxes({ x: isSummaryType ? parameterToVary : "Time" })
               .addGridLines()
               .addTraces(data.lines)
               .addScatterPoints(data.points)
-              .addZoom({ lockAxis: settings.lockYAxis ? "y" : null })
+              .addZoom({ lockAxis: config.lockYAxis ? "y" : null })
               .makeResponsive()
               .addTooltips(tooltipCallback)
               .addCustomLifecycleHooks({ beforeZoom: updateAxes })
