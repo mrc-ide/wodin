@@ -113,7 +113,7 @@ export default defineComponent({
                 store.commit(`graphs/${GraphsMutation.AddConfig}`, newId);
                 const updateConfigPayload: UpdateConfigPayload = {
                     id: newId,
-                    value: { selectedVariables: store.state.model.oldVariables }
+                    value: { selectedVariables: store.state.model.variablesCopy }
                 };
                 store.commit(`graphs/${GraphsMutation.UpdateConfig}`, updateConfigPayload);
                 const configGroupPayload: UpdateConfigGroupPayload = {
