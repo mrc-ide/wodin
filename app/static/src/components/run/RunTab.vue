@@ -54,10 +54,10 @@ import { anyTrue, newUid } from "../../utils";
 import LoadingSpinner from "../LoadingSpinner.vue";
 import { AppType, VisualisationTab } from "../../store/appState/state";
 import { ModelGetter } from "../../store/model/getters";
-import { getAllSelectedVariables } from "@/store/graphs/utils";
+import { getAllSelectedVariables, getGraphConfigs } from "@/store/graphs/utils";
 import { FitState } from "@/store/fit/state";
 import WodinPlot from "../WodinPlot.vue";
-import { GraphsMutation, UpdateConfigPayload, UpdateSyncedConfigGroupPayload } from "@/store/graphs/mutations";
+import { GraphsMutation, UpdateConfigPayload, UpdateConfigGroupPayload } from "@/store/graphs/mutations";
 import { ConfigGroupIds } from "@/store/graphs/graphs";
 
 const graphGroupId = VisualisationTab.Run;
@@ -88,11 +88,7 @@ export default defineComponent({
 
         const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
         const allSelectedVariables = computed(() => getAllSelectedVariables(store.state));
-        const graphConfigs = computed(() => {
-            const { syncedConfigGroupId } = store.state.graphs.syncedGraphGroups[graphGroupId];
-            const { configIds } = store.state.graphs.syncedConfigGroups[syncedConfigGroupId];
-            return store.state.graphs.configs.filter(cfg => configIds.includes(cfg.id));
-        });
+        const graphConfigs = computed(() => getGraphConfigs(store, graphGroupId));
 
         const endTime = computed(() => store.state.run.endTime);
 
@@ -133,20 +129,20 @@ export default defineComponent({
             store.dispatch(`run/${RunAction.DownloadOutput}`, payload);
 
         onMounted(() => {
-            const { configIds } = store.state.graphs.syncedConfigGroups[ConfigGroupIds.RunAndSens];
+            const { configIds } = store.state.graphs.configGroups[ConfigGroupIds.RunAndSens];
             if (configIds.length === 0) {
                 const newId = newUid();
                 store.commit(`graphs/${GraphsMutation.AddConfig}`, newId);
                 const updateConfigPayload: UpdateConfigPayload = {
                     id: newId,
-                    value: { selectedVariables: store.state.model.oldVariables }
+                    value: { selectedVariables: store.state.model.variablesCopy }
                 };
                 store.commit(`graphs/${GraphsMutation.UpdateConfig}`, updateConfigPayload);
-                const configGroupPayload: UpdateSyncedConfigGroupPayload = {
+                const configGroupPayload: UpdateConfigGroupPayload = {
                     id: ConfigGroupIds.RunAndSens,
                     value: { syncProperties: ["xAxisRange"], configIds: [newId] }
                 };
-                store.commit(`graphs/${GraphsMutation.UpdateSyncedConfigGroup}`, configGroupPayload);
+                store.commit(`graphs/${GraphsMutation.UpdateConfigGroup}`, configGroupPayload);
             }
             store.commit(`graphs/${GraphsMutation.UpdateVisibleGraphGroups}`, [graphGroupId]);
         });

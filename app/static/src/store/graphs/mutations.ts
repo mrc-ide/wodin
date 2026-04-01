@@ -1,11 +1,11 @@
-import { ConfigId, defaultGraphConfig, GraphConfig, GraphsState, SyncedConfigGroup, SyncedConfigGroupId, SyncedGraphGroup, SyncedGraphGroupId } from "./state";
+import { ConfigId, defaultGraphConfig, GraphConfig, GraphsState, ConfigGroup, ConfigGroupId, GraphGroup, GraphGroupId, SyncProperty } from "./state";
 
 export enum GraphsMutation {
   AddConfig = "AddConfig",
   UpdateConfig = "UpdateConfig",
   DeleteConfig = "DeleteConfig",
-  UpdateSyncedConfigGroup = "UpdateSyncedConfigGroup",
-  UpdateSyncedGraphGroup = "UpdateSyncedGraphGroup",
+  UpdateConfigGroup = "UpdateConfigGroup",
+  UpdateGraphGroup = "UpdateGraphGroup",
   UpdateVisibleGraphGroups = "UpdateVisibleGraphGroups",
 }
 
@@ -14,14 +14,14 @@ export type UpdateConfigPayload = {
   value: Partial<GraphConfig>,
 }
 
-export type UpdateSyncedConfigGroupPayload = {
-  id: SyncedConfigGroupId,
-  value: SyncedConfigGroup,
+export type UpdateConfigGroupPayload = {
+  id: ConfigGroupId,
+  value: ConfigGroup,
 }
 
-export type UpdateSyncedGraphGroupPayload = {
-  id: SyncedGraphGroupId,
-  value: SyncedGraphGroup,
+export type UpdateGraphGroupPayload = {
+  id: GraphGroupId,
+  value: GraphGroup,
 }
 
 export const mutations = {
@@ -37,13 +37,13 @@ export const mutations = {
     };
 
     // resolve synced config updates
-    Object.values(state.syncedConfigGroups).forEach(({ syncProperties, configIds }) => {
+    Object.values(state.configGroups).forEach(({ syncProperties, configIds }) => {
       // don't update if config not in group
       if (!configIds.includes(payload.id)) return;
 
       const propertiesToSync = Object.fromEntries(
         Object.entries(payload.value)
-          .filter(([property]) => syncProperties.includes(property as keyof GraphConfig))
+          .filter(([property]) => syncProperties.includes(property as SyncProperty))
       );
       // don't update if updated keys are not in synced properties
       if (Object.keys(propertiesToSync).length === 0) return;
@@ -63,7 +63,7 @@ export const mutations = {
     state.configs = state.configs.filter(c => c.id !== deleteId);
 
     // remove all references to this config
-    Object.values(state.syncedConfigGroups).forEach(cfgGroup => {
+    Object.values(state.configGroups).forEach(cfgGroup => {
       cfgGroup.configIds = cfgGroup.configIds.filter(id => id !== deleteId);
     });
 
@@ -76,15 +76,15 @@ export const mutations = {
     });
   },
 
-  [GraphsMutation.UpdateSyncedConfigGroup](state: GraphsState, payload: UpdateSyncedConfigGroupPayload) {
-    state.syncedConfigGroups[payload.id] = payload.value;
+  [GraphsMutation.UpdateConfigGroup](state: GraphsState, payload: UpdateConfigGroupPayload) {
+    state.configGroups[payload.id] = payload.value;
   },
 
-  [GraphsMutation.UpdateSyncedGraphGroup](state: GraphsState, payload: UpdateSyncedGraphGroupPayload) {
-    state.syncedGraphGroups[payload.id] = payload.value;
+  [GraphsMutation.UpdateGraphGroup](state: GraphsState, payload: UpdateGraphGroupPayload) {
+    state.graphGroups[payload.id] = payload.value;
   },
 
-  [GraphsMutation.UpdateVisibleGraphGroups](state: GraphsState, newVisibleGroups: SyncedGraphGroupId[]) {
+  [GraphsMutation.UpdateVisibleGraphGroups](state: GraphsState, newVisibleGroups: GraphGroupId[]) {
     state.visibleGraphGroups = newVisibleGroups;
   },
 };

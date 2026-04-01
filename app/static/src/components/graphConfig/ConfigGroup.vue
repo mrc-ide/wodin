@@ -67,7 +67,7 @@ import GraphSettings from "./GraphSettings.vue";
 import { GraphConfig } from "@/store/graphs/state";
 import VariableBadge from "./VariableBadge.vue";
 import { newUid } from "@/utils";
-import { GraphsMutation, UpdateConfigPayload, UpdateSyncedConfigGroupPayload } from "@/store/graphs/mutations";
+import { GraphsMutation, UpdateConfigPayload, UpdateConfigGroupPayload } from "@/store/graphs/mutations";
 
 enum DragData {
     Var = "variable",
@@ -92,8 +92,8 @@ export default defineComponent({
         const graphGroupId = computed(() => store.state.openVisualisationTab);
 
         const configs = computed(() => {
-            const { syncedConfigGroupId } = store.state.graphs.syncedGraphGroups[graphGroupId.value];
-            const { configIds } = store.state.graphs.syncedConfigGroups[syncedConfigGroupId];
+            const { configGroupId } = store.state.graphs.graphGroups[graphGroupId.value];
+            const { configIds } = store.state.graphs.configGroups[configGroupId];
             return configIds.map(id => store.state.graphs.configs.find(c => c.id === id)!);
         });
 
@@ -106,14 +106,14 @@ export default defineComponent({
         const addGraph = () => {
             const newId = newUid();
             store.commit(`graphs/${GraphsMutation.AddConfig}`, newId);
-            const { syncedConfigGroupId } = store.state.graphs.syncedGraphGroups[graphGroupId.value];
-            const configGroup = store.state.graphs.syncedConfigGroups[syncedConfigGroupId];
+            const { configGroupId } = store.state.graphs.graphGroups[graphGroupId.value];
+            const configGroup = store.state.graphs.configGroups[configGroupId];
             const newConfigGroup = { ...configGroup };
             newConfigGroup.configIds = [ ...newConfigGroup.configIds, newId ];
-            store.commit(`graphs/${GraphsMutation.UpdateSyncedConfigGroup}`, {
-                id: syncedConfigGroupId,
+            store.commit(`graphs/${GraphsMutation.UpdateConfigGroup}`, {
+                id: configGroupId,
                 value: newConfigGroup,
-            } as UpdateSyncedConfigGroupPayload);
+            } as UpdateConfigGroupPayload);
             store.commit(`graphs/${GraphsMutation.UpdateVisibleGraphGroups}`, [graphGroupId.value]);
         };
 

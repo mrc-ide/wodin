@@ -61,11 +61,15 @@ const updateGraphOnMutations = [
     `graphs/${GraphsMutation.AddConfig}`,
     `graphs/${GraphsMutation.UpdateConfig}`,
     `graphs/${GraphsMutation.DeleteConfig}`,
-    `graphs/${GraphsMutation.UpdateSyncedConfigGroup}`,
-    `graphs/${GraphsMutation.UpdateSyncedGraphGroup}`,
+    `graphs/${GraphsMutation.UpdateConfigGroup}`,
+    `graphs/${GraphsMutation.UpdateGraphGroup}`,
     `graphs/${GraphsMutation.UpdateVisibleGraphGroups}`,
 ];
 
+// the debounce here is necessary because several mutations listed
+// above can occur synchronously and one after the other. we only want
+// to compute the data for the final state rather than each in between
+// state
 export const updateGraphs = (store: Store<AppState>) => {
     let timeout: NodeJS.Timeout | undefined = undefined;
     store.subscribe(mutation => {

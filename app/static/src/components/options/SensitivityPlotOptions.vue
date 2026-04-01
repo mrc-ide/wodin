@@ -39,10 +39,17 @@ import { useStore } from "vuex";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { SensitivityPlotExtreme, SensitivityPlotType } from "../../store/sensitivity/state";
 import NumericInput from "./NumericInput.vue";
-import { GraphsMutation, UpdateSyncedGraphGroupPayload } from "@/store/graphs/mutations";
+import { GraphsMutation, UpdateGraphGroupPayload } from "@/store/graphs/mutations";
 import { AppState, VisualisationTab } from "@/store/appState/state";
 import { ConfigGroupIds } from "@/store/graphs/graphs";
 import { DataType } from "@/store/graphs/state";
+
+const sensPlotTypeToDataType = {
+  [SensitivityPlotType.TraceOverTime]: DataType.Sensitivity,
+  [SensitivityPlotType.ValueAtTime]: DataType.SensitivityValueAtTime,
+  [SensitivityPlotType.TimeAtExtreme]: DataType.SensitivityTimeAtExtreme,
+  [SensitivityPlotType.ValueAtExtreme]: DataType.SensitivityValueAtExtreme,
+}
 
 export default defineComponent({
     name: "SensitivityPlotOptions.vue",
@@ -60,25 +67,16 @@ export default defineComponent({
             get: () => settings.value.plotType,
             set: (newVal) => {
                 store.commit(`${namespace}/${SensitivityMutation.SetPlotType}`, newVal)
-                let dataType: DataType;
-                if (newVal === SensitivityPlotType.TraceOverTime) {
-                    dataType = DataType.Sensitivity;
-                } else if (newVal === SensitivityPlotType.ValueAtTime) {
-                    dataType = DataType.SensitivityValueAtTime;
-                } else if (newVal === SensitivityPlotType.TimeAtExtreme) {
-                    dataType = DataType.SensitivityTimeAtExtreme;
-                } else {
-                    dataType = DataType.SensitivityValueAtExtreme;
-                }
+                const dataType = sensPlotTypeToDataType[newVal];
 
-                const payload: UpdateSyncedGraphGroupPayload = {
+                const payload: UpdateGraphGroupPayload = {
                     id: VisualisationTab.Sensitivity,
                     value: {
-                        syncedConfigGroupId: ConfigGroupIds.RunAndSens,
+                        configGroupId: ConfigGroupIds.RunAndSens,
                         dataType,
                     }
                 };
-                store.commit(`graphs/${GraphsMutation.UpdateSyncedGraphGroup}`, payload);
+                store.commit(`graphs/${GraphsMutation.UpdateGraphGroup}`, payload);
             }
         });
 

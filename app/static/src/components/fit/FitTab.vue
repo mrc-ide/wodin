@@ -56,9 +56,10 @@ import ErrorInfo from "../ErrorInfo.vue";
 import { VisualisationTab } from "@/store/appState/state";
 import { FitState } from "@/store/fit/state";
 import { ConfigGroupIds } from "@/store/graphs/graphs";
-import { GraphsMutation, UpdateConfigPayload, UpdateSyncedConfigGroupPayload } from "@/store/graphs/mutations";
+import { GraphsMutation, UpdateConfigPayload, UpdateConfigGroupPayload } from "@/store/graphs/mutations";
 import { FitDataGetter } from "@/store/fitData/getters";
 import WodinPlot from "../WodinPlot.vue";
+import { getGraphConfigs } from "@/store/graphs/utils";
 
 const graphGroupId = VisualisationTab.Fit;
 
@@ -76,11 +77,7 @@ export default defineComponent({
         const store = useStore<FitState>();
         const namespace = "modelFit";
 
-        const graphConfigs = computed(() => {
-            const { syncedConfigGroupId } = store.state.graphs.syncedGraphGroups[graphGroupId];
-            const { configIds } = store.state.graphs.syncedConfigGroups[syncedConfigGroupId];
-            return store.state.graphs.configs.filter(cfg => configIds.includes(cfg.id));
-        });
+        const graphConfigs = computed(() => getGraphConfigs(store, graphGroupId));
 
         const fitRequirements = computed(() => store.getters[`${namespace}/${ModelFitGetter.fitRequirements}`]);
         const canFitModel = computed(() => allTrue(fitRequirements.value));
@@ -164,7 +161,7 @@ export default defineComponent({
         });
 
         onMounted(() => {
-            const { configIds } = store.state.graphs.syncedConfigGroups[ConfigGroupIds.Fit];
+            const { configIds } = store.state.graphs.configGroups[ConfigGroupIds.Fit];
             if (configIds.length === 0) {
                 const newId = newUid();
                 store.commit(`graphs/${GraphsMutation.AddConfig}`, newId);
@@ -175,11 +172,11 @@ export default defineComponent({
                     };
                     store.commit(`graphs/${GraphsMutation.UpdateConfig}`, updateConfigPayload);
                 }
-                const configGroupPayload: UpdateSyncedConfigGroupPayload = {
+                const configGroupPayload: UpdateConfigGroupPayload = {
                     id: ConfigGroupIds.Fit,
                     value: { syncProperties: ["xAxisRange"], configIds: [newId] }
                 };
-                store.commit(`graphs/${GraphsMutation.UpdateSyncedConfigGroup}`, configGroupPayload);
+                store.commit(`graphs/${GraphsMutation.UpdateConfigGroup}`, configGroupPayload);
             }
             store.commit(`graphs/${GraphsMutation.UpdateVisibleGraphGroups}`, [graphGroupId]);
         });

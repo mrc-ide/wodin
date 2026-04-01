@@ -13,28 +13,28 @@ export const defaultState = (): GraphsState => {
   return STATIC_BUILD
     ? {
       configs: [],
-      syncedConfigGroups: {},
-      syncedGraphGroups: {},
+      configGroups: {},
+      graphGroups: {},
       visibleGraphGroups: [],
       visibleData: {}
     }
     : {
       configs: [],
-      syncedConfigGroups: {
+      configGroups: {
         [ConfigGroupIds.RunAndSens]: { syncProperties: ["xAxisRange"], configIds: [] },
         [ConfigGroupIds.Fit]: { syncProperties: ["xAxisRange"], configIds: [] },
       },
-      syncedGraphGroups: {
+      graphGroups: {
         [VisualisationTab.Run]: {
-          syncedConfigGroupId: ConfigGroupIds.RunAndSens,
+          configGroupId: ConfigGroupIds.RunAndSens,
           dataType: DataType.Run
         },
         [VisualisationTab.Fit]: {
-          syncedConfigGroupId: ConfigGroupIds.Fit,
+          configGroupId: ConfigGroupIds.Fit,
           dataType: DataType.Fit
         },
         [VisualisationTab.Sensitivity]: {
-          syncedConfigGroupId: ConfigGroupIds.RunAndSens,
+          configGroupId: ConfigGroupIds.RunAndSens,
           dataType: DataType.Sensitivity
         },
       },

@@ -11,7 +11,7 @@ export enum ModelMutation {
     SetOdin = "SetOdin",
     SetCompileRequired = "SetCompileRequired",
     SetPaletteModel = "SetPaletteModel",
-    SetOldVariables = "SetOldVariables",
+    SetVariablesCopy = "SetVariablesCopy",
 }
 
 export const mutations: MutationTree<ModelState> = {
@@ -43,7 +43,7 @@ export const mutations: MutationTree<ModelState> = {
         state.paletteModel = payload;
     },
 
-    [ModelMutation.SetOldVariables](state: ModelState, payload: string[]) {
-        state.oldVariables = payload;
+    [ModelMutation.SetVariablesCopy](state: ModelState, payload: string[]) {
+        state.variablesCopy = payload;
     },
 };

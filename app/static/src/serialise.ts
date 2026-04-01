@@ -144,8 +144,9 @@ function serialiseModelFit(modelFit: ModelFitState): SerialisedModelFitState {
 function serialiseGraphs(graphs: GraphsState): SerialisedGraphsState {
     return {
         configs: graphs.configs,
-        syncedConfigGroups: graphs.syncedConfigGroups,
-        syncedGraphGroups: graphs.syncedGraphGroups,
+        configGroups: graphs.configGroups,
+        graphGroups: graphs.graphGroups,
+        visibleGraphGroups: graphs.visibleGraphGroups,
     };
 }
 

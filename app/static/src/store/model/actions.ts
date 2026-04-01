@@ -70,7 +70,7 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
 
         // add any new variables to first graph and remove any invalid variables from
         // all graphs
-        const newVariables = variables.filter(v => !state.oldVariables.includes(v));
+        const newVariables = variables.filter(v => !state.variablesCopy.includes(v));
         rootState.graphs.configs.map((cfg, i) => {
             const validSelectedVariables = cfg.selectedVariables.filter(v => variables.includes(v));
             const payload: UpdateConfigPayload = {
@@ -85,7 +85,7 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
             commit(`graphs/${GraphsMutation.UpdateConfig}`, payload, { root: true });
         });
 
-        commit(ModelMutation.SetOldVariables, variables);
+        commit(ModelMutation.SetVariablesCopy, variables);
 
         if (state.compileRequired) {
             commit(ModelMutation.SetCompileRequired, false);

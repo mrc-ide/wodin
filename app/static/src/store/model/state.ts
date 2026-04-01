@@ -13,5 +13,7 @@ export interface ModelState {
     paletteModel: null | Palette;
     // TODO: rename to simply error
     odinModelCodeError: WodinError | null;
-    oldVariables: string[];
+    // we keep a copy so that when the user recompiles their model, we know what new variables
+    // to add to the first graph config (we want to add to the first graph config by default)
+    variablesCopy: string[];
 }

@@ -43,8 +43,9 @@ import baseSensitivity from "../mixins/baseSensitivity";
 import { AppState, VisualisationTab } from "@/store/appState/state";
 import { ConfigGroupIds } from "@/store/graphs/graphs";
 import { newUid } from "@/utils";
-import { GraphsMutation, UpdateConfigPayload, UpdateSyncedConfigGroupPayload } from "@/store/graphs/mutations";
+import { GraphsMutation, UpdateConfigPayload, UpdateConfigGroupPayload } from "@/store/graphs/mutations";
 import WodinPlot from "../WodinPlot.vue";
+import { getGraphConfigs } from "@/store/graphs/utils";
 
 const graphGroupId = VisualisationTab.Sensitivity;
 
@@ -75,11 +76,7 @@ export default defineComponent({
 
         const endTime = computed(() => store.state.run.endTime);
 
-        const graphConfigs = computed(() => {
-            const { syncedConfigGroupId } = store.state.graphs.syncedGraphGroups[graphGroupId];
-            const { configIds } = store.state.graphs.syncedConfigGroups[syncedConfigGroupId];
-            return store.state.graphs.configs.filter(cfg => configIds.includes(cfg.id));
-        });
+        const graphConfigs = computed(() => getGraphConfigs(store, graphGroupId));
 
         const runSensitivity = () => {
             store.commit(`${namespace}/${SensitivityMutation.SetLoading}`, true);
@@ -107,20 +104,20 @@ export default defineComponent({
         const error = computed(() => store.state.sensitivity.result?.error);
 
         onMounted(() => {
-            const { configIds } = store.state.graphs.syncedConfigGroups[ConfigGroupIds.RunAndSens];
+            const { configIds } = store.state.graphs.configGroups[ConfigGroupIds.RunAndSens];
             if (configIds.length === 0) {
                 const newId = newUid();
                 store.commit(`graphs/${GraphsMutation.AddConfig}`, newId);
                 const updateConfigPayload: UpdateConfigPayload = {
                     id: newId,
-                    value: { selectedVariables: store.state.model.oldVariables }
+                    value: { selectedVariables: store.state.model.variablesCopy }
                 };
                 store.commit(`graphs/${GraphsMutation.UpdateConfig}`, updateConfigPayload);
-                const configGroupPayload: UpdateSyncedConfigGroupPayload = {
+                const configGroupPayload: UpdateConfigGroupPayload = {
                     id: ConfigGroupIds.RunAndSens,
                     value: { syncProperties: ["xAxisRange"], configIds: [newId] }
                 };
-                store.commit(`graphs/${GraphsMutation.UpdateSyncedConfigGroup}`, configGroupPayload);
+                store.commit(`graphs/${GraphsMutation.UpdateConfigGroup}`, configGroupPayload);
             }
             store.commit(`graphs/${GraphsMutation.UpdateVisibleGraphGroups}`, [graphGroupId]);
         });
