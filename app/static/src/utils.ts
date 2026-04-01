@@ -226,7 +226,7 @@ export const allTrue = (x: Dict<boolean>): boolean => {
     return Object.values(x).every((el: boolean) => el);
 };
 
-export const anyTrue = (x: Dict<boolean>): boolean => {
+export const anyTrue = <T extends object>(x: T): boolean => {
     return Object.values(x).some((el: boolean) => el);
 };
 
