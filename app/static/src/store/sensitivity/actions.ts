@@ -165,10 +165,12 @@ export const baseSensitivityActions: ActionTree<BaseSensitivityState, AppState> 
 export const actions: ActionTree<SensitivityState, AppState> = {
     ...baseSensitivityActions,
     [SensitivityAction.RunSensitivity](context) {
-        const { rootState, getters } = context;
+        const { rootState, getters, commit } = context;
         const { endTime } = rootState.run;
         const batchPars = getters[BaseSensitivityGetter.batchPars];
 
         runSensitivity(batchPars, endTime, context);
+
+        commit(`sensitivity/${SensitivityMutation.SetLoading}`, false, { root: true });
     }
 };
