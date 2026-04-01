@@ -17,12 +17,12 @@ import { computed, defineComponent, ref, watch, onMounted, PropType, shallowRef 
 import { useStore } from "vuex";
 import { Metadata, WodinPlotData, fadePlotStyle } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
-import { GraphsMutation, SetGraphConfigPayload } from "../store/graphs/mutations";
-import { fitGraphId, GraphConfig } from "../store/graphs/state";
+import { GraphConfig } from "../store/graphs/state";
 import { Chart, Scales, ZoomProperties } from "@reside-ic/skadi-chart";
 import { AppState } from "@/store/appState/state";
 import { tooltipCallback } from "@/utils";
 import WodinLegend, { LegendConfig } from "./WodinLegend.vue";
+import { GraphsAction, UpdateConfigPayload } from "@/store/graphs/actions";
 
 export default defineComponent({
     name: "WodinPlot",
@@ -30,22 +30,17 @@ export default defineComponent({
     props: {
         fadePlot: Boolean,
         placeholderMessage: String,
+        // need to check out fit plot in more detail to see why this is passed in
         endTime: {
             type: Number,
             required: true
         },
-        plotData: {
-            type: Function as PropType<(start: number, end: number, points: number) => WodinPlotData>,
-            required: true
-        },
-        // Only used as an indicator that redraw is required when this changes - the data to display is calculated by
-        // plotData function using these solutions
-        redrawWatches: {
-            type: Array as PropType<unknown[]>,
-            required: true
-        },
-        graphConfig: {
+        config: {
             type: Object as PropType<GraphConfig>,
+            required: true
+        },
+        graphGroupId: {
+            type: String,
             required: true
         }
     },
@@ -57,41 +52,24 @@ export default defineComponent({
 
         const plot = ref<null | HTMLDivElement>(null); // Picks up the element with 'plot' ref in the template
         const baseData = shallowRef<WodinPlotData>({ lines: [], points: [] });
-        const nPoints = 1000; // TODO: appropriate value could be derived from width of element
 
         const hasPlotData = computed(() => !!baseData.value.lines.length || !!baseData.value.points.length);
 
         const updateAxes = (zoomProperties: ZoomProperties) => {
             if (!zoomProperties) return;
+
             const newXYRanges = {
               xAxisRange: zoomProperties.x,
-              yAxisRange: zoomProperties.eventType === "dblclick" && !props.graphConfig.settings.lockYAxis
+              yAxisRange: zoomProperties.eventType === "dblclick" && !props.config.lockYAxis
                 ? null
                 : zoomProperties.y,
             };
 
-            if (props.graphConfig.id === fitGraphId) {
-              store.commit(`graphs/${GraphsMutation.SetGraphConfig}`, {
-                id: fitGraphId,
-                settings: { ...newXYRanges }
-              } as SetGraphConfigPayload);
-            } else {
-              const allGraphConfigs = store.state.graphs.config;
-              const allUpdatedConfigs = allGraphConfigs.map(cfg => ({
-                ...cfg,
-                settings: {
-                  ...cfg.settings,
-                  xAxisRange: newXYRanges.xAxisRange,
-                  yAxisRange: cfg.id === props.graphConfig.id
-                    ? newXYRanges.yAxisRange
-                    : cfg.settings.yAxisRange
-                }
-              }));
-              store.commit(
-                `graphs/${GraphsMutation.SetAllGraphConfigs}`,
-                JSON.parse(JSON.stringify(allUpdatedConfigs))
-              );
-            }
+            const payload: UpdateConfigPayload = {
+              id: props.config.id,
+              value: newXYRanges
+            };
+            store.dispatch(`graphs/${GraphsAction.UpdateConfig}`, payload);
         };
 
         const getLegendConfigs = (data: WodinPlotData) => {
@@ -133,7 +111,7 @@ export default defineComponent({
         const autoscaledMaxExtentsY = ref<Scales["y"]>();
 
         const drawSkadiChart = (legendFilteredData: null | WodinPlotData = null) => {
-            const settings = props.graphConfig.settings;
+            const settings = props.config;
             const maxXExtents = { start: startTime, end: props.endTime };
             const xRange = settings.xAxisRange
               ? { start: settings.xAxisRange[0], end: settings.xAxisRange[1] }
@@ -147,7 +125,9 @@ export default defineComponent({
             if (legendFilteredData) {
                 data = legendFilteredData;
             } else {
-                data = props.plotData(ranges.x.start, ranges.x.end, nPoints);
+                data = store.state.graphs.visibleData[props.graphGroupId]
+                    .find(x => x.configId === props.config.id)!
+                    .data;
                 baseData.value = data;
                 legendConfigs.value = getLegendConfigs(baseData.value);
             }
@@ -171,20 +151,22 @@ export default defineComponent({
         onMounted(drawSkadiChart);
 
         watch(
-          [() => props.redrawWatches, () => props.graphConfig],
+          [() => props.graphGroupId, () => props.config],
           ([, newGraphConfig], [, oldGraphConfig]) => {
           if (plotStyle.value !== fadePlotStyle) {
             drawSkadiChart();
             // if a user locks the y axis then we have to store the y axis range that
             // the graph automatically calculates or an existing y axis range
-            if (newGraphConfig.settings.lockYAxis && !oldGraphConfig.settings.lockYAxis) {
+            if (newGraphConfig.lockYAxis && !oldGraphConfig.lockYAxis) {
               const maxExtentsY = autoscaledMaxExtentsY.value!;
-              const yRange = newGraphConfig.settings.yAxisRange
-                || [maxExtentsY.start, maxExtentsY.end];
-              store.commit(`graphs/${GraphsMutation.SetGraphConfig}`, {
-                  id: props.graphConfig.id,
-                  settings: { yAxisRange: yRange }
-              } as SetGraphConfigPayload);
+              const yRange = newGraphConfig.yAxisRange
+                  || [maxExtentsY.start, maxExtentsY.end];
+
+              const payload: UpdateConfigPayload = {
+                  id: props.config.id,
+                  value: { yAxisRange: yRange }
+              };
+              store.dispatch(`graphs/${GraphsAction.UpdateConfig}`, payload);
             }
           }
         });
