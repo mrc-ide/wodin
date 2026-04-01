@@ -3,7 +3,6 @@
         <div class="wodin-plot-container" :style="plotStyle">
             <div class="plot" ref="plot" id="plot"></div>
             <wodin-plot-data-summary :data="baseData"></wodin-plot-data-summary>
-            <slot></slot>
         </div>
         <wodin-legend :legendConfigs="legendConfigs" @legendClick="handleClick"/>
         <div v-if="!hasPlotData" class="plot-placeholder">

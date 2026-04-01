@@ -2,6 +2,9 @@
     <div class="run-tab">
         <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
         <action-required-message :message="updateMsg"></action-required-message>
+        <div v-if="sumOfSquares">
+            <span id="squares">Sum of squares: {{ sumOfSquares }}</span>
+        </div>
         <template v-for="config in graphConfigs" :key="config.id">
             <wodin-plot
               :fade-plot="!!updateMsg"
@@ -10,9 +13,6 @@
               :graph-group-id="graphGroupId">
             </wodin-plot>
         </template>
-        <div v-if="sumOfSquares">
-            <span id="squares">Sum of squares: {{ sumOfSquares }}</span>
-        </div>
         <error-info :error="error"></error-info>
         <button
             v-if="!isStochastic"
