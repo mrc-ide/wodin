@@ -25,12 +25,13 @@ import {
     SensitivityVariationType
 } from "../src/store/sensitivity/state";
 import { VersionsState } from "../src/store/versions/state";
-import { GraphsState, defaultGraphSettings, fitGraphId } from "../src/store/graphs/state";
+import { DataType, GraphsState } from "../src/store/graphs/state";
 import { LanguageState } from "../translationPackage/store/state";
 import { Language } from "../src/types/languageTypes";
 import { noSensitivityUpdateRequired } from "../src/store/sensitivity/sensitivity";
 import { MultiSensitivityState } from "../src/store/multiSensitivity/state";
 import { SessionsState } from "../src/store/sessions/state";
+import { ConfigGroupIds } from "@/store/graphs/graphs";
 
 export const mockAxios = new MockAdapter(axios);
 
@@ -71,6 +72,7 @@ export const mockModelState = (state: Partial<ModelState> = {}): ModelState => {
         compileRequired: false,
         paletteModel: null,
         odinModelCodeError: null,
+        variablesCopy: [],
         ...state
     };
 };
@@ -123,22 +125,29 @@ export const mockVersionsState = (states: Partial<VersionsState> = {}): Versions
 
 export const mockGraphsState = (state: Partial<GraphsState> = {}): GraphsState => {
     return {
-        config: [
-            {
-                id: "123",
-                selectedVariables: [],
-                unselectedVariables: [],
-                settings: defaultGraphSettings()
-            }
-        ],
-        fitGraphConfig: {
-            id: fitGraphId,
-            selectedVariables: [],
-            unselectedVariables: [],
-            settings: defaultGraphSettings()
+        configs: [],
+        configGroups: {
+            [ConfigGroupIds.RunAndSens]: { syncProperties: ["xAxisRange"], configIds: [] },
+            [ConfigGroupIds.Fit]: { syncProperties: ["xAxisRange"], configIds: [] },
         },
+        graphGroups: {
+            [VisualisationTab.Run]: {
+                configGroupId: ConfigGroupIds.RunAndSens,
+                dataType: DataType.Run
+            },
+            [VisualisationTab.Fit]: {
+                configGroupId: ConfigGroupIds.Fit,
+                dataType: DataType.Fit
+            },
+            [VisualisationTab.Sensitivity]: {
+                configGroupId: ConfigGroupIds.RunAndSens,
+                dataType: DataType.Sensitivity
+            },
+        },
+        visibleGraphGroups: [],
+        visibleData: {},
         ...state
-    };
+    }
 };
 
 export const mockLanguageState = (state: Partial<LanguageState> = {}): LanguageState => {

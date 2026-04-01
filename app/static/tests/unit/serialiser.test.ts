@@ -20,12 +20,13 @@ import {
     mockSessionsState,
     mockVersionsState
 } from "../mocks";
-import { defaultState as defaultGraphsState } from "../../src/store/graphs/graphs";
+import { defaultState as defaultGraphsState, defaultState } from "../../src/store/graphs/graphs";
 import { Language } from "../../src/types/languageTypes";
 import { AdvancedOptions } from "../../src/types/responseTypes";
 import { AdvancedComponentType } from "../../src/store/run/state";
 import { noSensitivityUpdateRequired } from "../../src/store/sensitivity/sensitivity";
-import { defaultGraphSettings, fitGraphId, GraphConfig, GraphsState } from "../../src/store/graphs/state";
+import { defaultGraphConfig, GraphConfig, GraphsState } from "../../src/store/graphs/state";
+import { ModelState } from "@/store/model/state";
 
 vi.mock("../../src/utils", () => {
     return {
@@ -39,7 +40,7 @@ describe("serialise", () => {
         loading: false
     };
 
-    const modelState = {
+    const modelState: ModelState = {
         compileRequired: true,
         odinRunnerOde: {
             wodinRun: vi.fn(),
@@ -83,7 +84,8 @@ describe("serialise", () => {
         },
         odin: vi.fn(),
         paletteModel: { S: "#f00", I: "#0f0", R: "#00f" },
-        odinModelCodeError: { error: "odin error", detail: "test odin error" }
+        odinModelCodeError: { error: "odin error", detail: "test odin error" },
+        variablesCopy: ["S_0"]
     };
 
     const runState = {
@@ -370,38 +372,11 @@ describe("serialise", () => {
         sessionsMetadata: []
     });
 
-    const defaultFitGraphConfig: GraphConfig = {
-        id: fitGraphId,
-        selectedVariables: [],
-        unselectedVariables: [],
-        settings: defaultGraphSettings()
-    }
+    const defaultFitGraphConfig: GraphConfig = defaultGraphConfig("fit");
 
     const graphsState = mockGraphsState({
-        fitGraphConfig: {
-            id: fitGraphId,
-            selectedVariables: ["S", "I"],
-            unselectedVariables: ["R"],
-            settings: {
-              logScaleYAxis: true,
-              lockYAxis: true,
-              yAxisRange: [1, 2],
-              xAxisRange: [0, 10]
-            }
-        },
-        config: [
-            {
-                id: "123",
-                selectedVariables: ["S", "I"],
-                unselectedVariables: ["R"],
-                settings: {
-                    logScaleYAxis: false,
-                    lockYAxis: true,
-                    yAxisRange: [10, 20],
-                    xAxisRange: [0, 100]
-                }
-            }
-        ]
+        configs: [defaultFitGraphConfig],
+        visibleData: { fit: [{ configId: "fit", data: { lines: [], points: [] } }] }
     });
 
     const basicState: BasicState = {
@@ -563,32 +538,9 @@ describe("serialise", () => {
         }
     };
 
-    const expectedGraphs: GraphsState = {
-        fitGraphConfig: {
-          id: fitGraphId,
-          selectedVariables: ["S", "I"],
-          unselectedVariables: ["R"],
-          settings: {
-            logScaleYAxis: true,
-            lockYAxis: true,
-            yAxisRange: [1, 2],
-            xAxisRange: [0, 10]
-          }
-        },
-        config: [
-            {
-                id: "123",
-                selectedVariables: ["S", "I"],
-                unselectedVariables: ["R"],
-                settings: {
-                    logScaleYAxis: false,
-                    lockYAxis: true,
-                    yAxisRange: [10, 20],
-                    xAxisRange: [0, 100]
-                }
-            }
-        ]
-    };
+    const expectedGraphs: Partial<GraphsState> = defaultState();
+    expectedGraphs.configs = [defaultFitGraphConfig];
+    delete expectedGraphs.visibleData;
 
     it("serialises BasicState as expected", () => {
         const serialised = serialiseState(basicState);
@@ -754,100 +706,7 @@ describe("serialise", () => {
             fitData: mockFitDataState(),
             modelFit: mockModelFitState(),
             versions: mockVersionsState(),
-            graphs: mockGraphsState({
-                config: [
-                    {
-                        id: "123",
-                        selectedVariables: [],
-                        unselectedVariables: [],
-                        settings: defaultGraphSettings()
-                    }
-                ],
-                fitGraphConfig: defaultFitGraphConfig
-            })
+            graphs: mockGraphsState()
         });
-    });
-
-    it("deserialise initialises selected variables if required", () => {
-        const serialised = {
-            openVisualisationTab: VisualisationTab.Fit,
-            code: mockCodeState(),
-            model: mockModelState({
-                odinModelResponse: {
-                    metadata: {
-                        variables: ["S", "I", "R"]
-                    }
-                }
-            } as any),
-            run: { ...mockRunState(), advancedSettings: expectedRun.advancedSettings },
-            sensitivity: mockSensitivityState(),
-            multiSensitivity: mockMultiSensitivityState(),
-            fitData: mockFitDataState(),
-            modelFit: mockModelFitState(),
-            versions: mockVersionsState()
-        } as any;
-
-        const target = {
-            sessionId: "123",
-            appType: AppType.Fit,
-            config: {},
-            openVisualisationTab: VisualisationTab.Run,
-            code: {},
-            model: {},
-            run: {},
-            sensitivity: {},
-            fitData: {},
-            modelFit: {},
-            graphs: defaultGraphsState(),
-            versions: null
-        } as any;
-        deserialiseState(target, serialised);
-        expect(target.graphs.config).toStrictEqual([
-            {
-                id: "12345",
-                selectedVariables: ["S", "I", "R"],
-                unselectedVariables: [],
-                settings: defaultGraphSettings()
-            }
-        ]);
-        expect(target.graphs.fitGraphConfig).toStrictEqual(defaultFitGraphConfig);
-    });
-
-    it("deserialises default graph settings when undefined in serialised state", () => {
-        // serialised state with no graph settings
-        const serialised = {
-            openVisualisationTab: VisualisationTab.Fit,
-            code: mockCodeState(),
-            model: mockModelState(),
-            run: { ...mockRunState(), advancedSettings: expectedRun.advancedSettings },
-            sensitivity: mockSensitivityState(),
-            multiSensitivity: mockMultiSensitivityState(),
-            fitData: mockFitDataState(),
-            modelFit: mockModelFitState(),
-            versions: mockVersionsState()
-        } as any;
-
-        // target state with default graph settings - as module will initialise to
-        const target = {
-            sessionId: "123",
-            appType: AppType.Fit,
-            config: {},
-            openVisualisationTab: VisualisationTab.Run,
-            code: {},
-            model: {},
-            run: {},
-            sensitivity: {},
-            fitData: {},
-            modelFit: {},
-            versions: null,
-            graphs: defaultGraphsState()
-        } as any;
-        // sanity check
-        expect(target.graphs.fitGraphConfig.settings.logScaleYAxis).toBe(false);
-        expect(target.graphs.config[0].settings.logScaleYAxis).toBe(false);
-
-        deserialiseState(target, serialised);
-        expect(target.graphs.fitGraphConfig.settings.logScaleYAxis).toBe(false);
-        expect(target.graphs.config[0].settings.logScaleYAxis).toBe(false);
     });
 });
