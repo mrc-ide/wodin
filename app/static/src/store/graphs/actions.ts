@@ -55,7 +55,7 @@ export const actions = {
 
 
   [GraphsAction.UpdateConfig](ctx, payload: UpdateConfigPayload) {
-    actionWrapper(ctx, ({ newState }) => {
+    actionWrapper(ctx, ({ newState, rootState }) => {
       const cfgIdx = newState.configs.findIndex(c => c.id === payload.id);
       newState.configs[cfgIdx] = {
         ...newState.configs[cfgIdx],
@@ -83,6 +83,11 @@ export const actions = {
           };
         });
       });
+
+      const allVariables = rootState.model.odinModelResponse?.metadata?.variables || [];
+      newState.configs.forEach(cfg => cfg.selectedVariables.sort((a, b) => {
+          return allVariables.indexOf(a) > allVariables.indexOf(b) ? 1 : -1
+      }));
     });
   },
 
