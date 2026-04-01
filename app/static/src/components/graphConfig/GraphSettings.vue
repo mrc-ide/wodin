@@ -15,7 +15,7 @@
 import { defineComponent, computed, PropType } from "vue";
 import { useStore } from "vuex";
 import { GraphConfig } from "@/store/graphs/state";
-import { GraphsAction, UpdateConfigPayload } from "@/store/graphs/actions";
+import { GraphsMutation, UpdateConfigPayload } from "@/store/graphs/mutations";
 
 export default defineComponent({
     name: "GraphSettings",
@@ -37,7 +37,7 @@ export default defineComponent({
                         yAxisRange: null,
                     },
                 };
-                store.dispatch(`graphs/${GraphsAction.UpdateConfig}`, payload);
+                store.commit(`graphs/${GraphsMutation.UpdateConfig}`, payload);
             }
         });
 
@@ -48,7 +48,7 @@ export default defineComponent({
                     id: props.config.id,
                     value: { lockYAxis: newValue },
                 };
-                store.dispatch(`graphs/${GraphsAction.UpdateConfig}`, payload);
+                store.commit(`graphs/${GraphsMutation.UpdateConfig}`, payload);
             }
         });
 

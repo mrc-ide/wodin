@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch, onMounted, PropType, shallowRef } from "vue";
+import { computed, defineComponent, ref, watch, onMounted, PropType } from "vue";
 import { useStore } from "vuex";
 import { Metadata, WodinPlotData, fadePlotStyle } from "../plot";
 import WodinPlotDataSummary from "./WodinPlotDataSummary.vue";
@@ -22,7 +22,7 @@ import { Chart, Scales, ZoomProperties } from "@reside-ic/skadi-chart";
 import { AppState } from "@/store/appState/state";
 import { tooltipCallback } from "@/utils";
 import WodinLegend, { LegendConfig } from "./WodinLegend.vue";
-import { GraphsAction, UpdateConfigPayload } from "@/store/graphs/actions";
+import { GraphsMutation, UpdateConfigPayload } from "@/store/graphs/mutations";
 
 export default defineComponent({
     name: "WodinPlot",
@@ -51,7 +51,12 @@ export default defineComponent({
         const startTime = 0;
 
         const plot = ref<null | HTMLDivElement>(null); // Picks up the element with 'plot' ref in the template
-        const baseData = shallowRef<WodinPlotData>({ lines: [], points: [] });
+        const baseData = computed<WodinPlotData>(() => {
+            const emptyData = { lines: [], points: [] };
+            const visibleData = store.state.graphs.visibleData[props.graphGroupId];
+            if (!visibleData) return emptyData;
+            return visibleData.find(({ configId }) => configId === props.config.id)?.data || emptyData;
+        });
 
         const hasPlotData = computed(() => !!baseData.value.lines.length || !!baseData.value.points.length);
 
@@ -69,7 +74,7 @@ export default defineComponent({
               id: props.config.id,
               value: newXYRanges
             };
-            store.dispatch(`graphs/${GraphsAction.UpdateConfig}`, payload);
+            store.commit(`graphs/${GraphsMutation.UpdateConfig}`, payload);
         };
 
         const getLegendConfigs = (data: WodinPlotData) => {
@@ -125,10 +130,7 @@ export default defineComponent({
             if (legendFilteredData) {
                 data = legendFilteredData;
             } else {
-                data = store.state.graphs.visibleData[props.graphGroupId]
-                    .find(x => x.configId === props.config.id)!
-                    .data;
-                baseData.value = data;
+                data = baseData.value;
                 legendConfigs.value = getLegendConfigs(baseData.value);
             }
 
@@ -150,25 +152,27 @@ export default defineComponent({
 
         onMounted(drawSkadiChart);
 
-        watch(
-          [() => props.graphGroupId, () => props.config],
-          ([, newGraphConfig], [, oldGraphConfig]) => {
-          if (plotStyle.value !== fadePlotStyle) {
-            drawSkadiChart();
-            // if a user locks the y axis then we have to store the y axis range that
-            // the graph automatically calculates or an existing y axis range
-            if (newGraphConfig.lockYAxis && !oldGraphConfig.lockYAxis) {
-              const maxExtentsY = autoscaledMaxExtentsY.value!;
-              const yRange = newGraphConfig.yAxisRange
-                  || [maxExtentsY.start, maxExtentsY.end];
+        watch([() => props.config], ([newCfg], [oldCfg]) => {
+          if (plotStyle.value === fadePlotStyle) return;
 
-              const payload: UpdateConfigPayload = {
-                  id: props.config.id,
-                  value: { yAxisRange: yRange }
-              };
-              store.dispatch(`graphs/${GraphsAction.UpdateConfig}`, payload);
-            }
+          // if a user locks the y axis then we have to store the y axis range that
+          // the graph automatically calculates or an existing y axis range
+          if (newCfg.lockYAxis && !oldCfg.lockYAxis) {
+            const maxExtentsY = autoscaledMaxExtentsY.value!;
+            const yRange = newCfg.yAxisRange
+                || [maxExtentsY.start, maxExtentsY.end];
+
+            const payload: UpdateConfigPayload = {
+                id: props.config.id,
+                value: { yAxisRange: yRange }
+            };
+            store.commit(`graphs/${GraphsMutation.UpdateConfig}`, payload);
           }
+        });
+
+        watch(baseData, () => {
+          if (plotStyle.value === fadePlotStyle) return;
+          drawSkadiChart();
         });
 
         return {

@@ -64,10 +64,10 @@ import { useStore } from "vuex";
 import VueFeather from "vue-feather";
 import { AppState } from "@/store/appState/state";
 import GraphSettings from "./GraphSettings.vue";
-import { GraphsAction, UpdateConfigPayload, UpdateSyncedConfigGroupPayload } from "@/store/graphs/actions";
 import { GraphConfig } from "@/store/graphs/state";
 import VariableBadge from "./VariableBadge.vue";
 import { newUid } from "@/utils";
+import { GraphsMutation, UpdateConfigPayload, UpdateSyncedConfigGroupPayload } from "@/store/graphs/mutations";
 
 enum DragData {
     Var = "variable",
@@ -89,10 +89,10 @@ export default defineComponent({
 
         // by convention we have the graph group id is the same string as the
         // openVisualisationTab
-        const graphGroup = computed(() => store.state.openVisualisationTab);
+        const graphGroupId = computed(() => store.state.openVisualisationTab);
 
         const configs = computed(() => {
-            const { syncedConfigGroupId } = store.state.graphs.syncedGraphGroups[graphGroup.value];
+            const { syncedConfigGroupId } = store.state.graphs.syncedGraphGroups[graphGroupId.value];
             const { configIds } = store.state.graphs.syncedConfigGroups[syncedConfigGroupId];
             return configIds.map(id => store.state.graphs.configs.find(c => c.id === id)!);
         });
@@ -105,20 +105,20 @@ export default defineComponent({
 
         const addGraph = () => {
             const newId = newUid();
-            store.dispatch(`graphs/${GraphsAction.AddConfig}`, newId);
-            const { syncedConfigGroupId } = store.state.graphs.syncedGraphGroups[graphGroup.value];
+            store.commit(`graphs/${GraphsMutation.AddConfig}`, newId);
+            const { syncedConfigGroupId } = store.state.graphs.syncedGraphGroups[graphGroupId.value];
             const configGroup = store.state.graphs.syncedConfigGroups[syncedConfigGroupId];
             const newConfigGroup = { ...configGroup };
             newConfigGroup.configIds = [ ...newConfigGroup.configIds, newId ];
-            store.dispatch(`graphs/${GraphsAction.UpdateSyncedConfigGroup}`, {
+            store.commit(`graphs/${GraphsMutation.UpdateSyncedConfigGroup}`, {
                 id: syncedConfigGroupId,
                 value: newConfigGroup,
             } as UpdateSyncedConfigGroupPayload);
-            store.dispatch(`graphs/${GraphsAction.UpdateVisibleGraphGroups}`, [graphGroup.value]);
+            store.commit(`graphs/${GraphsMutation.UpdateVisibleGraphGroups}`, [graphGroupId.value]);
         };
 
         const deleteGraph = (configId: string) => {
-            store.dispatch(`graphs/${GraphsAction.DeleteConfig}`, configId);
+            store.commit(`graphs/${GraphsMutation.DeleteConfig}`, configId);
         };
 
         const startDrag = (event: DragEvent, configId: string, variable: string) => {
@@ -137,7 +137,7 @@ export default defineComponent({
         const endDrag = () => dragging.value = false;
 
         const updateSelectedVariables = (configId: string, newVariables: string[]) => {
-            store.dispatch(`graphs/${GraphsAction.UpdateConfig}`, {
+            store.commit(`graphs/${GraphsMutation.UpdateConfig}`, {
                 id: configId,
                 value: { selectedVariables: newVariables }
             } as UpdateConfigPayload)
