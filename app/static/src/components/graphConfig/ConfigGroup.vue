@@ -192,3 +192,20 @@ export default defineComponent({
     }
 });
 </script>
+
+<style scoped lang="scss">
+.graph-config-panel {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ccc;
+    padding: 4px;
+    .selected-variables-panel {
+        width: 100%;
+
+        .variable {
+            font-size: large;
+            cursor: pointer;
+        }
+    }
+}
+</style>
