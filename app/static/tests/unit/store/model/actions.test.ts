@@ -21,7 +21,6 @@ import { ModelFitMutation } from "../../../../src/store/modelFit/mutations";
 import { BaseSensitivityMutation, SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
 import { MultiSensitivityMutation } from "../../../../src/store/multiSensitivity/mutations";
 import { defaultSensitivityParamSettings } from "../../../../src/store/sensitivity/sensitivity";
-import { GraphsAction } from "../../../../src/store/graphs/actions";
 import { GraphsMutation } from "@/store/graphs/mutations";
 
 describe("Model actions", () => {
