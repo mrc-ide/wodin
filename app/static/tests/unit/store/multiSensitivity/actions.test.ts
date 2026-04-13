@@ -16,7 +16,7 @@ describe("multiSensitivity actions", () => {
         vi.clearAllMocks();
     });
 
-    testCommonRunSensitivity(actions[MultiSensitivityAction.RunMultiSensitivity]);
+    testCommonRunSensitivity(actions[MultiSensitivityAction.RunMultiSensitivity], true);
 
     it("does not runs sensitivity for parameter sets", async () => {
         const rootState = {
