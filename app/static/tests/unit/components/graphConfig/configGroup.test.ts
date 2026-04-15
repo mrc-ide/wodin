@@ -143,6 +143,7 @@ describe("Config group", () => {
     await destPanel.trigger("drop", { dataTransfer });
   };
 
+  // eslint-disable-next-line vitest/valid-title
   const testWithState = test.extend<{ state: ConfigGroupState }>({
     state: async ({}, use) => { await use(getDefaultConfigGroupState()) }
   });
