@@ -143,25 +143,25 @@ describe("Config group", () => {
     await destPanel.trigger("drop", { dataTransfer });
   };
 
-  const testWithState = test.extend("state", () => getDefaultConfigGroupState());
+  const testWithState = test.extend<{ state: ConfigGroupState }>({
+    state: async ({}, use) => { await use(getDefaultConfigGroupState()) }
+  });
 
-  test("renders as expected", () => {
+  testWithState("renders as expected", () => {
     const wrapper = getWrapper();
     expect(wrapper.find("#graph-configs-instruction").exists()).toBe(true);
     expect(wrapper.find("#add-graph-btn").exists()).toBe(true);
     expectConfigGroupState(wrapper, getDefaultConfigGroupState());
   });
 
-  test("dropzone instruction doesn't render if there are hidden variables", () => {
+  testWithState("dropzone instruction doesn't render if there are hidden variables", ({ state }) => {
     const wrapper = getWrapper(["S", "I", "R", "M"]);
-    const state = getDefaultConfigGroupState();
     state.hidden = ["M"];
     expectConfigGroupState(wrapper, state);
   });
 
-  test("can move badge from one graph to another", async () => {
+  testWithState("can move badge from one graph to another", async ({ state }) => {
     const wrapper = getWrapper();
-    const state = getDefaultConfigGroupState();
     expectConfigGroupState(wrapper, state);
     await moveBadge(
       wrapper,
@@ -175,9 +175,8 @@ describe("Config group", () => {
     expectConfigGroupState(wrapper, state);
   });
 
-  test("moving badge from one graph to another dedupes the badge", async () => {
+  testWithState("moving badge from one graph to another dedupes the badge", async ({ state }) => {
     const wrapper = getWrapper();
-    const state = getDefaultConfigGroupState();
     expectConfigGroupState(wrapper, state);
     // 456 already has I
     await moveBadge(
@@ -189,9 +188,8 @@ describe("Config group", () => {
     expectConfigGroupState(wrapper, state);
   });
 
-  test("moving badge from one graph to another dedupes the badge", async () => {
+  testWithState("moving badge from one graph to another dedupes the badge", async ({ state }) => {
     const wrapper = getWrapper();
-    const state = getDefaultConfigGroupState();
     expectConfigGroupState(wrapper, state);
     // 456 already has I
     await moveBadge(
@@ -200,6 +198,65 @@ describe("Config group", () => {
       { id: "456" }
     );
     state.panels[0].variables = ["S"];
+    expectConfigGroupState(wrapper, state);
+  });
+
+  testWithState("ctrl or meta key copies variable", async ({ state }) => {
+    const wrapper = getWrapper();
+    expectConfigGroupState(wrapper, state);
+
+    // copy R to third config with ctrl
+    await moveBadge(
+      wrapper,
+      { id: "456", variable: "R" },
+      { id: "789" },
+      true,
+      false,
+    );
+    state.panels[2].variables = ["R"];
+    expectConfigGroupState(wrapper, state);
+
+    // copy I to third config with meta
+    await moveBadge(
+      wrapper,
+      { id: "456", variable: "I" },
+      { id: "789" },
+      false,
+      true,
+    );
+    state.panels[2].variables = ["R", "I"];
+    expectConfigGroupState(wrapper, state);
+  });
+
+  testWithState("moving to hidden removes variable from all configs", async ({ state }) => {
+    const wrapper = getWrapper();
+    expectConfigGroupState(wrapper, state);
+
+    // hide even with copy
+    await moveBadge(
+      wrapper,
+      { id: "123", variable: "I" },
+      { id: "hidden" },
+      true,
+    );
+    state.panels[0].variables = ["S"];
+    state.panels[1].variables = ["R"];
+    state.hidden = ["I"];
+    expectConfigGroupState(wrapper, state);
+  });
+
+  testWithState("moving from hidden removes from hidden", async ({ state }) => {
+    const wrapper = getWrapper(["S", "I", "R", "M"]);
+    state.hidden = ["M"];
+    expectConfigGroupState(wrapper, state);
+
+    await moveBadge(
+      wrapper,
+      { id: "hidden", variable: "M" },
+      { id: "123" },
+    );
+    state.panels[0].variables = ["S", "I", "M"];
+    state.hidden = [];
     expectConfigGroupState(wrapper, state);
   });
 });
