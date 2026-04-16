@@ -6,9 +6,8 @@ import { noSensitivityUpdateRequired } from "../../../../src/store/sensitivity/s
 import { AppState } from "../../../../src/store/appState/state";
 import { BaseSensitivityMutation } from "../../../../src/store/sensitivity/mutations";
 import { BaseSensitivityAction } from "../../../../src/store/sensitivity/actions";
-import { getters as graphGetters } from "../../../../src/store/graphs/getters";
 import { mockGraphsState } from "../../../mocks";
-import { defaultGraphSettings } from "../../../../src/store/graphs/state";
+import { defaultGraphConfig } from "@/store/graphs/state";
 
 describe("baseSensitivity mixin", () => {
     const mockSensSetUserSummaryDownloadFileName = vi.fn();
@@ -24,22 +23,16 @@ describe("baseSensitivity mixin", () => {
         multiSensitivityState: Partial<BaseSensitivityState> = {},
         selectedVariables: string[] = ["A"]
     ) => {
+        const config = defaultGraphConfig("123");
+        config.selectedVariables = selectedVariables;
         return new Vuex.Store<AppState>({
             state: {} as any,
             modules: {
                 graphs: {
                     namespaced: true,
                     state: mockGraphsState({
-                        config: [
-                            {
-                                id: "123",
-                                selectedVariables,
-                                unselectedVariables: [],
-                                settings: defaultGraphSettings()
-                            }
-                        ]
+                        configs: [config]
                     }),
-                    getters: graphGetters
                 },
                 model: {
                     namespaced: true,

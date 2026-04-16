@@ -207,6 +207,7 @@ export default defineComponent({
             legendConfigs,
             handleClick,
             placeholderMessage,
+            autoscaledMaxExtentsY
         };
     }
 });
