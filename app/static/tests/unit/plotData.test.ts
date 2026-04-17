@@ -4,7 +4,6 @@ import { AppType } from "@/store/appState/state";
 import { mockFitDataState, mockModelFitState, mockModelState, mockRunState, mockSensitivityState } from "../mocks";
 import { DataType, defaultGraphConfig } from "@/store/graphs/state";
 import { getPlotData } from "@/plotData";
-import { WodinPlotData } from "@/plot";
 import { FitDataGetter } from "@/store/fitData/getters";
 
 describe("plot data", () => {
@@ -72,37 +71,11 @@ describe("plot data", () => {
     ]
   });
 
-  const parSet2Solution = () => ({
-    x: [0, 1],
-    values: [
-      { name: "S", y: [300, 400] },
-      { name: "I", y: [500, 600] },
-    ]
-  });
-
-  const parSet2SolutionSens = () => ({
-    x: [0, 1],
-    values: [
-      { name: "S", y: [-300, -400] },
-      { name: "I", y: [-500, -600] },
-    ]
-  });
-
-  const parSet2SolutionValueAtTime = () => ({
-    x: [{ a: 1 }, { a: 1.1 }],
-    values: [
-      { name: "S", y: [-0.32, -0.42] },
-      { name: "I", y: [-0.52, -0.62] },
-    ]
-  });
-
-  const parSet2SolutionExtreme = () => ({
-    x: [{ a: 1 }, { a: 1.1 }],
-    values: [
-      { name: "S", y: [-0.032, -0.042] },
-      { name: "I", y: [-0.052, -0.062] },
-    ]
-  });
+  // parSet2 is hidden so shouldn't be triggered
+  const parSet2Solution = () => null;
+  const parSet2SolutionSens = () => null;
+  const parSet2SolutionValueAtTime = () => null;
+  const parSet2SolutionExtreme = () => null;
 
   const odeI = {
     metadata: {
