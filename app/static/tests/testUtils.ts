@@ -1,5 +1,10 @@
 import { VueWrapper } from "@vue/test-utils";
 import WodinPanels from "../src/components/WodinPanels.vue";
+import { AppType } from "@/store/appState/state";
+import { FitState } from "@/store/fit/state";
+import { StochasticState } from "@/store/stochastic/state";
+import { BasicState } from "@/store/basic/state";
+import { mockBasicState, mockFitState, mockStochasticState } from "./mocks";
 
 export const fileTimeout = 20;
 
@@ -70,3 +75,15 @@ export type ComponentProps<T> =
     T extends { setup?: (props: infer Props, ...otherArgs: any[]) => any }
         ? Prettify<RequiredKeys<Props> & OptionalKeys<Props>>
         : never
+
+export type AppTypeToState = {
+    [AppType.Basic]: BasicState,
+    [AppType.Fit]: FitState,
+    [AppType.Stochastic]: StochasticState,
+}
+
+export const mockStates = {
+    [AppType.Basic]: mockBasicState(),
+    [AppType.Fit]: mockFitState(),
+    [AppType.Stochastic]: mockStochasticState(),
+} as const;

@@ -268,6 +268,7 @@ const getSensitivityTracesData = <T>(
     const result = getResult(centralSln, tRange);
     const lines = resultToSkadiChartLines(result, { strokeDasharray });
     lines.forEach(l => updatePlotTraceName(l, null, null, currentParamSet.displayName));
+    allData.lines.push(...lines);
   });
 
   allData.points.push(...allFitDataToSkadiChart(

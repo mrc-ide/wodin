@@ -12,14 +12,12 @@ import LoadingSpinner from "../../../../src/components/LoadingSpinner.vue";
 import { SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
 import SensitivitySummaryDownload from "../../../../src/components/sensitivity/SensitivitySummaryDownload.vue";
 import LoadingButton from "../../../../src/components/LoadingButton.vue";
-import { BasicState } from "@/store/basic/state";
-import { FitState } from "@/store/fit/state";
-import { StochasticState } from "@/store/stochastic/state";
-import { mockBasicState, mockFitState, mockGraphsState, mockModelState, mockRunState, mockSensitivityState, mockStochasticState } from "../../../mocks";
+import { mockGraphsState, mockModelState, mockRunState, mockSensitivityState } from "../../../mocks";
 import { defaultGraphConfig } from "@/store/graphs/state";
 import { ConfigGroupIds } from "@/store/graphs/graphs";
 import { GraphsMutation } from "@/store/graphs/mutations";
 import WodinPlot from "@/components/WodinPlot.vue";
+import { AppTypeToState, mockStates } from "../../../testUtils";
 
 describe("SensitivityTab", () => {
     const mockRunSensitivity = vi.fn();
@@ -30,18 +28,6 @@ describe("SensitivityTab", () => {
     const mockUpdateConfig = vi.fn();
     const mockUpdateConfigGroup = vi.fn();
     const mockUpdateVisibleGraphGroups = vi.fn();
-
-    type AppTypeToState = {
-        [AppType.Basic]: BasicState,
-        [AppType.Fit]: FitState,
-        [AppType.Stochastic]: StochasticState,
-    }
-
-    const mockStates = {
-        [AppType.Basic]: mockBasicState(),
-        [AppType.Fit]: mockFitState(),
-        [AppType.Stochastic]: mockStochasticState(),
-    } as const;
 
     const getStore = <T extends AppType>(
         appType: T,
