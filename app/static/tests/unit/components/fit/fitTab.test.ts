@@ -3,12 +3,26 @@ import Vuex from "vuex";
 import FitTab from "../../../../src/components/fit/FitTab.vue";
 import { FitState } from "../../../../src/store/fit/state";
 import ActionRequiredMessage from "../../../../src/components/ActionRequiredMessage.vue";
-import FitPlot from "../../../../src/components/fit/FitPlot.vue";
 import { mockFitState, mockGraphsState } from "../../../mocks";
 import { WodinError } from "../../../../src/types/responseTypes";
 import ErrorInfo from "../../../../src/components/ErrorInfo.vue";
+import WodinPlot from "@/components/WodinPlot.vue";
+import { defaultGraphConfig } from "@/store/graphs/state";
+import { ConfigGroupIds } from "@/store/graphs/graphs";
+import { GraphsMutation } from "@/store/graphs/mutations";
+import { VisualisationTab } from "@/store/appState/state";
+import { FitDataGetter } from "@/store/fitData/getters";
 
 describe("Fit Tab", () => {
+    const mockAddConfig = vi.fn();
+    const mockUpdateConfig = vi.fn();
+    const mockUpdateConfigGroup = vi.fn();
+    const mockUpdateVisibleGraphGroups = vi.fn();
+
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
     const getWrapper = (
         fitRequirements = {}, // ends up being true
         compileRequired = false,
@@ -19,8 +33,15 @@ describe("Fit Tab", () => {
         sumOfSquares: number | null = 2.1,
         mockFitModel = vi.fn(),
         mockSetFitting = vi.fn(),
-        error: WodinError | null = null
+        error: WodinError | null = null,
+        includeDefaultConfig = true,
     ) => {
+        const graphsState = mockGraphsState();
+        if (includeDefaultConfig) {
+            graphsState.configs = [defaultGraphConfig("fit")];
+            graphsState.configGroups[ConfigGroupIds.Fit].configIds = ["fit"];
+        }
+
         const store = new Vuex.Store<FitState>({
             state: mockFitState(),
             modules: {
@@ -30,9 +51,15 @@ describe("Fit Tab", () => {
                         compileRequired
                     }
                 },
-                graphSettings: {
+                graphs: {
                     namespaced: true,
-                    state: mockGraphsState()
+                    state: graphsState,
+                    mutations: {
+                        [GraphsMutation.AddConfig]: mockAddConfig,
+                        [GraphsMutation.UpdateConfig]: mockUpdateConfig,
+                        [GraphsMutation.UpdateConfigGroup]: mockUpdateConfigGroup,
+                        [GraphsMutation.UpdateVisibleGraphGroups]: mockUpdateVisibleGraphGroups,
+                    }
                 },
                 modelFit: {
                     namespaced: true,
@@ -56,6 +83,13 @@ describe("Fit Tab", () => {
                     mutations: {
                         SetFitting: mockSetFitting
                     }
+                },
+                fitData: {
+                    namespaced: true,
+                    state: {},
+                    getters: {
+                        [FitDataGetter.link]: () => ({ model: "M" })
+                    }
                 }
             }
         });
@@ -73,7 +107,7 @@ describe("Fit Tab", () => {
         expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect((wrapper.find("#cancel-fit-btn").element as HTMLButtonElement).disabled).toBe(true);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
-        const fitPlot = wrapper.findComponent(FitPlot);
+        const fitPlot = wrapper.findComponent(WodinPlot);
         expect(fitPlot.props("fadePlot")).toBe(false);
         expect(wrapper.vm.iconType).toBe("check");
         expect(wrapper.vm.iconClass).toBe("text-success");
@@ -89,7 +123,7 @@ describe("Fit Tab", () => {
         expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(true);
         expect((wrapper.find("#cancel-fit-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
-        const fitPlot = wrapper.findComponent(FitPlot);
+        const fitPlot = wrapper.findComponent(WodinPlot);
         expect(fitPlot.props("fadePlot")).toBe(false);
         expect(wrapper.vm.iconType).toBe(null);
         expect(wrapper.vm.fitting).toBe(true);
@@ -103,7 +137,7 @@ describe("Fit Tab", () => {
         expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect((wrapper.find("#cancel-fit-btn").element as HTMLButtonElement).disabled).toBe(true);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
-        const fitPlot = wrapper.findComponent(FitPlot);
+        const fitPlot = wrapper.findComponent(WodinPlot);
         expect(fitPlot.props("fadePlot")).toBe(false);
         expect(wrapper.vm.iconType).toBe(null);
         expect(wrapper.vm.fitting).toBe(false);
@@ -116,7 +150,7 @@ describe("Fit Tab", () => {
         expect((wrapper.find("#fit-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect((wrapper.find("#cancel-fit-btn").element as HTMLButtonElement).disabled).toBe(true);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
-        const fitPlot = wrapper.findComponent(FitPlot);
+        const fitPlot = wrapper.findComponent(WodinPlot);
         expect(fitPlot.props("fadePlot")).toBe(false);
         expect(wrapper.vm.iconType).toBe("alert-circle");
         expect(wrapper.vm.iconClass).toBe("text-secondary");
@@ -138,7 +172,7 @@ describe("Fit Tab", () => {
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Cannot fit model. Please compile a model (Code tab) and upload a data set (Data tab)."
         );
-        const fitPlot = wrapper.findComponent(FitPlot);
+        const fitPlot = wrapper.findComponent(WodinPlot);
         expect(fitPlot.props("fadePlot")).toBe(true);
         expect(wrapper.vm.fitting).toBe(false);
         expect(wrapper.vm.iterations).toBe(null);
@@ -151,7 +185,7 @@ describe("Fit Tab", () => {
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Model code has been updated. Compile code and Fit Model for updated best fit."
         );
-        const fitPlot = wrapper.findComponent(FitPlot);
+        const fitPlot = wrapper.findComponent(WodinPlot);
         expect(fitPlot.props("fadePlot")).toBe(true);
         expect(wrapper.vm.iconType).toBe("check");
         expect(wrapper.vm.iterations).toBe(10);
@@ -164,7 +198,7 @@ describe("Fit Tab", () => {
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Fit is out of date: data have been updated. Rerun fit to update."
         );
-        const fitPlot = wrapper.findComponent(FitPlot);
+        const fitPlot = wrapper.findComponent(WodinPlot);
         expect(fitPlot.props("fadePlot")).toBe(true);
         expect(wrapper.vm.fitting).toBe(false);
         expect(wrapper.vm.iterations).toBe(10);
@@ -193,5 +227,30 @@ describe("Fit Tab", () => {
         await wrapper.find("#cancel-fit-btn").trigger("click");
         expect(mockSetFitting).toHaveBeenCalledTimes(1);
         expect(mockSetFitting.mock.calls[0][1]).toBe(false);
+    });
+
+    it("sets visible graph groups on mount", () => {
+        getWrapper();
+        expect(mockAddConfig).not.toHaveBeenCalled();
+        expect(mockUpdateConfig).not.toHaveBeenCalled();
+        expect(mockUpdateConfigGroup).not.toHaveBeenCalled();
+        expect(mockUpdateVisibleGraphGroups.mock.calls[0][1]).toStrictEqual([VisualisationTab.Fit]);
+    });
+
+    it("creates config if not present on mount", () => {
+        getWrapper({}, false, {}, 10, true, false, 2.1, vi.fn(), vi.fn(), null, false);
+        expect(mockAddConfig).toHaveBeenCalled();
+        expect(mockUpdateConfig.mock.calls[0][1].value).toStrictEqual({
+            selectedVariables: ["M"]
+        });
+        const cfgId = mockUpdateConfig.mock.calls[0][1].id;
+        expect(mockUpdateConfigGroup.mock.calls[0][1]).toStrictEqual({
+            id: ConfigGroupIds.Fit,
+            value: {
+                configIds: [cfgId],
+                syncProperties: ["xAxisRange"]
+            }
+        });
+        expect(mockUpdateVisibleGraphGroups.mock.calls[0][1]).toStrictEqual([VisualisationTab.Fit]);
     });
 });
