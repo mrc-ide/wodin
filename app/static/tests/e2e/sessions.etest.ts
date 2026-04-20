@@ -20,7 +20,7 @@ const lineSummarySelector = ".wodin-plot-data-summary-lines";
 const pointSummarySelector = ".wodin-plot-data-summary-points";
 
 const enterSessionLabel = async (page: Page, dialogId: string, newLabel: string) => {
-    await expect(await page.locator(`#${dialogId} #edit-session-label label`)).toBeVisible();
+    await expect(page.locator(`#${dialogId} #edit-session-label label`)).toBeVisible();
     await page.fill(`#${dialogId} #edit-session-label input`, newLabel);
     await page.click(`#${dialogId} #ok-session-label`);
 };
@@ -43,13 +43,13 @@ const expectNewFitCode = async (page: Page) => {
     const editorSelector = ".wodin-left .wodin-content .editor-container .editor-scrollable";
     // wait until there is some text in the code editor
     await page.waitForFunction((selector) => !!document.querySelector(selector)?.textContent, editorSelector);
-    await expect(await page.innerText(editorSelector)).toContain("# JUST CHANGE A COMMENT");
+    await expect(page.locator(editorSelector)).toContainText("# JUST CHANGE A COMMENT");
 };
 
 const expectReloadedSession = async (page: Page) => {
     await page.click(":nth-match(.wodin-left .nav-tabs a, 2)"); // select code tab
     await expectNewFitCode(page);
-    await expect(await page.locator("#sessions-menu")).toHaveText("Session: session to reload");
+    await expect(page.locator("#sessions-menu")).toHaveText("Session: session to reload");
 };
 
 test.describe("Sessions tests", () => {
@@ -75,7 +75,7 @@ test.describe("Sessions tests", () => {
         // change code in this session, which we will later reload and check that we can see the code changes
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
         await writeCode(page, newFitCode);
-        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
+        await expect(page.locator(".run-tab .action-required-msg")).toHaveText(
             "Model code has been updated. Compile code and Run Model to update.",
             {
                 timeout
@@ -84,14 +84,14 @@ test.describe("Sessions tests", () => {
 
         // compile and re-run
         await page.click("#compile-btn");
-        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText(
+        await expect(page.locator(".run-tab .action-required-msg")).toHaveText(
             "Plot is out of date: model code has been recompiled. Run model to update.",
             {
                 timeout
             }
         );
         await page.click("#run-btn");
-        await expect(await page.locator(".run-tab .action-required-msg")).toHaveText("", { timeout });
+        await expect(page.locator(".run-tab .action-required-msg")).toHaveText("", { timeout });
 
         // Upload data, link, select variables to vary and run fit
         await page.click(":nth-match(.wodin-left .nav-tabs a, 1)");
@@ -127,28 +127,28 @@ test.describe("Sessions tests", () => {
         await page.click("#sessions-menu");
         await page.click("#all-sessions-link");
 
-        await expect(await page.innerText(".container h2")).toBe("Sessions");
-        await expect(await page.innerText(":nth-match(#current-session p, 1)")).toBe(
+        await expect(page.locator(".container h2")).toHaveText("Sessions");
+        await expect(page.locator(":nth-match(#current-session p, 1)")).toHaveText(
             "Return to the current session or make a copy of the current session."
         );
-        await expect(await page.innerText(":nth-match(.session-col-header, 1)")).toBe("Saved");
-        await expect(await page.innerText(":nth-match(.session-col-header, 2)")).toBe("Label");
-        await expect(await page.innerText(":nth-match(.session-col-header, 3)")).toBe("Edit Label");
-        await expect(await page.innerText(":nth-match(.session-col-header, 4)")).toBe("Load");
-        await expect(await page.innerText(":nth-match(.session-col-header, 5)")).toBe("Delete");
-        await expect(await page.innerText(":nth-match(.session-col-header, 6)")).toBe("Shareable Link");
+        await expect(page.locator(":nth-match(.session-col-header, 1)")).toHaveText("Saved");
+        await expect(page.locator(":nth-match(.session-col-header, 2)")).toHaveText("Label");
+        await expect(page.locator(":nth-match(.session-col-header, 3)")).toHaveText("Edit Label");
+        await expect(page.locator(":nth-match(.session-col-header, 4)")).toHaveText("Load");
+        await expect(page.locator(":nth-match(.session-col-header, 5)")).toHaveText("Delete");
+        await expect(page.locator(":nth-match(.session-col-header, 6)")).toHaveText("Shareable Link");
 
         const noLabel = "--no label--";
-        await expect(await page.locator(".session-label")).toHaveText(noLabel);
+        await expect(page.locator(".session-label")).toHaveText(noLabel);
 
         // Can copy code and link for a session
         await page.click(":nth-match(.session-copy-code, 2)");
-        await expect(await page.innerText(":nth-match(.session-copy-confirm, 2)")).toContain("Copied: ");
+        await expect(page.locator(":nth-match(.session-copy-confirm, 2)")).toContainText("Copied: ");
         const copiedCodeText = await page.evaluate("navigator.clipboard.readText()");
         expect(copiedCodeText).toContain("-");
 
         await page.click(":nth-match(.session-copy-link, 2)");
-        await expect(await page.innerText(":nth-match(.session-copy-confirm, 2)")).toContain(
+        await expect(page.locator(":nth-match(.session-copy-confirm, 2)")).toContainText(
             "Copied: http://localhost:3000/apps/day2/?share="
         );
         const copiedLinkText = (await page.evaluate("navigator.clipboard.readText()")) as string;
@@ -158,19 +158,19 @@ test.describe("Sessions tests", () => {
         await page.click("#sessions-menu");
         await page.click("#edit-current-session-label");
         await enterSessionLabel(page, "header-edit-session-label", "current session label");
-        await expect(await page.innerText("#sessions-menu")).toBe("Session: current session label");
+        await expect(page.locator("#sessions-menu")).toHaveText("Session: current session label");
 
         // Toggle 'Show unlabelled sessions' - all historic sessions should be filtered out
         const unlabelledCount = await page.locator(".previous-session-row").count();
-        await expect(unlabelledCount).toBeGreaterThan(0);
+        expect(unlabelledCount).toBeGreaterThan(0);
         await page.click("input#show-unlabelled-check");
-        await expect(await page.locator(".previous-session-row")).toHaveCount(0);
+        await expect(page.locator(".previous-session-row")).toHaveCount(0);
         await page.click("input#show-unlabelled-check");
-        await expect(await page.locator(".previous-session-row")).toHaveCount(unlabelledCount);
+        await expect(page.locator(".previous-session-row")).toHaveCount(unlabelledCount);
 
         await page.goto(`${appUrl}/sessions`);
-        await expect(await page.isChecked("#show-duplicates-check")).toBe(false);
-        await expect(await page.innerText(":nth-match(.session-label, 2)")).toBe(noLabel);
+        await expect(page.locator("#show-duplicates-check")).not.toBeChecked();
+        await expect(page.locator(":nth-match(.session-label, 2)")).toHaveText(noLabel);
 
         // Load no label session
         await page.locator(":nth-match(.session-load > a, 2)").click();
@@ -200,20 +200,20 @@ test.describe("Sessions tests", () => {
         // "Show duplicates"
         await page.check("#show-duplicates-check");
         // wait for second no label to appear
-        await expect(await page.locator(":nth-match(.session-label, 2)")).toHaveText(noLabel, { timeout });
+        await expect(page.locator(":nth-match(.session-label, 2)")).toHaveText(noLabel, { timeout });
         await page.click(":nth-match(.session-edit-label i, 2)");
         await enterSessionLabel(page, "page-edit-session-label", "earlier duplicate");
-        await expect(await page.locator(":nth-match(.session-label, 2)")).toHaveText("earlier duplicate", { timeout });
+        await expect(page.locator(":nth-match(.session-label, 2)")).toHaveText("earlier duplicate", { timeout });
 
         await page.uncheck("#show-duplicates-check");
         // the newly labelled duplicate should still be visible after unchecking, as should the latest (unlabelled) one,
         // but the middle duplicate should be removed
-        await expect(await page.locator(":nth-match(.session-label, 1)")).toHaveText(noLabel, { timeout });
-        await expect(await page.locator(":nth-match(.session-label, 2)")).toHaveText("earlier duplicate", { timeout });
-        await expect(await page.locator(":nth-match(.session-label, 3)")).toHaveText("current session label", {
+        await expect(page.locator(":nth-match(.session-label, 1)")).toHaveText(noLabel, { timeout });
+        await expect(page.locator(":nth-match(.session-label, 2)")).toHaveText("earlier duplicate", { timeout });
+        await expect(page.locator(":nth-match(.session-label, 3)")).toHaveText("current session label", {
             timeout
         });
-        await expect(await page.locator(":nth-match(.session-label, 4)")).toHaveText(noLabel, { timeout });
+        await expect(page.locator(":nth-match(.session-label, 4)")).toHaveText(noLabel, { timeout });
 
         // Load previously run session
         await page.click(":nth-match(.session-load a, 4)");
@@ -222,29 +222,30 @@ test.describe("Sessions tests", () => {
         // Check data
         await page.waitForTimeout(500);
         await page.clock.fastForward(saveSessionTimeout);
-        await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Data");
-        await expect(await page.innerText("#data-upload-success")).toBe(" Uploaded 32 rows and 2 columns");
+        await expect(page.locator(".wodin-left .nav-tabs .active")).toHaveText("Data");
+        await expect(page.locator("#data-upload-success")).toHaveText(" Uploaded 32 rows and 2 columns");
 
         // Check code
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)");
-        await expect(await page.innerText(".wodin-left .nav-tabs .active")).toBe("Code");
+        await expect(page.locator(".wodin-left .nav-tabs .active")).toHaveText("Code");
         await expectNewFitCode(page);
 
         // Check options
         await page.click(":nth-match(.wodin-left .nav-tabs a, 3)"); // Options tab
         await page.click(":nth-match(.wodin-right .nav-tabs a, 2)"); // Fit tab
-        await expect(await page.inputValue("#link-data select")).toBe("I");
+        expect(await page.inputValue("#link-data select")).toBe("I");
         expect((await page.inputValue(":nth-match(#model-params .row .parameter-input, 1)")).startsWith("0.4925")).toBe(
             true
         );
-        await expect(await page.inputValue(":nth-match(#model-params .row .parameter-input, 2)")).toBe("1");
-        await expect(await page.inputValue(":nth-match(#model-params .row .parameter-input, 3)")).toBe("1.5");
-        await expect(await page.isChecked(":nth-match(#model-params .row .form-check-input, 1)")).toBeTruthy();
-        await expect(await page.isChecked(":nth-match(#model-params .row .form-check-input, 2)")).toBeFalsy();
-        await expect(await page.isChecked(":nth-match(#model-params .row .form-check-input, 3)")).toBeFalsy();
+        expect(await page.inputValue(":nth-match(#model-params .row .parameter-input, 2)")).toBe("1");
+        expect(await page.inputValue(":nth-match(#model-params .row .parameter-input, 3)")).toBe("1.5");
+        expect(await page.isChecked(":nth-match(#model-params .row .form-check-input, 1)")).toBeTruthy();
+        expect(await page.isChecked(":nth-match(#model-params .row .form-check-input, 2)")).toBeFalsy();
+        expect(await page.isChecked(":nth-match(#model-params .row .form-check-input, 3)")).toBeFalsy();
 
         // Check run plot
         await page.click(":nth-match(.wodin-right .nav-tabs a, 1)"); // Run tab
+        await page.waitForTimeout(50);
         expect(await page.locator(lineSummarySelector).count()).toBe(5);
         const summary1 = page.locator(`:nth-match(${lineSummarySelector}, 1)`);
         await expectWodinLineSummary(summary1, "S", 1000, 0, 31, 154.64, 369, "#2e5cb8");
@@ -261,6 +262,7 @@ test.describe("Sessions tests", () => {
 
         // Check fit plot
         await page.click(":nth-match(.wodin-right .nav-tabs a, 2)"); // Fit tab
+        await page.waitForTimeout(50);
         expect(await page.locator(lineSummarySelector).count()).toBe(1);
         const fitSummary1 = page.locator(`:nth-match(${lineSummarySelector}, 1)`);
         await expectWodinLineSummary(fitSummary1, "I", 1000, 0, 31, 0.3, 7.9, "#cccc00");
@@ -268,6 +270,7 @@ test.describe("Sessions tests", () => {
 
         // Check sensitivity plot - but not every trace!
         await page.click(":nth-match(.wodin-right .nav-tabs a, 3)"); // Sensitivity tab
+        await page.waitForTimeout(50);
         expect(await page.locator(lineSummarySelector).count()).toBe(55);
         const sensitivitySummary = page.locator(`:nth-match(${lineSummarySelector}, 1)`);
         await expectWodinLineSummary(
@@ -286,28 +289,28 @@ test.describe("Sessions tests", () => {
 
         // Check multi-sensitivity result
         await page.click(":nth-match(.wodin-right .nav-tabs a, 4)"); // Multi-sensitivity tab
-        await expect(await page.locator(".multi-sensitivity-status")).toHaveText(
+        await expect(page.locator(".multi-sensitivity-status")).toHaveText(
             "Multi-sensitivity run produced 100 solutions.",
             { timeout }
         );
-        await expect(await page.locator("#download-summary-btn")).toBeEnabled();
-        await expect(await page.locator("#run-multi-sens-btn")).toBeEnabled();
+        await expect(page.locator("#download-summary-btn")).toBeEnabled();
+        await expect(page.locator("#run-multi-sens-btn")).toBeEnabled();
 
         // Expect to be able to navigate to the share link we copied earlier - check it has some rehydrated data
         await page.goto(copiedLinkText);
-        await expect(await page.innerText("#data-upload-success")).toBe(" Uploaded 32 rows and 2 columns");
+        await expect(page.locator("#data-upload-success")).toHaveText(" Uploaded 32 rows and 2 columns");
 
         // can delete session
         await page.goto(`${appUrl}/sessions`);
-        await expect(await page.locator("#app .container .row").count()).toBeGreaterThan(3);
+        expect(await page.locator("#app .container .row").count()).toBeGreaterThan(3);
         await page.locator(":nth-match(#app .container .row, 4) .session-edit-label i").click();
         await enterSessionLabel(page, "page-edit-session-label", "delete me");
 
-        await expect(await page.locator(".row:has-text('delete me')")).toBeVisible({ timeout });
+        await expect(page.locator(".row:has-text('delete me')")).toBeVisible({ timeout });
         await page.locator(".row:has-text('delete me') .session-delete i").click();
-        await expect(await page.locator("#confirm-yes")).toBeVisible();
+        await expect(page.locator("#confirm-yes")).toBeVisible();
         await page.click("#confirm-yes");
-        await expect(await page.locator("#app")).not.toContainText("delete me");
+        await expect(page.locator("#app")).not.toContainText("delete me");
 
         await browser.close();
     });
@@ -316,7 +319,7 @@ test.describe("Sessions tests", () => {
         await page.goto("/apps/day1/sessions");
         await page.fill("#session-code-input", "good-dog");
         await page.click("#load-session-from-code");
-        await expect(await page.url()).toBe("http://localhost:3000/apps/day1/?share=good-dog");
+        expect(page.url()).toBe("http://localhost:3000/apps/day1/?share=good-dog");
     });
 
     test("session initialise modal behaves as expected", async () => {
@@ -326,15 +329,15 @@ test.describe("Sessions tests", () => {
         await loadAppPage(page);
 
         // We don't see the modal on load first session...
-        await expect(await page.locator("#session-initialise-modal .modal")).not.toBeVisible({ timeout });
+        await expect(page.locator("#session-initialise-modal .modal")).not.toBeVisible({ timeout });
 
         // ..but we should on the second
         await loadAppPage(page);
-        await expect(await page.locator("#session-initialise-modal .modal")).toBeVisible({ timeout });
+        await expect(page.locator("#session-initialise-modal .modal")).toBeVisible({ timeout });
 
         // select new session and make some changes, including set label
         await page.click("#new-session");
-        await expect(await page.locator("#session-initialise-modal .modal")).not.toBeVisible({ timeout });
+        await expect(page.locator("#session-initialise-modal .modal")).not.toBeVisible({ timeout });
 
         await page.click(":nth-match(.wodin-left .nav-tabs a, 2)"); // select code tab
         await writeCode(page, newFitCode);
@@ -346,7 +349,7 @@ test.describe("Sessions tests", () => {
 
         // refresh page and select reload latest - should see the changes and new label
         await loadAppPage(page);
-        await expect(await page.locator("#session-initialise-modal .modal")).toBeVisible({ timeout });
+        await expect(page.locator("#session-initialise-modal .modal")).toBeVisible({ timeout });
         await page.click("#reload-session");
         await expectReloadedSession(page);
 

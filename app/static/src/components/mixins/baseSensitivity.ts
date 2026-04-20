@@ -23,7 +23,14 @@ export default (store: Store<AppState>, multiSensitivity: boolean): BaseSensitiv
     const namespace = multiSensitivity ? "multiSensitivity" : "sensitivity";
 
     const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
-    const allSelectedVariables = computed(() => getAllSelectedVariables(store.state));
+
+    // multi sensitivity tab does not actually care about what variables are selected
+    // so select them all otherwise wodin will raise no variables selected error
+    const allSelectedVariables = computed(() =>
+        multiSensitivity
+            ? store.state.model.variablesCopy
+            : getAllSelectedVariables(store.state)
+    );
 
     const sensitivityPrerequisitesReady = computed(() => {
         return hasRunner.value && !!store.state.model.odin && !store.state.model.compileRequired;

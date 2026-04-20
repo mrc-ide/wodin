@@ -418,9 +418,9 @@ test.describe("Code Tab tests", () => {
         // should update y axis tick
         const yAxis = page.locator(`g[id^="y-axes"]`);
         const firstTick = yAxis.locator(".tick").first();
-        await expect(await firstTick.textContent()).toBe("100p");
+        await expect(firstTick).toHaveText("100p");
         // change back to linear
         await page.locator(".log-scale-y-axis input").click();
-        await expect(await firstTick.textContent()).toBe("0M");
+        await expect(firstTick).toHaveText("0M");
     });
 });

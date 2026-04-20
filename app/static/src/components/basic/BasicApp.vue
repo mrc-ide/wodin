@@ -11,7 +11,10 @@
             </wodin-tabs>
         </template>
         <template v-slot:right>
-            <wodin-tabs id="right-tabs" :tabNames="rightTabNames" @tabSelected="rightTabSelected">
+            <wodin-tabs id="right-tabs"
+                        :tab="tab"
+                        :tabNames="rightTabNames"
+                        @tabSelected="rightTabSelected">
                 <template v-if="helpTabName" v-slot:[helpTabName]>
                     <help-tab></help-tab>
                 </template>
@@ -30,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import { useStore } from "vuex";
 import WodinApp from "../WodinApp.vue";
 import WodinTabs from "../WodinTabs.vue";
@@ -43,6 +46,7 @@ import { AppStateMutation } from "../../store/appState/mutations";
 import { VisualisationTab } from "../../store/appState/state";
 import HelpTab from "../help/HelpTab.vue";
 import includeConfiguredTabs from "../mixins/includeConfiguredTabs";
+import { BasicState } from "@/store/basic/state";
 
 export default defineComponent({
     name: "BasicApp",
@@ -57,7 +61,10 @@ export default defineComponent({
         WodinTabs
     },
     setup() {
-        const store = useStore();
+        const store = useStore<BasicState>();
+
+        const tab = computed(() => store.state.openVisualisationTab);
+
         const rightTabSelected = (tab: string) => {
             store.commit(AppStateMutation.SetOpenVisualisationTab, tab);
         };
@@ -66,13 +73,17 @@ export default defineComponent({
             VisualisationTab.Sensitivity
         ]);
 
-        onMounted(() => rightTabSelected(rightTabNames.value[0]));
+        // help tab is selected by default
+        onMounted(() => {
+            if (helpTabName.value) rightTabSelected(helpTabName.value)
+        });
 
         return {
             rightTabSelected,
             helpTabName,
             multiSensitivityTabName,
-            rightTabNames
+            rightTabNames,
+            tab,
         };
     }
 });

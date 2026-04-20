@@ -20,26 +20,32 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType } from "vue";
+import { defineComponent, ref, PropType, watch } from "vue";
 
 interface Props {
     tabNames: string[];
+    tab?: string | undefined;
 }
 
 export default defineComponent({
     name: "WodinTabs",
     props: {
-        tabNames: { type: Array as PropType<string[]>, required: true }
+        tabNames: { type: Array as PropType<string[]>, required: true },
+        tab: { type: String, required: false },
     },
     emits: ["tabSelected"],
     setup(props: Props, { emit }) {
         // eslint-disable-next-line vue/no-setup-props-destructure
-        const selectedTabName = ref(props.tabNames[0]);
+        const selectedTabName = ref(props.tab || props.tabNames[0]);
 
         const tabSelected = (tabName: string) => {
-            selectedTabName.value = tabName;
+            if (!props.tab) selectedTabName.value = tabName;
             emit("tabSelected", tabName);
         };
+
+        watch(() => [props.tab], ([newTab]) => {
+            if (newTab) selectedTabName.value = newTab;
+        });
 
         return {
             selectedTabName,

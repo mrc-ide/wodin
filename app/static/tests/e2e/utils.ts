@@ -114,7 +114,7 @@ export const startModelFit = async (page: Page, data: string = realisticFitData)
 };
 
 export const waitForModelFitCompletion = async (page: Page) => {
-    await expect(await page.getAttribute(".wodin-plot-container .vue-feather", "data-type")).toBe("check");
+    await expect(await page.getAttribute(".fit-summary-container .vue-feather", "data-type")).toBe("check");
 };
 
 export const expectWodinLineSummary = async (

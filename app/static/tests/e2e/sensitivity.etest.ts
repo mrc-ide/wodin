@@ -272,7 +272,7 @@ test.describe("Sensitivity tests", () => {
     });
 
     const expectMultipleSensitivityGraphs = async (page: Page, summary = false) => {
-        const containerClass = summary ? "summary-plot-container" : "wodin-plot-container";
+        const containerClass = "wodin-plot-container";
         const firstPlot = await page.locator(`:nth-match(.${containerClass}, 1)`);
         const secondPlot = await page.locator(`:nth-match(.${containerClass}, 2)`);
         expect(await firstPlot.locator(":nth-match(.wodin-plot-data-summary-lines, 1)").getAttribute("name")).toBe(
