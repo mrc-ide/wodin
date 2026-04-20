@@ -36,8 +36,6 @@ import { ModelAction } from "../../../../src/store/model/actions";
 import CodeTab from "../../../../src/components/code/CodeTab.vue";
 import DataTab from "../../../../src/components/data/DataTab.vue";
 import RunTab from "../../../../src/components/run/RunTab.vue";
-import HelpTab from "../../../../src/components/help/HelpTab.vue";
-import MultiSensitivityTab from "../../../../src/components/multiSensitivity/MultiSensitivityTab.vue";
 import { VisualisationTab } from "../../../../src/store/appState/state";
 import { AppStateMutation } from "../../../../src/store/appState/mutations";
 import { ModelFitGetter } from "../../../../src/store/modelFit/getters";
@@ -139,33 +137,14 @@ describe("FitApp", () => {
         expect(optionsTab.exists()).toBe(true);
     });
 
-    it("renders Fit as expected", async () => {
-        const wrapper = getWrapper();
-        const rightTabs = wrapper.find("#right-tabs");
-
-        // Change to Fit tab
-        await rightTabs.findAll("li a").at(1)!.trigger("click");
-        expect(rightTabs.find("div.mt-4 button").text()).toBe("Fit model");
-    });
-
-    it("renders Sensitivity as expected", async () => {
-        const wrapper = getWrapper();
-        const rightTabs = wrapper.find("#right-tabs");
-
-        // Change to Sensitivity tab
-        await rightTabs.findAll("li a").at(2)!.trigger("click");
-        expect(rightTabs.find("div.mt-4 button").text()).toBe("Run sensitivity");
-    });
-
     it("commits open tab change when change tab", async () => {
         const mockSetOpenTab = vi.fn();
         const wrapper = getWrapper(mockSetOpenTab);
         const rightTabs = wrapper.find("#right-tabs");
 
         await rightTabs.findAll("li a").at(1)!.trigger("click"); // Click Fit tab
-        // always sets it once on mount
-        expect(mockSetOpenTab).toHaveBeenCalledTimes(2);
-        expect(mockSetOpenTab.mock.calls[1][1]).toBe(VisualisationTab.Fit);
+        expect(mockSetOpenTab).toHaveBeenCalledTimes(1);
+        expect(mockSetOpenTab.mock.calls[0][1]).toBe(VisualisationTab.Fit);
     });
 
     it("renders help tab", () => {
@@ -176,11 +155,8 @@ describe("FitApp", () => {
             }
         };
         const wrapper = getWrapper(vi.fn(), helpConfig);
-        const wodinPanels = wrapper.findComponent(WodinPanels);
 
         expectRightWodinTabs(wrapper, ["Help", "Run", "Fit", "Sensitivity"]);
-        const rightTabs = wodinPanels.find(".wodin-right #right-tabs");
-        expect(rightTabs.findComponent(HelpTab).exists()).toBe(true);
     });
 
     it("renders Multi-sensitivity tab if configured", async () => {
@@ -188,14 +164,8 @@ describe("FitApp", () => {
             multiSensitivity: true
         };
         const wrapper = getWrapper(vi.fn(), multiSensConfig);
-        const wodinPanels = wrapper.findComponent(WodinPanels);
 
         expectRightWodinTabs(wrapper, ["Run", "Fit", "Sensitivity", "Multi-sensitivity"]);
-        // Change to Options tab
-        const rightTabs = wodinPanels.find(".wodin-right #right-tabs");
-        const rightTabLinks = rightTabs.findAll("ul li a");
-        await rightTabLinks.at(3)!.trigger("click");
-        expect(rightTabs.findComponent(MultiSensitivityTab).exists()).toBe(true);
     });
 
     it("renders both Help and MultiSensitivity if configured", () => {

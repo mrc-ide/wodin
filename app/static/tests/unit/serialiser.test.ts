@@ -439,7 +439,8 @@ describe("serialise", () => {
         odinModelResponse: modelState.odinModelResponse,
         hasOdin: true,
         odinModelCodeError: modelState.odinModelCodeError,
-        paletteModel: modelState.paletteModel
+        paletteModel: modelState.paletteModel,
+        variablesCopy: modelState.variablesCopy,
     };
     const expectedRun = {
         runRequired: {

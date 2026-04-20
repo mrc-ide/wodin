@@ -40,6 +40,7 @@ describe("baseSensitivity mixin", () => {
                         odin: {},
                         compileRequired: false,
                         selectedVariables: ["A"],
+                        variablesCopy: ["A"],
                         ...modelState
                     },
                     getters: {
@@ -162,13 +163,14 @@ describe("baseSensitivity mixin", () => {
     });
 
     it("returns expected update message when there are no selected variables", () => {
+        // multi sens should not warn when no selected variables
         expectUpdateMsgForSensAndMultiSens(
             true,
             {},
             {},
             [],
             "Please select at least one variable.",
-            "Please select at least one variable."
+            ""
         );
     });
 

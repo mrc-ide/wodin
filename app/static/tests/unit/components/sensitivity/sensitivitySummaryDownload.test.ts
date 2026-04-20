@@ -70,7 +70,8 @@ describe("SensitivitySummaryDownload", () => {
                     state: {
                         odinRunnerOde: {},
                         odin: {},
-                        selectedVariables: ["S"]
+                        selectedVariables: ["S"],
+                        variablesCopy: ["S"],
                     },
                     getters: {
                         [ModelGetter.hasRunner]: () => true

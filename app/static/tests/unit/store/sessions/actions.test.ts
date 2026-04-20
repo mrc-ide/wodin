@@ -53,7 +53,8 @@ describe("SessionsActions", () => {
                 result: {
                     hasResult: multiSensitivityHasResult
                 }
-            }
+            },
+            graphs: {}
         };
     };
 

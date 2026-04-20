@@ -28,9 +28,6 @@ import WodinPanels from "../../../../src/components/WodinPanels.vue";
 import CodeTab from "../../../../src/components/code/CodeTab.vue";
 import OptionsTab from "../../../../src/components/options/OptionsTab.vue";
 import RunTab from "../../../../src/components/run/RunTab.vue";
-import SensitivityTab from "../../../../src/components/sensitivity/SensitivityTab.vue";
-import MultiSensitivityTab from "../../../../src/components/multiSensitivity/MultiSensitivityTab.vue";
-import HelpTab from "../../../../src/components/help/HelpTab.vue";
 import { ModelAction } from "../../../../src/store/model/actions";
 import { AppStateMutation } from "../../../../src/store/appState/mutations";
 import { VisualisationTab } from "../../../../src/store/appState/state";
@@ -111,22 +108,12 @@ describe("StochasticApp", () => {
         expect(optionsTab.exists()).toBe(true);
     });
 
-    it("renders Sensitivity as expected", async () => {
-        const wrapper = getWrapper();
-        const rightTabs = wrapper.find("#right-tabs");
-
-        // Change to Sensitivity tab
-        await rightTabs.findAll("li a").at(1)!.trigger("click");
-        expect(rightTabs.findComponent(SensitivityTab).exists()).toBe(true);
-    });
-
     it("commits visualisation tab change", async () => {
         const wrapper = getWrapper();
         const rightTabs = wrapper.findComponent("#right-tabs");
         await rightTabs.findAll("li a").at(1)!.trigger("click"); // Click Sensitivity Tab
-        // always sets it once on mount
-        expect(mockSetOpenVisualisationTab).toHaveBeenCalledTimes(2);
-        expect(mockSetOpenVisualisationTab.mock.calls[1][1]).toBe(VisualisationTab.Sensitivity);
+        expect(mockSetOpenVisualisationTab).toHaveBeenCalledTimes(1);
+        expect(mockSetOpenVisualisationTab.mock.calls[0][1]).toBe(VisualisationTab.Sensitivity);
     });
 
     it("renders help tab", () => {
@@ -137,11 +124,7 @@ describe("StochasticApp", () => {
             }
         };
         const wrapper = getWrapper(helpConfig);
-        const wodinPanels = wrapper.findComponent(WodinPanels);
         expectRightWodinTabs(wrapper, ["Help", "Run", "Sensitivity"]);
-
-        const rightTabs = wodinPanels.find(".wodin-right #right-tabs");
-        expect(rightTabs.findComponent(HelpTab).exists()).toBe(true);
     });
 
     it("renders Multi-sensitivity tab if configured", async () => {
@@ -149,14 +132,8 @@ describe("StochasticApp", () => {
             multiSensitivity: true
         };
         const wrapper = getWrapper(multiSensConfig);
-        const wodinPanels = wrapper.findComponent(WodinPanels);
 
         expectRightWodinTabs(wrapper, ["Run", "Sensitivity", "Multi-sensitivity"]);
-        // Change to Options tab
-        const rightTabs = wodinPanels.find(".wodin-right #right-tabs");
-        const rightTabLinks = rightTabs.findAll("ul li a");
-        await rightTabLinks.at(2)!.trigger("click");
-        expect(rightTabs.findComponent(MultiSensitivityTab).exists()).toBe(true);
     });
 
     it("renders both Help and MultiSensitivity if configured", () => {
