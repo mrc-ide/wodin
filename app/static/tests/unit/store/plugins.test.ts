@@ -1,11 +1,13 @@
 import Vuex from "vuex";
-import { logMutations, persistState, registerRerunModel, registerRerunSensitivity } from "../../../src/store/plugins";
+import { logMutations, persistState, registerRerunModel, registerRerunSensitivity, updateGraphs } from "../../../src/store/plugins";
 import { AppState } from "../../../src/store/appState/state";
 import { AppStateAction } from "../../../src/store/appState/actions";
 import { AppStateMutation } from "../../../src/store/appState/mutations";
 import { RunMutation } from "@/store/run/mutations";
 import { RunAction } from "@/store/run/actions";
 import { SensitivityAction } from "@/store/sensitivity/actions";
+import { GraphsMutation } from "@/store/graphs/mutations";
+import { GraphsAction } from "@/store/graphs/actions";
 
 describe("plugins", () => {
     it("logMutations logs mutations to console", () => {
@@ -127,5 +129,26 @@ describe("plugins", () => {
         registerRerunSensitivity(store);
         store.commit(`run/${RunMutation.SetParameterValues}`);
         expect(mockRunSensitivity).toHaveBeenCalled();
+    });
+
+    it("generates data on a mutation from update graph mutations", async () => {
+        const mockGenerateData = vi.fn();
+        const store = new Vuex.Store<AppState>({
+            modules: {
+                graphs: {
+                    namespaced: true,
+                    mutations: {
+                        [GraphsMutation.AddConfig]: () => {}
+                    },
+                    actions: {
+                        [GraphsAction.GenerateData]: mockGenerateData
+                    }
+                },
+            }
+        });
+        updateGraphs(store);
+        store.commit(`graphs/${GraphsMutation.AddConfig}`);
+        await new Promise(res => setTimeout(res, 1));
+        expect(mockGenerateData).toHaveBeenCalled();
     });
 });
