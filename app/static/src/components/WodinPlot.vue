@@ -24,16 +24,14 @@ import WodinLegend, { LegendConfig } from "./WodinLegend.vue";
 import { GraphsMutation, UpdateConfigPayload } from "@/store/graphs/mutations";
 import { STATIC_BUILD } from "@/parseEnv";
 import userMessages from "@/userMessages";
+import { FitState } from "@/store/fit/state";
+import { FitDataGetter } from "@/store/fitData/getters";
 
 export default defineComponent({
     name: "WodinPlot",
     components: { WodinPlotDataSummary, WodinLegend },
     props: {
         fadePlot: Boolean,
-        endTime: {
-            type: Number,
-            required: true
-        },
         config: {
             type: Object as PropType<GraphConfig>,
             required: true
@@ -60,6 +58,20 @@ export default defineComponent({
         const dataType = computed(() => store.state.graphs.graphGroups[props.graphGroupId].dataType);
 
         const hasPlotData = computed(() => !!baseData.value.lines.length || !!baseData.value.points.length);
+
+        const endTime = computed(() => {
+          if (store.state.openVisualisationTab !== VisualisationTab.Fit) {
+            return store.state.run.endTime;
+          } else {
+            const state = store.state as FitState;
+            const { modelFit } = state;
+            const plotRehydratedFit =
+              modelFit.result && !modelFit.result.solution && !modelFit.result.error;
+            return plotRehydratedFit
+              ? state.modelFit.result?.inputs.endTime
+              : store.getters[`fitData/${FitDataGetter.dataEnd}`];
+          }
+        });
 
         const placeholderMessage = computed(() => {
             if (STATIC_BUILD) return "";
@@ -140,7 +152,7 @@ export default defineComponent({
             const parameterToVary = store.state.sensitivity.paramSettings.parameterToVary || undefined;
 
             const config = props.config;
-            const maxXExtents = isSummaryType ? undefined : { start: startTime, end: props.endTime };
+            const maxXExtents = isSummaryType ? undefined : { start: startTime, end: endTime.value };
             const xRange = config.xAxisRange
               ? { start: config.xAxisRange[0], end: config.xAxisRange[1] }
               : maxXExtents;

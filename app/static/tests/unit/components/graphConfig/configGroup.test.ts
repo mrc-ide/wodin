@@ -30,6 +30,8 @@ describe("Config group", () => {
     const configs = getConfigs();
     mockGraph.configs.push(...configs);
     mockGraph.configGroups[ConfigGroupIds.RunAndSens].configIds = configs.map(c => c.id);
+    mockGraph.graphGroups[VisualisationTab.Run].configIds = configs.map(c => c.id);
+    mockGraph.graphGroups[VisualisationTab.Sensitivity].configIds = configs.map(c => c.id);
 
     const store = new Vuex.Store<BasicState>({
       state: mockBasicState({ openVisualisationTab: VisualisationTab.Run }),

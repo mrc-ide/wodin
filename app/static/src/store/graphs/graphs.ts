@@ -26,15 +26,15 @@ export const defaultState = (): GraphsState => {
       },
       graphGroups: {
         [VisualisationTab.Run]: {
-          configGroupId: ConfigGroupIds.RunAndSens,
+          configIds: [],
           dataType: DataType.Run
         },
         [VisualisationTab.Fit]: {
-          configGroupId: ConfigGroupIds.Fit,
+          configIds: [],
           dataType: DataType.Fit
         },
         [VisualisationTab.Sensitivity]: {
-          configGroupId: ConfigGroupIds.RunAndSens,
+          configIds: [],
           dataType: DataType.Sensitivity
         },
       },

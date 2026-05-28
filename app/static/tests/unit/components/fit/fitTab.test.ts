@@ -7,7 +7,7 @@ import { mockFitState, mockGraphsState } from "../../../mocks";
 import { WodinError } from "../../../../src/types/responseTypes";
 import ErrorInfo from "../../../../src/components/ErrorInfo.vue";
 import WodinPlot from "@/components/WodinPlot.vue";
-import { defaultGraphConfig } from "@/store/graphs/state";
+import { DataType, defaultGraphConfig } from "@/store/graphs/state";
 import { ConfigGroupIds } from "@/store/graphs/graphs";
 import { GraphsMutation } from "@/store/graphs/mutations";
 import { VisualisationTab } from "@/store/appState/state";
@@ -17,6 +17,7 @@ describe("Fit Tab", () => {
     const mockAddConfig = vi.fn();
     const mockUpdateConfig = vi.fn();
     const mockUpdateConfigGroup = vi.fn();
+    const mockUpdateGraphGroup = vi.fn();
     const mockUpdateVisibleGraphGroups = vi.fn();
 
     beforeEach(() => {
@@ -40,6 +41,7 @@ describe("Fit Tab", () => {
         if (includeDefaultConfig) {
             graphsState.configs = [defaultGraphConfig("fit")];
             graphsState.configGroups[ConfigGroupIds.Fit].configIds = ["fit"];
+            graphsState.graphGroups[VisualisationTab.Fit].configIds = ["fit"];
         }
 
         const store = new Vuex.Store<FitState>({
@@ -58,6 +60,7 @@ describe("Fit Tab", () => {
                         [GraphsMutation.AddConfig]: mockAddConfig,
                         [GraphsMutation.UpdateConfig]: mockUpdateConfig,
                         [GraphsMutation.UpdateConfigGroup]: mockUpdateConfigGroup,
+                        [GraphsMutation.UpdateGraphGroup]: mockUpdateGraphGroup,
                         [GraphsMutation.UpdateVisibleGraphGroups]: mockUpdateVisibleGraphGroups,
                     }
                 },
@@ -249,6 +252,13 @@ describe("Fit Tab", () => {
             value: {
                 configIds: [cfgId],
                 syncProperties: ["xAxisRange"]
+            }
+        });
+        expect(mockUpdateGraphGroup.mock.calls[0][1]).toStrictEqual({
+            id: VisualisationTab.Fit,
+            value: {
+                configIds: [cfgId],
+                dataType: DataType.Fit
             }
         });
         expect(mockUpdateVisibleGraphGroups.mock.calls[0][1]).toStrictEqual([VisualisationTab.Fit]);

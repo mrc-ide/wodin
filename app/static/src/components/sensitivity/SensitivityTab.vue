@@ -12,7 +12,6 @@
         <template v-for="config in graphConfigs" :key="config.id">
             <wodin-plot
               :fade-plot="!!updateMsg"
-              :end-time="endTime"
               :config="config"
               :graph-group-id="graphGroupId">
             </wodin-plot>
@@ -43,7 +42,7 @@ import baseSensitivity from "../mixins/baseSensitivity";
 import { AppState, VisualisationTab } from "@/store/appState/state";
 import { ConfigGroupIds } from "@/store/graphs/graphs";
 import { newUid } from "@/utils";
-import { GraphsMutation, UpdateConfigPayload, UpdateConfigGroupPayload } from "@/store/graphs/mutations";
+import { GraphsMutation, UpdateConfigPayload, UpdateConfigGroupPayload, UpdateGraphGroupPayload } from "@/store/graphs/mutations";
 import WodinPlot from "../WodinPlot.vue";
 import { getGraphConfigs } from "@/store/graphs/utils";
 
@@ -73,8 +72,6 @@ export default defineComponent({
                 !!store.getters[`${namespace}/${BaseSensitivityGetter.batchPars}`]
             );
         });
-
-        const endTime = computed(() => store.state.run.endTime);
 
         const graphConfigs = computed(() => getGraphConfigs(store, graphGroupId));
 
@@ -119,6 +116,17 @@ export default defineComponent({
                 };
                 store.commit(`graphs/${GraphsMutation.UpdateConfigGroup}`, configGroupPayload);
             }
+
+            // keeping graph group config ids up to date with RunAndSens config ids
+            const graphGroup = store.state.graphs.graphGroups[graphGroupId];
+            const newGraphGroup = { ...graphGroup };
+            newGraphGroup.configIds = store.state.graphs.configGroups[ConfigGroupIds.RunAndSens].configIds;
+            const graphGroupPayload: UpdateGraphGroupPayload = {
+                id: graphGroupId,
+                value: newGraphGroup
+            };
+            store.commit(`graphs/${GraphsMutation.UpdateGraphGroup}`, graphGroupPayload);
+
             store.commit(`graphs/${GraphsMutation.UpdateVisibleGraphGroups}`, [graphGroupId]);
         });
 
@@ -133,7 +141,6 @@ export default defineComponent({
             error,
             loading,
             graphGroupId,
-            endTime,
         };
     }
 });

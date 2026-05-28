@@ -14,7 +14,6 @@ export const getAllSelectedVariables = <T extends AppState>(state: T) => {
 };
 
 export const getGraphConfigs = <T extends AppState>(store: Store<T>, graphGroupId: string) => {
-  const { configGroupId } = store.state.graphs.graphGroups[graphGroupId];
-  const { configIds } = store.state.graphs.configGroups[configGroupId];
+  const { configIds } = store.state.graphs.graphGroups[graphGroupId];
   return store.state.graphs.configs.filter(cfg => configIds.includes(cfg.id));
 };

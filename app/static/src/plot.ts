@@ -142,12 +142,8 @@ export function allFitDataToSkadiChart(
 
   return Object.keys(linkedVariables).flatMap((name: string): WodinPlotData["points"] => {
     let color = palette[name];
-    const variable = linkedVariables[name];
-    if (variable) {
-      // If there is a linked variable, only show data if the variable is selected - if not selected, render the
-      // series, but as transparent so that all graph x axes are consistent
-      color = selectedVariables.includes(variable) ? paletteModel[variable] : "transparent";
-    }
+    const variable = linkedVariables[name]!;
+    color = selectedVariables.includes(variable) ? paletteModel[variable] : color;
 
     const points: WodinPlotData["points"] = [];
     for (let i = 0; i < filteredData.length; i++) {
