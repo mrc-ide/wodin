@@ -3,6 +3,7 @@ import { AdvancedComponentType, ParameterSet, RunState, RunUpdateRequiredReasons
 import { OdinUserType } from "../../types/responseTypes";
 import { OdinRunResultDiscrete, OdinRunResultOde } from "../../types/wrapperTypes";
 import { SetAdvancedSettingPayload, SetParameterSetResultPayload } from "../../types/payloadTypes";
+import { StaticConfig } from "@/wodinStaticUtils";
 
 export enum RunMutation {
     SetRunRequired = "SetRunRequired",
@@ -22,7 +23,8 @@ export enum RunMutation {
     SaveParameterDisplayName = "SaveParameterDisplayName",
     TurnOffDisplayNameError = "TurnOffDisplayNameError",
     UpdateAdvancedSettings = "UpdateAdvancedSettings",
-    ToggleShowUnchangedParameters = "ToggleShowUnchangedParameters"
+    ToggleShowUnchangedParameters = "ToggleShowUnchangedParameters",
+    SetStatic = "SetStatic"
 }
 
 const runRequiredNone = {
@@ -189,5 +191,8 @@ export const mutations: MutationTree<RunState> = {
     },
     [RunMutation.ToggleShowUnchangedParameters](state: RunState) {
         state.showUnchangedParameters = !state.showUnchangedParameters;
+    },
+    [RunMutation.SetStatic](state: RunState, payload: Partial<StaticConfig["static"]>) {
+        state.static = payload || {};
     }
 };

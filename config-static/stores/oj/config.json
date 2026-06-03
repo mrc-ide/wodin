@@ -1,0 +1,29 @@
+{
+  "appType": "stochastic",
+  "endTime": 35,
+  "static": {
+    "parameterValues": {
+      "n_age": 3,
+      "s_0": [1000, 2000, 1500],
+      "beta_t": [0, 50, 150, 300, 400, 550],
+      "beta_x": [3, 4, 5, 6, 7, 8],
+      "age_by_sex_susceptibility": [10, 20, 30, 15, 25, 35]
+    },
+    "dt": 1,
+    "nParticles": 5,
+    "legend": {
+      "s[0]": {
+        "label": "s age 1",
+        "color": "green"
+      },
+      "s[1]": {
+        "label": "s age 2",
+        "color": "red"
+      },
+      "s[2]": {
+        "label": "s age 3",
+        "color": "blue"
+      }
+    }
+  }
+}

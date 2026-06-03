@@ -32,8 +32,8 @@ export default defineComponent({
     components: { WodinPlotDataSummary, WodinLegend },
     props: {
         fadePlot: Boolean,
-        config: {
-            type: Object as PropType<GraphConfig>,
+        configId: {
+            type: String,
             required: true
         },
         graphGroupId: {
@@ -52,8 +52,10 @@ export default defineComponent({
             const emptyData = { lines: [], points: [] };
             const visibleData = store.state.graphs.visibleData[props.graphGroupId];
             if (!visibleData) return emptyData;
-            return visibleData.find(({ configId }) => configId === props.config.id)?.data || emptyData;
+            return visibleData.find(({ configId }) => configId === props.configId)?.data || emptyData;
         });
+
+        const config = computed(() => store.state.graphs.configs.find(c => c.id === props.configId)!);
 
         const dataType = computed(() => store.state.graphs.graphGroups[props.graphGroupId].dataType);
 
@@ -77,11 +79,11 @@ export default defineComponent({
             if (STATIC_BUILD) return "";
             const tab = store.state.openVisualisationTab;
             if (tab === VisualisationTab.Run) {
-                return runPlaceholderMessage(props.config.selectedVariables, false);
+                return runPlaceholderMessage(config.value.selectedVariables, false);
             } else if (tab === VisualisationTab.Fit) {
                 return userMessages.modelFit.notFittedYet;
             } else if (tab === VisualisationTab.Sensitivity) {
-                return runPlaceholderMessage(props.config.selectedVariables, true);
+                return runPlaceholderMessage(config.value.selectedVariables, true);
             } else {
                 return "";
             }
@@ -92,13 +94,13 @@ export default defineComponent({
 
             const newXYRanges = {
               xAxisRange: zoomProperties.x,
-              yAxisRange: zoomProperties.eventType === "dblclick" && !props.config.lockYAxis
+              yAxisRange: zoomProperties.eventType === "dblclick" && !config.value.lockYAxis
                 ? null
                 : zoomProperties.y,
             };
 
             const payload: UpdateConfigPayload = {
-              id: props.config.id,
+              id: props.configId,
               value: newXYRanges
             };
             store.commit(`graphs/${GraphsMutation.UpdateConfig}`, payload);
@@ -151,13 +153,13 @@ export default defineComponent({
             const isSummaryType = summaryDataTypes.includes(dataType.value);
             const parameterToVary = store.state.sensitivity.paramSettings.parameterToVary || undefined;
 
-            const config = props.config;
+            const cfg = config.value;
             const maxXExtents = isSummaryType ? undefined : { start: startTime, end: endTime.value };
-            const xRange = config.xAxisRange
-              ? { start: config.xAxisRange[0], end: config.xAxisRange[1] }
+            const xRange = cfg.xAxisRange
+              ? { start: cfg.xAxisRange[0], end: cfg.xAxisRange[1] }
               : maxXExtents;
-            const yRange = config.yAxisRange
-              ? { start: config.yAxisRange[0], end: config.yAxisRange[1] }
+            const yRange = cfg.yAxisRange
+              ? { start: cfg.yAxisRange[0], end: cfg.yAxisRange[1] }
               : {};
             const ranges = { x: xRange, y: yRange };
 
@@ -171,12 +173,12 @@ export default defineComponent({
 
             // skadiChart holds a lot of data, making this reactive will have a performance
             // penalty, if you need to make it reactive, please use shallowRef
-            const skadiChart = new Chart<Metadata>({ logScale: { y: config.logScaleYAxis } })
+            const skadiChart = new Chart<Metadata>({ logScale: { y: cfg.logScaleYAxis } })
               .addAxes({ x: isSummaryType ? parameterToVary : "Time" })
               .addGridLines()
               .addTraces(data.lines)
               .addScatterPoints(data.points)
-              .addZoom({ lockAxis: config.lockYAxis ? "y" : null })
+              .addZoom({ lockAxis: cfg.lockYAxis ? "y" : null })
               .makeResponsive()
               .addTooltips(tooltipCallback)
               .addCustomLifecycleHooks({ beforeZoom: updateAxes })
@@ -187,7 +189,7 @@ export default defineComponent({
 
         onMounted(drawSkadiChart);
 
-        watch([() => props.config], ([newCfg], [oldCfg]) => {
+        watch(config, (newCfg, oldCfg) => {
           if (plotStyle.value === fadePlotStyle) return;
 
           // if a user locks the y axis then we have to store the y axis range that
@@ -198,7 +200,7 @@ export default defineComponent({
                 || [maxExtentsY.start, maxExtentsY.end];
 
             const payload: UpdateConfigPayload = {
-                id: props.config.id,
+                id: props.configId,
                 value: { yAxisRange: yRange }
             };
             store.commit(`graphs/${GraphsMutation.UpdateConfig}`, payload);

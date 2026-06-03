@@ -65,7 +65,7 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
         });
         commit(`run/${RunMutation.SetParameterValues}`, newValues, { root: true });
 
-        const variables = state.odinModelResponse.metadata?.variables || [];
+        const variables = state.odinModelResponse.metadata?.variables.map(x => (x as any).name) || [];
         commit(ModelMutation.SetPaletteModel, paletteModel(variables));
 
         // add any new variables to first graph and remove any invalid variables from

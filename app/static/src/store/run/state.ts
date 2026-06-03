@@ -1,6 +1,7 @@
 import { AdvancedOptions, OdinUserType } from "../../types/responseTypes";
 import { OdinRunResultOde, OdinRunResultDiscrete } from "../../types/wrapperTypes";
 import { Dict } from "../../types/utilTypes";
+import { StaticConfig } from "@/wodinStaticUtils";
 
 export interface RunUpdateRequiredReasons {
     modelChanged: boolean;
@@ -68,4 +69,7 @@ export interface RunState {
     showUnchangedParameters: boolean;
     parameterSetResults: Dict<OdinRunResultOde>;
     advancedSettings: AdvancedSettings;
+
+    // used only in static mode
+    static: Partial<StaticConfig["static"]>;
 }

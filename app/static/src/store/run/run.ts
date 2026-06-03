@@ -29,7 +29,8 @@ export const defaultState: RunState = {
         [AdvancedOptions.stepSizeMax]: { val: null, type: AdvancedComponentType.num },
         [AdvancedOptions.stepSizeMin]: { val: [null, null], default: [1, -8], type: AdvancedComponentType.stdf },
         [AdvancedOptions.tcrit]: { val: null, default: [], type: AdvancedComponentType.tag }
-    }
+    },
+    static: {},
 };
 
 export const run = {
