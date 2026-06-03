@@ -4,5 +4,5 @@ set -ex
 ODIN_API_BRANCH=main
 
 docker pull mrcide/odin.api:$ODIN_API_BRANCH
-docker run -d --name odin.api --rm -p 8001:8001 mrcide/odin.api:604ee49
+docker run -d --name odin.api --rm -p 8001:8001 mrcide/odin.api:529e69f
 docker run -d --name wodin-redis --rm -p 6379:6379 redis:6
