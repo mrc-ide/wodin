@@ -65,6 +65,9 @@ export const testCommonRunSensitivity = (
     isMultiSens: boolean
 ) => {
     const expectCommitCalledTimes = (commit: Mock, times: number) => {
+        // In the RunSensitivity action, at the end, we commit the `SetLoading` mutation
+        // with payload false but RunMultiSensitivity action does not have that so we
+        // need to add an extra commit for that for RunSensitivity
         expect(commit).toHaveBeenCalledTimes(isMultiSens ? times : times + 1);
         if (!isMultiSens) {
             expect(commit.mock.calls[times][0]).toBe(
