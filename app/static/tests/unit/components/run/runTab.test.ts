@@ -2,30 +2,25 @@ import VueFeather from "vue-feather";
 import Vuex, { Store } from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { nextTick } from "vue";
-import { BasicState } from "../../../../src/store/basic/state";
 import {
-    mockBasicState,
-    mockFitState,
     mockGraphsState,
     mockModelState,
     mockRunState,
-    mockStochasticState
 } from "../../../mocks";
 import RunTab from "../../../../src/components/run/RunTab.vue";
 import ErrorInfo from "../../../../src/components/ErrorInfo.vue";
 import ActionRequiredMessage from "../../../../src/components/ActionRequiredMessage.vue";
 import DownloadOutput from "../../../../src/components/DownloadOutput.vue";
 import LoadingSpinner from "../../../../src/components/LoadingSpinner.vue";
-import { StochasticState } from "../../../../src/store/stochastic/state";
 import { ModelGetter } from "../../../../src/store/model/getters";
 import { AppType, VisualisationTab } from "../../../../src/store/appState/state";
 import { RunMutation } from "../../../../src/store/run/mutations";
 import { RunAction } from "../../../../src/store/run/actions";
-import { FitState } from "../../../../src/store/fit/state";
 import { defaultGraphConfig } from "@/store/graphs/state";
 import { ConfigGroupIds } from "@/store/graphs/graphs";
 import { GraphsMutation } from "@/store/graphs/mutations";
 import WodinPlot from "@/components/WodinPlot.vue";
+import { AppTypeToState, mockStates } from "../../../testUtils";
 
 describe("RunTab", () => {
     beforeEach(() => {
@@ -40,18 +35,6 @@ describe("RunTab", () => {
     const mockUpdateConfig = vi.fn();
     const mockUpdateConfigGroup = vi.fn();
     const mockUpdateVisibleGraphGroups = vi.fn();
-
-    type AppTypeToState = {
-        [AppType.Basic]: BasicState,
-        [AppType.Fit]: FitState,
-        [AppType.Stochastic]: StochasticState,
-    }
-
-    const mockStates = {
-        [AppType.Basic]: mockBasicState(),
-        [AppType.Fit]: mockFitState(),
-        [AppType.Stochastic]: mockStochasticState(),
-    } as const;
 
     const getStore = <T extends AppType>(
         appType: T, hasRunner = true
