@@ -365,7 +365,6 @@ test.describe("Wodin App model fit tests", () => {
         const secondGraph = await page.locator(":nth-match(.wodin-plot-container, 2)");
         const unlinkedDataColor = "#1c0a00";
         const linkedDataColor = "#cccc00";
-        const unselectedDataColor = "transparent";
         await expectDataSummaryOnGraph(firstGraph, unlinkedDataColor);
         await expectDataSummaryOnGraph(secondGraph, unlinkedDataColor);
 
@@ -373,8 +372,8 @@ test.describe("Wodin App model fit tests", () => {
         await linkData(page);
 
         // Expect data to be shown on second graph with I's variable colour. Data should still be present on first graph
-        // but transparent
-        await expectDataSummaryOnGraph(firstGraph, unselectedDataColor);
+        // but with unlinked color
+        await expectDataSummaryOnGraph(firstGraph, unlinkedDataColor);
         await expectDataSummaryOnGraph(secondGraph, linkedDataColor);
 
         // Drag 'I' back to first graph
@@ -382,16 +381,15 @@ test.describe("Wodin App model fit tests", () => {
         iVariable = secondGraphConfig.locator(":nth-match(.variable, 1)");
         await iVariable.dragTo(page.locator(":nth-match(.graph-config-panel .drop-zone, 1)"));
 
-        // Expect data to be visible on first graph, transparent on second
         await expectDataSummaryOnGraph(firstGraph, linkedDataColor);
-        await expectDataSummaryOnGraph(secondGraph, unselectedDataColor);
+        await expectDataSummaryOnGraph(secondGraph, unlinkedDataColor);
 
         // SoS should be shown only once
         const sumOfSquares = page.locator("#squares");
         expect(await sumOfSquares.count()).toBe(1);
         expect(await sumOfSquares.innerText()).toContain("Sum of squares:");
 
-        // Run sensitivity - expect data to be coloured on first graph, transparent on second
+        // Run sensitivity - expect data to be coloured on first graph, unlinked color on second
         await page.click(":nth-match(.wodin-right .nav-tabs a, 3)");
         await page.click("#run-sens-btn");
 
@@ -399,6 +397,6 @@ test.describe("Wodin App model fit tests", () => {
         await expect(page.getByText("Run sensitivity")).toBeVisible();
 
         await expectDataSummaryOnGraph(firstGraph, linkedDataColor);
-        await expectDataSummaryOnGraph(secondGraph, unselectedDataColor);
+        await expectDataSummaryOnGraph(secondGraph, unlinkedDataColor);
     });
 });

@@ -67,6 +67,10 @@ export const mutations = {
       cfgGroup.configIds = cfgGroup.configIds.filter(id => id !== deleteId);
     });
 
+    Object.values(state.graphGroups).forEach(graphGroup => {
+      graphGroup.configIds = graphGroup.configIds.filter(id => id !== deleteId);
+    });
+
     // this will get updated by plugin but since the data update is async
     // and this mutation is sync, it could potentially cause buggy UI for
     // a second so remove it here anyway

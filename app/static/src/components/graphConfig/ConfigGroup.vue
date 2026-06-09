@@ -62,12 +62,14 @@
 import { computed, defineComponent, ref } from "vue";
 import { useStore } from "vuex";
 import VueFeather from "vue-feather";
-import { AppState } from "@/store/appState/state";
+import { AppState, VisualisationTab } from "@/store/appState/state";
 import GraphSettings from "./GraphSettings.vue";
 import { GraphConfig } from "@/store/graphs/state";
 import VariableBadge from "./VariableBadge.vue";
 import { newUid } from "@/utils";
-import { GraphsMutation, UpdateConfigPayload, UpdateConfigGroupPayload } from "@/store/graphs/mutations";
+import { GraphsMutation, UpdateConfigGroupPayload, UpdateConfigPayload, UpdateGraphGroupPayload } from "@/store/graphs/mutations";
+import { getGraphConfigs } from "@/store/graphs/utils";
+import { ConfigGroupIds } from "@/store/graphs/graphs";
 
 export enum DragData {
     Var = "variable",
@@ -91,11 +93,7 @@ export default defineComponent({
         // openVisualisationTab
         const graphGroupId = computed(() => store.state.openVisualisationTab);
 
-        const configs = computed(() => {
-            const { configGroupId } = store.state.graphs.graphGroups[graphGroupId.value];
-            const { configIds } = store.state.graphs.configGroups[configGroupId];
-            return configIds.map(id => store.state.graphs.configs.find(c => c.id === id)!);
-        });
+        const configs = computed(() => getGraphConfigs(store, graphGroupId.value));
 
         const hiddenVariables = computed(() => {
             const allVariables = store.state.model.odinModelResponse?.metadata?.variables || [];
@@ -106,7 +104,10 @@ export default defineComponent({
         const addGraph = () => {
             const newId = newUid();
             store.commit(`graphs/${GraphsMutation.AddConfig}`, newId);
-            const { configGroupId } = store.state.graphs.graphGroups[graphGroupId.value];
+
+            const configGroupId = graphGroupId.value === VisualisationTab.Fit
+                ? ConfigGroupIds.Fit
+                : ConfigGroupIds.RunAndSens
             const configGroup = store.state.graphs.configGroups[configGroupId];
             const newConfigGroup = { ...configGroup };
             newConfigGroup.configIds = [ ...newConfigGroup.configIds, newId ];
@@ -114,6 +115,13 @@ export default defineComponent({
                 id: configGroupId,
                 value: newConfigGroup,
             } as UpdateConfigGroupPayload);
+            const graphGroup = store.state.graphs.graphGroups[graphGroupId.value];
+            const newGraphGroup = { ...graphGroup };
+            newGraphGroup.configIds = [ ...newGraphGroup.configIds, newId ];
+            store.commit(`graphs/${GraphsMutation.UpdateGraphGroup}`, {
+                id: graphGroupId.value,
+                value: newGraphGroup,
+            } as UpdateGraphGroupPayload);
             store.commit(`graphs/${GraphsMutation.UpdateVisibleGraphGroups}`, [graphGroupId.value]);
         };
 

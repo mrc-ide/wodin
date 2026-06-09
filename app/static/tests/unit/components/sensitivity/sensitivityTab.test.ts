@@ -13,7 +13,7 @@ import { SensitivityMutation } from "../../../../src/store/sensitivity/mutations
 import SensitivitySummaryDownload from "../../../../src/components/sensitivity/SensitivitySummaryDownload.vue";
 import LoadingButton from "../../../../src/components/LoadingButton.vue";
 import { mockGraphsState, mockModelState, mockRunState, mockSensitivityState } from "../../../mocks";
-import { defaultGraphConfig } from "@/store/graphs/state";
+import { DataType, defaultGraphConfig } from "@/store/graphs/state";
 import { ConfigGroupIds } from "@/store/graphs/graphs";
 import { GraphsMutation } from "@/store/graphs/mutations";
 import WodinPlot from "@/components/WodinPlot.vue";
@@ -27,6 +27,7 @@ describe("SensitivityTab", () => {
     const mockAddConfig = vi.fn();
     const mockUpdateConfig = vi.fn();
     const mockUpdateConfigGroup = vi.fn();
+    const mockUpdateGraphGroup = vi.fn();
     const mockUpdateVisibleGraphGroups = vi.fn();
 
     const getStore = <T extends AppType>(
@@ -41,6 +42,7 @@ describe("SensitivityTab", () => {
         const graphsState = mockGraphsState();
         graphsState.configs = [config1, config2];
         graphsState.configGroups[ConfigGroupIds.RunAndSens].configIds = ["123", "456"];
+        graphsState.graphGroups[VisualisationTab.Sensitivity].configIds = ["123", "456"];
 
         return new Vuex.Store<AppTypeToState[T]>({
             state: mockStates[appType],
@@ -52,6 +54,7 @@ describe("SensitivityTab", () => {
                         [GraphsMutation.AddConfig]: mockAddConfig,
                         [GraphsMutation.UpdateConfig]: mockUpdateConfig,
                         [GraphsMutation.UpdateConfigGroup]: mockUpdateConfigGroup,
+                        [GraphsMutation.UpdateGraphGroup]: mockUpdateGraphGroup,
                         [GraphsMutation.UpdateVisibleGraphGroups]: mockUpdateVisibleGraphGroups,
                     }
                 },
@@ -293,6 +296,7 @@ describe("SensitivityTab", () => {
     it("creates config with all variables and group on mount if it doesn't exist", () => {
         const store = getStore(AppType.Basic);
         store.state.graphs.configGroups[ConfigGroupIds.RunAndSens].configIds = [];
+        store.state.graphs.graphGroups[VisualisationTab.Sensitivity].configIds = [];
         store.state.model.variablesCopy = ["W"];
         getWrapper(store);
         expect(mockAddConfig).toHaveBeenCalled();
@@ -307,6 +311,27 @@ describe("SensitivityTab", () => {
                 syncProperties: ["xAxisRange"]
             }
         });
+        // constructed graph group pulls config id from store but since we are mocking
+        // commits to the store, it just sets it as empty
+        expect(mockUpdateGraphGroup.mock.calls[0][1]).toStrictEqual({
+            id: VisualisationTab.Sensitivity,
+            value: {
+                configIds: [],
+                dataType: DataType.Sensitivity
+            }
+        });
         expect(mockUpdateVisibleGraphGroups.mock.calls[0][1]).toStrictEqual([VisualisationTab.Sensitivity]);
+    });
+
+    it("does not set up config groups if already set up", () => {
+        const store = getStore(AppType.Basic);
+        store.state.graphs.graphGroups[VisualisationTab.Sensitivity].configIds = [];
+        store.state.model.variablesCopy = ["W"];
+        getWrapper(store);
+        expect(mockAddConfig).not.toHaveBeenCalled();
+        expect(mockUpdateConfig).not.toHaveBeenCalled();
+        expect(mockUpdateConfigGroup).not.toHaveBeenCalled();
+        expect(mockUpdateGraphGroup).toHaveBeenCalled();
+        expect(mockUpdateVisibleGraphGroups).toHaveBeenCalled();
     });
 });

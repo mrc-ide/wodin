@@ -105,7 +105,10 @@ const getFitTraceData = <T>(
   if (!data || !link || !result) return { lines: [], points: [] };
 
   return {
-    lines: odinToSkadiChart(filterSeriesSet(result, cfg.selectedVariables), paletteModel!),
+    lines: odinToSkadiChart(filterSeriesSet(result, cfg.selectedVariables, rootState.run.static),
+                            paletteModel!,
+                            {},
+                            rootState.run.static),
     points: fitDataToSkadiChart(data, link, paletteModel!, tRange[0], tRange[1])
   };
 }
@@ -128,9 +131,10 @@ const getRunTracesDiscreteData = <T>(
 
   return {
     lines: discreteSeriesSetToSkadiChart(
-      filterSeriesSet(result, cfg.selectedVariables),
+      filterSeriesSet(result, cfg.selectedVariables, rootState.run.static),
       paletteModel!,
-      showIndividualTraces
+      showIndividualTraces,
+      rootState.run.static
     ),
     points: []
   }
@@ -152,8 +156,10 @@ const getRunTracesContinuousData = <T>(
   // 1. Current parameter values
   const allData: WodinPlotData = {
     lines: odinToSkadiChart(
-      filterSeriesSet(result, cfg.selectedVariables),
-      paletteModel!
+      filterSeriesSet(result, cfg.selectedVariables, rootState.run.static),
+      paletteModel!,
+      {},
+      rootState.run.static
     ),
     points: allFitDataToSkadiChart(
       getAllFitData(ctx),
@@ -175,8 +181,11 @@ const getRunTracesContinuousData = <T>(
     if (!result) return;
 
     const strokeDasharray = lineStylesForParamSets[name];
-    const filteredSetData = filterSeriesSet(result, cfg.selectedVariables);
-    const plotData = odinToSkadiChart(filteredSetData, paletteModel!, { strokeDasharray });
+    const filteredSetData = filterSeriesSet(result, cfg.selectedVariables, rootState.run.static);
+    const plotData = odinToSkadiChart(filteredSetData,
+                                      paletteModel!,
+                                      { strokeDasharray },
+                                      rootState.run.static);
     plotData.forEach(line => {
       line.metadata!.tooltipName = `${line.metadata!.name} (${currentParamSet.displayName})`;
     });
@@ -217,9 +226,10 @@ const getSensitivityTracesData = <T>(
   const resultToSkadiChartLines = (result: OdinSeriesSet | null | undefined, style?: LineStyle) => {
     if (!result) return [];
     return odinToSkadiChart(
-      filterSeriesSet(result, cfg.selectedVariables),
+      filterSeriesSet(result, cfg.selectedVariables, rootState.run.static),
       paletteModel!,
-      style
+      style,
+      rootState.run.static
     );
   };
 
@@ -310,9 +320,10 @@ const getSensitivitySummaryData = <T>(
   const filtered = filterUserTypeSeriesSet(
     getSeriesFromBatch(sensitivityResult.batch),
     paramName!,
-    cfg.selectedVariables
+    cfg.selectedVariables,
+    rootState.run.static
   );
-  allData.lines.push(...odinToSkadiChart(filtered, paletteModel!));
+  allData.lines.push(...odinToSkadiChart(filtered, paletteModel!, {}, rootState.run.static));
 
   const lineStylesForParamSets = getLineStylesForParameterSets(ctx);
 
@@ -324,9 +335,13 @@ const getSensitivitySummaryData = <T>(
     const filtered = filterUserTypeSeriesSet(
       getSeriesFromBatch(sln.batch),
       paramName!,
-      cfg.selectedVariables
+      cfg.selectedVariables,
+      rootState.run.static
     );
-    const lines = odinToSkadiChart(filtered, paletteModel!, { strokeDasharray, strokeWidth: 1 });
+    const lines = odinToSkadiChart(filtered,
+                                   paletteModel!,
+                                   { strokeDasharray, strokeWidth: 1 },
+                                   rootState.run.static);
     lines.forEach(l => updatePlotTraceName(l, null, null, currentParamSet.displayName));
     allData.lines.push(...lines);
   });

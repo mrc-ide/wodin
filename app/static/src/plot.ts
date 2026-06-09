@@ -4,6 +4,7 @@ import type { AllFitData, FitData, FitDataLink } from "./store/fitData/state";
 import { DiscreteSeriesSet, OdinSeriesSet, OdinSeriesSetValues, OdinUserTypeSeriesSet } from "./types/responseTypes";
 import { Dict } from "./types/utilTypes";
 import { Lines, ScatterPoints, LineStyle, Point } from "@reside-ic/skadi-chart";
+import { StaticConfig } from "./wodinStaticUtils";
 
 export type Metadata = {
   name: string,
@@ -14,8 +15,26 @@ export type WodinPlotData = { lines: Lines<Metadata>, points: ScatterPoints<Meta
 
 export const fadePlotStyle = "opacity:0.5;";
 
-export function filterUserTypeSeriesSet(s: OdinUserTypeSeriesSet, param: string, names: string[]): OdinSeriesSet {
-  const values = s.values.filter((v) => names.includes(v.name));
+const particleRegex = / \[P=(\d)*\]$/
+
+export function filterUserTypeSeriesSet(
+  s: OdinUserTypeSeriesSet,
+  param: string,
+  names: string[],
+  staticConfig: Partial<StaticConfig["static"]>
+): OdinSeriesSet {
+  const values = s.values.filter(v => {
+    let name = v.name;
+    if (staticConfig.legend) {
+      Object.entries(staticConfig.legend).forEach(([k, val]) => {
+        if (name.startsWith(k)) {
+          name = name.replace(k, val.label);
+        }
+      });
+    }
+    name = name.replace(particleRegex, "");
+    return names.includes(name)
+  });
   const xValues = s.x.map((x) => x[param]);
   return {
     x: xValues,
@@ -23,8 +42,21 @@ export function filterUserTypeSeriesSet(s: OdinUserTypeSeriesSet, param: string,
   };
 }
 
-export function filterSeriesSet(s: OdinSeriesSet, names: string[]): OdinSeriesSet {
-  const values = s.values.filter((v) => names.includes(v.name));
+export function filterSeriesSet(
+  s: OdinSeriesSet, names: string[], staticConfig: Partial<StaticConfig["static"]>
+): OdinSeriesSet {
+  const values = s.values.filter(v => {
+    let name = v.name;
+    if (staticConfig.legend) {
+      Object.entries(staticConfig.legend).forEach(([k, val]) => {
+        if (name.startsWith(k)) {
+          name = name.replace(k, val.label);
+        }
+      });
+    }
+    name = name.replace(particleRegex, "");
+    return names.includes(name);
+  });
   return {
     x: s.x,
     values
@@ -46,7 +78,8 @@ const defaultSkadiChartStyle: SkadiChartStyleNoColor = {
 export function odinToSkadiChart(
   s: OdinSeriesSet,
   palette: Palette,
-  style: SkadiChartStyleNoColor = {}
+  style: SkadiChartStyleNoColor = {},
+  staticConfig: Partial<StaticConfig["static"]>,
 ): WodinPlotData["lines"] {
   const skadiChartStyle = {
     ...defaultSkadiChartStyle,
@@ -55,18 +88,36 @@ export function odinToSkadiChart(
 
   return s.values.map(el => {
     const points: SkadiChartPoints = s.x.map((x, i) => ({ x, y: el.y[i] }));
-    const color = palette[el.name];
+    let color = palette[el.name];
+    let name = el.name;
+
+    if (staticConfig.legend) {
+      Object.entries(staticConfig.legend).forEach(([k, val]) => {
+        if (name.startsWith(k)) {
+          name = name.replace(k, val.label);
+          color = val.color;
+        }
+      });
+    }
+
+    let tooltipName = name;
+    const isMultipleParticles = particleRegex.test(name);
+    if (isMultipleParticles) {
+      name = name.replace(particleRegex, "");
+    }
+
+    const opacity = skadiChartStyle.opacity || 1;
     const style: SkadiChartStyle = {
       strokeColor: color,
       strokeWidth: skadiChartStyle.strokeWidth,
       strokeDasharray: skadiChartStyle.strokeDasharray,
-      opacity: skadiChartStyle.opacity
+      opacity: isMultipleParticles ? opacity / 4 : opacity
     };
     return {
       points, style,
       metadata: {
-        name: el.name,
-        tooltipName: el.name,
+        name,
+        tooltipName,
         color
       }
     };
@@ -76,25 +127,43 @@ export function odinToSkadiChart(
 export function discreteSeriesSetToSkadiChart(
   s: DiscreteSeriesSet,
   palette: Palette,
-  showIndividualTraces: boolean
+  showIndividualTraces: boolean,
+  staticConfig: Partial<StaticConfig["static"]>,
 ): WodinPlotData["lines"] {
   const series = showIndividualTraces ? s.values : s.values.filter((el) => el.description !== "Individual");
   return series.map((values: OdinSeriesSetValues) => {
     const isIndividual = values.description === "Individual";
-    const name = values.description === "Mean" ? values.name + " (mean)" : values.name;
+    let name = values.description === "Mean" ? values.name + " (mean)" : values.name;
 
     const points: SkadiChartPoints = s.x.map((x, i) => ({ x, y: values.y[i] }));
-    const color = palette[values.name];
+    let color = palette[values.name];
+
+    if (staticConfig.legend) {
+      Object.entries(staticConfig.legend).forEach(([k, val]) => {
+        if (name.startsWith(k)) {
+          name = name.replace(k, val.label);
+          color = val.color;
+        }
+      });
+    }
+
+    let tooltipName = name;
+    const isMultipleParticles = particleRegex.test(name)
+    if (isMultipleParticles) {
+      name = name.replace(particleRegex, "");
+    }
+
+    const opacity = isIndividual ? 0.5 : 1;
     const style: SkadiChartStyle = {
       strokeColor: color,
       strokeWidth: isIndividual ? 0.5 : 2,
-      opacity: isIndividual ? 0.5 : 1
+      opacity: isMultipleParticles ? opacity / 4 : opacity
     };
     return {
       points, style,
       metadata: {
         name,
-        tooltipName: name,
+        tooltipName,
         color
       }
     };
@@ -142,12 +211,8 @@ export function allFitDataToSkadiChart(
 
   return Object.keys(linkedVariables).flatMap((name: string): WodinPlotData["points"] => {
     let color = palette[name];
-    const variable = linkedVariables[name];
-    if (variable) {
-      // If there is a linked variable, only show data if the variable is selected - if not selected, render the
-      // series, but as transparent so that all graph x axes are consistent
-      color = selectedVariables.includes(variable) ? paletteModel[variable] : "transparent";
-    }
+    const variable = linkedVariables[name]!;
+    color = selectedVariables.includes(variable) ? paletteModel[variable] : color;
 
     const points: WodinPlotData["points"] = [];
     for (let i = 0; i < filteredData.length; i++) {

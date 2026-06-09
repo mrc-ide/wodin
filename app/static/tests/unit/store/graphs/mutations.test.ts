@@ -18,7 +18,7 @@ export const getState = () => {
             cfgGroup1: { configIds: ["123", "456"], syncProperties: ["lockYAxis"] }
         },
         graphGroups: {
-            graph1: { configGroupId: "cfgGroup1", dataType: DataType.Run }
+            graph1: { configIds: ["123", "456"], dataType: DataType.Run }
         },
         visibleData: {
             graph1: [
@@ -55,6 +55,7 @@ describe("Graphs mutations", () => {
 
         expect(state.configs.find(c => c.id === "123")).toBeUndefined();
         expect(state.configGroups["cfgGroup1"].configIds.find(c => c === "123")).toBeUndefined();
+        expect(state.graphGroups["graph1"].configIds.find(c => c === "123")).toBeUndefined();
         expect(state.visibleData["graph1"].find(c => c.configId === "123")).toBeUndefined();
     });
 
@@ -70,7 +71,7 @@ describe("Graphs mutations", () => {
 
     it("can update graph group", () => {
         const state = getState();
-        const updated = { configGroupId: "cfgGroup1", dataType: DataType.Fit };
+        const updated = { configIds: ["456"], dataType: DataType.Fit };
         mutations[GraphsMutation.UpdateGraphGroup](state, {
             id: "graph1", value: updated
         });

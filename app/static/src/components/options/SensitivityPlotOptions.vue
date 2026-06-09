@@ -41,7 +41,6 @@ import { SensitivityPlotExtreme, SensitivityPlotType } from "../../store/sensiti
 import NumericInput from "./NumericInput.vue";
 import { GraphsMutation, UpdateGraphGroupPayload } from "@/store/graphs/mutations";
 import { AppState, VisualisationTab } from "@/store/appState/state";
-import { ConfigGroupIds } from "@/store/graphs/graphs";
 import { DataType } from "@/store/graphs/state";
 
 const sensPlotTypeToDataType = {
@@ -72,7 +71,7 @@ export default defineComponent({
                 const payload: UpdateGraphGroupPayload = {
                     id: VisualisationTab.Sensitivity,
                     value: {
-                        configGroupId: ConfigGroupIds.RunAndSens,
+                        ...store.state.graphs.graphGroups[VisualisationTab.Sensitivity],
                         dataType,
                     }
                 };

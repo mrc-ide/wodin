@@ -1,13 +1,13 @@
-import { createApp } from "vue";
-import { getStoreOptions, registerRedrawGraphPlugins } from "./wodinStaticUtils";
+import { drawParameters, getStoreOptions, registerRedrawGraphPlugins, setUpGraphsStateAndDrawGraphs, StaticConfig } from "./wodinStaticUtils";
 import { Store, StoreOptions } from "vuex";
 import "./scss/style.scss"
 import { AppState } from "./store/appState/state";
 import { loadThirdPartyCDNScripts } from "./externalScriptSrc";
 import {
-    componentsAndSelectors, getConfigAndModelForStores, getDeepCopiedStoreOptions,
+    getConfigAndModelForStores, getDeepCopiedStoreOptions,
     getStoresInPage, initialiseStore, waitForBlockingScripts
 } from "./wodinStaticUtils";
+import { registerRerunModel, registerRerunSensitivity, updateGraphs } from "./store/plugins";
 
 /*
     This is the entrypoint to the wodin static build. This boot function just gets called
@@ -48,26 +48,32 @@ const boot = async () => {
 
         // we want the graph to update automatically when users of static wodin
         // change parameter values
-        registerRedrawGraphPlugins(s, store);
+        // registerRedrawGraphPlugins(s, store);
+        registerRerunModel(store);
+        // registerRerunSensitivity(store);
+        updateGraphs(store);
+
+        setUpGraphsStateAndDrawGraphs(s, store);
+        drawParameters(s, store);
 
         // mount components to dom elements based on selectors
-        componentsAndSelectors(s).forEach(({ component, selector }) => {
-            document.querySelectorAll(selector)?.forEach(el => {
-              const props: Record<string, string | boolean> = {};
-              for (let i = 0; i < el.attributes.length; i++) {
-                const attribute = el.attributes[i];
-                // ignore all attributes except for those matching w-*
-                if (attribute.nodeName.substring(0, 2) !== "w-" || attribute.nodeValue === null) continue;
-                // if an empty attribute is present on a tag e.g.
-                // <div prop></div> then we get nodeValue of "" which
-                // would be converted to true here
-                props[attribute.nodeName.slice(2)] = attribute.nodeValue === "" || attribute.nodeValue;
-              }
-              const applet = createApp(component, props);
-              applet.use(store);
-              applet.mount(el)
-            });
-        });
+        // componentsAndSelectors(s).forEach(({ component, selector }) => {
+        //     document.querySelectorAll(selector)?.forEach(el => {
+        //       const props: Record<string, string | boolean> = {};
+        //       for (let i = 0; i < el.attributes.length; i++) {
+        //         const attribute = el.attributes[i];
+        //         // ignore all attributes except for those matching w-*
+        //         if (attribute.nodeName.substring(0, 2) !== "w-" || attribute.nodeValue === null) continue;
+        //         // if an empty attribute is present on a tag e.g.
+        //         // <div prop></div> then we get nodeValue of "" which
+        //         // would be converted to true here
+        //         props[attribute.nodeName.slice(2)] = attribute.nodeValue === "" || attribute.nodeValue;
+        //       }
+        //       const applet = createApp(component, props);
+        //       applet.use(store);
+        //       applet.mount(el)
+        //     });
+        // });
     })
 };
 

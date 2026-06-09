@@ -29,7 +29,6 @@
             <template v-for="config in graphConfigs" :key="config.id">
                 <wodin-plot
                   :fade-plot="!!actionRequiredMessage"
-                  :end-time="endTime"
                   :config="config"
                   :graph-group-id="graphGroupId">
                 </wodin-plot>
@@ -56,10 +55,11 @@ import ErrorInfo from "../ErrorInfo.vue";
 import { VisualisationTab } from "@/store/appState/state";
 import { FitState } from "@/store/fit/state";
 import { ConfigGroupIds } from "@/store/graphs/graphs";
-import { GraphsMutation, UpdateConfigPayload, UpdateConfigGroupPayload } from "@/store/graphs/mutations";
+import { GraphsMutation, UpdateConfigPayload, UpdateConfigGroupPayload, UpdateGraphGroupPayload } from "@/store/graphs/mutations";
 import { FitDataGetter } from "@/store/fitData/getters";
 import WodinPlot from "../WodinPlot.vue";
 import { getGraphConfigs } from "@/store/graphs/utils";
+import { DataType } from "@/store/graphs/state";
 
 const graphGroupId = VisualisationTab.Fit;
 
@@ -154,14 +154,8 @@ export default defineComponent({
                 : store.getters[`fitData/${FitDataGetter.link}`];
         });
 
-        const endTime = computed(() => {
-            return plotRehydratedFit.value
-                ? store.state.modelFit.result?.inputs.endTime
-                : store.getters[`fitData/${FitDataGetter.dataEnd}`];
-        });
-
         onMounted(() => {
-            const { configIds } = store.state.graphs.configGroups[ConfigGroupIds.Fit];
+            const { configIds } = store.state.graphs.graphGroups[graphGroupId];
             if (configIds.length === 0) {
                 const newId = newUid();
                 store.commit(`graphs/${GraphsMutation.AddConfig}`, newId);
@@ -177,6 +171,11 @@ export default defineComponent({
                     value: { syncProperties: ["xAxisRange"], configIds: [newId] }
                 };
                 store.commit(`graphs/${GraphsMutation.UpdateConfigGroup}`, configGroupPayload);
+                const graphGroupPayload: UpdateGraphGroupPayload = {
+                    id: graphGroupId,
+                    value: { dataType: DataType.Fit, configIds: [newId] }
+                };
+                store.commit(`graphs/${GraphsMutation.UpdateGraphGroup}`, graphGroupPayload);
             }
             store.commit(`graphs/${GraphsMutation.UpdateVisibleGraphGroups}`, [graphGroupId]);
         });
@@ -196,7 +195,6 @@ export default defineComponent({
             iconType,
             iconClass,
             graphConfigs,
-            endTime,
             graphGroupId,
         };
     }

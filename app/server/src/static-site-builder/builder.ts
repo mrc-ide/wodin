@@ -36,8 +36,7 @@ export const buildWodinStaticSite = async (configPath: string, destPath: string)
         const config = JSON.parse(readFile(path.resolve(storesPath, store, "config.json"))) as { appType: string };
         fs.writeFileSync(path.resolve(destStorePath, "config.json"), JSON.stringify({ ...config, defaultCode: model }));
     
-        const timeType = config.appType === "stochastic" ? "discrete" : "continuous";
-        const modelResponse = await axios.post("http://localhost:8001/compile", { model, requirements: { timeType } });
+        const modelResponse = await axios.post("http://localhost:8001/compile2", { model });
         fs.writeFileSync(path.resolve(destStorePath, `model.json`), JSON.stringify(modelResponse.data.data));
     });
 };

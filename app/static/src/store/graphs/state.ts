@@ -35,7 +35,7 @@ export enum DataType {
 }
 
 export type GraphGroup = {
-  configGroupId: ConfigGroupId,
+  configIds: ConfigId[],
   dataType: DataType,
 }
 
@@ -60,13 +60,13 @@ export type DataWithConfigId = {
     that run and sensitivity tabs share a config group
 
   `graphGroups` - an object with keys as graph group id (once again the
-    tabs will decide this) and value containing config group id and data type
+    tabs will decide this) and value containing config ids and data type
     this graph group displays. This data type can then be updated by sensitivity
     plot options, for example when you change plot type. In Wodin, graph groups
-    are each of the tabs which instantiate a config group with a given data type,
-    e.g. run tab instantiates `RunAndSens` config group with the `Run` data type
-    whereas the sensitivity tab instantiates `RunAndSens` config group with the
-    `Sensitivity` or `SensitivityValueAtTime` data types.
+    are each of the tabs which mirror the config groups' config ids but with a
+    given data type, e.g. run tab mirrors `RunAndSens` config group config ids
+    with the `Run` data type whereas the sensitivity tab mirrors `RunAndSens`
+    config group with the `Sensitivity` or `SensitivityValueAtTime` data types.
 
     Note: an implicit assumption is that all the graphs in a graph group are
     visible or none of them are. This is not enforced in the code anywhere and
