@@ -5,6 +5,7 @@ import { BasicState } from "../../../../src/store/basic/state";
 import { mockBasicState, mockModelState } from "../../../mocks";
 import GraphConfigsCollapsible from "../../../../src/components/graphConfig/GraphConfigsCollapsible.vue";
 import VerticalCollapse from "../../../../src/components/VerticalCollapse.vue";
+import { VisualisationTab } from "@/store/appState/state";
 
 describe("GraphConfigsCollapsible", () => {
     const defaultModelState = {
@@ -17,10 +18,14 @@ describe("GraphConfigsCollapsible", () => {
         } as any
     };
 
-    const getWrapper = (modelState: Partial<ModelState> = {}) => {
+    const getWrapper = (
+        modelState: Partial<ModelState> = {},
+        openVisualisationTab = VisualisationTab.Run,
+    ) => {
         const store = new Vuex.Store<BasicState>({
             state: mockBasicState({
-                configured: true
+                configured: true,
+                openVisualisationTab,
             }),
             modules: {
                 model: {
@@ -58,6 +63,11 @@ describe("GraphConfigsCollapsible", () => {
         const wrapper = getWrapper({
             compileRequired: true
         });
+        expect(wrapper.findComponent(VerticalCollapse).exists()).toBe(false);
+    });
+
+    it("does not render collapsible if visualisation tab doesn't contain a graph", () => {
+        const wrapper = getWrapper({}, VisualisationTab.MultiSensitivity);
         expect(wrapper.findComponent(VerticalCollapse).exists()).toBe(false);
     });
 });

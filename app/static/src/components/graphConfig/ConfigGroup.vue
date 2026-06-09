@@ -47,7 +47,7 @@
              :class="dragging ? 'drop-zone-active' : 'drop-zone-inactive'">
             <template v-for="variable in hiddenVariables" :key="variable">
                 <variable-badge :variable="variable"
-                                :inHidden="false"
+                                :inHidden="true"
                                 @dragstart="event => startDrag(event, hiddenConfigId, variable)"
                                 @dragend="endDrag"></variable-badge>
             </template>
@@ -69,13 +69,13 @@ import VariableBadge from "./VariableBadge.vue";
 import { newUid } from "@/utils";
 import { GraphsMutation, UpdateConfigPayload, UpdateConfigGroupPayload } from "@/store/graphs/mutations";
 
-enum DragData {
+export enum DragData {
     Var = "variable",
     CfgId = "configId",
     DoCopy = "doCopy",
 }
 
-const hiddenConfigId = "hidden" as const;
+export const hiddenConfigId = "hidden" as const;
 
 export default defineComponent({
     components: {
@@ -149,6 +149,7 @@ export default defineComponent({
         };
 
         const addVariable = (config: GraphConfig, variableToAdd: string) => {
+            if (config.selectedVariables.includes(variableToAdd)) return;
             const newVariables = [ ...config.selectedVariables, variableToAdd ];
             updateSelectedVariables(config.id, newVariables);
         };
