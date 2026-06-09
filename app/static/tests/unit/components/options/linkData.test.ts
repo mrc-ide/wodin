@@ -5,11 +5,12 @@ import { FitState } from "../../../../src/store/fit/state";
 import { getters } from "../../../../src/store/fitData/getters";
 import { mockFitDataState, mockFitState, mockGraphsState, mockModelState } from "../../../mocks";
 import { FitDataAction } from "../../../../src/store/fitData/actions";
-import { getters as graphGetters } from "../../../../src/store/graphs/getters";
-import { defaultGraphSettings } from "../../../../src/store/graphs/state";
+import { defaultGraphConfig } from "@/store/graphs/state";
 
 describe("LinkData", () => {
     const getWrapper = (includeColumns = true, includeValidModel = true, mockUpdateLinkedVariable = vi.fn()) => {
+        const config = defaultGraphConfig("123");
+        config.selectedVariables = ["I", "R"];
         const store = new Vuex.Store<FitState>({
             state: mockFitState(),
             modules: {
@@ -34,16 +35,8 @@ describe("LinkData", () => {
                 graphs: {
                     namespaced: true,
                     state: mockGraphsState({
-                        config: [
-                            {
-                                id: "123",
-                                selectedVariables: ["I", "R"],
-                                unselectedVariables: [],
-                                settings: defaultGraphSettings()
-                            }
-                        ]
+                        configs: [config]
                     }),
-                    getters: graphGetters
                 },
                 model: {
                     namespaced: true,
@@ -67,13 +60,15 @@ describe("LinkData", () => {
 
     const checkExpectedSelectOptions = (select: HTMLSelectElement) => {
         const { options } = select;
-        expect(options.length).toBe(3);
+        expect(options.length).toBe(4);
         expect(options[0].text).toBe("-- no link --");
         expect(options[0].value).toBe("");
-        expect(options[1].text).toBe("I");
-        expect(options[1].value).toBe("I");
-        expect(options[2].text).toBe("R");
-        expect(options[2].value).toBe("R");
+        expect(options[1].text).toBe("S");
+        expect(options[1].value).toBe("S");
+        expect(options[2].text).toBe("I");
+        expect(options[2].value).toBe("I");
+        expect(options[3].text).toBe("R");
+        expect(options[3].value).toBe("R");
     };
 
     const checkCannotLink = (wrapper: VueWrapper<any>, expectedMessage: string) => {

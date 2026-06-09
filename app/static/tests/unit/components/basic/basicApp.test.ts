@@ -1,10 +1,3 @@
-// Mock the import of third party packages to prevent errors
-vi.mock("plotly.js-basic-dist-min", () => {
-    return {
-        default: undefined,
-        update: undefined
-    }
-});
 vi.mock("../../../../src/components/help/MarkdownItImport.ts", () => {
   class MarkDownItClass {
       constructor() {
@@ -38,7 +31,6 @@ import { ModelAction } from "../../../../src/store/model/actions";
 import { VisualisationTab } from "../../../../src/store/appState/state";
 import { AppStateMutation } from "../../../../src/store/appState/mutations";
 import { AppConfig } from "../../../../src/types/responseTypes";
-import { getters as graphsGetters } from "../../../../src/store/graphs/getters";
 
 const mockTooltipDirective = vi.fn();
 
@@ -78,7 +70,6 @@ describe("BasicApp", () => {
                 graphs: {
                     namespaced: true,
                     state: mockGraphsState(),
-                    getters: graphsGetters
                 }
             }
         });
@@ -135,8 +126,9 @@ describe("BasicApp", () => {
         const wrapper = getWrapper(mockSetOpenTab);
         const rightTabs = wrapper.findComponent("#right-tabs");
         await rightTabs.findAll("li a").at(1)!.trigger("click"); // Click Sensitivity Tab
-        expect(mockSetOpenTab).toHaveBeenCalledTimes(1);
-        expect(mockSetOpenTab.mock.calls[0][1]).toBe(VisualisationTab.Sensitivity);
+        // sets it once on mounted and once for this test
+        expect(mockSetOpenTab).toHaveBeenCalledTimes(2);
+        expect(mockSetOpenTab.mock.calls[1][1]).toBe(VisualisationTab.Sensitivity);
     });
 
     it("renders help tab", () => {

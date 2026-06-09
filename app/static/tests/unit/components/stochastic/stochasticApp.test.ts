@@ -35,7 +35,6 @@ import { ModelAction } from "../../../../src/store/model/actions";
 import { AppStateMutation } from "../../../../src/store/appState/mutations";
 import { VisualisationTab } from "../../../../src/store/appState/state";
 import { AppConfig } from "../../../../src/types/responseTypes";
-import { getters as graphsGetters } from "../../../../src/store/graphs/getters";
 
 const mockSetOpenVisualisationTab = vi.fn();
 const mockTooltipDirective = vi.fn();
@@ -68,7 +67,6 @@ describe("StochasticApp", () => {
                 graphs: {
                     namespaced: true,
                     state: mockGraphsState(),
-                    getters: graphsGetters
                 }
             }
         });
@@ -126,8 +124,9 @@ describe("StochasticApp", () => {
         const wrapper = getWrapper();
         const rightTabs = wrapper.findComponent("#right-tabs");
         await rightTabs.findAll("li a").at(1)!.trigger("click"); // Click Sensitivity Tab
-        expect(mockSetOpenVisualisationTab).toHaveBeenCalledTimes(1);
-        expect(mockSetOpenVisualisationTab.mock.calls[0][1]).toBe(VisualisationTab.Sensitivity);
+        // always sets it once on mount
+        expect(mockSetOpenVisualisationTab).toHaveBeenCalledTimes(2);
+        expect(mockSetOpenVisualisationTab.mock.calls[1][1]).toBe(VisualisationTab.Sensitivity);
     });
 
     it("renders help tab", () => {

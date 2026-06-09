@@ -12,12 +12,12 @@ import SensitivityOptions from "../../../../src/components/options/SensitivityOp
 import OptimisationOptions from "../../../../src/components/options/OptimisationOptions.vue";
 import { mockModelState, mockRunState } from "../../../mocks";
 import { RunMutation } from "../../../../src/store/run/mutations";
-import GraphSettings from "../../../../src/components/GraphSettings.vue";
 import ParameterSets from "../../../../src/components/options/ParameterSets.vue";
 import { getters as runGetters } from "../../../../src/store/run/getters";
 import AdvancedSettings from "../../../../src/components/options/AdvancedSettings.vue";
 import GraphConfigsCollapsible from "../../../../src/components/graphConfig/GraphConfigsCollapsible.vue";
-import { fitGraphId } from "@/store/graphs/state";
+import { nextTick } from "vue";
+import ConfigGroup from "@/components/graphConfig/ConfigGroup.vue";
 
 describe("OptionsTab", () => {
     const mockTooltipDirective = vi.fn();
@@ -131,7 +131,8 @@ describe("OptionsTab", () => {
                 }
             }
         });
-        const wrapper = await getWrapper(store);
+        const wrapper = getWrapper(store);
+        await nextTick();
 
         expect(wrapper.find("#reset-params-btn").exists()).toBe(true);
         const parameters = wrapper.findComponent(ParameterValues);
@@ -154,16 +155,6 @@ describe("OptionsTab", () => {
                 fitData: {
                     columnToFit: null
                 },
-                graphs: {
-                    fitGraphConfig: {
-                        id: fitGraphId,
-                        selectVariables: [],
-                        unselectedVariables: [],
-                        settings: {
-                            logScaleYAxis: false
-                        }
-                    }
-                }
             } as any,
             modules: {
                 run: {
@@ -216,11 +207,6 @@ describe("OptionsTab", () => {
                 run: mockRunState({
                     parameterValues: { param1: 1, param2: 2.2 }
                 }),
-                graphs: {
-                    settings: {
-                        logScaleYAxis: false
-                    }
-                }
             } as any
         });
         const wrapper = getWrapper(store);
@@ -309,6 +295,6 @@ describe("OptionsTab", () => {
             }
         });
         expect(wrapper.findComponent(SensitivityOptions).exists()).toBe(true);
-        expect(wrapper.findComponent(GraphSettings).exists()).toBe(false);
+        expect(wrapper.findComponent(ConfigGroup).exists()).toBe(false);
     });
 });
