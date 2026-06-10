@@ -208,11 +208,11 @@ test.describe("Options Tab tests", () => {
     test("can change graph setting for log scale y axis", async ({ page }) => {
         const yAxis = page.locator(`g[id^="y-axes"]`);
         const firstTick = yAxis.locator(".tick").first();
-        await expect(await firstTick.textContent()).toBe("0M");
+        await expect(await firstTick.textContent()).toBe("0");
 
         await page.locator(".log-scale-y-axis input").click();
 
-        await expect(await firstTick.textContent()).not.toBe("0M");
+        await expect(await firstTick.textContent()).not.toBe("0");
     });
 
     test("can change graph setting for lock axes", async ({ page }) => {
@@ -238,13 +238,13 @@ test.describe("Options Tab tests", () => {
 
         const yAxis = page.locator(`g[id^="y-axes"]`);
         const firstTick = yAxis.locator(".tick").first();
-        await expect(await firstTick.textContent()).toBe("0M");
+        await expect(await firstTick.textContent()).toBe("0");
 
         await page.locator(".log-scale-y-axis input").click();
 
         // if you've locked the axis, it should not update to 10n, would
         // be 10^115441
-        await expect(await firstTick.textContent()).toBe("100p");
+        await expect(await firstTick.textContent()).toBe("1e-10");
     });
 
     const createParameterSet = async (page: Page) => {
