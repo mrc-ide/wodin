@@ -14,7 +14,10 @@
             </wodin-tabs>
         </template>
         <template v-slot:right>
-            <wodin-tabs id="right-tabs" :tabNames="rightTabNames" @tabSelected="rightTabSelected">
+            <wodin-tabs id="right-tabs"
+                        :tab="tab"
+                        :tabNames="rightTabNames"
+                        @tabSelected="rightTabSelected">
                 <template v-if="helpTabName" v-slot:[helpTabName]>
                     <help-tab></help-tab>
                 </template>
@@ -36,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import { useStore } from "vuex";
 import MultiSensitivityTab from "@/components/multiSensitivity/MultiSensitivityTab.vue";
 import WodinApp from "../WodinApp.vue";
@@ -51,6 +54,7 @@ import SensitivityTab from "../sensitivity/SensitivityTab.vue";
 import { VisualisationTab } from "../../store/appState/state";
 import { AppStateMutation } from "../../store/appState/mutations";
 import includeConfiguredTabs from "../mixins/includeConfiguredTabs";
+import { FitState } from "@/store/fit/state";
 
 export default defineComponent({
     name: "FitApp",
@@ -67,7 +71,9 @@ export default defineComponent({
         WodinTabs
     },
     setup() {
-        const store = useStore();
+        const store = useStore<FitState>();
+
+        const tab = computed(() => store.state.openVisualisationTab);
 
         const rightTabSelected = (tab: string) => {
             store.commit(AppStateMutation.SetOpenVisualisationTab, tab);
@@ -78,12 +84,16 @@ export default defineComponent({
             VisualisationTab.Sensitivity
         ]);
 
-        onMounted(() => rightTabSelected(rightTabNames.value[0]));
+        // help tab is selected by default
+        onMounted(() => {
+            if (helpTabName.value) rightTabSelected(helpTabName.value)
+        });
 
         return {
             helpTabName,
             rightTabNames,
-            rightTabSelected
+            rightTabSelected,
+            tab,
         };
     }
 });

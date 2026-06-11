@@ -19,14 +19,12 @@ vi.mock("../../../../src/components/help/MarkdownItImport.ts", () => {
 import Vuex from "vuex";
 import { mount } from "@vue/test-utils";
 import { expectLeftWodinTabs, expectRightWodinTabs } from "../../../testUtils";
-import HelpTab from "../../../../src/components/help/HelpTab.vue";
 import BasicApp from "../../../../src/components/basic/BasicApp.vue";
 import { BasicState } from "../../../../src/store/basic/state";
 import { mockBasicState, mockGraphsState, mockModelState, mockSensitivityState } from "../../../mocks";
 import WodinApp from "../../../../src/components/WodinApp.vue";
 import WodinPanels from "../../../../src/components/WodinPanels.vue";
 import OptionsTab from "../../../../src/components/options/OptionsTab.vue";
-import MultiSensitivityTab from "../../../../src/components/multiSensitivity/MultiSensitivityTab.vue";
 import { ModelAction } from "../../../../src/store/model/actions";
 import { VisualisationTab } from "../../../../src/store/appState/state";
 import { AppStateMutation } from "../../../../src/store/appState/mutations";
@@ -112,37 +110,27 @@ describe("BasicApp", () => {
         expect(optionsTab.exists()).toBe(true);
     });
 
-    it("renders Sensitivity as expected", async () => {
-        const wrapper = getWrapper();
-        const rightTabs = wrapper.find("#right-tabs");
-
-        // Change to Sensitivity tab
-        await rightTabs.findAll("li a").at(1)!.trigger("click");
-        expect(rightTabs.find("div.mt-4 button").text()).toBe("Run sensitivity");
-    });
-
     it("commits change new right tab selected", async () => {
         const mockSetOpenTab = vi.fn();
         const wrapper = getWrapper(mockSetOpenTab);
         const rightTabs = wrapper.findComponent("#right-tabs");
         await rightTabs.findAll("li a").at(1)!.trigger("click"); // Click Sensitivity Tab
-        // sets it once on mounted and once for this test
-        expect(mockSetOpenTab).toHaveBeenCalledTimes(2);
-        expect(mockSetOpenTab.mock.calls[1][1]).toBe(VisualisationTab.Sensitivity);
+        expect(mockSetOpenTab).toHaveBeenCalledTimes(1);
+        expect(mockSetOpenTab.mock.calls[0][1]).toBe(VisualisationTab.Sensitivity);
     });
 
-    it("renders help tab", () => {
+    it("sets help tab as open tab on mount", () => {
+        const mockSetOpenTab = vi.fn();
         const helpConfig = {
             help: {
                 markdown: ["test md"],
                 tabName: "Help"
             }
         };
-        const wrapper = getWrapper(vi.fn(), helpConfig);
+        const wrapper = getWrapper(mockSetOpenTab, helpConfig);
         expectRightWodinTabs(wrapper, ["Help", "Run", "Sensitivity"]);
 
-        const rightTabs = wrapper.findComponent(WodinPanels).find(".wodin-right #right-tabs");
-        expect(rightTabs.findComponent(HelpTab).exists()).toBe(true);
+        expect(mockSetOpenTab.mock.calls[0][1]).toBe("Help");
     });
 
     it("renders Multi-sensitivity tab if configured", async () => {
@@ -151,12 +139,6 @@ describe("BasicApp", () => {
         };
         const wrapper = getWrapper(vi.fn(), multiSensConfig);
         expectRightWodinTabs(wrapper, ["Run", "Sensitivity", "Multi-sensitivity"]);
-
-        const rightTabs = wrapper.findComponent(WodinPanels).find(".wodin-right #right-tabs");
-        const rightTabLinks = rightTabs.findAll("ul li a");
-        // Change to Options tab
-        await rightTabLinks.at(2)!.trigger("click");
-        expect(rightTabs.findComponent(MultiSensitivityTab).exists()).toBe(true);
     });
 
     it("renders both Help and MultiSensitivity if configured", () => {

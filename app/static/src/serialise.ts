@@ -35,7 +35,8 @@ function serialiseModel(model: ModelState): SerialisedModelState {
         odinModelResponse: model.odinModelResponse,
         hasOdin: !!model.odin,
         odinModelCodeError: model.odinModelCodeError,
-        paletteModel: model.paletteModel
+        paletteModel: model.paletteModel,
+        variablesCopy: model.variablesCopy,
     };
 }
 
@@ -176,4 +177,6 @@ export const deserialiseState = (targetState: AppState, serialised: SerialisedAp
         ...serialised,
         persisted: true
     });
+
+    targetState.graphs.visibleData = {};
 };

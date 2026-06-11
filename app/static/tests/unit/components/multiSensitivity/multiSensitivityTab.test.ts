@@ -33,6 +33,7 @@ describe("MultiSensitivityTab", () => {
                     state: {
                         odin: {},
                         compileRequired: false,
+                        variablesCopy: ["A"],
                         ...modelState
                     },
                     getters: {

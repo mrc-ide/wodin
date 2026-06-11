@@ -26,6 +26,7 @@ export interface SerialisedModelState {
     hasOdin: boolean;
     odinModelCodeError: WodinError | null;
     paletteModel: Palette | null;
+    variablesCopy: string[];
 }
 
 export interface SerialisedRunState {
