@@ -6,6 +6,13 @@ import { ModelFitAction } from "../../../../src/store/modelFit/actions";
 import { ModelFitMutation } from "../../../../src/store/modelFit/mutations";
 import { RunMutation } from "../../../../src/store/run/mutations";
 import { SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
+import { ConfigGroupIds } from "@/store/graphs/graphs";
+import { GraphsState } from "@/store/graphs/state";
+import { GraphsMutation } from "@/store/graphs/mutations";
+
+vi.mock("../../../../src/store/graphs/utils.ts", () => {
+    return { getAllSelectedVariables: () => (["X", "Y"]) };
+});
 
 describe("Fit Data actions", () => {
     const file = { name: "testFile" } as any;
@@ -26,10 +33,6 @@ describe("Fit Data actions", () => {
     };
 
     const updateSumOfSquaresArgs = [`modelFit/${ModelFitAction.UpdateSumOfSquares}`, null, { root: true }];
-
-    const rootGetters = {
-        "graphs/allSelectedVariables": ["X", "Y"]
-    };
 
     afterEach(() => {
         vi.resetAllMocks();
@@ -79,7 +82,6 @@ describe("Fit Data actions", () => {
             state: mockState,
             rootState: mockRootState,
             getters: mockGetters,
-            rootGetters
         };
         (actions[FitDataAction.Upload] as any)(context, file);
         expectFileRead(mockFileReader);
@@ -119,7 +121,7 @@ describe("Fit Data actions", () => {
 
         const commit = vi.fn();
         const dispatch = vi.fn();
-        (actions[FitDataAction.Upload] as any)({ commit, dispatch, rootGetters }, file);
+        (actions[FitDataAction.Upload] as any)({ commit, dispatch }, file);
         expectFileRead(mockFileReader);
         await new Promise(res => setTimeout(res, fileTimeout));
         expect(commit).toHaveBeenCalledTimes(2);
@@ -140,7 +142,7 @@ describe("Fit Data actions", () => {
 
         const commit = vi.fn();
         const dispatch = vi.fn();
-        (actions[FitDataAction.Upload] as any)({ commit, dispatch, rootGetters }, file);
+        (actions[FitDataAction.Upload] as any)({ commit, dispatch }, file);
         expectFileRead(mockFileReader);
         await new Promise(res => setTimeout(res, fileTimeout));
         expect(commit).toHaveBeenCalledTimes(2);
@@ -168,7 +170,7 @@ describe("Fit Data actions", () => {
 
         const commit = vi.fn();
         const dispatch = vi.fn();
-        (actions[FitDataAction.Upload] as any)({ commit, dispatch, rootGetters }, file);
+        (actions[FitDataAction.Upload] as any)({ commit, dispatch }, file);
         expectFileRead(mockFileReader);
         await new Promise(res => setTimeout(res, fileTimeout));
         expect(commit).toHaveBeenCalledTimes(2);
@@ -190,7 +192,7 @@ describe("Fit Data actions", () => {
 
         const commit = vi.fn();
         const dispatch = vi.fn();
-        (actions[FitDataAction.Upload] as any)({ commit, dispatch, rootGetters }, null);
+        (actions[FitDataAction.Upload] as any)({ commit, dispatch }, null);
         expect(mockFileReader.readAsText).not.toHaveBeenCalled();
         await new Promise(res => setTimeout(res, fileTimeout));
         expect(commit).toHaveBeenCalledTimes(1);
@@ -208,7 +210,7 @@ describe("Fit Data actions", () => {
         linkedVariables: {
             old1: "A",
             old2: "B",
-            old3: "C"
+            old3: "X"
         }
     });
 
@@ -221,10 +223,6 @@ describe("Fit Data actions", () => {
             }
         };
 
-        const testRootGetters = {
-            "graphs/allSelectedVariables": ["B", "C", "D"]
-        };
-
         const commit = vi.fn();
         const dispatch = vi.fn();
 
@@ -234,12 +232,11 @@ describe("Fit Data actions", () => {
             state,
             rootState,
             getters,
-            rootGetters: testRootGetters
         });
 
         expect(commit).toHaveBeenCalledTimes(1);
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetLinkedVariables);
-        expect(commit.mock.calls[0][1]).toStrictEqual({ old1: null, old3: "C", new: null });
+        expect(commit.mock.calls[0][1]).toStrictEqual({ old1: null, old3: "X", new: null });
 
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch.mock.calls[0]).toEqual(updateSumOfSquaresArgs);
@@ -251,7 +248,7 @@ describe("Fit Data actions", () => {
                 odinModelResponse: {
                     valid: false,
                     metadata: {
-                        variables: ["B", "C", "D"]
+                        variables: ["B", "X", "Y"]
                     }
                 }
             }
@@ -266,7 +263,6 @@ describe("Fit Data actions", () => {
             state,
             rootState,
             getters,
-            rootGetters
         });
 
         expect(commit).toHaveBeenCalledTimes(1);
@@ -290,8 +286,8 @@ describe("Fit Data actions", () => {
             timeVariable: "Day2",
             columns: ["Day1", "Day2", "Cases"],
             linkedVariables: {
-                Day2: "A",
-                Cases: "B"
+                Day2: "X",
+                Cases: "Y"
             },
             data: mockData
         };
@@ -309,10 +305,6 @@ describe("Fit Data actions", () => {
             nonTimeColumns: ["Day1", "Cases"]
         };
 
-        const testRootGetters = {
-            "graphs/allSelectedVariables": ["A", "B", "C"]
-        };
-
         const commit = vi.fn().mockImplementation((type: FitDataMutation, payload: string) => {
             if (type === FitDataMutation.SetTimeVariable) {
                 state.timeVariable = payload;
@@ -326,7 +318,6 @@ describe("Fit Data actions", () => {
                 state: testState,
                 rootState,
                 getters: testGetters,
-                rootGetters: testRootGetters
             },
             "Day2"
         );
@@ -334,7 +325,7 @@ describe("Fit Data actions", () => {
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetTimeVariable);
         expect(commit.mock.calls[0][1]).toBe("Day2");
         expect(commit.mock.calls[1][0]).toBe(FitDataMutation.SetLinkedVariables);
-        expect(commit.mock.calls[1][1]).toStrictEqual({ Day1: null, Cases: "B" });
+        expect(commit.mock.calls[1][1]).toStrictEqual({ Day1: null, Cases: "Y" });
         expect(commit.mock.calls[2][0]).toBe(`run/${RunMutation.SetEndTime}`);
         expect(commit.mock.calls[2][1]).toBe(10);
         expect(commit.mock.calls[2][2]).toStrictEqual({ root: true });
@@ -355,10 +346,17 @@ describe("Fit Data actions", () => {
         const testState = {
             columnToFit: "a"
         };
+        const rootState = {
+            graphs: {
+                configGroups: {
+                    [ConfigGroupIds.Fit]: { configIds: [] }
+                }
+            }
+        }
 
         const payload = { column: "a", variable: "I" };
         (actions[FitDataAction.UpdateLinkedVariable] as any)(
-            { commit, dispatch, state: testState, rootGetters },
+            { commit, dispatch, state: testState, rootState },
             payload
         );
         expect(commit).toHaveBeenCalledTimes(2);
@@ -378,10 +376,17 @@ describe("Fit Data actions", () => {
         const testState = {
             columnToFit: "a"
         };
+        const rootState = {
+            graphs: {
+                configGroups: {
+                    [ConfigGroupIds.Fit]: { configIds: [] }
+                }
+            }
+        }
 
         const payload = { column: "b", variable: "I" };
         (actions[FitDataAction.UpdateLinkedVariable] as any)(
-            { commit, dispatch, state: testState, rootGetters },
+            { commit, dispatch, state: testState, rootState },
             payload
         );
         expect(commit).toHaveBeenCalledTimes(1);
@@ -391,10 +396,44 @@ describe("Fit Data actions", () => {
         expect(dispatch).not.toHaveBeenCalled();
     });
 
+    it("UpdateLinkedVariable sets selected variables of first graph config if empty", () => {
+        const commit = vi.fn();
+        const dispatch = vi.fn();
+        const testState = {
+            columnToFit: "a"
+        };
+        const rootState = {
+            graphs: {
+                configs: [{
+                    id: "123",
+                    selectedVariables: []
+                } as any],
+                configGroups: {
+                    [ConfigGroupIds.Fit]: {
+                        syncProperties: [],
+                        configIds: ["123"]
+                    }
+                }
+            } as Partial<GraphsState>
+        }
+
+        const payload = { column: "b", variable: "I" };
+        (actions[FitDataAction.UpdateLinkedVariable] as any)(
+            { commit, dispatch, state: testState, rootState },
+            payload
+        );
+        expect(commit).toHaveBeenCalledTimes(2);
+        expect(commit.mock.calls[1][0]).toBe(`graphs/${GraphsMutation.UpdateConfig}`);
+        expect(commit.mock.calls[1][1]).toStrictEqual({
+            id: "123",
+            value: { selectedVariables: ["I"] }
+        });
+    });
+
     it("updates column to fit", () => {
         const commit = vi.fn();
         const dispatch = vi.fn();
-        (actions[FitDataAction.UpdateColumnToFit] as any)({ commit, dispatch, rootGetters }, "col1");
+        (actions[FitDataAction.UpdateColumnToFit] as any)({ commit, dispatch }, "col1");
         expect(commit).toHaveBeenCalledTimes(2);
         expect(commit.mock.calls[0][0]).toBe(FitDataMutation.SetColumnToFit);
         expect(commit.mock.calls[0][1]).toBe("col1");

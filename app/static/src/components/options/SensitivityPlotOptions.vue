@@ -39,6 +39,17 @@ import { useStore } from "vuex";
 import { SensitivityMutation } from "../../store/sensitivity/mutations";
 import { SensitivityPlotExtreme, SensitivityPlotType } from "../../store/sensitivity/state";
 import NumericInput from "./NumericInput.vue";
+import { GraphsMutation, UpdateGraphGroupPayload } from "@/store/graphs/mutations";
+import { AppState, VisualisationTab } from "@/store/appState/state";
+import { ConfigGroupIds } from "@/store/graphs/graphs";
+import { DataType } from "@/store/graphs/state";
+
+const sensPlotTypeToDataType = {
+  [SensitivityPlotType.TraceOverTime]: DataType.Sensitivity,
+  [SensitivityPlotType.ValueAtTime]: DataType.SensitivityValueAtTime,
+  [SensitivityPlotType.TimeAtExtreme]: DataType.SensitivityTimeAtExtreme,
+  [SensitivityPlotType.ValueAtExtreme]: DataType.SensitivityValueAtExtreme,
+}
 
 export default defineComponent({
     name: "SensitivityPlotOptions.vue",
@@ -47,14 +58,26 @@ export default defineComponent({
     },
     setup() {
         const namespace = "sensitivity";
-        const store = useStore();
+        const store = useStore<AppState>();
 
         const settings = computed(() => store.state.sensitivity.plotSettings);
         const modelEndTime = computed(() => store.state.run.endTime);
 
         const plotType = computed({
             get: () => settings.value.plotType,
-            set: (newVal) => store.commit(`${namespace}/${SensitivityMutation.SetPlotType}`, newVal)
+            set: (newVal) => {
+                store.commit(`${namespace}/${SensitivityMutation.SetPlotType}`, newVal)
+                const dataType = sensPlotTypeToDataType[newVal];
+
+                const payload: UpdateGraphGroupPayload = {
+                    id: VisualisationTab.Sensitivity,
+                    value: {
+                        configGroupId: ConfigGroupIds.RunAndSens,
+                        dataType,
+                    }
+                };
+                store.commit(`graphs/${GraphsMutation.UpdateGraphGroup}`, payload);
+            }
         });
 
         const extreme = computed({
@@ -65,8 +88,8 @@ export default defineComponent({
         const time = computed({
             get: () => settings.value.time,
             set: (newVal) => {
-                // we let the user set any numeric value here, but will clip to 0 to endTime range when get data
-                store.commit(`${namespace}/${SensitivityMutation.SetPlotTime}`, newVal);
+                const clampedValue = Math.max(0, Math.min(newVal || 0, modelEndTime.value));
+                store.commit(`${namespace}/${SensitivityMutation.SetPlotTime}`, clampedValue);
             }
         });
 

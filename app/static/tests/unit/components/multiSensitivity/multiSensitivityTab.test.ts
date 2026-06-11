@@ -9,7 +9,6 @@ import ActionRequiredMessage from "../../../../src/components/ActionRequiredMess
 import { MultiSensitivityState } from "../../../../src/store/multiSensitivity/state";
 import ErrorInfo from "../../../../src/components/ErrorInfo.vue";
 import SensitivitySummaryDownload from "../../../../src/components/sensitivity/SensitivitySummaryDownload.vue";
-import { getters as graphsGetters } from "../../../../src/store/graphs/getters";
 
 describe("MultiSensitivityTab", () => {
     const mockRunMultiSensitivity = vi.fn();
@@ -26,13 +25,8 @@ describe("MultiSensitivityTab", () => {
                 graphs: {
                     namespaced: true,
                     state: {
-                        config: [
-                            {
-                                selectedVariables: ["A"]
-                            }
-                        ]
+                        configs: [{ selectedVariables: ["A"] }]
                     },
-                    getters: graphsGetters
                 },
                 model: {
                     namespaced: true,

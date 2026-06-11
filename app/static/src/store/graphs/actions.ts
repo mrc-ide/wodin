@@ -1,47 +1,33 @@
+import { markRaw } from "vue";
 import { ActionTree } from "vuex";
-import { GraphsMutation, SetGraphConfigPayload } from "./mutations";
-import { AppState, AppType } from "../appState/state";
-import { FitDataAction } from "../fitData/actions";
-import { defaultGraphSettings, GraphsState } from "./state";
-import { newUid } from "../../utils";
+import { AppState } from "../appState/state";
+import { DataWithConfigId, GraphsState } from "./state";
+import { getPlotData } from "@/plotData";
 
 export enum GraphsAction {
-    UpdateSelectedVariables = "UpdateSelectedVariables",
-    NewGraph = "NewGraph"
+  GenerateData = "GenerateData"
 }
 
-export type UpdateSelectedVariablesPayload = { id: string; selectedVariables: string[] };
+export const actions = {
+  [GraphsAction.GenerateData](ctx) {
+    const { state, rootState } = ctx;
+    state.visibleData = Object.fromEntries(state.visibleGraphGroups.map(graphGroupId => {
+      const { configGroupId, dataType } = state.graphGroups[graphGroupId];
+      const { configIds } = state.configGroups[configGroupId];
 
-export const actions: ActionTree<GraphsState, AppState> = {
-    UpdateSelectedVariables(context, payload: UpdateSelectedVariablesPayload) {
-        const { commit, dispatch, rootState } = context;
-        // Maintain unselected variables too, so we know which variables had been explicitly unselected when model
-        // updates
-        const allVariables = rootState.model.odinModelResponse?.metadata?.variables || [];
-        const unselectedVariables = allVariables.filter((s) => !payload.selectedVariables.includes(s)) || [];
-        // sort the selected variables to match the order in the model
-        const selectedVariables = payload.selectedVariables.sort((a, b) =>
-            allVariables.indexOf(a) > allVariables.indexOf(b) ? 1 : -1
-        );
+      const dataWithConfigIds: DataWithConfigId[] = configIds.map(cfgId => {
+        const config = state.configs.find(cfg => cfg.id === cfgId)!;
+        const data = markRaw(getPlotData(ctx, config, dataType));
+        return { configId: config.id, data };
+      });
 
-        commit(GraphsMutation.SetGraphConfig, {
-            id: payload.id,
-            selectedVariables,
-            unselectedVariables
-        } as SetGraphConfigPayload);
+      return [graphGroupId, dataWithConfigIds];
+    }));
 
-        if (rootState.appType === AppType.Fit) {
-            dispatch(`fitData/${FitDataAction.UpdateLinkedVariables}`, null, { root: true });
-        }
-    },
-    NewGraph(context) {
-        const { rootState, commit } = context;
-        const unselectedVariables = [...(rootState.model.odinModelResponse?.metadata?.variables || [])];
-        commit(GraphsMutation.AddGraph, {
-            id: newUid(),
-            settings: defaultGraphSettings(),
-            selectedVariables: [],
-            unselectedVariables
-        });
-    }
-};
+    // make sure config variables are in order of metadata
+    const allVariables = rootState.model.odinModelResponse?.metadata?.variables || [];
+    state.configs.forEach(cfg => cfg.selectedVariables.sort((a, b) => {
+        return allVariables.indexOf(a) > allVariables.indexOf(b) ? 1 : -1
+    }));
+  },
+} satisfies ActionTree<GraphsState, AppState>;

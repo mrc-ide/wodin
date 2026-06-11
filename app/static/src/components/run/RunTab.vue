@@ -1,41 +1,32 @@
 <template>
     <div class="run-tab">
-        <div v-if="!hideRunButton">
-            <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
-        </div>
+        <button class="btn btn-primary" id="run-btn" :disabled="!canRunModel" @click="runModel">Run model</button>
         <action-required-message :message="updateMsg"></action-required-message>
-        <template v-for="config in graphConfigs" :key="config.id">
-            <run-stochastic-plot
-                v-if="isStochastic"
-                :fade-plot="!!updateMsg"
-                :graph-config="config"
-            ></run-stochastic-plot>
-            <run-plot
-                v-else
-                :fade-plot="!!updateMsg"
-                :graph-config="config"
-            >
-            </run-plot>
-        </template>
         <div v-if="sumOfSquares">
             <span id="squares">Sum of squares: {{ sumOfSquares }}</span>
         </div>
+        <template v-for="config in graphConfigs" :key="config.id">
+            <wodin-plot
+              :fade-plot="!!updateMsg"
+              :end-time="endTime"
+              :config="config"
+              :graph-group-id="graphGroupId">
+            </wodin-plot>
+        </template>
         <error-info :error="error"></error-info>
-        <div v-if="!hideDownloadButton">
-            <button
-                v-if="!isStochastic"
-                class="btn btn-primary"
-                id="download-btn"
-                :disabled="downloading || !canDownloadOutput"
-                @click="toggleShowDownloadOutput(true)"
-            >
-                <vue-feather size="20" class="inline-icon" type="download"></vue-feather>
-                Download
-            </button>
-            <div v-if="downloading" id="downloading">
-                <LoadingSpinner size="xs"></LoadingSpinner>
-                Downloading...
-            </div>
+        <button
+            v-if="!isStochastic"
+            class="btn btn-primary"
+            id="download-btn"
+            :disabled="downloading || !canDownloadOutput"
+            @click="toggleShowDownloadOutput(true)"
+        >
+            <vue-feather size="20" class="inline-icon" type="download"></vue-feather>
+            Download
+        </button>
+        <div v-if="downloading" id="downloading">
+            <LoadingSpinner size="xs"></LoadingSpinner>
+            Downloading...
         </div>
         <DownloadOutput
             :open="showDownloadOutput"
@@ -50,44 +41,39 @@
 
 <script lang="ts">
 import { useStore } from "vuex";
-import { computed, defineComponent, onMounted, PropType, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import VueFeather from "vue-feather";
 import { RunMutation } from "../../store/run/mutations";
-import RunPlot from "./RunPlot.vue";
 import ActionRequiredMessage from "../ActionRequiredMessage.vue";
 import { RunAction } from "../../store/run/actions";
 import userMessages from "../../userMessages";
 import ErrorInfo from "../ErrorInfo.vue";
 import DownloadOutput from "../DownloadOutput.vue";
 import { runRequiredExplanation } from "./support";
-import { anyTrue } from "../../utils";
+import { anyTrue, newUid } from "../../utils";
 import LoadingSpinner from "../LoadingSpinner.vue";
-import { AppType } from "../../store/appState/state";
+import { AppType, VisualisationTab } from "../../store/appState/state";
 import { ModelGetter } from "../../store/model/getters";
-import RunStochasticPlot from "./RunStochasticPlot.vue";
-import { GraphsGetter } from "../../store/graphs/getters";
-import { GraphConfig } from "@/store/graphs/state";
-import { GraphsAction } from "@/store/graphs/actions";
-import { STATIC_BUILD } from "@/parseEnv";
+import { getAllSelectedVariables, getGraphConfigs } from "@/store/graphs/utils";
+import { FitState } from "@/store/fit/state";
+import WodinPlot from "../WodinPlot.vue";
+import { GraphsMutation, UpdateConfigPayload, UpdateConfigGroupPayload } from "@/store/graphs/mutations";
+import { ConfigGroupIds } from "@/store/graphs/graphs";
+
+const graphGroupId = VisualisationTab.Run;
 
 export default defineComponent({
     name: "RunTab",
     components: {
-        RunStochasticPlot,
         LoadingSpinner,
-        RunPlot,
         ErrorInfo,
         ActionRequiredMessage,
         DownloadOutput,
-        VueFeather
+        VueFeather,
+        WodinPlot,
     },
-    props: {
-        hideRunButton: { type: Boolean, default: false },
-        hideDownloadButton: { type: Boolean, default: false },
-        visibleVars: { type: String as PropType<string | null>, default: null }
-    },
-    setup(props) {
-        const store = useStore();
+    setup() {
+        const store = useStore<FitState>();
 
         const showDownloadOutput = ref(false);
 
@@ -101,8 +87,10 @@ export default defineComponent({
         const sumOfSquares = computed(() => store.state.modelFit?.sumOfSquares);
 
         const hasRunner = computed(() => store.getters[`model/${ModelGetter.hasRunner}`]);
-        const allSelectedVariables = computed(() => store.getters[`graphs/${GraphsGetter.allSelectedVariables}`]);
-        const graphConfigs = computed(() => store.state.graphs.config as GraphConfig[]);
+        const allSelectedVariables = computed(() => getAllSelectedVariables(store.state));
+        const graphConfigs = computed(() => getGraphConfigs(store, graphGroupId));
+
+        const endTime = computed(() => store.state.run.endTime);
 
         // Enable run button if model has initialised and compile is not required
         const canRunModel = computed(() => {
@@ -141,15 +129,22 @@ export default defineComponent({
             store.dispatch(`run/${RunAction.DownloadOutput}`, payload);
 
         onMounted(() => {
-            if (props.visibleVars && STATIC_BUILD) {
-                const visibleVars = props.visibleVars.split(",").map(s => s.trim());
-                graphConfigs.value.forEach(cfg => {
-                    store.dispatch(`graphs/${GraphsAction.UpdateSelectedVariables}`, {
-                        id: cfg.id,
-                        selectedVariables: visibleVars
-                    });
-                });
+            const { configIds } = store.state.graphs.configGroups[ConfigGroupIds.RunAndSens];
+            if (configIds.length === 0) {
+                const newId = newUid();
+                store.commit(`graphs/${GraphsMutation.AddConfig}`, newId);
+                const updateConfigPayload: UpdateConfigPayload = {
+                    id: newId,
+                    value: { selectedVariables: store.state.model.variablesCopy }
+                };
+                store.commit(`graphs/${GraphsMutation.UpdateConfig}`, updateConfigPayload);
+                const configGroupPayload: UpdateConfigGroupPayload = {
+                    id: ConfigGroupIds.RunAndSens,
+                    value: { syncProperties: ["xAxisRange"], configIds: [newId] }
+                };
+                store.commit(`graphs/${GraphsMutation.UpdateConfigGroup}`, configGroupPayload);
             }
+            store.commit(`graphs/${GraphsMutation.UpdateVisibleGraphGroups}`, [graphGroupId]);
         });
 
         return {
@@ -166,6 +161,8 @@ export default defineComponent({
             toggleShowDownloadOutput,
             download,
             graphConfigs,
+            endTime,
+            graphGroupId,
         };
     }
 });

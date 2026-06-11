@@ -15,11 +15,12 @@ import {
     SerialisedRunResult,
     SerialisedSensitivityResult,
     SerialisedModelFitState,
-    SerialisedMultiSensitivityState
+    SerialisedMultiSensitivityState,
+    SerialisedGraphsState
 } from "./types/serialisationTypes";
-import { defaultGraphSettings } from "./store/graphs/state";
 import { Dict } from "./types/utilTypes";
 import { MultiSensitivityState } from "./store/multiSensitivity/state";
+import { GraphsState } from "./store/graphs/state";
 
 function serialiseCode(code: CodeState): CodeState {
     return {
@@ -140,6 +141,15 @@ function serialiseModelFit(modelFit: ModelFitState): SerialisedModelFitState {
     };
 }
 
+function serialiseGraphs(graphs: GraphsState): SerialisedGraphsState {
+    return {
+        configs: graphs.configs,
+        configGroups: graphs.configGroups,
+        graphGroups: graphs.graphGroups,
+        visibleGraphGroups: graphs.visibleGraphGroups,
+    };
+}
+
 export const serialiseState = (state: AppState): string => {
     const result: SerialisedAppState = {
         openVisualisationTab: state.openVisualisationTab,
@@ -148,7 +158,7 @@ export const serialiseState = (state: AppState): string => {
         run: serialiseRun(state.run),
         sensitivity: serialiseSensitivity(state.sensitivity),
         multiSensitivity: serialiseMultiSensitivity(state.multiSensitivity),
-        graphs: state.graphs
+        graphs: serialiseGraphs(state.graphs),
     };
 
     if (state.appType === AppType.Fit) {
@@ -166,24 +176,4 @@ export const deserialiseState = (targetState: AppState, serialised: SerialisedAp
         ...serialised,
         persisted: true
     });
-
-    // Initialise selected variables if required
-    const { model, graphs } = targetState;
-    if (
-        model.odinModelResponse?.metadata?.variables &&
-        !graphs.config[0].selectedVariables.length &&
-        !graphs.config[0].unselectedVariables?.length
-    ) {
-        const selectedVariables = [...(model.odinModelResponse?.metadata?.variables || [])];
-        const unselectedVariables: string[] = [];
-
-        targetState.graphs.config = [
-            {
-                id: graphs!.config[0].id,
-                selectedVariables,
-                unselectedVariables,
-                settings: defaultGraphSettings()
-            }
-        ];
-    }
 };

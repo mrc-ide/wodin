@@ -43,6 +43,7 @@ import OptionsTab from "../options/OptionsTab.vue";
 import SensitivityTab from "../sensitivity/SensitivityTab.vue";
 import includeConfiguredTabs from "../mixins/includeConfiguredTabs";
 import HelpTab from "../help/HelpTab.vue";
+import { onMounted } from "vue";
 
 export default defineComponent({
     name: "StochasticApp",
@@ -65,6 +66,8 @@ export default defineComponent({
             VisualisationTab.Run,
             VisualisationTab.Sensitivity
         ]);
+
+        onMounted(() => rightTabSelected(rightTabNames.value[0]));
 
         return {
             helpTabName,

@@ -12,7 +12,7 @@
                         :value="linkedVariables[dataColumn] || ''"
                     >
                         <option value="">-- no link --</option>
-                        <option v-for="modelVar in selectedVariables" :value="modelVar" :key="modelVar">
+                        <option v-for="modelVar in allVariables" :value="modelVar" :key="modelVar">
                             {{ modelVar }}
                         </option>
                     </select>
@@ -33,16 +33,16 @@ import { useStore } from "vuex";
 import { FitDataGetter } from "../../store/fitData/getters";
 import userMessages from "../../userMessages";
 import { FitDataAction } from "../../store/fitData/actions";
-import { GraphsGetter } from "../../store/graphs/getters";
+import { FitState } from "@/store/fit/state";
 
 export default defineComponent({
     name: "LinkData",
     setup() {
         const namespace = "fitData";
-        const store = useStore();
+        const store = useStore<FitState>();
         const dataColumns = computed(() => store.getters[`${namespace}/${FitDataGetter.nonTimeColumns}`]);
         const modelSuccess = computed(() => store.state.model.odinModelResponse?.valid);
-        const selectedVariables = computed(() => store.getters[`graphs/${GraphsGetter.allSelectedVariables}`]);
+        const allVariables = computed(() => store.state.model.odinModelResponse?.metadata?.variables || []);
         const linkedVariables = computed(() => store.state.fitData.linkedVariables);
         const linkPrerequisitesMessage = computed(() => {
             const messages = [];
@@ -71,7 +71,7 @@ export default defineComponent({
         return {
             dataColumns,
             modelSuccess,
-            selectedVariables,
+            allVariables,
             linkedVariables,
             updateLinkedVariable,
             linkPrerequisitesMessage

@@ -1,37 +1,33 @@
 import Vuex from "vuex";
 import { shallowMount } from "@vue/test-utils";
-import { BasicState } from "../../../src/store/basic/state";
-import GraphSettingsComponent from "../../../src/components/GraphSettings.vue";
-import { GraphsMutation } from "../../../src/store/graphs/mutations";
-import { defaultGraphSettings, fitGraphId, GraphSettings, GraphsState } from "../../../src/store/graphs/state";
+import { BasicState } from "../../../../src/store/basic/state";
+import GraphSettingsComponent from "../../../../src/components/graphConfig/GraphSettings.vue";
+import { GraphsMutation } from "../../../../src/store/graphs/mutations";
+import { defaultGraphConfig, GraphConfig } from "../../../../src/store/graphs/state";
 
 describe("GraphSettings", () => {
-    const mockSetGraphConfig = vi.fn();
+    const mockUpdateConfig = vi.fn();
 
-    const getWrapper = (fitGraphSettings: Partial<GraphSettings> = {}) => {
-        const graphState: GraphsState = {
-            fitGraphConfig: {
-                id: fitGraphId,
-                selectedVariables: [],
-                unselectedVariables: [],
-                settings: { ...defaultGraphSettings(), ...fitGraphSettings }
-            },
-            config: []
-        };
+    const getWrapper = (fitGraphConfig: Partial<GraphConfig> = {}) => {
         const store = new Vuex.Store<BasicState>({
             modules: {
                 graphs: {
                     namespaced: true,
-                    state: graphState,
+                    state: {},
                     mutations: {
-                        [GraphsMutation.SetGraphConfig]: mockSetGraphConfig,
+                        [GraphsMutation.UpdateConfig]: mockUpdateConfig,
                     }
                 }
             }
         });
 
+        const graphConfig = {
+            ...defaultGraphConfig("fit"),
+            ...fitGraphConfig,
+        }
+
         return shallowMount(GraphSettingsComponent, {
-            props: { graphConfig: graphState.fitGraphConfig },
+            props: { config: graphConfig },
             global: {
                 plugins: [store]
             }
@@ -61,9 +57,9 @@ describe("GraphSettings", () => {
         const inputs = wrapper.findAll("input");
         expect((inputs[0].element as HTMLInputElement).checked).toBe(false);
         await inputs[0].setValue(true);
-        expect(mockSetGraphConfig.mock.calls[0][1]).toStrictEqual({
-            id: fitGraphId,
-            settings: { logScaleYAxis: true, yAxisRange: null }
+        expect(mockUpdateConfig.mock.calls[0][1]).toStrictEqual({
+            id: "fit",
+            value: { logScaleYAxis: true, yAxisRange: null }
         });
     });
 
@@ -72,9 +68,9 @@ describe("GraphSettings", () => {
         const inputs = wrapper.findAll("input");
         expect((inputs[1].element as HTMLInputElement).checked).toBe(false);
         await inputs[1].setValue(true);
-        expect(mockSetGraphConfig.mock.calls[0][1]).toStrictEqual({
-            id: fitGraphId,
-            settings: { lockYAxis: true }
+        expect(mockUpdateConfig.mock.calls[0][1]).toStrictEqual({
+            id: "fit",
+            value: { lockYAxis: true }
         });
     });
 });

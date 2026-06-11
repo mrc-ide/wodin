@@ -73,6 +73,8 @@ export interface SerialisedModelFitState {
     error: null | WodinError;
 }
 
+export type SerialisedGraphsState = Omit<GraphsState, "visibleData">
+
 export interface SerialisedAppState {
     openVisualisationTab: VisualisationTab;
     code: CodeState;
@@ -80,7 +82,7 @@ export interface SerialisedAppState {
     run: SerialisedRunState;
     sensitivity: SerialisedSensitivityState;
     multiSensitivity: SerialisedMultiSensitivityState;
-    graphs: GraphsState;
+    graphs: SerialisedGraphsState;
     fitData?: FitDataState;
     modelFit?: SerialisedModelFitState;
 }

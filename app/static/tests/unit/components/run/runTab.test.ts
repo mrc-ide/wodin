@@ -1,57 +1,28 @@
 import VueFeather from "vue-feather";
-import Vuex from "vuex";
+import Vuex, { Store } from "vuex";
 import { shallowMount } from "@vue/test-utils";
 import { nextTick } from "vue";
-import { BasicState } from "../../../../src/store/basic/state";
 import {
-    mockBasicState,
-    mockFitState,
     mockGraphsState,
-    mockModelFitState,
     mockModelState,
     mockRunState,
-    mockStochasticState
 } from "../../../mocks";
-import { ModelState } from "../../../../src/store/model/state";
-import { RunState } from "../../../../src/store/run/state";
 import RunTab from "../../../../src/components/run/RunTab.vue";
-import RunPlot from "../../../../src/components/run/RunPlot.vue";
-import RunStochasticPlot from "../../../../src/components/run/RunStochasticPlot.vue";
 import ErrorInfo from "../../../../src/components/ErrorInfo.vue";
 import ActionRequiredMessage from "../../../../src/components/ActionRequiredMessage.vue";
 import DownloadOutput from "../../../../src/components/DownloadOutput.vue";
 import LoadingSpinner from "../../../../src/components/LoadingSpinner.vue";
-import { StochasticState } from "../../../../src/store/stochastic/state";
-import { OdinRunnerDiscrete } from "../../../../src/types/responseTypes";
-import { OdinRunResultDiscrete } from "../../../../src/types/wrapperTypes";
 import { ModelGetter } from "../../../../src/store/model/getters";
-import { AppType } from "../../../../src/store/appState/state";
+import { AppType, VisualisationTab } from "../../../../src/store/appState/state";
 import { RunMutation } from "../../../../src/store/run/mutations";
 import { RunAction } from "../../../../src/store/run/actions";
-import { getters as graphGetters } from "../../../../src/store/graphs/getters";
-import { FitState } from "../../../../src/store/fit/state";
-import * as Env from "@/parseEnv";
-import { GraphsAction } from "@/store/graphs/actions";
-
-vi.mock("@/parseEnv");
+import { defaultGraphConfig } from "@/store/graphs/state";
+import { ConfigGroupIds } from "@/store/graphs/graphs";
+import { GraphsMutation } from "@/store/graphs/mutations";
+import WodinPlot from "@/components/WodinPlot.vue";
+import { AppTypeToState, mockStates } from "../../../testUtils";
 
 describe("RunTab", () => {
-    const defaultModelState = {
-        odinRunnerOde: {} as any,
-        odin: {} as any,
-        compileRequired: false
-    };
-
-    const defaultRunState = {
-        runRequired: {
-            modelChanged: false,
-            parameterValueChanged: false,
-            endTimeChanged: false,
-            numberOfReplicatesChanged: false,
-            advancedSettingsChanged: false
-        }
-    };
-
     beforeEach(() => {
         vi.clearAllMocks();
     });
@@ -59,38 +30,39 @@ describe("RunTab", () => {
     const mockRunModel = vi.fn();
     const mockDownloadOutput = vi.fn();
     const mockSetUserDownloadFileName = vi.fn();
-    const mockUpdateSelectedVariables = vi.fn();
 
-    type Props = { hideRunButton: boolean, hideDownloadButton: boolean, visibleVars?: string }
-    const defaultProps = { hideRunButton: false, hideDownloadButton: false };
+    const mockAddConfig = vi.fn();
+    const mockUpdateConfig = vi.fn();
+    const mockUpdateConfigGroup = vi.fn();
+    const mockUpdateVisibleGraphGroups = vi.fn();
 
-    const getWrapper = (
-        modelState: Partial<ModelState> = defaultModelState,
-        runState: Partial<RunState> = defaultRunState,
-        hasRunner = true,
-        appType = AppType.Basic,
-        selectedVariables: string[] = ["S"],
-        props: Props = defaultProps
-    ) => {
-        const store = new Vuex.Store<BasicState>({
-            state: mockBasicState({ appType }),
+    const getStore = <T extends AppType>(
+        appType: T, hasRunner = true
+    ): Store<AppTypeToState[T]> => {
+        const config1 = defaultGraphConfig("123");
+        config1.selectedVariables = ["S"];
+        const config2 = defaultGraphConfig("456");
+
+        const graphsState = mockGraphsState();
+        graphsState.configs = [config1, config2];
+        graphsState.configGroups[ConfigGroupIds.RunAndSens].configIds = ["123", "456"];
+
+        return new Vuex.Store<AppTypeToState[T]>({
+            state: mockStates[appType],
             modules: {
                 graphs: {
                     namespaced: true,
-                    state: mockGraphsState({
-                        config: [
-                            { id: "123", selectedVariables, unselectedVariables: [] },
-                            { id: "456", selectedVariables: [], unselectedVariables: [] }
-                        ]
-                    } as any),
-                    getters: graphGetters,
-                    actions: {
-                        [GraphsAction.UpdateSelectedVariables]: mockUpdateSelectedVariables
+                    state: graphsState,
+                    mutations: {
+                        [GraphsMutation.AddConfig]: mockAddConfig,
+                        [GraphsMutation.UpdateConfig]: mockUpdateConfig,
+                        [GraphsMutation.UpdateConfigGroup]: mockUpdateConfigGroup,
+                        [GraphsMutation.UpdateVisibleGraphGroups]: mockUpdateVisibleGraphGroups,
                     }
                 },
                 model: {
                     namespaced: true,
-                    state: mockModelState(modelState),
+                    state: mockModelState({ odin: {} as any }),
                     actions: {},
                     getters: {
                         [ModelGetter.hasRunner]: () => hasRunner
@@ -98,7 +70,7 @@ describe("RunTab", () => {
                 },
                 run: {
                     namespaced: true,
-                    state: mockRunState(runState),
+                    state: mockRunState(),
                     actions: {
                         [RunAction.RunModel]: mockRunModel,
                         [RunAction.DownloadOutput]: mockDownloadOutput
@@ -109,106 +81,29 @@ describe("RunTab", () => {
                 }
             }
         });
+    }
+
+    const getWrapper = <T extends AppType>(store: Store<AppTypeToState[T]>) => {
         return shallowMount(RunTab, {
             global: {
                 plugins: [store],
-            }, props
-        });
-    };
-
-    const getStochasticWrapper = (
-        runner: Partial<OdinRunnerDiscrete> | null = {},
-        resultDiscrete: Partial<OdinRunResultDiscrete> | null = null,
-        compileRequired = false
-    ) => {
-        const store = new Vuex.Store<StochasticState>({
-            state: mockStochasticState(),
-            modules: {
-                graphs: {
-                    namespaced: true,
-                    state: mockGraphsState({
-                        config: [
-                            { id: "123", selectedVariables: ["S"], unselectedVariables: [] },
-                            { id: "456", selectedVariables: [], unselectedVariables: [] }
-                        ]
-                    } as any),
-                    getters: graphGetters
-                },
-                model: {
-                    namespaced: true,
-                    state: mockModelState({
-                        odin: {} as any,
-                        odinRunnerDiscrete: runner as any,
-                        compileRequired
-                    }),
-                    getters: {
-                        [ModelGetter.hasRunner]: () => true
-                    } as any
-                },
-                run: {
-                    namespaced: true,
-                    state: mockRunState({
-                        resultDiscrete: resultDiscrete as any
-                    })
-                }
-            }
-        });
-        return shallowMount(RunTab, {
-            global: {
-                plugins: [store]
-            }
-        });
-    };
-
-    const getFitWrapper = () => {
-        const store = new Vuex.Store<FitState>({
-            state: mockFitState(),
-            modules: {
-                graphs: {
-                    namespaced: true,
-                    state: mockGraphsState({
-                        config: [
-                            { id: "123", selectedVariables: ["S"], unselectedVariables: [] },
-                            { id: "456", selectedVariables: [], unselectedVariables: [] }
-                        ]
-                    } as any),
-                    getters: graphGetters
-                },
-                modelFit: {
-                    namespaced: true,
-                    state: mockModelFitState({
-                        sumOfSquares: 21.2
-                    })
-                }
-            }
-        });
-        return shallowMount(RunTab, {
-            global: {
-                plugins: [store]
             }
         });
     };
 
     it("renders as expected when can run model", () => {
-        const runState = { ...defaultRunState, userDownloadFileName: "test.xlsx" };
-        const wrapper = getWrapper(defaultModelState, runState);
+        const store = getStore(AppType.Basic);
+        store.state.run.userDownloadFileName = "test.xlsx";
+        const wrapper = getWrapper(store);
         expect(wrapper.find("button#run-btn").text()).toBe("Run model");
         expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
-        const plots = wrapper.findAllComponents(RunPlot);
+        const plots = wrapper.findAllComponents(WodinPlot);
         expect(plots.length).toBe(2);
         expect(plots.at(0)!.props("fadePlot")).toBe(false);
-        expect(plots.at(0)!.props("graphConfig")).toStrictEqual({
-            id: "123",
-            selectedVariables: ["S"],
-            unselectedVariables: []
-        });
+        expect(plots.at(0)!.props("config")).toStrictEqual(store.state.graphs.configs[0]);
         expect(plots.at(1)!.props("fadePlot")).toBe(false);
-        expect(plots.at(1)!.props("graphConfig")).toStrictEqual({
-            id: "456",
-            selectedVariables: [],
-            unselectedVariables: []
-        });
+        expect(plots.at(1)!.props("config")).toStrictEqual(store.state.graphs.configs[1]);
 
         // Download button disabled because there is no model solution
         const downloadBtn = wrapper.find("button#download-btn");
@@ -222,150 +117,128 @@ describe("RunTab", () => {
         expect(downloadOutput.props().userFileName).toBe("test.xlsx");
 
         expect(wrapper.find("#downloading").exists()).toBe(false);
-        expect(wrapper.findComponent(RunStochasticPlot).exists()).toBe(false);
     });
 
     it("renders sumOfSquares for Fit app", () => {
-        const wrapper = getFitWrapper();
+        const store = getStore(AppType.Fit);
+        store.state.modelFit.sumOfSquares = 21.2;
+        const wrapper = getWrapper(store);
         expect(wrapper.findAll("#squares").length).toBe(1);
         expect(wrapper.find("#squares").text()).toBe("Sum of squares: 21.2");
     });
 
     it("renders as expected when app is stochastic", () => {
-        const wrapper = getStochasticWrapper(
-            {},
-            {
-                solution: vi.fn()
-            }
-        );
-        const plots = wrapper.findAllComponents(RunStochasticPlot);
+        const store = getStore(AppType.Stochastic);
+        store.state.run.resultDiscrete = { solution: vi.fn() } as any;
+        const wrapper = getWrapper(store);
+        const plots = wrapper.findAllComponents(WodinPlot);
         expect(plots.length).toBe(2);
         expect(plots.at(0)!.props("fadePlot")).toBe(false);
-        expect(plots.at(0)!.props("graphConfig")).toStrictEqual({
-            id: "123",
-            selectedVariables: ["S"],
-            unselectedVariables: []
-        });
+        expect(plots.at(0)!.props("config")).toStrictEqual(store.state.graphs.configs[0]);
 
         expect(plots.at(1)!.props("fadePlot")).toBe(false);
-        expect(plots.at(1)!.props("graphConfig")).toStrictEqual({
-            id: "456",
-            selectedVariables: [],
-            unselectedVariables: []
-        });
+        expect(plots.at(1)!.props("config")).toStrictEqual(store.state.graphs.configs[1]);
 
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
-        expect(wrapper.findComponent(RunPlot).exists()).toBe(false);
         expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(false);
     });
 
-    it("hides run button when prop passed in", () => {
-        const wrapper = getWrapper(
-            {}, {}, true, AppType.Basic, ["S"],
-            { hideRunButton: true, hideDownloadButton: false }
-        );
-        expect(wrapper.find("#run-btn").exists()).toBe(false);
-    });
-
-    it("hides download button when prop passed in", () => {
-        const wrapper = getWrapper(
-            {}, {}, true, AppType.Basic, ["S"],
-            { hideRunButton: false, hideDownloadButton: true }
-        );
-        expect(wrapper.find("#download-btn").exists()).toBe(false);
-    });
-
     it("disables run button when state has no runner", () => {
-        const wrapper = getWrapper({ odinRunnerOde: null }, defaultRunState, false);
+        const store = getStore(AppType.Basic, false);
+        store.state.model.odinRunnerOde = null;
+        const wrapper = getWrapper(store);
         expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(true);
     });
 
     it("disables run button when state has no odin model", () => {
-        const wrapper = getWrapper({ odin: null });
+        const store = getStore(AppType.Basic);
+        store.state.model.odin = null;
+        const wrapper = getWrapper(store);
         expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(true);
     });
 
     it("disables run and download buttons when compile is required", () => {
-        const modelState = { compileRequired: true };
-        const runState = { resultOde: { solution: {} } as any };
-        const wrapper = getWrapper(modelState, runState);
+        const store = getStore(AppType.Basic);
+        store.state.model.compileRequired = true;
+        store.state.run.resultOde = { solution: {} } as any;
+        const wrapper = getWrapper(store);
         expect((wrapper.find("button#run-btn").element as HTMLButtonElement).disabled).toBe(true);
         expect((wrapper.find("button#download-btn").element as HTMLButtonElement).disabled).toBe(true);
     });
 
     it("enables download button when model has a solution", () => {
-        const wrapper = getWrapper(defaultModelState, { resultOde: { solution: {} } as any });
+        const store = getStore(AppType.Basic);
+        store.state.run.resultOde = { solution: {} } as any;
+        const wrapper = getWrapper(store);
         expect((wrapper.find("button#download-btn").element as HTMLButtonElement).disabled).toBe(false);
     });
 
     it("disables download button when run is required", () => {
-        const runState = {
-            result: { solution: {} } as any,
-            runRequired: { modelChanged: true } as any
-        };
-        const wrapper = getWrapper({}, runState);
+        const store = getStore(AppType.Basic);
+        store.state.run.resultOde = { solution: {} } as any;
+        store.state.run.runRequired.modelChanged = true;
+        const wrapper = getWrapper(store);
         expect((wrapper.find("button#download-btn").element as HTMLButtonElement).disabled).toBe(true);
     });
 
     it("disables download button and show message when downloading", () => {
-        const runState = {
-            result: { solution: {} } as any,
-            downloading: true
-        };
-        const wrapper = getWrapper({}, runState);
+        const store = getStore(AppType.Basic);
+        store.state.run.resultOde = { solution: {} } as any;
+        store.state.run.downloading = true;
+        const wrapper = getWrapper(store);
         expect((wrapper.find("button#download-btn").element as HTMLButtonElement).disabled).toBe(true);
         expect(wrapper.find("#downloading").text()).toBe("Downloading...");
         expect(wrapper.find("#downloading").findComponent(LoadingSpinner).exists()).toBe(true);
     });
 
     it("fades plot and shows message when compile required", () => {
-        const wrapper = getWrapper({
-            compileRequired: true
-        });
+        const store = getStore(AppType.Basic);
+        store.state.model.compileRequired = true;
+        const wrapper = getWrapper(store);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Model code has been updated. Compile code and Run Model to update."
         );
-        const plots = wrapper.findAllComponents(RunPlot);
+        const plots = wrapper.findAllComponents(WodinPlot);
         expect(plots.at(0)!.props("fadePlot")).toBe(true);
         expect(plots.at(1)!.props("fadePlot")).toBe(true);
     });
 
     it("fades plot and shows message when model run required", () => {
-        const runRequired = {
-            modelChanged: true,
-            parameterValueChanged: false,
-            endTimeChanged: false,
-            numberOfReplicatesChanged: false,
-            advancedSettingsChanged: false
-        };
-        const wrapper = getWrapper(defaultModelState, { runRequired });
+        const store = getStore(AppType.Basic);
+        store.state.run.runRequired.modelChanged = true;
+        const wrapper = getWrapper(store);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Plot is out of date: model code has been recompiled. Run model to update."
         );
-        const plots = wrapper.findAllComponents(RunPlot);
+        const plots = wrapper.findAllComponents(WodinPlot);
         expect(plots.at(0)!.props("fadePlot")).toBe(true);
         expect(plots.at(1)!.props("fadePlot")).toBe(true);
     });
 
     it("fades plot and show message when no selected variables", () => {
-        const wrapper = getWrapper(defaultModelState, defaultRunState, true, AppType.Basic, []);
+        const store = getStore(AppType.Basic);
+        store.state.graphs.configs[0].selectedVariables = [];
+        const wrapper = getWrapper(store);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Please select at least one variable."
         );
-        const plots = wrapper.findAllComponents(RunPlot);
+        const plots = wrapper.findAllComponents(WodinPlot);
         expect(plots.at(0)!.props("fadePlot")).toBe(true);
         expect(plots.at(1)!.props("fadePlot")).toBe(true);
     });
 
     it("fades plot when compile required when stochastic", () => {
-        const wrapper = getStochasticWrapper({}, {}, true);
-        const plots = wrapper.findAllComponents(RunStochasticPlot);
+        const store = getStore(AppType.Stochastic);
+        store.state.model.compileRequired = true;
+        const wrapper = getWrapper(store);
+        const plots = wrapper.findAllComponents(WodinPlot);
         expect(plots.at(0)!.props("fadePlot")).toBe(true);
         expect(plots.at(1)!.props("fadePlot")).toBe(true);
     });
 
     it("invokes run model action when run button is clicked", () => {
-        const wrapper = getWrapper();
+        const store = getStore(AppType.Basic);
+        const wrapper = getWrapper(store);
         wrapper.find("button#run-btn").trigger("click");
         expect(mockRunModel).toHaveBeenCalled();
     });
@@ -377,13 +250,17 @@ describe("RunTab", () => {
             error: odinRunnerError,
             solution: null
         };
-        const wrapper = getWrapper({}, { resultOde: result });
+        const store = getStore(AppType.Basic);
+        store.state.run.resultOde = result;
+        const wrapper = getWrapper(store);
         expect(wrapper.findComponent(ErrorInfo).exists()).toBe(true);
         expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(odinRunnerError);
     });
 
     it("opens download dialog on click download button, and closes when dialog emits close event", async () => {
-        const wrapper = getWrapper(defaultModelState, { resultOde: { solution: {} } as any });
+        const store = getStore(AppType.Basic);
+        store.state.run.resultOde = { solution: {} } as any;
+        const wrapper = getWrapper(store);
         await wrapper.find("button#download-btn").trigger("click");
         const download = wrapper.findComponent(DownloadOutput);
         expect(download.props().open).toBe(true);
@@ -393,12 +270,14 @@ describe("RunTab", () => {
     });
 
     it("hides run button if app is stochastic", () => {
-        const wrapper = getWrapper({}, {}, true, AppType.Stochastic);
+        const store = getStore(AppType.Stochastic);
+        const wrapper = getWrapper(store);
         expect(wrapper.find("button#download-btn").exists()).toBe(false);
     });
 
     it("commits user download filename change", () => {
-        const wrapper = getWrapper();
+        const store = getStore(AppType.Basic);
+        const wrapper = getWrapper(store);
         const downloadOutput = wrapper.findComponent(DownloadOutput);
         downloadOutput.vm.$emit("update:userFileName", "newFileName.xlsx");
         expect(mockSetUserDownloadFileName).toHaveBeenCalledTimes(1);
@@ -406,7 +285,8 @@ describe("RunTab", () => {
     });
 
     it("dispatches download output action", () => {
-        const wrapper = getWrapper();
+        const store = getStore(AppType.Basic);
+        const wrapper = getWrapper(store);
         const downloadOutput = wrapper.findComponent(DownloadOutput);
         const payload = { fileName: "downlad.xlsx", points: 100 };
         downloadOutput.vm.$emit("download", payload);
@@ -414,17 +294,32 @@ describe("RunTab", () => {
         expect(mockDownloadOutput.mock.calls[0][1]).toBe(payload);
     });
 
-    it("correctly filters traces based on visible vars", () => {
-        vi.mocked(Env).STATIC_BUILD = true;
-        getWrapper({}, {}, true, AppType.Basic, ["S"], { ...defaultProps, visibleVars: "I, T" });
-        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({
-            id: "123",
-            selectedVariables: ["I", "T"]
+    it("sets visible graph groups on mount", () => {
+        const store = getStore(AppType.Basic);
+        getWrapper(store);
+        expect(mockAddConfig).not.toHaveBeenCalled();
+        expect(mockUpdateConfig).not.toHaveBeenCalled();
+        expect(mockUpdateConfigGroup).not.toHaveBeenCalled();
+        expect(mockUpdateVisibleGraphGroups.mock.calls[0][1]).toStrictEqual([VisualisationTab.Run]);
+    });
+
+    it("creates config with all variables and group on mount if it doesn't exist", () => {
+        const store = getStore(AppType.Basic);
+        store.state.graphs.configGroups[ConfigGroupIds.RunAndSens].configIds = [];
+        store.state.model.variablesCopy = ["W"];
+        getWrapper(store);
+        expect(mockAddConfig).toHaveBeenCalled();
+        expect(mockUpdateConfig.mock.calls[0][1].value).toStrictEqual({
+            selectedVariables: ["W"]
         });
-        expect(mockUpdateSelectedVariables.mock.calls[1][1]).toStrictEqual({
-            id: "456",
-            selectedVariables: ["I", "T"]
+        const cfgId = mockUpdateConfig.mock.calls[0][1].id;
+        expect(mockUpdateConfigGroup.mock.calls[0][1]).toStrictEqual({
+            id: ConfigGroupIds.RunAndSens,
+            value: {
+                configIds: [cfgId],
+                syncProperties: ["xAxisRange"]
+            }
         });
-        vi.mocked(Env).STATIC_BUILD = false;
+        expect(mockUpdateVisibleGraphGroups.mock.calls[0][1]).toStrictEqual([VisualisationTab.Run]);
     });
 });

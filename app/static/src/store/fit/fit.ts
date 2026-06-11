@@ -10,7 +10,7 @@ import { sensitivity } from "../sensitivity/sensitivity";
 import { fitData } from "../fitData/fitData";
 import { modelFit } from "../modelFit/modelFit";
 import { AppType, VisualisationTab } from "../appState/state";
-import { logMutations, persistState } from "../plugins";
+import { logMutations, persistState, updateGraphs } from "../plugins";
 import { newUid } from "../../utils";
 import { sessions } from "../sessions/sessions";
 import { versions } from "../versions/versions";
@@ -58,5 +58,5 @@ export const storeOptions: StoreOptions<FitState> = {
         graphs,
         language
     },
-    plugins: [logMutations, persistState]
+    plugins: [logMutations, persistState, updateGraphs]
 };

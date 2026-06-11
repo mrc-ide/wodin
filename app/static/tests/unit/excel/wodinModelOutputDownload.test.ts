@@ -1,5 +1,5 @@
 import { mockBookNew, mockWriteFile } from "./mocks";
-import { mockFitDataState, mockFitState, mockBasicState, mockRunState } from "../../mocks";
+import { mockFitDataState, mockFitState, mockBasicState, mockRunState, mockGraphsState } from "../../mocks";
 import { WodinModelOutputDownload } from "../../../src/excel/wodinModelOutputDownload";
 import { ErrorsMutation } from "../../../src/store/errors/mutations";
 
@@ -19,6 +19,12 @@ describe("WodinModelOutputDownload", () => {
         endTime: 10,
         parameterValues: { v1: 1.1, v2: 2.2 }
     });
+
+    const graphsState = mockGraphsState({
+        configs: [
+          { selectedVariables: ["A", "B"] } as any
+        ]
+    })
 
     const rootGetters = {
         "graphs/allSelectedVariables": ["A", "B"],
@@ -50,7 +56,8 @@ describe("WodinModelOutputDownload", () => {
 
     it("downloads expected workbook for Basic app", () => {
         const rootState = mockBasicState({
-            run: runState
+            run: runState,
+            graphs: graphsState,
         });
         const commit = vi.fn();
 
@@ -83,7 +90,8 @@ describe("WodinModelOutputDownload", () => {
                     { time: 2, cases: 3, deaths: 4 }
                 ],
                 timeVariable: "time"
-            })
+            }),
+            graphs: graphsState,
         });
 
         const commit = vi.fn();

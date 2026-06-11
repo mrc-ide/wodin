@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, onMounted } from "vue";
 import { useStore } from "vuex";
 import MultiSensitivityTab from "@/components/multiSensitivity/MultiSensitivityTab.vue";
 import WodinApp from "../WodinApp.vue";
@@ -77,6 +77,8 @@ export default defineComponent({
             VisualisationTab.Fit,
             VisualisationTab.Sensitivity
         ]);
+
+        onMounted(() => rightTabSelected(rightTabNames.value[0]));
 
         return {
             helpTabName,

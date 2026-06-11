@@ -14,13 +14,13 @@
 <script lang="ts">
 import { defineComponent, computed, PropType } from "vue";
 import { useStore } from "vuex";
-import { GraphsMutation, SetGraphConfigPayload } from "../store/graphs/mutations";
 import { GraphConfig } from "@/store/graphs/state";
+import { GraphsMutation, UpdateConfigPayload } from "@/store/graphs/mutations";
 
 export default defineComponent({
     name: "GraphSettings",
     props: {
-        graphConfig: {
+        config: {
             type: Object as PropType<GraphConfig>,
             required: true,
         },
@@ -28,29 +28,27 @@ export default defineComponent({
     setup(props) {
         const store = useStore();
         const logScaleYAxis = computed({
-            get() {
-                return props.graphConfig.settings.logScaleYAxis;
-            },
+            get() { return props.config.logScaleYAxis },
             set(newValue) {
-                store.commit(`graphs/${GraphsMutation.SetGraphConfig}`, {
-                    id: props.graphConfig.id,
-                    settings: {
-                      logScaleYAxis: newValue,
-                      yAxisRange: null
-                    }
-                } as SetGraphConfigPayload);
+                const payload: UpdateConfigPayload = {
+                    id: props.config.id,
+                    value: {
+                        logScaleYAxis: newValue,
+                        yAxisRange: null,
+                    },
+                };
+                store.commit(`graphs/${GraphsMutation.UpdateConfig}`, payload);
             }
         });
 
         const lockYAxis = computed({
-            get() {
-                return props.graphConfig.settings.lockYAxis;
-            },
+            get() { return props.config.lockYAxis },
             set(newValue) {
-                store.commit(`graphs/${GraphsMutation.SetGraphConfig}`, {
-                    id: props.graphConfig.id,
-                    settings: { lockYAxis: newValue }
-                } as SetGraphConfigPayload);
+                const payload: UpdateConfigPayload = {
+                    id: props.config.id,
+                    value: { lockYAxis: newValue },
+                };
+                store.commit(`graphs/${GraphsMutation.UpdateConfig}`, payload);
             }
         });
 

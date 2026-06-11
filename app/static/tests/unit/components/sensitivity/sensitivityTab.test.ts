@@ -1,111 +1,85 @@
 import { shallowMount } from "@vue/test-utils";
-import Vuex from "vuex";
-import { ModelState } from "../../../../src/store/model/state";
+import Vuex, { Store } from "vuex";
 import SensitivityTab from "../../../../src/components/sensitivity/SensitivityTab.vue";
 import ActionRequiredMessage from "../../../../src/components/ActionRequiredMessage.vue";
 import { BaseSensitivityGetter } from "../../../../src/store/sensitivity/getters";
-import SensitivityTracesPlot from "../../../../src/components/sensitivity/SensitivityTracesPlot.vue";
-import { SensitivityPlotType, SensitivityState } from "../../../../src/store/sensitivity/state";
+import { SensitivityPlotType } from "../../../../src/store/sensitivity/state";
 import { SensitivityAction } from "../../../../src/store/sensitivity/actions";
-import SensitivitySummaryPlot from "../../../../src/components/sensitivity/SensitivitySummaryPlot.vue";
 import ErrorInfo from "../../../../src/components/ErrorInfo.vue";
-import { AppState, AppType } from "../../../../src/store/appState/state";
+import { AppType, VisualisationTab } from "../../../../src/store/appState/state";
 import { ModelGetter } from "../../../../src/store/model/getters";
 import LoadingSpinner from "../../../../src/components/LoadingSpinner.vue";
 import { SensitivityMutation } from "../../../../src/store/sensitivity/mutations";
 import SensitivitySummaryDownload from "../../../../src/components/sensitivity/SensitivitySummaryDownload.vue";
 import LoadingButton from "../../../../src/components/LoadingButton.vue";
-import { getters as graphsGetters } from "../../../../src/store/graphs/getters";
-import * as Env from "@/parseEnv";
-import { GraphsAction } from "@/store/graphs/actions";
-
-vi.mock("@/parseEnv");
+import { mockGraphsState, mockModelState, mockRunState, mockSensitivityState } from "../../../mocks";
+import { defaultGraphConfig } from "@/store/graphs/state";
+import { ConfigGroupIds } from "@/store/graphs/graphs";
+import { GraphsMutation } from "@/store/graphs/mutations";
+import WodinPlot from "@/components/WodinPlot.vue";
+import { AppTypeToState, mockStates } from "../../../testUtils";
 
 describe("SensitivityTab", () => {
     const mockRunSensitivity = vi.fn();
     const mockSetLoading = vi.fn();
     const mockSetPlotTime = vi.fn();
-    const mockUpdateSelectedVariables = vi.fn();
 
-    type Props = { hideSensitivityButton: boolean, hideDownloadButton: boolean, visibleVars?: string }
-    const defaultProps = { hideSensitivityButton: false, hideDownloadButton: false };
+    const mockAddConfig = vi.fn();
+    const mockUpdateConfig = vi.fn();
+    const mockUpdateConfigGroup = vi.fn();
+    const mockUpdateVisibleGraphGroups = vi.fn();
 
-    const getWrapper = (
-        appType = AppType.Basic,
-        modelState: Partial<ModelState> = {},
-        sensitivityState: Partial<SensitivityState> = {},
-        batchPars: any = {},
+    const getStore = <T extends AppType>(
+        appType: T,
         hasRunner = true,
-        selectedVariables = ["S"],
-        props: Props = defaultProps
-    ) => {
-        const store = new Vuex.Store<AppState>({
-            state: {
-                appType
-            } as any,
+        batchPars: any = {},
+    ): Store<AppTypeToState[T]> => {
+        const config1 = defaultGraphConfig("123");
+        config1.selectedVariables = ["S"];
+        const config2 = defaultGraphConfig("456");
+
+        const graphsState = mockGraphsState();
+        graphsState.configs = [config1, config2];
+        graphsState.configGroups[ConfigGroupIds.RunAndSens].configIds = ["123", "456"];
+
+        return new Vuex.Store<AppTypeToState[T]>({
+            state: mockStates[appType],
             modules: {
                 graphs: {
                     namespaced: true,
-                    state: {
-                        config: [
-                            {
-                                id: "123",
-                                selectedVariables
-                            },
-                            {
-                                id: "456",
-                                selectedVariables: []
-                            }
-                        ]
-                    },
-                    getters: graphsGetters,
-                    actions: {
-                        [GraphsAction.UpdateSelectedVariables]: mockUpdateSelectedVariables
+                    state: graphsState,
+                    mutations: {
+                        [GraphsMutation.AddConfig]: mockAddConfig,
+                        [GraphsMutation.UpdateConfig]: mockUpdateConfig,
+                        [GraphsMutation.UpdateConfigGroup]: mockUpdateConfigGroup,
+                        [GraphsMutation.UpdateVisibleGraphGroups]: mockUpdateVisibleGraphGroups,
                     }
                 },
                 model: {
                     namespaced: true,
-                    state: {
-                        odinRunnerOde: {},
-                        odin: {},
-                        ...modelState
-                    },
+                    state: mockModelState({
+                        odin: {} as any
+                    }),
                     getters: {
                         [ModelGetter.hasRunner]: () => hasRunner
                     }
                 },
                 run: {
                     namespaced: true,
-                    state: {
-                        endTime: 100
-                    }
+                    state: mockRunState(),
                 },
                 sensitivity: {
                     namespaced: true,
-                    state: {
-                        sensitivityUpdateRequired: {
-                            modelChanged: false,
-                            parameterValueChanged: false,
-                            endTimeChanged: false,
-                            sensitivityOptionsChanged: false
-                        },
+                    state: mockSensitivityState({
                         result: {
-                            inputs: {},
+                            inputs: {} as any,
                             batch: {
                                 solutions: [],
                                 errors: []
-                            },
+                            } as any,
                             error: null
-                        },
-                        plotSettings: {
-                            plotType: SensitivityPlotType.TraceOverTime,
-                            time: null
-                        },
-                        paramSettings: {
-                            numberOfRuns: 5
-                        },
-                        ...sensitivityState
-                    },
+                        }
+                    }),
                     getters: {
                         [BaseSensitivityGetter.batchPars]: () => batchPars
                     },
@@ -119,17 +93,13 @@ describe("SensitivityTab", () => {
                 }
             }
         });
+    };
+
+    const getWrapper = <T extends AppType>(store: Store<AppTypeToState[T]>) => {
         return shallowMount(SensitivityTab, {
             global: {
-                plugins: [store],
-                stubs: [
-                    "action-required-message",
-                    "sensitivity-traces-plot",
-                    "sensitivity-summary-plot",
-                    "loading-spinner",
-                    "error-info"
-                ]
-            }, props
+                plugins: [store]
+            }
         });
     };
 
@@ -138,80 +108,29 @@ describe("SensitivityTab", () => {
     });
 
     it("renders as expected when Trace over Time", () => {
-        const wrapper = getWrapper();
+        const store = getStore(AppType.Basic);
+        const wrapper = getWrapper(store);
         expect(wrapper.findComponent(LoadingButton).props("isDisabled")).toBe(false);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
-        const plots = wrapper.findAllComponents(SensitivityTracesPlot);
+        const plots = wrapper.findAllComponents(WodinPlot);
         expect(plots.length).toBe(2);
         expect(plots.at(0)!.props("fadePlot")).toBe(false);
-        expect(plots.at(0)!.props("graphConfig")).toStrictEqual({
-            id: "123", selectedVariables: ["S"]
-        });
+        expect(plots.at(0)!.props("config")).toStrictEqual(store.state.graphs.configs[0]);
         expect(plots.at(1)!.props("fadePlot")).toBe(false);
-        expect(plots.at(1)!.props("graphConfig")).toStrictEqual({
-            id: "456", selectedVariables: []
-        });
+        expect(plots.at(1)!.props("config")).toStrictEqual(store.state.graphs.configs[1]);
         expect(wrapper.findComponent(ErrorInfo).props("error")).toBe(null);
         expect(wrapper.find("#sensitivity-running").exists()).toBe(false);
-        expect(wrapper.findComponent(SensitivitySummaryPlot).exists()).toBe(false);
-    });
-
-    it("hides sensitivity button when prop passed in", () => {
-        const wrapper = getWrapper(
-            AppType.Basic, {}, {}, {}, true, ["S"],
-            { hideSensitivityButton: true, hideDownloadButton: false }
-        );
-        expect(wrapper.find("#run-sens-btn").exists()).toBe(false);
-    });
-
-    it("hides download button when prop passed in", () => {
-        const wrapper = getWrapper(
-            AppType.Basic, {}, {}, {}, true, ["S"],
-            { hideSensitivityButton: false, hideDownloadButton: true }
-        );
-        expect(wrapper.findComponent(SensitivitySummaryDownload).exists()).toBe(false);
     });
 
     it("enables sensitivity when app is stochastic and runner is available", () => {
-        const wrapper = getWrapper(AppType.Stochastic);
+        const store = getStore(AppType.Stochastic);
+        const wrapper = getWrapper(store);
         expect(wrapper.findComponent(LoadingButton).props("isDisabled")).toBe(false);
-    });
-
-    it("renders as expected when Value at Time", () => {
-        const sensitivityState = { plotSettings: { plotType: SensitivityPlotType.ValueAtTime } as any };
-        const wrapper = getWrapper(AppType.Fit, {}, sensitivityState);
-        expect(wrapper.findComponent(LoadingButton).props("isDisabled")).toBe(false);
-        expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe("");
-        expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(false);
-
-        expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
-    });
-
-    it("renders as expected when Time at Extreme", () => {
-        const sensitivityState = { plotSettings: { plotType: SensitivityPlotType.TimeAtExtreme } as any };
-        const wrapper = getWrapper(AppType.Basic, {}, sensitivityState);
-        const plots = wrapper.findAllComponents(SensitivitySummaryPlot);
-        expect(plots.length).toBe(2);
-        expect(plots.at(0)!.props("fadePlot")).toBe(false);
-        expect(plots.at(0)!.props("graphConfig")).toStrictEqual({
-            id: "123", selectedVariables: ["S"]
-        });
-        expect(plots.at(1)!.props("fadePlot")).toBe(false);
-        expect(plots.at(1)!.props("graphConfig")).toStrictEqual({
-            id: "456", selectedVariables: []
-        });
-        expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
-    });
-
-    it("renders as expected when Value at Extreme", () => {
-        const sensitivityState = { plotSettings: { plotType: SensitivityPlotType.ValueAtExtreme } as any };
-        const wrapper = getWrapper(AppType.Basic, {}, sensitivityState);
-        expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(false);
-        expect(wrapper.findComponent(SensitivityTracesPlot).exists()).toBe(false);
     });
 
     it("renders SensitivitySummaryDownload", () => {
-        const wrapper = getWrapper(AppType.Basic);
+        const store = getStore(AppType.Basic);
+        const wrapper = getWrapper(store);
         const download = wrapper.findComponent(SensitivitySummaryDownload);
         expect(download.props("multiSensitivity")).toBe(false);
         expect(download.props("downloadType")).toBe("Sensitivity Summary");
@@ -219,135 +138,141 @@ describe("SensitivityTab", () => {
 
     it("renders error", () => {
         const testError = { error: "Test Error", detail: "test error detail" };
-        const sensitivityState = {
-            result: {
-                inputs: {} as any,
-                batch: null,
-                error: testError
-            }
+        const store = getStore(AppType.Stochastic);
+        store.state.sensitivity.result = {
+            inputs: {} as any,
+            batch: null,
+            error: testError
         };
-        const wrapper = getWrapper(AppType.Stochastic, {}, sensitivityState);
+        const wrapper = getWrapper(store);
         expect(wrapper.findComponent(ErrorInfo).props("error")).toStrictEqual(testError);
     });
 
     it("disables run button when hasRunner is false", () => {
-        const wrapper = getWrapper(AppType.Basic, { odinRunnerOde: null }, {}, {}, false);
+        const store = getStore(AppType.Basic, false);
+        store.state.model.odinRunnerOde = null;
+        const wrapper = getWrapper(store);
         expect(wrapper.findComponent(LoadingButton).props("isDisabled")).toBe(true);
     });
 
     it("disables run button when no odin model", () => {
-        const wrapper = getWrapper(AppType.Fit, { odin: null });
+        const store = getStore(AppType.Fit);
+        store.state.model.odin = null;
+        const wrapper = getWrapper(store);
         expect(wrapper.findComponent(LoadingButton).props("isDisabled")).toBe(true);
     });
 
     it("disables run button when required action is Compile", () => {
-        const wrapper = getWrapper(AppType.Basic, {
-            compileRequired: true
-        });
+        const store = getStore(AppType.Basic);
+        store.state.model.compileRequired = true;
+        const wrapper = getWrapper(store);
         expect(wrapper.findComponent(LoadingButton).props("isDisabled")).toBe(true);
     });
 
     it("disables run button when no batchPars", () => {
-        const wrapper = getWrapper(AppType.Basic, {}, {}, null);
+        const store = getStore(AppType.Basic, true, null);
+        const wrapper = getWrapper(store);
         expect(wrapper.findComponent(LoadingButton).props("isDisabled")).toBe(true);
     });
 
     it("sets loading prop on LoadingBUtton when loading is true", () => {
-        const wrapper = getWrapper(AppType.Fit, {}, { loading: true });
+        const store = getStore(AppType.Fit);
+        store.state.sensitivity.loading = true;
+        const wrapper = getWrapper(store);
         expect(wrapper.findComponent(LoadingButton).props("loading")).toBe(true);
     });
 
     it("sets loading prop on LoadingButton when running is true", () => {
-        const wrapper = getWrapper(AppType.Fit, {}, { running: true });
+        const store = getStore(AppType.Fit);
+        store.state.sensitivity.running = true;
+        const wrapper = getWrapper(store);
         expect(wrapper.findComponent(LoadingButton).props("loading")).toBe(true);
     });
 
     it("renders expected update message when required action is Compile", () => {
-        const sensitivityState = {
-            result: {
-                batch: { solutions: [{}], errors: [] }
+        const store = getStore(AppType.Basic);
+        store.state.sensitivity.result = {
+            batch: {
+                solutions: [{}],
+                errors: []
             }
         } as any;
-        const wrapper = getWrapper(AppType.Basic, { compileRequired: true }, sensitivityState);
+        store.state.model.compileRequired = true;
+        const wrapper = getWrapper(store);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Model code has been updated. Compile code and Run Sensitivity to update."
         );
-        expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);
+        expect(wrapper.findComponent(WodinPlot).props("fadePlot")).toBe(true);
     });
 
     it("renders expected update message when no selected variables", () => {
-        const sensitivityState = {
-            result: {
-                batch: {
-                    solutions: [{}],
-                    errors: []
-                }
+        const store = getStore(AppType.Basic);
+        store.state.sensitivity.result = {
+            batch: {
+                solutions: [{}],
+                errors: []
             }
         } as any;
-        const wrapper = getWrapper(AppType.Basic, {}, sensitivityState, {}, true, []);
+        store.state.graphs.configs[0].selectedVariables = [];
+        const wrapper = getWrapper(store);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Please select at least one variable."
         );
-        expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);
+        expect(wrapper.findComponent(WodinPlot).props("fadePlot")).toBe(true);
     });
 
     it("renders expected update message when sensitivity requires update", () => {
-        const sensitivityState = {
-            result: {
-                batch: { solutions: [{}], errors: [] }
-            },
-            sensitivityUpdateRequired: {
-                modelChanged: true,
-                endTimeChanged: false
+        const store = getStore(AppType.Basic);
+        store.state.sensitivity.result = {
+            batch: {
+                solutions: [{}],
+                errors: []
             }
         } as any;
-        const wrapper = getWrapper(AppType.Basic, {}, sensitivityState);
+        store.state.sensitivity.sensitivityUpdateRequired.modelChanged = true;
+        const wrapper = getWrapper(store);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Plot is out of date: model code has been recompiled. Run Sensitivity to update."
         );
-        expect(wrapper.findComponent(SensitivityTracesPlot).props("fadePlot")).toBe(true);
+        expect(wrapper.findComponent(WodinPlot).props("fadePlot")).toBe(true);
     });
 
     it("fades Summary plot when updated required", () => {
-        const sensitivityState = {
-            result: {
-                batch: { solutions: [{}], errors: [] }
-            },
-            plotSettings: { plotType: SensitivityPlotType.ValueAtTime } as any,
-            sensitivityUpdateRequired: {
-                modelChanged: false,
-                parameterValueChanged: true,
-                endTimeChanged: false
+        const store = getStore(AppType.Basic);
+        store.state.sensitivity.result = {
+            batch: {
+                solutions: [{}],
+                errors: []
             }
         } as any;
-        const wrapper = getWrapper(AppType.Basic, {}, sensitivityState);
+        store.state.sensitivity.sensitivityUpdateRequired.parameterValueChanged = true;
+        store.state.sensitivity.plotSettings.plotType = SensitivityPlotType.ValueAtTime;
+        const wrapper = getWrapper(store);
         expect(wrapper.findComponent(ActionRequiredMessage).props("message")).toBe(
             "Plot is out of date: parameters have been changed. Run Sensitivity to update."
         );
-        expect(wrapper.findComponent(SensitivitySummaryPlot).props("fadePlot")).toBe(true);
+        expect(wrapper.findComponent(WodinPlot).props("fadePlot")).toBe(true);
     });
 
     it("renders sensitivity running message", () => {
-        const sensitivityState = {
-            running: true,
-            result: {
-                batch: {
-                    solutions: [{}, {}],
-                    errors: [{}]
-                }
-            },
-            paramSettings: {
-                numberOfRuns: 12
+        const store = getStore(AppType.Stochastic);
+        store.state.sensitivity.result = {
+            batch: {
+                solutions: [{}, {}],
+                errors: [{}]
             }
         } as any;
-        const wrapper = getWrapper(AppType.Stochastic, {}, sensitivityState);
+        store.state.sensitivity.running = true;
+        store.state.sensitivity.paramSettings.numberOfRuns = 12;
+        const wrapper = getWrapper(store);
         const runningMsg = wrapper.find("#sensitivity-running");
         expect(runningMsg.text()).toBe("Running sensitivity: finished 3 of 12 runs");
         expect(runningMsg.findComponent(LoadingSpinner).props("size")).toBe("xs");
     });
 
     it("commits set loading and dispatches sensitivity run when button is clicked", async () => {
-        const wrapper = getWrapper();
+        const store = getStore(AppType.Basic);
+        const wrapper = getWrapper(store);
         expect(mockRunSensitivity).not.toHaveBeenCalled();
         expect(mockSetLoading).not.toHaveBeenCalled();
         wrapper.findComponent(LoadingButton).vm.$emit("click");
@@ -356,17 +281,32 @@ describe("SensitivityTab", () => {
         expect(mockSetLoading).toHaveBeenCalledTimes(1);
     });
 
-    it("correctly filters traces based on visible vars", () => {
-        vi.mocked(Env).STATIC_BUILD = true;
-        getWrapper(AppType.Basic, {}, {}, {}, true, ["S"], { ...defaultProps, visibleVars: "I, T" });
-        expect(mockUpdateSelectedVariables.mock.calls[0][1]).toStrictEqual({
-            id: "123",
-            selectedVariables: ["I", "T"]
+    it("sets visible graph groups on mount", () => {
+        const store = getStore(AppType.Basic);
+        getWrapper(store);
+        expect(mockAddConfig).not.toHaveBeenCalled();
+        expect(mockUpdateConfig).not.toHaveBeenCalled();
+        expect(mockUpdateConfigGroup).not.toHaveBeenCalled();
+        expect(mockUpdateVisibleGraphGroups.mock.calls[0][1]).toStrictEqual([VisualisationTab.Sensitivity]);
+    });
+
+    it("creates config with all variables and group on mount if it doesn't exist", () => {
+        const store = getStore(AppType.Basic);
+        store.state.graphs.configGroups[ConfigGroupIds.RunAndSens].configIds = [];
+        store.state.model.variablesCopy = ["W"];
+        getWrapper(store);
+        expect(mockAddConfig).toHaveBeenCalled();
+        expect(mockUpdateConfig.mock.calls[0][1].value).toStrictEqual({
+            selectedVariables: ["W"]
         });
-        expect(mockUpdateSelectedVariables.mock.calls[1][1]).toStrictEqual({
-            id: "456",
-            selectedVariables: ["I", "T"]
+        const cfgId = mockUpdateConfig.mock.calls[0][1].id;
+        expect(mockUpdateConfigGroup.mock.calls[0][1]).toStrictEqual({
+            id: ConfigGroupIds.RunAndSens,
+            value: {
+                configIds: [cfgId],
+                syncProperties: ["xAxisRange"]
+            }
         });
-        vi.mocked(Env).STATIC_BUILD = false;
+        expect(mockUpdateVisibleGraphGroups.mock.calls[0][1]).toStrictEqual([VisualisationTab.Sensitivity]);
     });
 });

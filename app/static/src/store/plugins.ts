@@ -4,6 +4,11 @@ import { StateUploadMutations } from "./appState/mutations";
 import { RunMutation } from "./run/mutations";
 import { RunAction } from "./run/actions";
 import { SensitivityAction } from "./sensitivity/actions";
+import { BaseSensitivityMutation, SensitivityMutation } from "./sensitivity/mutations";
+import { FitDataMutation } from "./fitData/mutations";
+import { ModelFitMutation } from "./modelFit/mutations";
+import { GraphsAction } from "./graphs/actions";
+import { GraphsMutation } from "./graphs/mutations";
 
 export const logMutations = (store: Store<AppState>): void => {
     store.subscribe((mutation: MutationPayload) => {
@@ -16,6 +21,67 @@ export const persistState = (store: Store<AppState>): void => {
         if (!StateUploadMutations.includes(mutation.type) && !mutation.type.startsWith("errors")) {
             const { dispatch } = store;
             dispatch("QueueStateUpload");
+        }
+    });
+};
+
+const updateGraphOnMutations = [
+    // run button
+    `run/${RunMutation.SetResultOde}`,
+    `run/${RunMutation.SetParameterSetResult}`,
+    `run/${RunMutation.SetResultDiscrete}`,
+
+    // parameter set changes
+    `run/${RunMutation.DeleteParameterSet}`,
+    `sensitivity/${SensitivityMutation.ParameterSetDeleted}`,
+    `run/${RunMutation.SwapParameterSet}`,
+    `sensitivity/${SensitivityMutation.ParameterSetSwapped}`,
+    `run/${RunMutation.ToggleParameterSetHidden}`,
+    `run/${RunMutation.SaveParameterDisplayName}`,
+
+    // fit data changes
+    `fitData/${FitDataMutation.SetData}`,
+    `fitData/${FitDataMutation.SetTimeVariable}`,
+    `fitData/${FitDataMutation.SetLinkedVariable}`,
+    `fitData/${FitDataMutation.SetLinkedVariables}`,
+
+    // fit button
+    `modelFit/${ModelFitMutation.SetResult}`,
+
+    // run sensitivity
+    `sensitivity/${BaseSensitivityMutation.SetResult}`,
+    `sensitivity/${SensitivityMutation.SetParameterSetResults}`,
+    `sensitivity/${SensitivityMutation.SetPlotExtreme}`,
+    `sensitivity/${SensitivityMutation.SetPlotTime}`,
+
+    // change endTime
+    `run/${RunMutation.SetEndTime}`,
+
+    // graphs mutations
+    `graphs/${GraphsMutation.AddConfig}`,
+    `graphs/${GraphsMutation.UpdateConfig}`,
+    `graphs/${GraphsMutation.DeleteConfig}`,
+    `graphs/${GraphsMutation.UpdateConfigGroup}`,
+    `graphs/${GraphsMutation.UpdateGraphGroup}`,
+    `graphs/${GraphsMutation.UpdateVisibleGraphGroups}`,
+];
+
+// the debounce here is necessary because several mutations listed
+// above can occur synchronously and one after the other. we only want
+// to compute the data for the final state rather than each in between
+// state
+export const updateGraphs = (store: Store<AppState>) => {
+    let timeout: NodeJS.Timeout | undefined = undefined;
+    store.subscribe(mutation => {
+        if (updateGraphOnMutations.includes(mutation.type)) {
+            if (timeout) globalThis.clearTimeout(timeout);
+            timeout = globalThis.setTimeout(() => {
+                store.dispatch(
+                    `graphs/${GraphsAction.GenerateData}`,
+                    null,
+                    { root: true }
+                );
+            }, 0);
         }
     });
 };

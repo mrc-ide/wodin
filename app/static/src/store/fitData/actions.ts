@@ -8,7 +8,9 @@ import { RunMutation } from "../run/mutations";
 import { ModelFitMutation } from "../modelFit/mutations";
 import { ModelFitAction } from "../modelFit/actions";
 import { SensitivityMutation } from "../sensitivity/mutations";
-import { GraphsGetter } from "../graphs/getters";
+import { getAllSelectedVariables } from "../graphs/utils";
+import { ConfigGroupIds } from "../graphs/graphs";
+import { GraphsMutation, UpdateConfigPayload } from "../graphs/mutations";
 
 export enum FitDataAction {
     Upload = "Upload",
@@ -22,9 +24,9 @@ const updateLinkedVariables = (context: ActionContext<FitDataState, FitState>) =
     // This is called whenever new data is uploaded, or selected time variable changes, or the model changes, which
     // may partially or fully invalidate any existing links. We retain any we can from previous selection.
     // Empty string means no link
-    const { commit, state, rootState, getters, rootGetters } = context;
+    const { commit, state, rootState, getters } = context;
     const modelResponse = rootState.model.odinModelResponse;
-    const modelVariables = modelResponse?.valid ? rootGetters[`graphs/${GraphsGetter.allSelectedVariables}`] : [];
+    const modelVariables = modelResponse?.valid ? getAllSelectedVariables(rootState) : [];
     const dataColumns = getters.nonTimeColumns;
     let newLinks = {};
     if (dataColumns) {
@@ -80,11 +82,28 @@ export const actions: ActionTree<FitDataState, FitState> = {
     },
 
     [FitDataAction.UpdateLinkedVariable](context, payload: SetLinkedVariablePayload) {
-        const { commit, dispatch, state } = context;
+        const { commit, dispatch, state, rootState } = context;
         commit(FitDataMutation.SetLinkedVariable, payload);
+
         if (payload.column === state.columnToFit) {
             commit(`modelFit/${ModelFitMutation.SetFitUpdateRequired}`, { linkChanged: true }, { root: true });
             dispatch(`modelFit/${ModelFitAction.UpdateSumOfSquares}`, null, { root: true });
+        }
+
+        // the fit tab may be mounted and add a graph config when there is no linked variable,
+        // so no selectedVariables will be added to the default fit config.
+        // if the first graph config has no variables selected then we add the linked variable
+        // as a quality of life feature
+        const { configIds } = rootState.graphs.configGroups[ConfigGroupIds.Fit];
+        if (payload.variable && configIds.length !== 0) {
+            const firstConfig = rootState.graphs.configs.find(cfg => cfg.id === configIds[0]);
+            if (firstConfig?.selectedVariables.length === 0) {
+                const updateConfigPayload: UpdateConfigPayload = {
+                    id: firstConfig.id,
+                    value: { selectedVariables: [payload.variable] }
+                };
+                commit(`graphs/${GraphsMutation.UpdateConfig}`, updateConfigPayload, { root: true });
+            }
         }
     },
 

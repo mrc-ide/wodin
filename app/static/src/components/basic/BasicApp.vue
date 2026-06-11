@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, onMounted } from "vue";
 import { useStore } from "vuex";
 import WodinApp from "../WodinApp.vue";
 import WodinTabs from "../WodinTabs.vue";
@@ -65,6 +65,8 @@ export default defineComponent({
             VisualisationTab.Run,
             VisualisationTab.Sensitivity
         ]);
+
+        onMounted(() => rightTabSelected(rightTabNames.value[0]));
 
         return {
             rightTabSelected,

@@ -1,10 +1,3 @@
-// Mock the import of third party packages to prevent errors
-vi.mock("plotly.js-basic-dist-min", () => {
-  return {
-      default: undefined,
-      update: undefined
-  }
-});
 vi.mock("../../../../src/components/help/MarkdownItImport.ts", () => {
   class MarkDownItClass {
       constructor() {
@@ -49,7 +42,6 @@ import { VisualisationTab } from "../../../../src/store/appState/state";
 import { AppStateMutation } from "../../../../src/store/appState/mutations";
 import { ModelFitGetter } from "../../../../src/store/modelFit/getters";
 import { AppConfig } from "../../../../src/types/responseTypes";
-import { getters as graphsGetters } from "../../../../src/store/graphs/getters";
 
 function mockResizeObserver(this: any) {
     this.observe = vi.fn();
@@ -99,7 +91,6 @@ describe("FitApp", () => {
                 graphs: {
                     namespaced: true,
                     state: mockGraphsState(),
-                    getters: graphsGetters
                 }
             }
         });
@@ -172,8 +163,9 @@ describe("FitApp", () => {
         const rightTabs = wrapper.find("#right-tabs");
 
         await rightTabs.findAll("li a").at(1)!.trigger("click"); // Click Fit tab
-        expect(mockSetOpenTab).toHaveBeenCalledTimes(1);
-        expect(mockSetOpenTab.mock.calls[0][1]).toBe(VisualisationTab.Fit);
+        // always sets it once on mount
+        expect(mockSetOpenTab).toHaveBeenCalledTimes(2);
+        expect(mockSetOpenTab.mock.calls[1][1]).toBe(VisualisationTab.Fit);
     });
 
     it("renders help tab", () => {

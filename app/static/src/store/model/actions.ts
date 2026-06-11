@@ -15,7 +15,7 @@ import { ErrorsMutation } from "../errors/mutations";
 import { BaseSensitivityMutation, SensitivityMutation } from "../sensitivity/mutations";
 import { defaultSensitivityParamSettings } from "../sensitivity/sensitivity";
 import { MultiSensitivityMutation } from "../multiSensitivity/mutations";
-import { GraphsAction, UpdateSelectedVariablesPayload } from "../graphs/actions";
+import { GraphsMutation, UpdateConfigPayload } from "../graphs/mutations";
 
 export enum ModelAction {
     FetchOdinRunner = "FetchOdinRunner",
@@ -68,13 +68,24 @@ const compileModelAndUpdateStore = (context: ActionContext<ModelState, AppState>
         const variables = state.odinModelResponse.metadata?.variables || [];
         commit(ModelMutation.SetPaletteModel, paletteModel(variables));
 
-        // Retain variable selections. Newly added variables will be selected by default in the first graph
-        const selectedVariables = variables.filter((s) => !rootState.graphs.config[0].unselectedVariables.includes(s));
-        dispatch(
-            `graphs/${GraphsAction.UpdateSelectedVariables}`,
-            { id: rootState.graphs.config[0].id, selectedVariables } as UpdateSelectedVariablesPayload,
-            { root: true }
-        );
+        // add any new variables to first graph and remove any invalid variables from
+        // all graphs
+        const newVariables = variables.filter(v => !state.variablesCopy.includes(v));
+        rootState.graphs.configs.map((cfg, i) => {
+            const validSelectedVariables = cfg.selectedVariables.filter(v => variables.includes(v));
+            const payload: UpdateConfigPayload = {
+                id: cfg.id,
+                value: {
+                    selectedVariables: [
+                        ...validSelectedVariables,
+                        ...(i === 0 ? newVariables : [])
+                    ]
+                }
+            };
+            commit(`graphs/${GraphsMutation.UpdateConfig}`, payload, { root: true });
+        });
+
+        commit(ModelMutation.SetVariablesCopy, variables);
 
         if (state.compileRequired) {
             commit(ModelMutation.SetCompileRequired, false);
